@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?android:attr/colorControlHighlight">
+    <item android:id="@android:id/mask">
+        <vector
+            android:width="33dp"
+            android:height="33dp"
+            android:viewportWidth="33"
+            android:viewportHeight="33">
+            <path
+                android:pathData="M16.9985,16.7153m-16,0a16,16 0,1 1,32 0a16,16 0,1 1,-32 0"
+                android:fillColor="@color/black"/>
+            <path
+                android:strokeWidth="1"
+                android:pathData="M20.4229,21.4628L16.9269,17.9668L13.4624,21.4313C13.0813,21.8124 12.4548,21.8095 12.0703,21.425C11.6857,21.0404 11.6829,20.414 12.064,20.0329L15.5285,16.5684L12.0325,13.0724C11.6479,12.6878 11.6451,12.0614 12.0262,11.6803C12.4073,11.2992 13.0337,11.302 13.4183,11.6866L16.9143,15.1826L20.3788,11.7181C20.7599,11.337 21.3863,11.3398 21.7709,11.7244C22.1554,12.1089 22.1583,12.7354 21.7772,13.1165L18.3127,16.581L21.8087,20.077C22.1932,20.4615 22.1961,21.088 21.815,21.4691C21.4339,21.8502 20.8074,21.8473 20.4229,21.4628Z"
+                android:fillColor="@color/black"
+                android:fillType="evenOdd"
+                android:strokeColor="@color/black"/>
+        </vector>
+    </item>
+
+    <item>
+        <vector
+            android:width="33dp"
+            android:height="33dp"
+            android:viewportWidth="33"
+            android:viewportHeight="33">
+            <path
+                android:pathData="M16.9985,16.7153m-16,0a16,16 0,1 1,32 0a16,16 0,1 1,-32 0"
+                android:fillColor="#B5B5B5"/>
+            <path
+                android:strokeWidth="1"
+                android:pathData="M20.4229,21.4628L16.9269,17.9668L13.4624,21.4313C13.0813,21.8124 12.4548,21.8095 12.0703,21.425C11.6857,21.0404 11.6829,20.414 12.064,20.0329L15.5285,16.5684L12.0325,13.0724C11.6479,12.6878 11.6451,12.0614 12.0262,11.6803C12.4073,11.2992 13.0337,11.302 13.4183,11.6866L16.9143,15.1826L20.3788,11.7181C20.7599,11.337 21.3863,11.3398 21.7709,11.7244C22.1554,12.1089 22.1583,12.7354 21.7772,13.1165L18.3127,16.581L21.8087,20.077C22.1932,20.4615 22.1961,21.088 21.815,21.4691C21.4339,21.8502 20.8074,21.8473 20.4229,21.4628Z"
+                android:fillColor="#ffffff"
+                android:fillType="evenOdd"
+                android:strokeColor="#ffffff"/>
+        </vector>
+    </item>
+
+</ripple>

@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/main_layout"
+    android:layout_height="match_parent"
+    android:background="@color/page_background_color">
+
+    <LinearLayout
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="160dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_car" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/empty_car_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pixel_ten"
+            android:fontFamily="@font/cairo_black"
+            android:textColor="@color/cod_gray"
+            android:textSize="18sp"
+            tools:text="No car registered yet" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/empty_car_text_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/cairo_regular"
+            android:gravity="center"
+            android:lineSpacingExtra="-6dp"
+            android:paddingStart="72dp"
+            android:paddingEnd="72dp"
+            android:textColor="#B5B5B5"
+            tools:text="Add a car by filling up the details of your vehicle above this message" />
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        app:cardElevation="@dimen/margin_basic_4dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="18dp"
+            android:paddingTop="9dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="9dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/confirm"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:background="@drawable/background_primary_eight_dp"
+                android:enabled="false"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="center"
+                android:paddingStart="5dp"
+                android:paddingTop="0dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="0dp"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="CONFIRM" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/footer"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cars_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:itemCount="1"
+                tools:listitem="@layout/item_cars" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/car_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cars_list">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="12dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="10dp">
+
+                    <FrameLayout
+                        android:id="@+id/car_color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="4dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/car_color_constraint"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/background_order_type"
+                            android:scaleType="centerInside"
+                            app:backgroundTint="@color/white"
+                            app:elevation="4dp"
+                            app:fabCustomSize="40dp"
+                            app:tint="#DEDEDE" />
+
+                    </FrameLayout>
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/color_image_selected"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@id/car_color"
+                        app:layout_constraintEnd_toEndOf="@id/car_color"
+                        app:layout_constraintStart_toStartOf="@id/car_color"
+                        app:layout_constraintTop_toTopOf="@id/car_color"
+                        tools:src="@color/primary_text"
+                        tools:visibility="visible" />
+
+                    <ImageView
+                        android:id="@+id/car_color_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_add_car"
+                        app:layout_constraintBottom_toBottomOf="@id/car_color"
+                        app:layout_constraintEnd_toEndOf="@id/car_color"
+                        app:layout_constraintStart_toStartOf="@id/car_color"
+                        app:layout_constraintTop_toTopOf="@id/car_color" />
+
+                    <TextView
+                        android:id="@+id/car_color_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:fontFamily="@font/cairo_bold"
+                        android:textColor="@color/primary_text"
+                        android:textSize="10sp"
+                        app:layout_constraintEnd_toEndOf="@id/car_color"
+                        app:layout_constraintStart_toStartOf="@id/car_color"
+                        app:layout_constraintTop_toBottomOf="@id/car_color"
+                        tools:text="Color" />
+
+                    <FrameLayout
+                        android:id="@+id/maker_color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="4dp"
+                        app:layout_constraintStart_toEndOf="@id/car_color"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/maker_color_constraint"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/background_order_type"
+                            android:scaleType="centerInside"
+                            app:backgroundTint="@color/white"
+                            app:elevation="4dp"
+                            app:fabCustomSize="40dp"
+                            app:tint="#DEDEDE" />
+
+                    </FrameLayout>
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/maker_image"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintBottom_toBottomOf="@id/maker_color"
+                        app:layout_constraintEnd_toEndOf="@id/maker_color"
+                        app:layout_constraintStart_toStartOf="@id/maker_color"
+                        app:layout_constraintTop_toTopOf="@id/maker_color"
+                        tools:src="@drawable/dish_sample" />
+
+                    <ImageView
+                        android:id="@+id/maker_color_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_add_car"
+                        app:layout_constraintBottom_toBottomOf="@id/maker_color"
+                        app:layout_constraintEnd_toEndOf="@id/maker_color"
+                        app:layout_constraintStart_toStartOf="@id/maker_color"
+                        app:layout_constraintTop_toTopOf="@id/maker_color" />
+
+                    <TextView
+                        android:id="@+id/maker_other_text"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_gravity="center"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/cairo_regular"
+                        android:gravity="center"
+                        android:lineSpacingExtra="-12dp"
+                        android:maxLines="2"
+                        android:padding="6dp"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@id/maker_color"
+                        app:layout_constraintEnd_toEndOf="@id/maker_color"
+                        app:layout_constraintStart_toStartOf="@id/maker_color"
+                        app:layout_constraintTop_toTopOf="@id/maker_color"
+                        tools:text="Lam"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/car_maker_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:fontFamily="@font/cairo_bold"
+                        android:textColor="@color/primary_text"
+                        android:textSize="10sp"
+                        app:layout_constraintEnd_toEndOf="@id/maker_color"
+                        app:layout_constraintStart_toStartOf="@id/maker_color"
+                        app:layout_constraintTop_toBottomOf="@id/maker_color"
+                        tools:text="Maker" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_fields"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="10dp"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/maker_color"
+                        app:layout_constraintTop_toTopOf="@+id/maker_color"
+                        app:layout_constraintBottom_toBottomOf="@+id/car_maker_label">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/plate_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="8dp"
+                            app:cardElevation="2dp"
+                            app:cardPreventCornerOverlap="true"
+                            android:layout_margin="1dp">
+
+                            <EditText
+                                android:id="@+id/plate_number_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@null"
+                                android:fontFamily="@font/cairo_bold"
+                                android:gravity="center"
+                                android:inputType="text"
+                                android:textSize="12sp"
+                                android:imeOptions="actionNext"
+                                android:nextFocusForward="@+id/phone_number_text"/>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="2dp"/>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/phone_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="8dp"
+                            app:cardElevation="2dp"
+                            app:cardPreventCornerOverlap="true"
+                            android:layout_margin="1dp">
+
+                            <EditText
+                                android:id="@+id/phone_number_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@null"
+                                android:fontFamily="@font/cairo_bold"
+                                android:gravity="center"
+                                android:inputType="phone"
+                                android:digits="0123456789"
+                                android:maxLength="12"
+                                android:textSize="12sp"
+                                android:imeOptions="actionDone"/>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </LinearLayout>
+
+                    <!--<androidx.cardview.widget.CardView
+                        android:id="@+id/plate_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="4dp"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="4dp"
+                        app:cardPreventCornerOverlap="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/maker_color"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <EditText
+                            android:id="@+id/plate_number_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:fontFamily="@font/cairo_bold"
+                            android:gravity="center"
+                            android:inputType="textVisiblePassword"
+                            android:textSize="13sp"
+                            tools:ignore="TextFields"
+                            tools:text="LAD 4868" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/plate_number_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:fontFamily="@font/cairo_bold"
+                        android:textColor="@color/primary_text"
+                        android:textSize="10sp"
+                        app:layout_constraintEnd_toEndOf="@id/plate_layout"
+                        app:layout_constraintStart_toStartOf="@id/plate_layout"
+                        app:layout_constraintTop_toBottomOf="@id/plate_layout"
+                        tools:text="Plate Number (Optional)" />-->
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/add_new_car"
+                        android:layout_width="0dp"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/background_primary_eight_dp"
+                        android:enabled="false"
+                        android:fontFamily="@font/cairo_bold"
+                        android:gravity="center"
+                        android:paddingStart="0dp"
+                        android:paddingTop="0dp"
+                        android:paddingEnd="0dp"
+                        android:paddingBottom="0dp"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/ll_fields"
+                        app:layout_constraintStart_toStartOf="@id/car_color"
+                        app:layout_constraintTop_toBottomOf="@id/car_color_label"
+                        tools:text="ADD THIS AS NEW CAR" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/time"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="end"
+            android:includeFontPadding="false"
+            android:textAlignment="viewEnd"
+            android:textColor="#40000000"
+            android:textSize="12sp"
+            tools:text="8:34 PM" />
+
+        <com.github.vipulasri.timelineview.TimelineView
+            android:id="@+id/timeline"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="32dp"
+            app:endLineColor="?attr/colorPrimary"
+            app:lineStyle="dash"
+            app:lineStyleDashGap="2dp"
+            app:lineStyleDashLength="5dp"
+            app:lineWidth="1dp"
+            app:marker="@drawable/ic_marker_timeline_pending"
+            app:markerSize="16dp"
+            app:startLineColor="#10C735" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="-7dp"
+            android:textAlignment="viewStart"
+            android:textColor="#40000000"
+            android:textSize="14sp"
+            tools:text="Order Received" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/driverChat"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top"
+        tools:visibility="visible">
+
+        <com.github.vipulasri.timelineview.TimelineView
+            android:id="@+id/timelineDummy"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="97dp"
+            app:endLineColor="?attr/colorPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lineStyle="dash"
+            app:lineStyleDashGap="2dp"
+            app:lineStyleDashLength="5dp"
+            app:lineWidth="1dp"
+            app:marker="@drawable/ic_marker_timeline_pending"
+            app:markerSize="2dp"
+            app:startLineColor="#10C735" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/driverChatButton"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:layout_marginStart="24dp"
+            android:background="@drawable/bg_chat_orange"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            app:layout_constraintStart_toEndOf="@id/timelineDummy"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/chatImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_chat_message"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/chatDriverLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/chatImage"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Chat driver" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/container"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	app:cardBackgroundColor="@android:color/transparent"
+	android:clickable="true"
+	android:focusable="true">
+
+	<com.google.android.material.card.MaterialCardView
+		android:id="@+id/card"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="16dp"
+		android:layout_marginEnd="16dp"
+		android:clickable="true"
+		android:focusable="true"
+		app:cardBackgroundColor="@color/white"
+		app:cardCornerRadius="10dp"
+		app:cardElevation="4dp"
+		app:cardPreventCornerOverlap="true"
+		app:cardUseCompatPadding="true"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent">
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/content"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="16dp">
+
+			<androidx.constraintlayout.widget.Guideline
+				android:id="@+id/center"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				app:layout_constraintGuide_percent="0.5" />
+
+			<TextView
+				android:id="@+id/btn_cancel"
+				android:layout_width="140dp"
+				android:layout_height="46dp"
+				android:layout_marginTop="24dp"
+				android:layout_marginEnd="6dp"
+				android:background="@drawable/background_red"
+				android:fontFamily="@font/cairo_bold"
+				android:gravity="center"
+				android:includeFontPadding="false"
+				android:text="Yes, cancel"
+				android:textAlignment="center"
+				android:textColor="@color/white"
+				android:textSize="14sp"
+				android:textStyle="bold"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toStartOf="@id/center"
+				app:layout_constraintTop_toBottomOf="@id/label_desc" />
+
+			<TextView
+				android:id="@+id/btn_back"
+				android:layout_width="140dp"
+				android:layout_height="46dp"
+				android:layout_marginStart="6dp"
+				android:layout_marginTop="24dp"
+				android:background="@drawable/background_add_to_bag"
+				android:fontFamily="@font/cairo_bold"
+				android:gravity="center"
+				android:includeFontPadding="false"
+				android:text="Back"
+				android:textAlignment="center"
+				android:textColor="@color/white"
+				android:textSize="14sp"
+				android:textStyle="bold"
+				app:backgroundTint="?attr/colorPrimary"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintStart_toEndOf="@id/center"
+				app:layout_constraintTop_toBottomOf="@id/label_desc" />
+
+			<TextView
+				android:id="@+id/label_desc"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="20dp"
+				android:ellipsize="end"
+				android:fontFamily="@font/cairo_regular"
+				android:gravity="center"
+				android:lineSpacingExtra="-5dp"
+				android:maxLines="2"
+				android:text="Are you sure you want to cancel this order? This can\'t be undone."
+				android:textColor="@color/primary_text"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/title" />
+
+			<TextView
+				android:id="@+id/title"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="4dp"
+				android:fontFamily="@font/cairo_bold"
+				android:gravity="center"
+				android:lineSpacingExtra="-5dp"
+				android:text="Cancel Order"
+				android:textAllCaps="true"
+				android:textColor="?attr/colorPrimary"
+				android:textSize="18sp"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
+	</com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

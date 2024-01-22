@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView android:id="@+id/account_container"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	app:cardPreventCornerOverlap="true"
+	app:cardUseCompatPadding="true"
+	app:cardBackgroundColor="@color/white"
+	app:layout_constraintTop_toBottomOf="@+id/navigation"
+	app:layout_constraintStart_toStartOf="parent"
+	app:layout_constraintEnd_toEndOf="parent"
+	app:cardCornerRadius="8dp"
+	app:cardElevation="4dp"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+		android:paddingTop="14dp"
+		android:paddingStart="22dp"
+		android:paddingEnd="22dp"
+		android:paddingBottom="18dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/img_card"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="16dp"
+			tools:src="@drawable/visa"
+			android:layout_gravity="center_vertical"/>
+
+		<TextView
+			android:id="@+id/bullets"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="start"
+			android:textAlignment="viewStart"
+			android:textSize="30sp"
+			android:layout_marginTop="-22dp"
+			android:layout_marginBottom="-22dp"
+			android:textColor="@color/primary_text"
+			android:text="•••• •••• •••• "
+			app:layout_constraintTop_toTopOf="@id/hours_icon"
+			app:layout_constraintBottom_toBottomOf="@+id/hours_icon"
+			app:layout_constraintStart_toEndOf="@+id/hours_icon"
+			app:layout_constraintEnd_toStartOf="@+id/open_now_icon"
+			android:layout_gravity="center_vertical"/>
+
+		<TextView
+			android:id="@+id/card_number_end"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:gravity="start"
+			android:textAlignment="viewStart"
+			android:textSize="14sp"
+			android:textColor="@color/primary_text"
+			tools:text="2256"
+			android:fontFamily="@font/cairo_regular"
+			app:layout_constraintTop_toTopOf="@id/hours_icon"
+			app:layout_constraintBottom_toBottomOf="@+id/hours_icon"
+			app:layout_constraintStart_toEndOf="@+id/hours_icon"
+			app:layout_constraintEnd_toStartOf="@+id/open_now_icon"
+			android:layout_marginEnd="8dp"
+			android:layout_gravity="center_vertical"/>
+
+		<ImageView
+			android:id="@+id/delete"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:foreground="?selectableItemBackgroundBorderless"
+			android:src="@drawable/ic_unbookmark_or_delete"
+			android:visibility="gone"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
+

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:id="@+id/content_main"
+	android:layout_height="match_parent"
+	android:background="@color/page_background_color">
+
+	<ImageView
+		android:id="@+id/background"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:src="@drawable/dialog_background"
+		android:scaleType="fitXY" />
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		android:animateLayoutChanges="true">
+
+		<include
+			layout="@layout/toolbar"/>
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="12dp"
+			android:layout_marginEnd="12dp">
+
+
+			<ImageView
+				android:id="@+id/image"
+				android:layout_width="300dp"
+				android:layout_height="120dp"
+				android:layout_marginTop="50dp"
+				android:layout_gravity="center_horizontal"
+				android:src="@drawable/ic_al_rajhi_bank"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+<!-- countdown -->
+<!--			<TextView-->
+<!--				android:id="@+id/label"-->
+<!--				android:layout_width="0dp"-->
+<!--				android:layout_height="wrap_content"-->
+<!--				android:fontFamily="@font/cairo_regular"-->
+<!--				android:includeFontPadding="true"-->
+<!--				android:lineSpacingExtra="-8dp"-->
+<!--				android:layout_marginEnd="20dp"-->
+<!--				android:layout_marginStart="20dp"-->
+<!--				android:textColor="@color/primary_text"-->
+<!--				android:gravity="center"-->
+<!--				android:textSize="15dp"-->
+<!--				android:layout_marginTop="8dp"-->
+<!--				android:visibility="gone"-->
+<!--				tools:visibility="visible"-->
+<!--				app:layout_constraintStart_toStartOf="parent"-->
+<!--				app:layout_constraintEnd_toEndOf="parent"-->
+<!--				app:layout_constraintTop_toBottomOf="@id/image"-->
+<!--				tools:text="We have sent you a one-time password which will expire in 1 minute."/>-->
+
+			<TextView
+				android:id="@+id/otp_label"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/cairo_regular"
+				android:includeFontPadding="true"
+				android:lineSpacingExtra="-8dp"
+				android:textColor="#4D000000"
+				android:textSize="14sp"
+				android:layout_marginStart="16dp"
+				android:layout_marginTop="24dp"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/image"
+				tools:text="OTP"/>
+
+			<com.google.android.material.card.MaterialCardView
+				android:id="@+id/otp_layout"
+				android:layout_width="0dp"
+				android:layout_height="52dp"
+				app:cardCornerRadius="6dp"
+				app:cardElevation="4dp"
+				app:cardPreventCornerOverlap="true"
+				app:cardUseCompatPadding="true"
+				app:cardBackgroundColor="@color/white"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/otp_label">
+
+				<EditText
+					android:id="@+id/otp"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:background="@null"
+					android:fontFamily="@font/cairo_bold"
+					android:includeFontPadding="true"
+					android:lineSpacingExtra="-8dp"
+					android:inputType="number"
+					android:textStyle="bold"
+					android:textSize="14sp"
+					android:paddingStart="16dp"
+					android:gravity="center"
+					android:textColorHint="#858585"
+					android:textColor="#303030"
+					tools:text="mS123v"
+					android:textCursorDrawable="@drawable/cursor"/>
+
+			</com.google.android.material.card.MaterialCardView>
+
+
+			<TextView
+				android:id="@+id/amount_label"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/cairo_regular"
+				android:includeFontPadding="true"
+				android:lineSpacingExtra="-8dp"
+				android:textColor="#4D000000"
+				android:textSize="14sp"
+				android:layout_marginStart="16dp"
+				android:layout_marginTop="4dp"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/otp_layout"
+				tools:text="Amount"/>
+
+			<com.google.android.material.card.MaterialCardView
+				android:id="@+id/amount_layout"
+				android:layout_width="0dp"
+				android:layout_height="52dp"
+				app:cardCornerRadius="6dp"
+				app:cardElevation="4dp"
+				app:cardPreventCornerOverlap="true"
+				app:cardUseCompatPadding="true"
+				app:cardBackgroundColor="@color/white"
+				app:layout_constraintEnd_toStartOf="@id/guideline"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/amount_label">
+
+				<EditText
+					android:id="@+id/amount"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:background="@null"
+					android:fontFamily="@font/cairo_bold"
+					android:includeFontPadding="true"
+					android:lineSpacingExtra="-8dp"
+					android:inputType="number"
+					android:textStyle="bold"
+					android:textSize="14sp"
+					android:gravity="center"
+					android:textColorHint="#858585"
+					android:textColor="#303030"
+					tools:text="20"
+					android:textCursorDrawable="@drawable/cursor"/>
+
+			</com.google.android.material.card.MaterialCardView>
+
+			<TextView
+				android:id="@+id/sar_label"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/cairo_bold"
+				android:includeFontPadding="true"
+				android:textColor="@color/primary_text"
+				android:gravity="center"
+				android:textSize="18dp"
+				app:layout_constraintStart_toEndOf="@id/amount_layout"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/amount_label"
+				app:layout_constraintBottom_toBottomOf="@id/amount_layout"
+				tools:text="SAR"/>
+
+			<com.google.android.material.button.MaterialButton
+				android:id="@+id/submit"
+				android:layout_width="0dp"
+				android:layout_height="50dp"
+				android:layout_marginTop="18dp"
+				android:fontFamily="@font/cairo_bold"
+				android:includeFontPadding="true"
+				android:gravity="center"
+				tools:text="SUBMIT OTP"
+				android:textColor="@color/white"
+				android:textSize="14sp"
+				android:textStyle="bold"
+				android:textAllCaps="true"
+				app:backgroundTint="?colorPrimary"
+				app:cornerRadius="8dp"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/amount_layout"
+				android:layout_marginBottom="16dp"/>
+
+			<LinearLayout
+				android:id="@+id/resend_container"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:layout_marginTop="12dp"
+				tools:visibility="gone"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/submit">
+
+				<TextView
+					android:id="@+id/resend_message"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="4dp"
+					android:layout_marginStart="8dp"
+					android:fontFamily="@font/cairo_regular"
+					android:includeFontPadding="true"
+					android:lineSpacingExtra="-8dp"
+					android:maxLines="1"
+					tools:text="Didn’t receive OTP? Resend by clicking"
+					android:textAllCaps="false"
+					android:textColor="@color/primary_text"
+					android:textSize="12sp" />
+
+				<TextView
+					android:id="@+id/resend"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="?selectableItemBackground"
+					android:clickable="true"
+					android:focusable="true"
+					android:fontFamily="@font/cairo_regular"
+					android:includeFontPadding="true"
+					android:lineSpacingExtra="-8dp"
+					android:maxLines="1"
+					tools:text="here"
+					android:textAllCaps="false"
+					android:textColor="?colorPrimary"
+					android:textSize="12sp" />
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/count_container"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:layout_marginTop="12dp"
+				tools:visibility="visible"
+				android:visibility="gone"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/submit">
+
+				<TextView
+					android:id="@+id/count_message"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="4dp"
+					android:layout_marginStart="8dp"
+					android:fontFamily="@font/cairo_regular"
+					android:includeFontPadding="true"
+					android:lineSpacingExtra="-8dp"
+					android:maxLines="1"
+					tools:text="You can resend the code in"
+					android:textAllCaps="false"
+					android:textColor="@color/primary_text"
+					android:textSize="12sp" />
+
+				<TextView
+					android:id="@+id/count"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="?selectableItemBackground"
+					android:clickable="true"
+					android:focusable="true"
+					android:fontFamily="@font/cairo_regular"
+					android:includeFontPadding="true"
+					android:lineSpacingExtra="-8dp"
+					android:maxLines="1"
+					tools:text="59 seconds"
+					android:textAllCaps="false"
+					android:textColor="@color/colorAccent"
+					android:textSize="12sp" />
+
+			</LinearLayout>
+
+			<androidx.constraintlayout.widget.Guideline
+				android:id="@+id/guideline"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				app:layout_constraintGuide_begin="274dp" />
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
+	</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

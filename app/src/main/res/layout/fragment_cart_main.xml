@@ -1,0 +1,1115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:padding="12dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/footer"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/empty"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
+                <View
+                    android:id="@+id/curbside_space"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:visibility="gone" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_search_empty" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/empty_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pixel_ten"
+                    android:fontFamily="@font/cairo_black"
+                    android:textColor="@color/cod_gray"
+                    android:textSize="18sp"
+                    tools:text="No item found" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/empty_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_regular"
+                    android:gravity="center"
+                    android:lineSpacingExtra="-10dp"
+                    android:paddingStart="72dp"
+                    android:paddingEnd="72dp"
+                    android:textColor="#B5B5B5"
+                    tools:text="You can add something to your bag if you visit our menu here" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/go_to_menu"
+                    android:layout_width="124dp"
+                    android:layout_height="39dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/background_primary_eight_dp"
+                    android:fontFamily="@font/cairo_bold"
+                    android:gravity="center"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="GO TO MENU" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/container_order_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="4dp"
+                    app:cardPreventCornerOverlap="true"
+                    app:cardUseCompatPadding="true"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <LinearLayout
+                        android:id="@+id/container_order_type_main"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:orientation="vertical"
+                        android:paddingStart="16dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="8dp">
+
+                        <TextView
+                            android:id="@+id/order_type_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/cairo_black"
+                            android:includeFontPadding="false"
+                            android:textAllCaps="true"
+                            android:textColor="@color/primary_text"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            tools:text="DELIVERT TO:" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/order_type_location"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="-4dp"
+                                android:layout_weight="1"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/cairo_regular"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="-7dp"
+                                android:lines="1"
+                                android:paddingStart="0dp"
+                                android:paddingEnd="5dp"
+                                android:singleLine="true"
+                                android:textAlignment="viewStart"
+                                android:textColor="@color/primary_text"
+                                android:textSize="14sp"
+                                tools:text="The quick brown St. 34124 Ave. 212 blvd. Califor..." />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="@drawable/ic_union"
+                                app:layout_constraintBottom_toBottomOf="@id/branch_name"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="@id/branch_name" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/curbside_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="6dp"
+                    app:cardElevation="4dp"
+                    app:cardUseCompatPadding="true"
+                    app:layout_constraintBottom_toTopOf="@id/place_order"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spacing_top"
+                    tools:visibility="visible">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="10dp"
+                        android:paddingTop="5dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="10dp">
+
+                        <TextView
+                            android:id="@+id/curbside_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/cairo_regular"
+                            android:textColor="#969696"
+                            android:textSize="12sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Your order will be delivered to this car:" />
+
+                        <View
+                            android:id="@+id/top_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            app:layout_constraintTop_toBottomOf="@id/curbside_desc" />
+
+                        <View
+                            android:id="@+id/bottom_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            app:layout_constraintBottom_toTopOf="@id/change_vehicle" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toTopOf="@id/bottom_view"
+                            app:layout_constraintTop_toBottomOf="@id/top_view">
+
+                            <TextView
+                                android:id="@+id/plate_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_marginEnd="4dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/cairo_bold"
+                                android:maxWidth="240dp"
+                                android:maxLines="1"
+                                android:textColor="@color/primary_text"
+                                android:textSize="18sp"
+                                tools:text="JBP 7024" />
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/car_color"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:layout_marginBottom="4dp">
+
+                                <FrameLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                                        android:layout_width="34dp"
+                                        android:layout_height="34dp"
+                                        android:background="@drawable/background_order_type"
+                                        android:scaleType="centerInside"
+                                        app:backgroundTint="@color/white"
+                                        app:elevation="4dp"
+                                        app:fabCustomSize="34dp"
+                                        app:tint="#DEDEDE" />
+
+                                </FrameLayout>
+
+                                <de.hdodenhof.circleimageview.CircleImageView
+                                    android:id="@+id/color_image_selected"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_gravity="center"
+                                    app:layout_constraintBottom_toBottomOf="@id/car_color"
+                                    app:layout_constraintEnd_toEndOf="@id/car_color"
+                                    app:layout_constraintStart_toStartOf="@id/car_color"
+                                    app:layout_constraintTop_toTopOf="@id/car_color"
+                                    tools:src="@color/primary_text" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/maker_color"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:layout_marginBottom="4dp"
+                                android:visibility="gone"
+                                tools:visibility="visible">
+
+                                <FrameLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                                        android:layout_width="34dp"
+                                        android:layout_height="34dp"
+                                        android:background="@drawable/background_order_type"
+                                        android:scaleType="centerInside"
+                                        app:backgroundTint="@color/white"
+                                        app:elevation="4dp"
+                                        app:fabCustomSize="34dp"
+                                        app:tint="#DEDEDE" />
+
+                                </FrameLayout>
+
+                                <de.hdodenhof.circleimageview.CircleImageView
+                                    android:id="@+id/maker_image"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_gravity="center"
+                                    android:scaleType="centerCrop"
+                                    app:layout_constraintBottom_toBottomOf="@id/maker_color"
+                                    app:layout_constraintEnd_toEndOf="@id/maker_color"
+                                    app:layout_constraintStart_toStartOf="@id/maker_color"
+                                    app:layout_constraintTop_toTopOf="@id/maker_color"
+                                    tools:src="@drawable/dish_sample" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <TextView
+                                android:id="@+id/maker_other_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_marginEnd="4dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/cairo_bold"
+                                android:lineSpacingExtra="-12dp"
+                                android:maxWidth="240dp"
+                                android:maxLines="1"
+                                android:textColor="@color/primary_text"
+                                android:textSize="18sp"
+                                tools:text="Mitsubishi" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/change_vehicle"
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:background="@drawable/background_add_to_bag"
+                            android:fontFamily="@font/cairo_bold"
+                            android:gravity="center"
+                            android:paddingTop="0dp"
+                            android:paddingBottom="0dp"
+                            android:textAllCaps="true"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            tools:text="CHANGE VEHICLE" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/with_sched_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="6dp"
+                    app:cardElevation="4dp"
+                    app:cardUseCompatPadding="true"
+                    app:layout_constraintBottom_toTopOf="@id/place_order"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/curbside_layout"
+                    tools:visibility="visible">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:id="@+id/clock_sched"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_sched"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/remove_sched"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_remove_a_main_dish_snack_drink_svg"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/sched_time"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/cairo_regular"
+                            android:gravity="start"
+                            android:lineSpacingExtra="-8dp"
+                            android:paddingStart="5dp"
+                            android:paddingEnd="5dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/remove_sched"
+                            app:layout_constraintStart_toEndOf="@+id/clock_sched"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Order scheduled for: AUG 22 at 2:44 PM" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/items_in_your_cart_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="6dp"
+                    android:fontFamily="@font/cairo_bold"
+                    android:textAllCaps="true"
+                    android:textColor="@color/silver_chalice"
+                    tools:text="ITEMS IN YOUR CART" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/carts_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    tools:itemCount="1"
+                    tools:listitem="@layout/item_cart_menu_item_new" />
+
+                <FrameLayout
+                    android:id="@+id/promotional_item_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <include
+                        android:id="@+id/promo_item"
+                        layout="@layout/item_promotional_item" />
+
+                </FrameLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/promo_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="2dp"
+                    android:elevation="@dimen/margin_basic_4dp"
+                    app:cardCornerRadius="@dimen/margin_basic_8dp"
+                    app:cardUseCompatPadding="true">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/apply_code"
+                            android:layout_width="wrap_content"
+                            android:layout_height="38dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/background_primary_eight_dp"
+                            android:fontFamily="@font/cairo_bold"
+                            android:gravity="center"
+                            android:paddingTop="0dp"
+                            android:paddingBottom="0dp"
+                            android:textAllCaps="true"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="APPLY CODE" />
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/promo_code"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:background="@null"
+                            android:fontFamily="@font/cairo_regular"
+                            android:gravity="start|center_vertical"
+                            android:imeOptions="actionDone"
+                            android:inputType="textVisiblePassword"
+                            android:paddingStart="18dp"
+                            android:paddingEnd="10dp"
+                            android:textAlignment="viewStart"
+                            android:textAllCaps="true"
+                            android:textColor="@color/primary_text"
+                            android:textColorHint="@color/silver_chalice"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/apply_code"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:hint="Enter Promo Code" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/promo_code_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:background="@null"
+                            android:fontFamily="@font/cairo_bold"
+                            android:gravity="start|center_vertical"
+                            android:foregroundGravity="left|center_vertical"
+                            android:lineSpacingExtra="-8dp"
+                            android:maxWidth="165dp"
+                            android:maxLines="2"
+                            android:paddingStart="18dp"
+                            android:paddingEnd="0dp"
+                            android:textAlignment="viewStart"
+                            android:textAllCaps="true"
+                            android:textColor="@color/primary_text"
+                            android:textColorHint="@color/silver_chalice"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <LinearLayout
+                            android:id="@+id/coupon_layout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginEnd="10dp"
+                            android:gravity="start|center_vertical"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/promo_code_text"
+                            app:layout_constraintEnd_toStartOf="@id/apply_code"
+                            app:layout_constraintStart_toEndOf="@id/promo_code_text"
+                            app:layout_constraintTop_toTopOf="@id/promo_code_text">
+
+                            <ImageView
+                                android:layout_width="13dp"
+                                android:layout_height="13dp"
+                                android:src="@drawable/ic_picked_payment_type_svg" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/coupon_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="3dp"
+                                android:fontFamily="@font/cairo_bold"
+                                android:lineSpacingExtra="-8dp"
+                                android:textColor="?attr/colorPrimary"
+                                app:layout_constraintBottom_toTopOf="@id/total_vat_label"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/total_label"
+                                tools:text="20% OFF" />
+
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/container_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="2dp"
+                    android:elevation="@dimen/margin_basic_4dp"
+                    app:cardCornerRadius="@dimen/margin_basic_8dp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingStart="16dp"
+                        android:paddingTop="13dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="13dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/subtotal_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/subtotal_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_bold"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary_text"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Subtotal" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/subtotal_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_bold"
+                                android:textColor="@color/primary_text"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="55 SR" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/discount_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/discount_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_semibold"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary_text"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Promo Discount" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/discount_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_semibold"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary_text"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="55 SR" />
+
+                            <com.airbnb.lottie.LottieAnimationView
+                                android:id="@+id/dot_loader"
+                                android:layout_width="30dp"
+                                android:layout_height="15dp"
+                                android:layout_marginEnd="10dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:lottie_autoPlay="true"
+                                app:lottie_loop="true"
+                                app:lottie_colorFilter="?attr/colorPrimary"
+                                app:lottie_rawRes="@raw/dot_loader" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <LinearLayout
+                            android:id="@+id/mukafaa_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <TextView
+                                android:id="@+id/mukafaa_label"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/cairo_regular"
+                                android:gravity="start"
+                                android:includeFontPadding="true"
+                                android:lineSpacingExtra="-8dp"
+                                android:textAlignment="viewStart"
+                                android:textColor="@color/primary_text"
+                                android:textSize="13sp"
+                                tools:text="Al Rajhi Mokafa'a" />
+
+                            <TextView
+                                android:id="@+id/mukafaa_remove"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:fontFamily="@font/cairo_regular"
+                                android:gravity="end"
+                                android:includeFontPadding="true"
+                                android:lineSpacingExtra="-8dp"
+                                android:textAlignment="viewEnd"
+                                android:textColor="?colorPrimary"
+                                android:textSize="11sp"
+                                tools:text="Remove" />
+
+                            <TextView
+                                android:id="@+id/mukafaa_sar"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_regular"
+                                android:gravity="end"
+                                android:includeFontPadding="true"
+                                android:lineSpacingExtra="-8dp"
+                                android:textAlignment="viewEnd"
+                                android:textAllCaps="true"
+                                android:textColor="@color/primary_text"
+                                android:textSize="14sp"
+                                tools:text="-20 SR" />
+
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvServiceCharge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/delivery_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/delivery_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_regular"
+                                android:textColor="@color/primary_text"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Delivery charge" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/delivery_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_regular"
+                                android:textColor="@color/primary_text"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="55 SR" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/vat_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/vat_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_regular"
+                                android:textColor="@color/primary_text"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="15% VAT" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/vat_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_regular"
+                                android:textColor="@color/primary_text"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="55 SR" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/campaign_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?android:selectableItemBackground"
+                            tools:visibility="visible">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/campaign_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_regular"
+                                android:textColor="?attr/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Show Promos" />
+
+                            <View
+                                android:id="@+id/view_underline"
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="20dp"
+                                android:background="?attr/colorPrimary"
+                                app:layout_constraintEnd_toEndOf="@id/campaign_label"
+                                app:layout_constraintStart_toStartOf="@id/campaign_label"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <FrameLayout
+                                android:id="@+id/icon_campaign"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginStart="5dp"
+                                android:background="@drawable/circle_small"
+                                android:visibility="gone"
+                                app:layout_constraintBottom_toBottomOf="@id/campaign_label"
+                                app:layout_constraintStart_toEndOf="@id/view_underline"
+                                app:layout_constraintTop_toTopOf="@id/campaign_label"
+                                tools:visibility="visible">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_pen" />
+
+                            </FrameLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="25dp"
+                                android:paddingEnd="0dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/campaign_label"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/campaign_name"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:ellipsize="end"
+                                    android:fontFamily="@font/cairo_regular"
+                                    android:gravity="end"
+                                    android:lineSpacingExtra="-7dp"
+                                    android:maxLines="2"
+                                    android:textColor="@color/primary_text"
+                                    app:autoSizeMaxTextSize="14sp"
+                                    app:autoSizeMinTextSize="8sp"
+                                    app:autoSizeTextType="uniform"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@id/campaign_label"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="20 SAR FIX" />
+
+                            </LinearLayout>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/table_number_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="2dp"
+                    android:elevation="@dimen/margin_basic_4dp"
+                    android:visibility="gone"
+                    app:cardCornerRadius="@dimen/margin_basic_8dp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingStart="16dp"
+                        android:paddingTop="13dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="13dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/table_number_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/table_number_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_bold"
+                                android:textColor="@color/primary_text"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Table Number" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/table_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_bold"
+                                android:textColor="@color/primary_text"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="5" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/order_notes_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="6dp"
+                    android:fontFamily="@font/cairo_bold"
+                    android:textAllCaps="true"
+                    android:textColor="#ACACAC"
+                    android:visibility="visible"
+                    tools:text="ORDER NOTES" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/order_notes_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:elevation="@dimen/margin_basic_4dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:cardCornerRadius="@dimen/margin_basic_8dp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <EditText
+                            android:id="@+id/order_notes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:gravity="start|top"
+                            android:inputType="textMultiLine"
+                            android:lines="4"
+                            android:maxLength="512"
+                            android:overScrollMode="ifContentScrolls"
+                            android:scrollbarStyle="insideInset"
+                            android:scrollbars="vertical"
+                            android:scrollbarSize="2dp"
+                            android:scrollHorizontally="false"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/primary_text"
+                            android:textColorHint="#A8A8A8"
+                            android:textSize="14sp" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            app:srcCompat="@drawable/ic_order_notes" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        app:cardElevation="@dimen/margin_basic_4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="18dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="9dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.42" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/place_order"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/background_primary_eight_dp"
+                android:enabled="false"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="center"
+                android:paddingStart="5dp"
+                android:paddingTop="0dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="0dp"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/center"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:enabled="true"
+                tools:text="PLACE ORDER" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/total_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:fontFamily="@font/cairo_regular"
+                android:textColor="@color/dusty_gray"
+                android:textSize="10sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Total:" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/total_vat_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo_regular"
+                android:textColor="@color/dusty_gray"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/center"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Total is inclusive of VAT" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/total_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo_bold"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toTopOf="@id/total_vat_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/total_label"
+                tools:text="6,051.99 SR" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/total_loader"
+                android:layout_width="30dp"
+                android:layout_height="15dp"
+                app:layout_constraintTop_toBottomOf="@+id/total_label"
+                app:layout_constraintStart_toStartOf="@+id/total_label"
+                app:layout_constraintEnd_toEndOf="@+id/total_label"
+                app:lottie_autoPlay="true"
+                app:lottie_colorFilter="?attr/colorPrimary"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/dot_loader" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/original_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4.5dp"
+                android:fontFamily="@font/cairo_bold"
+                android:paddingStart="4dp"
+                android:paddingEnd="2dp"
+                android:textColor="@color/home_indicator"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/total_label"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="6,051.99 SR"
+                tools:visibility="visible" />
+
+            <View
+                android:id="@+id/dashed"
+                android:layout_width="0dp"
+                android:layout_height="1.1dp"
+                android:layout_marginStart="6dp"
+                android:background="@color/home_indicator"
+                app:layout_constraintBottom_toBottomOf="@id/original_price"
+                app:layout_constraintEnd_toEndOf="@id/original_price"
+                app:layout_constraintStart_toEndOf="@id/total_label"
+                app:layout_constraintTop_toTopOf="@id/original_price" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

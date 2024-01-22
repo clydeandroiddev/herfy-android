@@ -1,0 +1,8 @@
+project.ext.signingConfigs = {
+    herfy {
+        storeFile file('../app/src/herfy/herfy')
+        keyAlias 'herfy'
+        keyPassword 'herfyandroid'
+        storePassword 'herfyandroid'
+    }
+}

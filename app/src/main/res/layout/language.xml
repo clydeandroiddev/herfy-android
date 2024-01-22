@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/language_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="invisible"
+    tools:visibility="visible">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp">
+
+            <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+                android:id="@+id/language_segmented"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@android:color/white"
+                android:layoutDirection="ltr"
+                android:padding="4dp"
+                app:dividerPadding="0dp"
+                app:dividerWidth="0dp"
+                app:radius="16dp"
+                app:ripple="true"
+                app:selectedBackground="?attr/colorPrimary"
+                app:selectedButtonRadius="16dp">
+
+                <com.addisonelliott.segmentedbutton.SegmentedButton
+                    android:id="@+id/arabic"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="fonts/cairo_bold.ttf"
+                    android:padding="4dp"
+                    app:selectedTextColor="@color/white"
+                    app:text="@string/arabic"
+                    app:textColor="#CFCFCF"
+                    app:textSize="12sp"
+                    app:textStyle="bold"
+                    android:visibility="gone"/>
+
+                <com.addisonelliott.segmentedbutton.SegmentedButton
+                    android:id="@+id/french"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="fonts/cairo_bold.ttf"
+                    android:padding="4dp"
+                    app:selectedTextColor="@color/white"
+                    app:text="@string/fr"
+                    app:textColor="#CFCFCF"
+                    app:textSize="12sp"
+                    app:textStyle="bold"
+                    android:visibility="gone"/>
+
+                <com.addisonelliott.segmentedbutton.SegmentedButton
+                    android:id="@+id/english"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="fonts/cairo_bold.ttf"
+                    android:padding="4dp"
+                    app:selectedTextColor="@color/white"
+                    app:text="@string/eng"
+                    app:textColor="#CFCFCF"
+                    app:textSize="12sp"
+                    app:textStyle="bold"
+                    android:visibility="gone"/>
+
+
+
+            </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
+
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

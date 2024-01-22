@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Generic Mobile App</string>
+
+    <string-array name="custom_weekdays_common">
+        <item>M</item>
+        <item>T</item>
+        <item>W</item>
+        <item>T</item>
+        <item>F</item>
+        <item>S</item>
+        <item>S</item>
+    </string-array>
+    <string name="contact_support_email_subject"></string>
+</resources>

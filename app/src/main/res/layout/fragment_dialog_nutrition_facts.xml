@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:clickable="true"
+    android:focusable="true">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="19dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="19dp"
+            android:paddingBottom="33dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/centerGuideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/title_nutrition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo_regular"
+                android:paddingStart="26dp"
+                android:paddingEnd="26dp"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Average daily nutrition facts" />
+
+            <View
+                android:id="@+id/separator"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="#F3F3F3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title_nutrition" />
+
+            <ImageView
+                android:id="@+id/carbs_image"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginTop="22dp"
+                android:src="@drawable/carbs"
+                app:layout_constraintEnd_toEndOf="@id/centerGuideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/separator" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/carbs_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:fontFamily="@font/cairo_regular"
+                android:textColor="@color/primary_text"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/centerGuideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/carbs_image"
+                app:layout_constraintTop_toTopOf="@id/carbs_image"
+                tools:text="62g" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/carbs_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="54dp"
+                android:fontFamily="@font/cairo_regular"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/centerGuideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/carbs_value"
+                app:layout_constraintTop_toTopOf="@id/carbs_value"
+                tools:text="Total Carbs" />
+
+            <ImageView
+                android:id="@+id/protein_image"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/eggs"
+                app:layout_constraintEnd_toEndOf="@id/centerGuideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/carbs_label" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/protein_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/cairo_regular"
+                android:textColor="@color/primary_text"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/centerGuideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/protein_image"
+                app:layout_constraintTop_toTopOf="@id/protein_image"
+                tools:text="20g" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/protein_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="52dp"
+                android:fontFamily="@font/cairo_regular"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/centerGuideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/protein_value"
+                app:layout_constraintTop_toTopOf="@id/protein_value"
+                tools:text="Total Protein" />
+
+            <ImageView
+                android:id="@+id/fasts_image"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginTop="22dp"
+                android:src="@drawable/fats"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/centerGuideline"
+                app:layout_constraintTop_toBottomOf="@id/separator" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fats_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:fontFamily="@font/cairo_regular"
+                android:textColor="@color/primary_text"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/centerGuideline"
+                app:layout_constraintTop_toBottomOf="@id/fasts_image"
+                app:layout_constraintTop_toTopOf="@id/fasts_image"
+                tools:text="48g" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fats_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="54dp"
+                android:fontFamily="@font/cairo_regular"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/centerGuideline"
+                app:layout_constraintTop_toBottomOf="@id/fats_value"
+                app:layout_constraintTop_toTopOf="@id/fats_value"
+                tools:text="Total Fats" />
+
+            <ImageView
+                android:id="@+id/calories_image"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/calories"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/centerGuideline"
+                app:layout_constraintTop_toBottomOf="@id/fats_label" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/calories_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/cairo_bold"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/centerGuideline"
+                app:layout_constraintTop_toBottomOf="@id/calories_image"
+                app:layout_constraintTop_toTopOf="@id/calories_image"
+                tools:text="4823" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/calories_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="52dp"
+                android:fontFamily="@font/cairo_bold"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/centerGuideline"
+                app:layout_constraintTop_toBottomOf="@id/calories_value"
+                app:layout_constraintTop_toTopOf="@id/calories_value"
+                tools:text="Total Calories" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

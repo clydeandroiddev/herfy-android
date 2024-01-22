@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/mainCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="11dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_height="120dp"
+        tools:layout_width="105dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imageModifierItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@color/placeholder_color"
+                android:scaleType="centerInside"
+                tools:src="@drawable/image_item_stub"
+                android:layout_alignParentTop="true"/>
+
+            <TextView
+                android:id="@+id/mealSizeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:fontFamily="@font/cairo_bold"
+                android:includeFontPadding="false"
+                android:maxLines="2"
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
+                android:textColor="@color/primary_text"
+                android:textSize="11sp"
+                android:layout_below="@+id/imageModifierItem"
+                android:layout_centerHorizontal="true"
+                tools:text="Spicy Text Max(+10 SAR)" />
+
+            <ImageView
+                android:id="@+id/checkSelected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="6dp"
+                android:src="@drawable/check_item_new"
+                android:visibility="gone"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                tools:visibility="visible" />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

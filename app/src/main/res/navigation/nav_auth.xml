@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_auth" >
+
+    <fragment
+        android:id="@+id/nav_signin_register"
+        android:name="com.herfy.auth.views.AuthFragment"
+        tools:layout="@layout/fragment_auth" >
+
+        <argument
+            android:name="sign_in"
+            app:argType="boolean"
+            android:defaultValue="true" />
+
+        <argument
+            android:name="guest"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <argument
+            android:name="history"
+            app:argType="boolean"
+            android:defaultValue="false"/>
+
+        <argument
+            android:name="account"
+            app:argType="boolean"
+            android:defaultValue="false"/>
+
+        <argument
+            android:name="curbside"
+            app:argType="boolean"
+            android:defaultValue="false"/>
+
+        <argument
+            android:name="checkout"
+            app:argType="boolean"
+            android:defaultValue="false"/>
+
+        <action
+            android:id="@+id/action_auth_to_guest"
+            app:destination="@id/nav_guest"
+            app:popUpTo="@+id/nav_guest" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_guest"
+        android:name="com.herfy.auth.views.GuestFragment"
+        tools:layout="@layout/fragment_guest" >
+
+        <argument
+            android:name="checkout"
+            app:argType="boolean"
+            android:defaultValue="false"/>
+
+    </fragment>
+
+</navigation>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mercury">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_pickup_branch" />
+
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        android:id="@+id/sliding_panel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="bottom"
+        app:layout_constraintBottom_toTopOf="@id/confirm_container"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:umanoAnchorPoint="0.65"
+        app:umanoDragView="@+id/drag"
+        app:umanoFadeColor="@android:color/transparent"
+        app:umanoOverlay="true"
+        app:umanoPanelHeight="@dimen/pickup_branch_panel_height"
+        app:umanoScrollableView="@+id/stores_recycler_view"
+        app:umanoShadowHeight="0dp">
+
+        <FrameLayout
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include layout="@layout/activity_pickup_main_content" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="-8dp"
+                app:cardBackgroundColor="@color/mercury"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="8dp">
+
+                <include layout="@layout/activity_pickup_sliding_panel" />
+
+            </androidx.cardview.widget.CardView>
+
+        </FrameLayout>
+
+
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+    <RelativeLayout
+        android:id="@+id/confirm_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/confirm"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/cairo_bold"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:backgroundTint="#B5B5B5"
+            app:cornerRadius="8dp"
+            tools:text="CONFIRM" />
+
+    </RelativeLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

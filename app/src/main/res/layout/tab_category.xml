@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/category_image_card"
+        android:layout_width="170dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="2dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guide_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="30dp" />
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/loader"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/guide_top">
+
+                <View
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:background="#CCCCCC" />
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <ImageView
+                android:id="@+id/tab_image"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/guide_top"
+                android:visibility="invisible"
+                android:scaleType="centerCrop"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_marginTop="20dp"
+        android:id="@+id/tab_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/cairo_bold"
+        android:includeFontPadding="false"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:elevation="5dp"
+        android:maxWidth="120dp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:background="@drawable/background_rounded_category"
+        android:layout_marginStart="2dp"
+        tools:text="Sandwichesesssssss" />
+
+    <ImageView
+        android:layout_width="18dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_rectangle_568"
+        android:layout_marginTop="11.5dp"
+        android:paddingStart="2dp"
+        android:paddingEnd="0dp"
+        android:scaleType="fitXY"
+        app:layout_constraintTop_toTopOf="@id/category_image_card"
+        app:layout_constraintEnd_toStartOf="@id/category_image_card"
+        app:layout_constraintStart_toStartOf="@+id/category_image_card" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/cairo_regular"
+        android:textAlignment="viewStart"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="-8dp"
+        android:maxLines="2"
+        android:paddingStart="0dp"
+        android:paddingEnd="10dp"
+        android:textColor="@color/primary_text"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/price"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Chicken Classic Peri Peri asdf asdf adsf x2" />
+
+    <TextView
+        android:id="@+id/modifierItemName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/cairo_regular"
+        android:textAlignment="viewStart"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="-8dp"
+        android:maxLines="2"
+        android:paddingStart="0dp"
+        android:paddingEnd="10dp"
+        android:visibility="gone"
+        android:textColor="@color/primary_text"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/price"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        tools:text="Chicken Classic Peri Peri asdf asdf adsf x2" />
+
+    <TextView
+        android:id="@+id/modifierItemPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/cairo_semibold"
+        android:includeFontPadding="false"
+        android:textAllCaps="true"
+        android:textColor="@color/dusty_gray"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textAlignment="viewEnd"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/modifierItemName"
+        app:layout_constraintTop_toTopOf="@+id/modifierItemName"
+        tools:text="40.00 SR" />
+    <TextView
+        android:id="@+id/txtAddOnTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:textAlignment="viewStart"
+        android:textColor="@color/dusty_gray"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/txtAddOn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtAddOn"
+        tools:text="44"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/txtAddOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:fontFamily="@font/cairo_regular"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="-8dp"
+        android:maxLines="2"
+        android:paddingStart="0dp"
+        android:textAlignment="viewStart"
+        android:textColor="@color/dusty_gray"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/txtAddOnTotal"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        tools:text="@string/add_on"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/icModifierItemsDropDown"
+        android:layout_width="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/txtAddOn"
+        app:layout_constraintTop_toTopOf="@+id/txtAddOn"
+        android:src="@drawable/ic_chevron_down"
+        android:layout_marginStart="10dp"
+        android:visibility="gone"
+        android:textAlignment="viewEnd"
+        app:layout_constraintBottom_toBottomOf="@+id/txtAddOn"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/quantity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:fontFamily="@font/cairo_regular"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="14sp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/price"
+        app:layout_constraintStart_toEndOf="@id/name"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="x2" />
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/cairo_semibold"
+        android:gravity="end"
+        android:includeFontPadding="false"
+        android:textAlignment="viewEnd"
+        android:textAllCaps="true"
+        android:textColor="@color/primary_text"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="40.00 SR" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/modifierRecycleView"
+        android:layout_width="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_modifiers_order"
+        tools:itemCount="5"
+        app:layout_constraintStart_toEndOf="@+id/modifierLineSeparator"
+        app:layout_constraintTop_toBottomOf="@+id/txtAddOn"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/ingredients"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:id="@+id/modifierLineSeparator"
+        android:layout_width="3dp"
+        android:layout_height="0dp"
+        android:background="@color/dusty_gray"
+        android:visibility="gone"
+        android:layout_marginBottom="4dp"
+        tools:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/modifierRecycleView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/modifierRecycleView" />
+    <TextView
+        android:id="@+id/ingredients"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-8dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/cairo_regular"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="-7dp"
+        android:textColor="#969696"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/price"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/modifierRecycleView"
+        tools:text="Ingredients" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

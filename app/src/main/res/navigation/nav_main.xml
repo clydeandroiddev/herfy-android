@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.herfy.newmenu.views.NewMenuHomePageFragment"
+        android:label="home_caps"
+        tools:layout="@layout/fragment_menu_new_home_page">
+
+        <action
+            android:id="@+id/action_home_to_menu"
+            app:destination="@id/nav_menu"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_order_type"
+            app:destination="@id/nav_order_type"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_popular_now"
+            app:destination="@id/nav_popular_now"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_menu_item"
+            app:destination="@id/nav_menu_item"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_digital_coupons"
+            app:destination="@id/nav_digital_coupons"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_digital_coupon"
+            app:destination="@id/nav_digital_coupon"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_auth"
+            app:destination="@id/nav_auth"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_account"
+            app:destination="@id/nav_account"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_orders"
+            app:destination="@id/nav_orders"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_order"
+            app:destination="@id/nav_order"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_branches"
+            app:destination="@id/nav_branches"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_favorites"
+            app:destination="@id/nav_favorites"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_notifications"
+            app:destination="@id/nav_notifications"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_countries"
+            app:destination="@id/nav_fragment_countries"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_dialog_popup"
+            app:destination="@id/nav_dialog_popup"
+            app:popUpTo="@+id/nav_home" />
+
+        <action
+            android:id="@+id/action_home_to_promotions"
+            app:destination="@id/nav_promotions"
+            app:popUpTo="@+id/nav_home" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_menu"
+        android:name="com.herfy.newmenu.views.NewMenuFragment"
+        android:label="menu"
+        tools:layout="@layout/fragment_menu_new">
+
+        <argument
+            android:name="menu_category_id"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_menu_to_order_type"
+            app:destination="@id/nav_order_type"
+            app:popUpTo="@+id/nav_menu" />
+
+        <action
+            android:id="@+id/action_menu_to_item"
+            app:destination="@id/nav_menu_item"
+            app:popUpTo="@+id/nav_menu" />
+
+        <action
+            android:id="@+id/action_menu_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_menu" />
+
+        <action
+            android:id="@+id/action_menu_to_orders"
+            app:destination="@id/nav_orders"
+            app:popUpTo="@+id/nav_menu" />
+
+        <action
+            android:id="@+id/action_menu_to_order"
+            app:destination="@id/nav_order"
+            app:popUpTo="@+id/nav_menu" />
+
+        <action
+            android:id="@+id/action_menu_to_favorites"
+            app:destination="@id/nav_favorites"
+            app:popUpTo="@+id/nav_menu" />
+
+        <action
+            android:id="@+id/action_menu_to_promotions"
+            app:destination="@id/nav_promotions"
+            app:popUpTo="@+id/nav_menu" />
+
+        <action
+            android:id="@+id/action_menu_to_notifications"
+            app:destination="@id/nav_notifications"
+            app:popUpTo="@+id/nav_menu" />
+
+        <action
+            android:id="@+id/action_menu_to_digital_coupon"
+            app:destination="@id/nav_digital_coupon"
+            app:popUpTo="@+id/nav_menu" />
+
+        <action
+            android:id="@+id/action_menu_to_countries"
+            app:destination="@id/nav_fragment_countries"
+            app:popUpTo="@+id/nav_menu" />
+
+        <action
+            android:id="@+id/action_menu_to_dialog_popup"
+            app:destination="@id/nav_dialog_popup"
+            app:popUpTo="@+id/nav_menu" />
+
+        <action
+            android:id="@+id/action_menu_to_auth"
+            app:destination="@id/nav_auth"
+            app:popUpTo="@+id/nav_menu" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_popular_now"
+        android:name="com.herfy.newmenu.views.PopularNowFragment"
+        android:label="popular_now_caps"
+        tools:layout="@layout/fragment_popular_now">
+
+        <argument
+            android:name="menu_items"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_popular_now_to_menu_item"
+            app:destination="@id/nav_menu_item"
+            app:popUpTo="@+id/nav_popular_now" />
+
+        <action
+            android:id="@+id/action_popular_now_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_popular_now" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_order_type"
+        android:name="com.herfy.order.views.OrderTypeFragment"
+        android:label="select_order_type"
+        tools:layout="@layout/fragment_order_type">
+        <argument
+            android:name="fromCart"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="checkout"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        
+        <argument
+            android:name="storeId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_order_type_fragment_to_dialog"
+            app:destination="@id/nav_dialog_order_type"
+            app:popUpTo="@+id/nav_order_type" />
+
+        <action
+            android:id="@+id/action_order_type_to_auth"
+            app:destination="@id/nav_auth"
+            app:popUpTo="@+id/nav_order_type" />
+
+        <action
+            android:id="@+id/action_order_type_to_curbside"
+            app:destination="@id/nav_curbside"
+            app:popUpTo="@+id/nav_order_type" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_curbside"
+        android:name="com.herfy.curbside.CurbsideFragment"
+        android:label="choose_car"
+        tools:layout="@layout/fragment_curbside">
+
+        <argument
+            android:name="curbside"
+            android:defaultValue="true"
+            app:argType="boolean" />
+        <argument
+            android:name="curbside_store_position"
+            android:defaultValue="-1"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_menu_item"
+        android:name="com.herfy.menu.views.MenuItemFragment"
+        android:label="customize_caps"
+        tools:layout="@layout/fragment_menu_item">
+
+        <argument
+            android:name="menu_category_id"
+            app:argType="string" />
+
+        <argument
+            android:name="menu_item_id"
+            app:argType="string" />
+
+        <argument
+            android:name="cart_menu_item_position"
+            android:defaultValue="-1"
+            app:argType="integer" />
+
+        <argument
+            android:name="is_promo"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="is_edit"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <action
+            android:id="@+id/action_menu_item_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_menu_item" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_cart"
+        android:name="com.herfy.cart.views.CartFragment"
+        android:label="bag"
+        tools:layout="@layout/fragment_cart">
+
+        <argument
+            android:name="isBranchPreselected"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="isFromPromotions"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <action
+            android:id="@+id/action_cart_to_order_type"
+            app:destination="@id/nav_order_type"
+            app:popUpTo="@+id/nav_cart" />
+
+        <action
+            android:id="@+id/action_cart_to_menu"
+            app:destination="@id/nav_menu"
+            app:popUpTo="@+id/nav_cart" />
+
+        <action
+            android:id="@+id/action_cart_to_menu_item"
+            app:destination="@id/nav_menu_item"
+            app:popUpTo="@+id/nav_cart" />
+
+        <action
+            android:id="@+id/action_cart_to_auth"
+            app:destination="@id/nav_auth"
+            app:popUpTo="@+id/nav_cart" />
+
+        <action
+            android:id="@+id/action_cart_to_curbside"
+            app:destination="@id/nav_curbside"
+            app:popUpTo="@+id/nav_cart" />
+
+        <action
+            android:id="@+id/action_cart_to_upsell"
+            app:destination="@id/nav_upsell"
+            app:popUpTo="@+id/nav_cart" />
+
+        <action
+            android:id="@+id/action_cart_to_order"
+            app:destination="@id/nav_order"
+            app:popUpTo="@+id/nav_home" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_upsell"
+        android:name="com.herfy.upsell.UpsellFragment"
+        android:label="recommended"
+        tools:layout="@layout/fragment_upsell">
+
+        <argument
+            android:name="isScheduled"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="goodSelectedDate"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="goodDaySelected"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="totalPrice"
+            android:defaultValue="0"
+            app:argType="float"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/action_upsell_to_menu_item"
+            app:destination="@id/nav_menu_item"
+            app:popUpTo="@+id/nav_upsell" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_digital_coupons"
+        android:name="com.herfy.digitalcoupons.views.DigitalCouponsFragment"
+        android:label="digital_offers_caps"
+        tools:layout="@layout/fragment_digital_coupons">
+
+        <action
+            android:id="@+id/action_digital_coupons_to_coupon"
+            app:destination="@id/nav_digital_coupon"
+            app:popUpTo="@+id/nav_digital_coupons" />
+
+        <action
+            android:id="@+id/action_digital_coupons_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_home" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_digital_coupon"
+        android:name="com.herfy.digitalcoupons.views.DigitalCouponFragment"
+        android:label="digital_offers_caps"
+        tools:layout="@layout/fragment_digital_coupon">
+
+        <argument
+            android:name="digital_coupon"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_digital_coupon_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_home" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_subscriptions"
+        android:name="com.herfy.subscription.subhome.views.SubscriptionHomeFragment"
+        android:label="subscription_menu"
+        tools:layout="@layout/fragment_sub_home" />
+
+    <fragment
+        android:id="@+id/nav_auth"
+        android:name="com.herfy.auth.views.AuthFragment"
+        tools:layout="@layout/fragment_auth">
+
+        <argument
+            android:name="sign_in"
+            android:defaultValue="true"
+            app:argType="boolean" />
+
+        <argument
+            android:name="guest"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="history"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="account"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="curbside"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="checkout"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <action
+            android:id="@+id/action_auth_to_guest"
+            app:destination="@id/nav_guest"
+            app:popUpTo="@+id/nav_guest" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_guest"
+        android:name="com.herfy.auth.views.GuestFragment"
+        tools:layout="@layout/fragment_guest">
+
+        <argument
+            android:name="checkout"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_orders"
+        android:name="com.herfy.history.views.OrdersFragment"
+        android:label="order_history"
+        tools:layout="@layout/fragment_orders">
+
+        <action
+            android:id="@+id/action_orders_to_order"
+            app:destination="@id/nav_order"
+            app:popUpTo="@+id/nav_orders" />
+
+        <action
+            android:id="@+id/action_orders_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_orders" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_order"
+        android:name="com.herfy.history.views.OrderFragment"
+        android:label="order_details_caps"
+        tools:layout="@layout/fragment_order">
+
+        <argument
+            android:name="order_id"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_order_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_order" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_favorites"
+        android:name="com.herfy.favorites.FavoritesFragment"
+        android:label="favorites"
+        tools:layout="@layout/fragment_favorites">
+
+        <action
+            android:id="@+id/action_favorites_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_favorites" />
+
+        <action
+            android:id="@+id/action_favorites_to_menu_item"
+            app:destination="@id/nav_menu_item"
+            app:popUpTo="@+id/nav_favorites" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_promotions"
+        android:name="com.herfy.promotions.views.PromotionsFragment"
+        android:label="promos_caps"
+        tools:layout="@layout/fragment_promotions">
+
+        <action
+            android:id="@+id/action_promotions_to_promotion"
+            app:destination="@id/nav_promotion"
+            app:popUpTo="@+id/nav_promotions" />
+
+        <action
+            android:id="@+id/action_promotions_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_promotions" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_promotion"
+        android:name="com.herfy.promotions.views.PromotionFragment"
+        android:label="promotions"
+        tools:layout="@layout/fragment_promotion">
+
+        <argument
+            android:name="campaign"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_notifications"
+        android:name="com.herfy.notification.views.NotificationsFragment"
+        android:label="notifications"
+        tools:layout="@layout/fragment_notifications">
+
+        <action
+            android:id="@+id/action_notifications_to_notification"
+            app:destination="@id/nav_notification"
+            app:popUpTo="@+id/nav_notifications" />
+
+        <action
+            android:id="@+id/action_notifications_to_menu"
+            app:destination="@id/nav_menu"
+            app:popUpTo="@+id/nav_notifications" />
+
+        <action
+            android:id="@+id/action_notifications_to_menu_item"
+            app:destination="@id/nav_menu_item"
+            app:popUpTo="@+id/nav_notifications" />
+
+        <action
+            android:id="@+id/action_notifications_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_notifications" />
+
+        <action
+            android:id="@+id/action_notifications_to_digital_coupon"
+            app:destination="@id/nav_digital_coupon"
+            app:popUpTo="@+id/nav_notifications" />
+
+        <action
+            android:id="@+id/action_notifications_to_order"
+            app:destination="@id/nav_order"
+            app:popUpTo="@+id/nav_notifications" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_notification"
+        android:name="com.herfy.notification.views.NotificationFragment"
+        android:label=""
+        tools:layout="@layout/fragment_notification">
+
+        <argument
+            android:name="notification_id"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_fragment_countries"
+        android:name="com.herfy.country.CountriesFragment"
+        android:label="restaurant_caps"
+        tools:layout="@layout/fragment_countries" />
+
+    <activity
+        android:id="@+id/nav_activity_auth"
+        android:name="com.herfy.auth.views.AuthActivity" />
+
+    <activity
+        android:id="@+id/nav_branches"
+        android:name="com.herfy.branches.BranchesActivity"
+        android:label="our_branches" />
+
+    <activity
+        android:id="@+id/nav_account"
+        android:name="com.herfy.account.views.AccountActivity" />
+
+    <dialog
+        android:id="@+id/nav_dialog_popup"
+        android:name="com.skylinedynamics.popup.PopupFragment"
+        tools:layout="@layout/fragment_dialog_popup" />
+
+    <dialog
+        android:id="@+id/nav_dialog_order_type"
+        android:name="com.skylinedynamics.order.views.OrderTypeDialogFragment"
+        android:label="order_type_caps"
+        tools:layout="@layout/fragment_dialog_order_type" />
+
+</navigation>

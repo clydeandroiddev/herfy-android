@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "650260545167",
+    "project_id": "herfy-53052",
+    "storage_bucket": "herfy-53052.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650260545167:android:333dd90b16ee21c8e7fafa",
+        "android_client_info": {
+          "package_name": "com.herfy.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYNNFbwHNnVgK0ACwB7L9UBX4tpqTHs9M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

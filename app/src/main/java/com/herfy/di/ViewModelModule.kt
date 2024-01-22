@@ -1,0 +1,15 @@
+package com.herfy.di
+
+import com.herfy.menu.MenuViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
+
+
+/**
+ * View model module for containing repositories and view models
+ */
+val viewModelModule = module {
+
+    viewModel { MenuViewModel() }
+
+}

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/name"
+            android:fontFamily="@font/cairo_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:includeFontPadding="false"
+            android:textColor="@color/primary_text"
+            android:textSize="18sp"
+            tools:text="Additions" />
+
+        <TextView
+            android:id="@+id/select"
+            android:fontFamily="@font/cairo_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:visibility="invisible"
+            android:layout_gravity="center_vertical"
+            tools:text="Your way" />
+
+        <TextView
+            android:id="@+id/minimum_maximum"
+            android:fontFamily="@font/cairo_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:visibility="invisible"
+            android:layout_gravity="center_vertical"
+            tools:text="Your way" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:layoutDirection="locale"
+        android:nestedScrollingEnabled="false"
+        android:paddingTop="2dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="3"
+        tools:listitem="@layout/item_additions"
+        tools:visibility="visible" />
+
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:id="@+id/yourWayLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:visibility="gone"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/name"-->
+<!--        tools:visibility="visible">-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/bunUp"-->
+<!--            android:layout_width="162dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:src="@drawable/bun_up"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            tools:visibility="visible" />-->
+
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/sandwichesList"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:clipToPadding="false"-->
+<!--            android:layoutDirection="locale"-->
+<!--            android:nestedScrollingEnabled="false"-->
+<!--            android:paddingTop="2dp"-->
+<!--            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/bunUp"-->
+<!--            tools:itemCount="5"-->
+<!--            tools:listitem="@layout/item_your_way" />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/bunDown"-->
+<!--            android:layout_width="162dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:src="@drawable/bun_down"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/sandwichesList"-->
+<!--            tools:visibility="visible" />-->
+
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/additionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/nameAddition"
+            android:fontFamily="@font/cairo_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:includeFontPadding="false"
+            android:paddingTop="5dp"
+            android:textColor="@color/primary_text"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Additions" />
+
+        <TextView
+            android:id="@+id/selectAddition"
+            android:fontFamily="@font/cairo_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/nameAddition"
+            app:layout_constraintStart_toEndOf="@id/nameAddition"
+            tools:text="Your way" />
+
+        <TextView
+            android:id="@+id/minimum_maximum_addition"
+            android:fontFamily="@font/cairo_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/selectAddition"
+            app:layout_constraintStart_toEndOf="@id/selectAddition"
+            tools:text="Your way" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewAddition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:layoutDirection="locale"
+            android:nestedScrollingEnabled="false"
+            android:paddingTop="2dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/nameAddition"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_additions" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

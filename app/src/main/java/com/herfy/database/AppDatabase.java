@@ -1,0 +1,93 @@
+package com.herfy.database;
+
+import android.content.Context;
+
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
+
+import com.herfy.database.converters.LocationPriceListConverter;
+import com.herfy.database.converters.StringListConverter;
+import com.herfy.database.converters.TranslatedEntityConverter;
+import com.herfy.database.daos.AllergenDao;
+import com.herfy.database.daos.FacilityDao;
+import com.herfy.database.daos.IngredientDao;
+import com.herfy.database.daos.MenuCategoryDao;
+import com.herfy.database.daos.MenuCategoryEntityDao;
+import com.herfy.database.daos.MenuItemDao;
+import com.herfy.database.daos.MenuItemEntityDao;
+import com.herfy.database.daos.ModifierGroupDao;
+import com.herfy.database.daos.ModifierItemDao;
+import com.herfy.database.daos.StoreDao;
+import com.herfy.database.entities.AllergenDb;
+import com.herfy.database.entities.FacilityEntity;
+import com.herfy.database.entities.IngredientDb;
+import com.herfy.database.entities.MenuCategoryDb;
+import com.herfy.database.entities.MenuCategoryEntity;
+import com.herfy.database.entities.MenuItemDb;
+import com.herfy.database.entities.MenuItemEntity;
+import com.herfy.database.entities.ModifierGroupDb;
+import com.herfy.database.entities.ModifierItemDb;
+import com.herfy.database.entities.StoreDb;
+
+import dev.matrix.roomigrant.GenerateRoomMigrations;
+
+@Database(entities = {
+        MenuCategoryDb.class,
+        MenuItemDb.class,
+        ModifierGroupDb.class,
+        ModifierItemDb.class,
+        IngredientDb.class,
+        AllergenDb.class,
+        StoreDb.class,
+        FacilityEntity.class,
+        MenuCategoryEntity.class,
+        MenuItemEntity.class
+}, version = 1)
+@TypeConverters(value = {
+        LocationPriceListConverter.class,
+        StringListConverter.class,
+        TranslatedEntityConverter.class
+    }
+)
+@GenerateRoomMigrations(rules = {})
+public abstract class AppDatabase extends RoomDatabase {
+
+    private static AppDatabase instance;
+
+    public static void init(Context context) {
+        if (instance == null) {
+            instance = Room.databaseBuilder(context, AppDatabase.class, context.getPackageName()
+                            .replace(".", "_") + "_db")
+                            .addMigrations(AppDatabase_Migrations.INSTANCE.build())
+                            .fallbackToDestructiveMigration()
+                            .allowMainThreadQueries()
+                            .build();
+        }
+    }
+
+    public static synchronized AppDatabase getInstance() {
+        return instance;
+    }
+
+    public abstract MenuCategoryDao menuCategoryDao();
+
+    public abstract MenuItemDao menuItemDao();
+
+    public abstract ModifierGroupDao modifierGroupDao();
+
+    public abstract ModifierItemDao modifierItemDao();
+
+    public abstract IngredientDao ingredientDao();
+
+    public abstract AllergenDao allergenDao();
+
+    public abstract StoreDao storeDao();
+
+    public abstract FacilityDao facilityDao();
+
+    public abstract MenuCategoryEntityDao menuCategoryEntityDao();
+    public abstract MenuItemEntityDao menuItemEntityDao();
+
+}

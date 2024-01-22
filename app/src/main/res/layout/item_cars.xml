@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/main_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toStartOf="@id/editable_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="?attr/colorPrimary">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_constraint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:paddingStart="0dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="10dp">
+
+            <FrameLayout
+                android:id="@+id/item_car_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintStart_toEndOf="@id/item_car_selected"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/background_order_type"
+                    android:scaleType="centerInside"
+                    app:backgroundTint="@color/white"
+                    app:elevation="4dp"
+                    app:fabCustomSize="40dp"
+                    app:tint="#DEDEDE" />
+
+            </FrameLayout>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/color_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="@id/item_car_color"
+                app:layout_constraintEnd_toEndOf="@id/item_car_color"
+                app:layout_constraintStart_toStartOf="@id/item_car_color"
+                app:layout_constraintTop_toTopOf="@id/item_car_color"
+                tools:src="@color/primary_text" />
+
+            <TextView
+                android:id="@+id/car_color_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:fontFamily="@font/cairo_bold"
+                android:textColor="@color/primary_text"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="@id/item_car_color"
+                app:layout_constraintStart_toStartOf="@id/item_car_color"
+                app:layout_constraintTop_toBottomOf="@id/item_car_color"
+                tools:text="Color" />
+
+            <FrameLayout
+                android:id="@+id/item_car_maker_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                app:layout_constraintStart_toEndOf="@id/item_car_color"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/background_order_type"
+                    android:scaleType="centerInside"
+                    app:backgroundTint="@color/white"
+                    app:elevation="4dp"
+                    app:fabCustomSize="40dp"
+                    app:tint="#DEDEDE" />
+
+            </FrameLayout>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/maker_image"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="@id/item_car_maker_color"
+                app:layout_constraintEnd_toEndOf="@id/item_car_maker_color"
+                app:layout_constraintStart_toStartOf="@id/item_car_maker_color"
+                app:layout_constraintTop_toTopOf="@id/item_car_maker_color"
+                tools:src="@drawable/dish_sample" />
+
+            <TextView
+                android:id="@+id/maker_other_text"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="center"
+                android:lineSpacingExtra="-12dp"
+                android:maxLines="2"
+                android:padding="6dp"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/item_car_maker_color"
+                app:layout_constraintEnd_toEndOf="@id/item_car_maker_color"
+                app:layout_constraintStart_toStartOf="@id/item_car_maker_color"
+                app:layout_constraintTop_toTopOf="@id/item_car_maker_color"
+                tools:text="Lam" />
+
+            <TextView
+                android:id="@+id/item_car_maker_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:fontFamily="@font/cairo_bold"
+                android:textColor="@color/primary_text"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="@id/item_car_maker_color"
+                app:layout_constraintStart_toStartOf="@id/item_car_maker_color"
+                app:layout_constraintTop_toBottomOf="@id/item_car_maker_color"
+                tools:text="Maker" />
+
+            <ImageView
+                android:id="@+id/item_car_selected"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/language_selected"
+                app:layout_constraintBottom_toBottomOf="@id/item_car_maker_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/item_car_maker_color" />
+
+            <TextView
+                android:id="@+id/item_car_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="4dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="center"
+                android:lineSpacingExtra="-14dp"
+                android:maxLines="2"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="22sp"
+                app:layout_constraintBottom_toBottomOf="@id/item_car_selected"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/item_car_maker_color"
+                app:layout_constraintTop_toTopOf="@id/item_car_selected"
+                tools:text="JBP 7024" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:id="@+id/editable_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:paddingStart="5dp"
+        android:paddingEnd="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/main_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/main_layout"
+        tools:visibility="visible">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="4dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/delete_vehicle_constraint"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/delete_trash_bg_38"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/delete_vehicle"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_delete_vehicle"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/edit_vehicle_constraint"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="14dp"
+                android:background="@drawable/edit_pen_bg_38"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/delete_vehicle_constraint"
+                app:layout_constraintStart_toEndOf="@id/view"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/edit_vehicle"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_edit_vehicle"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,376 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'com.jakewharton.butterknife'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'androidx.navigation.safeargs.kotlin'
+
+
+fileTree('sub').filter { it.toString().contains(".gradle") }.each { apply from: "${it}" }
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(18))
+    }
+}
+
+android {
+    compileSdk 34
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 34
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.incremental"   : "true",
+                        "room.schemaLocation":
+                                "$projectDir/schemas".toString()
+                ]
+            }
+        }
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    dexOptions {
+        javaMaxHeapSize "8g"
+    }
+
+    dataBinding { //Moneyhash requirements
+        enabled = true
+    }
+
+    signingConfigs project.signingConfigs
+
+    buildTypes {
+        debug {
+            signingConfig null
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            buildConfigField "String", "BASE_URL", "\"https://dev-api.getsolo.io/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+        }
+        staging {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://staging-api.getsolo.io/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+        }
+        //Use this for VAPT builds
+        stagingrelease {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://staging-api.getsolo.io/\""
+            //buildConfigField "String", "BASE_URL", "\"https://staging2.api.solo.skylinedynamics.com/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+        }
+        prod {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+        }
+        releaselog {
+            debuggable true
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+        }
+        release {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+        }
+        consumer {
+            signingConfig null
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            buildConfigField "String", "BASE_URL", "\"https://test-consumer-api.getsolo.io/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+        }
+        marketing {
+            signingConfig null
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            buildConfigField "String", "BASE_URL", "\"https://test-marketing-api.getsolo.io/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+        }
+        merchant {
+            signingConfig null
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            buildConfigField "String", "BASE_URL", "\"https://test-merchant-api.getsolo.io/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+        }
+    }
+
+    flavorDimensions "concept"
+    productFlavors {
+        herfy {
+            signingConfig signingConfigs.herfy
+            applicationId "com.herfy.android"
+            versionCode 1
+            versionName "1.0.0"
+            buildConfigField "String", "TAG", "\"Herfy\""
+            buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
+            buildConfigField "String", "SOLO_CONCEPT", "\"\""
+            buildConfigField "String", "SPLASH_COLOR", "\"#FAFBFC\""
+            buildConfigField "boolean", "SPLASH_LOGO", "true"
+            buildConfigField "boolean", "SPLASH_BACKGROUND", "false"
+            buildConfigField "boolean", "SPLASH_VIDEO", "false"
+            buildConfigField "boolean", "ONBOARDING_ENABLED", "true"
+            buildConfigField "String", "SOLO_APP_TYPE", "\"Restaurant\""
+            buildConfigField "boolean", "SOLO_LOGO", "false"
+            buildConfigField "boolean", "FOODICS_LOGO", "true"
+            buildConfigField "boolean", "SUBSCRIPTION_ENABLED", "false"
+            buildConfigField "String", "TAP_TEST", "\"\""
+            buildConfigField "String", "TAP_LIVE", "\"\""
+            buildConfigField "boolean", "MULTI_COUNTRY_ENABLED", "false"
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "true"
+            buildConfigField "boolean", "DISABLE_SPLASH_ANIMATION", "true"
+       }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+
+        kotlinOptions {
+            jvmTarget = JavaVersion.VERSION_1_8.toString()
+        }
+    }
+
+    useLibrary 'android.test.runner'
+
+    useLibrary 'android.test.base'
+    useLibrary 'android.test.mock'
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+    lint {
+        disable 'RestrictedApi'
+    }
+    namespace 'com.herfy'
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def buildType = variant.buildType.name
+            def versionName = variant.versionName
+            def flavor = variant.flavorName
+            outputFileName = "${flavor}-${buildType}-v${versionName}(${versionCode})-${new Date().format( 'yyyy.MM.dd.hh.mm.aa' )}.apk"
+        }
+    }
+}
+
+kapt {
+    generateStubs = true
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':solosdk')
+    implementation project(':SingleDateAndTimePicker')
+    implementation project(':imagepicker')
+
+    // Modules
+    implementation project(path: ':features:cart')
+    implementation project(path: ':features:home')
+    implementation project(path: ':features:menu')
+    implementation project(path: ':features:ordertype')
+    implementation project(path: ':features:promotions')
+    implementation project(path: ':features:upsell')
+    implementation project(path: ':utils')
+
+    implementation(name: 'MaterialCalendarNew', ext: 'aar')
+
+    def multidex_version = "2.0.1"
+    implementation "androidx.multidex:multidex:$multidex_version"
+
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation "androidx.core:core-ktx:1.9.0"
+    implementation "androidx.fragment:fragment:1.5.0-rc01"
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
+    implementation platform('com.google.firebase:firebase-bom:30.1.0')
+
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-appindexing'
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-core'
+    implementation 'com.google.firebase:firebase-perf'
+    implementation "com.google.firebase:firebase-config:21.2.0"
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-dynamic-links'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.android.gms:play-services-location:20.0.0'
+    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    implementation 'com.google.android.libraries.places:places:2.6.0'
+    implementation "com.google.android.gms:play-services-auth:20.2.0"
+    implementation "com.google.android.gms:play-services-auth-api-phone:18.0.1"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0'
+    implementation 'com.jakewharton:butterknife:10.2.3'
+    kapt 'com.jakewharton:butterknife-compiler:10.2.3'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.material:material:1.9.0-alpha02'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.android.volley:volley:1.2.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'org.apache.commons:commons-lang3:3.8'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation("io.coil-kt:coil:2.0.0-rc02")
+    implementation ('com.github.bumptech.glide:okhttp3-integration:4.11.0'){
+        exclude group: 'glide-parent'
+    }
+    implementation 'com.xfinity:dahdit:0.9.3'
+    implementation 'id.zelory:compressor:2.1.0'
+    implementation 'com.github.mukeshsolanki:android-otpview-pinview:2.0.3'
+    implementation 'com.github.d-max:spots-dialog:1.1@aar'
+    implementation 'com.google.android.gms:play-services-auth:20.2.0'
+    implementation 'com.facebook.android:facebook-android-sdk:12.3.0'
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
+    implementation 'io.ably:ably-android:1.1.5'
+    implementation 'com.ss.bannerslider:bannerslider:2.0.0'
+    implementation 'com.dinuscxj:pullzoomrecyclerview:1.0.4'
+    implementation 'com.tubb.smrv:swipemenu-recyclerview:5.4.8'
+    implementation 'com.github.vipulasri:timelineview:1.1.3'
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'com.github.Tap-Payments:goSellSDK-AndroidX:3.14.1'
+    implementation 'com.nex3z:flow-layout:1.2.4'
+    implementation 'com.android.support:design:34'
+    implementation "androidx.cardview:cardview:1.0.0"
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.10"
+    implementation 'com.github.ac-opensource:dotsindicator:5.0.2'
+    implementation 'com.daimajia.androidanimations:library:2.4@aar'
+    implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
+    implementation 'com.github.addisonelliott:SegmentedButton:3.1.9'
+    def room_version = "2.5.0"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation 'com.ogaclejapan.smarttablayout:utils-v4:2.0.0@aar'
+    implementation 'com.github.zcweng:switch-button:0.0.3@aar'
+    implementation 'com.airbnb.android:lottie:3.4.0'
+    implementation 'com.ogaclejapan.smarttablayout:library:2.0.0@aar'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.3.0'
+    implementation "com.github.skydoves:balloon:1.4.5"
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    // Koin for Android
+    def koin = "3.1.5"
+    implementation "io.insert-koin:koin-core:$koin"
+    implementation "io.insert-koin:koin-android:$koin"
+
+    // Navigation
+    def navigation = "2.5.2"
+    implementation "androidx.navigation:navigation-fragment:$navigation"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
+    implementation "androidx.navigation:navigation-ui:$navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$navigation"
+    androidTestImplementation "androidx.navigation:navigation-testing:$navigation"
+    implementation "androidx.navigation:navigation-compose:$navigation"
+
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    implementation 'com.intuit.ssp:ssp-android:1.0.6'
+    implementation 'com.daimajia.androidanimations:library:2.4@aar'
+
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
+
+    implementation 'io.moneyHash:android:0.1.4'
+
+    debugImplementation "com.github.chuckerteam.chucker:library:3.5.2"
+    stagingImplementation "com.github.chuckerteam.chucker:library:3.5.2"
+    stagingreleaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
+    prodImplementation "com.github.chuckerteam.chucker:library:3.5.2"
+    releaselogImplementation "com.github.chuckerteam.chucker:library:3.5.2"
+    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
+    consumerImplementation "com.github.chuckerteam.chucker:library:3.5.2"
+    marketingImplementation "com.github.chuckerteam.chucker:library:3.5.2"
+    merchantImplementation "com.github.chuckerteam.chucker:library:3.5.2"
+
+    implementation 'com.jakewharton:process-phoenix:2.1.2'
+
+    // Shipbook
+    implementation 'io.shipbook:shipbooksdk:1.7.0'
+
+    // QR Code
+    implementation 'com.github.alexzhirkevich:custom-qr-generator:1.6.1'
+
+    // Roomigrant
+    implementation 'com.github.MatrixDev.Roomigrant:RoomigrantLib:0.3.4'
+    kapt 'com.github.MatrixDev.Roomigrant:RoomigrantCompiler:0.3.4'
+
+    //Resolve jdk8+ Generation Annotations - javax annotation does not exist
+    compileOnly 'com.github.pengrad:jdk9-deps:1.0'
+
+    implementation "androidx.security:security-crypto:1.1.0-alpha06"
+
+    // Mixpanel
+    implementation 'com.mixpanel.android:mixpanel-android:7.3.1'
+
+    //Checkout Sdk
+    implementation 'com.github.checkout:frames-android:4.1.0'
+
+    //Moyasar SDK
+    implementation 'com.moyasar:android-sdk:0.5.1'
+}
+
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'

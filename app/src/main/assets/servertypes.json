@@ -1,0 +1,44 @@
+[
+  {
+    "url": "https://dev-api.getsolo.io/",
+    "displayName": "Develop",
+    "contentUrlPrefix": "dev/",
+    "isProd": false
+  },
+  {
+    "url": "https://staging-api.getsolo.io/",
+    "displayName": "Staging",
+    "contentUrlPrefix": "staging/",
+    "isProd": false
+  },
+  {
+    "url": "https://api.solo.skylinedynamics.com/",
+    "displayName": "Production",
+    "contentUrlPrefix": "production/",
+    "isProd": true
+  },
+  {
+    "url": "https://test-consumer-api.getsolo.io/",
+    "displayName": "Test Consumer",
+    "contentUrlPrefix": "test/",
+    "isProd": false
+  },
+  {
+    "url": "https://test-marketing-api.getsolo.io/",
+    "displayName": "Test Marketing",
+    "contentUrlPrefix": "test/",
+    "isProd": false
+  },
+  {
+    "url": "https://test-merchant-api.getsolo.io/",
+    "displayName": "Test Merchant",
+    "contentUrlPrefix": "test/",
+    "isProd": false
+  },
+  {
+    "url": "",
+    "displayName": "Custom",
+    "contentUrlPrefix": "",
+    "isProd": false
+  }
+]

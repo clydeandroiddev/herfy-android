@@ -1,0 +1,107 @@
+package com.herfy.loyalty;
+
+import android.content.Context;
+import android.view.View;
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.herfy.R;
+import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction;
+import com.skylinedynamics.solosdk.api.models.objects.Tier;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class DateViewHolder extends RecyclerView.ViewHolder implements LoyaltyContract.View {
+
+    private Context context;
+    private LoyaltyContract.Presenter loyaltyPresenter;
+
+    @BindView(R.id.tv_date) TextView tvDate;
+
+
+    public DateViewHolder(Context context, LoyaltyContract.Presenter loyaltyPresenter, View itemView) {
+        super(itemView);
+
+        ButterKnife.bind(this, itemView);
+        this.context = context;
+        this.loyaltyPresenter = loyaltyPresenter;
+
+        setupViews();
+        setupFonts();
+        setupTranslations();
+
+    }
+
+
+    @Override
+    public void setPresenter(LoyaltyContract.Presenter presenter) {
+
+    }
+
+    @Override
+    public void logEvent(String eventName, HashMap<String, String> eventAttributes, String eventMetricName, double eventMetricValue) {
+
+    }
+
+    @Override
+    public void setCartExpiry() {
+
+    }
+
+    @Override
+    public void setupViews() {
+
+    }
+
+    @Override
+    public void setupFonts() {
+
+    }
+
+    @Override
+    public void setupTranslations() {
+
+    }
+
+    @Override
+    public void showLoyalty(Loyalty loyalty, String name) {
+
+    }
+
+    @Override
+    public void showLoyaltyError(String message) {
+
+    }
+
+    @Override
+    public void showLoyaltyPointsHistory(boolean newestToOldest, ArrayList<LoyaltyTransaction> loyaltyTransactions) {
+
+    }
+
+    @Override
+    public void setLoyaltyHistory(LoyaltyTransaction loyaltyTransaction) {
+
+    }
+
+    @Override
+    public void showNextTier(Tier tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier) {
+
+    }
+
+    @Override
+    public void showQRPage(LoyaltyPointsPosRedemption loyalty) {
+
+    }
+
+    @Override
+    public void showQrData(String data) {
+
+    }
+}

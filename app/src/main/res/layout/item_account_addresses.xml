@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView android:id="@+id/account_container"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	app:cardPreventCornerOverlap="true"
+	app:cardUseCompatPadding="true"
+	app:cardBackgroundColor="@color/white"
+	app:layout_constraintTop_toBottomOf="@+id/navigation"
+	app:layout_constraintStart_toStartOf="parent"
+	app:layout_constraintEnd_toEndOf="parent"
+	app:cardCornerRadius="8dp"
+	app:cardElevation="4dp"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<LinearLayout
+		android:paddingTop="14dp"
+		android:layout_marginStart="18dp"
+		android:layout_marginEnd="18dp"
+		android:paddingBottom="18dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		app:layout_constraintTop_toTopOf="parent">
+
+		<LinearLayout
+			android:layout_weight="1"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintTop_toTopOf="parent">
+
+			<TextView
+				android:id="@+id/type"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:gravity="start"
+				android:textAlignment="viewStart"
+				android:textSize="16sp"
+				android:textColor="@color/primary_text"
+				android:textStyle="bold"
+				tools:text="Home"
+				android:maxWidth="190dp"
+				android:fontFamily="@font/cairo_bold"
+				android:layout_marginEnd="16dp"
+				android:layout_marginBottom="-4dp"/>
+
+			<TextView
+				android:id="@+id/address"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="start"
+				android:textAlignment="viewStart"
+				android:textSize="12sp"
+				android:textColor="@color/primary_text"
+				android:fontFamily="@font/cairo_regular"
+				android:lineSpacingExtra="-6dp"
+				tools:text="Street: 344 Colorado City: La Habra State: ID"
+				android:layout_marginEnd="8dp"/>
+
+			<TextView
+				android:id="@+id/zip"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="start"
+				android:textAlignment="viewStart"
+				android:textSize="12sp"
+				android:fontFamily="@font/cairo_regular"
+				android:textColor="@color/primary_text"
+				tools:text="Zip: 34103"
+				android:layout_marginEnd="8dp"/>
+
+		</LinearLayout>
+
+		<ImageView
+			android:id="@+id/delete"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:layout_marginStart="8dp"
+			android:foreground="?selectableItemBackgroundBorderless"
+			android:src="@drawable/ic_unbookmark_or_delete"/>
+
+	</LinearLayout>
+</androidx.cardview.widget.CardView>
+

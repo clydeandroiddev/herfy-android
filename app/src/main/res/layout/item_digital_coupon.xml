@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="?attr/colorPrimary"
+        app:strokeWidth="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:id="@+id/digital_image"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:scaleType="fitXY"
+                android:visibility="invisible"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/coverImage"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:alpha="0.4"
+                android:background="@color/placeholder_color"
+                app:layout_constraintBottom_toBottomOf="@id/digital_image"
+                app:layout_constraintEnd_toEndOf="@id/digital_image"
+                app:layout_constraintStart_toStartOf="@id/digital_image"
+                app:layout_constraintTop_toTopOf="@id/digital_image" />
+
+            <com.herfy.views.SlantedTextView
+                android:id="@+id/ineligble"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:slantedBackgroundColor="@color/placeholder_color"
+                app:slantedLength="40dp"
+                app:slantedMode="right"
+                app:slantedTextColor="@color/white"
+                app:slantedTextSize="16sp"
+                tools:visibility="visible" />
+
+            <ProgressBar
+                android:id="@+id/progress_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintBottom_toBottomOf="@id/digital_image"
+                app:layout_constraintEnd_toEndOf="@id/digital_image"
+                app:layout_constraintStart_toStartOf="@id/digital_image"
+                app:layout_constraintTop_toTopOf="@id/digital_image" />
+
+            <TextView
+                android:id="@+id/digital_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="-10dp"
+                android:lines="2"
+                android:maxLines="2"
+                android:paddingStart="16dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="16dp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/primary_text"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@id/digital_image"
+                tools:text="Free Delivery" />
+
+            <TextView
+                android:id="@+id/digital_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="-10dp"
+                android:lines="1"
+                android:maxLines="1"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textAlignment="viewStart"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/digital_name"
+                tools:text="+10SR Only" />
+
+            <TextView
+                android:id="@+id/digital_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="-10dp"
+                android:maxLines="1"
+                android:paddingStart="11dp"
+                android:paddingEnd="11dp"
+                android:textColor="@color/primary_text"
+                android:textSize="9sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/digital_price"
+                app:layout_constraintStart_toStartOf="@id/digital_price"
+                app:layout_constraintTop_toTopOf="@id/digital_price"
+                tools:text="If your cart is 25 SR or higher" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

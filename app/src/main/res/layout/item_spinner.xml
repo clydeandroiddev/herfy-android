@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        style="?android:attr/spinnerItemStyle"
+        android:id="@+id/spinnerText"
+        android:singleLine="true"
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:fontFamily="@font/cairo_bold"
+        android:textAlignment="center"
+        android:textColor="#2F2F2F"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:textStyle="bold"/>

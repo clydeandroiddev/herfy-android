@@ -1,0 +1,48 @@
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layoutDirection="locale"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/startText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_size_11sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@+id/midText"
+        tools:text="SGD" />
+
+    <View
+        android:id="@+id/startSpace"
+        android:layout_width="?attr/amountCurrencySpace"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/midText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_size_14sp"
+        app:layout_constraintStart_toEndOf="@+id/startText"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="$2,361,568" />
+
+    <View
+        android:id="@+id/endSpace"
+        android:layout_width="?attr/amountCurrencySpace"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/endText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_size_11sp"
+        app:layout_constraintStart_toEndOf="@+id/midText"
+        app:layout_constraintBaseline_toBaselineOf="@+id/midText"
+        tools:text="SGD" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

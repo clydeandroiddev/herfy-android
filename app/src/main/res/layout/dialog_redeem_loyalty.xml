@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/loyalty_points"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@android:color/transparent"
+        app:strokeWidth="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp">
+
+
+            <ImageView
+                android:id="@+id/loyalty_image"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/ic_gift"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/loyalty_label"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:fontFamily="@font/cairo_bold"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="-10dp"
+                android:paddingStart="18dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/primary_text"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/loyalty_image"
+                app:layout_constraintTop_toTopOf="@+id/loyalty_image"
+                app:text="0 points (0 SAR)"
+                tools:text="0 points (0 SAR)" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/available_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo_bold"
+                android:includeFontPadding="true"
+                android:paddingStart="18dp"
+                android:paddingEnd="16dp"
+                android:textColor="#B1B1B1"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/loyalty_image"
+                app:layout_constraintStart_toEndOf="@id/loyalty_image"
+                app:layout_constraintTop_toBottomOf="@+id/loyalty_label"
+                app:text="Available Loyalty Points"
+                tools:text="Available Loyalty Points" />
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/pointsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/loyalty_image">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/how_much_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_bold"
+                    android:includeFontPadding="true"
+                    android:textColor="#B3B3B3"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:text="HOW MUCH POINTS DO YOU WANT TO USE?"
+                    tools:text="HOW MANY POINTS WOULD YOU LIKE TO REDEEM?" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/pointsInSarContainer"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/background_grayish_corner"
+                    android:backgroundTint="#F4F4F4"
+                    app:layout_constraintEnd_toEndOf="@id/how_much_label"
+                    app:layout_constraintStart_toStartOf="@id/how_much_label"
+                    app:layout_constraintTop_toBottomOf="@+id/how_much_label">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/pointsInSar"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@android:color/transparent"
+                        android:digits="0123456789"
+                        android:fontFamily="@font/cairo_bold"
+                        android:gravity="start|center_vertical"
+                        android:includeFontPadding="false"
+                        android:inputType="numberDecimal"
+                        android:lineSpacingExtra="-10dp"
+                        android:maxLength="12"
+                        android:minWidth="140dp"
+                        android:textAlignment="viewStart"
+                        android:textColor="#000000"
+                        android:textColorHint="#858585"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/btn_use_all"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:hint="Enter points amount here" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_use_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/cairo_black"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:maxLines="2"
+                        android:textAlignment="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:backgroundTint="?attr/colorPrimary"
+                        app:cornerRadius="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="USE ALL" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvErrorPointsInSar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/red"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/pointsInSarContainer" />
+
+
+                <LinearLayout
+                    android:id="@+id/pointsInSarButtonsContainer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="@id/how_much_label"
+                    app:layout_constraintStart_toStartOf="@id/how_much_label"
+                    app:layout_constraintTop_toBottomOf="@id/tvErrorPointsInSar">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCancel"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="37dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/margin_basic_4dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/cairo_black"
+                        android:includeFontPadding="false"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:textAllCaps="false"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="6dp"
+                        app:layout_constraintTop_toBottomOf="@+id/btnRedeem"
+                        app:strokeColor="?attr/colorPrimary"
+                        app:strokeWidth="2dp"
+                        tools:text="CANCEL" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_apply"
+                        android:layout_width="0dp"
+                        android:layout_height="37dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/margin_basic_4dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/cairo_black"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:maxLines="2"
+                        android:textAlignment="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:backgroundTint="@color/gray_light"
+                        app:cornerRadius="8dp"
+                        tools:text="APPLY" />
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

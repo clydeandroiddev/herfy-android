@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/main_layout"
+	tools:context=".feedback.FeedbackActivity"
+	android:background="@color/page_background_color">
+
+	<com.google.android.material.appbar.AppBarLayout
+		android:id="@+id/appBarLayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toEndOf="parent">
+
+		<com.google.android.material.appbar.CollapsingToolbarLayout
+			android:id="@+id/collapsing_toolbar_layout"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			app:contentScrim="?attr/colorPrimary"
+			app:expandedTitleGravity="top"
+			app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+			<include
+				android:id="@+id/toolbar"
+				layout="@layout/toolbar" />
+
+		</com.google.android.material.appbar.CollapsingToolbarLayout>
+
+	</com.google.android.material.appbar.AppBarLayout>
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:clipToPadding="false"
+		app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+		app:layout_constraintBottom_toBottomOf="parent">
+
+		<LinearLayout
+			android:id="@+id/container"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:visibility="visible"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:paddingBottom="24dp">
+
+			<TextView
+				android:id="@+id/message"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="37dp"
+				android:layout_marginEnd="35dp"
+				android:ellipsize="end"
+				android:fontFamily="@font/cairo_regular"
+				android:lineSpacingExtra="-10dp"
+				android:maxLines="2"
+				android:gravity="center"
+				android:text="We value your opinion, so please tell us about your experience with our app or about your meal."
+				android:textColor="#555555"
+				android:textSize="12sp"
+				android:includeFontPadding="false"
+				app:layout_constraintBottom_toTopOf="@id/arabic_card"
+				android:visibility="visible"
+				android:layout_marginTop="16dp"/>
+
+			<TextView
+				android:id="@+id/add_image_label"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/cairo_bold"
+				android:layout_marginStart="32dp"
+				android:text="ADD AN IMAGE"
+				android:textColor="#ACACAC"
+				android:textSize="12sp"
+				android:textStyle="bold"
+				android:textAllCaps="true"
+				android:visibility="visible"
+				android:layout_marginTop="16dp"/>
+
+			<androidx.cardview.widget.CardView
+				android:id="@+id/img_container"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="20dp"
+				android:layout_marginEnd="20dp"
+				app:cardCornerRadius="8dp"
+				app:cardElevation="0dp"
+				android:backgroundTint="@color/light_gray"
+				android:visibility="gone">
+
+				<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+					<ImageView
+						android:id="@+id/image"
+						android:layout_width="match_parent"
+						android:layout_height="150dp"
+						android:scaleType="centerCrop"
+						android:src="@drawable/img_burger_sample_feedback"/>
+
+					<ImageButton
+						android:id="@+id/delete"
+						android:layout_width="32dp"
+						android:layout_height="32dp"
+						app:srcCompat="@drawable/feedback_close"
+						android:background="?selectableItemBackground"
+						android:layout_alignParentEnd="true"
+						android:layout_alignParentTop="true"
+						android:scaleType="centerInside"
+						android:layout_margin="4dp"/>
+
+				</RelativeLayout>
+			</androidx.cardview.widget.CardView>
+
+			<LinearLayout
+				android:id="@+id/image_empty_container"
+				android:orientation="vertical"
+				android:layout_weight="1"
+				android:background="@drawable/background_feedback"
+				android:gravity="center_vertical|center_horizontal"
+				android:paddingBottom="12dp"
+				android:layout_marginStart="20dp"
+				android:layout_marginEnd="20dp"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+
+				<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					app:srcCompat="@drawable/ic_feedback_image_empty_state"
+					android:layout_marginTop="20dp"
+					android:layout_centerHorizontal="true"
+					android:scaleType="centerInside"
+					android:visibility="visible"/>
+
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/upload_image"
+					android:layout_width="wrap_content"
+					android:layout_height="50dp"
+					android:fontFamily="@font/cairo_black"
+					android:gravity="center"
+					android:layout_marginTop="8dp"
+					android:text="UPLOAD IMAGE"
+					android:textColor="@color/white"
+					android:textSize="12sp"
+					android:textStyle="bold"
+					app:backgroundTint="?attr/colorPrimary"
+					app:cornerRadius="8dp"
+					android:visibility="visible"/>
+
+			</LinearLayout>
+
+			<TextView
+				android:id="@+id/full_name_label"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/cairo_bold"
+				android:layout_marginStart="32dp"
+				android:text="FULL NAME"
+				android:textColor="#ACACAC"
+				android:textSize="12sp"
+				android:textStyle="bold"
+				android:textAllCaps="true"
+				android:layout_marginTop="12dp"
+				android:visibility="visible"/>
+
+			<androidx.cardview.widget.CardView
+				android:id="@+id/full_name_container"
+				android:layout_width="match_parent"
+				android:layout_height="52dp"
+				android:layout_marginStart="20dp"
+				android:layout_marginEnd="20dp"
+				app:cardCornerRadius="8dp"
+				app:cardElevation="0dp"
+				android:backgroundTint="@color/light_gray"
+				android:visibility="visible">
+
+				<EditText
+					android:id="@+id/full_name"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:background="@null"
+					android:fontFamily="@font/cairo_regular"
+					android:inputType="textPersonName|textCapWords"
+					android:maxLines="1"
+					android:paddingStart="10dp"
+					android:paddingEnd="10dp"
+					android:singleLine="true"
+					android:textColor="@color/black"
+					android:textSize="14sp"
+					android:nextFocusForward="@+id/last_name"
+					android:imeOptions="actionNext"
+					android:textAlignment="viewStart"
+					android:gravity="start|center_vertical"/>
+
+			</androidx.cardview.widget.CardView>
+
+			<TextView
+				android:id="@+id/full_name_error"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/cairo_regular"
+				android:layout_marginTop="8dp"
+				android:layout_marginStart="32dp"
+				android:textSize="12sp"
+				android:textColor="#DB3434"
+				android:visibility="gone"/>
+
+			<TextView
+				android:id="@+id/username_label"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="12dp"
+				android:layout_marginStart="32dp"
+				android:fontFamily="@font/cairo_bold"
+				android:text="EMAIL ADDRESS"
+				android:textColor="#ACACAC"
+				android:textSize="12sp"
+				android:textStyle="bold"
+				android:textAllCaps="true"
+				android:visibility="visible"/>
+
+			<androidx.cardview.widget.CardView
+				android:id="@+id/username_container"
+				android:layout_width="match_parent"
+				android:layout_height="52dp"
+				android:layout_marginStart="20dp"
+				android:layout_marginEnd="20dp"
+				app:cardCornerRadius="8dp"
+				app:cardElevation="0dp"
+				android:backgroundTint="@color/light_gray"
+				android:visibility="visible">
+
+				<EditText
+					android:id="@+id/username"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:background="@null"
+					android:fontFamily="@font/cairo_regular"
+					android:inputType="textEmailAddress"
+					android:maxLines="1"
+					android:paddingStart="10dp"
+					android:paddingEnd="10dp"
+					android:singleLine="true"
+					android:textColor="@color/black"
+					android:textSize="14sp"
+					android:nextFocusForward="@+id/password"
+					android:imeOptions="actionNext"
+					android:hint="email@sample.com"
+					android:textAlignment="viewStart"
+					android:gravity="start|center_vertical"/>
+
+			</androidx.cardview.widget.CardView>
+
+			<TextView
+				android:id="@+id/username_error"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/cairo_regular"
+				android:layout_marginTop="8dp"
+				android:layout_marginStart="32dp"
+				android:textSize="12sp"
+				android:textColor="#DB3434"
+				android:visibility="gone"/>
+
+			<TextView
+				android:id="@+id/phone_number_label"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="12dp"
+				android:layout_marginStart="32dp"
+				android:fontFamily="@font/cairo_bold"
+				android:text="PHONE NUMBER"
+				android:textColor="#ACACAC"
+				android:textSize="12sp"
+				android:textStyle="bold"
+				android:textAllCaps="true"
+				android:visibility="visible"/>
+
+			<androidx.cardview.widget.CardView
+				android:id="@+id/phone_number_container"
+				android:layout_width="match_parent"
+				android:layout_height="52dp"
+				android:layout_marginStart="20dp"
+				android:layout_marginEnd="20dp"
+				app:cardCornerRadius="8dp"
+				app:cardElevation="0dp"
+				android:backgroundTint="@color/light_gray"
+				android:visibility="visible">
+
+				<EditText
+					android:id="@+id/phone_number"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:background="@null"
+					android:fontFamily="@font/cairo_regular"
+					android:inputType="phone"
+					android:digits="0123456789٠١٢٣٤٥٦٧٨٩"
+					android:maxLength="12"
+					android:maxLines="1"
+					android:paddingStart="10dp"
+					android:paddingEnd="10dp"
+					android:singleLine="true"
+					android:textColor="@color/black"
+					android:textSize="14sp"
+					android:nextFocusForward="@+id/password"
+					android:imeOptions="actionNext"
+					android:hint="+966 XXXX XXXX"
+					android:textAlignment="viewStart"
+					android:gravity="start|center_vertical"/>
+
+			</androidx.cardview.widget.CardView>
+
+			<TextView
+				android:id="@+id/phone_number_error"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/cairo_regular"
+				android:layout_marginTop="8dp"
+				android:layout_marginStart="32dp"
+				android:textSize="12sp"
+				android:textColor="#DB3434"
+				android:visibility="gone"/>
+
+			<TextView
+				android:id="@+id/comment_label"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/cairo_bold"
+				android:layout_marginStart="32dp"
+				android:text="YOUR COMMENT"
+				android:textColor="#ACACAC"
+				android:textSize="12sp"
+				android:layout_marginTop="12dp"
+				android:textStyle="bold"
+				android:textAllCaps="true"
+				android:visibility="visible"/>
+
+			<androidx.cardview.widget.CardView
+				android:id="@+id/comment_container"
+				android:layout_width="match_parent"
+				android:layout_height="140dp"
+				android:layout_marginStart="20dp"
+				android:layout_marginEnd="20dp"
+				app:cardCornerRadius="8dp"
+				app:cardElevation="0dp"
+				android:backgroundTint="@color/light_gray"
+				android:visibility="visible">
+
+				<EditText
+					android:id="@+id/comment"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:background="@null"
+					android:fontFamily="@font/cairo_regular"
+					android:singleLine="false"
+					android:lines="8"
+					android:padding="10dp"
+					android:textColor="@color/black"
+					android:textSize="14sp"
+					android:imeOptions="actionDone"
+					android:hint="Tell us about your experience here"
+					android:textAlignment="viewStart"
+					android:gravity="start"/>
+
+			</androidx.cardview.widget.CardView>
+
+			<TextView
+				android:id="@+id/comment_error"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/cairo_regular"
+				android:layout_marginTop="8dp"
+				android:layout_marginStart="32dp"
+				android:textSize="12sp"
+				android:textColor="#DB3434"
+				android:visibility="gone"/>
+
+			<com.google.android.material.button.MaterialButton
+				android:id="@+id/submit"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:layout_marginTop="8dp"
+				android:layout_marginStart="20dp"
+				android:layout_marginEnd="20dp"
+				android:fontFamily="@font/cairo_black"
+				android:gravity="center"
+				android:text="SEND FEEDBACK"
+				android:textColor="@color/white"
+				android:textSize="14sp"
+				android:textStyle="bold"
+				app:backgroundTint="?attr/colorPrimary"
+				app:cornerRadius="8dp"
+				android:visibility="visible"/>
+
+		</LinearLayout>
+
+	</ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

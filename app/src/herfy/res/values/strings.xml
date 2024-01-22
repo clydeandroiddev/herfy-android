@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Herfy</string>
+    <string name="deeplink_page" translatable="false">gsg2h3zn9bduts4b.page.link</string>
+    <string name="google_sign_in_client_id" translatable="false">GOOGLE_SIGN_IN_CLIENT_ID</string>
+    <string name="facebook_app_id" translatable="false">FACEBOOK_APP_ID</string>
+    <string name="fb_login_protocol_scheme" translatable="false">FACEBOOK_LOGIN_PROTOCOL_SCHEME</string>
+    <string name="twitter_api_key" translatable="false">TWITTER_API_KEY</string>
+    <string name="twitter_secret_key" translatable="false">TWITTER_SECRET_KEY</string>
+    <string name="google_maps_api_key" translatable="false">AIzaSyC9ydsI5xQh2vKLiWmJ9r3K4-XGGN1Lxrc</string>
+    <string name="google_maps_api_key_encoded" translatable="false">QUl6YVN5Qzl5ZHNJNXhRaDJ2S0xpV21KOXIzSzQtWEdHTjFMeHJj</string>
+    <string name="please_pick_a_language_title_en" translatable="false">Please pick a language</string>
+    <string name="please_pick_a_language_message_en" translatable="false">You can change this later in the sidebar</string>
+    <string name="proceed_en" translatable="false">PROCEED</string>
+
+    <string name="please_pick_a_language_title_ar" translatable="false">الرجاء اختيار اللغة</string>
+    <string name="please_pick_a_language_message_ar" translatable="false">يمكنك تغيير هذا لاحقًا في الإعدادات</string>
+    <string name="proceed_ar" translatable="false">المتابعة</string>
+
+    <string name="arabic" translatable="false">عربي</string>
+    <string name="eng" translatable="false">ENG</string>
+
+    <string-array name="custom_weekdays_common">
+        <item>M</item>
+        <item>T</item>
+        <item>W</item>
+        <item>T</item>
+        <item>F</item>
+        <item>S</item>
+        <item>S</item>
+    </string-array>
+    <string name="checkout_ui_callback_scheme" translatable="false">checkoutui</string>
+</resources>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <TextView
+        android:id="@+id/remove"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/background_add_to_bag"
+        android:fontFamily="@font/cairo_black"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="REMOVE" />
+
+    <TextView
+        android:id="@+id/no_car_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/cairo_regular"
+        android:gravity="start"
+        android:lineSpacingExtra="-10dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="10dp"
+        android:textColor="@color/primary_text"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/remove"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="No car chosen yet, please tap here to choose a car"
+        tools:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/car_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/maker_color"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/car_color_constraint"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/background_order_type"
+            android:scaleType="centerInside"
+            app:backgroundTint="@color/white"
+            app:elevation="4dp"
+            app:fabCustomSize="35dp"
+            app:tint="#DEDEDE" />
+
+    </FrameLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/color_image_selected"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="@id/car_color"
+        app:layout_constraintEnd_toEndOf="@id/car_color"
+        app:layout_constraintStart_toStartOf="@id/car_color"
+        app:layout_constraintTop_toTopOf="@id/car_color"
+        tools:src="@color/primary_text" />
+
+    <FrameLayout
+        android:id="@+id/maker_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/remove"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/background_order_type"
+            android:scaleType="centerInside"
+            app:backgroundTint="@color/white"
+            app:elevation="4dp"
+            app:fabCustomSize="35dp"
+            app:tint="#DEDEDE" />
+
+    </FrameLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/maker_image"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="@id/maker_color"
+        app:layout_constraintEnd_toEndOf="@id/maker_color"
+        app:layout_constraintStart_toStartOf="@id/maker_color"
+        app:layout_constraintTop_toTopOf="@id/maker_color"
+        tools:src="@drawable/dish_sample" />
+
+    <TextView
+        android:id="@+id/maker_other_text"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:fontFamily="@font/cairo_regular"
+        android:gravity="center"
+        android:lineSpacingExtra="-12dp"
+        android:maxLines="2"
+        android:padding="6dp"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/maker_color"
+        app:layout_constraintEnd_toEndOf="@id/maker_color"
+        app:layout_constraintStart_toStartOf="@id/maker_color"
+        app:layout_constraintTop_toTopOf="@id/maker_color"
+        tools:text="Lam" />
+
+    <TextView
+        android:id="@+id/plate_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/cairo_bold"
+        android:maxWidth="240dp"
+        android:maxLines="1"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/car_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="JBP 7024" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

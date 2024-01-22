@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="8dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="8dp"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/light_gray"
+            app:strokeWidth="1dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="148dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/margin_basic_4dp"
+                android:layout_marginEnd="@dimen/margin_basic_4dp"
+                android:background="?selectableItemBackground">
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/loader"
+                    android:layout_width="@dimen/item_menu_image_size"
+                    android:layout_height="150dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <View
+                        android:layout_width="@dimen/item_menu_image_size"
+                        android:layout_height="150dp"
+                        android:background="#CCCCCC" />
+
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/image_item"
+                    android:layout_width="@dimen/item_menu_image_size"
+                    android:layout_height="150dp"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/image_item_stub" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="4dp"
+                    app:layout_constraintBottom_toTopOf="@+id/menuItemBottomButtons"
+                    app:layout_constraintTop_toBottomOf="@+id/image_item">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/item_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/cairo_bold"
+                        android:gravity="start"
+                        android:lineSpacingExtra="-5dp"
+                        android:maxLines="2"
+                        android:minLines="2"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/cod_gray"
+                        android:textSize="@dimen/font_size_16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Single Hamburgini" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/add_to_bag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:background="@drawable/background_oval"
+                        android:fontFamily="@font/cairo_bold"
+                        android:gravity="center"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        tools:text="Add to Bag" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/item_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/cairo_semibold"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="@+id/item_name"
+                        app:layout_constraintTop_toBottomOf="@+id/item_name"
+                        tools:text="252.00SR" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/old_price"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/cairo_semibold"
+                        android:gravity="start|bottom"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="-8dp"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/dusty_gray"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/item_price"
+                        app:layout_constraintStart_toEndOf="@+id/item_price"
+                        app:layout_constraintTop_toTopOf="@+id/item_price"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/item_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/cairo_bold"
+                        android:gravity="start"
+                        android:lineSpacingExtra="-10dp"
+                        android:maxLines="2"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/dusty_gray"
+                        android:textSize="14sp"
+                        app:layout_constraintTop_toBottomOf="@id/item_name"
+                        tools:layout_editor_absoluteX="8dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/menuItemBottomButtons"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:visibility="gone">
+
+                    <FrameLayout
+                        android:id="@+id/favorite_card"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/background_favorite_home"
+                        app:layout_constraintBottom_toBottomOf="@+id/add"
+                        app:layout_constraintEnd_toStartOf="@+id/add"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/add">
+
+                        <RelativeLayout
+                            android:id="@+id/favorite_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?selectableItemBackground">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/favorite_icon"
+                                android:layout_width="17dp"
+                                android:layout_height="15dp"
+                                android:layout_centerInParent="true"
+                                android:scaleType="fitXY"
+                                app:srcCompat="@drawable/ic_heart_empty"
+                                app:tint="#CCCCCC" />
+
+                        </RelativeLayout>
+
+                    </FrameLayout>
+
+                    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/card_fav"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/background_favorite"
+                        android:padding="16dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/add"
+                        app:layout_constraintBottom_toBottomOf="@+id/add"
+                        android:scaleType="centerInside"
+                        app:backgroundTint="@color/white"
+                        app:elevation="2dp"
+                        app:srcCompat="@drawable/ic_heart_empty"
+                        app:fabCustomSize="36dp"
+                        app:tint="#CCCCCC"/>-->
+
+                    <!--<FrameLayout
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:id="@+id/card_fav"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginTop="3dp"
+                        android:background="@drawable/background_order_type"
+                        >
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/heart_image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:srcCompat="@drawable/ic_gray_heart" />
+
+                    </FrameLayout>-->
+
+                    <TextView
+                        android:id="@+id/add"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/background_oval"
+                        android:fontFamily="@font/cairo_black"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:text="Add To Cart"
+                        android:textAlignment="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/favorite_card"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/soldout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/background_rounded_category"
+        android:elevation="5dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/cairo_bold"
+        android:includeFontPadding="false"
+        android:lines="1"
+        android:maxWidth="120dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Sandwichesesssssss" />
+
+    <ImageView
+        android:id="@+id/ivSoldout"
+        android:layout_width="18dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="23dp"
+        android:paddingStart="2dp"
+        android:paddingEnd="0dp"
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        android:src="@drawable/ic_rectangle_568"
+        app:layout_constraintTop_toTopOf="@id/clContainer"
+        app:layout_constraintEnd_toStartOf="@id/clContainer"
+        app:layout_constraintStart_toStartOf="@+id/clContainer" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
