@@ -219,6 +219,7 @@ dependencies {
     // Modules
     implementation project(path: ':features:cart')
     implementation project(path: ':features:home')
+    implementation project(path: ':features:loyalty')
     implementation project(path: ':features:menu')
     implementation project(path: ':features:ordertype')
     implementation project(path: ':features:promotions')
