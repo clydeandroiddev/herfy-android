@@ -56,6 +56,7 @@ import com.herfy.popup.PopupFragment
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContract.View,
     NewMenuTabListener, NewHomeMenuAdapterListener {
@@ -576,7 +577,8 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                 binding.totalContainer.visibility = View.VISIBLE
             }
         }
-        searchAdapter = SearchMenuRecyclerViewAdapter(activity, menuPresenter, ArrayList())
+        searchAdapter = SearchMenuRecyclerViewAdapter(activity, menuPresenter)
+        searchAdapter?.updateMenuList(ArrayList())
         searchLinearLayoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         binding.menuItemsSearchList.layoutManager = searchLinearLayoutManager
@@ -934,9 +936,9 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             binding.menuItemsSearchList.visibility = View.VISIBLE
             binding.searchEmptyLayout.visibility = View.GONE
             searchAdapter =
-                SearchMenuRecyclerViewAdapter(activity, menuPresenter, searchedMenuItems)
+                SearchMenuRecyclerViewAdapter(activity, menuPresenter)
             binding.menuItemsSearchList.adapter = searchAdapter
-            searchAdapter!!.notifyDataSetChanged()
+            searchAdapter?.updateMenuList(searchedMenuItems)
         }
     }
 

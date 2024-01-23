@@ -20,10 +20,14 @@ public class SearchMenuRecyclerViewAdapter extends RecyclerView.Adapter<SearchMe
     private final MenuContract.Presenter menuPresenter;
     private ArrayList<MenuItem> searchedMenuItems;
 
-    public SearchMenuRecyclerViewAdapter(Context context, MenuContract.Presenter menuPresenter, ArrayList<MenuItem> searchedMenuItems) {
+    public SearchMenuRecyclerViewAdapter(Context context, MenuContract.Presenter menuPresenter) {
         this.mContext = context;
         this.menuPresenter = menuPresenter;
+    }
+
+    public void updateMenuList(ArrayList<MenuItem> searchedMenuItems) {
         this.searchedMenuItems = searchedMenuItems;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -34,14 +38,14 @@ public class SearchMenuRecyclerViewAdapter extends RecyclerView.Adapter<SearchMe
 
     @Override
     public void onBindViewHolder(@NonNull SearchMenuViewHolder holder, int position) {
-        if (searchedMenuItems.size() != 0) {
+        if (position >= 0 && position < searchedMenuItems.size()) {
             holder.setMenuItem(null, searchedMenuItems.get(position));
         }
     }
 
     @Override
     public int getItemCount() {
-        return menuPresenter.getSearchItemsSize();
+        return searchedMenuItems.size();
     }
 
 }

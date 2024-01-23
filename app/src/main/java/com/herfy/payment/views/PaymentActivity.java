@@ -93,6 +93,7 @@ import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
 import com.skylinedynamics.solosdk.api.models.objects.PrayerTime;
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
+import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.summary.OrderSummaryMenuItemRecyclerViewAdapter;
 import com.herfy.util.ApiLogLevel;
 import com.herfy.util.ApiLogUtil;
@@ -1415,6 +1416,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         checkoutActivityLauncher.launch(intent);
         isFromCheckout = true;*/
         if (isCanProceedFragmentTransaction(getSupportFragmentManager())) {
+
             dialogCheckout = new CustomCheckoutDialog(this);
             dialogCheckout.setOnActionSelectedListener(new CustomCheckoutDialog.OnActionSelectedListener() {
                 @Override
@@ -1904,13 +1906,16 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                 }
             });
             savedCardsDialog.setCancelable(false);
-            savedCardsDialog.show(getSupportFragmentManager(), SavedCardsDialog.class.toString());
-
+            // Check if the fragment is still added to the activity
+            if (!savedCardsDialog.isAdded()) {
+                savedCardsDialog.show(getSupportFragmentManager(), SavedCardsDialog.class.toString());
+            }
         }
+
     }
 
     private boolean isCanProceedFragmentTransaction(FragmentManager fragmentManager) {
-        return !isFinishing() && !fragmentManager.isStateSaved();
+        return !isFinishing() && !fragmentManager.isStateSaved() && !fragmentManager.isDestroyed();
     }
 
     @Override

@@ -63,6 +63,7 @@ import com.herfy.popup.PopupFragment
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, NewMenuTabListener {
@@ -415,8 +416,8 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                     if (CacheUtil.getInstance().orderStore != null) {
                         binding.orderType.text = CacheUtil.getInstance()
                             .getTranslations(Text.PICK_UP_FROM, "PICK UP FROM").uppercase(
-                            Locale.getDefault()
-                        )
+                                Locale.getDefault()
+                            )
                         binding.branchName.text = CacheUtil.getInstance().orderStore.attributes.name
                     } else {
                         binding.branchName.text = CacheUtil.getInstance().getTranslations(
@@ -425,8 +426,8 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                         )
                         binding.orderType.text = CacheUtil.getInstance()
                             .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
-                            Locale.getDefault()
-                        )
+                                Locale.getDefault()
+                            )
                     }
                 }
                 OrderType.DINE_IN -> {
@@ -445,8 +446,8 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                         )
                         binding.orderType.text = CacheUtil.getInstance()
                             .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
-                            Locale.getDefault()
-                        )
+                                Locale.getDefault()
+                            )
                     }
                 }
                 OrderType.DELIVERY -> {
@@ -454,14 +455,14 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                     if (CacheUtil.getInstance().orderAddress != null) {
                         binding.orderType.text = CacheUtil.getInstance()
                             .getTranslations(Text.DELIVER_TO_CAPS, "DELIVER TO").uppercase(
-                            Locale.getDefault()
-                        )
+                                Locale.getDefault()
+                            )
                         binding.branchName.text = CacheUtil.getInstance().orderAddress.attributes.line1
                     } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
                         binding.orderType.text = CacheUtil.getInstance()
                             .getTranslations(Text.DELIVER_TO_CAPS, "DELIVER TO").uppercase(
-                            Locale.getDefault()
-                        )
+                                Locale.getDefault()
+                            )
                         binding.branchName.text = CacheUtil.getInstance().orderDeliveryAddress
                     } else {
                         binding.branchName.text = CacheUtil.getInstance().getTranslations(
@@ -470,8 +471,8 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                         )
                         binding.orderType.text = CacheUtil.getInstance()
                             .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
-                            Locale.getDefault()
-                        )
+                                Locale.getDefault()
+                            )
                     }
                 }
                 OrderType.CURBSIDE -> {
@@ -490,8 +491,8 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                         )
                         binding.orderType.text = CacheUtil.getInstance()
                             .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
-                            Locale.getDefault()
-                        )
+                                Locale.getDefault()
+                            )
                     }
                 }
                 OrderType.NONE -> {
@@ -501,8 +502,8 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                     )
                     binding.orderType.text = CacheUtil.getInstance()
                         .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
-                        Locale.getDefault()
-                    )
+                            Locale.getDefault()
+                        )
                 }
             }
         }
@@ -616,7 +617,8 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
         }
         binding.blocker.setOnClickListener {  }
         binding.withSearchLayout.setOnClickListener {  }
-        searchAdapter = SearchMenuRecyclerViewAdapter(activity, menuPresenter, ArrayList())
+        searchAdapter = SearchMenuRecyclerViewAdapter(activity, menuPresenter)
+        searchAdapter?.updateMenuList(ArrayList())
         searchLinearLayoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         binding.menuItemsSearchList.layoutManager = searchLinearLayoutManager
@@ -1177,9 +1179,9 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             binding.menuItemsSearchList.visibility = View.VISIBLE
             binding.searchEmptyLayout.visibility = View.GONE
             searchAdapter =
-                SearchMenuRecyclerViewAdapter(activity, menuPresenter, searchedMenuItems)
+                SearchMenuRecyclerViewAdapter(activity, menuPresenter)
             binding.menuItemsSearchList.adapter = searchAdapter
-            searchAdapter!!.notifyDataSetChanged()
+            searchAdapter?.updateMenuList(searchedMenuItems)
         }
     }
 
