@@ -74,8 +74,6 @@
     <style name="Styles.Text.Footnote.Light" parent="Widget.MaterialComponents.TextView">
         <item name="android:textAppearance">@style/TextAppearance.Footnote</item>
         <item name="lineHeight">@dimen/line_height_footnote</item>
-
-        <item name="android:textColor">?attr/colorGreyInactive</item>
     </style>
 
     <style name="Styles.Text.Caption" parent="Widget.MaterialComponents.TextView">

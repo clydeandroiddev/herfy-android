@@ -93,10 +93,11 @@
         <item name="android:letterSpacing">0</item>
     </style>
 
-    <style name="TextAppearance.Footnote" parent="">
+    <style name="TextAppearance.Footnote" parent="TextAppearance.AppCompat.Small">
         <item name="fontFamily">@font/poppins_regular</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">0</item>
+        <item name="lineHeight">13sp</item>
     </style>
 
     <style name="TextAppearance.Caption" parent="">

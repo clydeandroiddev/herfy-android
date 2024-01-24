@@ -24,7 +24,6 @@
     </declare-styleable>
     <attr name="textLargeTitleStyle" format="reference" />
     <attr name="textTitle1Style" format="reference" />
-    <attr name="colorGreyInactive" format="reference"/>
     <attr name="textTitle2Style" format="reference" />
     <attr name="textTitle3Style" format="reference" />
     <attr name="textHeadlineStyle" format="reference" />

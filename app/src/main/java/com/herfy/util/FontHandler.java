@@ -1,4 +1,4 @@
-package com.herfy.common.utils;
+package com.herfy.util;
 
 import android.content.Context;
 import android.graphics.Typeface;
