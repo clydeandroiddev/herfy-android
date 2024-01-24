@@ -6,18 +6,52 @@ plugins {
 android {
     namespace 'com.herfy.nutritiondetails'
     compileSdk 34
-
     defaultConfig {
-        minSdk 24
+        minSdk 21
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
+        staging {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        stagingrelease {
+            debuggable false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        prod {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        releaselog {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        consumer {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        marketing {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        merchant {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
         }
     }
     compileOptions {
