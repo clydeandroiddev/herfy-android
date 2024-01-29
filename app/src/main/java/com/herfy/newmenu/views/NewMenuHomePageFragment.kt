@@ -1165,6 +1165,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     val sliderAdapter =
                         SliderFragmentStateAdapter(it, sliderPresenter, slides)
                     binding.sliderViewPager.adapter = sliderAdapter
+
                 }
                 binding.sliderViewPager.visibility = View.VISIBLE
                 if (slides.size > 1) {

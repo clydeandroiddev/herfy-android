@@ -5,6 +5,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'com.google.dagger.hilt.android'
 
 
 fileTree('sub').filter { it.toString().contains(".gradle") }.each { apply from: "${it}" }
@@ -366,10 +367,13 @@ dependencies {
     //Moyasar SDK
     implementation 'com.moyasar:android-sdk:0.5.1'
 
-    def room_version = "2.5.0"
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    implementation "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.44"
 }
 
+
+kapt {
+    correctErrorTypes true
+}
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
