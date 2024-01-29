@@ -19,7 +19,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.herfy.R;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Values;
 import com.herfy.font.FontHandler;
 import com.herfy.menu.MenuContract;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;

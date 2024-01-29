@@ -9,7 +9,7 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentMenuItemsBinding
 import com.herfy.ext.onScrollStateChanged
 import com.herfy.menu.MenuContract
@@ -127,8 +127,10 @@ class MenuItemsFragment : Fragment() {
                 } else {
                     binding.containerItems.visibility = View.GONE
                     binding.containerEmpty.visibility = View.VISIBLE
-                    binding.tvNoAvailable.text = CacheUtil.getInstance().getTranslations(Text.NO_AVAILALBLE_ITEMS, "No available items")
-                    binding.tvPleaseTry.text = CacheUtil.getInstance().getTranslations(Text.EMPTY_ITEMS_CHANGE_BRANCH, "Please try changing to a different branch.")
+                    binding.tvNoAvailable.text = CacheUtil.getInstance().getTranslations(
+                        Text.NO_AVAILALBLE_ITEMS, "No available items")
+                    binding.tvPleaseTry.text = CacheUtil.getInstance().getTranslations(
+                        Text.EMPTY_ITEMS_CHANGE_BRANCH, "Please try changing to a different branch.")
                 }
             }
         } catch (ex: Exception) {

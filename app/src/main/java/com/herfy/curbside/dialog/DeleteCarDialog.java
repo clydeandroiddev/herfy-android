@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.util.CacheUtil;
 
 import org.jetbrains.annotations.NotNull;

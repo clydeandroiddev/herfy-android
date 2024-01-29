@@ -24,8 +24,8 @@ import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.auth.views.SignInActivity
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.databinding.ItemMenuItemNewBinding
 import com.herfy.firebase.FirebaseService
 import com.herfy.main.MainActivity
@@ -189,7 +189,8 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
         }
         binding.addToBag.setOnClickListener { v: View? ->
             if (CacheUtil.getInstance().application.attributes.menuOnly) {
-                FirebaseService.newNotification(CacheUtil.getInstance().getTranslations(Text.MENU_ONLY_MESSAGE, "Sorry, ordering is not available at the moment"), binding.addToBag.context)
+                FirebaseService.newNotification(CacheUtil.getInstance().getTranslations(
+                    Text.MENU_ONLY_MESSAGE, "Sorry, ordering is not available at the moment"), binding.addToBag.context)
                 return@setOnClickListener
             }
 

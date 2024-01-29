@@ -14,7 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.card.MaterialCardView
 import com.herfy.R
 import com.herfy.base.BaseDialogFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentDialogOrderTypeBinding
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.herfy.util.CacheUtil

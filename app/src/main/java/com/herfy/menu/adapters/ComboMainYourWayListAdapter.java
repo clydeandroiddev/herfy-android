@@ -12,7 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.menu.MenuContract;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;

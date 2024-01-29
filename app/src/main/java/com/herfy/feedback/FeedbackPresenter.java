@@ -1,6 +1,6 @@
 package com.herfy.feedback;
 
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.util.AppLogger;
 import com.herfy.util.CacheUtil;
 import com.herfy.analytics.MixpanelUtil;

@@ -17,7 +17,7 @@ import com.herfy.R;
 import com.herfy.auth.AuthContract;
 import com.herfy.auth.AuthPresenter;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.util.CacheUtil;
 
 import java.util.HashMap;

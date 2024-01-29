@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.snackbar.Snackbar
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentNotificationBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity

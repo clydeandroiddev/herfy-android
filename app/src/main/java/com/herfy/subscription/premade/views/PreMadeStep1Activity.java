@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.order.views.AddressActivity;
 import com.skylinedynamics.solosdk.api.models.objects.Address;

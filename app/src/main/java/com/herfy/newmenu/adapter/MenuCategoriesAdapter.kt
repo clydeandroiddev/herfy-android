@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.ItemEmptyMenuBinding
 import com.herfy.databinding.ItemNewMenuCategoryBinding
 import com.herfy.ext.gone

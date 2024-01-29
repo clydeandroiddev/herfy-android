@@ -35,8 +35,8 @@ import com.herfy.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.browser.BrowserActivity
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.country.CountriesFragment
 import com.herfy.databinding.FragmentMenuNewHomePageBinding
 import com.herfy.ext.cast
@@ -683,7 +683,8 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     intent.type = "text/plain"
                 } else {
                     intent = Intent(activity, BrowserActivity::class.java)
-                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(Text.FEEDBACK))
+                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(
+                        Text.FEEDBACK))
                     intent.putExtra("url", feedbackUrl)
                 }
             } else {
@@ -703,7 +704,8 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     intent.type = "text/plain"
                 } else {
                     intent = Intent(activity, BrowserActivity::class.java)
-                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(Text.FEEDBACK))
+                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(
+                        Text.FEEDBACK))
                     intent.putExtra("url", feedbackUrl)
                 }
             } else {

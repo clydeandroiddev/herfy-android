@@ -28,7 +28,7 @@ import com.google.android.material.card.MaterialCardView;
 
 import com.herfy.R;
 import com.herfy.auth.views.SignInActivity;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Values;
 import com.herfy.main.MainActivity;
 import com.herfy.menu.MenuContract;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;

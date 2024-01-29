@@ -32,7 +32,7 @@ import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseDialogFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.util.checkout.PaymentFormConstants.backIconSize
 import com.herfy.util.checkout.PaymentFormConstants.inputFieldColor
 import com.herfy.util.checkout.PaymentFormConstants.inputFieldCornerRadius

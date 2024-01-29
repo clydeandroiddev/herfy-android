@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentPromotionsBinding
 import com.herfy.ext.cast
 import com.herfy.ext.gone

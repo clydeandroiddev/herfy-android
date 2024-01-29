@@ -24,7 +24,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Values;
 import com.herfy.font.FontHandler;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;

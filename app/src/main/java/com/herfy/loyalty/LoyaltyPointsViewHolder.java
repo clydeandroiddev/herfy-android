@@ -7,7 +7,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;

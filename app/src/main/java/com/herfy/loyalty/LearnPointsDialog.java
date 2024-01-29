@@ -16,7 +16,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.skylinedynamics.solosdk.api.models.objects.CollectRules;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
 import com.skylinedynamics.solosdk.api.models.objects.Tier;

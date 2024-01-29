@@ -13,7 +13,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.country.CountriesActivity;
 import com.herfy.main.MainActivity;
 import com.herfy.onboarding.OnboardingContract;

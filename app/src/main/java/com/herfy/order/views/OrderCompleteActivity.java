@@ -15,7 +15,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.material.tabs.TabLayout;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.main.MainActivity;
 import com.herfy.order.OrderContract;

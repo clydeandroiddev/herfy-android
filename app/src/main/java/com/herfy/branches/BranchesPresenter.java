@@ -4,7 +4,7 @@ import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.reflect.TypeToken;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;

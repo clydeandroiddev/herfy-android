@@ -1,7 +1,7 @@
 package com.herfy.util;
 
 import com.google.gson.Gson;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.skylinedynamics.solosdk.api.models.objects.CustomFieldObject;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.FavoriteIngredients;

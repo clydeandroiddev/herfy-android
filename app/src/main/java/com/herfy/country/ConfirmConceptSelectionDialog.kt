@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.google.android.material.button.MaterialButton
 import com.herfy.R
 import com.herfy.base.BaseDialogFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.DialogConfirmConceptSelectionBinding
 import com.herfy.util.CacheUtil
 

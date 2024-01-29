@@ -44,7 +44,7 @@ import androidx.transition.TransitionManager;
 
 import com.herfy.R;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.main.MainActivity;
 import com.herfy.order.views.OrderTypeActivity;
 import com.herfy.util.AnimUtil;

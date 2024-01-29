@@ -6,7 +6,7 @@ import com.facebook.FacebookSdk.sdkInitialize
 import coil.ImageLoaderFactory
 import com.google.firebase.FirebaseApp
 import com.facebook.appevents.AppEventsLogger
-import com.herfy.database.AppDatabase
+import com.herfy.data.AppDatabase
 import com.herfy.util.AuthUtil
 import com.herfy.util.CacheUtil
 import com.herfy.util.LocaleUtil

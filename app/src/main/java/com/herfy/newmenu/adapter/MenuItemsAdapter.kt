@@ -22,8 +22,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.herfy.R
 import com.herfy.auth.views.SignInActivity
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.databinding.ItemMenuItemNewBinding
 import com.herfy.ext.cast
 import com.herfy.firebase.FirebaseService
@@ -177,7 +177,8 @@ class MenuItemsAdapter(
             }
             binding.addToBag.setOnClickListener { v: View? ->
                 if (CacheUtil.getInstance().application.attributes.menuOnly) {
-                    FirebaseService.newNotification(CacheUtil.getInstance().getTranslations(Text.MENU_ONLY_MESSAGE, "Sorry, ordering is not available at the moment"), binding.addToBag.context)
+                    FirebaseService.newNotification(CacheUtil.getInstance().getTranslations(
+                        Text.MENU_ONLY_MESSAGE, "Sorry, ordering is not available at the moment"), binding.addToBag.context)
                     return@setOnClickListener
                 }
                 onAddToCart(binding.imageItem, menuItem, price, 1)

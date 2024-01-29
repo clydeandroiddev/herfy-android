@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.menu.MenuContract;
 import com.herfy.menu.viewholders.ModifierItemViewHolderNew;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
