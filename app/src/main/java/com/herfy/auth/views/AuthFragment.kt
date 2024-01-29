@@ -39,7 +39,7 @@ import com.herfy.auth.AuthPresenter
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentAuthBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity

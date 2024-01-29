@@ -12,7 +12,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentDigitalCouponsBinding
 import com.herfy.digitalcoupons.DigitalCouponsContract
 import com.herfy.digitalcoupons.DigitalCouponsPresenter

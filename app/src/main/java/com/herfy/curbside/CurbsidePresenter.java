@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.base.BaseView;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CurbsideApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries;

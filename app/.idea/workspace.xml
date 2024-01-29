@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b7d3d331-039e-4012-9b27-f6829aaf221c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/java/com/herfy/home/adapter/PromotionsAdapter.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/java/com/herfy/home/adapter/SliderImageAdapter.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/java/com/herfy/home/data/ErrorMsgItem.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/java/com/herfy/home/data/HomeResponse.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/java/com/herfy/home/repository/HomeRepository.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/java/com/herfy/home/views/HomeContract.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/java/com/herfy/home/views/HomeFragment.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/java/com/herfy/home/views/HomePresenter.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/java/com/herfy/home/views/HomeViewModel.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/drawable/background_rate.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/layout/banner_home.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/layout/catering.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/layout/fragment_home.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/layout/item_banner_home.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/layout/item_promotion.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/layout/placeholder_banner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/layout/placeholder_catering.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/layout/placeholder_promotions.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/layout/promotions_list.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/values/colors.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/values/strings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../features/home/src/main/res/values/styles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../utils/src/main/java/com/herfy/utils/base/BaseActivity.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../utils/src/main/java/com/herfy/utils/base/BaseFragment.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../utils/src/main/java/com/herfy/utils/base/BaseViewModel.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../utils/src/main/java/com/herfy/utils/constants/Values.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../utils/src/main/java/com/herfy/utils/extensions/AnyExt.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../utils/src/main/java/com/herfy/utils/extensions/BindingAdapters.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../utils/src/main/java/com/herfy/utils/extensions/ViewBindingExtensions.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../utils/src/main/java/com/herfy/utils/helper/StringUtil.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/herfy/newmenu/views/NewMenuHomePageFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/herfy/newmenu/views/NewMenuHomePageFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../features/home/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../features/home/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../features/home/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../features/home/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../utils/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../utils/build.gradle" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="2bLmGY2bBh3oaw2hQDWk6VY7q38" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Clyde Miranda/Documents/SourceTree/SOLO/herfy-android&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b7d3d331-039e-4012-9b27-f6829aaf221c" name="Changes" comment="" />
+      <created>1706002642952</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1706002642952</updated>
+    </task>
+    <servers />
+  </component>
+</project>

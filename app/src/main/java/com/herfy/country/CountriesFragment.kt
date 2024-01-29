@@ -14,7 +14,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.herfy.BuildConfig
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentCountriesBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity

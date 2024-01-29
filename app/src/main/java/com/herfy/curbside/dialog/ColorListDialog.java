@@ -19,7 +19,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.curbside.adapter.ColorListAdapter;
 import com.herfy.util.CacheUtil;
 

@@ -21,7 +21,7 @@ import com.herfy.account.AccountPresenter;
 import com.herfy.account.adapters.LocationsRecyclerViewAdapter;
 import com.herfy.account.adapters.AccountSavedCardsAdapter;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.main.MainActivity;
 import com.herfy.order.views.AddressActivity;
 import com.skylinedynamics.solosdk.api.SoloAuth;

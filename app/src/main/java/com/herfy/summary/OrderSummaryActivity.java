@@ -29,7 +29,7 @@ import com.moneyhash.sdk.android.payment.PaymentResultContract;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.payment.PaymentContract;
 import com.herfy.payment.PaymentPresenter;

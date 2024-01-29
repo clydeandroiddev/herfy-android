@@ -18,7 +18,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.herfy.R;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Values;
 import com.herfy.menu.MenuContract;
 import com.herfy.newmenu.NewMenuTabListener;
 import com.herfy.newmenu.TabModel;

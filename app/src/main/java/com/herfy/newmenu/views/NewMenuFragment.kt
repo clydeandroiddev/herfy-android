@@ -44,8 +44,8 @@ import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.country.CountriesFragment
 import com.herfy.databinding.FragmentMenuNewBinding
 import com.herfy.ext.cast

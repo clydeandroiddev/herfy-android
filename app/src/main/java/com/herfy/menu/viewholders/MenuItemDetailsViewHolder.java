@@ -29,7 +29,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.nex3z.flowlayout.FlowLayout;
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.menu.MenuContract;
 import com.herfy.menu.adapters.IngredientsRecyclerViewAdapter;

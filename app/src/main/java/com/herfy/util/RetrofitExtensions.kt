@@ -1,7 +1,7 @@
 package com.herfy.util
 
 import com.google.gson.GsonBuilder
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import org.json.JSONException
 import retrofit2.Response
 

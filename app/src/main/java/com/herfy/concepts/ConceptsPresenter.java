@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.herfy.concepts.views.ConceptViewHolder;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.skylinedynamics.solosdk.api.calls.ConceptsService;
 import com.skylinedynamics.solosdk.api.calls.UtilitiesApiCall;
 import com.skylinedynamics.solosdk.api.models.kotlin.SoloResponse;

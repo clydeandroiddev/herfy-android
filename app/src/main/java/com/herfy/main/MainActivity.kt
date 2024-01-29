@@ -50,8 +50,8 @@ import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
 import com.herfy.browser.BrowserActivity
 import com.herfy.cart.views.CartFragment
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.contactsupport.ContactSupportBottomSheetDialogFragment
 import com.herfy.country.CountriesFragment
 import com.herfy.databinding.ActivityMainBinding
@@ -846,7 +846,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     intent.type = "text/plain"
                 } else {
                     intent = Intent(this@MainActivity, BrowserActivity::class.java)
-                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(Text.FEEDBACK))
+                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(
+                        Text.FEEDBACK))
                     intent.putExtra("url", feedbackUrl)
                 }
             } else {

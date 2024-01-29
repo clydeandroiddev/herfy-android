@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.BuildConfig;
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.menu.MenuContract;
 import com.herfy.menu.adapters.ModifierItemsRecyclerViewAdapter;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;

@@ -18,7 +18,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.herfy.addresses.viewholders.AddressViewHolder;
 import com.herfy.addresses.viewholders.PlaceViewHolder;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;

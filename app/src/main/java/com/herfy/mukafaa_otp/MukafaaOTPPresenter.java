@@ -1,8 +1,8 @@
 package com.herfy.mukafaa_otp;
 
 import com.google.gson.JsonObject;
-import com.herfy.constants.Text;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Text;
+import com.herfy.data.constants.Values;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.models.requestbodies.AuthorizeProviderBody;

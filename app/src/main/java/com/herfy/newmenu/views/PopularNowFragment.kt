@@ -19,7 +19,7 @@ import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.MixpanelUtil
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentPopularNowBinding
 import com.herfy.main.MainActivity
 import com.herfy.menu.MenuContract

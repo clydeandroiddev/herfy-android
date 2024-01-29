@@ -30,7 +30,7 @@ import com.moneyhash.sdk.android.ResultType;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.payment.PaymentContract;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;

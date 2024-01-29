@@ -23,15 +23,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += [
-                        "room.incremental"   : "true",
-                        "room.schemaLocation":
-                                "$projectDir/schemas".toString()
-                ]
-            }
-        }
     }
     buildFeatures {
         viewBinding true
@@ -233,6 +224,7 @@ dependencies {
     implementation project(path: ':features:promotions')
     implementation project(path: ':features:upsell')
     implementation project(path: ':utils')
+    implementation project(path: ':data:database')
 
     implementation(name: 'MaterialCalendarNew', ext: 'aar')
 
@@ -309,9 +301,7 @@ dependencies {
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
     implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
     implementation 'com.github.addisonelliott:SegmentedButton:3.1.9'
-    def room_version = "2.5.0"
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+
     implementation 'com.ogaclejapan.smarttablayout:utils-v4:2.0.0@aar'
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     implementation 'com.airbnb.android:lottie:3.4.0'
@@ -362,10 +352,6 @@ dependencies {
     // QR Code
     implementation 'com.github.alexzhirkevich:custom-qr-generator:1.6.1'
 
-    // Roomigrant
-    implementation 'com.github.MatrixDev.Roomigrant:RoomigrantLib:0.3.4'
-    kapt 'com.github.MatrixDev.Roomigrant:RoomigrantCompiler:0.3.4'
-
     //Resolve jdk8+ Generation Annotations - javax annotation does not exist
     compileOnly 'com.github.pengrad:jdk9-deps:1.0'
 
@@ -379,6 +365,10 @@ dependencies {
 
     //Moyasar SDK
     implementation 'com.moyasar:android-sdk:0.5.1'
+
+    def room_version = "2.5.0"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

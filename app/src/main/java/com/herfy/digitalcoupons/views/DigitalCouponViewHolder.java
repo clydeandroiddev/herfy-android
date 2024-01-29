@@ -18,7 +18,7 @@ import com.bumptech.glide.request.target.Target;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.digitalcoupons.DigitalCouponsContract;
 import com.herfy.digitalcoupons.DigitalCouponsRecyclerViewAdapter;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;

@@ -2,8 +2,8 @@ package com.herfy.account;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.herfy.constants.Text;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Text;
+import com.herfy.data.constants.Values;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.Address;

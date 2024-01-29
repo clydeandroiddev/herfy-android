@@ -19,14 +19,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
-import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.base.BaseDialogFragment;
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
 import com.herfy.cart.CartContract;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.order.OrderContract;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;

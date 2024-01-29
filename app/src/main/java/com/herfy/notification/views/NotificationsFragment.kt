@@ -19,7 +19,7 @@ import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentNotificationsBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
