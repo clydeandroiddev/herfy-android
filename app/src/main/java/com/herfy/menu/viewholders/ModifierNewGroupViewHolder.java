@@ -39,7 +39,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements MenuContract.View {
+public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implements MenuContract.View {
 
     private Context context;
 
@@ -60,7 +60,7 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
         this.onAction = onAction;
     }
 
-    public ModifierGroupViewHolder(Context context, MenuContract.Presenter menuPresenter, View itemView) {
+    public ModifierNewGroupViewHolder(Context context, MenuContract.Presenter menuPresenter, View itemView) {
 
         super(itemView);
 

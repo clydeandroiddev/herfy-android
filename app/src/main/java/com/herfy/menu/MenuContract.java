@@ -8,8 +8,7 @@ import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.IngredientViewHolder;
 import com.herfy.menu.viewholders.MenuCategoryViewHolder;
 import com.herfy.menu.viewholders.MenuItemViewHolder;
-import com.herfy.menu.viewholders.ModifierGroupViewHolder;
-import com.herfy.menu.viewholders.ModifierItemViewHolder;
+import com.herfy.menu.viewholders.ModifierNewGroupViewHolder;
 import com.herfy.menu.viewholders.ModifierItemViewHolderNew;
 import com.herfy.menu.viewholders.SizeViewHolder;
 import com.herfy.newmenu.viewholder.MenuCouponViewHolder;
@@ -284,7 +283,7 @@ public interface MenuContract {
 
         int getIngredientsCount();
 
-        void onBindModifierGroupViewAtPosition(int position, ModifierGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice);
+        void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice);
 
         int getModifierGroupsCount();
 

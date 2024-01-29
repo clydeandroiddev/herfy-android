@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
 import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
-import com.herfy.menu.viewholders.ModifierGroupViewHolder;
+import com.herfy.menu.viewholders.ModifierNewGroupViewHolder;
 
 import java.util.HashMap;
 
-public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<ModifierGroupViewHolder> {
+public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<ModifierNewGroupViewHolder> {
 
     private Context context;
 
@@ -34,8 +34,8 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     @NonNull
     @Override
-    public ModifierGroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ModifierGroupViewHolder modifierGroupViewHolder = new ModifierGroupViewHolder(context, menuPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_modifier_group, parent, false));
+    public ModifierNewGroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        ModifierNewGroupViewHolder modifierGroupViewHolder = new ModifierNewGroupViewHolder(context, menuPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_modifier_group, parent, false));
         modifierGroupViewHolder.setOnAction(onAction);
         return modifierGroupViewHolder;
 
@@ -43,7 +43,7 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ModifierGroupViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ModifierNewGroupViewHolder holder, int position) {
         menuPresenter.onBindModifierGroupViewAtPosition(position, holder, showModifierItemPrice.get(position));
     }
 

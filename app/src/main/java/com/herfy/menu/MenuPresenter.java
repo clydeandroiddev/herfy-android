@@ -37,7 +37,7 @@ import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.IngredientViewHolder;
 import com.herfy.menu.viewholders.MenuCategoryViewHolder;
 import com.herfy.menu.viewholders.MenuItemViewHolder;
-import com.herfy.menu.viewholders.ModifierGroupViewHolder;
+import com.herfy.menu.viewholders.ModifierNewGroupViewHolder;
 import com.herfy.menu.viewholders.ModifierItemViewHolderNew;
 import com.herfy.menu.viewholders.SizeViewHolder;
 import com.herfy.newmenu.viewholder.MenuCouponViewHolder;
@@ -3583,7 +3583,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void onBindModifierGroupViewAtPosition(int position, ModifierGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice) {
+    public void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice) {
        /* ModifierGroup modifierGroup = menuItemModifierGroups.get(menuItem.getModifierGroups().get(position).getId());
         if(modifierGroup != null) {*/
         modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice);

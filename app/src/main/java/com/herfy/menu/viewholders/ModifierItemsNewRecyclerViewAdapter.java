@@ -16,7 +16,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 
 import java.util.List;
 
-public class ModifierItemsRecyclerViewAdapter extends RecyclerView.Adapter<BaseModifierItemViewHolder> {
+public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<BaseModifierItemViewHolder> {
 
     private Context mContext;
 
@@ -35,7 +35,7 @@ public class ModifierItemsRecyclerViewAdapter extends RecyclerView.Adapter<BaseM
     private boolean dataUpdatedFlag = false;
 
 
-    public ModifierItemsRecyclerViewAdapter(Context context, MenuContract.Presenter menuPresenter, int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice) {
+    public ModifierItemsNewRecyclerViewAdapter(Context context, MenuContract.Presenter menuPresenter, int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice) {
         this.mContext = context;
         this.menuPresenter = menuPresenter;
         this.modifierGroupPosition = modifierGroupPosition;
