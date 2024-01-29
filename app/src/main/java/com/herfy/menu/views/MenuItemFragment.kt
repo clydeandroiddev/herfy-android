@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -22,10 +21,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.OnPositionChangedListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -39,6 +38,8 @@ import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
+import com.herfy.constants.Text
+import com.herfy.constants.Values
 import com.herfy.data.constants.Text
 import com.herfy.data.constants.Values
 import com.herfy.databinding.FragmentMenuItemBinding
@@ -46,23 +47,24 @@ import com.herfy.ext.cast
 import com.herfy.ext.invisible
 import com.herfy.ext.visible
 import com.herfy.firebase.FirebaseService
-import com.herfy.font.FontHandler
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.menu.MenuContract
 import com.herfy.menu.MenuPresenter
 import com.herfy.menu.adapters.*
-import com.herfy.menu.viewholders.ModifierItemViewHolder
+import com.herfy.menu.viewholders.BaseModifierItemViewHolder
 import com.herfy.newmenu.NewMenuFragmentCommonListener
+import com.herfy.productpagedetails.databinding.FragmentMenuItemDetailsBinding
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.util.GsonHelper
 import com.herfy.util.*
 import com.herfy.utils.helper.LocaleUtil
+import io.shipbook.shipbooksdk.Log
 import java.util.*
 
 class MenuItemFragment : BaseFragment(), MenuContract.View {
 
-    private lateinit var binding: FragmentMenuItemBinding
+    private lateinit var binding: FragmentMenuItemDetailsBinding
 
     private val args: MenuItemFragmentArgs by navArgs()
 
@@ -82,7 +84,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     private var menuCategorySelected: MenuCategory? = null
     private var sandwichId = ""
     private var sizesAdapter: SizesRecyclerViewAdapter? = null
-    private var modifierGroupsAdapter: ModifierGroupsRecyclerViewAdapter? = null
+    private var modifierGroupsAdapter: ModifierGroupsNewRecyclerViewAdapter? = null
     private var ingredientsAdapter: IngredientsRecyclerViewAdapter? = null
     private var initialModifierId = ""
     private var listener: NewMenuFragmentCommonListener? = null
@@ -105,7 +107,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMenuItemBinding.inflate(inflater, container, false)
+        binding = FragmentMenuItemDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -194,10 +196,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 if (calorieCount != 0) {
                     this@MenuItemFragment.calorieCount = calorieCount
                 } else if (caloriesValue != null && caloriesValue.isNotEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
-                    binding.calories.text = "(${
-                        CacheUtil.getInstance().getTranslations(Text.CALORIES_LABEL, "(x) cal")
-                            .replace("(x)", caloriesValue)
-                    })"
+//                    binding.calories.text = "(${
+//                        CacheUtil.getInstance().getTranslations(Text.CALORIES_LABEL, "(x) cal")
+//                            .replace("(x)", caloriesValue)
+//                    })"
                 }
             }
             var caloriesFromModifiers = 0
@@ -224,10 +226,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             }
 
             if (calorieCount > 0) {
-                binding.calories.text = "(${
-                    CacheUtil.getInstance().getTranslations(Text.CALORIES_LABEL, "(x) cal")
-                        .replace("(x)", calorieCount.toString())
-                })"
+//                binding.calories.text = "(${
+//                    CacheUtil.getInstance().getTranslations(Text.CALORIES_LABEL, "(x) cal")
+//                        .replace("(x)", calorieCount.toString())
+//                })"
             }
 
 
@@ -272,7 +274,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(activity)
                 (binding.modifierGroupsRecyclerView.itemAnimator as SimpleItemAnimator?)!!.supportsChangeAnimations =
                     false
-                binding.ingredientsRecyclerView.layoutManager = LinearLayoutManager(activity)
+//                binding.ingredientsRecyclerView.layoutManager = LinearLayoutManager(activity)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -314,12 +316,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun setupFonts() {}
     override fun setupTranslations() {
-        binding.mealDealsTabs.mealDealButton.text = CacheUtil.getInstance()
-            .getTranslations(Text.MEAL_DEAL, "Meal Deal")
-        binding.sizesLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.PICK_MEAL_SIZE_CAPS, "PICK MEAL SIZE")
-        binding.ingredientsLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.INGREDIENTS)
+//        binding.mealDealsTabs.mealDealButton.text = CacheUtil.getInstance()
+//            .getTranslations(Text.MEAL_DEAL, "Meal Deal")
+//        binding.sizesLabel.text = CacheUtil.getInstance()
+//            .getTranslations(Text.PICK_MEAL_SIZE_CAPS, "PICK MEAL SIZE")
+//        binding.ingredientsLabel.text =
+//            CacheUtil.getInstance().getTranslations(Text.INGREDIENTS)
     }
 
     override fun showStore(store: Store) {}
@@ -339,7 +341,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun setMenuItemDetails(menuItem: MenuItem) {
         activity?.cast<BaseActivity> {
             it.runOnUiThread {
-                binding.mealDealsContainer.visibility = View.GONE
+//                binding.mealDealsContainer.visibility = View.GONE
 
                 if (menuItem.attributes.notes.isNotEmpty()) {
                     binding.etItemNotes.setText(menuItem.attributes.notes)
@@ -376,7 +378,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             target: Target<Drawable?>,
                             isFirstResource: Boolean
                         ): Boolean {
-                            binding.imageShimmer.visibility = View.GONE
+//                            binding.imageShimmer.visibility = View.GONE
                             return false
                         }
 
@@ -387,75 +389,69 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             dataSource: DataSource,
                             isFirstResource: Boolean
                         ): Boolean {
-                            binding.imageShimmer.visibility = View.GONE
+//                            binding.imageShimmer.visibility = View.GONE
                             return false
                         }
                     })
                     .into(binding.image)
-                binding.allergensContainer.isRtl = LocaleUtil.getInstance().isArabic
-                binding.allergensContainer.removeAllViews()
-                for (allergen in menuItem.allergens) {
-                    val allergenView = LayoutInflater.from(activity)
-                        .inflate(R.layout.item_allergen, binding.allergensContainer, false)
-                    val allergenIcon = allergenView.findViewById<ImageView>(R.id.icon)
-                    val iconValue =
-                        allergen.attributes.icon.getValue(LocaleUtil.getInstance().language)
-                    //iconValue = StringUtil.getCloudinaryUrl(100, 100, iconValue);
-                    if (iconValue == null || iconValue.equals(
-                            "null",
-                            ignoreCase = true
-                        ) || iconValue.isEmpty() || iconValue.lowercase(
-                            Locale.getDefault()
-                        ).contains("default-image.png")
-                    ) {
-                        allergenIcon.visibility = View.GONE
-                    } else {
-                        Glide.with(it).load(iconValue)
-                            .apply(RequestOptions.centerCropTransform()).diskCacheStrategy(
-                                DiskCacheStrategy.ALL
-                            ).listener(object : RequestListener<Drawable?> {
-                                override fun onLoadFailed(
-                                    e: GlideException?,
-                                    model: Any,
-                                    target: Target<Drawable?>,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    allergenIcon.visibility = View.GONE
-                                    return false
-                                }
-
-                                override fun onResourceReady(
-                                    resource: Drawable?,
-                                    model: Any,
-                                    target: Target<Drawable?>,
-                                    dataSource: DataSource,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    allergenIcon.visibility = View.VISIBLE
-                                    return false
-                                }
-                            }).into(allergenIcon)
-                    }
-                    val allergenName = allergenView.findViewById<TextView>(R.id.value)
-                    allergenName.typeface = FontHandler.getRegularTypeface()
-                    allergenName.text =
-                        allergen.attributes.name.getValue(LocaleUtil.getInstance().language)
-                    binding.allergensContainer.addView(allergenView)
-                }
+//                binding.allergensContainer.isRtl = LocaleUtil.getInstance().isArabic
+//                binding.allergensContainer.removeAllViews()
+//                for (allergen in menuItem.allergens) {
+//                    val allergenView = LayoutInflater.from(activity)
+//                        .inflate(R.layout.item_allergen, binding.allergensContainer, false)
+//                    val allergenIcon = allergenView.findViewById<ImageView>(R.id.icon)
+//                    val iconValue = allergen.attributes.icon.getValue(LocaleUtil.getInstance().language)
+//                    //iconValue = StringUtil.getCloudinaryUrl(100, 100, iconValue);
+//                    if (iconValue == null || iconValue.equals(
+//                            "null",
+//                            ignoreCase = true
+//                        ) || iconValue.isEmpty() || iconValue.lowercase(
+//                            Locale.getDefault()
+//                        ).contains("default-image.png")
+//                    ) {
+//                        allergenIcon.visibility = View.GONE
+//                    } else {
+//                        Glide.with(it).load(iconValue)
+//                            .apply(RequestOptions.centerCropTransform()).diskCacheStrategy(
+//                                DiskCacheStrategy.ALL
+//                            ).listener(object : RequestListener<Drawable?> {
+//                                override fun onLoadFailed(
+//                                    e: GlideException?,
+//                                    model: Any,
+//                                    target: Target<Drawable?>,
+//                                    isFirstResource: Boolean
+//                                ): Boolean {
+//                                    allergenIcon.visibility = View.GONE
+//                                    return false
+//                                }
+//
+//                                override fun onResourceReady(
+//                                    resource: Drawable?,
+//                                    model: Any,
+//                                    target: Target<Drawable?>,
+//                                    dataSource: DataSource,
+//                                    isFirstResource: Boolean
+//                                ): Boolean {
+//                                    allergenIcon.visibility = View.VISIBLE
+//                                    return false
+//                                }
+//                            }).into(allergenIcon)
+//                    }
+////                    val allergenName = allergenView.findViewById<TextView>(R.id.value)
+////                    allergenName.typeface = FontHandler.getRegularTypeface()
+////                    allergenName.text = allergen.attributes.name.getValue(LocaleUtil.getInstance().language)
+////                    binding.allergensContainer.addView(allergenView)
+//                }
                 binding.name.text = menuItem.getName(LocaleUtil.getInstance().language)
                 val caloriesValue = menuItem.calories
-                val calorieCount = menuItem.calorieCount + fetchCalories(menuItem.modifierGroups)
-                if (calorieCount != 0) {
-                    binding.calories.text = "(${
-                        CacheUtil.getInstance().getTranslations(Text.CALORIES_LABEL, "(x) cal")
-                            .replace("(x)", calorieCount.toString())
-                    })"
+                val calorieCount = menuItem.calorieCount
+                if (caloriesValue != null && !caloriesValue.isEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
+                    binding.calories.text =
+                        CacheUtil.getInstance().getTranslations(Text.CALORIES) + " " + caloriesValue
                     binding.calories.visibility = View.VISIBLE
-                } else if (caloriesValue != null && !caloriesValue.isEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
-                    binding.calories.text = "(${
-                        CacheUtil.getInstance().getTranslations(Text.CALORIES_LABEL, "(x) cal")
-                            .replace("(x)", caloriesValue)
-                    })"
+                } else if (calorieCount != 0) {
+                    binding.calories.text =
+                        CacheUtil.getInstance().getTranslations(Text.CALORIES) + " " + calorieCount
                     binding.calories.visibility = View.VISIBLE
                 } else {
                     binding.calories.visibility = View.GONE
@@ -467,11 +463,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     binding.description.text = descriptionValue
                     binding.description.visibility = View.VISIBLE
                 }
-                binding.detailsShimmer.visibility = View.GONE
-
+//                binding.detailsShimmer.visibility = View.GONE
             }
         }
     }
+
+
 
     override fun setMenuItem(menuCategory: MenuCategory, menuItem: MenuItem) {
         activity?.cast<BaseActivity> { baseActivity ->
@@ -502,40 +499,40 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 canChange = false
                 if (menuItem.isCombo || menuItem.isSandwichOnly) {
                     if (menuItem.customFieldObjectMap.isNotItemable && !menuItem.isSandwichOnly) {
-                        binding.mealDealsContainer.visibility = View.GONE
+//                        binding.mealDealsContainer.visibility = View.GONE
                     } else {
-                        binding.mealDealsContainer.visibility = View.VISIBLE
+//                        binding.mealDealsContainer.visibility = View.VISIBLE
                         if (menuItem.isSandwichOnly) {
-                            if (!LocaleUtil.getInstance().isArabic) binding.mealDealsTabs.buttonType.setPosition(
-                                1,
-                                false
-                            ) else binding.mealDealsTabs.buttonType.setPosition(0, false)
+//                            if (!LocaleUtil.getInstance().isArabic) binding.mealDealsTabs.buttonType.setPosition(
+//                                1,
+//                                false
+//                            ) else binding.mealDealsTabs.buttonType.setPosition(0, false)
                         } else {
-                            if (!LocaleUtil.getInstance().isArabic) binding.mealDealsTabs.buttonType.setPosition(
-                                0,
-                                false
-                            ) else binding.mealDealsTabs.buttonType.setPosition(1, false)
+//                            if (!LocaleUtil.getInstance().isArabic) binding.mealDealsTabs.buttonType.setPosition(
+//                                0,
+//                                false
+//                            ) else binding.mealDealsTabs.buttonType.setPosition(1, false)
                         }
-                        binding.mealDealsTabs.buttonType.onPositionChangedListener =
-                            OnPositionChangedListener { position: Int ->
-                                when (position) {
-                                    0 -> if (canChange) {
-                                        if (!LocaleUtil.getInstance().isArabic) {
-                                            changeMealDeal(false)
-                                        } else {
-                                            changeMealDeal(true)
-                                        }
-                                    }
-
-                                    1 -> if (canChange) {
-                                        if (LocaleUtil.getInstance().isArabic) {
-                                            changeMealDeal(false)
-                                        } else {
-                                            changeMealDeal(true)
-                                        }
-                                    }
-                                }
-                            }
+//                        binding.mealDealsTabs.buttonType.onPositionChangedListener =
+//                            OnPositionChangedListener { position: Int ->
+//                                when (position) {
+//                                    0 -> if (canChange) {
+//                                        if (!LocaleUtil.getInstance().isArabic) {
+//                                            changeMealDeal(false)
+//                                        } else {
+//                                            changeMealDeal(true)
+//                                        }
+//                                    }
+//
+//                                    1 -> if (canChange) {
+//                                        if (LocaleUtil.getInstance().isArabic) {
+//                                            changeMealDeal(false)
+//                                        } else {
+//                                            changeMealDeal(true)
+//                                        }
+//                                    }
+//                                }
+//                            }
                     }
                 }
                 canChange = true
@@ -550,12 +547,13 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             group.attributes.freeModifiersCount == 0
                     }
                     shouldReset = false
-                    modifierGroupsAdapter = ModifierGroupsRecyclerViewAdapter(
-                        activity,
-                        menuPresenter,
-                        showModifierItemPrice
-                    )
-                    modifierGroupsAdapter!!.setOnAction(object : ModifierItemViewHolder.OnAction {
+                    modifierGroupsAdapter =
+                        ModifierGroupsNewRecyclerViewAdapter(
+                            activity,
+                            menuPresenter,
+                            showModifierItemPrice
+                        )
+                    modifierGroupsAdapter!!.setOnAction(object : BaseModifierItemViewHolder.OnAction {
                         @SuppressLint("NotifyDataSetChanged")
                         override fun onCheckedChanged(
                             isSelected: Boolean,
@@ -598,40 +596,24 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         }
                     })
                     binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapter
+                    Log.d("FAFA","Modifier group count " + modifierGroupsAdapter?.itemCount)
                     ViewCompat.setNestedScrollingEnabled(binding.modifierGroupsRecyclerView, false)
                     binding.modifierGroupsRecyclerView.visibility = View.VISIBLE
                 } else {
                     binding.modifierGroupsRecyclerView.visibility = View.GONE
                 }
-                if (menuPresenter!!.ingredientsCount > 0) {
-                    binding.ingredientsLabel.text = CacheUtil.getInstance()
-                        .getTranslations(Text.REMOVE_INGREDIENTS_CAPS, "REMOVE INGREDIENTS")
-                    ingredientsAdapter = IngredientsRecyclerViewAdapter(activity, menuPresenter)
-                    ingredientsAdapter!!.setOnCheckedChanged { isSelected, ingredient ->
-                        menuPresenter!!.selectIngredient(isSelected, ingredient)
-                        ingredientsAdapter!!.notifyDataSetChanged()
-                        //Trigger calorie count
-                    }
-                    binding.ingredientsRecyclerView.adapter = ingredientsAdapter
-                    ViewCompat.setNestedScrollingEnabled(binding.ingredientsRecyclerView, false)
-                    binding.ingredientsLabel.visibility = View.VISIBLE
-                    binding.ingredientsRecyclerView.visibility = View.VISIBLE
-                } else {
-                    binding.ingredientsLabel.visibility = View.GONE
-                    binding.ingredientsRecyclerView.visibility = View.GONE
-                }
                 binding.minus.isFocusable = menuItem.attributes.quantity != 1
                 binding.minus.isClickable = menuItem.attributes.quantity != 1
                 if (menuItem.attributes.quantity != 1) {
-                    binding.minus.setColorFilter(
-                        Color.parseColor(CacheUtil.getInstance().colorMain),
-                        PorterDuff.Mode.SRC_IN
-                    )
+//                    binding.minus.setColorFilter(
+//                        Color.parseColor(CacheUtil.getInstance().colorMain),
+//                        PorterDuff.Mode.SRC_IN
+//                    )
                 } else {
-                    binding.minus.setColorFilter(
-                        Color.parseColor("#BEBEBE"),
-                        PorterDuff.Mode.SRC_IN
-                    )
+//                    binding.minus.setColorFilter(
+//                        Color.parseColor("#BEBEBE"),
+//                        PorterDuff.Mode.SRC_IN
+//                    )
                 }
                 setMenuItemQuantity(menuItem.attributes.quantity)
                 if (cartMenuItem >= 0 || args.isEdit) {
@@ -695,7 +677,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 baseActivity.dismissDialogs()
                 menuItemSelected = menuItem
                 menuCategorySelected = menuCategory
-                setupCombos(menuItem)
+//                setupCombos(menuItem)
                 menuPresenter!!.getMenuItemTotalPrice(menuPresenter!!.menuItem, -1)
                 if (!menuItem.isSandwichOnly) {
                     previousMenuItem = menuItem
@@ -704,9 +686,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         CacheUtil.getOrderStoreId()
                     )
                 ) {
-                    binding.soldout.text =
-                        CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
-                    binding.soldout.visibility = View.VISIBLE
+//                    binding.soldout.text =
+//                        CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
+//                    binding.soldout.visibility = View.VISIBLE
                     binding.image.setColorFilter(
                         ContextCompat.getColor(
                             requireContext(),
@@ -721,13 +703,13 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     )
                     binding.add.isEnabled = false
                 }
-                if (menuItem.listPrice > 0.0) {
-                    binding.discountIndicator.visibility = View.VISIBLE
-                } else {
-                    binding.discountIndicator.visibility = View.GONE
-                }
+//                if (menuItem.listPrice > 0.0) {
+//                    binding.discountIndicator.visibility = View.VISIBLE
+//                } else {
+//                    binding.discountIndicator.visibility = View.GONE
+//                }
 
-                binding.componentsShimmer.visibility = View.GONE
+//                binding.componentsShimmer.visibility = View.GONE
                 var imageUrl = menuItem.image
                 if (imageUrl == null || imageUrl.equals(
                         "null",
@@ -758,7 +740,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             target: Target<Drawable?>,
                             isFirstResource: Boolean
                         ): Boolean {
-                            binding.imageShimmer.visibility = View.GONE
+//                            binding.imageShimmer.visibility = View.GONE
                             return false
                         }
 
@@ -769,7 +751,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             dataSource: DataSource,
                             isFirstResource: Boolean
                         ): Boolean {
-                            binding.imageShimmer.visibility = View.GONE
+//                            binding.imageShimmer.visibility = View.GONE
                             return false
                         }
                     })
@@ -810,86 +792,86 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         setMenuItem(menuCategorySelected!!, menuItemSelected!!)
     }
 
-    private fun setupCombos(menuItem: MenuItem) {
-        if (!menuItemSelected!!.isCombo) {
-            binding.combosList.visibility = View.GONE
-            binding.yourWayList.visibility = View.GONE
-            return
-        }
-        if (menuItemSelected!!.combo.isEmpty()) {
-            binding.yourWayList.visibility = View.GONE
-            binding.combosList.visibility = View.GONE
-            return
-        }
-        var comboIndex = 0
-        if (binding.sizesLabel.visibility == View.VISIBLE || binding.sizesCard.visibility == View.VISIBLE) {
-            var counter = 0
-            for (modifierItem in menuItemSelected!!.sizes.modifierItems) {
-                if (modifierItem.attributes.isSelected) {
-                    comboIndex = counter
-                    break
-                }
-                counter++
-            }
-        }
-        menuPresenter!!.assignComboIndex(comboIndex)
-        menuPresenter!!.assignMenuItem(menuItemSelected)
-        menuItemSelected!!.combo[comboIndex].components = menuPresenter!!.componentsSelectFirst(
-            menuItemSelected!!.combo[comboIndex].components
-        )
-        menuPresenter!!.assignMenuItem(menuItemSelected)
-        try {
-            for (i in menuItemSelected!!.combo[comboIndex].components.indices) {
-                if (menuItemSelected!!.combo[comboIndex].components[i].name.english.lowercase(Locale.getDefault())
-                        .contains("sandwich") || menuItemSelected!!.combo[comboIndex].components[i].name.french.lowercase(
-                        Locale.getDefault()
-                    ).contains("sandwich")
-                ) {
-                    binding.mealDealsTabs.sandwichOnlyButton.text =
-                        CacheUtil.getInstance().getTranslations(Text.SANDWICH_ONLY, "(x) only")
-                            .replace(
-                                "(x)",
-                                translated(
-                                    LocaleUtil.getInstance().language,
-                                    menuItemSelected!!.combo[comboIndex].components[i].name
-                                )
-                            )
-                    if (!menuItemSelected!!.combo[comboIndex].components[i].items.isEmpty()) sandwichId =
-                        menuItemSelected!!.combo[comboIndex].components[i].items[0].itemId.toString()
-                    break
-                }
-            }
-            val components = menuItemSelected!!.combo[comboIndex].components
-            val itemAnimator = binding.combosList.itemAnimator
-            if (itemAnimator != null) {
-                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-            }
-            val activity: Activity? = activity
-            if (activity != null) {
-                combosListAdapter =
-                    CombosListAdapter(activity, components, menuPresenter, menuItemSelected)
-                binding.combosList.adapter = combosListAdapter
-                ViewCompat.setNestedScrollingEnabled(binding.combosList, false)
-                if (menuItemSelected!!.isSandwichOnly) {
-                    binding.combosList.visibility = View.GONE
-                } else {
-                    binding.combosList.visibility = View.VISIBLE
-                }
-                try {
-                    val state = binding.combosList.layoutManager!!.onSaveInstanceState()
-                    combosListAdapter!!.notifyDataSetChanged()
-                    binding.combosList.layoutManager!!.onRestoreInstanceState(state)
-                } catch (e: Exception) {
-                    combosListAdapter!!.notifyDataSetChanged()
-                    e.printStackTrace()
-                }
-
-                //setupYourWay(components);
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+//    private fun setupCombos(menuItem: MenuItem) {
+//        if (!menuItemSelected!!.isCombo) {
+//            binding.combosList.visibility = View.GONE
+//            binding.yourWayList.visibility = View.GONE
+//            return
+//        }
+//        if (menuItemSelected!!.combo.isEmpty()) {
+//            binding.yourWayList.visibility = View.GONE
+//            binding.combosList.visibility = View.GONE
+//            return
+//        }
+//        var comboIndex = 0
+//        if (binding.sizesLabel.visibility == View.VISIBLE || binding.sizesCard.visibility == View.VISIBLE) {
+//            var counter = 0
+//            for (modifierItem in menuItemSelected!!.sizes.modifierItems) {
+//                if (modifierItem.attributes.isSelected) {
+//                    comboIndex = counter
+//                    break
+//                }
+//                counter++
+//            }
+//        }
+//        menuPresenter!!.assignComboIndex(comboIndex)
+//        menuPresenter!!.assignMenuItem(menuItemSelected)
+//        menuItemSelected!!.combo[comboIndex].components = menuPresenter!!.componentsSelectFirst(
+//            menuItemSelected!!.combo[comboIndex].components
+//        )
+//        menuPresenter!!.assignMenuItem(menuItemSelected)
+//        try {
+//            for (i in menuItemSelected!!.combo[comboIndex].components.indices) {
+//                if (menuItemSelected!!.combo[comboIndex].components[i].name.english.lowercase(Locale.getDefault())
+//                        .contains("sandwich") || menuItemSelected!!.combo[comboIndex].components[i].name.french.lowercase(
+//                        Locale.getDefault()
+//                    ).contains("sandwich")
+//                ) {
+//                    binding.mealDealsTabs.sandwichOnlyButton.text =
+//                        CacheUtil.getInstance().getTranslations(Text.SANDWICH_ONLY, "(x) only")
+//                            .replace(
+//                                "(x)",
+//                                translated(
+//                                    LocaleUtil.getInstance().language,
+//                                    menuItemSelected!!.combo[comboIndex].components[i].name
+//                                )
+//                            )
+//                    if (!menuItemSelected!!.combo[comboIndex].components[i].items.isEmpty()) sandwichId =
+//                        menuItemSelected!!.combo[comboIndex].components[i].items[0].itemId.toString()
+//                    break
+//                }
+//            }
+//            val components = menuItemSelected!!.combo[comboIndex].components
+//            val itemAnimator = binding.combosList.itemAnimator
+//            if (itemAnimator != null) {
+//                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+//            }
+//            val activity: Activity? = activity
+//            if (activity != null) {
+//                combosListAdapter =
+//                    CombosListAdapter(activity, components, menuPresenter, menuItemSelected)
+//                binding.combosList.adapter = combosListAdapter
+//                ViewCompat.setNestedScrollingEnabled(binding.combosList, false)
+//                if (menuItemSelected!!.isSandwichOnly) {
+//                    binding.combosList.visibility = View.GONE
+//                } else {
+//                    binding.combosList.visibility = View.VISIBLE
+//                }
+//                try {
+//                    val state = binding.combosList.layoutManager!!.onSaveInstanceState()
+//                    combosListAdapter!!.notifyDataSetChanged()
+//                    binding.combosList.layoutManager!!.onRestoreInstanceState(state)
+//                } catch (e: Exception) {
+//                    combosListAdapter!!.notifyDataSetChanged()
+//                    e.printStackTrace()
+//                }
+//
+//                //setupYourWay(components);
+//            }
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+//    }
 
     fun translated(language: String, name: Translated): String {
         return if (language.equals("en-us", ignoreCase = true)) {
@@ -899,30 +881,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         }
     }
 
-    fun setupYourWay(components: ArrayList<MenuItemComponents?>?) {
-        val components1 = menuPresenter!!.filterComponents(components)
-        if (!components1.isEmpty()) {
-            comboMainYourWayListAdapter = ComboMainYourWayListAdapter(
-                requireActivity(),
-                components1,
-                menuPresenter,
-                menuItemSelected
-            )
-            binding.yourWayList.adapter = comboMainYourWayListAdapter
-            binding.yourWayList.visibility = View.VISIBLE
-            try {
-                val state = binding.yourWayList.layoutManager!!.onSaveInstanceState()
-                comboMainYourWayListAdapter!!.notifyDataSetChanged()
-                binding.yourWayList.layoutManager!!.onRestoreInstanceState(state)
-            } catch (e: Exception) {
-                comboMainYourWayListAdapter!!.notifyDataSetChanged()
-                e.printStackTrace()
-            }
-        } else {
-            binding.yourWayList.visibility = View.GONE
-            comboMainYourWayListAdapter!!.notifyDataSetChanged()
-        }
-    }
 
     override fun setFavorite(menuItem: MenuItem) {
         if (!args.isPromo && AuthUtil.getInstance().isSignedIn && CacheUtil.getInstance().favorites.contains(
@@ -951,162 +909,165 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             showSizes = false
         }
         if (showSizes) {
+            Log.d("FAFA","Sizes value " + menuItem.sizes.modifierItems.size + " Items " + menuItem.sizes.modifierItems.size)
             if (menuItem.sizes.modifierItems.size > 1) {
                 if (menuItem.sizes.modifierItems.size <= 3) {
-                    binding.sizeSecond.visibility =
-                        if (menuItem.sizes.modifierItems.size >= 2) View.VISIBLE else View.GONE
-                    binding.sizeThird.visibility =
-                        if (menuItem.sizes.modifierItems.size == 3) View.VISIBLE else View.GONE
+//                    binding.sizeSecond.visibility =
+//                        if (menuItem.sizes.modifierItems.size >= 2) View.VISIBLE else View.GONE
+//                    binding.sizeThird.visibility =
+//                        if (menuItem.sizes.modifierItems.size == 3) View.VISIBLE else View.GONE
                     if (initialModifierId != menuItem.sizes.modifierItems[0].id) {
                         initialModifierId = ""
                     }
                     if (initialModifierId.isEmpty()) {
                         when (menuItem.sizes.modifierItems.size) {
                             3 -> {
-                                binding.sizeThird.text =
-                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 0 else 2].attributes.translatedName.getValue(
-                                        LocaleUtil.getInstance().language
-                                    )
-                                binding.sizeSecond.text =
-                                    menuItem.sizes.modifierItems[1].attributes.translatedName.getValue(
-                                        LocaleUtil.getInstance().language
-                                    )
-                                binding.sizeFirst.text =
-                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 2 else 0].attributes.translatedName.getValue(
-                                        LocaleUtil.getInstance().language
-                                    )
+//                                binding.sizeThird.text =
+//                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 0 else 2].attributes.translatedName.getValue(
+//                                        LocaleUtil.getInstance().language
+//                                    )
+//                                binding.sizeSecond.text =
+//                                    menuItem.sizes.modifierItems[1].attributes.translatedName.getValue(
+//                                        LocaleUtil.getInstance().language
+//                                    )
+//                                binding.sizeFirst.text =
+//                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 2 else 0].attributes.translatedName.getValue(
+//                                        LocaleUtil.getInstance().language
+//                                    )
                                 initialModifierId = menuItem.sizes.modifierItems[0].id
                             }
 
                             2 -> {
-                                binding.sizeSecond.text =
-                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 0 else 1].attributes.translatedName.getValue(
-                                        LocaleUtil.getInstance().language
-                                    )
-                                binding.sizeFirst.text =
-                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 1 else 0].attributes.translatedName.getValue(
-                                        LocaleUtil.getInstance().language
-                                    )
+//                                binding.sizeSecond.text =
+//                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 0 else 1].attributes.translatedName.getValue(
+//                                        LocaleUtil.getInstance().language
+//                                    )
+//                                binding.sizeFirst.text =
+//                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 1 else 0].attributes.translatedName.getValue(
+//                                        LocaleUtil.getInstance().language
+//                                    )
                                 initialModifierId = menuItem.sizes.modifierItems[0].id
                             }
                         }
                     }
-                    for ((index, size) in menuItem.sizes.modifierItems.withIndex()) {
-                        if (size.attributes.isSelected) {
-                            if (LocaleUtil.getInstance().isArabic) {
-                                binding.sizesSegmented.setPosition(
-                                    (menuItem.sizes.modifierItems.size - 1) - index,
-                                    false
-                                )
-                            } else {
-                                binding.sizesSegmented.setPosition(
-                                    menuItem.sizes.modifierItems.indexOf(size),
-                                    false
-                                )
-                            }
-                            break
-                        }
-                    }
-                    binding.sizesSegmented.onPositionChangedListener =
-                        OnPositionChangedListener { position: Int ->
-                            if (canChangeSize) {
-                                shouldReset = lastPosition != position
-                                lastPosition = position
-                                for (group in menuItem.modifierGroups) {
-                                    val indexOfGroup = menuItem.modifierGroups.indexOf(group)
-                                    if (shouldReset) {
-                                        if (group.attributes.minimum == 1 && group.modifierItems.size >= 1) {
-                                            for (i in group.modifierItems.indices) {
-                                                menuPresenter!!.selectModifierItem(
-                                                    false,
-                                                    indexOfGroup,
-                                                    group,
-                                                    i,
-                                                    group.modifierItems[0]
-                                                )
-                                            }
-                                        } else {
-                                            for (i in group.modifierItems.indices) {
-                                                menuPresenter!!.selectModifierItem(
-                                                    false,
-                                                    indexOfGroup,
-                                                    group,
-                                                    i,
-                                                    group.modifierItems[i]
-                                                )
-                                            }
-                                        }
-                                        for (i in group.defaultModifiers.indices) {
-                                            menuPresenter!!.selectModifierItem(
-                                                true,
-                                                indexOfGroup,
-                                                group,
-                                                i,
-                                                group.modifierItems[i]
-                                            )
-                                            break
-                                        }
-                                    }
-                                }
-                                shouldReset = false
-                                if (modifierGroupsAdapter != null) {
-                                    modifierGroupsAdapter!!.notifyDataSetChanged()
-                                }
-                                if (!LocaleUtil.getInstance().isArabic) {
-                                    sizeId = menuItem.sizes.modifierItems[position].id
-                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[position].id)
-                                } else {
-                                    // handling arabic
-                                    if (menuItem.sizes.modifierItems.size > 1) {
-                                        if (menuItem.sizes.modifierItems.size == 2) {
-                                            when (position) {
-                                                1 -> {
-                                                    sizeId = menuItem.sizes.modifierItems[0].id
-                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[0].id)
-                                                }
-
-                                                0 -> {
-                                                    sizeId = menuItem.sizes.modifierItems[1].id
-                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[1].id)
-                                                }
-                                            }
-                                        } else if (menuItem.sizes.modifierItems.size == 3) {
-                                            when (position) {
-                                                2 -> {
-                                                    sizeId = menuItem.sizes.modifierItems[0].id
-                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[0].id)
-                                                }
-
-                                                1 -> {
-                                                    sizeId = menuItem.sizes.modifierItems[1].id
-                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[1].id)
-                                                }
-
-                                                0 -> {
-                                                    sizeId = menuItem.sizes.modifierItems[2].id
-                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[2].id)
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        sizeId = menuItem.sizes.modifierItems[position].id
-                                        menuPresenter!!.selectSize(menuItem.sizes.modifierItems[position].id)
-                                    }
-                                }
-                            }
-
-                        }
-                    binding.sizesCard.visibility = View.VISIBLE
+//                    for ((index, size) in menuItem.sizes.modifierItems.withIndex()) {
+//                        if (size.attributes.isSelected) {
+//                            if (LocaleUtil.getInstance().isArabic) {
+//                                binding.sizesSegmented.setPosition(
+//                                    (menuItem.sizes.modifierItems.size - 1) - index,
+//                                    false
+//                                )
+//                            } else {
+//                                binding.sizesSegmented.setPosition(
+//                                    menuItem.sizes.modifierItems.indexOf(size),
+//                                    false
+//                                )
+//                            }
+//                            break
+//                        }
+//                    }
+//                    binding.sizesSegmented.onPositionChangedListener =
+//                        OnPositionChangedListener { position: Int ->
+//                            if (canChangeSize) {
+//                                shouldReset = lastPosition != position
+//                                lastPosition = position
+//                                for (group in menuItem.modifierGroups) {
+//                                    val indexOfGroup = menuItem.modifierGroups.indexOf(group)
+//                                    if (shouldReset) {
+//                                        if (group.attributes.minimum == 1 && group.modifierItems.size >= 1) {
+//                                            for (i in group.modifierItems.indices) {
+//                                                menuPresenter!!.selectModifierItem(
+//                                                    false,
+//                                                    indexOfGroup,
+//                                                    group,
+//                                                    i,
+//                                                    group.modifierItems[0]
+//                                                )
+//                                            }
+//                                        } else {
+//                                            for (i in group.modifierItems.indices) {
+//                                                menuPresenter!!.selectModifierItem(
+//                                                    false,
+//                                                    indexOfGroup,
+//                                                    group,
+//                                                    i,
+//                                                    group.modifierItems[i]
+//                                                )
+//                                            }
+//                                        }
+//                                        for (i in group.defaultModifiers.indices) {
+//                                            menuPresenter!!.selectModifierItem(
+//                                                true,
+//                                                indexOfGroup,
+//                                                group,
+//                                                i,
+//                                                group.modifierItems[i]
+//                                            )
+//                                            break
+//                                        }
+//                                    }
+//                                }
+//                                shouldReset = false
+//                                if (modifierGroupsAdapter != null) {
+//                                    modifierGroupsAdapter!!.notifyDataSetChanged()
+//                                }
+//                                if (!LocaleUtil.getInstance().isArabic) {
+//                                    sizeId = menuItem.sizes.modifierItems[position].id
+//                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[position].id)
+//                                } else {
+//                                    // handling arabic
+//                                    if (menuItem.sizes.modifierItems.size > 1) {
+//                                        if (menuItem.sizes.modifierItems.size == 2) {
+//                                            when (position) {
+//                                                1 -> {
+//                                                    sizeId = menuItem.sizes.modifierItems[0].id
+//                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[0].id)
+//                                                }
+//
+//                                                0 -> {
+//                                                    sizeId = menuItem.sizes.modifierItems[1].id
+//                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[1].id)
+//                                                }
+//                                            }
+//                                        } else if (menuItem.sizes.modifierItems.size == 3) {
+//                                            when (position) {
+//                                                2 -> {
+//                                                    sizeId = menuItem.sizes.modifierItems[0].id
+//                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[0].id)
+//                                                }
+//
+//                                                1 -> {
+//                                                    sizeId = menuItem.sizes.modifierItems[1].id
+//                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[1].id)
+//                                                }
+//
+//                                                0 -> {
+//                                                    sizeId = menuItem.sizes.modifierItems[2].id
+//                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[2].id)
+//                                                }
+//                                            }
+//                                        }
+//                                    } else {
+//                                        sizeId = menuItem.sizes.modifierItems[position].id
+//                                        menuPresenter!!.selectSize(menuItem.sizes.modifierItems[position].id)
+//                                    }
+//                                }
+//                            }
+//
+//                        }
                 } else {
                     try {
                         val activity: Activity? = activity
                         if (activity != null) {
                             sizesAdapter = SizesRecyclerViewAdapter(activity, menuPresenter)
+
                             sizesAdapter!!.setOnAction { modifierItem: ModifierItem ->
                                 menuPresenter!!.selectSize(modifierItem.id)
                                 sizesAdapter!!.notifyDataSetChanged()
+                                Log.d("FAFA","Sizes adapter count " + sizesAdapter?.itemCount);
                                 if (modifierGroupsAdapter != null) {
                                     modifierGroupsAdapter!!.notifyDataSetChanged()
+                                    Log.d("FAFA","Group count " + modifierGroupsAdapter?.itemCount)
                                 }
                             }
                             binding.sizesRecyclerView.adapter = sizesAdapter
@@ -1114,6 +1075,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             binding.sizesCard.visibility = View.GONE
                             binding.sizesLabel.visibility = View.VISIBLE
                             binding.sizesRecyclerView.visibility = View.VISIBLE
+                            Log.d("FAFA","Binding sizes recycle view " + binding.sizesRecyclerView.isVisible + " ")
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -1161,12 +1123,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         binding.minus.isFocusable = quantityValue != 1
         binding.minus.isClickable = quantityValue != 1
         if (quantityValue != 1) {
-            binding.minus.setColorFilter(
-                Color.parseColor(CacheUtil.getInstance().colorMain),
-                PorterDuff.Mode.SRC_IN
-            )
+//            binding.minus.setColorFilter(
+//                Color.parseColor(CacheUtil.getInstance().colorMain),
+//                PorterDuff.Mode.SRC_IN
+//            )
         } else {
-            binding.minus.setColorFilter(Color.parseColor("#BEBEBE"), PorterDuff.Mode.SRC_IN)
+//            binding.minus.setColorFilter(Color.parseColor("#BEBEBE"), PorterDuff.Mode.SRC_IN)
         }
         binding.quantity.text = StringUtil.localize(quantityValue.toString())
     }
@@ -1329,9 +1291,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         activity?.cast<BaseActivity> {
             it.runOnUiThread {
                 binding.coordinatorLayout.visibility = View.VISIBLE
-                binding.imageShimmer.visibility = View.VISIBLE
-                binding.detailsShimmer.visibility = View.VISIBLE
-                binding.componentsShimmer.visibility = View.VISIBLE
+//                binding.imageShimmer.visibility = View.VISIBLE
+//                binding.detailsShimmer.visibility = View.VISIBLE
+//                binding.componentsShimmer.visibility = View.VISIBLE
             }
         }
     }

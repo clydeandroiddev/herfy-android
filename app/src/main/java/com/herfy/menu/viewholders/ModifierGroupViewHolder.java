@@ -10,11 +10,13 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.herfy.BuildConfig;
 import com.herfy.R;
-import com.herfy.data.constants.Text;
+import com.herfy.constants.Text;
 import com.herfy.menu.MenuContract;
-import com.herfy.menu.adapters.ModifierItemsRecyclerViewAdapter;
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
+import com.herfy.util.CacheUtil;
+import com.herfy.util.LocaleUtil;
+import com.herfy.util.StringUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
@@ -52,9 +54,9 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
 
-    private ModifierItemViewHolder.OnAction onAction;
+    private BaseModifierItemViewHolder.OnAction onAction;
 
-    public void setOnAction(ModifierItemViewHolder.OnAction onAction) {
+    public void setOnAction(BaseModifierItemViewHolder.OnAction onAction) {
         this.onAction = onAction;
     }
 
@@ -184,6 +186,7 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
 
     }
 
+
     @Override
     public void setIngredient(Ingredient ingredient) {
 
@@ -246,14 +249,13 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
             }
 
             //hamburgini hide free modifiers text
-            if(BuildConfig.SOLO_CONCEPT == "1"){
+
                 if(modifierGroup.getFreeModifiersCount() > 0) {
                     free.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_MODIFIERS_FOR_FREE, "Select (x) modifiers for free").replace("(x)", StringUtil.localize(String.valueOf(modifierGroup.getFreeModifiersCount()))));
                     free.setVisibility(View.VISIBLE);
                 } else {
                     free.setVisibility(View.GONE);
                 }
-            }else{
                 if(modifierGroup.getAttributes().getFreeModifiersCount() > 0) {
                     free.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_MODIFIERS_FOR_FREE, "Select (x) modifiers for free").replace("(x)", StringUtil.localize(String.valueOf(modifierGroup.getAttributes().getFreeModifiersCount()))));
                     free.setVisibility(View.VISIBLE);
@@ -262,10 +264,10 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
                 }
             }
 
-        }
+
 
         //hamburgini
-        if(BuildConfig.SOLO_CONCEPT == "1"){
+
             select.setVisibility(View.INVISIBLE);
             String selectString ="";
             int minimum = modifierGroup.getAttributes().getMinimum();
@@ -288,16 +290,17 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
             } else {
                 selectString = "";
             }
+
             name.setText(modifierGroup.getAttributes().getName() +" "+selectString);
-        }else{
+
             name.setText(modifierGroup.getAttributes().getName());
-        }
+
+
 
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-
-        ModifierItemsRecyclerViewAdapter modifierItemsRecyclerViewAdapter = new ModifierItemsRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice);
-        modifierItemsRecyclerViewAdapter.setOnAction(onAction);
-        recyclerView.setAdapter(modifierItemsRecyclerViewAdapter);
+        ModifierItemsNewRecyclerViewAdapter modifierItemsNewRecyclerViewAdapter = new ModifierItemsNewRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice);
+        modifierItemsNewRecyclerViewAdapter.setOnAction(onAction);
+        recyclerView.setAdapter(modifierItemsNewRecyclerViewAdapter);
     }
 
     @Override

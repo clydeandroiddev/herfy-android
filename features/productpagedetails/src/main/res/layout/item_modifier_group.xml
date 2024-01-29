@@ -6,20 +6,20 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/txtModifierGroupTitle"
+        android:id="@+id/name"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_width="wrap_content"
         android:textAlignment="viewStart"
         android:fontFamily="@font/cairo_bold"
         android:textColor="@color/black"
-        tools:text = "Choose size"
+        tools:text = "Topic Sauce"
         android:layout_height="wrap_content"/>
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/txtModifierLabel"
         android:layout_width="wrap_content"
         tools:text = "Select one"
-        app:layout_constraintTop_toBottomOf="@+id/txtModifierGroupTitle"
+        app:layout_constraintTop_toBottomOf="@+id/name"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="@dimen/margin_5dp"
         android:layout_height="wrap_content"/>
@@ -34,16 +34,17 @@
         app:layout_constraintTop_toBottomOf="@+id/txtModifierLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_modifier_item"
+        tools:listitem="@layout/item_modifier_item_with_description"
         tools:itemCount="5"
         android:layout_marginTop="@dimen/margin_large"
+
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:paddingBottom="16dp"/>
 
     <LinearLayout
         android:id="@+id/btnRequired"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="73dp"
+        android:layout_height="30dp"
         android:background="@drawable/bg_rounded_background"
         android:gravity="center"
         android:textAlignment="viewEnd"

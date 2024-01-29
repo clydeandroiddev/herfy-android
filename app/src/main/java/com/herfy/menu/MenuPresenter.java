@@ -23,11 +23,21 @@ import com.herfy.data.entities.MenuItemEntity;
 import com.herfy.data.entities.ModifierGroupDb;
 import com.herfy.data.entities.ModifierItemDb;
 import com.herfy.data.responses.MenuCategoryItemResponse;
+import com.herfy.database.AppDatabase;
+import com.herfy.database.entities.AllergenDb;
+import com.herfy.database.entities.IngredientDb;
+import com.herfy.database.entities.MenuCategoryDb;
+import com.herfy.database.entities.MenuCategoryEntity;
+import com.herfy.database.entities.MenuItemDb;
+import com.herfy.database.entities.MenuItemEntity;
+import com.herfy.database.entities.ModifierGroupDb;
+import com.herfy.database.entities.ModifierItemDb;
+import com.herfy.database.responses.MenuCategoryItemResponse;
+import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.IngredientViewHolder;
 import com.herfy.menu.viewholders.MenuCategoryViewHolder;
 import com.herfy.menu.viewholders.MenuItemViewHolder;
 import com.herfy.menu.viewholders.ModifierGroupViewHolder;
-import com.herfy.menu.viewholders.ModifierItemViewHolder;
 import com.herfy.menu.viewholders.ModifierItemViewHolderNew;
 import com.herfy.menu.viewholders.SizeViewHolder;
 import com.herfy.newmenu.viewholder.MenuCouponViewHolder;
@@ -83,7 +93,7 @@ import com.herfy.util.AuthUtil;
 import com.herfy.util.BuildUtil;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.ErrorHandler;
-import com.herfy.utils.helper.LocaleUtil;
+import com.herfy.util.LocaleUtil;
 import com.herfy.util.MenuUtil;
 import com.herfy.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;
@@ -3629,9 +3639,15 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, ModifierItemViewHolder modifierItemViewHolder) {
+    public void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, BaseModifierItemViewHolder modifierItemViewHolder) {
         modifierItemViewHolder.setModifierItem(modifierGroupPosition, modifierGroup, position, modifierGroup.getModifierItems().get(position), showModifierItemPrice);
     }
+
+    @Override
+    public ModifierGroupType getModifierGroupTypeByPosition(int position, ModifierGroup modifierGroup) {
+        return modifierGroup.getModifierItems().get(position).getModifierGroup().getType();
+    }
+
 
     @Override
     public int getModifierItemsCount(ModifierGroup modifierGroup) {
