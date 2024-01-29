@@ -28,18 +28,22 @@ import com.herfy.analytics.MixpanelUtil
 import com.herfy.util.glide.UnsafeOkHttpClient
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
+import dagger.hilt.android.HiltAndroidApp
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
+@HiltAndroidApp
 class BaseApplication : Application(), ImageLoaderFactory {
 
     override fun onCreate() {
         super.onCreate()
 
-        startKoin {
+      /*  startKoin {
             androidContext(this@BaseApplication)
             modules(listOf(appModule, viewModelModule))
-        }
+        }*/
+
+
 
         FirebaseApp.initializeApp(this)
         sdkInitialize(this)

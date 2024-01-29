@@ -66,7 +66,9 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.hilt.android.AndroidEntryPoint;
 
+@AndroidEntryPoint
 public class SplashActivity extends BaseActivity implements SplashContract.View {
 
     private SplashContract.Presenter splashPresenter;
