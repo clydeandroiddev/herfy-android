@@ -8,6 +8,7 @@ import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.IngredientViewHolder;
 import com.herfy.menu.viewholders.MenuCategoryViewHolder;
 import com.herfy.menu.viewholders.MenuItemViewHolder;
+import com.herfy.menu.viewholders.ModifierItemViewHolder;
 import com.herfy.menu.viewholders.ModifierNewGroupViewHolder;
 import com.herfy.menu.viewholders.ModifierItemViewHolderNew;
 import com.herfy.menu.viewholders.SizeViewHolder;
@@ -294,6 +295,7 @@ public interface MenuContract {
         void onBindModifierItemViewAtPositionNew(ModifierGroup modifierGroup, int position, ModifierItemViewHolderNew modifierItemViewHolderNew);
 
         void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, BaseModifierItemViewHolder modifierItemViewHolder);
+        void onBindModifierItemViewAtPositionOld(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, ModifierItemViewHolder modifierItemViewHolder);
         ModifierGroupType getModifierGroupTypeByPosition(int position, ModifierGroup modifierGroup);
         int getModifierItemsCount(ModifierGroup modifierGroup);
 
