@@ -18,6 +18,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:id="@+id/headerToolbar"
             android:layout_height="?attr/actionBarSize">
 
             <androidx.appcompat.widget.AppCompatImageButton
