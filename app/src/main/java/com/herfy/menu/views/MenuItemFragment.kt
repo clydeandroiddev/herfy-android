@@ -616,17 +616,18 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 }
                 binding.minus.isFocusable = menuItem.attributes.quantity != 1
                 binding.minus.isClickable = menuItem.attributes.quantity != 1
-                if (menuItem.attributes.quantity != 1) {
-                    binding.minus.setColorFilter(
-                        Color.parseColor(CacheUtil.getInstance().colorMain),
-                        PorterDuff.Mode.SRC_IN
-                    )
-                } else {
-                    binding.minus.setColorFilter(
-                        Color.parseColor("#BEBEBE"),
-                        PorterDuff.Mode.SRC_IN
-                    )
-                }
+                // todo revert this once needed
+//                if (menuItem.attributes.quantity != 1) {
+//                    binding.minus.setColorFilter(
+//                        Color.parseColor(CacheUtil.getInstance().colorMain),
+//                        PorterDuff.Mode.SRC_IN
+//                    )
+//                } else {
+//                    binding.minus.setColorFilter(
+//                        Color.parseColor("#BEBEBE"),
+//                        PorterDuff.Mode.SRC_IN
+//                    )
+//                }
                 setMenuItemQuantity(menuItem.attributes.quantity)
                 if (cartMenuItem >= 0 || args.isEdit) {
                     binding.add.text = CacheUtil.getInstance().getTranslations(Text.UPDATE)
@@ -1134,14 +1135,16 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun setMenuItemQuantity(quantityValue: Int) {
         binding.minus.isFocusable = quantityValue != 1
         binding.minus.isClickable = quantityValue != 1
-        if (quantityValue != 1) {
-            binding.minus.setColorFilter(
-                Color.parseColor(CacheUtil.getInstance().colorMain),
-                PorterDuff.Mode.SRC_IN
-            )
-        } else {
-            binding.minus.setColorFilter(Color.parseColor("#BEBEBE"), PorterDuff.Mode.SRC_IN)
-        }
+
+        // todo revert this once needed
+//        if (quantityValue != 1) {
+//            binding.minus.setColorFilter(
+//                Color.parseColor(CacheUtil.getInstance().colorMain),
+//                PorterDuff.Mode.SRC_IN
+//            )
+//        } else {
+//            binding.minus.setColorFilter(Color.parseColor("#BEBEBE"), PorterDuff.Mode.SRC_IN)
+//        }
         binding.quantity.text = StringUtil.localize(quantityValue.toString())
     }
 
