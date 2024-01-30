@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -540,6 +541,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 setSizes(menuItem)
                 canChangeSize = true
                 if (shouldReset || menuPresenter!!.modifierGroupsCount > 0) {
+                    binding.modifierGroupsRecyclerView.visibility = View.VISIBLE
+                    binding.menuItemGroupCardView.visibility = View.VISIBLE
                     val showModifierItemPrice = HashMap<Int, Boolean>()
                     for (group in menuItem.modifierGroups) {
                         val indexOfGroup = menuItem.modifierGroups.indexOf(group)
@@ -562,6 +565,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             modifierItemPosition: Int,
                             modifierItem: ModifierItem
                         ) {
+
+                            Log.d("OnAction", "onCheckedChanged - isSelected: " + isSelected +
+                                    ", modifierGroupPosition: " + modifierGroupPosition +
+                                    ", modifierGroup: " + modifierGroup +
+                                    ", modifierItemPosition: " + modifierItemPosition +
+                                    ", modifierItem: " + modifierItem);
                             menuPresenter!!.selectModifierItem(
                                 isSelected,
                                 modifierGroupPosition,
@@ -571,8 +580,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             )
                             setSizes(menuItem)
                             shouldReset = false
-                            if (modifierGroupsAdapter != null) modifierGroupsAdapter!!.notifyDataSetChanged()
-                            //Trigger calorie count
+                            if (modifierGroupsAdapter != null) {
+                                modifierGroupsAdapter!!.notifyDataSetChanged()
+                            }
+
+
                         }
 
                         override fun onQuantityChanged(
@@ -596,24 +608,24 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         }
                     })
                     binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapter
-                    Log.d("FAFA","Modifier group count " + modifierGroupsAdapter?.itemCount)
                     ViewCompat.setNestedScrollingEnabled(binding.modifierGroupsRecyclerView, false)
                     binding.modifierGroupsRecyclerView.visibility = View.VISIBLE
                 } else {
                     binding.modifierGroupsRecyclerView.visibility = View.GONE
+                    binding.menuItemGroupCardView.visibility = View.GONE
                 }
                 binding.minus.isFocusable = menuItem.attributes.quantity != 1
                 binding.minus.isClickable = menuItem.attributes.quantity != 1
                 if (menuItem.attributes.quantity != 1) {
-//                    binding.minus.setColorFilter(
-//                        Color.parseColor(CacheUtil.getInstance().colorMain),
-//                        PorterDuff.Mode.SRC_IN
-//                    )
+                    binding.minus.setColorFilter(
+                        Color.parseColor(CacheUtil.getInstance().colorMain),
+                        PorterDuff.Mode.SRC_IN
+                    )
                 } else {
-//                    binding.minus.setColorFilter(
-//                        Color.parseColor("#BEBEBE"),
-//                        PorterDuff.Mode.SRC_IN
-//                    )
+                    binding.minus.setColorFilter(
+                        Color.parseColor("#BEBEBE"),
+                        PorterDuff.Mode.SRC_IN
+                    )
                 }
                 setMenuItemQuantity(menuItem.attributes.quantity)
                 if (cartMenuItem >= 0 || args.isEdit) {
@@ -909,9 +921,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             showSizes = false
         }
         if (showSizes) {
-            Log.d("FAFA","Sizes value " + menuItem.sizes.modifierItems.size + " Items " + menuItem.sizes.modifierItems.size)
             if (menuItem.sizes.modifierItems.size > 1) {
                 if (menuItem.sizes.modifierItems.size <= 3) {
+
 //                    binding.sizeSecond.visibility =
 //                        if (menuItem.sizes.modifierItems.size >= 2) View.VISIBLE else View.GONE
 //                    binding.sizeThird.visibility =
@@ -1064,10 +1076,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             sizesAdapter!!.setOnAction { modifierItem: ModifierItem ->
                                 menuPresenter!!.selectSize(modifierItem.id)
                                 sizesAdapter!!.notifyDataSetChanged()
-                                Log.d("FAFA","Sizes adapter count " + sizesAdapter?.itemCount);
                                 if (modifierGroupsAdapter != null) {
                                     modifierGroupsAdapter!!.notifyDataSetChanged()
-                                    Log.d("FAFA","Group count " + modifierGroupsAdapter?.itemCount)
+
                                 }
                             }
                             binding.sizesRecyclerView.adapter = sizesAdapter
@@ -1075,7 +1086,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             binding.sizesCard.visibility = View.GONE
                             binding.sizesLabel.visibility = View.VISIBLE
                             binding.sizesRecyclerView.visibility = View.VISIBLE
-                            Log.d("FAFA","Binding sizes recycle view " + binding.sizesRecyclerView.isVisible + " ")
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -1111,6 +1121,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     ) {
     }
 
+
+
     override fun setIngredient(ingredient: Ingredient) {}
     override fun setModifierGroup(
         position: Int,
@@ -1123,12 +1135,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         binding.minus.isFocusable = quantityValue != 1
         binding.minus.isClickable = quantityValue != 1
         if (quantityValue != 1) {
-//            binding.minus.setColorFilter(
-//                Color.parseColor(CacheUtil.getInstance().colorMain),
-//                PorterDuff.Mode.SRC_IN
-//            )
+            binding.minus.setColorFilter(
+                Color.parseColor(CacheUtil.getInstance().colorMain),
+                PorterDuff.Mode.SRC_IN
+            )
         } else {
-//            binding.minus.setColorFilter(Color.parseColor("#BEBEBE"), PorterDuff.Mode.SRC_IN)
+            binding.minus.setColorFilter(Color.parseColor("#BEBEBE"), PorterDuff.Mode.SRC_IN)
         }
         binding.quantity.text = StringUtil.localize(quantityValue.toString())
     }

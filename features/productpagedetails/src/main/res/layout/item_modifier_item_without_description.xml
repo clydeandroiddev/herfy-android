@@ -24,7 +24,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
-            android:src="@drawable/item_drawable_checked_state" />
+            android:src="@drawable/size" />
 
     </FrameLayout>
 

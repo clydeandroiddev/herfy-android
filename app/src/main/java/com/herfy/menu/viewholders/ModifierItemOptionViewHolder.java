@@ -71,9 +71,9 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder {
     public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
         getModifierNameTextView().setText(Html.fromHtml(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage())), TextView.BufferType.SPANNABLE);
         if (modifierItem.getAttributes().isSelected()) {
-            checkBox.setImageResource(R.drawable.modifier_item_selected);
+            checkBox.setImageResource(R.drawable.size_selected);
         } else {
-            checkBox.setImageResource(R.drawable.modifier_item_unselected);
+            checkBox.setImageResource(R.drawable.size_unselected);
         }
         checkLayout.setOnClickListener(new View.OnClickListener() {
             @Override

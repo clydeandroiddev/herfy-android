@@ -22,7 +22,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
-            android:src="@drawable/item_drawable_checked_state" />
+            android:src="@drawable/size" />
 
     </FrameLayout>
 
@@ -30,7 +30,7 @@
         android:id="@+id/txtModifierItemName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_large"
+
         android:ellipsize="end"
         android:fontFamily="@font/cairo_bold"
         tools:text = "Small"
