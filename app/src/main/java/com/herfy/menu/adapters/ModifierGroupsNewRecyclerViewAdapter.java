@@ -35,7 +35,7 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
     @NonNull
     @Override
     public ModifierNewGroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ModifierNewGroupViewHolder modifierGroupViewHolder = new ModifierNewGroupViewHolder(context, menuPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_modifier_group, parent, false));
+        ModifierNewGroupViewHolder modifierGroupViewHolder = new ModifierNewGroupViewHolder(context, menuPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_modifier_group_new, parent, false));
         modifierGroupViewHolder.setOnAction(onAction);
         return modifierGroupViewHolder;
 

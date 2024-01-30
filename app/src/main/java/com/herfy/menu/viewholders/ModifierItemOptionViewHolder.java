@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
+import com.herfy.productpagedetails.ui.viewholder.util.ArabicUtils;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.LocaleUtil;
 import com.herfy.util.ModifierProcessor;
@@ -74,7 +75,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
     @Override
     public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
-        getModifierNameTextView().setText(Html.fromHtml(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage())), TextView.BufferType.SPANNABLE);
+      modifierProcessor.processModifier(modifierItem);
         if (modifierItem.getAttributes().isSelected()) {
             checkBox.setImageResource(R.drawable.size_selected);
         } else {
@@ -92,10 +93,6 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 }
             }
         });
-//       double modifierPrice = modifierItem.getAttributes().getPrice();
-//        getModifierPriceTextView().setText(modifierPrice == 0
-//                ? CacheUtil.getInstance().getTranslations("free_caps", "Free")
-//                : StringUtil.getFormattedPrice(modifierPrice));
     }
 
     public static boolean isProbablyArabic(String s) {
@@ -116,7 +113,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
             modifierItemName.setText(Html.fromHtml(name),  TextView.BufferType.SPANNABLE);
         } else {
-            if (isProbablyArabic(name)) {
+            if (ArabicUtils.INSTANCE.isArabic(name)) {
                 modifierItemName.setText(Html.fromHtml(name), TextView.BufferType.SPANNABLE);
             } else {
 
