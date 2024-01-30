@@ -35,7 +35,7 @@ import com.herfy.data.constants.Text;
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries;
 import com.skylinedynamics.solosdk.api.models.objects.LoginOption;
 import com.herfy.util.CacheUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;

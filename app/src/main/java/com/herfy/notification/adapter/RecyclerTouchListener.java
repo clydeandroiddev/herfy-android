@@ -16,7 +16,7 @@ import android.widget.ListView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;

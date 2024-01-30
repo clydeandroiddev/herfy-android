@@ -25,7 +25,7 @@ import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.notification.NotificationPresenter
-import com.herfy.util.LocaleUtil
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.notification.adapter.RecyclerTouchListener.OnRowClickListener
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifDeeplink
 import com.herfy.util.CacheUtil

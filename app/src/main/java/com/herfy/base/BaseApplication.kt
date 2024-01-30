@@ -2,44 +2,44 @@ package com.herfy.base
 
 import android.app.Application
 import android.content.Context
-import com.facebook.FacebookSdk.sdkInitialize
-import coil.ImageLoaderFactory
-import com.google.firebase.FirebaseApp
-import com.facebook.appevents.AppEventsLogger
-import com.herfy.data.AppDatabase
-import com.herfy.util.AuthUtil
-import com.herfy.util.CacheUtil
-import com.herfy.util.LocaleUtil
-import com.herfy.font.FontHandler
-import com.skylinedynamics.solosdk.api.SoloApi
-import com.herfy.util.EnvUtil
-import com.herfy.util.BuildUtil
-import com.skylinedynamics.solosdk.api.SoloAuth
-import com.chuckerteam.chucker.api.ChuckerCollector
-import com.chuckerteam.chucker.api.ChuckerInterceptor
-import io.shipbook.shipbooksdk.ShipBook
 import androidx.multidex.MultiDex
 import coil.ImageLoader
+import coil.ImageLoaderFactory
+import com.chuckerteam.chucker.api.ChuckerCollector
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
+import com.facebook.FacebookSdk.sdkInitialize
+import com.facebook.appevents.AppEventsLogger
+import com.google.firebase.FirebaseApp
 import com.herfy.BuildConfig
-import com.herfy.di.appModule
-import com.herfy.di.viewModelModule
 import com.herfy.analytics.MixpanelUtil
+import com.herfy.data.AppDatabase
+import com.herfy.font.FontHandler
+import com.herfy.util.AuthUtil
+import com.herfy.util.BuildUtil
+import com.herfy.util.CacheUtil
+import com.herfy.util.EnvUtil
 import com.herfy.util.glide.UnsafeOkHttpClient
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
+import com.herfy.utils.helper.LocaleUtil
+import com.skylinedynamics.solosdk.api.SoloApi
+import com.skylinedynamics.solosdk.api.SoloAuth
+import dagger.hilt.android.HiltAndroidApp
+import io.shipbook.shipbooksdk.ShipBook
 
+@HiltAndroidApp
 class BaseApplication : Application(), ImageLoaderFactory {
 
     override fun onCreate() {
         super.onCreate()
 
-        startKoin {
+      /*  startKoin {
             androidContext(this@BaseApplication)
             modules(listOf(appModule, viewModelModule))
-        }
+        }*/
+
+
 
         FirebaseApp.initializeApp(this)
         sdkInitialize(this)

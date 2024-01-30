@@ -104,7 +104,7 @@ import com.herfy.util.CurrencyUtils;
 import com.herfy.util.EnvUtil;
 import com.herfy.analytics.FacebookAppEventUtil;
 import com.herfy.analytics.FirebaseECommerceEventUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.ShipBookLogger;
 import com.herfy.util.StringUtil;
 import com.herfy.util.TimeUtil;

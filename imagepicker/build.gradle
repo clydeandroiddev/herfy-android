@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'maven-publish'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 33
@@ -73,7 +74,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.20'
     implementation 'com.github.bumptech.glide:glide:4.14.2'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
+    kapt 'com.github.bumptech.glide:compiler:4.14.2'
     implementation 'com.github.addisonelliott:SegmentedButton:3.1.9'
 }
 
@@ -92,8 +93,4 @@ afterEvaluate {
             }
         }
     }
-}
-
-repositories {
-    mavenCentral()
 }

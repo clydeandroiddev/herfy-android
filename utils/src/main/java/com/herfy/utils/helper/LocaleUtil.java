@@ -1,4 +1,4 @@
-package com.herfy.util;
+package com.herfy.utils.helper;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,7 +8,6 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.view.View;
 
-import com.herfy.BuildConfig;
 import com.skylinedynamics.solosdk.api.SoloAuth;
 
 import java.util.Locale;

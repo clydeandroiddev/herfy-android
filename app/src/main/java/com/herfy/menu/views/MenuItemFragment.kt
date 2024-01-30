@@ -57,6 +57,7 @@ import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.util.GsonHelper
 import com.herfy.util.*
+import com.herfy.utils.helper.LocaleUtil
 import java.util.*
 
 class MenuItemFragment : BaseFragment(), MenuContract.View {

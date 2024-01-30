@@ -21,6 +21,7 @@ import com.herfy.main.MainActivity
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
 import com.herfy.util.*
+import com.herfy.utils.helper.LocaleUtil
 
 class CountriesFragment : BaseFragment(), CountriesContract.View,
     ConfirmConceptSelectionDialog.OnDialogAction {

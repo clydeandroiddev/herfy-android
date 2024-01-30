@@ -6,7 +6,7 @@ import com.herfy.util.AppLogger;
 import com.herfy.util.AuthUtil;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.DeviceUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 
 import java.util.Locale;
 import java.util.UUID;

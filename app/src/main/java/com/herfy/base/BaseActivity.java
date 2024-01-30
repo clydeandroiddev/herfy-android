@@ -59,7 +59,7 @@ import com.herfy.summary.OrderSummaryActivity;
 import com.herfy.upsell.UpsellActivity;
 import com.herfy.util.BuildUtil;
 import com.herfy.util.CacheUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.ReviewManagerUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;

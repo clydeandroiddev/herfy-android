@@ -58,6 +58,7 @@ import com.herfy.util.*
 import com.herfy.util.LatLngInterpolator.Spherical
 import com.herfy.util.extensions.dialPhoneNumber
 import com.herfy.util.extensions.removeSpecialCharacters
+import com.herfy.utils.helper.LocaleUtil
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*

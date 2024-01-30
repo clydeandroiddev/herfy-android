@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="slide"
+            type="com.skylinedynamics.solosdk.api.models.objects.Slide" />
+        <variable
+            name="viewModel"
+            type="com.herfy.home.views.HomeViewModel" />
+    </data>
+
+
+
+
+    <ImageView
+        app:imageUri="@{slide.imageUri}"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:onClick="@{()->viewModel.selectSliderImage(slide)}"
+        android:contentDescription="@{slide.title != null ? slide.title : ``}" />
+
+
+</layout>

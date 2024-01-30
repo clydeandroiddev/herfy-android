@@ -29,7 +29,7 @@ import com.skylinedynamics.solosdk.api.SoloApi;
 import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.EnvUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

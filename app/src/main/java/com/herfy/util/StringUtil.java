@@ -7,6 +7,7 @@ import android.util.Patterns;
 import com.herfy.R;
 import com.herfy.data.constants.Text;
 import com.herfy.data.constants.Values;
+import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 
 import java.text.DecimalFormat;

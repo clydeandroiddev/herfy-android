@@ -51,7 +51,7 @@ import com.herfy.font.FontHandler;
 import com.herfy.location.FusedLocationProvider;
 import com.herfy.util.AuthUtil;
 import com.herfy.util.CacheUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.ViewUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;

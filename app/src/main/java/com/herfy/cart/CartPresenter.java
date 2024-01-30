@@ -64,7 +64,7 @@ import com.herfy.util.AuthUtil;
 import com.herfy.util.BuildUtil;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.ErrorHandler;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.MenuUtil;
 import com.herfy.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;

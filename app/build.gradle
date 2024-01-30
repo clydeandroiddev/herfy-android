@@ -5,6 +5,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'dagger.hilt.android.plugin'
 
 
 fileTree('sub').filter { it.toString().contains(".gradle") }.each { apply from: "${it}" }
@@ -225,14 +226,14 @@ dependencies {
     implementation project(path: ':features:upsell')
     implementation project(path: ':utils')
     implementation project(path: ':data:database')
-
-    implementation(name: 'MaterialCalendarNew', ext: 'aar')
-
+    //implementation(name: 'MaterialCalendarNew', ext: 'aar')
+    implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
+    implementation 'com.google.android.play:review-ktx:2.0.1'
     def multidex_version = "2.0.1"
     implementation "androidx.multidex:multidex:$multidex_version"
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation "androidx.core:core-ktx:1.9.0"
+    implementation "androidx.core:core-ktx:1.8.0"
     implementation "androidx.fragment:fragment:1.5.0-rc01"
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
@@ -268,14 +269,17 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'org.apache.commons:commons-lang3:3.8'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    implementation("io.coil-kt:coil:2.0.0-rc02")
-    implementation ('com.github.bumptech.glide:okhttp3-integration:4.11.0'){
-        exclude group: 'glide-parent'
+    def glide_version = "4.11.0"
+    implementation ("com.github.bumptech.glide:glide:$glide_version"){
+        exclude group: "com.android.support"
     }
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
+    implementation "com.github.bumptech.glide:okhttp3-integration:$glide_version"
+    implementation("io.coil-kt:coil:2.0.0-rc02")
+
     implementation 'com.xfinity:dahdit:0.9.3'
-    implementation 'id.zelory:compressor:2.1.0'
+    //implementation 'id.zelory:compressor:2.1.0'
     implementation 'com.github.mukeshsolanki:android-otpview-pinview:2.0.3'
     implementation 'com.github.d-max:spots-dialog:1.1@aar'
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
@@ -296,12 +300,14 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.4.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.10"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.20"
     implementation 'com.github.ac-opensource:dotsindicator:5.0.2'
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
     implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
     implementation 'com.github.addisonelliott:SegmentedButton:3.1.9'
-
+    def room_version = "2.5.0"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
     implementation 'com.ogaclejapan.smarttablayout:utils-v4:2.0.0@aar'
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     implementation 'com.airbnb.android:lottie:3.4.0'
@@ -330,7 +336,7 @@ dependencies {
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
 
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
     implementation 'io.moneyHash:android:0.1.4'
 
@@ -366,10 +372,19 @@ dependencies {
     //Moyasar SDK
     implementation 'com.moyasar:android-sdk:0.5.1'
 
-    def room_version = "2.5.0"
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    def dagger_version = "2.48"
+    implementation "com.google.dagger:hilt-android:$dagger_version"
+    kapt "com.google.dagger:hilt-android-compiler:$dagger_version"
+    kapt('org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0')
+
+    //RXJava
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
 }
 
+
+kapt {
+    correctErrorTypes true
+}
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'

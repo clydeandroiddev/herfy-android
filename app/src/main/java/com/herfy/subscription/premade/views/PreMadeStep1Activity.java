@@ -33,7 +33,7 @@ import com.herfy.subscription.premade.models.StubPreMadeModel;
 import com.herfy.subscription.subhome.views.NutritionFactsDialogFragment;
 import com.herfy.util.AnimUtil;
 import com.herfy.util.CacheUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.views.DynamicTheme;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;

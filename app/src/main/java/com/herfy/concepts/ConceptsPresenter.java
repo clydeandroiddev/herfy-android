@@ -17,7 +17,7 @@ import com.herfy.util.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
 import com.herfy.util.DeviceUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -14,7 +14,7 @@ import com.herfy.data.responses.MenuCategoryItemResponse;
 import com.herfy.util.AppLogger;
 import com.herfy.util.AuthUtil;
 import com.herfy.util.CacheUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.MenuUtil;
 import com.herfy.util.StringUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;

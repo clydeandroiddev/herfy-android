@@ -54,6 +54,7 @@ import org.json.JSONException
 import java.util.*
 import java.util.regex.Pattern
 import com.herfy.R
+import com.herfy.utils.helper.LocaleUtil
 
 class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginResult>,
     SignInFragment.Listener {

@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.fragment.app.Fragment;
 
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.ViewUtil;
 
 import java.util.Locale;

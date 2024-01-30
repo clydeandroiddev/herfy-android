@@ -68,6 +68,7 @@ import com.herfy.payment.views.PaymentActivity
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.herfy.util.*
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.views.DynamicTheme
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
@@ -1725,7 +1726,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                     first = false
                                 }
                                 stringBuilder.append(
-                                    modifierItem.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + "(" + StringUtil.localize(
+                                    modifierItem.attributes.translatedName.getValue(
+                                        LocaleUtil.getInstance().language) + "(" + StringUtil.localize(
                                         modifierItem.attributes.quantity.toString()
                                     ) + ")"
                                 )

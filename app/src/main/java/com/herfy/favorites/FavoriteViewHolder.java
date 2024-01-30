@@ -36,7 +36,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.FavoriteModifier;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.herfy.util.CacheUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.views.SlantedTextView;
 

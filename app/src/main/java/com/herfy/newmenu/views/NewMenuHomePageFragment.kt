@@ -55,6 +55,7 @@ import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
+import com.herfy.utils.helper.LocaleUtil
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -1165,6 +1166,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     val sliderAdapter =
                         SliderFragmentStateAdapter(it, sliderPresenter, slides)
                     binding.sliderViewPager.adapter = sliderAdapter
+
                 }
                 binding.sliderViewPager.visibility = View.VISIBLE
                 if (slides.size > 1) {

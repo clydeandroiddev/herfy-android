@@ -34,6 +34,7 @@ import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addToCartEvent
 import com.herfy.util.scroll.ScrollableViewPagerContentTouchEventDelegator
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.views.SlantedTextView
 
 class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Presenter, val binding: ItemMenuItemNewBinding) : RecyclerView.ViewHolder(binding.root), MenuContract.View, SharedPreferences.OnSharedPreferenceChangeListener {

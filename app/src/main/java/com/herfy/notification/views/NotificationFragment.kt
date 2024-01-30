@@ -23,7 +23,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData
 import com.skylinedynamics.solosdk.api.models.objects.notification.Notification
 import com.herfy.util.CacheUtil
-import com.herfy.util.LocaleUtil
+import com.herfy.utils.helper.LocaleUtil
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*

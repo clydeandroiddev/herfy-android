@@ -13,7 +13,7 @@ import com.herfy.ext.visible
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.herfy.util.CacheUtil
-import com.herfy.util.LocaleUtil
+import com.herfy.utils.helper.LocaleUtil
 import java.util.LinkedList
 
 /**

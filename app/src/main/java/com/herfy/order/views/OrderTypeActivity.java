@@ -79,7 +79,7 @@ import com.herfy.util.AnimUtil;
 import com.herfy.util.AppLogger;
 import com.herfy.util.AuthUtil;
 import com.herfy.util.CacheUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;
 import com.herfy.views.NestedScrollableViewHelper;

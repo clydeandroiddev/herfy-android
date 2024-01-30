@@ -78,6 +78,7 @@ import com.herfy.order.adapters.AddressesRecyclerViewAdapter
 import com.herfy.order.adapters.StoresRecyclerViewAdapter
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.views.RecyclerViewUtil
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import java.util.*

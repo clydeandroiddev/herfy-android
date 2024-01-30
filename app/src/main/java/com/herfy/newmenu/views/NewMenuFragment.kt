@@ -62,6 +62,7 @@ import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
+import com.herfy.utils.helper.LocaleUtil
 import java.util.*
 import kotlin.collections.ArrayList
 

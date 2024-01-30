@@ -26,7 +26,7 @@ import com.herfy.menu.MenuContract;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.Translated;
 import com.herfy.util.CacheUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;
 

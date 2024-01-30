@@ -1,7 +1,11 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+
+
 buildscript {
-	ext.kotlin_version = '1.8.0'
+	ext.kotlin_version = '1.8.20'
+
+
     repositories {
         google()
         mavenCentral()
@@ -15,11 +19,12 @@ buildscript {
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.4'
         classpath 'com.google.firebase:perf-plugin:1.4.2'
         classpath 'com.jakewharton:butterknife-gradle-plugin:10.2.3'
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0"
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
 		classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
         classpath 'androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3'
+        classpath "com.google.dagger:hilt-android-gradle-plugin:2.48"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -39,6 +44,8 @@ allprojects {
         }
     }
 }
+
+
 
 task clean(type: Delete) {
     delete rootProject.buildDir

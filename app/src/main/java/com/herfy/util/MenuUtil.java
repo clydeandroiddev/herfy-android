@@ -2,6 +2,7 @@ package com.herfy.util;
 
 import com.google.gson.Gson;
 import com.herfy.data.constants.Text;
+import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.models.objects.CustomFieldObject;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.FavoriteIngredients;

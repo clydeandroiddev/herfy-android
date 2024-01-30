@@ -45,7 +45,7 @@ import dev.matrix.roomigrant.GenerateRoomMigrations;
 @GenerateRoomMigrations(rules = {})
 public abstract class AppDatabase extends RoomDatabase {
 
-    private static AppDatabase instance;
+    public static AppDatabase instance;
 
     public static void init(Context context) {
         if (instance == null) {
@@ -56,6 +56,19 @@ public abstract class AppDatabase extends RoomDatabase {
                             .allowMainThreadQueries()
                             .build();
         }
+    }
+
+    public static AppDatabase initWith(Context context){
+        if(instance == null){
+            instance = Room.databaseBuilder(context, AppDatabase.class, context.getPackageName()
+                            .replace(".", "_") + "_db")
+                    .addMigrations(AppDatabase_Migrations.INSTANCE.build())
+                    .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
+                    .build();
+        }
+
+        return instance;
     }
 
     public static synchronized AppDatabase getInstance() {

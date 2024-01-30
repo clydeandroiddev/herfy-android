@@ -25,7 +25,7 @@ import com.herfy.newmenu.TabModel;
 import com.herfy.newmenu.views.MenuItemsFragment;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
 import com.herfy.util.CacheUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 
 import java.util.HashMap;

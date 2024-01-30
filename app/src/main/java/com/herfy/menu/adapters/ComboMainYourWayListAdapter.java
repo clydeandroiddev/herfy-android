@@ -21,7 +21,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.Translated;
 import com.herfy.util.CacheUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.List;

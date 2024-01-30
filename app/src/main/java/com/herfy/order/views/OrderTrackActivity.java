@@ -63,7 +63,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.herfy.util.AppLogger;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.LatLngInterpolator;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.MarkerAnimation;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;

@@ -1,5 +1,7 @@
 package com.herfy.data.constants;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Text {
 
     public static final String CART = "cart";
@@ -802,4 +804,9 @@ public class Text {
     public static final String PROMOTIONAL_PRODUCTS_MAY = "promotional_products_may";
     public static final String LOYALTY_TO_NEXT_TIER = "loyalty_to_next_tier";
     public static final String MINIMUM_DELIVERY_FOR_AREA = "minimum_delivery_for_area";
+
+    public static final String CATER_WITH_HERFY= "cater_with_herfy";
+    public static final String CATER_WITH_US="cater_with_us";
+    public static final String CATER_WITH_HERFY_DESC="cater_with_herfy_desc";
+    public static final String ORDER_CATERING = "order_catering";
 }

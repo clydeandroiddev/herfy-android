@@ -40,7 +40,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.jakewharton.processphoenix.ProcessPhoenix
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.account.views.AccountActivity
@@ -50,10 +49,10 @@ import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
 import com.herfy.browser.BrowserActivity
 import com.herfy.cart.views.CartFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
 import com.herfy.contactsupport.ContactSupportBottomSheetDialogFragment
 import com.herfy.country.CountriesFragment
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.databinding.ActivityMainBinding
 import com.herfy.digitalcoupons.views.DigitalCouponFragmentDirections
 import com.herfy.digitalcoupons.views.DigitalCouponsFragmentDirections
@@ -71,19 +70,22 @@ import com.herfy.newmenu.views.*
 import com.herfy.order.views.OrderTypeFragment
 import com.herfy.promotions.views.PromotionsFragmentDirections
 import com.herfy.ratings.views.RatingsBottomSheetDialogFragment
-import com.skylinedynamics.solosdk.api.SoloApi
-import com.skylinedynamics.solosdk.api.SoloAuth
-import com.skylinedynamics.solosdk.api.models.objects.*
-import com.skylinedynamics.solosdk.api.models.objects.cms.CmsPage
-import com.skylinedynamics.solosdk.util.GsonHelper
 import com.herfy.splash.SplashActivity
 import com.herfy.util.*
 import com.herfy.util.extensions.loadImageFromUrl
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
+import com.herfy.utils.helper.LocaleUtil
+import com.jakewharton.processphoenix.ProcessPhoenix
+import com.skylinedynamics.solosdk.api.SoloApi
+import com.skylinedynamics.solosdk.api.SoloAuth
+import com.skylinedynamics.solosdk.api.models.objects.*
+import com.skylinedynamics.solosdk.api.models.objects.cms.CmsPage
+import com.skylinedynamics.solosdk.util.GsonHelper
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
-
+@AndroidEntryPoint
 class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonListener {
 
     companion object {
