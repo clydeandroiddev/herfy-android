@@ -12,11 +12,15 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.tabs.TabLayout
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
+import com.herfy.constants.Text
 import com.herfy.ext.cast
+import com.herfy.ext.gone
+import com.herfy.ext.visible
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.order.OrderContract
 import com.herfy.order.OrderPresenter
+import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.FragmentOrderTypeNewBinding
 import com.herfy.util.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.Address
@@ -25,6 +29,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderStatus
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
+import java.util.Locale
 
 class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
@@ -107,32 +112,69 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         })
     }
 
+    private fun adjustOrderType(withVisibility: Boolean, orderTypes: MutableSet<OrderType>) {
+        for (orderType: OrderType in orderTypes) {
+            if (orderType == OrderType.DELIVERY) {
+                isDeliveryAvailable = true
+                if (withVisibility) binding.deliveryButton.visible()
+            } else if (orderType == OrderType.DINE_IN) {
+                isDineInAvailable = true
+                if (withVisibility) binding.dineInButton.visible()
+            } else if (orderType == OrderType.PICKUP) {
+                isPickupAvailable = true
+                if (withVisibility) binding.pickupButton.visible()
+            } else if (orderType == OrderType.CURBSIDE) {
+                isCurbsideAvailable = true
+                if (withVisibility) binding.pickupButton.visible()
+            }
+        }
+    }
+
     override fun showOrderTypes(orderTypes: MutableSet<OrderType>?) {
         activity?.cast<BaseActivity> {
             it.dismissDialogs()
         }
         orderTypes?.let {
-            if (orderTypes.size > 1) {
-                isSingleOrderType = false
-                orderTypes.map {
-                    createOrderType(it)
+            val hasOrderTypes = orderTypes.size > 1
+            isSingleOrderType = !hasOrderTypes
+            adjustOrderType(hasOrderTypes, orderTypes)
+            var title: String? = ""
+            initialTypeState()
+            for (orderType: OrderType in orderTypes) {
+                if (orderType === OrderType.DELIVERY) {
+                    title = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
+                } else if (orderType === OrderType.PICKUP) {
+                    title = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
+                } else if (orderType === OrderType.DINE_IN) {
+                    title = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
+                } else if (orderType === OrderType.CURBSIDE) {
+                    processCurbside()
+                    title = CacheUtil.getInstance()
+                        .getTranslations(Text.CURBSIDE_PICKUP_CAPS, "Curbside").uppercase(
+                            Locale.getDefault()
+                        )
                 }
-            } else {
-                if (orderTypes.size == 1) {
-                    for (orderType: OrderType in orderTypes) {
-                        if (orderType === OrderType.DELIVERY) {
-                            isDeliveryAvailable = true
-                        } else if (orderType === OrderType.CURBSIDE) {
-                            isCurbsideAvailable = true
-                        } else if (orderType === OrderType.PICKUP) {
-                            isPickupAvailable = true
-                        } else if (orderType === OrderType.DINE_IN) {
-                            isDineInAvailable = true
-                        }
-                    }
-                }
-                isSingleOrderType = true
             }
+            if (isSingleOrderType) {
+                binding.typeGroup.gone()
+                binding.soloType.visible()
+                binding.soloType.text = title
+            } else {
+                binding.typeGroup.visible()
+                binding.soloType.gone()
+            }
+        }
+    }
+
+    private fun initialTypeState() {
+        if (isDeliveryAvailable) {
+            binding.typeGroup.check(R.id.deliveryButton)
+        } else if (isPickupAvailable) {
+            binding.typeGroup.check(R.id.pickupButton)
+        } else if (isDineInAvailable) {
+            binding.typeGroup.check(R.id.dineInButton)
+        } else if (isCurbsideAvailable) {
+            binding.typeGroup.check(R.id.pickupButton)
         }
     }
 
@@ -162,12 +204,50 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
     }
 
-    override fun setupViews() {}
+    override fun setupViews() {
+        binding.typeGroup.setOnCheckedChangeListener { group, checkedId ->
+            when (checkedId) {
+                R.id.deliveryButton -> {
+                    selectDelivery()
+                }
+
+                R.id.dineInButton -> {
+                    selectDineIn()
+                }
+
+                R.id.pickupButton -> {
+                    selectPickup()
+                }
+            }
+        }
+    }
+
+    private fun processCurbside() {
+
+    }
+
+    override fun selectDelivery() {
+    }
+
+    override fun selectPickup() {
+    }
+
+    override fun selectDineIn() {
+    }
+
+    override fun selectCurbside() {
+    }
 
     override fun setupFonts() {
     }
 
     override fun setupTranslations() {
+        binding.continueButton.text =
+            CacheUtil.getInstance().getTranslations(Text.CONTINUE_TITLE, "Continue")
+        binding.deliveryButton.text =
+            CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
+        binding.pickupButton.text = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
+        binding.dineInButton.text = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
     }
 
     override fun createOrderType(orderType: OrderType?) {
@@ -228,18 +308,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun showOrderType(orderType: OrderType?) {
-    }
-
-    override fun selectDelivery() {
-    }
-
-    override fun selectPickup() {
-    }
-
-    override fun selectDineIn() {
-    }
-
-    override fun selectCurbside() {
     }
 
     override fun saveAddress(address: String?) {

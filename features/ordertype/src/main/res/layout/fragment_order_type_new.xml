@@ -17,6 +17,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
@@ -24,6 +25,86 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/soloType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:textColor="#101010"
+                android:textSize="17sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Select Pickup" />
+
+            <RadioGroup
+                android:id="@+id/typeGroup"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/background_bg_order_types"
+                android:orientation="horizontal"
+                android:padding="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/back"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:checkedButton="@id/pickupButton">
+
+                <RadioButton
+                    android:id="@+id/deliveryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_types"
+                    android:button="@null"
+                    android:fontFamily="@font/cairo_regular"
+                    android:gravity="center"
+                    android:textColor="@drawable/bg_types_text"
+                    android:visibility="gone"
+                    tools:text="Delivery"
+                    tools:visibility="visible" />
+
+
+                <RadioButton
+                    android:id="@+id/pickupButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_types"
+                    android:button="@null"
+                    android:fontFamily="@font/cairo_regular"
+                    android:gravity="center"
+                    android:textColor="@drawable/bg_types_text"
+                    android:visibility="gone"
+                    tools:text="Pickup"
+                    tools:visibility="visible" />
+
+
+                <RadioButton
+                    android:id="@+id/dineInButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_types"
+                    android:button="@null"
+                    android:fontFamily="@font/cairo_regular"
+                    android:gravity="center"
+                    android:textColor="@drawable/bg_types_text"
+                    android:visibility="gone"
+                    tools:text="Dine In"
+                    tools:visibility="visible" />
+
+
+            </RadioGroup>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -48,13 +129,13 @@
                 app:umanoScrollableView="@+id/stores_recycler_view"
                 app:umanoShadowHeight="0dp">
 
-                <!--                <fragment-->
-                <!--                    android:id="@+id/order_type_map"-->
-                <!--                    android:name="com.google.android.gms.maps.SupportMapFragment"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="match_parent">-->
+                <fragment
+                    android:id="@+id/order_type_map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <!--                </fragment>-->
+                </fragment>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -76,7 +157,7 @@
             android:layout_width="match_parent"
             android:layout_height="70dp"
             app:cardBackgroundColor="#FFFFFF"
-            app:cardElevation="4dp"
+            app:cardElevation="6dp"
             app:cardUseCompatPadding="false"
             app:layout_constraintBottom_toBottomOf="parent">
 
