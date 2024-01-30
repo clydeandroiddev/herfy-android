@@ -274,6 +274,8 @@ public class Text {
     public static final String CART_EMPTY_MESSAGE = "cart_empty_message";
     public static final String FREE = "free";
     public static final String FREE_CAPS = "free_caps";
+    public static final String OPTIONAL_KEY = "optional_key";
+    public static final String REQUIRED_KEY = "required_key";
     public static final String SHOW_FACILITY = "show_facility";
     public static final String HIDE_FACILITY = "hide_facility";
     public static final String CONFIRM_LOCATION = "confirm_location";
