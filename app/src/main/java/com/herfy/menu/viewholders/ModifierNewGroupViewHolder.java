@@ -14,6 +14,8 @@ import com.herfy.R;
 import com.herfy.constants.Text;
 import com.herfy.menu.MenuContract;
 import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
+import com.herfy.productpagedetails.ui.viewholder.util.ModifierGroupMinimumType;
+import com.herfy.productpagedetails.ui.viewholder.util.ModifierGroupMinimumUtil;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.LocaleUtil;
 import com.herfy.util.StringUtil;
@@ -45,14 +47,20 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
     private MenuContract.Presenter menuPresenter;
 
-    @BindView(R.id.name_minimum_maximum_container) LinearLayout nameContainer;
+
 
     @BindView(R.id.name) TextView name;
-    @BindView(R.id.minimum_maximum) TextView minimumMaximum;
-    @BindView(R.id.select) TextView select;
-    @BindView(R.id.free) TextView free;
+    @BindView(R.id.minimum)
+    TextView txtMinimum;
+    @BindView(R.id.btnMinimum)
+    LinearLayout minimumLayout;
+
+
+//    @BindView(R.id.select) TextView select; // todo uncomment this one ui for select is now final
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
+
+
 
     private BaseModifierItemViewHolder.OnAction onAction;
 
@@ -196,111 +204,124 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice) {
         boolean visible = false;
         VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
-        if(visibilityConfig != null) {
-            if(visibilityConfig.getInitialValue() != null && !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
+        if (visibilityConfig != null) {
+            if (visibilityConfig.getInitialValue() != null && !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
                 visible = true;
-                nameContainer.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
             } else {
-                nameContainer.setVisibility(View.GONE);
-                free.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
             }
         } else {
             visible = true;
-            nameContainer.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.VISIBLE);
+        }
+        name.setText(modifierGroup.getAttributes().getName());
+
+        ModifierGroupMinimumType modifierGroupMinimumType = ModifierGroupMinimumUtil.INSTANCE.validateType(modifierGroup.getAttributes().getMinimum());
+
+        switch (modifierGroupMinimumType) {
+            case OPTIONAL:
+                String optional = CacheUtil.getInstance().getTranslations(Text.OPTIONAL_KEY);
+                minimumLayout.setVisibility(View.VISIBLE);
+                txtMinimum.setText(optional);
+                break;
+
+            case REQUIRED:
+                String required = CacheUtil.getInstance().getTranslations(Text.REQUIRED_KEY);
+                minimumLayout.setVisibility(View.VISIBLE);
+                txtMinimum.setText(required);
+                break;
+
+
+            default:
+                minimumLayout.setVisibility(View.GONE);
+                break;
         }
 
 
+        if (visible) {
 
-
-
-
-        if(visible) {
-            int minimum = modifierGroup.getAttributes().getMinimum();
-            int maximum = modifierGroup.getAttributes().getMaximum();
-            if (minimum > 0) {
-                if(LocaleUtil.getInstance().isArabic()) {
-                    minimumMaximum.setText("(x)\\(y)".replace("(x)", StringUtil.localize(String.valueOf(menuPresenter.getModifierGroupSelectedModifierItemsCount(modifierGroup)))).replace("(y)", StringUtil.localize(String.valueOf(maximum))));
-                } else {
-                    minimumMaximum.setText("(x)/(y)".replace("(x)", StringUtil.localize(String.valueOf(menuPresenter.getModifierGroupSelectedModifierItemsCount(modifierGroup)))).replace("(y)", StringUtil.localize(String.valueOf(maximum))));
-                }
-                minimumMaximum.setVisibility(View.VISIBLE);
-                if(maximum > minimum) {
-                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_ATLEAST, "(Select at least (x))").replace("(x)", StringUtil.localize(String.valueOf(minimum))));
-                    select.setVisibility(View.VISIBLE);
-                } else if(maximum == minimum) {
-                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_X, "(Select (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
-                    select.setVisibility(View.VISIBLE);
-                } else {
-                    select.setVisibility(View.INVISIBLE);
-                }
-            } else if (minimum == 0) {
-                minimumMaximum.setVisibility(View.GONE);
-                if(maximum > 0) {
-                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_UP_TO_X, "(Select up to (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
-                    select.setVisibility(View.VISIBLE);
-                } else {
-                    select.setVisibility(View.INVISIBLE);
-                }
-            } else {
-                select.setVisibility(View.INVISIBLE);
-            }
+            // todo uncomment for this is when desiginer has final ui for select
+//            int minimum = modifierGroup.getAttributes().getMinimum();
+//            int maximum = modifierGroup.getAttributes().getMaximum();
+//            if (minimum > 0) {
+//                if(LocaleUtil.getInstance().isArabic()) {
+//                    minimumMaximum.setText("(x)\\(y)".replace("(x)", StringUtil.localize(String.valueOf(menuPresenter.getModifierGroupSelectedModifierItemsCount(modifierGroup)))).replace("(y)", StringUtil.localize(String.valueOf(maximum))));
+//                } else {
+//                    minimumMaximum.setText("(x)/(y)".replace("(x)", StringUtil.localize(String.valueOf(menuPresenter.getModifierGroupSelectedModifierItemsCount(modifierGroup)))).replace("(y)", StringUtil.localize(String.valueOf(maximum))));
+//                }
+//                minimumMaximum.setVisibility(View.VISIBLE);
+//                if(maximum > minimum) {
+//                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_ATLEAST, "(Select at least (x))").replace("(x)", StringUtil.localize(String.valueOf(minimum))));
+//                    select.setVisibility(View.VISIBLE);
+//                } else if(maximum == minimum) {
+//                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_X, "(Select (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
+//                    select.setVisibility(View.VISIBLE);
+//                } else {
+//                    select.setVisibility(View.INVISIBLE);
+//                }
+//            } else if (minimum == 0) {
+//                minimumMaximum.setVisibility(View.GONE);
+//                if(maximum > 0) {
+//                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_UP_TO_X, "(Select up to (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
+//                    select.setVisibility(View.VISIBLE);
+//                } else {
+//                    select.setVisibility(View.INVISIBLE);
+//                }
+//            } else {
+//                select.setVisibility(View.INVISIBLE);
+//            }
 
             //hamburgini hide free modifiers text
 
-                if(modifierGroup.getFreeModifiersCount() > 0) {
-                    free.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_MODIFIERS_FOR_FREE, "Select (x) modifiers for free").replace("(x)", StringUtil.localize(String.valueOf(modifierGroup.getFreeModifiersCount()))));
-                    free.setVisibility(View.VISIBLE);
-                } else {
-                    free.setVisibility(View.GONE);
-                }
-                if(modifierGroup.getAttributes().getFreeModifiersCount() > 0) {
-                    free.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_MODIFIERS_FOR_FREE, "Select (x) modifiers for free").replace("(x)", StringUtil.localize(String.valueOf(modifierGroup.getAttributes().getFreeModifiersCount()))));
-                    free.setVisibility(View.VISIBLE);
-                } else {
-                    free.setVisibility(View.GONE);
-                }
-            }
+//                if(modifierGroup.getFreeModifiersCount() > 0) {
+//                    free.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_MODIFIERS_FOR_FREE, "Select (x) modifiers for free").replace("(x)", StringUtil.localize(String.valueOf(modifierGroup.getFreeModifiersCount()))));
+//                    free.setVisibility(View.VISIBLE);
+//                } else {
+//                    free.setVisibility(View.GONE);
+//                }
+//                if(modifierGroup.getAttributes().getFreeModifiersCount() > 0) {
+//                    free.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_MODIFIERS_FOR_FREE, "Select (x) modifiers for free").replace("(x)", StringUtil.localize(String.valueOf(modifierGroup.getAttributes().getFreeModifiersCount()))));
+//                    free.setVisibility(View.VISIBLE);
+//                } else {
+//                    free.setVisibility(View.GONE);
+//                }
+//            }
+
+
+            //hamburgini
+
+//            select.setVisibility(View.INVISIBLE);
+//            String selectString = "";
+//            int minimum = modifierGroup.getAttributes().getMinimum();
+//            int maximum = modifierGroup.getAttributes().getMaximum();
+//            if (minimum > 0) {
+//                if (maximum > minimum) {
+//                    selectString = CacheUtil.getInstance().getTranslations(Text.SELECT_ATLEAST, "(Select at least (x))").replace("(x)", StringUtil.localize(String.valueOf(minimum)));
+//                } else if (maximum == minimum) {
+//                    selectString = CacheUtil.getInstance().getTranslations(Text.SELECT_X, "(Select (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum)));
+//
+//                } else {
+//                    selectString = "";
+//                }
+//            } else if (minimum == 0) {
+//                if (maximum > 0) {
+//                    selectString = CacheUtil.getInstance().getTranslations(Text.SELECT_UP_TO_X, "(Select up to (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum)));
+//                } else {
+//                    selectString = "";
+//                }
+//            } else {
+//                selectString = "";
+//            }
 
 
 
-        //hamburgini
 
-            select.setVisibility(View.INVISIBLE);
-            String selectString ="";
-            int minimum = modifierGroup.getAttributes().getMinimum();
-            int maximum = modifierGroup.getAttributes().getMaximum();
-            if (minimum > 0) {
-                if(maximum > minimum) {
-                    selectString = CacheUtil.getInstance().getTranslations(Text.SELECT_ATLEAST, "(Select at least (x))").replace("(x)", StringUtil.localize(String.valueOf(minimum)));
-                } else if(maximum == minimum) {
-                    selectString =  CacheUtil.getInstance().getTranslations(Text.SELECT_X, "(Select (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum)));
-
-                } else {
-                    selectString = "";
-                }
-            } else if (minimum == 0) {
-                if(maximum > 0) {
-                    selectString = CacheUtil.getInstance().getTranslations(Text.SELECT_UP_TO_X, "(Select up to (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum)));
-                } else {
-                    selectString = "";
-                }
-            } else {
-                selectString = "";
-            }
-
-            name.setText(modifierGroup.getAttributes().getName() +" "+selectString);
-
-            name.setText(modifierGroup.getAttributes().getName());
-
-
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        ModifierItemsNewRecyclerViewAdapter modifierItemsNewRecyclerViewAdapter = new ModifierItemsNewRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice);
-        modifierItemsNewRecyclerViewAdapter.setOnAction(onAction);
-        recyclerView.setAdapter(modifierItemsNewRecyclerViewAdapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            ModifierItemsNewRecyclerViewAdapter modifierItemsNewRecyclerViewAdapter = new ModifierItemsNewRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice);
+            modifierItemsNewRecyclerViewAdapter.setOnAction(onAction);
+            recyclerView.setAdapter(modifierItemsNewRecyclerViewAdapter);
+        }
     }
 
     @Override
