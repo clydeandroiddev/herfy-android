@@ -34,10 +34,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.google.android.gms.maps.model.LatLng
-import com.prolificinteractive.materialcalendarview.CalendarDay
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView
-import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
-import com.prolificinteractive.materialcalendarview.format.ArrayWeekDayFormatter
 import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
@@ -61,15 +57,19 @@ import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
 import com.herfy.main.MainActivity
 import com.herfy.main.MainActivity.Companion.curbside
 import com.herfy.main.NavigationActivity
-import com.herfy.order.views.OrderTypeFragment
+import com.herfy.order.views.ordertype.OrderTypeNewFragment
 import com.herfy.payment.dialog.PaymentOrderTimeDialog
 import com.herfy.payment.views.OrderDialogFragment
 import com.herfy.payment.views.PaymentActivity
-import com.skylinedynamics.solosdk.api.models.objects.*
-import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.herfy.util.*
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.views.DynamicTheme
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
+import com.prolificinteractive.materialcalendarview.format.ArrayWeekDayFormatter
+import com.skylinedynamics.solosdk.api.models.objects.*
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import org.threeten.bp.LocalDate
@@ -1152,7 +1152,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         dismissDialogFragments()
         continueCheckout = false
         setFragmentResultListener(ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
-            clearFragmentResultListener(requestKey = OrderTypeFragment.ARGS_KEY_FRAGMENT_RESULT)
+            clearFragmentResultListener(requestKey = OrderTypeNewFragment.ARGS_KEY_FRAGMENT_RESULT)
             continueCheckout = if (bundle.containsKey(ARGS_KEY_CHECKOUT)) {
                 bundle.getBoolean(ARGS_KEY_CHECKOUT, false)
             } else {

@@ -202,9 +202,9 @@
 
     <fragment
         android:id="@+id/nav_order_type"
-        android:name="com.herfy.order.views.OrderTypeFragment"
+        android:name="com.herfy.order.views.ordertype.OrderTypeNewFragment"
         android:label="select_order_type"
-        tools:layout="@layout/fragment_order_type">
+        tools:layout="@layout/fragment_order_type_new">
         <argument
             android:name="fromCart"
             android:defaultValue="false"
@@ -214,7 +214,7 @@
             android:name="checkout"
             android:defaultValue="false"
             app:argType="boolean" />
-        
+
         <argument
             android:name="storeId"
             android:defaultValue="@null"

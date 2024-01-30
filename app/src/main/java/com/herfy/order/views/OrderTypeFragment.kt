@@ -76,10 +76,12 @@ import com.herfy.order.OrderContract
 import com.herfy.order.OrderPresenter
 import com.herfy.order.adapters.AddressesRecyclerViewAdapter
 import com.herfy.order.adapters.StoresRecyclerViewAdapter
-import com.skylinedynamics.solosdk.api.models.objects.*
+import com.herfy.order.views.ordertype.OrderTypeNewFragmentArgs
+import com.herfy.order.views.ordertype.OrderTypeNewFragmentDirections
 import com.herfy.util.*
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.views.RecyclerViewUtil
+import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import java.util.*
 
@@ -93,7 +95,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
 
     private lateinit var binding: FragmentOrderTypeBinding
 
-    private val args: OrderTypeFragmentArgs by navArgs()
+    private val args: OrderTypeNewFragmentArgs by navArgs()
 
     private lateinit var orderPresenter: OrderContract.Presenter
 
@@ -810,7 +812,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         }
         NavigationUtils.navigateSafe(
             findNavController(),
-            OrderTypeFragmentDirections.actionOrderTypeFragmentToDialog()
+            OrderTypeNewFragmentDirections.actionOrderTypeFragmentToDialog()
         )
     }
 
@@ -1553,7 +1555,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             }
             CacheUtil.getInstance().signinUsername = ""
             NavigationUtils.navigateSafe(
-                findNavController(), OrderTypeFragmentDirections.actionOrderTypeToAuth(
+                findNavController(), OrderTypeNewFragmentDirections.actionOrderTypeToAuth(
                     signIn = true,
                     guest = false,
                     curbside = true,

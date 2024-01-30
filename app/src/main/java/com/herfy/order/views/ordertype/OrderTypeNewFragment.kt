@@ -28,6 +28,12 @@ import com.skylinedynamics.solosdk.api.models.objects.Store
 
 class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
+    companion object {
+        const val ARGS_KEY_FRAGMENT_RESULT = "fragmentResult"
+        const val ARGS_KEY_CURBSIDE = "curbside"
+        const val ARGS_KEY_IS_SAME_BRANCH = "is_same_branch"
+    }
+
     private lateinit var binding: FragmentOrderTypeNewBinding
 
     private lateinit var orderPresenter: OrderContract.Presenter
