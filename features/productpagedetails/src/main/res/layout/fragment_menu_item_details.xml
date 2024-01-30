@@ -13,194 +13,6 @@
         android:layout_above="@+id/footer"
         tools:visibility="visible"
         android:visibility="invisible">
-        <!--        <com.google.android.material.appbar.AppBarLayout-->
-        <!--            android:id="@+id/appbar"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:background="@color/white"-->
-        <!--            android:layout_height="wrap_content">-->
-
-        <!--            <com.google.android.material.appbar.CollapsingToolbarLayout-->
-        <!--                android:id="@+id/main_toolbar"-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:maxHeight="@dimen/menu_appbar_height_no_slider"-->
-        <!--                app:layout_scrollFlags="scroll|exitUntilCollapsed">-->
-
-        <!--                <LinearLayout-->
-        <!--                    android:layout_width="match_parent"-->
-        <!--                    android:layout_height="wrap_content"-->
-        <!--                    android:orientation="vertical"-->
-        <!--                    app:layout_scrollFlags="scroll|enterAlways">-->
-
-        <!--                    <androidx.constraintlayout.widget.ConstraintLayout-->
-        <!--                        android:layout_width="match_parent"-->
-        <!--                        android:layout_height="wrap_content">-->
-        <!--                        <androidx.cardview.widget.CardView-->
-        <!--                            android:id="@+id/imageCardView"-->
-        <!--                            android:layout_width="match_parent"-->
-        <!--                            android:layout_height="wrap_content"-->
-        <!--                            app:cardPreventCornerOverlap="true"-->
-        <!--                            android:visibility="gone"-->
-        <!--                            tools:visibility="visible"-->
-        <!--                            app:cardUseCompatPadding="true"-->
-        <!--                            app:layout_constraintStart_toStartOf="parent"-->
-        <!--                            app:layout_constraintTop_toTopOf="parent">-->
-
-        <!--                        <androidx.constraintlayout.widget.ConstraintLayout-->
-        <!--                            android:layout_width="match_parent"-->
-        <!--                            android:layout_height="wrap_content">-->
-
-        <!--                        <ImageView-->
-        <!--                            android:id="@+id/image"-->
-        <!--                            app:layout_constraintStart_toStartOf="parent"-->
-        <!--                            app:layout_constraintTop_toTopOf="parent"-->
-        <!--                            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                            android:layout_width="match_parent"-->
-        <!--                            android:layout_height="@dimen/menu_item_details_image_height"-->
-        <!--                            android:layout_marginHorizontal="@dimen/margin_basic_15dp"-->
-        <!--                            android:scaleType="centerCrop" />-->
-
-        <!--                        <ImageView-->
-        <!--                            android:id="@+id/icClose"-->
-        <!--                            android:layout_width="36dp"-->
-        <!--                            android:src="@drawable/ic_close"-->
-        <!--                            app:layout_constraintStart_toStartOf="parent"-->
-        <!--                            app:layout_constraintTop_toTopOf="parent"-->
-        <!--                            android:layout_marginStart="@dimen/margin_basic_15dp"-->
-
-        <!--                            android:layout_marginTop="@dimen/margin_basic_15dp"-->
-        <!--                            android:layout_height="36dp"/>-->
-
-        <!--                        <FrameLayout-->
-        <!--                            android:id="@+id/favorite_card"-->
-        <!--                            android:layout_width="36dp"-->
-        <!--                            android:layout_height="36dp"-->
-        <!--                            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--                            app:layout_constraintTop_toTopOf="parent"-->
-        <!--                            android:layout_marginEnd="@dimen/margin_basic_15dp"-->
-        <!--                            android:layout_marginTop="@dimen/margin_basic_15dp"-->
-        <!--                            android:background="@drawable/back_black"-->
-        <!--                            android:elevation="8dp"-->
-        <!--                            android:visibility="visible">-->
-
-        <!--                            <RelativeLayout-->
-        <!--                                android:id="@+id/favorite_container"-->
-        <!--                                android:layout_width="match_parent"-->
-        <!--                                android:layout_height="match_parent">-->
-
-        <!--                                <androidx.appcompat.widget.AppCompatImageView-->
-        <!--                                    android:id="@+id/favorite_icon"-->
-        <!--                                    android:layout_width="20dp"-->
-        <!--                                    android:layout_height="18dp"-->
-        <!--                                    android:layout_centerInParent="true"-->
-        <!--                                    android:scaleType="fitXY"-->
-        <!--                                    app:srcCompat="@drawable/ic_heart"-->
-        <!--                                    app:tint="#DEDEDE" />-->
-
-        <!--                            </RelativeLayout>-->
-
-        <!--                        </FrameLayout>-->
-        <!--                        </androidx.constraintlayout.widget.ConstraintLayout>-->
-        <!--                        </androidx.cardview.widget.CardView>-->
-        <!--                    </androidx.constraintlayout.widget.ConstraintLayout>-->
-        <!--                    <com.google.android.material.card.MaterialCardView-->
-        <!--                        android:layout_width="match_parent"-->
-        <!--                        app:layout_constraintStart_toStartOf="parent"-->
-        <!--                        app:layout_constraintTop_toTopOf="parent"-->
-        <!--                        android:layout_marginHorizontal="@dimen/margin_basic_15dp"-->
-        <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-        <!--                        android:layout_height="wrap_content">-->
-        <!--                        <androidx.constraintlayout.widget.ConstraintLayout-->
-        <!--                            android:layout_width="match_parent"-->
-        <!--                            android:layout_height="wrap_content">-->
-
-        <!--                            <androidx.constraintlayout.widget.Guideline-->
-        <!--                                android:id="@+id/halfGuideline"-->
-        <!--                                android:layout_width="wrap_content"-->
-        <!--                                android:layout_height="wrap_content"-->
-        <!--                                android:orientation="vertical"-->
-        <!--                                app:layout_constraintGuide_percent="0.5" />-->
-
-        <!--                            <TextView-->
-        <!--                                android:id="@+id/name"-->
-        <!--                                android:layout_width="wrap_content"-->
-        <!--                                android:layout_height="wrap_content"-->
-        <!--                                android:ellipsize="end"-->
-        <!--                                android:fontFamily="@font/cairo_bold"-->
-        <!--                                android:includeFontPadding="false"-->
-        <!--                                android:maxLines="1"-->
-        <!--                                android:singleLine="true"-->
-        <!--                                android:textColor="@color/primary_text"-->
-        <!--                                android:textSize="18sp"-->
-        <!--                                tools:text ="Grill Chicken"-->
-        <!--                                android:textStyle="bold"-->
-        <!--                                app:layout_constraintStart_toStartOf="parent"-->
-        <!--                                app:layout_constraintTop_toTopOf="parent" />-->
-
-        <!--                            <TextView-->
-        <!--                                android:id="@+id/total"-->
-        <!--                                android:layout_width="wrap_content"-->
-        <!--                                android:layout_height="wrap_content"-->
-        <!--                                android:layout_marginBottom="-5dp"-->
-        <!--                                android:fontFamily="@font/cairo_regular"-->
-        <!--                                android:includeFontPadding="false"-->
-        <!--                                android:textSize="14sp"-->
-        <!--                                app:layout_constraintBottom_toBottomOf="@+id/name"-->
-        <!--                                app:layout_constraintEnd_toEndOf="parent"-->
-        <!--                                app:layout_constraintTop_toTopOf="@+id/name"-->
-        <!--                                tools:text="SAR 44" />-->
-
-        <!--                            <TextView-->
-        <!--                                android:id="@+id/description"-->
-        <!--                                android:layout_width="match_parent"-->
-        <!--                                android:layout_height="wrap_content"-->
-        <!--                                android:fontFamily="@font/cairo_regular"-->
-        <!--                                android:gravity="start"-->
-        <!--                                android:includeFontPadding="false"-->
-        <!--                                android:lineSpacingExtra="-7dp"-->
-        <!--                                android:textAlignment="viewStart"-->
-        <!--                                android:textColor="#969696"-->
-        <!--                                android:textSize="14sp"-->
-        <!--                                app:layout_constraintEnd_toEndOf="@+id/name"-->
-        <!--                                app:layout_constraintHorizontal_bias="0.0"-->
-        <!--                                app:layout_constraintStart_toStartOf="parent"-->
-        <!--                                app:layout_constraintTop_toBottomOf="@+id/name"-->
-        <!--                                tools:text="Grilled chicken patty, topped with a flavorful slice of cheese and shredded fresh lettuce" />-->
-
-        <!--                            <TextView-->
-        <!--                                android:id="@+id/calories"-->
-        <!--                                android:layout_width="wrap_content"-->
-        <!--                                android:layout_height="wrap_content"-->
-        <!--                                android:fontFamily="@font/cairo_regular"-->
-        <!--                                app:layout_constraintEnd_toStartOf="@+id/txtMoreInfo"-->
-        <!--                                android:gravity="start"-->
-        <!--                                android:textAlignment="viewStart"-->
-        <!--                                android:textSize="14sp"-->
-        <!--                                android:visibility="visible"-->
-        <!--                                app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                                app:layout_constraintStart_toStartOf="parent"-->
-        <!--                                app:layout_constraintTop_toBottomOf="@+id/description"-->
-        <!--                                tools:text="350 Cal." />-->
-
-        <!--                            <com.google.android.material.textview.MaterialTextView-->
-        <!--                                android:id="@+id/txtMoreInfo"-->
-        <!--                                android:layout_width="0dp"-->
-        <!--                                android:layout_height="wrap_content"-->
-        <!--                                android:textColor="#1877F2"-->
-        <!--                                android:textSize="15sp"-->
-        <!--                                app:lineHeight="20sp"-->
-        <!--                                app:layout_constraintBottom_toBottomOf="@+id/calories"-->
-        <!--                                android:layout_marginStart="@dimen/margin_basic_8dp"-->
-        <!--                                app:layout_constraintStart_toEndOf="@+id/calories"-->
-        <!--                                app:layout_constraintTop_toTopOf="@+id/calories"-->
-        <!--                                tools:text="More information" />-->
-        <!--                        </androidx.constraintlayout.widget.ConstraintLayout>-->
-        <!--                    </com.google.android.material.card.MaterialCardView>-->
-        <!--                </LinearLayout>-->
-
-        <!--            </com.google.android.material.appbar.CollapsingToolbarLayout>-->
-
-        <!--        </com.google.android.material.appbar.AppBarLayout>-->
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
@@ -246,7 +58,7 @@
                                     android:layout_marginHorizontal="@dimen/margin_large"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     android:layout_marginEnd="@dimen/margin_large"
-                                    tools:src="@tools:sample/avatars"
+                                    android:src="@drawable/bg_menu_item_details_background"
                                     android:layout_marginStart="12dp"
                                     android:scaleType="fitXY"
                                     app:layout_constraintStart_toStartOf="parent"
@@ -325,9 +137,9 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginBottom="-5dp"
                                     android:fontFamily="@font/cairo_regular"
+                                    style="@style/Styles.Text.Headline"
                                     android:includeFontPadding="false"
                                     android:layout_marginEnd="@dimen/margin_large"
-                                    android:textSize="14sp"
                                     app:layout_constraintBottom_toBottomOf="@+id/name"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="@+id/name"
@@ -341,6 +153,7 @@
                                     android:gravity="start"
                                     android:includeFontPadding="false"
                                     android:lineSpacingExtra="-7dp"
+                                    style="@style/TextAppearance.Footnote"
                                     android:textAlignment="viewStart"
                                     android:textColor="#969696"
                                     android:textSize="14sp"
@@ -352,12 +165,14 @@
 
                                 <TextView
                                     android:id="@+id/calories"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/cairo_regular"
                                     android:gravity="start"
                                     android:textAlignment="viewStart"
-                                    android:textSize="14sp"
+                                    android:drawableStart="@drawable/ic_fire"
+                                    android:drawablePadding="10dp"
+                                    style="@style/TextAppearance.Subheadline"
                                     android:visibility="visible"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintEnd_toStartOf="@+id/txtMoreInfo"
@@ -368,16 +183,18 @@
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/txtMoreInfo"
                                     android:layout_width="0dp"
+                                    style="@style/TextAppearance.Subheadline"
                                     android:layout_height="wrap_content"
-                                    android:textColor="#1877F2"
-                                    android:textSize="15sp"
-                                    app:lineHeight="20sp"
-
-                                    app:layout_constraintBottom_toBottomOf="@+id/calories"
                                     android:layout_marginStart="@dimen/margin_small"
+                                    android:textAlignment="viewStart"
+                                    android:textColor="#1877F2"
+                                    app:layout_constraintBottom_toBottomOf="@+id/calories"
+                                    app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintStart_toEndOf="@+id/calories"
                                     app:layout_constraintTop_toTopOf="@+id/calories"
+                                    app:lineHeight="20sp"
                                     tools:text="More information" />
+
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -506,7 +323,7 @@
                             android:paddingTop="2dp"
                             android:visibility="gone"
                             tools:visibility="visible"
-                            tools:listitem="@layout/item_modifier_group"
+                            tools:listitem="@layout/item_modifier_group_new"
                             android:clipToPadding="false"
                             tools:itemCount="2"
                             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
@@ -616,11 +433,10 @@
                 android:layout_height="wrap_content">
 
 
-                <androidx.appcompat.widget.AppCompatImageButton
+                <ImageView
                     android:id="@+id/minus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="?selectableItemBackground"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
