@@ -221,13 +221,14 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
         switch (modifierGroupMinimumType) {
             case OPTIONAL:
-                String optional = CacheUtil.getInstance().getTranslations(Text.OPTIONAL_KEY);
+                String optional = CacheUtil.getInstance().getTranslations(Text.OPTIONAL_KEY,"Optional");
                 minimumLayout.setVisibility(View.VISIBLE);
                 txtMinimum.setText(optional);
                 break;
 
             case REQUIRED:
-                String required = CacheUtil.getInstance().getTranslations(Text.REQUIRED_KEY);
+                String required = CacheUtil.getInstance()
+                        .getTranslations(Text.REQUIRED_KEY, "Required");
                 minimumLayout.setVisibility(View.VISIBLE);
                 txtMinimum.setText(required);
                 break;

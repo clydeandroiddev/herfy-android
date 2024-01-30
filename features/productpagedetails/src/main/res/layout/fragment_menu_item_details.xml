@@ -193,7 +193,7 @@
                                     app:layout_constraintStart_toEndOf="@+id/calories"
                                     app:layout_constraintTop_toTopOf="@+id/calories"
                                     app:lineHeight="20sp"
-                                    tools:text="More information" />
+                                    android:text="More information" />
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
@@ -474,7 +474,7 @@
         <Button
             android:id="@+id/add"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="24dp"
@@ -483,6 +483,7 @@
             android:background="@drawable/rounded_corner"
             android:includeFontPadding="false"
             android:text="ADD TO Cart"
+
             android:textAlignment="center"
             android:textAllCaps="true"
             android:textStyle="bold"
