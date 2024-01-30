@@ -1,7 +1,6 @@
 package com.herfy.menu.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,13 +118,10 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
     private int determineModifierItemViewType(ModifierGroupType type) {
         int modifierItemSize = menuPresenter.getModifierItemsCount(modifierGroup);
         if (isSizeModifierItem(type, modifierItemSize)) {
-            Log.d("FAFA","Sizes modifier type");
             return ITEM_WITH_IMAGE_AND_DESCRIPTION_VIEW_TYPE;
         } else if (isDrinkModifierItem(type, modifierItemSize)) {
-            Log.d("FAFA","Drink modifier type");
             return ITEM_WITHOUT_DESCRIPTION_VIEW_TYPE;
         } else if (isOptionModifierItem(type, modifierItemSize)) {
-            Log.d("FAFA","Option modifier type");
             return ITEM_MODIFIER_OPTIONS_VIEW_TYPE;
         } else {
             return HIDDEN_VIEW_TYPE;
