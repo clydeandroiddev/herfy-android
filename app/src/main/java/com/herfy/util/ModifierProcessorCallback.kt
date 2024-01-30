@@ -1,6 +1,7 @@
 package com.herfy.util
 
 import android.text.SpannedString
+import com.herfy.productpagedetails.ui.viewholder.util.ArabicUtils
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemAttributes
 
@@ -32,25 +33,19 @@ class ModifierProcessor(private val callback: ModifierProcessorCallback) {
     private fun formatPriceBasedOnLocale(originalPrice: Double, translatedName: String): String {
         return when {
             isEnglishOrFrench() -> "+${getFormattedPrice(originalPrice)}"
-            isProbablyArabic(translatedName) -> convertFormattedPriceAsString(StringUtil.getFormattedPriceWithText(originalPrice))
+            ArabicUtils.isArabic(translatedName) -> convertFormattedPriceAsString(StringUtil.getFormattedPriceWithText(originalPrice))
             else -> convertFormattedPriceAsString(getFormattedPrice(originalPrice))
         }
     }
     private fun isEnglishOrFrench(): Boolean {
-        return LocaleUtil.getInstance().isEnglish || LocaleUtil.getInstance().isFrench;
+        return LocaleUtil.getInstance().isEnglish || LocaleUtil.getInstance().isFrench
     }
     private fun getFormattedPrice(originalPrice: Double): SpannedString {
         return StringUtil.getFormattedPrice(originalPrice)
     }
 
     private fun convertFormattedPriceAsString(formattedPrice: SpannedString): String {
-        return formattedPrice.toString();
+        return formattedPrice.toString()
     }
 
-
-    private fun isProbablyArabic(text: String): Boolean {
-        // Implement logic to check if text is probably Arabic
-        // For example, you can use a library or a custom method
-        return false
-    }
 }
