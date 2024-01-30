@@ -233,6 +233,7 @@ dependencies {
     implementation project(path: ':features:ordertype')
     implementation project(path: ':features:promotions')
     implementation project(path: ':features:upsell')
+    implementation project(path: ':features:checkout')
     implementation project(path: ':utils')
     implementation project(path: ':data:database')
     implementation project(path: ':features:nutritiondetails')
