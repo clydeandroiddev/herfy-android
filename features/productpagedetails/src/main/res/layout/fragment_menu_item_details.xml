@@ -352,8 +352,9 @@
                             android:id="@+id/notes_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/margin_large"
+
                             android:layout_marginTop="@dimen/margin_large"
+                            style="@style/Styles.Text.Footnote"
                             android:fontFamily="@font/cairo_bold"
                             android:gravity="start"
                             android:includeFontPadding="false"
@@ -370,6 +371,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/cairo_bold"
                             android:gravity="start"
+
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:text="Please let us know if you are allergic to anything or if we need to31231"
