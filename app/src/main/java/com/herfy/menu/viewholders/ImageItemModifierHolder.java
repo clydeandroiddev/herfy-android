@@ -11,18 +11,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.herfy.R;
+import com.herfy.constants.Text;
 import com.herfy.menu.MenuContract;
 import com.herfy.util.LocaleUtil;
+import com.herfy.util.ModifierProcessor;
+import com.herfy.util.ModifierProcessorCallback;
 import com.herfy.util.StringUtil;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ImageItemModifierHolder extends BaseModifierItemViewHolder {
+public class ImageItemModifierHolder extends BaseModifierItemViewHolder implements ModifierProcessorCallback {
     @BindView(R.id.check)
     ImageView check;
     @BindView(R.id.check_layout)
@@ -36,11 +40,13 @@ public class ImageItemModifierHolder extends BaseModifierItemViewHolder {
     @BindView(R.id.txtmodifierPrice)
     TextView txtModifierPrice;
     private OnAction action;
+    private ModifierProcessor modifierProcessor;
     @Nullable
     LinearLayout clickableLayout;
     public ImageItemModifierHolder(Context context, MenuContract.Presenter menuPresenter, View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        modifierProcessor = new ModifierProcessor(this);
     }
 
 
@@ -71,46 +77,35 @@ public class ImageItemModifierHolder extends BaseModifierItemViewHolder {
 
     @Override
     public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
+        modifierProcessor.processModifier(modifierItem);
         if (modifierItem.getAttributes().isSelected()) {
             check.setImageResource(R.drawable.modifier_item_selected);
         } else {
             check.setImageResource(R.drawable.modifier_item_unselected);
         }
 
-        String price;
-        //hamburgini
-
-            price = String.valueOf(StringUtil.getFormattedPrice(modifierItem.getAttributes().getPrice()));
-            if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
-                price = ("+" + StringUtil.getFormattedPrice(modifierItem.getAttributes().getPrice()));
-            } else {
-                if (isProbablyArabic(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()))) {
-                    price = String.valueOf(StringUtil.getFormattedPriceWithText(modifierItem.getAttributes().getPrice()));
-                } else {
-                    price = String.valueOf(StringUtil.getFormattedPrice(modifierItem.getAttributes().getPrice()));
-                }
-            }
-
-
-        String text = "<font color='#D62300'>" + price + "</font>";
-        if (modifierItem.getAttributes().getPrice() <= 0) {
-            text = "";
-        }
-
-            if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
-                modifierNameAndPrice.setText(Html.fromHtml(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage())), TextView.BufferType.SPANNABLE);
-                txtModifierPrice.setText(price);
-            } else {
-                if (isProbablyArabic(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()))) {
-                    modifierNameAndPrice.setText(Html.fromHtml(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage())), TextView.BufferType.SPANNABLE);
-                    txtModifierPrice.setText(price);
-                } else {
-
-                    modifierNameAndPrice.setText(Html.fromHtml(text + " " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage())), TextView.BufferType.SPANNABLE);
-                    txtModifierPrice.setText(price);
-                }
-            }
-        }
     }
+
+    @Override
+    public void onModifierProcessed(@NonNull String name, @NonNull String formattedPrice, @NonNull String text) {
+        setModifierNameAndPrice(name,formattedPrice,text);
+    }
+    private void setModifierNameAndPrice(String name, String formattedPrice,String text) {
+        if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
+            modifierNameAndPrice.setText(Html.fromHtml(name),  TextView.BufferType.SPANNABLE);
+        } else {
+            if (isProbablyArabic(name)) {
+                modifierNameAndPrice.setText(Html.fromHtml(name), TextView.BufferType.SPANNABLE);
+            } else {
+                String modifiedText = text + " " + name;
+                modifierNameAndPrice.setText(Html.fromHtml(modifiedText), TextView.BufferType.SPANNABLE);
+            }
+        }
+
+        // Set the price text in all cases
+        txtModifierPrice.setText(formattedPrice);
+    }
+
+}
 
 

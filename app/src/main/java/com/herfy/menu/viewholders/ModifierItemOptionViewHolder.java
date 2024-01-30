@@ -7,10 +7,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.LocaleUtil;
+import com.herfy.util.ModifierProcessor;
+import com.herfy.util.ModifierProcessorCallback;
 import com.herfy.util.StringUtil;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
@@ -18,7 +22,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder {
+public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder implements ModifierProcessorCallback {
     @BindView(R.id.check)
     ImageView checkBox;
     @BindView(R.id.txtModifierItemName)
@@ -31,11 +35,12 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder {
 
     @BindView(R.id.check_layout)
     FrameLayout checkLayout;
+    private ModifierProcessor modifierProcessor;
 
 
     public ModifierItemOptionViewHolder(Context context, MenuContract.Presenter menuPresenter, View itemView) {
         super(itemView);
-
+        modifierProcessor = new ModifierProcessor(this);
         ButterKnife.bind(this, itemView);
     }
 
@@ -87,10 +92,10 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder {
                 }
             }
         });
-       double modifierPrice = modifierItem.getAttributes().getPrice();
-        getModifierPriceTextView().setText(modifierPrice == 0
-                ? CacheUtil.getInstance().getTranslations("free_caps", "Free")
-                : StringUtil.getFormattedPrice(modifierPrice));
+//       double modifierPrice = modifierItem.getAttributes().getPrice();
+//        getModifierPriceTextView().setText(modifierPrice == 0
+//                ? CacheUtil.getInstance().getTranslations("free_caps", "Free")
+//                : StringUtil.getFormattedPrice(modifierPrice));
     }
 
     public static boolean isProbablyArabic(String s) {
@@ -103,4 +108,23 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder {
         return false;
     }
 
+    @Override
+    public void onModifierProcessed(@NonNull String name, @NonNull String formattedPrice, @NonNull String text) {
+        setModifierNameAndPrice(name,formattedPrice,text);
+    }
+    private void setModifierNameAndPrice(String name, String formattedPrice,String text) {
+        if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
+            modifierItemName.setText(Html.fromHtml(name),  TextView.BufferType.SPANNABLE);
+        } else {
+            if (isProbablyArabic(name)) {
+                modifierItemName.setText(Html.fromHtml(name), TextView.BufferType.SPANNABLE);
+            } else {
+
+                String modifiedText = text + " " + name;
+                modifierItemName.setText(Html.fromHtml(modifiedText), TextView.BufferType.SPANNABLE);
+            }
+        }
+
+        modifierPrice.setText(formattedPrice);
+    }
 }
