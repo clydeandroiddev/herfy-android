@@ -318,7 +318,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun setupFonts() {}
     override fun setupTranslations() {
         binding.txtMoreInfo.text = CacheUtil.getInstance()
-            .getTranslations(Text.MEAL_DEAL, "Meal Deal")
+            .getTranslations(Text.MEAL_DEAL, "More information")
     }
 
     override fun showStore(store: Store) {}
