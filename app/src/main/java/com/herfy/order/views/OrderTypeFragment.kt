@@ -8,7 +8,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -23,12 +22,9 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResult
@@ -65,6 +61,8 @@ import com.herfy.cart.views.CartFragment
 import com.herfy.data.constants.Text
 import com.herfy.data.constants.Values
 import com.herfy.databinding.FragmentOrderTypeBinding
+import com.herfy.constants.Text
+import com.herfy.constants.Values
 import com.herfy.ext.cast
 import com.herfy.ext.gone
 import com.herfy.ext.isVisible
@@ -78,6 +76,7 @@ import com.herfy.order.adapters.AddressesRecyclerViewAdapter
 import com.herfy.order.adapters.StoresRecyclerViewAdapter
 import com.herfy.order.views.ordertype.OrderTypeNewFragmentArgs
 import com.herfy.order.views.ordertype.OrderTypeNewFragmentDirections
+import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
 import com.herfy.util.*
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.views.RecyclerViewUtil
@@ -115,10 +114,12 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
     private val storeMarkers = ArrayList<Marker?>()
     private var bookmarkAddressDialogFragment: BookmarkAddressDialogFragment? = null
     private var dineInTableNumberDialogFragment: DineInTableNumberDialogFragment? = null
+
     private val gpsLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
             initializeLocation()
         }
+
     private val locationLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -128,6 +129,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             getStoresFallback()
         }
     }
+
     private var addressLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -142,27 +144,23 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                         showPromptChangeOrderTypeDialog(CacheUtil.getInstance().getTranslations(
                             Text.CHANGE_DELIVERY_INSTEAD_LABEL,
                             "Your current Pickup order will be removed from cart. Would you like to proceed and have your order delivered instead?"
-                        ),
-                            { _, _ ->
-                                val previousDifferentMenuId =
-                                    CacheUtil.getInstance().differentMenuId
-                                MenuUtil.getDiffMenuCdnUrl()
-                                if (previousDifferentMenuId != CacheUtil.getInstance().differentMenuId) {
-                                    CacheUtil.getInstance().cart = ArrayList()
-                                    showLoadingDialog()
-                                    fromAddAddressDifferentMenu = true
-                                    orderPresenter.getDiffMenuCdn(null)
-                                } else {
-                                    fromAddAddressDifferentMenu = false
-                                    navigateUp()
-                                }
-                            },
-                            { dialog, which ->
-                                activity?.cast<BaseActivity> { it.dismissDialogs() }
-                                dialog.dismiss()
-                                CacheUtil.getInstance().orderType = cachedOrderType
+                        ), { _, _ ->
+                            val previousDifferentMenuId = CacheUtil.getInstance().differentMenuId
+                            MenuUtil.getDiffMenuCdnUrl()
+                            if (previousDifferentMenuId != CacheUtil.getInstance().differentMenuId) {
+                                CacheUtil.getInstance().cart = ArrayList()
+                                showLoadingDialog()
+                                fromAddAddressDifferentMenu = true
+                                orderPresenter.getDiffMenuCdn(null)
+                            } else {
+                                fromAddAddressDifferentMenu = false
+                                navigateUp()
                             }
-                        )
+                        }, { dialog, which ->
+                            activity?.cast<BaseActivity> { it.dismissDialogs() }
+                            dialog.dismiss()
+                            CacheUtil.getInstance().orderType = cachedOrderType
+                        })
                     } else {
                         val previousDifferentMenuId = CacheUtil.getInstance().differentMenuId
                         MenuUtil.getDiffMenuCdnUrl()
@@ -212,9 +210,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentOrderTypeBinding.inflate(inflater, container, false)
         return binding.root
@@ -271,17 +267,6 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         })
     }
 
-    /*override fun onResume() {
-        super.onResume()
-        AppLogger.error("onResume fromCurbside $fromCurbside")
-        if(fromCurbside || fromShowCurbside) {
-            fromCurbside = false
-            fromShowCurbside = false
-            selectOrderType(OrderType.CURBSIDE)
-            processCurbside()
-        }
-    }*/
-
     private fun navigateUp() {
         activity?.runOnUiThread {
             activity?.cast<MainActivity> {
@@ -303,8 +288,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
     private fun sendFragmentResult() {
         val isSameBranch = args.storeId == (CacheUtil.getOrderStoreId() ?: "")
         setFragmentResult(
-            ARGS_KEY_FRAGMENT_RESULT,
-            bundleOf(
+            ARGS_KEY_FRAGMENT_RESULT, bundleOf(
                 CartFragment.ARGS_KEY_CHECKOUT to args.checkout,
                 ARGS_KEY_IS_SAME_BRANCH to isSameBranch
             )
@@ -343,10 +327,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
     ) {
         activity?.cast<BaseActivity> {
             it.logEventAttributesMetric(
-                eventName,
-                eventAttributes,
-                eventMetricName,
-                eventMetricValue
+                eventName, eventAttributes, eventMetricName, eventMetricValue
             )
         }
     }
@@ -380,8 +361,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                 googleMap?.animateCamera(
                     CameraUpdateFactory.newLatLngZoom(
                         LatLng(
-                            Values.DEFAULT_LATITUDE,
-                            Values.DEFAULT_LONGITUDE
+                            Values.DEFAULT_LATITUDE, Values.DEFAULT_LONGITUDE
                         ), 15f
                     )
                 )
@@ -401,9 +381,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                         } else {
                             orderPresenter.getStore(!curbsideTabSelected, position)?.let { store ->
                                 selectStore(
-                                    position,
-                                    store,
-                                    true
+                                    position, store, true
                                 )
                             }
                         }
@@ -451,53 +429,49 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             dineInStoresRecyclerViewAdapter = StoresRecyclerViewAdapter(orderPresenter, true)
             pickupCurbsideStoresRecyclerViewAdapter =
                 StoresRecyclerViewAdapter(orderPresenter, false)
-            binding.confirm.setOnClickListener { v: View? ->
-                it.showLoadingDialog()
-                val cachedOrderType = CacheUtil.getInstance().orderType
-                if (orderTypeSelected == OrderType.PICKUP) {
-                    if (curbsideTabSelected && binding.curbsideLayout.isVisible() && CacheUtil.getInstance().curbsideCar != null) {
-                        orderTypeSelected = OrderType.CURBSIDE
-                    } else if (dineInTabSelected) {
-                        orderTypeSelected = OrderType.DINE_IN
-                    }
-                }
-
-
-                if (isMenuSeparate && cachedOrderType == OrderType.DELIVERY && orderTypeSelected == OrderType.PICKUP) {
-                    val itemsInCart = CacheUtil.getInstance().cart
-                    if (itemsInCart.size > 0) {
-                        showPromptChangeOrderTypeDialog(
-                            CacheUtil.getInstance().getTranslations(
-                                Text.CHANGE_PICKUP_INSTEAD_LABEL,
-                                "Your current Delivery order will be removed from cart. Would you like to proceed and pick up your order instead?"
-                            ),
-                            { _, _ ->
-                                CacheUtil.getInstance().cart = ArrayList()
-                                orderPresenter.getDiffMenuCdn(null)
-                                isMenuRedownloaded = true;
-                                CacheUtil.getInstance().orderType = orderTypeSelected
-                            },
-                            { dialog, which ->
-                                it.dismissDialogs()
-                                dialog.dismiss()
-                            }
-                        )
-                    } else {
-                        orderPresenter.getDiffMenuCdn(null)
-                        isMenuRedownloaded = true;
-                        CacheUtil.getInstance().orderType = orderTypeSelected
-                    }
-                } else {
-                    CacheUtil.getInstance().orderType = orderTypeSelected
-                    if (orderTypeSelected != OrderType.NONE) {
-                        if (cachedOrderType == OrderType.NONE) {
-                            orderPresenter.getDiffMenuCdn(null)
-                        } else diffMenuSaved(null)
-                    } else {
-                        diffMenuSaved(null)
-                    }
-                }
-            }
+//            binding.confirm.setOnClickListener { v: View? ->
+//                it.showLoadingDialog()
+//                val cachedOrderType = CacheUtil.getInstance().orderType
+//                if (orderTypeSelected == OrderType.PICKUP) {
+//                    if (curbsideTabSelected && binding.curbsideLayout.isVisible() && CacheUtil.getInstance().curbsideCar != null) {
+//                        orderTypeSelected = OrderType.CURBSIDE
+//                    } else if (dineInTabSelected) {
+//                        orderTypeSelected = OrderType.DINE_IN
+//                    }
+//                }
+//
+//
+//                if (isMenuSeparate && cachedOrderType == OrderType.DELIVERY && orderTypeSelected == OrderType.PICKUP) {
+//                    val itemsInCart = CacheUtil.getInstance().cart
+//                    if (itemsInCart.size > 0) {
+//                        showPromptChangeOrderTypeDialog(CacheUtil.getInstance().getTranslations(
+//                            Text.CHANGE_PICKUP_INSTEAD_LABEL,
+//                            "Your current Delivery order will be removed from cart. Would you like to proceed and pick up your order instead?"
+//                        ), { _, _ ->
+//                            CacheUtil.getInstance().cart = ArrayList()
+//                            orderPresenter.getDiffMenuCdn(null)
+//                            isMenuRedownloaded = true;
+//                            CacheUtil.getInstance().orderType = orderTypeSelected
+//                        }, { dialog, which ->
+//                            it.dismissDialogs()
+//                            dialog.dismiss()
+//                        })
+//                    } else {
+//                        orderPresenter.getDiffMenuCdn(null)
+//                        isMenuRedownloaded = true;
+//                        CacheUtil.getInstance().orderType = orderTypeSelected
+//                    }
+//                } else {
+//                    CacheUtil.getInstance().orderType = orderTypeSelected
+//                    if (orderTypeSelected != OrderType.NONE) {
+//                        if (cachedOrderType == OrderType.NONE) {
+//                            orderPresenter.getDiffMenuCdn(null)
+//                        } else diffMenuSaved(null)
+//                    } else {
+//                        diffMenuSaved(null)
+//                    }
+//                }
+//            }
         }
         binding.curbsideCancel.setOnClickListener {
             binding.orderTypeLabel.text = CacheUtil.getInstance().getTranslations(Text.PICKUP_AT)
@@ -519,172 +493,158 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
     override fun setupFonts() {}
     override fun setupTranslations() {
         binding.curbsideOrderType.noCarLabel.text = CacheUtil.getInstance().getTranslations(
-            Text.NO_CAR_CHOSEN_YET,
-            "No car chosen yet, please tap here to choose a car"
+            Text.NO_CAR_CHOSEN_YET, "No car chosen yet, please tap here to choose a car"
         )
         binding.curbsideOrderType.remove.text =
             CacheUtil.getInstance().getTranslations(Text.REMOVE, "REMOVE")
                 .uppercase(Locale.getDefault())
-        binding.orderTypeNoteLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.NOTE_TO_DRIVER_CAPS, "NOTE TO DRIVER")
+        binding.orderTypeNoteLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.NOTE_TO_DRIVER_CAPS, "NOTE TO DRIVER")
         binding.emptyAddressesTitle.text = CacheUtil.getInstance().getTranslations(
-            Text.NO_PREVIOUS_ADDRESS_FOUND,
-            "No previous address found"
+            Text.NO_PREVIOUS_ADDRESS_FOUND, "No previous address found"
         )
         binding.emptyAddressesSubtitle.text = CacheUtil.getInstance().getTranslations(
-            Text.YOU_DONT_HAVE_ANY_ADDRESSES_SAVED_YET,
-            "You don’t have any address saved yet."
+            Text.YOU_DONT_HAVE_ANY_ADDRESSES_SAVED_YET, "You don’t have any address saved yet."
         )
         binding.emptyAddressesMessage.text = CacheUtil.getInstance().getTranslations(
-            Text.PRESS_ON_THE_BUTTON_TO_ADD_ONE,
-            "Press on the button to add one"
+            Text.PRESS_ON_THE_BUTTON_TO_ADD_ONE, "Press on the button to add one"
         )
-        binding.emptyAdd.text = CacheUtil.getInstance()
-            .getTranslations(Text.ADD_NEW_ADDRESS_CAPS, "ADD NEW ADDRESS")
+        binding.emptyAdd.text =
+            CacheUtil.getInstance().getTranslations(Text.ADD_NEW_ADDRESS_CAPS, "ADD NEW ADDRESS")
         binding.add.text = CacheUtil.getInstance().getTranslations(
-            Text.ADD_A_NEW_ADDRESS_CAPS,
-            "ADD A NEW ADDRESS"
+            Text.ADD_A_NEW_ADDRESS_CAPS, "ADD A NEW ADDRESS"
         )
         binding.bookmarkedAddressesLabel.text = CacheUtil.getInstance().getTranslations(
-            Text.BOOKMARKED_ADDRESSES_CAPS,
-            "BOOKMARKED ADDRESSES"
+            Text.BOOKMARKED_ADDRESSES_CAPS, "BOOKMARKED ADDRESSES"
         )
-        binding.otherAddressesLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.PREVIOUSLY_USED_CAPS, "PREVIOUSLY USED")
-        binding.curbsideLabel.text =
-            CacheUtil.getInstance().getTranslations(
-                Text.WOULD_YOU_LIKE_TO_TRY_CURBSIDE_PICKUP,
-                "Would you like to try Curbside Pickup?"
-            )
+        binding.otherAddressesLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.PREVIOUSLY_USED_CAPS, "PREVIOUSLY USED")
+        binding.curbsideLabel.text = CacheUtil.getInstance().getTranslations(
+            Text.WOULD_YOU_LIKE_TO_TRY_CURBSIDE_PICKUP, "Would you like to try Curbside Pickup?"
+        )
         binding.curbsideCancel.text =
             CacheUtil.getInstance().getTranslations(Text.CURBSIDE_NO_THANKS_CAPS, "NO, THANKS")
         binding.curbsideProceed.text =
             CacheUtil.getInstance().getTranslations(Text.CURBSIDE_YES_PLEASE_CAPS, "YES, PLEASE")
-        binding.confirm.text = CacheUtil.getInstance()
-            .getTranslations(Text.CONFIRM_CAPS, "CONFIRM")
+        //binding.confirm.text = CacheUtil.getInstance().getTranslations(Text.CONFIRM_CAPS, "CONFIRM")
     }
 
     override fun showOrderTypes(orderTypes: Set<OrderType>) {
-        if (orderTypes.size > 1) {
-            isSingleOrderType = false
-            binding.typesContainer.visibility = View.VISIBLE
-            binding.typesContainer.removeAllViews()
-            activity?.let {
-                when (orderTypes.size) {
-                    3 -> binding.typesContainer.setPadding(
-                        ViewUtil.dpToPx(it, 32),
-                        ViewUtil.dpToPx(it, 16),
-                        ViewUtil.dpToPx(it, 32),
-                        ViewUtil.dpToPx(it, 22)
-                    )
-
-                    2 -> binding.typesContainer.setPadding(
-                        ViewUtil.dpToPx(it, 90),
-                        ViewUtil.dpToPx(it, 16),
-                        ViewUtil.dpToPx(it, 90),
-                        ViewUtil.dpToPx(it, 22)
-                    )
-
-                    else -> binding.typesContainer.setPadding(
-                        ViewUtil.dpToPx(it, 16),
-                        ViewUtil.dpToPx(it, 16),
-                        ViewUtil.dpToPx(it, 16),
-                        ViewUtil.dpToPx(it, 22)
-                    )
-                }
-            }
-
-            orderTypes.map {
-                createOrderType(it)
-            }
-        } else {
-            if (orderTypes.size == 1) {
-                for (orderType: OrderType in orderTypes) {
-                    if (orderType === OrderType.DELIVERY) {
-                        isDeliveryAvailable = true
-                    } else if (orderType === OrderType.CURBSIDE) {
-                        isCurbsideAvailable = true
-                    } else if (orderType === OrderType.PICKUP) {
-                        isPickupAvailable = true
-                    } else if (orderType === OrderType.DINE_IN) {
-                        isDineInAvailable = true
-                    }
-                }
-            }
-            isSingleOrderType = true
-            binding.typesContainer.visibility = View.GONE
-        }
-        activity?.cast<BaseActivity> {
-            it.dismissDialogs()
-        }
+//        if (orderTypes.size > 1) {
+//            isSingleOrderType = false
+//            binding.typesContainer.visibility = View.VISIBLE
+//            binding.typesContainer.removeAllViews()
+//            activity?.let {
+//                when (orderTypes.size) {
+//                    3 -> binding.typesContainer.setPadding(
+//                        ViewUtil.dpToPx(it, 32),
+//                        ViewUtil.dpToPx(it, 16),
+//                        ViewUtil.dpToPx(it, 32),
+//                        ViewUtil.dpToPx(it, 22)
+//                    )
+//
+//                    2 -> binding.typesContainer.setPadding(
+//                        ViewUtil.dpToPx(it, 90),
+//                        ViewUtil.dpToPx(it, 16),
+//                        ViewUtil.dpToPx(it, 90),
+//                        ViewUtil.dpToPx(it, 22)
+//                    )
+//
+//                    else -> binding.typesContainer.setPadding(
+//                        ViewUtil.dpToPx(it, 16),
+//                        ViewUtil.dpToPx(it, 16),
+//                        ViewUtil.dpToPx(it, 16),
+//                        ViewUtil.dpToPx(it, 22)
+//                    )
+//                }
+//            }
+//
+//            orderTypes.map {
+//                createOrderType(it)
+//            }
+//        } else {
+//            if (orderTypes.size == 1) {
+//                for (orderType: OrderType in orderTypes) {
+//                    if (orderType === OrderType.DELIVERY) {
+//                        isDeliveryAvailable = true
+//                    } else if (orderType === OrderType.CURBSIDE) {
+//                        isCurbsideAvailable = true
+//                    } else if (orderType === OrderType.PICKUP) {
+//                        isPickupAvailable = true
+//                    } else if (orderType === OrderType.DINE_IN) {
+//                        isDineInAvailable = true
+//                    }
+//                }
+//            }
+//            isSingleOrderType = true
+////            binding.typesContainer.visibility = View.GONE
+//        }
+//        activity?.cast<BaseActivity> {
+//            it.dismissDialogs()
+//        }
     }
 
     override fun createOrderType(orderType: OrderType) {
-        try {
-            val activity: Activity? = activity
-            if (activity != null) {
-                val view = LayoutInflater.from(activity)
-                    .inflate(R.layout.item_order_type, binding.typesContainer, false)
-                val container = view.findViewById<ConstraintLayout>(R.id.container)
-                container.tag = orderType
-                container.setOnClickListener {
-                    selectOrderType(orderType)
-                }
-                val icon = view.findViewById<AppCompatImageView>(R.id.icon)
-                val label = view.findViewById<TextView>(R.id.label)
-                val iconLayoutParams: LinearLayout.LayoutParams
-                if (orderType === OrderType.DELIVERY) {
-                    iconLayoutParams = LinearLayout.LayoutParams(
-                        ViewUtil.dpToPx(activity, 31),
-                        ViewUtil.dpToPx(activity, 23)
-                    )
-                } else if (orderType === OrderType.CURBSIDE) {
-                    iconLayoutParams = LinearLayout.LayoutParams(
-                        ViewUtil.dpToPx(activity, 26),
-                        ViewUtil.dpToPx(activity, 23)
-                    )
-                } else if (orderType === OrderType.DINE_IN) {
-                    iconLayoutParams = LinearLayout.LayoutParams(
-                        ViewUtil.dpToPx(activity, 33),
-                        ViewUtil.dpToPx(activity, 23)
-                    )
-                } else {
-                    iconLayoutParams = LinearLayout.LayoutParams(
-                        ViewUtil.dpToPx(activity, 23),
-                        ViewUtil.dpToPx(activity, 23)
-                    )
-                }
-                iconLayoutParams.gravity = Gravity.CENTER_HORIZONTAL
-                icon.layoutParams = iconLayoutParams
-                if (orderType === OrderType.DELIVERY) {
-                    icon.setImageResource(R.drawable.ic_order_type_delivery)
-                    label.text = CacheUtil.getInstance().getTranslations(Text.DELIVERY)
-                    isDeliveryAvailable = true
-                } else if (orderType === OrderType.CURBSIDE) {
-                    icon.setImageResource(R.drawable.ic_order_type_curbside)
-                    label.text = CacheUtil.getInstance()
-                        .getTranslations(Text.CURBSIDE_PICKUP_CAPS, "CURBSIDE")
-                    isCurbsideAvailable = true
-                } else if (orderType === OrderType.PICKUP) {
-                    icon.setImageResource(R.drawable.ic_order_type_pickup)
-                    label.text = CacheUtil.getInstance().getTranslations(Text.PICKUP)
-                    isPickupAvailable = true
-                } else if (orderType === OrderType.DINE_IN) {
-                    icon.setImageResource(R.drawable.ic_order_type_dinein)
-                    label.text =
-                        CacheUtil.getInstance().getTranslations("dine_in_tab_label", "Dine In")
-                    isDineInAvailable = true
-                }
-                ImageViewCompat.setImageTintList(
-                    icon,
-                    ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
-                )
-                label.setTextColor(Color.parseColor("#FFFFFF"))
-                binding.typesContainer.addView(view)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+//        try {
+//            val activity: Activity? = activity
+//            if (activity != null) {
+//                val view = LayoutInflater.from(activity)
+//                    .inflate(R.layout.item_order_type, binding.typesContainer, false)
+//                val container = view.findViewById<ConstraintLayout>(R.id.container)
+//                container.tag = orderType
+//                container.setOnClickListener {
+//                    selectOrderType(orderType)
+//                }
+//                val icon = view.findViewById<AppCompatImageView>(R.id.icon)
+//                val label = view.findViewById<TextView>(R.id.label)
+//                val iconLayoutParams: LinearLayout.LayoutParams
+//                if (orderType === OrderType.DELIVERY) {
+//                    iconLayoutParams = LinearLayout.LayoutParams(
+//                        ViewUtil.dpToPx(activity, 31), ViewUtil.dpToPx(activity, 23)
+//                    )
+//                } else if (orderType === OrderType.CURBSIDE) {
+//                    iconLayoutParams = LinearLayout.LayoutParams(
+//                        ViewUtil.dpToPx(activity, 26), ViewUtil.dpToPx(activity, 23)
+//                    )
+//                } else if (orderType === OrderType.DINE_IN) {
+//                    iconLayoutParams = LinearLayout.LayoutParams(
+//                        ViewUtil.dpToPx(activity, 33), ViewUtil.dpToPx(activity, 23)
+//                    )
+//                } else {
+//                    iconLayoutParams = LinearLayout.LayoutParams(
+//                        ViewUtil.dpToPx(activity, 23), ViewUtil.dpToPx(activity, 23)
+//                    )
+//                }
+//                iconLayoutParams.gravity = Gravity.CENTER_HORIZONTAL
+//                icon.layoutParams = iconLayoutParams
+//                if (orderType === OrderType.DELIVERY) {
+//                    icon.setImageResource(R.drawable.ic_order_type_delivery)
+//                    label.text = CacheUtil.getInstance().getTranslations(Text.DELIVERY)
+//                    isDeliveryAvailable = true
+//                } else if (orderType === OrderType.CURBSIDE) {
+//                    icon.setImageResource(R.drawable.ic_order_type_curbside)
+//                    label.text = CacheUtil.getInstance()
+//                        .getTranslations(Text.CURBSIDE_PICKUP_CAPS, "CURBSIDE")
+//                    isCurbsideAvailable = true
+//                } else if (orderType === OrderType.PICKUP) {
+//                    icon.setImageResource(R.drawable.ic_order_type_pickup)
+//                    label.text = CacheUtil.getInstance().getTranslations(Text.PICKUP)
+//                    isPickupAvailable = true
+//                } else if (orderType === OrderType.DINE_IN) {
+//                    icon.setImageResource(R.drawable.ic_order_type_dinein)
+//                    label.text =
+//                        CacheUtil.getInstance().getTranslations("dine_in_tab_label", "Dine In")
+//                    isDineInAvailable = true
+//                }
+//                ImageViewCompat.setImageTintList(
+//                    icon, ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
+//                )
+//                label.setTextColor(Color.parseColor("#FFFFFF"))
+////                binding.typesContainer.addView(view)
+//            }
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
     }
 
     override fun selectOrderType(type: OrderType) {
@@ -735,28 +695,27 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                 }
             }
         }
-        for (i in 0 until binding.typesContainer.childCount) {
-            val view = binding.typesContainer.getChildAt(i)
-            val card = view.findViewById<FrameLayout>(R.id.card)
-            val container = view.findViewById<ConstraintLayout>(R.id.container)
-            val icon = view.findViewById<AppCompatImageView>(R.id.icon)
-            val label = view.findViewById<TextView>(R.id.label)
-            if (!isNone && (container.tag == orderType || (orderType == OrderType.CURBSIDE && container.tag == OrderType.PICKUP))) {
-                card.setBackgroundResource(R.drawable.background_order_type_selected)
-                ImageViewCompat.setImageTintList(
-                    icon,
-                    ColorStateList.valueOf(Color.parseColor(CacheUtil.getInstance().colorMain))
-                )
-                label.setTextColor(Color.parseColor(CacheUtil.getInstance().colorMain))
-            } else {
-                card.setBackgroundResource(R.drawable.background_order_type_unselected)
-                ImageViewCompat.setImageTintList(
-                    icon,
-                    ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
-                )
-                label.setTextColor(Color.parseColor("#FFFFFF"))
-            }
-        }
+//        for (i in 0 until binding.typesContainer.childCount) {
+//            val view = binding.typesContainer.getChildAt(i)
+//            val card = view.findViewById<FrameLayout>(R.id.card)
+//            val container = view.findViewById<ConstraintLayout>(R.id.container)
+//            val icon = view.findViewById<AppCompatImageView>(R.id.icon)
+//            val label = view.findViewById<TextView>(R.id.label)
+//            if (!isNone && (container.tag == orderType || (orderType == OrderType.CURBSIDE && container.tag == OrderType.PICKUP))) {
+//                card.setBackgroundResource(R.drawable.background_order_type_selected)
+//                ImageViewCompat.setImageTintList(
+//                    icon,
+//                    ColorStateList.valueOf(Color.parseColor(CacheUtil.getInstance().colorMain))
+//                )
+//                label.setTextColor(Color.parseColor(CacheUtil.getInstance().colorMain))
+//            } else {
+//                card.setBackgroundResource(R.drawable.background_order_type_unselected)
+//                ImageViewCompat.setImageTintList(
+//                    icon, ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
+//                )
+//                label.setTextColor(Color.parseColor("#FFFFFF"))
+//            }
+//        }
         var title: String? = ""
         if (orderType === OrderType.DELIVERY) {
             selectDelivery()
@@ -811,8 +770,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             }
         }
         NavigationUtils.navigateSafe(
-            findNavController(),
-            OrderTypeNewFragmentDirections.actionOrderTypeFragmentToDialog()
+            findNavController(), OrderTypeNewFragmentDirections.actionOrderTypeFragmentToDialog()
         )
     }
 
@@ -828,29 +786,28 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             locationSettingsRequestBuilder.setAlwaysShow(true)
             LocationServices.getSettingsClient(it)
                 .checkLocationSettings(locationSettingsRequestBuilder.build())
-                .addOnCompleteListener(
-                    OnCompleteListener { task ->
-                        try {
-                            task.getResult(ApiException::class.java)
-                            getLocation()
-                        } catch (e: ApiException) {
-                            getStoresFallback()
-                            e.printStackTrace()
-                            if (e.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
-                                try {
-                                    val resolvableApiException = e as ResolvableApiException
-                                    val intentSenderRequest =
-                                        IntentSenderRequest.Builder(resolvableApiException.resolution)
-                                            .build()
-                                    gpsLauncher.launch(intentSenderRequest)
-                                } catch (exception: IntentSender.SendIntentException) {
-                                    exception.printStackTrace()
-                                }
-                            } else if (e.statusCode == LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE) {
-                                AppLogger.error("Settings change unavailable")
+                .addOnCompleteListener(OnCompleteListener { task ->
+                    try {
+                        task.getResult(ApiException::class.java)
+                        getLocation()
+                    } catch (e: ApiException) {
+                        getStoresFallback()
+                        e.printStackTrace()
+                        if (e.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+                            try {
+                                val resolvableApiException = e as ResolvableApiException
+                                val intentSenderRequest =
+                                    IntentSenderRequest.Builder(resolvableApiException.resolution)
+                                        .build()
+                                gpsLauncher.launch(intentSenderRequest)
+                            } catch (exception: IntentSender.SendIntentException) {
+                                exception.printStackTrace()
                             }
+                        } else if (e.statusCode == LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE) {
+                            AppLogger.error("Settings change unavailable")
                         }
-                    })
+                    }
+                })
         }
 
     }
@@ -858,8 +815,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
     override fun getLocation() {
         activity?.apply {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                    this, Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 context?.let {
@@ -899,8 +855,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                 val activity: Activity? = activity
                 if (activity != null) {
                     val bitmapDrawable = ContextCompat.getDrawable(
-                        activity,
-                        R.drawable.marker_location
+                        activity, R.drawable.marker_location
                     ) as BitmapDrawable?
                     if (bitmapDrawable != null) {
                         val bitmap =
@@ -928,12 +883,10 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun showAddresses(
-        bookmarkedAddresses: ArrayList<Address>,
-        otherAddresses: ArrayList<Address>
+        bookmarkedAddresses: ArrayList<Address>, otherAddresses: ArrayList<Address>
     ) {
         binding.addressesShimmer.visibility = View.GONE
-        val hasOrderDeliveryAddress =
-            !CacheUtil.getInstance().orderDeliveryAddress.isNullOrEmpty()
+        val hasOrderDeliveryAddress = !CacheUtil.getInstance().orderDeliveryAddress.isNullOrEmpty()
         binding.emptyAddresses.visibility =
             if (hasOrderDeliveryAddress || orderPresenter.addressesCount > 0) View.GONE else View.VISIBLE
         if (deliveryTabSelected || typeOrder == OrderType.DELIVERY.value) {
@@ -1012,16 +965,14 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             bookmarkAddressDialogFragment?.dismiss()
             activity?.cast<BaseActivity> {
                 bookmarkAddressDialogFragment = BookmarkAddressDialogFragment.newInstance(
-                    orderPresenter,
-                    updateAddress
+                    orderPresenter, updateAddress
                 ) { label ->
                     it.showLoadingDialog()
                     updateAddress?.attributes?.label = label
                     orderPresenter.updateAddress(false, updateAddress, false)
                 }
                 bookmarkAddressDialogFragment?.show(
-                    it.supportFragmentManager,
-                    BookmarkAddressDialogFragment::class.java.simpleName
+                    it.supportFragmentManager, BookmarkAddressDialogFragment::class.java.simpleName
                 )
             }
         }
@@ -1064,8 +1015,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                         val activity: Activity? = activity
                         if (activity != null) {
                             val icon = ViewUtil.vectorDrawableToBitmapDescriptor(
-                                activity,
-                                R.drawable.marker_store_unselected
+                                activity, R.drawable.marker_store_unselected
                             )
                             if (icon != null) {
                                 markerOptions.icon(icon)
@@ -1086,16 +1036,13 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                     CacheUtil.getInstance().orderStore.id.orEmpty()
                 }
                 val position = orderPresenter.getStorePosition(
-                    true,
-                    storeId
+                    true, storeId
                 )
                 orderPresenter.pickupCurbsideStores?.let { list ->
                     val store: Store? = if (position != -1) list[position] else null
                     store?.let {
                         selectStore(
-                            position,
-                            it,
-                            true
+                            position, it, true
                         )
                     }
                 }
@@ -1104,16 +1051,13 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             } else if (!deliveryTabSelected && (CacheUtil.getInstance().orderType === OrderType.PICKUP) || (CacheUtil.getInstance().orderType === OrderType.DINE_IN) || (CacheUtil.getInstance().orderType === OrderType.CURBSIDE)) {
                 if (CacheUtil.getInstance().orderStore != null) {
                     val position = orderPresenter.getStorePosition(
-                        true,
-                        CacheUtil.getInstance().orderStore.id
+                        true, CacheUtil.getInstance().orderStore.id
                     )
                     orderPresenter.dineInStores?.let { list ->
                         val store: Store? = if (position != -1) list[position] else null
                         store?.let {
                             selectStore(
-                                position,
-                                it,
-                                true
+                                position, it, true
                             )
                         }
 
@@ -1129,48 +1073,48 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         if (store != null) {
             binding.orderTypeLocation.text = store.attributes.name
         }
-        if (!curbsideTabSelected) {
-            dineInStoresRecyclerViewAdapter?.selected = position
-            binding.confirm.setBackgroundColor(
-                if (dineInStoresRecyclerViewAdapter?.selected != -1) Color.parseColor(
-                    CacheUtil.getInstance().colorMain
-                ) else Color.parseColor("#B5B5B5")
-            )
-            binding.confirm.isFocusable = dineInStoresRecyclerViewAdapter?.selected != -1
-            binding.confirm.isClickable = dineInStoresRecyclerViewAdapter?.selected != -1
-            if (!initialLoad && dineInTabSelected && store != null && store.attributes.hasPromptForTableNumber == 1) {
-                showDineInTableNumberDialog(initialLoad, store)
-            }
-        } else {
-            pickupCurbsideStoresRecyclerViewAdapter?.selected = position
-            binding.confirm.setBackgroundColor(
-                if (pickupCurbsideStoresRecyclerViewAdapter?.selected != -1) Color.parseColor(
-                    CacheUtil.getInstance().colorMain
-                ) else Color.parseColor("#B5B5B5")
-            )
-            binding.confirm.isFocusable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
-            binding.confirm.isClickable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
-            if (CacheUtil.getInstance().application.attributes.getOrderTypes()
-                    .contains(OrderType.CURBSIDE) && store.attributes.curbsideEnabled == 1
-            ) {
-                if (CacheUtil.getInstance().curbsideCar == null) {
-                    binding.nonCurbsideLayout.gone()
-                    binding.curbsideContainer.visible()
-                    binding.curbsideLayout.gone()
-                } else {
-                    binding.nonCurbsideLayout.visible()
-                    binding.curbsideContainer.gone()
-                    binding.curbsideLayout.visible()
-                    processCurbside()
-                }
-            } else {
-                binding.orderTypeLabel.text =
-                    CacheUtil.getInstance().getTranslations(Text.PICKUP_AT)
-                binding.nonCurbsideLayout.visible()
-                binding.curbsideContainer.gone()
-                binding.curbsideLayout.gone()
-            }
-        }
+//        if (!curbsideTabSelected) {
+//            dineInStoresRecyclerViewAdapter?.selected = position
+//            binding.confirm.setBackgroundColor(
+//                if (dineInStoresRecyclerViewAdapter?.selected != -1) Color.parseColor(
+//                    CacheUtil.getInstance().colorMain
+//                ) else Color.parseColor("#B5B5B5")
+//            )
+//            binding.confirm.isFocusable = dineInStoresRecyclerViewAdapter?.selected != -1
+//            binding.confirm.isClickable = dineInStoresRecyclerViewAdapter?.selected != -1
+//            if (!initialLoad && dineInTabSelected && store != null && store.attributes.hasPromptForTableNumber == 1) {
+//                showDineInTableNumberDialog(initialLoad, store)
+//            }
+//        } else {
+//            pickupCurbsideStoresRecyclerViewAdapter?.selected = position
+//            binding.confirm.setBackgroundColor(
+//                if (pickupCurbsideStoresRecyclerViewAdapter?.selected != -1) Color.parseColor(
+//                    CacheUtil.getInstance().colorMain
+//                ) else Color.parseColor("#B5B5B5")
+//            )
+//            binding.confirm.isFocusable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
+//            binding.confirm.isClickable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
+//            if (CacheUtil.getInstance().application.attributes.getOrderTypes()
+//                    .contains(OrderType.CURBSIDE) && store.attributes.curbsideEnabled == 1
+//            ) {
+//                if (CacheUtil.getInstance().curbsideCar == null) {
+//                    binding.nonCurbsideLayout.gone()
+//                    binding.curbsideContainer.visible()
+//                    binding.curbsideLayout.gone()
+//                } else {
+//                    binding.nonCurbsideLayout.visible()
+//                    binding.curbsideContainer.gone()
+//                    binding.curbsideLayout.visible()
+//                    processCurbside()
+//                }
+//            } else {
+//                binding.orderTypeLabel.text =
+//                    CacheUtil.getInstance().getTranslations(Text.PICKUP_AT)
+//                binding.nonCurbsideLayout.visible()
+//                binding.curbsideContainer.gone()
+//                binding.curbsideLayout.gone()
+//            }
+//        }
         showStore(false, position)
     }
 
@@ -1208,18 +1152,13 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         if (markerClicked && ((!curbsideTabSelected && dineInStoresRecyclerViewAdapter?.selected == position) || pickupCurbsideStoresRecyclerViewAdapter?.selected == position)) {
             val branch = orderPresenter.getStore(!curbsideTabSelected, position)
             if (branch != null) {
-                val directionsBuilder = Uri.Builder()
-                    .scheme("https")
-                    .authority("www.google.com")
-                    .appendPath("maps")
-                    .appendPath("dir")
-                    .appendPath("")
-                    .appendQueryParameter("api", "1")
-                    .appendQueryParameter("travelmode", "driving")
-                    .appendQueryParameter(
-                        "destination",
-                        branch.attributes.lat.toString() + "," + branch.attributes.lng
-                    )
+                val directionsBuilder =
+                    Uri.Builder().scheme("https").authority("www.google.com").appendPath("maps")
+                        .appendPath("dir").appendPath("").appendQueryParameter("api", "1")
+                        .appendQueryParameter("travelmode", "driving").appendQueryParameter(
+                            "destination",
+                            branch.attributes.lat.toString() + "," + branch.attributes.lng
+                        )
 
                 if (StringUtil.hasOrderLatLong()) {
                     directionsBuilder.appendQueryParameter(
@@ -1237,9 +1176,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                 pickupCurbsideStoresRecyclerViewAdapter?.selected = position
             }
             RecyclerViewUtil.smoothSnapToPosition(
-                binding.storesRecyclerView,
-                position,
-                LinearSmoothScroller.SNAP_TO_START
+                binding.storesRecyclerView, position, LinearSmoothScroller.SNAP_TO_START
             )
             for (i in storeMarkers.indices) {
                 val storeMarker = storeMarkers[i]
@@ -1252,24 +1189,21 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                         if (store != null) {
                             val inflater =
                                 activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                            val view = inflater.inflate(R.layout.marker_store, null)
+                            val view = inflater.inflate(R.layout.marker_store_new, null)
                             val open = view.findViewById<MaterialButton>(R.id.open)
                             open.text = CacheUtil.getInstance()
                                 .getTranslations(Text.OPEN_IN_GOOGLE_MAPS, "Open in Google Maps")
                             open.setOnClickListener(object : View.OnClickListener {
                                 override fun onClick(v: View) {
-                                    val directionsBuilder = Uri.Builder()
-                                        .scheme("https")
-                                        .authority("www.google.com")
-                                        .appendPath("maps")
-                                        .appendPath("dir")
-                                        .appendPath("")
-                                        .appendQueryParameter("api", "1")
-                                        .appendQueryParameter("travelmode", "driving")
-                                        .appendQueryParameter(
-                                            "destination",
-                                            store?.attributes?.lat.toString() + "," + store?.attributes?.lng
-                                        )
+                                    val directionsBuilder =
+                                        Uri.Builder().scheme("https").authority("www.google.com")
+                                            .appendPath("maps").appendPath("dir").appendPath("")
+                                            .appendQueryParameter("api", "1")
+                                            .appendQueryParameter("travelmode", "driving")
+                                            .appendQueryParameter(
+                                                "destination",
+                                                store?.attributes?.lat.toString() + "," + store?.attributes?.lng
+                                            )
 
                                     if (StringUtil.hasOrderLatLong()) {
                                         directionsBuilder.appendQueryParameter(
@@ -1282,8 +1216,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                                         val activity: Activity? = getActivity()
                                         activity?.startActivity(
                                             Intent(
-                                                Intent.ACTION_VIEW,
-                                                directionsBuilder.build()
+                                                Intent.ACTION_VIEW, directionsBuilder.build()
                                             )
                                         )
                                     } catch (e: Exception) {
@@ -1294,8 +1227,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                             storeMarker.setIcon(
                                 BitmapDescriptorFactory.fromBitmap(
                                     ViewUtil.createDrawableFromView(
-                                        activity,
-                                        view
+                                        activity, view
                                     )
                                 )
                             )
@@ -1303,8 +1235,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                             storeMarker.title = i.toString()
                             googleMap?.animateCamera(
                                 CameraUpdateFactory.newLatLngZoom(
-                                    storeMarker.position,
-                                    11f
+                                    storeMarker.position, 11f
                                 )
                             )
                         }
@@ -1314,8 +1245,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                 } else {
                     storeMarker?.setIcon(
                         ViewUtil.vectorDrawableToBitmapDescriptor(
-                            activity,
-                            R.drawable.marker_store_unselected
+                            activity, R.drawable.marker_store_unselected
                         )
                     )
                     storeMarker?.setAnchor(0.5f, 1f)
@@ -1369,7 +1299,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         binding.nonCurbsideLayout.visibility = View.VISIBLE
         bookmarkedAddressesAdapter?.notifyDataSetChanged()
         otherAddressesAdapter?.notifyDataSetChanged()
-        binding.confirm.visibility = View.GONE
+       // binding.confirm.visibility = View.GONE
         binding.slidingPanel.post {
             binding.slidingPanel.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
         }
@@ -1378,8 +1308,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             if (activity != null) {
                 binding.orderTypeContainer.setBackgroundColor(
                     ContextCompat.getColor(
-                        activity,
-                        R.color.page_background_white
+                        activity, R.color.page_background_white
                     )
                 )
             }
@@ -1406,9 +1335,8 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                 binding.orderTypeNoteContainer.visibility = View.GONE
             }
         } else {
-            binding.orderTypeLocation.text =
-                CacheUtil.getInstance()
-                    .getTranslations(Text.NO_ADDRESS_SELECTED, "No address selected")
+            binding.orderTypeLocation.text = CacheUtil.getInstance()
+                .getTranslations(Text.NO_ADDRESS_SELECTED, "No address selected")
             binding.orderTypeNoteContainer.visibility = View.GONE
         }
         binding.nestedScrollView.visibility =
@@ -1438,8 +1366,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                 binding.curbsideOrderType.makerOtherText.visibility = View.GONE
                 var imageUrl = customerCar.attributes.carMakerImageUri
                 if ((imageUrl == null) || imageUrl.equals(
-                        "null",
-                        ignoreCase = true
+                        "null", ignoreCase = true
                     ) || imageUrl.isEmpty() || imageUrl.lowercase(
                         Locale.getDefault()
                     ).contains("default-image.png")
@@ -1481,8 +1408,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             binding.curbsideOrderType.colorImageSelected.setImageDrawable(
                 ViewUtil.getColorDrawable(
                     "#" + customerCar.attributes.color.replace(
-                        "#",
-                        ""
+                        "#", ""
                     )
                 )
             )
@@ -1512,7 +1438,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         dineInTabSelected = false
         binding.curbsideLayout.visibility = View.VISIBLE
         binding.nonCurbsideLayout.visibility = View.GONE
-        binding.confirm.visibility = View.VISIBLE
+       // binding.confirm.visibility = View.VISIBLE
         binding.storesRecyclerView.adapter = pickupCurbsideStoresRecyclerViewAdapter
         pickupCurbsideStoresRecyclerViewAdapter?.notifyDataSetChanged()
         binding.slidingPanel.post {
@@ -1521,8 +1447,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         activity?.cast<BaseActivity> {
             binding.orderTypeContainer.setBackgroundColor(
                 ContextCompat.getColor(
-                    it,
-                    android.R.color.transparent
+                    it, android.R.color.transparent
                 )
             )
             binding.deliveryContainer.visibility = View.GONE
@@ -1556,27 +1481,13 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             CacheUtil.getInstance().signinUsername = ""
             NavigationUtils.navigateSafe(
                 findNavController(), OrderTypeNewFragmentDirections.actionOrderTypeToAuth(
-                    signIn = true,
-                    guest = false,
-                    curbside = true,
-                    checkout = false
+                    signIn = true, guest = false, curbside = true, checkout = false
                 )
             )
         }
     }
 
     private fun showCurbside() {
-        /*setFragmentResultListener(ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
-            clearFragmentResultListener(requestKey = ARGS_KEY_FRAGMENT_RESULT)
-            selectOrderType(OrderType.CURBSIDE)
-            fromCurbside = true
-            curbsideStorePosition = bundle.getInt(ARGS_KEY_CURBSIDE_STORE_POSITION, -1)
-            processCurbside()
-        }
-        NavigationUtils.navigateSafe(findNavController(), OrderTypeFragmentDirections.actionOrderTypeToCurbside(
-            curbside = true,
-            curbsideStorePosition = pickupCurbsideStoresRecyclerViewAdapter?.selected ?: -1
-        ))*/
         activity?.let {
             val intent = Intent(it, NavigationActivity::class.java)
             intent.putExtra("navigation", R.id.nav_curbside)
@@ -1602,9 +1513,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         pickupCurbsideStoresRecyclerViewAdapter?.selected?.let {
             if (it != -1) {
                 RecyclerViewUtil.smoothSnapToPosition(
-                    binding.storesRecyclerView,
-                    it,
-                    LinearSmoothScroller.SNAP_TO_START
+                    binding.storesRecyclerView, it, LinearSmoothScroller.SNAP_TO_START
                 )
             }
         }
@@ -1614,8 +1523,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         activity?.cast<BaseActivity> {
             binding.orderTypeContainer.setBackgroundColor(
                 ContextCompat.getColor(
-                    it,
-                    android.R.color.transparent
+                    it, android.R.color.transparent
                 )
             )
         }
@@ -1627,30 +1535,27 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             binding.orderTypeLocation.text = orderPresenter.pickupCurbsideStores[0].attributes.name
             displaySinglePickupStore()
         } else {
-            binding.orderTypeLocation.text = CacheUtil.getInstance()
-                .getTranslations(Text.NO_BRANCH_PICKED, "No branch picked")
+            binding.orderTypeLocation.text =
+                CacheUtil.getInstance().getTranslations(Text.NO_BRANCH_PICKED, "No branch picked")
         }
         binding.orderTypeNoteContainer.visibility = View.GONE
         binding.nestedScrollView.visibility = View.GONE
         binding.location.visibility = View.VISIBLE
-        binding.confirm.setBackgroundColor(
-            if (pickupCurbsideStoresRecyclerViewAdapter?.selected != -1) Color.parseColor(
-                CacheUtil.getInstance().colorMain
-            ) else Color.parseColor("#B5B5B5")
-        )
-        binding.confirm.isFocusable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
-        binding.confirm.isClickable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
-        binding.confirm.visibility = View.VISIBLE
-        activity?.cast<BaseActivity> {
-            it.dismissDialogs()
-        }
+//        binding.confirm.setBackgroundColor(
+//            if (pickupCurbsideStoresRecyclerViewAdapter?.selected != -1) Color.parseColor(
+//                CacheUtil.getInstance().colorMain
+//            ) else Color.parseColor("#B5B5B5")
+//        )
+//        binding.confirm.isFocusable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
+//        binding.confirm.isClickable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
+//        binding.confirm.visibility = View.VISIBLE
+//        activity?.cast<BaseActivity> {
+//            it.dismissDialogs()
+//        }
     }
 
     private fun displaySinglePickupStore() {
-        if (isCurbsideAvailable &&
-            orderPresenter.pickupCurbsideStores[0].attributes.curbsideEnabled == 1 &&
-            CacheUtil.getInstance().curbsideCar == null && !binding.curbsideLayout.isVisible()
-        ) {
+        if (isCurbsideAvailable && orderPresenter.pickupCurbsideStores[0].attributes.curbsideEnabled == 1 && CacheUtil.getInstance().curbsideCar == null && !binding.curbsideLayout.isVisible()) {
             binding.nonCurbsideLayout.gone()
             binding.curbsideContainer.visible()
         }
@@ -1674,9 +1579,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         dineInStoresRecyclerViewAdapter?.selected?.let {
             if (it != -1) {
                 RecyclerViewUtil.smoothSnapToPosition(
-                    binding.storesRecyclerView,
-                    it,
-                    LinearSmoothScroller.SNAP_TO_START
+                    binding.storesRecyclerView, it, LinearSmoothScroller.SNAP_TO_START
                 )
             }
         }
@@ -1686,8 +1589,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         activity?.cast<BaseActivity> {
             binding.orderTypeContainer.setBackgroundColor(
                 ContextCompat.getColor(
-                    it,
-                    android.R.color.transparent
+                    it, android.R.color.transparent
                 )
             )
         }
@@ -1698,23 +1600,23 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         } else if (orderPresenter.dineInStores.size == 1) {
             binding.orderTypeLocation.text = orderPresenter.dineInStores[0].attributes.name
         } else {
-            binding.orderTypeLocation.text = CacheUtil.getInstance()
-                .getTranslations(Text.NO_BRANCH_PICKED, "No branch picked")
+            binding.orderTypeLocation.text =
+                CacheUtil.getInstance().getTranslations(Text.NO_BRANCH_PICKED, "No branch picked")
         }
         binding.orderTypeNoteContainer.visibility = View.GONE
         binding.nestedScrollView.visibility = View.VISIBLE
         binding.location.visibility = View.VISIBLE
-        binding.confirm.setBackgroundColor(
-            if (dineInStoresRecyclerViewAdapter?.selected != -1) Color.parseColor(
-                CacheUtil.getInstance().colorMain
-            ) else Color.parseColor("#B5B5B5")
-        )
-        binding.confirm.isFocusable = dineInStoresRecyclerViewAdapter?.selected != -1
-        binding.confirm.isClickable = dineInStoresRecyclerViewAdapter?.selected != -1
-        binding.confirm.visibility = View.VISIBLE
-        activity?.cast<BaseActivity> {
-            it.dismissDialogs()
-        }
+//        binding.confirm.setBackgroundColor(
+//            if (dineInStoresRecyclerViewAdapter?.selected != -1) Color.parseColor(
+//                CacheUtil.getInstance().colorMain
+//            ) else Color.parseColor("#B5B5B5")
+//        )
+//        binding.confirm.isFocusable = dineInStoresRecyclerViewAdapter?.selected != -1
+//        binding.confirm.isClickable = dineInStoresRecyclerViewAdapter?.selected != -1
+//        binding.confirm.visibility = View.VISIBLE
+//        activity?.cast<BaseActivity> {
+//            it.dismissDialogs()
+//        }
     }
 
     override fun saveAddress(address: String) {
@@ -1755,8 +1657,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                 it.dismissDialogs()
                 val cartDialogFragment = CartDialogFragment.newInstance(orderPresenter)
                 cartDialogFragment.show(
-                    it.supportFragmentManager,
-                    CartDialogFragment::class.java.simpleName
+                    it.supportFragmentManager, CartDialogFragment::class.java.simpleName
                 )
             }
         }
@@ -1789,10 +1690,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun updateMap(
-        orderType: OrderType,
-        startLocation: LatLng,
-        endLocation: LatLng,
-        bounds: LatLngBounds
+        orderType: OrderType, startLocation: LatLng, endLocation: LatLng, bounds: LatLngBounds
     ) {
     }
 
@@ -1816,15 +1714,15 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
     override fun enableConfirmButton(enable: Boolean, storeName: String) {
         if (!deliveryTabSelected) {
             isPreselectedBranch = enable
-            binding.confirm.setBackgroundColor(
-                if (enable) Color.parseColor(
-                    CacheUtil.getInstance().colorMain
-                ) else Color.parseColor("#B5B5B5")
-            )
-            binding.confirm.isFocusable = enable
-            binding.confirm.isClickable = enable
-            binding.confirm.visibility = View.VISIBLE
-            binding.orderTypeLocation.text = storeName
+//            binding.confirm.setBackgroundColor(
+//                if (enable) Color.parseColor(
+//                    CacheUtil.getInstance().colorMain
+//                ) else Color.parseColor("#B5B5B5")
+//            )
+//            binding.confirm.isFocusable = enable
+//            binding.confirm.isClickable = enable
+//            binding.confirm.visibility = View.VISIBLE
+//            binding.orderTypeLocation.text = storeName
         }
     }
 
@@ -1838,11 +1736,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         activity?.apply {
             runOnUiThread(Runnable {
                 if (!isDestroyed && !isFinishing) {
-                    Glide.with(this)
-                        .downloadOnly()
-                        .load(imageUrl)
-                        .apply(requestOptions)
-                        .submit()
+                    Glide.with(this).downloadOnly().load(imageUrl).apply(requestOptions).submit()
                 }
             })
         }
@@ -1856,9 +1750,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
             if (!curbsideTabSelected) {
                 dineInStoresRecyclerViewAdapter?.let { adapter ->
                     orderPresenter.continueStore(
-                        true,
-                        adapter.selected,
-                        null
+                        true, adapter.selected, null
                     )
                 }
             } else {
@@ -1866,9 +1758,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                     if (isPreselectedBranch) 0 else pickupCurbsideStoresRecyclerViewAdapter?.selected
                 position?.let {
                     orderPresenter.continueStore(
-                        false,
-                        it,
-                        null
+                        false, it, null
                     )
                 }
             }
@@ -1886,7 +1776,8 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
     ) {
         activity?.let {
             (it as BaseActivity).showPromptAlertDialog(
-                "", message,
+                "",
+                message,
                 CacheUtil.getInstance().getTranslations(Text.YES_CAPS),
                 positive,
                 CacheUtil.getInstance().getTranslations(Text.NO_CAPS),
@@ -1899,29 +1790,25 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
         showPromptChangeOrderTypeDialog(CacheUtil.getInstance().getTranslations(
             Text.CHANGE_DELIVERY_INSTEAD_LABEL,
             "Your current Pickup order will be removed from cart. Would you like to proceed and have your order delivered instead?"
-        ),
-            { _, _ ->
-                CacheUtil.getInstance().cart = ArrayList()
-                orderPresenter.setSelectedAddress(address)
-                val label = address.attributes.label
-                CacheUtil.getInstance().orderType = OrderType.DELIVERY
-                if (label != null && !label.equals(
-                        "null",
-                        ignoreCase = true
-                    ) && label.isNotEmpty()
-                ) {
-                    selectAddressHome(address, true)
-                } else {
-                    selectAddressOther(address, true)
-                }
-                isMenuRedownloaded = true;
-
-            },
-            { dialog, which ->
-                activity?.cast<BaseActivity> { it.dismissDialogs() }
-                dialog.dismiss()
+        ), { _, _ ->
+            CacheUtil.getInstance().cart = ArrayList()
+            orderPresenter.setSelectedAddress(address)
+            val label = address.attributes.label
+            CacheUtil.getInstance().orderType = OrderType.DELIVERY
+            if (label != null && !label.equals(
+                    "null", ignoreCase = true
+                ) && label.isNotEmpty()
+            ) {
+                selectAddressHome(address, true)
+            } else {
+                selectAddressOther(address, true)
             }
-        )
+            isMenuRedownloaded = true;
+
+        }, { dialog, which ->
+            activity?.cast<BaseActivity> { it.dismissDialogs() }
+            dialog.dismiss()
+        })
 
     }
 
@@ -1932,9 +1819,7 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                     bookmarkAddressDialogFragment?.dismiss()
                 }
                 it.showAlertDialog(
-                    "",
-                    error,
-                    CacheUtil.getInstance().getTranslations(Text.OK)
+                    "", error, CacheUtil.getInstance().getTranslations(Text.OK)
                 ) { dialogInterface, which ->
                     orderPresenter.setOrderType()
                 }

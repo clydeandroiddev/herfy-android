@@ -2,4 +2,9 @@
 <resources>
     <color name="white">#FFFFFF</color>
     <color name="grayscale">#101010</color>
+    <color name="primary_text">#1E1E1E</color>
+    <color name="colorAccent">#000000</color>
+    <color name="colorPrimary">#000000</color>
+    <color name="page_background_white">#FFFFFF</color>
+    <color name="placeholder_color">#cccccc</color>
 </resources>

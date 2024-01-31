@@ -397,7 +397,7 @@ public class BranchesActivity extends BaseActivity implements BranchesContract.V
 
                         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-                        View view = inflater.inflate(R.layout.marker_store, null);
+                        View view = inflater.inflate(R.layout.marker_store_new, null);
 
                         MaterialButton open = view.findViewById(R.id.open);
                         open.setText(CacheUtil.getInstance().getTranslations(Text.OPEN_IN_GOOGLE_MAPS, "Open in Google Maps"));
