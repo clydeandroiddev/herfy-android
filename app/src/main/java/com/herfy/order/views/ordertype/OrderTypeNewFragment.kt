@@ -608,7 +608,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     private fun initialTypeState() {
-        if (typeOrder != 0 || CacheUtil.getInstance().orderType != null) {
+        if (typeOrder != 0 || CacheUtil.getInstance().orderType != OrderType.NONE) {
             var orderType = CacheUtil.getInstance().orderType
             if (typeOrder != 0) {
                 orderType = OrderType.fromInt(typeOrder)
@@ -829,19 +829,13 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 val activity: Activity? = activity
                 if (activity != null) {
                     val bitmapDrawable = ContextCompat.getDrawable(
-                        activity, R.drawable.location_icon
+                        activity, R.drawable.marker_new_location
                     ) as BitmapDrawable?
                     if (bitmapDrawable != null) {
                         val bitmap =
-                            Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 110, 110, true)
+                            Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 105, 140, true)
                         val canvas = Canvas(bitmap)
-                        val paint = Paint()
-                        val filter: ColorFilter = PorterDuffColorFilter(
-                            Color.parseColor(CacheUtil.getInstance().colorMain),
-                            PorterDuff.Mode.SRC_IN
-                        )
-                        paint.colorFilter = filter
-                        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+                        canvas.drawBitmap(bitmap, 0f, 0f, Paint())
                         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
                     }
                 }
