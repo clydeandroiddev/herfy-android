@@ -66,6 +66,7 @@ import com.herfy.util.*
 import com.herfy.utils.helper.LocaleUtil
 import io.shipbook.shipbooksdk.Log
 import java.util.*
+import kotlin.math.roundToInt
 
 class MenuItemFragment : BaseFragment(), MenuContract.View {
 
@@ -294,8 +295,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 .getTranslations(Text.SPECIAL_INSTRUCTION, "Special Instruction")
             binding.notesDescription.text = CacheUtil.getInstance()
                 .getTranslations(Text.NOTES_DESCRIPTION,"Please let us know if you are allergic to anything or if we need to avoid anything." )
-            binding.etItemNotes.hint = CacheUtil.getInstance()
-                .getTranslations(Text.TYPE_YOUR_NOTES_HERE)
 
             binding.etItemNotes.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -327,7 +326,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun setupTranslations() {
         binding.txtMoreInfo.text = CacheUtil.getInstance()
             .getTranslations(Text.MORE_INFROMATION, "More information")
-        binding.txtQuantity.text = CacheUtil.getInstance().getTranslations(Text.QUANTITY,"Quantity")
+        val originalQuantityWithColon = CacheUtil.getInstance().getTranslations(Text.QUANTITY,"Quantity")
+        val formattedQuantityWithoutColon = originalQuantityWithColon.replace(":", "")
+        binding.txtQuantity.text = formattedQuantityWithoutColon
     }
 
     override fun showStore(store: Store) {}
@@ -634,11 +635,16 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 //                    )
 //                }
                 setMenuItemQuantity(menuItem.attributes.quantity)
+                var addToCart = ""
                 if (cartMenuItem >= 0 || args.isEdit) {
                     binding.add.text = CacheUtil.getInstance().getTranslations(Text.UPDATE)
                 } else {
-                    binding.add.text = CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG)
-                }
+                    val translatedText = CacheUtil.getInstance().getTranslations(Text.ADD_TO_CART_CAPS, "Add to cart")
+                    addToCart = "$translatedText \u2022 ${PriceFormatter.formatPriceWithLocale(menuPresenter.menuItemsTotalPrice, translatedText)}"
+                    binding.add.text = addToCart
+
+                    }
+
                 menuPresenter!!.getMenuItemTotalPrice(menuPresenter!!.menuItem, -1)
                 binding.coordinatorLayout.visibility = View.VISIBLE
                 binding.footer.visibility = View.VISIBLE
@@ -935,6 +941,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 binding.sizesLabel.visible()
                 binding.txtSelectOne.visible()
                 binding.sizesLabel.text = menuItem.sizes.attributes.name
+                binding.txtRequired.text = CacheUtil.getInstance().getTranslations(Text.REQUIRED,"Required")
                 if (menuItem.sizes.modifierItems.size <= 3) {
                     menuItem.getSizes().getModifierItems().forEach { modifierItem ->
                         val view = LayoutInflater.from(activity)

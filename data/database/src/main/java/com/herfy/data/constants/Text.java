@@ -218,6 +218,7 @@ public class Text {
     public static final String RATE = "rate";
     public static final String OPTIONS = "options";
     public static final String QUANTITY = "quantity";
+    public static final String REQUIRED ="required";
     public static final String RATING_SENT = "rating_sent";
     public static final String INGREDIENTS = "ingredients";
     public static final String SIGN_IN_MESSAGE = "sign_in_message";

@@ -238,7 +238,7 @@
                         <LinearLayout
                             android:id="@+id/btnRequired"
                             android:layout_width="73dp"
-                            android:layout_height="26dp"
+                            android:layout_height="28dp"
                             android:background="@drawable/bg_rounded_25_radius_background"
                             android:gravity="center"
                             android:textAlignment="viewEnd"
@@ -247,13 +247,14 @@
                             app:layout_constraintTop_toTopOf="parent">
 
                             <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/txtRequired"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:textSize="12sp"
+                                tools:text = "Required"
                                 android:padding="0dp"
-                                android:textColor="@color/white"
-                                android:text="Required" />
+                                android:textColor="@color/white" />
                         </LinearLayout>
 
                         <com.google.android.material.textview.MaterialTextView
@@ -375,22 +376,20 @@
                             android:textColor="#ACACAC"
                             android:textSize="14sp"
                             android:textStyle="bold" />
-
                         <TextView
                             android:id="@+id/notes_description"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/cairo_bold"
                             android:gravity="start"
-
                             android:includeFontPadding="false"
                             android:maxLines="1"
-                            android:text="Please let us know if you are allergic to anything or if we need to31231"
+                            android:ellipsize="end"
                             android:textAlignment="viewStart"
                             android:textAllCaps="false"
                             android:textColor="#ACACAC"
                             android:textSize="14sp"
-                            android:textStyle="bold" />
+                           android:textStyle="bold" />
 
 
 
