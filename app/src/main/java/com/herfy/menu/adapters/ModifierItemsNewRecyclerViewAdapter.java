@@ -137,7 +137,7 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
     }
 
     private boolean isOptionModifierItem(ModifierGroupType type, int modifierItemSize) {
-        return type == ModifierGroupType.OPTIONS && modifierItemSize >= 3;
+        return type == ModifierGroupType.OPTIONS && modifierItemSize >= 1;
     }
 
 

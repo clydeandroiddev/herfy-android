@@ -43,6 +43,7 @@
                             app:cardPreventCornerOverlap="true"
                             tools:visibility="visible"
                             app:cardUseCompatPadding="true"
+
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
@@ -54,6 +55,7 @@
                                     android:id="@+id/image"
                                     android:layout_width="361dp"
                                     android:layout_height="180dp"
+                                    android:layout_marginTop="@dimen/margin_large"
                                     app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Corner12dp"
                                     android:layout_marginHorizontal="@dimen/margin_large"
                                     app:layout_constraintEnd_toEndOf="parent"
@@ -72,14 +74,14 @@
                                     app:layout_constraintTop_toTopOf="parent"
                                     android:layout_marginStart="@dimen/margin_large"
 
-                                    android:layout_marginTop="@dimen/margin_large"
+                                    android:layout_marginTop="@dimen/margin_xlarge"
                                     android:layout_height="36dp"/>
 
                                 <FrameLayout
                                     android:id="@+id/favorite_card"
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
-                                    android:layout_marginTop="@dimen/margin_large"
+                                    android:layout_marginTop="@dimen/margin_xlarge"
                                     android:layout_marginEnd="@dimen/margin_large"
                                     android:background="@drawable/background_favourite"
                                     android:elevation="8dp"
@@ -153,7 +155,6 @@
                                     android:gravity="start"
                                     android:includeFontPadding="false"
                                     android:lineSpacingExtra="-7dp"
-                                    style="@style/TextAppearance.Footnote"
                                     android:textAlignment="viewStart"
                                     android:textColor="#969696"
                                     android:textSize="14sp"
@@ -165,14 +166,15 @@
 
                                 <TextView
                                     android:id="@+id/calories"
-                                    android:layout_width="0dp"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/cairo_regular"
                                     android:gravity="start"
                                     android:textAlignment="viewStart"
+                                    android:textSize="14sp"
                                     android:drawableStart="@drawable/ic_fire"
+                                    android:layout_marginBottom="@dimen/margin_small"
                                     android:drawablePadding="10dp"
-                                    style="@style/TextAppearance.Subheadline"
                                     android:visibility="visible"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintEnd_toStartOf="@+id/txtMoreInfo"
@@ -183,17 +185,17 @@
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/txtMoreInfo"
                                     android:layout_width="0dp"
-                                    style="@style/TextAppearance.Subheadline"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="@dimen/margin_small"
                                     android:textAlignment="viewStart"
                                     android:textColor="#1877F2"
+                                    android:textSize="15sp"
                                     app:layout_constraintBottom_toBottomOf="@+id/calories"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintStart_toEndOf="@+id/calories"
                                     app:layout_constraintTop_toTopOf="@+id/calories"
                                     app:lineHeight="20sp"
-                                    android:text="More information" />
+                                    tools:text="More information" />
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
@@ -274,8 +276,18 @@
                             android:textSize="12sp"
                             app:layout_constraintStart_toStartOf="@+id/sizes_label"
                             app:layout_constraintTop_toBottomOf="@+id/sizes_label"
-                            tools:text="Select one" />
-
+                            android:text="Select one" />
+                        <LinearLayout
+                            android:id="@+id/sizes_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layout_constraintTop_toBottomOf="@+id/txtSelectOne"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginEnd="12dp"
+                            tools:visibility="visible"
+                            android:visibility="gone"/>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/sizes_recycler_view"
@@ -289,10 +301,9 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/txtSelectOne"
+                            app:layout_constraintTop_toBottomOf="@+id/sizes_container"
                             tools:itemCount="2"
                             android:orientation="horizontal"
-                            tools:listitem="@layout/item_size"
                             tools:visibility="visible" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -324,9 +335,9 @@
                             android:visibility="gone"
 
                             tools:visibility="visible"
-                            tools:listitem="@layout/item_modifier_group_new"
+
                             android:clipToPadding="false"
-                            tools:itemCount="2"
+
                             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

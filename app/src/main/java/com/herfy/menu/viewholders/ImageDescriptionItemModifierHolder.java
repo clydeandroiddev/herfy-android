@@ -5,9 +5,11 @@ import android.text.Html;
 import android.text.SpannedString;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -44,8 +46,8 @@ public class ImageDescriptionItemModifierHolder extends BaseModifierItemViewHold
     TextView txtModifierPrice;
     @BindView(R.id.clickable_layout)
     LinearLayout clickableLayout;
-    @BindView(R.id.modifierDescription)
-    MaterialTextView modifierDescription;
+    @BindView(R.id.quantityUp)
+    ImageButton plus;
     private OnAction onAction;
     private ModifierProcessor modifierProcessor;
 
@@ -108,6 +110,25 @@ public class ImageDescriptionItemModifierHolder extends BaseModifierItemViewHold
                         onAction.onCheckedChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     } else {
                         onAction.onCheckedChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
+                    }
+                }
+            }
+        });
+        plus.setFocusable(modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum());
+        plus.setClickable(modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum());
+
+        if (modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum()) {
+            plus.setImageResource(R.drawable.ic_add);
+        }
+
+        plus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (onAction != null) {
+                    if (modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum()) {
+                        onAction.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
+                    } else {
+                        Toast.makeText(itemView.getContext(), CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT), Toast.LENGTH_SHORT).show();
                     }
                 }
             }

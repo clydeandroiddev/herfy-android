@@ -7,26 +7,20 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/name"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_width="wrap_content"
         style="@style/TextAppearance.Subheadline"
-        android:textAlignment="viewStart"
-        app:fontFamily="@font/cairo_bold"
-        app:lineHeight="16sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        tools:text = "Topic Sauce"
-        android:layout_height="wrap_content"/>
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/select"
         android:layout_width="wrap_content"
-        tools:text = "Select one"
-        style="@style/Styles.Text.Footnote"
-        app:layout_constraintTop_toBottomOf="@+id/name"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_large"
+        android:textAlignment="viewStart"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:fontFamily="@font/cairo_bold"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="@dimen/margin_5dp"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:lineHeight="16sp"
+        tools:text="Topic Sauce" />
+
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -35,10 +29,10 @@
         android:layout_height="wrap_content"
         android:focusableInTouchMode="false"
         android:descendantFocusability="blocksDescendants"
-        app:layout_constraintTop_toBottomOf="@+id/select"
+        app:layout_constraintTop_toBottomOf="@+id/name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_modifier_item_with_description"
+        tools:listitem="@layout/item_modifier_without_image_and_description"
         tools:itemCount="5"
         android:layout_marginTop="@dimen/margin_large"
 
@@ -47,24 +41,24 @@
 
     <LinearLayout
         android:id="@+id/btnMinimum"
-        android:layout_width="73dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_rounded_background"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:background="@drawable/bg_rounded_25_radius_background"
         android:gravity="center"
         android:textAlignment="viewEnd"
-        app:layout_constraintBottom_toBottomOf="@+id/select"
         android:visibility="invisible"
-
+        app:layout_constraintBottom_toBottomOf="@+id/name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@+id/name"
+        tools:visibility="visible">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/minimum"
+            style="@style/Styles.Text.Footnote"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Styles.Text.Footnote"
-            android:textColor="@color/white"
             android:gravity="center"
+            android:textColor="@color/white"
             tools:text="Required" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

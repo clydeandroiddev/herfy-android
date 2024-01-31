@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -20,9 +19,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -33,6 +32,8 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
@@ -45,6 +46,7 @@ import com.herfy.data.constants.Text
 import com.herfy.data.constants.Values
 import com.herfy.databinding.FragmentMenuItemBinding
 import com.herfy.ext.cast
+import com.herfy.ext.gone
 import com.herfy.ext.invisible
 import com.herfy.ext.visible
 import com.herfy.firebase.FirebaseService
@@ -56,6 +58,7 @@ import com.herfy.menu.adapters.*
 import com.herfy.menu.viewholders.BaseModifierItemViewHolder
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.productpagedetails.databinding.FragmentMenuItemDetailsBinding
+import com.herfy.util.*
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.util.GsonHelper
 import com.herfy.util.*
@@ -318,7 +321,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun setupFonts() {}
     override fun setupTranslations() {
         binding.txtMoreInfo.text = CacheUtil.getInstance()
-            .getTranslations(Text.MEAL_DEAL, "More information")
+            .getTranslations(Text.MORE_INFROMATION, "More information")
+        binding.txtQuantity.text = CacheUtil.getInstance().getTranslations(Text.QUANTITY,"Quantity")
     }
 
     override fun showStore(store: Store) {}
@@ -905,6 +909,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun showSearchedMenuItems(searchedMenuItems: ArrayList<MenuItem>) {}
     override fun hideSearchedMenuItems(menuCategory: MenuCategory) {}
 
+
     @SuppressLint("NotifyDataSetChanged")
     override fun setSizes(menuItem: MenuItem) {
 
@@ -917,10 +922,148 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         ) {
             showSizes = false
         }
+        var initialSelectedEncountered = false
+        var countSelected = 0
         if (showSizes) {
+            sizesAdapter = SizesRecyclerViewAdapter(activity, menuPresenter)
+            binding.sizesRecyclerView.adapter = sizesAdapter
             if (menuItem.sizes.modifierItems.size > 1) {
+                binding.sizesLabel.visible()
+                binding.txtSelectOne.visible()
+                binding.sizesLabel.text = menuItem.sizes.attributes.name
                 if (menuItem.sizes.modifierItems.size <= 3) {
+                    menuItem.getSizes().getModifierItems().forEach { modifierItem ->
+                        val view = LayoutInflater.from(activity)
+                            .inflate(R.layout.item_new_sizes_fixed, binding.sizesContainer, false)
+                        view.tag = modifierItem.id
+                        val card: MaterialCardView = view.findViewById(R.id.card)
+                        val txtPrice =
+                            card.findViewById<MaterialTextView>(R.id.txtSizesPrice)
+                        val txtSizesName =
+                            card.findViewById<MaterialTextView>(R.id.name)
+                        if (modifierItem.getAttributes().isSelected) {
+                            if (!initialSelectedEncountered) {
+                                card.strokeColor = ContextCompat.getColor(requireContext(), R.color.black)
+                                card.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
+                                card.radius = resources.getDimensionPixelSize(R.dimen.radius_small).toFloat()
+                                txtSizesName.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                                card.setCardBackgroundColor(Color.BLACK)
+                                initialSelectedEncountered =true
+                            }else {
+                                card.strokeWidth =
+                                    ViewUtil.dpToPx(requireActivity(), 1)
+                                card.strokeColor = ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.color_border
+                                )
+                                card.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white))
+                                txtPrice.setTextColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.black
+                                    )
+                                )
+                                txtPrice.setTextColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.black
+                                    )
+                                )
+                            }
 
+                        } else {
+                            card.strokeWidth =
+                                ViewUtil.dpToPx(requireActivity(), 1)
+                            card.strokeColor = ContextCompat.getColor(
+                                requireContext(),
+                                R.color.color_border
+                            )
+                            card.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white))
+                            txtPrice.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.black
+                                )
+                            )
+                            txtPrice.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.black
+                                )
+                            )
+
+                            card.radius = 8f
+                        }
+                        val container = view!!.findViewById<ConstraintLayout>(R.id.container)
+                        container.tag = modifierItem.getId()
+                        container.setOnClickListener { view1 ->
+                            for (i in 0 until binding.sizesContainer.childCount) {
+                                val childView = binding.sizesContainer.getChildAt(i)
+                                val childCard: MaterialCardView = childView.findViewById(R.id.card)
+                                val txtModifierSizes =
+                                    childView.findViewById<MaterialTextView>(R.id.name)
+                                val txtModifierPrice = childView.findViewById<MaterialTextView>(R.id.txtSizesPrice)
+                                if (childView.tag == view1.tag) {
+                                    childCard.setContentPadding(0, 0, 0, 0)
+                                    childCard.strokeWidth =
+                                        ViewUtil.dpToPx(requireActivity(), 1)
+                                        txtModifierSizes.setTextColor(
+                                            ContextCompat.getColor(
+                                                requireContext(),
+                                                R.color.white
+                                            )
+                                        )
+                                    childCard.setBackgroundColor(Color.BLACK)
+                                    txtModifierPrice.setTextColor(
+                                            ContextCompat.getColor(
+                                                requireContext(),
+                                                R.color.white
+                                            )
+                                        )
+
+
+                                } else {
+                                    childCard.strokeWidth =
+                                        ViewUtil.dpToPx(requireActivity(), 1)
+                                    childCard.strokeColor = ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.color_border
+                                    )
+                                    childCard.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white))
+                                        txtModifierSizes.setTextColor(
+                                            ContextCompat.getColor(
+                                                requireContext(),
+                                                R.color.black
+                                            )
+                                        )
+                                        txtModifierPrice.setTextColor(
+                                            ContextCompat.getColor(
+                                                requireContext(),
+                                                R.color.black
+                                            )
+                                        )
+
+
+                                    }
+                                }
+//                                }
+                              menuPresenter.selectSize(view1.tag as String)
+                            }
+
+
+
+                        val txtModifierSizes = view.findViewById<MaterialTextView>(R.id.name)
+                        val txtModifierPrice =
+                            view.findViewById<MaterialTextView>(R.id.txtSizesPrice)
+                        txtModifierPrice.text =
+                            "+${StringUtil.getFormattedPrice(modifierItem.attributes.price)}"
+                        txtModifierSizes.text = modifierItem.attributes.name
+                        binding.sizesContainer.addView(view)
+                    }
+                    binding.sizesContainer.visible()
+                    binding.sizesCard.visible()
+                    binding.sizesRecyclerView.gone()
+                    binding.modifierGroupsRecyclerView.gone()
 //                    binding.sizeSecond.visibility =
 //                        if (menuItem.sizes.modifierItems.size >= 2) View.VISIBLE else View.GONE
 //                    binding.sizeThird.visibility =
@@ -1065,11 +1208,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 //
 //                        }
                 } else {
+                    binding.sizesRecyclerView.visible()
                     try {
                         val activity: Activity? = activity
                         if (activity != null) {
                             sizesAdapter = SizesRecyclerViewAdapter(activity, menuPresenter)
-
                             sizesAdapter!!.setOnAction { modifierItem: ModifierItem ->
                                 menuPresenter!!.selectSize(modifierItem.id)
                                 sizesAdapter!!.notifyDataSetChanged()

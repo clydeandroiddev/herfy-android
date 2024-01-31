@@ -30,12 +30,14 @@
         android:id="@+id/txtModifierItemName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Styles.Text.Footnote.Medium"
+
         android:ellipsize="end"
+        app:layout_constraintBottom_toTopOf="@+id/txtmodifierPrice"
         android:fontFamily="@font/cairo_bold"
-        tools:text = "Small"
+        tools:text = "Sprite"
         android:maxLines="1"
         android:textColor="@color/primary_text"
+        android:textSize="12sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/check_layout"
@@ -45,19 +47,18 @@
         android:id="@+id/txtmodifierPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
         android:fontFamily="@font/cairo_bold"
         android:gravity="start"
         android:includeFontPadding="false"
         android:maxLines="1"
         android:textAlignment="viewStart"
         android:textColor="@color/black"
-        style="@style/Styles.Text.Footnote.Medium"
+        android:textSize="12sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@+id/txtModifierItemName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtModifierItemName"
-        tools:text="Sar 2" />
+        app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
+        app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
+        tools:text="+12.00sSR" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
