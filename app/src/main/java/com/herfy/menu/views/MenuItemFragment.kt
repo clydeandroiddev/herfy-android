@@ -291,7 +291,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             binding.notesLabel.visibility = View.VISIBLE
             binding.notesContainer.visibility = View.VISIBLE
             binding.notesLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.NOTES_CAPS, "NOTES")
+                .getTranslations(Text.SPECIAL_INSTRUCTION, "Special Instruction")
+            binding.notesDescription.text = CacheUtil.getInstance()
+                .getTranslations(Text.NOTES_DESCRIPTION,"Please let us know if you are allergic to anything or if we need to avoid anything." )
             binding.etItemNotes.hint = CacheUtil.getInstance()
                 .getTranslations(Text.TYPE_YOUR_NOTES_HERE)
 

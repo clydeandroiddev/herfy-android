@@ -739,6 +739,8 @@ public class Text {
     public static final String DRIVER_NAME_CAPS = "driver_name_caps";
     public static final String DRIVER_NUMBER_CAPS = "driver_number_caps";
     public static final String NOTES_CAPS = "notes_caps";
+    public static final String SPECIAL_INSTRUCTION = "special_instruction";
+    public static final String NOTES_DESCRIPTION = "notes_description";
     public static final String GENDER_CAPS = "gender_caps";
     public static final String DATE_OF_BIRTH_CAPS = "date_of_birth_caps";
     public static final String MALE = "male";
