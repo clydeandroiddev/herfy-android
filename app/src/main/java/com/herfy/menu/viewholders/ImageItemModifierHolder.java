@@ -15,12 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.herfy.R;
-import com.herfy.constants.Text;
 import com.herfy.menu.MenuContract;
 import com.herfy.util.LocaleUtil;
 import com.herfy.util.ModifierProcessor;
 import com.herfy.util.ModifierProcessorCallback;
-import com.herfy.util.StringUtil;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import butterknife.BindView;
@@ -79,9 +77,9 @@ public class ImageItemModifierHolder extends BaseModifierItemViewHolder implemen
     public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
         modifierProcessor.processModifier(modifierItem);
         if (modifierItem.getAttributes().isSelected()) {
-            check.setImageResource(R.drawable.modifier_item_selected);
+            check.setImageResource(R.drawable.modifier_radio_item_selected);
         } else {
-            check.setImageResource(R.drawable.modifier_item_unselected);
+            check.setImageResource(R.drawable.modifier_item_radio_unselected);
         }
 
     }

@@ -1,6 +1,7 @@
 package com.herfy.menu.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
 import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
-import com.herfy.menu.viewholders.ImageDescriptionItemModifierHolder;
 import com.herfy.menu.viewholders.ImageItemModifierHolder;
 import com.herfy.menu.viewholders.ModifierItemOptionViewHolder;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
@@ -31,7 +31,7 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
     private boolean showModifierItemPrice;
     private List<ModifierItem> modifierItems;
 
-    private int ITEM_WITH_IMAGE_AND_DESCRIPTION_VIEW_TYPE = 1 ;
+    private int ITEM_MODIFIER_OPTION_TYPE = 1 ;
     private int ITEM_WITHOUT_DESCRIPTION_VIEW_TYPE = 2;
     private int ITEM_MODIFIER_OPTIONS_VIEW_TYPE = 3 ;
     private int HIDDEN_VIEW_TYPE = 4;
@@ -47,8 +47,6 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
         this.showModifierItemPrice = showModifierItemPrice;
 
 
-
-
     }
 
 
@@ -60,26 +58,17 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
     @Override
     public BaseModifierItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = createViewByType(viewType, parent);
-        if (viewType == ITEM_WITH_IMAGE_AND_DESCRIPTION_VIEW_TYPE) {
-            return new ImageDescriptionItemModifierHolder(mContext, menuPresenter, view);
+        if (viewType == ITEM_MODIFIER_OPTION_TYPE) {
+            ModifierItemOptionViewHolder modifierTypeOption = new  ModifierItemOptionViewHolder(mContext, menuPresenter, view);
+            modifierTypeOption.setAction(onAction);
+            return modifierTypeOption;
         } else if (viewType == ITEM_WITHOUT_DESCRIPTION_VIEW_TYPE) {
             ImageItemModifierHolder holder = new ImageItemModifierHolder(mContext, menuPresenter, view);
             holder.setAction(onAction);
             return holder;
-        } else if (viewType == ITEM_MODIFIER_OPTIONS_VIEW_TYPE) {
-            ModifierItemOptionViewHolder holder = new ModifierItemOptionViewHolder(mContext, menuPresenter, view);
-            holder.setAction(onAction);
-            return holder;
-        } else {
+        }  else {
             throw new UnsupportedOperationException("Invalid view type " + viewType);
         }
-    }
-    public void updateModifierMenuItem(List<ModifierItem> modifierItems) {
-        this.modifierItems = modifierItems;
-        notifyDataSetChanged();
-    }
-    public void updateModifierItemByPosition(int modifierGroupPosition) {
-        notifyItemChanged(modifierGroupPosition);
     }
     @Override
     public void onBindViewHolder(@NonNull BaseModifierItemViewHolder holder, int position) {
@@ -93,12 +82,10 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
     }
 
     private int getLayoutResourceIdByType(int viewType) {
-        if (viewType == ITEM_WITH_IMAGE_AND_DESCRIPTION_VIEW_TYPE) {
-            return R.layout.item_modifier_item_with_description;
-        } else if (viewType == ITEM_WITHOUT_DESCRIPTION_VIEW_TYPE) {
-            return R.layout.item_modifier_item_without_description;
+        if (viewType == ITEM_MODIFIER_OPTION_TYPE) {
+            return R.layout.item_modifier_option_type;
         } else if (viewType == ITEM_MODIFIER_OPTIONS_VIEW_TYPE) {
-            return R.layout.item_modifier_without_image_and_description;
+            return R.layout.item_modifier_drinks_type;
         } else {
             throw new UnsupportedOperationException("Invalid view type " + viewType);
         }
@@ -117,19 +104,13 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
 
     private int determineModifierItemViewType(ModifierGroupType type) {
         int modifierItemSize = menuPresenter.getModifierItemsCount(modifierGroup);
-        if (isSizeModifierItem(type, modifierItemSize)) {
-            return ITEM_WITH_IMAGE_AND_DESCRIPTION_VIEW_TYPE;
+        if (isOptionModifierItem(type, modifierItemSize)) {
+            return ITEM_MODIFIER_OPTION_TYPE;
         } else if (isDrinkModifierItem(type, modifierItemSize)) {
             return ITEM_WITHOUT_DESCRIPTION_VIEW_TYPE;
-        } else if (isOptionModifierItem(type, modifierItemSize)) {
-            return ITEM_MODIFIER_OPTIONS_VIEW_TYPE;
-        } else {
+        }  else {
             return HIDDEN_VIEW_TYPE;
         }
-    }
-
-    private boolean isSizeModifierItem(ModifierGroupType type, int modifierItemSize) {
-        return (modifierItemSize == 2 || modifierItemSize == 3) && type == ModifierGroupType.SIZES;
     }
 
     private boolean isDrinkModifierItem(ModifierGroupType type, int modifierItemSize) {

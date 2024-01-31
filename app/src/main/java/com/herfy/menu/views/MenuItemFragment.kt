@@ -22,6 +22,7 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -283,7 +284,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
+        binding.icClose.setOnClickListener {
+           requireActivity().onBackPressed()
+        }
         if (CacheUtil.getInstance().concept.isCartItemsNotesEnabled) {
             binding.notesLabel.visibility = View.VISIBLE
             binding.notesContainer.visibility = View.VISIBLE
@@ -925,8 +928,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         var initialSelectedEncountered = false
         var countSelected = 0
         if (showSizes) {
-            sizesAdapter = SizesRecyclerViewAdapter(activity, menuPresenter)
-            binding.sizesRecyclerView.adapter = sizesAdapter
+            binding.sizesContainer.removeAllViews()
             if (menuItem.sizes.modifierItems.size > 1) {
                 binding.sizesLabel.visible()
                 binding.txtSelectOne.visible()
@@ -1046,11 +1048,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
                                     }
                                 }
-//                                }
                               menuPresenter.selectSize(view1.tag as String)
                             }
-
-
 
                         val txtModifierSizes = view.findViewById<MaterialTextView>(R.id.name)
                         val txtModifierPrice =
@@ -1063,152 +1062,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     binding.sizesContainer.visible()
                     binding.sizesCard.visible()
                     binding.sizesRecyclerView.gone()
-                    binding.modifierGroupsRecyclerView.gone()
-//                    binding.sizeSecond.visibility =
-//                        if (menuItem.sizes.modifierItems.size >= 2) View.VISIBLE else View.GONE
-//                    binding.sizeThird.visibility =
-//                        if (menuItem.sizes.modifierItems.size == 3) View.VISIBLE else View.GONE
-                    if (initialModifierId != menuItem.sizes.modifierItems[0].id) {
-                        initialModifierId = ""
-                    }
-                    if (initialModifierId.isEmpty()) {
-                        when (menuItem.sizes.modifierItems.size) {
-                            3 -> {
-//                                binding.sizeThird.text =
-//                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 0 else 2].attributes.translatedName.getValue(
-//                                        LocaleUtil.getInstance().language
-//                                    )
-//                                binding.sizeSecond.text =
-//                                    menuItem.sizes.modifierItems[1].attributes.translatedName.getValue(
-//                                        LocaleUtil.getInstance().language
-//                                    )
-//                                binding.sizeFirst.text =
-//                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 2 else 0].attributes.translatedName.getValue(
-//                                        LocaleUtil.getInstance().language
-//                                    )
-                                initialModifierId = menuItem.sizes.modifierItems[0].id
-                            }
-
-                            2 -> {
-//                                binding.sizeSecond.text =
-//                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 0 else 1].attributes.translatedName.getValue(
-//                                        LocaleUtil.getInstance().language
-//                                    )
-//                                binding.sizeFirst.text =
-//                                    menuItem.sizes.modifierItems[if (LocaleUtil.getInstance().isArabic) 1 else 0].attributes.translatedName.getValue(
-//                                        LocaleUtil.getInstance().language
-//                                    )
-                                initialModifierId = menuItem.sizes.modifierItems[0].id
-                            }
-                        }
-                    }
-//                    for ((index, size) in menuItem.sizes.modifierItems.withIndex()) {
-//                        if (size.attributes.isSelected) {
-//                            if (LocaleUtil.getInstance().isArabic) {
-//                                binding.sizesSegmented.setPosition(
-//                                    (menuItem.sizes.modifierItems.size - 1) - index,
-//                                    false
-//                                )
-//                            } else {
-//                                binding.sizesSegmented.setPosition(
-//                                    menuItem.sizes.modifierItems.indexOf(size),
-//                                    false
-//                                )
-//                            }
-//                            break
-//                        }
-//                    }
-//                    binding.sizesSegmented.onPositionChangedListener =
-//                        OnPositionChangedListener { position: Int ->
-//                            if (canChangeSize) {
-//                                shouldReset = lastPosition != position
-//                                lastPosition = position
-//                                for (group in menuItem.modifierGroups) {
-//                                    val indexOfGroup = menuItem.modifierGroups.indexOf(group)
-//                                    if (shouldReset) {
-//                                        if (group.attributes.minimum == 1 && group.modifierItems.size >= 1) {
-//                                            for (i in group.modifierItems.indices) {
-//                                                menuPresenter!!.selectModifierItem(
-//                                                    false,
-//                                                    indexOfGroup,
-//                                                    group,
-//                                                    i,
-//                                                    group.modifierItems[0]
-//                                                )
-//                                            }
-//                                        } else {
-//                                            for (i in group.modifierItems.indices) {
-//                                                menuPresenter!!.selectModifierItem(
-//                                                    false,
-//                                                    indexOfGroup,
-//                                                    group,
-//                                                    i,
-//                                                    group.modifierItems[i]
-//                                                )
-//                                            }
-//                                        }
-//                                        for (i in group.defaultModifiers.indices) {
-//                                            menuPresenter!!.selectModifierItem(
-//                                                true,
-//                                                indexOfGroup,
-//                                                group,
-//                                                i,
-//                                                group.modifierItems[i]
-//                                            )
-//                                            break
-//                                        }
-//                                    }
-//                                }
-//                                shouldReset = false
-//                                if (modifierGroupsAdapter != null) {
-//                                    modifierGroupsAdapter!!.notifyDataSetChanged()
-//                                }
-//                                if (!LocaleUtil.getInstance().isArabic) {
-//                                    sizeId = menuItem.sizes.modifierItems[position].id
-//                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[position].id)
-//                                } else {
-//                                    // handling arabic
-//                                    if (menuItem.sizes.modifierItems.size > 1) {
-//                                        if (menuItem.sizes.modifierItems.size == 2) {
-//                                            when (position) {
-//                                                1 -> {
-//                                                    sizeId = menuItem.sizes.modifierItems[0].id
-//                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[0].id)
-//                                                }
-//
-//                                                0 -> {
-//                                                    sizeId = menuItem.sizes.modifierItems[1].id
-//                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[1].id)
-//                                                }
-//                                            }
-//                                        } else if (menuItem.sizes.modifierItems.size == 3) {
-//                                            when (position) {
-//                                                2 -> {
-//                                                    sizeId = menuItem.sizes.modifierItems[0].id
-//                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[0].id)
-//                                                }
-//
-//                                                1 -> {
-//                                                    sizeId = menuItem.sizes.modifierItems[1].id
-//                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[1].id)
-//                                                }
-//
-//                                                0 -> {
-//                                                    sizeId = menuItem.sizes.modifierItems[2].id
-//                                                    menuPresenter!!.selectSize(menuItem.sizes.modifierItems[2].id)
-//                                                }
-//                                            }
-//                                        }
-//                                    } else {
-//                                        sizeId = menuItem.sizes.modifierItems[position].id
-//                                        menuPresenter!!.selectSize(menuItem.sizes.modifierItems[position].id)
-//                                    }
-//                                }
-//                            }
-//
-//                        }
                 } else {
-                    binding.sizesRecyclerView.visible()
                     try {
                         val activity: Activity? = activity
                         if (activity != null) {
@@ -1223,7 +1077,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             }
                             binding.sizesRecyclerView.adapter = sizesAdapter
                             ViewCompat.setNestedScrollingEnabled(binding.sizesRecyclerView, false)
-                            binding.sizesCard.visibility = View.GONE
+                            binding.sizesCard.visibility = View.VISIBLE
                             binding.sizesLabel.visibility = View.VISIBLE
                             binding.sizesRecyclerView.visibility = View.VISIBLE
                         }
