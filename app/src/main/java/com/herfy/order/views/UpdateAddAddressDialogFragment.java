@@ -41,7 +41,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.material.tabs.TabLayout;
 import com.herfy.R;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.order.OrderContract;
 import com.herfy.order.OrderPresenter;
 import com.skylinedynamics.solosdk.api.models.objects.Address;

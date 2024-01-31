@@ -14,13 +14,14 @@ import com.bumptech.glide.request.RequestOptions
 import com.herfy.BuildConfig
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentCountriesBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
 import com.herfy.util.*
+import com.herfy.utils.helper.LocaleUtil
 
 class CountriesFragment : BaseFragment(), CountriesContract.View,
     ConfirmConceptSelectionDialog.OnDialogAction {

@@ -13,7 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.main.MainActivity;
 import com.herfy.util.CacheUtil;

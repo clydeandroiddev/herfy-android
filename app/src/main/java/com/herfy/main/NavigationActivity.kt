@@ -10,8 +10,8 @@ import com.herfy.R
 import com.herfy.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.cart.views.CartFragment
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.databinding.ActivityNavigationBinding
 import com.herfy.digitalcoupons.views.DigitalCouponFragmentDirections
 import com.herfy.digitalcoupons.views.DigitalCouponsFragmentDirections

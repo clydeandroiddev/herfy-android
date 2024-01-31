@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.subscription.premade.models.StubPreMadeModel;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.StringUtil;

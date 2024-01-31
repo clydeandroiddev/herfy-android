@@ -22,8 +22,8 @@ import com.google.gson.JsonObject
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.curbside.adapter.CustomerCarAdapter
 import com.herfy.curbside.adapter.CustomerCarAdapter.CustomerCarListener
 import com.herfy.curbside.dialog.CarMakerDialog

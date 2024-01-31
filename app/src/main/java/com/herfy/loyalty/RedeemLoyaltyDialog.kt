@@ -16,14 +16,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.herfy.R
 import com.herfy.base.BaseDialogFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.DialogRedeemLoyaltyBinding
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.herfy.util.AuthUtil
 import com.herfy.util.CacheUtil
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
-import java.util.*
 
 class RedeemLoyaltyDialog(var loyalty: Loyalty?) : BaseDialogFragment() {
 

@@ -25,12 +25,13 @@ import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.auth.AuthContract
 import com.herfy.auth.AuthPresenter
 import com.herfy.base.*
-import com.herfy.constants.AUTH_ENTER_MOBILE_OR_EMAIL_ADDRESS
-import com.herfy.constants.Text
+import com.herfy.data.constants.AUTH_ENTER_MOBILE_OR_EMAIL_ADDRESS
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentSignInBinding
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries
 import com.skylinedynamics.solosdk.api.models.objects.LoginOption
 import com.herfy.util.*
+import com.herfy.utils.helper.LocaleUtil
 
 class SignInFragment : BaseFragment(), AuthContract.View {
 
@@ -403,7 +404,8 @@ class SignInFragment : BaseFragment(), AuthContract.View {
             }
 
             phoneNumber.hint = CacheUtil.getInstance().getTranslations(Text.ENTER_PHONE_NUMBER_CAPS, "ENTER PHONE NUMBER").toLowerCase().capitalize()
-            username.hint = CacheUtil.getInstance().getTranslations(AUTH_ENTER_MOBILE_OR_EMAIL_ADDRESS, "enter_mobile_or_email_address").toLowerCase().capitalize()
+            username.hint = CacheUtil.getInstance().getTranslations(
+                AUTH_ENTER_MOBILE_OR_EMAIL_ADDRESS, "enter_mobile_or_email_address").toLowerCase().capitalize()
             phoneNumberLabel.text = CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER)
             passwordLabel.text = CacheUtil.getInstance().getTranslations(Text.PASSWORD)
             password.hint = CacheUtil.getInstance().getTranslations(Text.PLEASE_TYPE_YOUR_PASSWORD_HERE, "Please type your password here").toLowerCase().capitalize()

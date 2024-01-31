@@ -12,7 +12,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.herfy.R;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Values;
+import com.herfy.utils.helper.LocaleUtil;
 
 /**
  * Animation Util

@@ -35,8 +35,8 @@ import com.herfy.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.browser.BrowserActivity
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.country.CountriesFragment
 import com.herfy.databinding.FragmentMenuNewHomePageBinding
 import com.herfy.ext.cast
@@ -55,6 +55,7 @@ import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
+import com.herfy.utils.helper.LocaleUtil
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -683,7 +684,8 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     intent.type = "text/plain"
                 } else {
                     intent = Intent(activity, BrowserActivity::class.java)
-                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(Text.FEEDBACK))
+                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(
+                        Text.FEEDBACK))
                     intent.putExtra("url", feedbackUrl)
                 }
             } else {
@@ -703,7 +705,8 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     intent.type = "text/plain"
                 } else {
                     intent = Intent(activity, BrowserActivity::class.java)
-                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(Text.FEEDBACK))
+                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(
+                        Text.FEEDBACK))
                     intent.putExtra("url", feedbackUrl)
                 }
             } else {
@@ -1163,6 +1166,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     val sliderAdapter =
                         SliderFragmentStateAdapter(it, sliderPresenter, slides)
                     binding.sliderViewPager.adapter = sliderAdapter
+
                 }
                 binding.sliderViewPager.visibility = View.VISIBLE
                 if (slides.size > 1) {

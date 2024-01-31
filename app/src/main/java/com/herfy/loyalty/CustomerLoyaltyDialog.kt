@@ -12,7 +12,7 @@ import android.util.TypedValue
 import android.view.*
 import androidx.fragment.app.FragmentManager
 import com.herfy.base.BaseDialogFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.DialogLoyaltyQrCodeBinding
 import com.herfy.util.CacheUtil
 import com.herfy.util.QRHelper

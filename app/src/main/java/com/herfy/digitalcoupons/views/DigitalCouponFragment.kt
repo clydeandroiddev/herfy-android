@@ -21,7 +21,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentDigitalCouponBinding
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.herfy.analytics.MixpanelUtil

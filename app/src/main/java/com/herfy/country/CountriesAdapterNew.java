@@ -24,7 +24,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.util.CacheUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 
 import java.util.List;
 

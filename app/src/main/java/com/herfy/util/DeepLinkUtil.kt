@@ -1,6 +1,6 @@
 package com.herfy.util
 
-import com.herfy.constants.Values
+import com.herfy.data.constants.Values
 
 object DeepLinkUtil {
 

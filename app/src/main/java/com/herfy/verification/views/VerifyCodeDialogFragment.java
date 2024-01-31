@@ -37,7 +37,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.herfy.R;
 import com.herfy.auth.views.AuthFragment;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.main.MainActivity;
 import com.herfy.order.views.OrderTypeActivity;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;

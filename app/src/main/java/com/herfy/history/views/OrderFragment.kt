@@ -38,8 +38,8 @@ import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.refundevent
 import com.herfy.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.databinding.FragmentOrderBinding
 import com.herfy.ext.cast
 import com.herfy.ext.hasDecimalPart
@@ -58,6 +58,7 @@ import com.herfy.util.*
 import com.herfy.util.LatLngInterpolator.Spherical
 import com.herfy.util.extensions.dialPhoneNumber
 import com.herfy.util.extensions.removeSpecialCharacters
+import com.herfy.utils.helper.LocaleUtil
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -224,7 +225,8 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
             Text.ARRIVED_MESSAGE,
             "We have notified our crew that you have arrived"
         )
-        binding.txtBranchNumberTitle.text = CacheUtil.getInstance().getTranslations(Text.BRANCH_NUMBER_CAPS,"BRANCH NUMBER")
+        binding.txtBranchNumberTitle.text = CacheUtil.getInstance().getTranslations(
+            Text.BRANCH_NUMBER_CAPS,"BRANCH NUMBER")
         binding.maps.text = CacheUtil.getInstance().getTranslations(
             Text.OPEN_IN_GOOGLE_MAPS,
             "OPEN IN GOOGLE MAPS"
@@ -674,23 +676,28 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
                 e.printStackTrace()
             }
             if (orderDetails.paymentMethod.equals(PaymentType.CASH.value, ignoreCase = true)) {
-                binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(Text.CASH)
+                binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(
+                    Text.CASH)
             } else if (orderDetails.paymentMethod.equals(PaymentType.CARD.value, ignoreCase = true)) {
-                binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
+                binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(
+                    Text.CARD, "Card")
             } else if (orderDetails.paymentMethod.equals(
                     PaymentType.CARD_ON_DELIVERY.value,
                     ignoreCase = true
                 )
             ) {
-                binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY)
+                binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(
+                    Text.CARD_ON_DELIVERY)
             } else if (orderDetails.paymentMethod.equals(PaymentType.APPLE_PAY.value, ignoreCase = true)) {
-                binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(Text.APPLE_PAY)
+                binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(
+                    Text.APPLE_PAY)
             } else if (orderDetails.paymentMethod.equals(
                     PaymentType.CARD_ON_PICKUP.value,
                     ignoreCase = true
                 )
             ) {
-                binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(Text.CARD_ON_PICKUP)
+                binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(
+                    Text.CARD_ON_PICKUP)
             } else {
                 binding.paymentLabel.visibility = View.GONE
                 binding.paymentContainer.visibility = View.GONE
@@ -795,12 +802,14 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
                             orderDetails.deliveryOption.equals("ايصال", ignoreCase = true))
                 ) {
                     binding.driverNameContainer.visibility = View.VISIBLE
-                    binding.driverNameLabel.text = CacheUtil.getInstance().getTranslations(Text.DRIVER_NAME_CAPS, "DRIVER NAME")
+                    binding.driverNameLabel.text = CacheUtil.getInstance().getTranslations(
+                        Text.DRIVER_NAME_CAPS, "DRIVER NAME")
                     binding.driverName.text = orderDetails.driverName
                     if (!orderDetails.driverMobile.isNullOrEmpty()) {
                         driverNumber = orderDetails.driverMobile
                         binding.driverNumberContainer.visibility = View.VISIBLE
-                        binding.driverNumberLabel.text = CacheUtil.getInstance().getTranslations(Text.DRIVER_NUMBER_CAPS, "DRIVER NUMBER")
+                        binding.driverNumberLabel.text = CacheUtil.getInstance().getTranslations(
+                            Text.DRIVER_NUMBER_CAPS, "DRIVER NUMBER")
                         binding.driverNumber.text = orderDetails.driverMobile
 
                         binding.driverNumberContainer.setOnClickListener {

@@ -24,8 +24,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.databinding.FragmentFavoritesBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity

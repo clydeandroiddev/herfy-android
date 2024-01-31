@@ -6,7 +6,7 @@ import android.util.Pair;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.loyalty.objects.DateItem;
 import com.herfy.loyalty.objects.ListItem;
 import com.herfy.loyalty.objects.LoyaltyTransactionItem;

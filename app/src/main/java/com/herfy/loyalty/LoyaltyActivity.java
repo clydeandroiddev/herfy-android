@@ -1,6 +1,6 @@
 package com.herfy.loyalty;
 
-import static com.herfy.constants.Text.TOTAL_POINTS_MAX_OUT;
+import static com.herfy.data.constants.Text.TOTAL_POINTS_MAX_OUT;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,7 +33,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.skylinedynamics.solosdk.api.models.objects.Customer;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;

@@ -11,13 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
-import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.concepts.ConceptsContract;
 import com.herfy.concepts.ConceptsPresenter;
 import com.herfy.concepts.ConceptsRecyclerViewAdapter;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.splash.SplashActivity;
 import com.herfy.util.CacheUtil;

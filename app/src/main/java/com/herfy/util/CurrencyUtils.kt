@@ -4,6 +4,7 @@ import android.text.SpannedString
 import androidx.core.text.buildSpannedString
 import androidx.core.text.scale
 import com.herfy.ext.hasDecimalPart
+import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.CurrencyFormat
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols

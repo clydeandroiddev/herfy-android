@@ -30,7 +30,7 @@ import com.herfy.util.AuthUtil;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.DeepLinkUtil;
 import com.herfy.util.DeviceUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.ViewUtil;
 
 import org.jetbrains.annotations.NotNull;

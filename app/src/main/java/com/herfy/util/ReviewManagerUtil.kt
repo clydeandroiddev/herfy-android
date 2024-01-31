@@ -3,6 +3,7 @@ package com.herfy.util
 import android.app.Activity
 import com.google.android.play.core.review.ReviewManagerFactory
 
+
 class ReviewManagerUtil(val activity: Activity) {
 
     fun showReviewDialog() {

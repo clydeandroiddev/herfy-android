@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Values;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.herfy.util.CacheUtil;

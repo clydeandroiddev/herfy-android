@@ -11,7 +11,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.herfy.constants.Values
+import com.herfy.data.constants.Values
 import com.herfy.databinding.ItemPromotionsBinding
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.herfy.util.CacheUtil

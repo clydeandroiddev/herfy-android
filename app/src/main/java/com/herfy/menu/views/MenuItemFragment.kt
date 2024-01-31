@@ -39,8 +39,8 @@ import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.databinding.FragmentMenuItemBinding
 import com.herfy.ext.cast
 import com.herfy.ext.invisible
@@ -57,6 +57,7 @@ import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.util.GsonHelper
 import com.herfy.util.*
+import com.herfy.utils.helper.LocaleUtil
 import java.util.*
 
 class MenuItemFragment : BaseFragment(), MenuContract.View {

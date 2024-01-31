@@ -3,7 +3,7 @@ package com.herfy.analytics
 import android.content.Context
 import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.herfy.BuildConfig
-import com.herfy.constants.Values
+import com.herfy.data.constants.Values
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import com.herfy.util.AuthUtil
 import com.herfy.util.BuildUtil
