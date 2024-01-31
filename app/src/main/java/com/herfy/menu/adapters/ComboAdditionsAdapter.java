@@ -140,7 +140,7 @@ public class ComboAdditionsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolderData(LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.item_modifier_group, parent, false));
+                R.layout.item_modifier_item, parent, false));
     }
 
     @Override
