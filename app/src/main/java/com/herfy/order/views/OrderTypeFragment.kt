@@ -1,5 +1,4 @@
 package com.herfy.order.views
-
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -60,9 +59,6 @@ import com.herfy.cart.views.CartDialogFragment
 import com.herfy.cart.views.CartFragment
 import com.herfy.data.constants.Text
 import com.herfy.data.constants.Values
-import com.herfy.databinding.FragmentOrderTypeBinding
-import com.herfy.constants.Text
-import com.herfy.constants.Values
 import com.herfy.ext.cast
 import com.herfy.ext.gone
 import com.herfy.ext.isVisible
