@@ -22,10 +22,10 @@ import com.herfy.util.EnvUtil
 import com.herfy.util.glide.UnsafeOkHttpClient
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
+import dagger.hilt.android.HiltAndroidApp
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
-import dagger.hilt.android.HiltAndroidApp
 import io.shipbook.shipbooksdk.ShipBook
 
 @HiltAndroidApp

@@ -67,7 +67,7 @@ class HomeRepositoryImpl @Inject constructor(
 
                     val `object` = JSONObject(o.toString())
 
-                    val digitalCoupons: ArrayList<Campaign> = GsonHelper.gsonFinal().fromJson(
+                    val digitalCoupons : ArrayList<Campaign> = GsonHelper.gsonFinal().fromJson(
                         `object`.getJSONArray("data").toString(),
                         object : TypeToken<ArrayList<Campaign>>() {}.type
                     )

@@ -1,6 +1,5 @@
 package com.herfy.data.constants;
 
-import org.jetbrains.annotations.NotNull;
 
 public class Text {
 
