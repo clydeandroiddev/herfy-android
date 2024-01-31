@@ -16,14 +16,13 @@ import androidx.annotation.Nullable;
 
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.ModifierProcessor;
 import com.herfy.util.ModifierProcessorCallback;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 public class ImageItemModifierHolder extends BaseModifierItemViewHolder implements ModifierProcessorCallback {
     @BindView(R.id.check)
     ImageView check;

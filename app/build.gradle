@@ -236,12 +236,11 @@ dependencies {
     implementation project(path: ':utils')
     implementation project(path: ':data:database')
 
-    //implementation(name: 'MaterialCalendarNew', ext: 'aar')
+
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
     implementation 'com.google.android.play:review-ktx:2.0.1'
     implementation project(path: ':features:nutritiondetails')
     implementation project(path: ':features:productpagedetails')
-    implementation(name: 'MaterialCalendarNew', ext: 'aar')
 
     def multidex_version = "2.0.1"
     implementation "androidx.multidex:multidex:$multidex_version"
@@ -333,6 +332,7 @@ dependencies {
     implementation "io.insert-koin:koin-core:$koin"
     implementation "io.insert-koin:koin-android:$koin"
 
+
     // Navigation
     def navigation = "2.5.2"
     implementation "androidx.navigation:navigation-fragment:$navigation"
@@ -383,6 +383,19 @@ dependencies {
 
     //Moyasar SDK
     implementation 'com.moyasar:android-sdk:0.5.1'
+    def dagger_version = "2.48"
+    implementation "com.google.dagger:hilt-android:$dagger_version"
+    kapt "com.google.dagger:hilt-android-compiler:$dagger_version"
+    kapt('org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0')
+
+    //RXJava
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+
+    def room_version = "2.5.0"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
 }
 
 
