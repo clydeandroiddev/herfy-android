@@ -6,12 +6,12 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/icon"
-        android:layout_width="25dp"
-        android:layout_height="32dp"
+        android:layout_width="42dp"
+        android:layout_height="54dp"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/branch_icon" />
+        app:srcCompat="@drawable/location_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

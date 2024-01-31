@@ -191,7 +191,7 @@
                                                     android:layout_height="24dp"
                                                     android:layout_gravity="center_vertical"
                                                     android:scaleType="centerInside"
-                                                    app:srcCompat="@drawable/ic_order_type" />
+                                                    app:srcCompat="@drawable/location_icon" />
 
                                                 <LinearLayout
                                                     android:layout_width="0dp"

@@ -57,8 +57,8 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartDialogFragment
 import com.herfy.cart.views.CartFragment
-import com.herfy.constants.Text
-import com.herfy.constants.Values
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Values
 import com.herfy.ext.cast
 import com.herfy.ext.gone
 import com.herfy.ext.isVisible
@@ -76,6 +76,7 @@ import com.herfy.order.views.DineInTableNumberDialogFragment
 import com.herfy.order.views.OrderTypeDialogFragment
 import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
 import com.herfy.util.*
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -90,6 +91,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     private lateinit var binding: FragmentOrderTypeBinding
+
+    private lateinit var choosePickupTypeDialog: ChoosePickupTypeDialog
 
     private val args: OrderTypeNewFragmentArgs by navArgs()
 
@@ -429,47 +432,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             pickupCurbsideStoresRecyclerViewAdapter =
                 StoresRecyclerViewAdapter(orderPresenter, false)
             binding.continueButton.setOnClickListener { v: View? ->
-                it.showLoadingDialog()
-                val cachedOrderType = CacheUtil.getInstance().orderType
-                if (orderTypeSelected == OrderType.PICKUP) {
-                    if (curbsideTabSelected && binding.curbsideLayout.isVisible() && CacheUtil.getInstance().curbsideCar != null) {
-                        orderTypeSelected = OrderType.CURBSIDE
-                    } else if (dineInTabSelected) {
-                        orderTypeSelected = OrderType.DINE_IN
-                    }
-                }
-
-
-                if (isMenuSeparate && cachedOrderType == OrderType.DELIVERY && orderTypeSelected == OrderType.PICKUP) {
-                    val itemsInCart = CacheUtil.getInstance().cart
-                    if (itemsInCart.size > 0) {
-                        showPromptChangeOrderTypeDialog(CacheUtil.getInstance().getTranslations(
-                            Text.CHANGE_PICKUP_INSTEAD_LABEL,
-                            "Your current Delivery order will be removed from cart. Would you like to proceed and pick up your order instead?"
-                        ), { _, _ ->
-                            CacheUtil.getInstance().cart = ArrayList()
-                            orderPresenter.getDiffMenuCdn(null)
-                            isMenuRedownloaded = true;
-                            CacheUtil.getInstance().orderType = orderTypeSelected
-                        }, { dialog, which ->
-                            it.dismissDialogs()
-                            dialog.dismiss()
-                        })
-                    } else {
-                        orderPresenter.getDiffMenuCdn(null)
-                        isMenuRedownloaded = true;
-                        CacheUtil.getInstance().orderType = orderTypeSelected
-                    }
-                } else {
-                    CacheUtil.getInstance().orderType = orderTypeSelected
-                    if (orderTypeSelected != OrderType.NONE) {
-                        if (cachedOrderType == OrderType.NONE) {
-                            orderPresenter.getDiffMenuCdn(null)
-                        } else diffMenuSaved(null)
-                    } else {
-                        diffMenuSaved(null)
-                    }
-                }
+                chooseType(it)
             }
         }
         binding.curbsideCancel.setOnClickListener {
@@ -829,13 +792,19 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 val activity: Activity? = activity
                 if (activity != null) {
                     val bitmapDrawable = ContextCompat.getDrawable(
-                        activity, R.drawable.marker_new_location
+                        activity, R.drawable.marker_location
                     ) as BitmapDrawable?
                     if (bitmapDrawable != null) {
                         val bitmap =
-                            Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 105, 140, true)
+                            Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 110, 110, true)
                         val canvas = Canvas(bitmap)
-                        canvas.drawBitmap(bitmap, 0f, 0f, Paint())
+                        val paint = Paint()
+                        val filter: ColorFilter = PorterDuffColorFilter(
+                            Color.parseColor(CacheUtil.getInstance().colorMain),
+                            PorterDuff.Mode.SRC_IN
+                        )
+                        paint.colorFilter = filter
+                        canvas.drawBitmap(bitmap, 0f, 0f, paint)
                         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
                     }
                 }
@@ -1205,7 +1174,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 } else {
                     storeMarker?.setIcon(
                         ViewUtil.vectorDrawableToBitmapDescriptor(
-                            activity, R.drawable.marker_store_unselected
+                            activity, R.drawable.branch_icon_new
                         )
                     )
                     storeMarker?.setAnchor(0.5f, 1f)
@@ -1786,6 +1755,82 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     orderPresenter.setOrderType()
                 }
             }
+        }
+    }
+
+    private fun continueSelectingType(it: BaseActivity) {
+        it.showLoadingDialog()
+        val cachedOrderType = CacheUtil.getInstance().orderType
+        if (orderTypeSelected == OrderType.PICKUP) {
+            if (curbsideTabSelected && binding.curbsideLayout.isVisible() && CacheUtil.getInstance().curbsideCar != null) {
+                orderTypeSelected = OrderType.CURBSIDE
+            } else if (dineInTabSelected) {
+                orderTypeSelected = OrderType.DINE_IN
+            }
+        }
+
+
+        if (isMenuSeparate && cachedOrderType == OrderType.DELIVERY && orderTypeSelected == OrderType.PICKUP) {
+            val itemsInCart = CacheUtil.getInstance().cart
+            if (itemsInCart.size > 0) {
+                showPromptChangeOrderTypeDialog(CacheUtil.getInstance().getTranslations(
+                    Text.CHANGE_PICKUP_INSTEAD_LABEL,
+                    "Your current Delivery order will be removed from cart. Would you like to proceed and pick up your order instead?"
+                ), { _, _ ->
+                    CacheUtil.getInstance().cart = ArrayList()
+                    orderPresenter.getDiffMenuCdn(null)
+                    isMenuRedownloaded = true;
+                    CacheUtil.getInstance().orderType = orderTypeSelected
+                }, { dialog, which ->
+                    it.dismissDialogs()
+                    dialog.dismiss()
+                })
+            } else {
+                orderPresenter.getDiffMenuCdn(null)
+                isMenuRedownloaded = true;
+                CacheUtil.getInstance().orderType = orderTypeSelected
+            }
+        } else {
+            CacheUtil.getInstance().orderType = orderTypeSelected
+            if (orderTypeSelected != OrderType.NONE) {
+                if (cachedOrderType == OrderType.NONE) {
+                    orderPresenter.getDiffMenuCdn(null)
+                } else diffMenuSaved(null)
+            } else {
+                diffMenuSaved(null)
+            }
+        }
+    }
+
+    private fun chooseType(activity: BaseActivity) {
+        dismissPickupTypeDialog()
+        choosePickupTypeDialog =
+            ChoosePickupTypeDialog.newInstance(object : ChoosePickupTypeDialog.OnSubmit {
+                override fun isPickup() {
+                    continueSelectingType(activity)
+                    dismissPickupTypeDialog()
+                }
+
+                override fun isCurbside() {
+                    continueSelectingType(activity)
+                    dismissPickupTypeDialog()
+                }
+
+                override fun exit() {
+                    dismissPickupTypeDialog()
+                }
+
+            })
+        choosePickupTypeDialog.show(
+            requireActivity().supportFragmentManager, ChoosePickupTypeDialog::class.java.simpleName
+        )
+    }
+
+    private fun dismissPickupTypeDialog() {
+        try {
+            choosePickupTypeDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
         }
     }
 
