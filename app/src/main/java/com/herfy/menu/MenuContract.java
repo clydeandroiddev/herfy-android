@@ -4,11 +4,12 @@ import android.widget.ImageView;
 
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
+import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.IngredientViewHolder;
 import com.herfy.menu.viewholders.MenuCategoryViewHolder;
 import com.herfy.menu.viewholders.MenuItemViewHolder;
-import com.herfy.menu.viewholders.ModifierGroupViewHolder;
 import com.herfy.menu.viewholders.ModifierItemViewHolder;
+import com.herfy.menu.viewholders.ModifierNewGroupViewHolder;
 import com.herfy.menu.viewholders.ModifierItemViewHolderNew;
 import com.herfy.menu.viewholders.SizeViewHolder;
 import com.herfy.newmenu.viewholder.MenuCouponViewHolder;
@@ -24,6 +25,7 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuCategoryItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
@@ -282,7 +284,7 @@ public interface MenuContract {
 
         int getIngredientsCount();
 
-        void onBindModifierGroupViewAtPosition(int position, ModifierGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice);
+        void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice);
 
         int getModifierGroupsCount();
 
@@ -292,8 +294,9 @@ public interface MenuContract {
 
         void onBindModifierItemViewAtPositionNew(ModifierGroup modifierGroup, int position, ModifierItemViewHolderNew modifierItemViewHolderNew);
 
-        void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, ModifierItemViewHolder modifierItemViewHolder);
-
+        void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, BaseModifierItemViewHolder modifierItemViewHolder);
+        void onBindModifierItemViewAtPositionOld(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, ModifierItemViewHolder modifierItemViewHolder);
+        ModifierGroupType getModifierGroupTypeByPosition(int position, ModifierGroup modifierGroup);
         int getModifierItemsCount(ModifierGroup modifierGroup);
 
         void addRemoveFavorite(boolean add);

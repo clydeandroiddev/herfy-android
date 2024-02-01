@@ -22,4 +22,18 @@
             <enum name="right_bottom_triangle" value="7"></enum>
         </attr>
     </declare-styleable>
+    <attr name="textLargeTitleStyle" format="reference" />
+    <attr name="textTitle1Style" format="reference" />
+    <attr name="textTitle2Style" format="reference" />
+    <attr name="textTitle3Style" format="reference" />
+    <attr name="textHeadlineStyle" format="reference" />
+    <attr name="textBodyStyle" format="reference" />
+    <attr name="textBodyMediumStyle" format="reference" />
+    <attr name="textCalloutStyle" format="reference" />
+    <attr name="textSubheadlineStyle" format="reference" />
+    <attr name="textSubheadlineMediumStyle" format="reference" />
+    <attr name="textFootnoteStyle" format="reference" />
+    <attr name="textCaptionStyle" format="reference" />
+    <attr name="textCaptionSemiboldStyle" format="reference" />
+    <attr name="textNavigationLabelStyle" format="reference" />
 </resources>

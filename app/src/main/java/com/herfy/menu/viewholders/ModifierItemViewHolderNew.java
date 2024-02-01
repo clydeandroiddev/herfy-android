@@ -297,9 +297,9 @@ public class ModifierItemViewHolderNew extends RecyclerView.ViewHolder implement
     public void setModifierItem(ModifierGroup modifierGroup, ModifierItem modifierItem, int posTrue) {
 
         if (modifierItem.getAttributes().isSelected()) {
-            check.setImageResource(R.drawable.modifier_item_selected);
+            check.setImageResource(R.drawable.modifier_radio_item_selected);
         } else {
-            check.setImageResource(R.drawable.modifier_item_unselected);
+            check.setImageResource(R.drawable.modifier_item_radio_unselected);
         }
 
         checkLayout.setOnClickListener(new View.OnClickListener() {
