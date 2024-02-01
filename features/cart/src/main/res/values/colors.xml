@@ -10,7 +10,7 @@
     <color name="page_background_color">#FAFBFC</color>
     <color name="page_background_white">#FFFFFF</color>
     <color name="home_indicator">#D6D6D6</color>
-    <color name="primary_text">#1E1E1E</color>
+    <color name="primary_text">#000000</color>
     <color name="secondary_text">#9B9B9B</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
@@ -20,7 +20,7 @@
     <color name="input_background">#FAFAFA</color>
     <color name="light_gray">#f7f7f7</color>
     <color name="cod_gray">#1E1E1E</color>
-    <color name="dusty_gray">#969696</color>
+    <color name="dusty_gray">#636366</color>
     <color name="mercury">#FAFBFC</color>
     <color name="silver_chalice">#acacac</color>
     <color name="placeholder_color">#cccccc</color>
