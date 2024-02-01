@@ -203,7 +203,7 @@
                     android:id="@+id/promotion_edit"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:background="@drawable/background_order_type"
+                    android:background="@drawable/background_header_order_type"
                     android:scaleType="centerInside"
                     app:backgroundTint="@color/white"
                     app:elevation="4dp"

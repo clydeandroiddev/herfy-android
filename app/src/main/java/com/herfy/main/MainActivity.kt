@@ -187,24 +187,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         val inflater = navController.navInflater
         val graph = inflater.inflate(R.navigation.nav_main)
-        isDefaultHomeScreenDesign =
-            CacheUtil.getInstance().application.attributes.homeScreenDesign == "default"
+        isDefaultHomeScreenDesign = false
 
-        if (CacheUtil.getInstance().mode == 1) {
-            quickOrderSelected()
-            currentDestination = if (isDefaultHomeScreenDesign) {
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
-                graph.setStartDestination(R.id.nav_menu)
-                R.id.nav_menu
-            } else {
-                graph.setStartDestination(R.id.nav_home)
-                R.id.nav_home
-            }
-        } else {
-            subscriptionSelected()
-            currentDestination = R.id.nav_subscriptions
-            graph.setStartDestination(R.id.nav_subscriptions)
-        }
+        quickOrderSelected()
+        graph.setStartDestination(R.id.nav_menu)
+        currentDestination = R.id.nav_menu
 
         navController.setGraph(graph, intent.extras)
 
@@ -214,7 +201,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 setupSideBar()
             }
             currentDestination = destination.id
-            val layoutParams = binding.appBarLayout.layoutParams as CoordinatorLayout.LayoutParams
+            /*val layoutParams = binding.appBarLayout.layoutParams as CoordinatorLayout.LayoutParams
             if (destination.id == R.id.nav_auth || destination.id == R.id.nav_guest) {
                 layoutParams.height = 0
             } else {
@@ -287,7 +274,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 }
             }
             binding.mainToolbar.schedule.visibility = View.GONE
-            binding.mainToolbar.whatsapp.visibility = View.GONE
+            binding.mainToolbar.whatsapp.visibility = View.GONE*/
         }
 
         checkBackground()
@@ -770,7 +757,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         mainPresenter.getCaloriesPage()
         binding.drawerLayout.setScrimColor(Color.TRANSPARENT)
         showSocialMediaLinks()
-        if (BuildUtil.soloAppKey().equals("7r5YQwmSgZCtM0ux", ignoreCase = true)) {
+        /*if (BuildUtil.soloAppKey().equals("7r5YQwmSgZCtM0ux", ignoreCase = true)) {
             binding.mainToolbar.title.visibility = View.GONE
             binding.mainToolbar.topLogo.visibility = View.VISIBLE
         }
@@ -778,7 +765,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             binding.mainToolbar.viewOnlyLayout.visibility = View.VISIBLE
         } else {
             binding.mainToolbar.viewOnlyLayout.visibility = View.GONE
-        }
+        }*/
         val actionBarDrawerToggle: ActionBarDrawerToggle = object :
             ActionBarDrawerToggle(
                 this,
@@ -858,8 +845,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         binding.sidebar.clNotification.setOnClickListener {
             notifCount = 0
-            binding.mainToolbar.notifCounter.setText(null)
-            binding.mainToolbar.notifCounter.visibility = View.GONE
+            //binding.mainToolbar.notifCounter.setText(null)
+            //binding.mainToolbar.notifCounter.visibility = View.GONE
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             showNotifications()
         }
@@ -933,7 +920,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
-        binding.mainToolbar.menu.setOnClickListener {
+        /*binding.mainToolbar.menu.setOnClickListener {
             val selectedCountry = CacheUtil.getInstance().country
             selectedCountry?.let { country ->
                 val brandImageUrl = country.imageUrl
@@ -959,7 +946,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 binding.mainToolbar.notifCounter.visibility = View.GONE
                 showNotifications()
             }
-        }
+        }*/
 
         binding.sidebar.promotions.setOnClickListener { view: View? ->
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -1215,7 +1202,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     fun setCartQuantity() {
-        try {
+        /*try {
             if (binding.mainToolbar.notif.visibility == View.GONE) {
                 binding.mainToolbar.cart.visibility = View.VISIBLE
                 if (CacheUtil.getInstance().cartQuantity == 0) {
@@ -1228,7 +1215,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        }
+        }*/
     }
 
     fun cartExpired() {
@@ -1245,7 +1232,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     fun showNotifIcon() {
-        if (!AuthUtil.getInstance().isSignedIn || !CacheUtil.getInstance().concept.isNotificationCenterEnabled) {
+        /*if (!AuthUtil.getInstance().isSignedIn || !CacheUtil.getInstance().concept.isNotificationCenterEnabled) {
             binding.mainToolbar.notif.visibility = View.GONE
             binding.mainToolbar.notifCounter.visibility = View.GONE
             return
@@ -1268,7 +1255,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             binding.mainToolbar.schedule.visibility = View.GONE
         } else {
             binding.mainToolbar.notif.visibility = View.GONE
-        }
+        }*/
     }
 
     private fun subscriptionSelected() {
@@ -1286,12 +1273,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.subscriptionsLabel.setTextColor(Color.parseColor(CacheUtil.getInstance().colorMain))
         goToSubs = true
         goToMenu = false
-        binding.mainToolbar.cartIcon.visibility = View.GONE
+        /*binding.mainToolbar.cartIcon.visibility = View.GONE
         binding.mainToolbar.cartQuantity.visibility = View.GONE
         binding.mainToolbar.scheduleIcon.visibility =
             if (CacheUtil.getInstance().concept.allowAdvanceOrder) View.VISIBLE else View.GONE
         binding.mainToolbar.title.text = CacheUtil.getInstance()
-            .getTranslations(Text.SUBSCRIPTION_MENU, "SUBSCRIPTION MENU")
+            .getTranslations(Text.SUBSCRIPTION_MENU, "SUBSCRIPTION MENU")*/
     }
 
     private fun quickOrderSelected() {
@@ -1310,17 +1297,17 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     override fun setupTranslations() {
-        binding.mainToolbar.close.text = CacheUtil.getInstance().getTranslations(Text.CLOSE)
+        //binding.mainToolbar.close.text = CacheUtil.getInstance().getTranslations(Text.CLOSE)
         binding.sidebar.brands.text =
             CacheUtil.getInstance().getTranslations(Text.BRANDS, "Brands")
         binding.sidebar.promotions.text =
             CacheUtil.getInstance().getTranslations(Text.PROMOTIONS, "Promotions")
-        binding.mainToolbar.viewOnlyLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.VIEW_ONLY, "View Only")
+        /*binding.mainToolbar.viewOnlyLabel.text = CacheUtil.getInstance()
+            .getTranslations(Text.VIEW_ONLY, "View Only")*/
         binding.sidebar.liveChat.text = CacheUtil.getInstance()
             .getTranslations(Text.LIVE_CHAT, "Live Chat")
-        binding.mainToolbar.back.text =
-            CacheUtil.getInstance().getTranslations(Text.BACK, "Back")
+        /*binding.mainToolbar.back.text =
+            CacheUtil.getInstance().getTranslations(Text.BACK, "Back")*/
         binding.sidebar.signin.text = CacheUtil.getInstance().getTranslations(Text.SIGN_IN)
         binding.sidebar.register.text = CacheUtil.getInstance()
             .getTranslations(Text.REGISTER, "Register")
@@ -1438,7 +1425,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     override fun showFavorites() {}
 
     override fun setCartQuantity(quantity: Int) {
-        try {
+        /*try {
             cQuantity = quantity
             if (quantity == 0) {
                 binding.mainToolbar.cartQuantity.visibility = View.GONE
@@ -1448,7 +1435,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        }
+        }*/
     }
 
     override fun showRatings(ratings: List<Rating>) {
@@ -1490,7 +1477,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     override fun showNewNotifIndicator(count: Int) {
-        if (count > 0 && CacheUtil.getInstance().concept.isNotificationCenterEnabled && (currentDestination == R.id.nav_home || currentDestination == R.id.nav_menu) && binding.mainToolbar.notif.visibility == View.VISIBLE && Values.sDeepLink.isEmpty()) {
+        /*if (count > 0 && CacheUtil.getInstance().concept.isNotificationCenterEnabled && (currentDestination == R.id.nav_home || currentDestination == R.id.nav_menu) && binding.mainToolbar.notif.visibility == View.VISIBLE && Values.sDeepLink.isEmpty()) {
             notifCount = count
             binding.mainToolbar.notifCounter.text = "" + count
             binding.sidebar.ivNewNotifIndicator.visibility = View.VISIBLE
@@ -1499,7 +1486,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         } else {
             binding.sidebar.ivNewNotifIndicator.visibility = View.INVISIBLE
             binding.mainToolbar.notifCounter.visibility = View.GONE
-        }
+        }*/
     }
 
     override fun proceedRestart() {
@@ -1519,7 +1506,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     override fun animateViewToCart(itemView: View, imageUrl: String, offset: Int) {}
 
     fun showScheduleButton(onClick: View.OnClickListener) {
-        if (currentDestination == R.id.nav_cart) {
+        /*if (currentDestination == R.id.nav_cart) {
             try {
                 binding.mainToolbar.cart.visibility = View.GONE
                 binding.mainToolbar.schedule.visibility =
@@ -1528,11 +1515,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
+        }*/
     }
 
     fun showScheduleBubble() {
-        if (CacheUtil.getInstance().concept.allowAdvanceOrder && currentDestination == R.id.nav_cart && binding.mainToolbar.schedule.visibility == View.VISIBLE) {
+        /*if (CacheUtil.getInstance().concept.allowAdvanceOrder && currentDestination == R.id.nav_cart && binding.mainToolbar.schedule.visibility == View.VISIBLE) {
             try {
                 binding.bubbleOrderLayout.visibility = View.VISIBLE
                 binding.bubbleOrderLayout.postDelayed({
@@ -1541,7 +1528,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
+        }*/
     }
 
     private fun deepLinkRedirect() {
@@ -1587,47 +1574,47 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     fun setCloseButton(onClick: OnClickListener?) {
-        binding.mainToolbar.close.setOnClickListener(onClick)
+        //binding.mainToolbar.close.setOnClickListener(onClick)
     }
 
     fun setToolbarTitle(title: String) {
-        binding.mainToolbar.title.text = title
+        //binding.mainToolbar.title.text = title
     }
 
     fun showToolbarActionButton(isShow: Boolean) {
-        binding.mainToolbar.action.visibility = if (isShow) View.VISIBLE else View.GONE
+        //binding.mainToolbar.action.visibility = if (isShow) View.VISIBLE else View.GONE
     }
 
     fun setToolbarActionText(action: String) {
-        binding.mainToolbar.action.text = action
+        //binding.mainToolbar.action.text = action
     }
 
     fun setToolbarActionButton(onClick: OnClickListener?) {
-        binding.mainToolbar.action.setOnClickListener(onClick)
+        //binding.mainToolbar.action.setOnClickListener(onClick)
     }
 
     fun enableToolbarActionButton(isEnabled: Boolean) {
-        binding.mainToolbar.action.isEnabled = isEnabled
+        //binding.mainToolbar.action.isEnabled = isEnabled
     }
 
     fun showToolbarWhatsappButton(isShow: Boolean) {
-        binding.mainToolbar.whatsapp.visibility = if (isShow) View.VISIBLE else View.GONE
+        //binding.mainToolbar.whatsapp.visibility = if (isShow) View.VISIBLE else View.GONE
     }
 
     fun setToolbarWhatsappButton(onClick: OnClickListener) {
-        binding.mainToolbar.whatsapp.setOnClickListener(onClick)
+        //binding.mainToolbar.whatsapp.setOnClickListener(onClick)
     }
 
     fun showToolbarCustomActionButton(isShow: Boolean) {
-        binding.mainToolbar.customAction.visibility = if (isShow) View.VISIBLE else View.GONE
+        //binding.mainToolbar.customAction.visibility = if (isShow) View.VISIBLE else View.GONE
     }
 
     fun setToolbarCustomActionText(action: String) {
-        binding.mainToolbar.customAction.text = action
+        //binding.mainToolbar.customAction.text = action
     }
 
     fun setToolbarCustomActionButton(onClick: OnClickListener) {
-        binding.mainToolbar.customAction.setOnClickListener(onClick)
+        //binding.mainToolbar.customAction.setOnClickListener(onClick)
     }
 
     private fun refreshMenu() {

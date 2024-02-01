@@ -333,7 +333,7 @@
                         tools:listitem="@layout/tab_category"
                         tools:visibility="visible" />
 
-                    <com.herfy.views.CenteringTabLayout
+                    <com.herfy.menu.widgets.CenteringTabLayout
                         android:id="@+id/tabs_layout"
                         android:layout_width="match_parent"
                         android:layout_height="130dp"
