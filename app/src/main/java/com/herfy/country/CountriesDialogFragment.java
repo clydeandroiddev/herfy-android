@@ -24,12 +24,12 @@ import com.google.android.material.button.MaterialButton;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.skylinedynamics.solosdk.api.SoloApi;
 import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.EnvUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

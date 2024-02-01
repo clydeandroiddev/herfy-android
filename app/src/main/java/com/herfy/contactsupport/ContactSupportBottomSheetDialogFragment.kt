@@ -24,7 +24,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.herfy.R
 import com.herfy.base.BaseBottomSheetDialogFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.BottomSheetDialogContactSupportBinding
 import com.herfy.util.CacheUtil
 import com.herfy.util.ViewUtil

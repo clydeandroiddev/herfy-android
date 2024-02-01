@@ -19,13 +19,13 @@ import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.FragmentNotificationsBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.notification.NotificationPresenter
-import com.herfy.util.LocaleUtil
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.notification.adapter.RecyclerTouchListener.OnRowClickListener
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifDeeplink
 import com.herfy.util.CacheUtil

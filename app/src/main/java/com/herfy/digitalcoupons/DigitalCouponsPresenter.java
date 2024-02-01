@@ -3,7 +3,7 @@ package com.herfy.digitalcoupons;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.digitalcoupons.views.DigitalCouponViewHolder;
 import com.herfy.promotions.data.CampaignToAdd;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;

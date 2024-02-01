@@ -25,7 +25,7 @@ import com.google.android.material.button.MaterialButton;
 import com.herfy.R;
 import com.herfy.cart.CartContract;
 import com.herfy.cart.adapters.CartPromoAdapter;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.main.NavigationActivity;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;

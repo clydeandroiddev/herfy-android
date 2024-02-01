@@ -40,11 +40,11 @@ import com.google.android.material.button.MaterialButton;
 import com.herfy.R;
 import com.herfy.addresses.views.AddAddressDialogFragment;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Values;
 import com.herfy.font.FontHandler;
 import com.herfy.location.FusedLocationProvider;
 import com.herfy.util.AppLogger;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 
 import java.util.HashMap;
 

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.main.MainActivity;
 import com.herfy.menu.views.MenuItemActivity;

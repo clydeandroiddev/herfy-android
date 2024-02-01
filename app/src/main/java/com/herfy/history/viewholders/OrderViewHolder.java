@@ -17,7 +17,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.ext.DoubleExtKt;
 import com.herfy.firebase.FirebaseService;
 import com.herfy.history.OrdersContract;

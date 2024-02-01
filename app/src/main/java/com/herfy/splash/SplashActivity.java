@@ -41,8 +41,8 @@ import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.animation.ActivitySwitcher;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Text;
+import com.herfy.data.constants.Values;
 import com.herfy.country.CountriesActivity;
 import com.herfy.language.LanguageActivity;
 import com.herfy.main.MainActivity;
@@ -57,7 +57,7 @@ import com.herfy.util.CacheHelper;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.DeepLinkUtil;
 import com.herfy.util.JsonUtil;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 
 import java.io.File;
@@ -66,7 +66,9 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.hilt.android.AndroidEntryPoint;
 
+@AndroidEntryPoint
 public class SplashActivity extends BaseActivity implements SplashContract.View {
 
     private SplashContract.Presenter splashPresenter;

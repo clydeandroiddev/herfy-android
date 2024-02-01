@@ -20,7 +20,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.payment.savedcards.adapter.SavedCardsAdapter;
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard;
 import com.herfy.util.CacheUtil;

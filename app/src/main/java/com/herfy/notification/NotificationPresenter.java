@@ -3,7 +3,7 @@ package com.herfy.notification;
 import androidx.annotation.Nullable;
 
 import com.google.gson.reflect.TypeToken;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.notification.views.NotificationViewHolder;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall;

@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.ActivityLoyaltyQrBinding
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption

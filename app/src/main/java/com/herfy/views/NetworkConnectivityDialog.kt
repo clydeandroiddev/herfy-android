@@ -8,7 +8,7 @@ import android.util.TypedValue
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import com.herfy.R
-import com.herfy.constants.Text
+import com.herfy.data.constants.Text
 import com.herfy.databinding.DialogNetworkConnectivityBinding
 import com.herfy.util.CacheUtil
 

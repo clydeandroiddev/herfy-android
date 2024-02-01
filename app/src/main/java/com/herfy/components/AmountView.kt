@@ -13,7 +13,7 @@ import com.herfy.R
 import com.herfy.databinding.AmountViewBinding
 import com.skylinedynamics.solosdk.api.models.objects.CurrencyFormat
 import com.herfy.util.CacheUtil
-import com.herfy.util.LocaleUtil
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.util.StringUtil.localize
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols

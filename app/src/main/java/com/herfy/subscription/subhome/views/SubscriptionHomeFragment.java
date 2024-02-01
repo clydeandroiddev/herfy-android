@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.herfy.R;
 import com.herfy.base.BaseFragment;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.subscription.premade.views.PreMadeStep1Activity;
 import com.herfy.subscription.subhome.SubHomeContract;
 import com.herfy.subscription.subhome.SubHomePresenter;

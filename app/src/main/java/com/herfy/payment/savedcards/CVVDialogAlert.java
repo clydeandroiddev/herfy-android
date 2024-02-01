@@ -19,7 +19,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.DialogFragment;
 
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard;
 import com.herfy.util.CacheUtil;
 

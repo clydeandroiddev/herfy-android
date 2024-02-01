@@ -15,6 +15,7 @@ import com.herfy.country.SupportedCountryResponse;
 import com.herfy.popup.Popup;
 import com.herfy.promotions.data.CampaignToAdd;
 import com.herfy.promotions.data.CouponToAdd;
+import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Application;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;

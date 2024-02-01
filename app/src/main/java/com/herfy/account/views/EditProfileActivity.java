@@ -38,7 +38,7 @@ import com.herfy.account.adapters.LocationsRecyclerViewAdapter;
 import com.herfy.account.adapters.AccountDeleteSavedCardsAdapter;
 import com.herfy.auth.views.AuthActivity;
 import com.herfy.base.BaseActivity;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.payment.savedcards.DeleteCardDialog;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.SoloAuth;

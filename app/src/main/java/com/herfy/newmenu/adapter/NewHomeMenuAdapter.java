@@ -22,9 +22,9 @@ import com.bumptech.glide.request.target.Target;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.herfy.R;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Values;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 
 import java.util.List;

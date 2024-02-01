@@ -5,6 +5,14 @@
     android:id="@+id/nav_main">
 
     <fragment
+        android:id="@+id/nav_herfy_home"
+        android:name="com.herfy.home.views.HomeFragment"
+        android:label="home_caps"
+        tools:layout="@layout/fragment_home">
+
+    </fragment>
+
+    <fragment
         android:id="@+id/nav_home"
         android:name="com.herfy.newmenu.views.NewMenuHomePageFragment"
         android:label="home_caps"

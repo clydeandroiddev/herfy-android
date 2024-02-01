@@ -1,10 +1,10 @@
 package com.herfy.auth;
 
-import static com.herfy.constants.AuthKt.AUTH_USERNAME_INVALID;
-import static com.herfy.constants.AuthKt.AUTH_USERNAME_REQUIRED;
+import static com.herfy.data.constants.AuthKt.AUTH_USERNAME_INVALID;
+import static com.herfy.data.constants.AuthKt.AUTH_USERNAME_REQUIRED;
 
-import com.herfy.constants.Text;
-import com.herfy.constants.Values;
+import com.herfy.data.constants.Text;
+import com.herfy.data.constants.Values;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
@@ -33,7 +33,7 @@ import com.herfy.util.BuildUtil;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.DeviceUtil;
 import com.herfy.util.ErrorHandler;
-import com.herfy.util.LocaleUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;
 

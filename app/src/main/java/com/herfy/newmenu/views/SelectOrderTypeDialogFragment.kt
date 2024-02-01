@@ -11,8 +11,8 @@ import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import com.herfy.R
 import com.herfy.base.BaseDialogFragment
-import com.herfy.constants.Text
-import com.herfy.constants.Text.SELECT_ORDER_TYPE
+import com.herfy.data.constants.Text
+import com.herfy.data.constants.Text.SELECT_ORDER_TYPE
 import com.herfy.databinding.FragmentDialogSelectOrderTypeBinding
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.herfy.util.CacheUtil

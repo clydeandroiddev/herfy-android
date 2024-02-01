@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.herfy.R;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.history.OrdersContract;
 import com.herfy.history.adapters.OrderModifierPriceAdapter;
 import com.skylinedynamics.solosdk.api.models.objects.Address;

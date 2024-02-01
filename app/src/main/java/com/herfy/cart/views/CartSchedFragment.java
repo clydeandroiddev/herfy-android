@@ -20,7 +20,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.herfy.R;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.util.CacheUtil;
 
 import org.jetbrains.annotations.NotNull;

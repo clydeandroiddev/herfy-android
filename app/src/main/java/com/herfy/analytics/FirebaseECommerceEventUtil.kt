@@ -9,7 +9,7 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.herfy.util.AuthUtil
 import com.herfy.util.CacheUtil
-import com.herfy.util.LocaleUtil
+import com.herfy.utils.helper.LocaleUtil
 
 class FirebaseECommerceEventUtil {
 
@@ -43,7 +43,8 @@ class FirebaseECommerceEventUtil {
                 val bundleParam = Bundle()
 
                 bundleParam.putString(FirebaseAnalytics.Param.ITEM_ID, menuItem.id)
-                bundleParam.putString(FirebaseAnalytics.Param.ITEM_NAME, menuItem.getName(LocaleUtil.getInstance().language))
+                bundleParam.putString(FirebaseAnalytics.Param.ITEM_NAME, menuItem.getName(
+                    LocaleUtil.getInstance().language))
                 bundleParam.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, menuCategory?.getName(
                     LocaleUtil.getInstance().language))
                 bundleParam.putDouble(FirebaseAnalytics.Param.PRICE, menuItem.getPrice(CacheUtil.getOrderStoreId()))

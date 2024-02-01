@@ -31,7 +31,7 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.herfy.R;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.subscription.subhome.StubFilterModel;
 import com.herfy.subscription.subhome.adapter.FilterOptionsAdapter;
 import com.herfy.util.CacheUtil;

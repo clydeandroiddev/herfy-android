@@ -33,7 +33,7 @@ import com.herfy.addresses.AddressesContract;
 import com.herfy.addresses.AddressesPresenter;
 import com.herfy.base.BaseActivity;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.constants.Text;
+import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.util.AuthUtil;
 import com.herfy.util.BuildUtil;
