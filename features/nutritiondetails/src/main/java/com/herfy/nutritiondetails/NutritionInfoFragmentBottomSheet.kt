@@ -26,7 +26,7 @@ class NutritionInfoFragmentBottomSheet: BaseBottomSheetDialog<DialogNutritionInf
         }
     }
 
-    override fun isFullScreen(): Boolean = false
+    override fun isFullScreen(): Boolean = true
     override fun shouldExpandOnOpen(): Boolean = true
 
     override fun isDraggable(): Boolean = false
@@ -48,7 +48,6 @@ class NutritionInfoFragmentBottomSheet: BaseBottomSheetDialog<DialogNutritionInf
 
         val nutritionInfoParams = requireArguments().getParcelableValue<NutritionInfoParams>(NAV_ARGS_INFO_KEY)
         nutritionInfoParams?.let { params ->
-            Log.d("FAFA","Not null $params")
             with(binding) {
                 txtNutritionInfo.text = params.menuName
                 storyLayout.setVisible(params.nutritionStory.isNotEmpty())
@@ -59,8 +58,6 @@ class NutritionInfoFragmentBottomSheet: BaseBottomSheetDialog<DialogNutritionInf
                     txtStory.text = cacheHelper.getTranslations(Text.STORY, "Story")
                 }
             }
-        } ?: run {
-            Log.d("FAFA","Null man")
         }
     }
 
