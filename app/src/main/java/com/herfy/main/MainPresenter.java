@@ -757,6 +757,8 @@ public class MainPresenter implements MainContract.Presenter {
                                     menuItem.customFieldObjectMap.disablePosAndroid = inner[1];
                                 } else if (inner[0].equalsIgnoreCase("kiosk_address_id")) {
                                     menuItem.customFieldObjectMap.kioskAddressId = inner[1];
+                                }else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
+                                    menuItem.customFieldObjectMap.nutritionInfoImageUrl = inner[1];
                                 }
                             }
                         }

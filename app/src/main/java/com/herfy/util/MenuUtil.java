@@ -266,6 +266,10 @@ public class MenuUtil {
                         menuItem.customFieldObjectMap.disablePosAndroid = inner[1];
                     } else if (inner[0].equalsIgnoreCase("kiosk_address_id")) {
                         menuItem.customFieldObjectMap.kioskAddressId = inner[1];
+                    }else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
+                        menuItem.customFieldObjectMap.nutritionInfoImageUrl = inner[1];
+                    }else if (inner[0].equalsIgnoreCase("nutritional-info-story")) {
+                        menuItem.customFieldObjectMap.nutritionInfoStory = inner[1];
                     }
                 }
             }
@@ -325,6 +329,10 @@ public class MenuUtil {
                         modifierGroupCdn.getAttributes().customFieldObjectMap.disablePosAndroid = inner[1];
                     } else if (inner[0].equalsIgnoreCase("kiosk_address_id")) {
                         modifierGroupCdn.getAttributes().customFieldObjectMap.kioskAddressId = inner[1];
+                    }else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
+                        modifierGroupCdn.getAttributes().customFieldObjectMap.nutritionInfoImageUrl = inner[1];
+                    }else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
+                        modifierGroupCdn.getAttributes().customFieldObjectMap.nutritionInfoStory = inner[1];
                     }
                 }
             }
