@@ -1,9 +1,10 @@
-
 package com.herfy.common.base
+
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -13,7 +14,6 @@ import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleOwner
-import androidx.viewbinding.ViewBindings
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -21,8 +21,7 @@ import com.herfy.common.utils.autoCleared
 import dev.chrisbanes.insetter.InsetterDsl
 import dev.chrisbanes.insetter.applyInsetter
 
-abstract class BaseBottomSheetFragment<B : ViewDataBinding> : BottomSheetDialogFragment() {
-
+abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragment() {
     protected var binding: B by autoCleared(::onBindingCleanup)
         private set
 
@@ -34,6 +33,9 @@ abstract class BaseBottomSheetFragment<B : ViewDataBinding> : BottomSheetDialogF
     @LayoutRes
     abstract fun getLayoutId(): Int
 
+    /**
+     * @return true if dialog is cancellable via outside interactions
+     */
     protected open fun cancellableWithOutsideTouch(): Boolean {
         return true
     }
@@ -137,6 +139,10 @@ abstract class BaseBottomSheetFragment<B : ViewDataBinding> : BottomSheetDialogF
 
         if (isFullScreen()) {
             frameLayout.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+
+            bottomSheetBehavior.isFitToContents = false
+        }else {
+            frameLayout.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
             bottomSheetBehavior.isFitToContents = false
         }
 

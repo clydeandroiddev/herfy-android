@@ -22,6 +22,7 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -55,12 +56,18 @@ import com.herfy.menu.MenuPresenter
 import com.herfy.menu.adapters.*
 import com.herfy.menu.viewholders.BaseModifierItemViewHolder
 import com.herfy.newmenu.NewMenuFragmentCommonListener
+import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet
+import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet.Companion.NAV_ARGS_INFO_KEY
+import com.herfy.nutritiondetails.NutritionInfoParams
 import com.herfy.productpagedetails.databinding.FragmentMenuItemDetailsBinding
 import com.herfy.util.*
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.util.GsonHelper
 import com.herfy.util.*
+import com.herfy.utils.extensions.ninjaTap
+import com.herfy.utils.extensions.safeNavigate
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.viewLifecycleScope
 import io.shipbook.shipbooksdk.Log
 import java.util.*
 import kotlin.math.roundToInt
@@ -282,6 +289,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
         binding.icClose.setOnClickListener {
            requireActivity().onBackPressed()
         }
@@ -346,7 +354,17 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         activity?.cast<BaseActivity> {
             it.runOnUiThread {
 //                binding.mealDealsContainer.visibility = View.GONE
-
+                binding.txtMoreInfo.isVisible = !menuItem.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
+                binding.txtMoreInfo.ninjaTap(viewLifecycleScope) {
+                    val bundle = Bundle()
+                    bundle.putParcelable(NAV_ARGS_INFO_KEY,  NutritionInfoParams(
+                        nutritionImageUrl = menuItem.customFieldObjectMap.nutritionInfoImageUrl.orEmpty(),
+                        nutritionStory = menuItem.customFieldObjectMap.nutritionInfoStory.orEmpty(),
+                        menuName = menuItem.getName(LocaleUtil.getInstance().language)
+                    )
+                    )
+                    val fragment = NutritionInfoFragmentBottomSheet.newInstance(bundle).show(childFragmentManager,NutritionInfoFragmentBottomSheet.TAG)
+                }
                 if (menuItem.attributes.notes.isNotEmpty()) {
                     binding.etItemNotes.setText(menuItem.attributes.notes)
                 }

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     android:id="@+id/clickable_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -51,7 +50,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
         <TextView
             android:id="@+id/txtModifierItemName"
             style="@style/Styles.Text.Footnote.Medium"
@@ -68,7 +66,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Coke Large" />
 
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtmodifierPrice"
             style="@style/Styles.Text.Footnote"
@@ -78,18 +75,7 @@
             app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
             app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
             tools:text="+Sar 2" />
-        <!--        <ImageButton-->
-        <!--            android:id="@+id/quantityUp"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginEnd="@dimen/margin_large"-->
-        <!--            android:layout_marginStart="4dp"-->
-        <!--            android:background="?attr/selectableItemBackgroundBorderless"-->
-        <!--            android:src="@drawable/ic_add"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintTop_toTopOf="parent"-->
-        <!--            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />-->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/quantity_container"
             android:layout_width="wrap_content"
@@ -140,6 +126,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </LinearLayout>
