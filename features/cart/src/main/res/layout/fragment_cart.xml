@@ -5,7 +5,7 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#D5D5D5">
+    android:background="@color/white">
 
     <androidx.core.widget.NestedScrollView
         app:layout_constraintTop_toTopOf="parent"
@@ -21,6 +21,7 @@
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:backgroundTint="#E6F0F7"
                 android:id="@+id/order_type_container"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
@@ -47,7 +48,7 @@
                         app:layout_constraintTop_toTopOf="@+id/order_type_icon"
                         app:layout_constraintStart_toEndOf="@+id/order_type_icon"
                         app:layout_constraintBottom_toBottomOf="@+id/order_type_icon"
-                        app:layout_constraintEnd_toStartOf="@+id/ic_arrow_right"
+                        app:layout_constraintEnd_toEndOf="parent"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
@@ -58,7 +59,7 @@
                             android:layout_marginTop="4dp"
                             android:layout_marginStart="8dp"
                             android:includeFontPadding="false"
-                            android:textColor="@color/black"
+                            android:textColor="@color/primary_text"
                             android:textStyle="bold"
                             android:textSize="16sp"
                             tools:text="Delivery in 20 - 43 mins" />
@@ -73,21 +74,12 @@
                             android:gravity="start"
                             android:maxLines="1"
                             android:textAlignment="viewStart"
-                            android:textColor="@color/black"
+                            android:textColor="@color/primary_text"
                             android:textSize="14sp"
                             android:layout_marginTop="4dp"
                             tools:text="King Abdulla Branch"/>
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/ic_arrow_right"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/order_type_icon"
-                        app:layout_constraintBottom_toBottomOf="@+id/order_type_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:src="@drawable/ic_arrow_right"/>
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -114,22 +106,23 @@
                     android:gravity="start"
                     android:maxLines="1"
                     android:textAlignment="viewStart"
-                    android:textColor="#6B7280"
+                    android:textColor="#0C0C0C"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:layout_marginTop="8dp"
                     tools:text="YOUR ORDER (3)"/>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@+id/your_order_label"
                     android:id="@+id/rv_cart_items"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:nestedScrollingEnabled="false"
-                    tools:visibility="visible"
+                    app:layout_constraintTop_toBottomOf="@+id/your_order_label"
                     tools:itemCount="5"
-                    tools:listitem="@layout/item_cart"/>
+                    tools:layout_editor_absoluteX="16dp"
+                    tools:listitem="@layout/item_cart"
+                    tools:visibility="visible" />
 
                 <com.google.android.material.button.MaterialButton
                     android:backgroundTint="@color/white"
@@ -142,10 +135,10 @@
                     android:paddingTop="0dp"
                     android:paddingEnd="5dp"
                     android:paddingBottom="0dp"
-                    android:textColor="@color/black"
+                    android:textColor="#0064AC"
                     android:textSize="14sp"
-                    android:cornerRadius="16dp"
-                    app:strokeColor="@color/black"
+                    android:cornerRadius="4dp"
+                    app:strokeColor="#0064AC"
                     app:strokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -160,8 +153,7 @@
                     android:id="@+id/promotion_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
+                    >
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/promotion_icon"
@@ -171,7 +163,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:src="@drawable/image_placeholder"/>
+                        android:src="@drawable/ic_unlock"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         app:layout_constraintTop_toTopOf="@id/promotion_icon"
@@ -181,9 +173,10 @@
                         android:id="@+id/promotion_description"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="32dp"
                         android:includeFontPadding="false"
-                        android:textColor="@color/black"
+                        android:textColor="@color/primary_text"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         tools:text="Add 2 more items to your order to unlock free delivery!" />
@@ -231,17 +224,26 @@
 
 
                 <androidx.recyclerview.widget.RecyclerView
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@+id/upsell_label"
                     android:id="@+id/rv_upsell_items"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@+id/upsell_label"
                     tools:itemCount="6"
-                    tools:listitem="@layout/item_upsell"/>
+                    tools:layout_editor_absoluteX="16dp"
+                    tools:listitem="@layout/item_upsell" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="#C9C9C9" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_marginTop="8dp"
@@ -262,168 +264,178 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <com.google.android.material.card.MaterialCardView
+                        app:cardBackgroundColor="#E6F0F7"
+                        app:cardCornerRadius="6dp"
                         android:layout_marginTop="12dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-
-                        <LinearLayout
-                            android:visibility="visible"
-                            android:id="@+id/apply_coupon_container"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:orientation="horizontal">
+                            android:layout_height="wrap_content">
 
                             <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-                                <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:src="@drawable/ic_coupon"/>
-                                <TextView
-                                    android:layout_marginStart="6dp"
-                                    android:id="@+id/apply_coupon_label"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:includeFontPadding="false"
-                                    android:textAlignment="viewEnd"
-                                    android:textColor="@color/black"
-                                    android:textSize="16sp"
-                                    android:textStyle="bold"
-                                    tools:text="Apply a coupon" />
-
-                            </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/view_coupon"
+                                android:visibility="visible"
+                                android:id="@+id/apply_coupon_container"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:gravity="end|center_vertical"
-                                android:includeFontPadding="false"
-                                android:textAlignment="viewEnd"
-                                android:textAllCaps="true"
-                                android:textColor="#6B7280"
-                                android:textSize="12sp"
-                                tools:text="VIEW COUPONS" />
-
-                        </LinearLayout>
-
-
-                        <LinearLayout
-                            android:visibility="gone"
-                            android:id="@+id/applied_coupon_container"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:orientation="vertical">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-                                <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:src="@drawable/ic_coupon"/>
-                                <TextView
-                                    android:layout_marginStart="6dp"
-                                    android:id="@+id/applied_coupon_label"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
+                                android:layout_marginTop="12dp"
+                                android:orientation="horizontal"
+                                android:weightSum="2">
+
+                                <LinearLayout
+                                    android:layout_gravity="center_vertical"
                                     android:layout_weight="1"
-                                    android:includeFontPadding="false"
-                                    android:textAlignment="viewEnd"
-                                    android:textColor="@color/black"
-                                    android:textSize="16sp"
-                                    android:textStyle="bold"
-                                    tools:text="Coupon Applied" />
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:src="@drawable/ic_coupon"/>
+                                    <TextView
+                                        android:layout_marginStart="6dp"
+                                        android:id="@+id/apply_coupon_label"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:includeFontPadding="false"
+                                        android:textAlignment="viewEnd"
+                                        android:textColor="@color/black"
+                                        android:textSize="16sp"
+                                        android:textStyle="bold"
+                                        tools:text="Apply a coupon" />
+
+                                </LinearLayout>
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:layout_weight="1"
+                                    android:backgroundTint="#0064AC"
+                                    android:id="@+id/view_coupon"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="48dp"
+                                    android:layout_gravity="end"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/white"
+                                    android:textSize="12sp"
+                                    tools:text="VIEW COUPONS" />
 
                             </LinearLayout>
 
+
                             <LinearLayout
+                                android:visibility="gone"
+                                android:id="@+id/applied_coupon_container"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-                                <androidx.constraintlayout.widget.ConstraintLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content">
-                                    <androidx.appcompat.widget.AppCompatImageView
-                                        android:id="@+id/coupon_icon"
-                                        app:layout_constraintTop_toTopOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent"
-                                        app:layout_constraintTop_toBottomOf="parent"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginTop="8dp"
-                                        android:src="@drawable/image_placeholder"/>
+                                android:layout_marginTop="12dp"
+                                android:orientation="vertical">
 
-                                    <androidx.appcompat.widget.LinearLayoutCompat
-                                        app:layout_constraintTop_toTopOf="@+id/coupon_icon"
-                                        app:layout_constraintStart_toEndOf="@+id/coupon_icon"
-                                        app:layout_constraintBottom_toBottomOf="@+id/coupon_icon"
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:src="@drawable/ic_coupon"/>
+                                    <TextView
+                                        android:layout_marginStart="6dp"
+                                        android:id="@+id/applied_coupon_label"
                                         android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-                                        <androidx.appcompat.widget.AppCompatTextView
-                                            android:id="@+id/coupon_name"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:includeFontPadding="false"
+                                        android:textAlignment="viewEnd"
+                                        android:textColor="@color/black"
+                                        android:textSize="16sp"
+                                        android:textStyle="bold"
+                                        tools:text="Coupon Applied" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+                                    <androidx.constraintlayout.widget.ConstraintLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content">
+                                        <androidx.appcompat.widget.AppCompatImageView
+                                            android:id="@+id/coupon_icon"
+                                            app:layout_constraintTop_toTopOf="parent"
+                                            app:layout_constraintStart_toStartOf="parent"
+                                            app:layout_constraintTop_toBottomOf="parent"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:layout_marginStart="8dp"
-                                            android:includeFontPadding="false"
-                                            android:textColor="@color/black"
-                                            android:textStyle="bold"
-                                            android:textSize="15sp"
-                                            tools:text="Coupon Name" />
+                                            android:layout_marginTop="8dp"
+                                            android:src="@drawable/image_placeholder"/>
 
-                                        <androidx.appcompat.widget.AppCompatTextView
-                                            android:layout_marginStart="8dp"
-                                            android:id="@+id/coupon_amount"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="match_parent"
-                                            android:includeFontPadding="false"
-                                            android:ellipsize="end"
-                                            android:gravity="start|bottom"
-                                            android:maxLines="1"
-                                            android:textAlignment="viewStart"
-                                            android:textColor="@color/black"
-                                            android:textSize="15sp"
-                                            android:layout_marginTop="4dp"
-                                            tools:text="Amount"/>
-                                    </androidx.appcompat.widget.LinearLayoutCompat>
+                                        <androidx.appcompat.widget.LinearLayoutCompat
+                                            app:layout_constraintTop_toTopOf="@+id/coupon_icon"
+                                            app:layout_constraintStart_toEndOf="@+id/coupon_icon"
+                                            app:layout_constraintBottom_toBottomOf="@+id/coupon_icon"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="vertical">
+                                            <androidx.appcompat.widget.AppCompatTextView
+                                                android:id="@+id/coupon_name"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginStart="8dp"
+                                                android:includeFontPadding="false"
+                                                android:textColor="@color/black"
+                                                android:textStyle="bold"
+                                                android:textSize="15sp"
+                                                tools:text="Coupon Name" />
 
-                                </androidx.constraintlayout.widget.ConstraintLayout>
-                                <TextView
-                                    android:id="@+id/remove_coupon"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:gravity="end|center_vertical"
-                                    android:includeFontPadding="false"
-                                    android:textAlignment="viewEnd"
-                                    android:textAllCaps="true"
-                                    android:textColor="#6B7280"
-                                    android:textSize="12sp"
-                                    tools:text="REMOVE" />
+                                            <androidx.appcompat.widget.AppCompatTextView
+                                                android:layout_marginStart="8dp"
+                                                android:id="@+id/coupon_amount"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="match_parent"
+                                                android:includeFontPadding="false"
+                                                android:ellipsize="end"
+                                                android:gravity="start|bottom"
+                                                android:maxLines="1"
+                                                android:textAlignment="viewStart"
+                                                android:textColor="@color/black"
+                                                android:textSize="15sp"
+                                                android:layout_marginTop="4dp"
+                                                tools:text="Amount"/>
+                                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                                    </androidx.constraintlayout.widget.ConstraintLayout>
+                                    <TextView
+                                        android:id="@+id/remove_coupon"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:gravity="end|center_vertical"
+                                        android:includeFontPadding="false"
+                                        android:textAlignment="viewEnd"
+                                        android:textAllCaps="true"
+                                        android:textColor="#6B7280"
+                                        android:textSize="12sp"
+                                        tools:text="REMOVE" />
+
+                                </LinearLayout>
+
 
                             </LinearLayout>
 
 
-                        </LinearLayout>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
 
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
@@ -437,8 +449,9 @@
                         android:gravity="start"
                         android:maxLines="1"
                         android:textAlignment="viewStart"
-                        android:textColor="#6B7280"
-                        android:textSize="12sp"
+                        android:textColor="@color/primary_text"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
                         android:layout_marginTop="30dp"
                         tools:text="PAYMENT SUMMARY"/>
 
@@ -458,8 +471,8 @@
                             android:gravity="start"
                             android:includeFontPadding="false"
                             android:textAlignment="viewStart"
-                            android:textColor="@color/black"
-                            android:textSize="12sp"
+                            android:textColor="#55667B"
+                            android:textSize="16sp"
                             tools:text="Subtotal" />
 
                         <TextView
@@ -473,6 +486,7 @@
                             android:textAllCaps="true"
                             android:textColor="@color/black"
                             android:textSize="12sp"
+                            android:textStyle="bold"
                             tools:text="55 SR" />
 
                     </LinearLayout>
@@ -498,8 +512,8 @@
                             android:gravity="start"
                             android:includeFontPadding="false"
                             android:textAlignment="viewStart"
-                            android:textColor="@color/black"
-                            android:textSize="12sp"
+                            android:textColor="#55667B"
+                            android:textSize="16sp"
                             tools:text="Coupon Discount" />
 
                         <TextView
@@ -513,6 +527,7 @@
                             android:textAllCaps="true"
                             android:textColor="@color/black"
                             android:textSize="12sp"
+                            android:textStyle="bold"
                             tools:text="-2 SR" />
 
                     </LinearLayout>
@@ -538,8 +553,8 @@
                             android:gravity="start"
                             android:includeFontPadding="false"
                             android:textAlignment="viewStart"
-                            android:textColor="@color/black"
-                            android:textSize="12sp"
+                            android:textColor="#55667B"
+                            android:textSize="16sp"
                             tools:text="Delivery Charge" />
 
                         <TextView
@@ -553,6 +568,7 @@
                             android:textAllCaps="true"
                             android:textColor="@color/black"
                             android:textSize="12sp"
+                            android:textStyle="bold"
                             tools:text="5 SR" />
 
                     </LinearLayout>
@@ -579,9 +595,8 @@
                             android:gravity="start"
                             android:includeFontPadding="false"
                             android:textAlignment="viewStart"
-                            android:textColor="@color/black"
+                            android:textColor="#55667B"
                             android:textSize="16sp"
-                            android:textStyle="bold"
                             tools:text="Total" />
 
                         <TextView
@@ -594,7 +609,7 @@
                             android:textAlignment="viewEnd"
                             android:textAllCaps="true"
                             android:textColor="@color/black"
-                            android:textSize="16sp"
+                            android:textSize="12sp"
                             android:textStyle="bold"
                             tools:text="55 SR" />
 
@@ -618,7 +633,7 @@
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="108dp"
-        android:background="@color/black"
+        android:background="#E6F0F7"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -642,7 +657,7 @@
                 android:id="@+id/original_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
+                android:textColor="#0064AC"
                 android:textSize="15sp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/total_price"
@@ -665,7 +680,7 @@
                 android:id="@+id/total_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
+                android:textColor="#0064AC"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 android:includeFontPadding="false"
@@ -680,7 +695,7 @@
                 android:id="@+id/total_vat_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
+                android:textColor="#0064AC"
                 android:textSize="10sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@+id/total_price"
@@ -692,10 +707,10 @@
 
 
             <com.google.android.material.button.MaterialButton
-                android:backgroundTint="@color/white"
+                android:backgroundTint="#0064AC"
                 android:id="@+id/place_order"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="52dp"
                 android:layout_marginStart="16dp"
                 android:enabled="false"
                 android:gravity="center"
@@ -703,7 +718,7 @@
                 android:paddingTop="0dp"
                 android:paddingEnd="5dp"
                 android:paddingBottom="0dp"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 app:cornerRadius="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"

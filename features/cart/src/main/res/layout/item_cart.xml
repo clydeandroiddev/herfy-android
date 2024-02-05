@@ -17,6 +17,7 @@
         android:padding="5dp">
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:tint="#E6F0F7"
             android:id="@+id/image"
             android:layout_width="54dp"
             android:layout_height="64dp"
@@ -138,7 +139,7 @@
                 android:layout_height="wrap_content"
                 tools:listitem="@layout/item_cart_modifiers"
                 tools:itemCount="5"
-                app:layout_constraintStart_toEndOf="@+id/modifierLineSeparator"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/ingredients"
                 app:layout_constraintTop_toBottomOf="@+id/txtAddOn"
                 app:layout_constraintEnd_toStartOf="@+id/quantity_layout"
@@ -148,7 +149,7 @@
 
 
             <com.google.android.material.card.MaterialCardView
-                app:cardBackgroundColor="@color/dusty_gray"
+                app:cardBackgroundColor="#E6F0F7"
                 app:cardCornerRadius="24dp"
                 android:id="@+id/quantity_layout"
                 android:layout_width="0dp"
@@ -189,7 +190,7 @@
                         android:layout_marginEnd="12dp"
                         android:gravity="center_vertical"
                         android:maxLines="1"
-                        android:textColor="@color/primary_text"
+                        android:textColor="#0064AC"
                         android:textStyle="bold"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toStartOf="@id/quantity_layout"
@@ -219,7 +220,7 @@
                 android:background="#D1D1D6"
                 android:visibility="gone"
                 android:layout_marginBottom="4dp"
-                tools:visibility="visible"
+                tools:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/modifierRecycleView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/modifierRecycleView" />
@@ -273,7 +274,7 @@
                     android:id="@+id/edit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary_text"
+                    android:textColor="#0064AC"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textAlignment="viewStart"
