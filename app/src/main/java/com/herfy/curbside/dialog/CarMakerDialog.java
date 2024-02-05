@@ -23,10 +23,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.curbside.adapter.CarMakerListAdapter;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
-import com.herfy.util.CacheUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

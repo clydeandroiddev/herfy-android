@@ -21,10 +21,10 @@ import com.herfy.country.CountriesActivity;
 import com.herfy.main.MainActivity;
 import com.herfy.onboarding.views.OnboardingActivity;
 import com.herfy.selection.SelectionActivity;
+import com.herfy.utils.helper.BuildUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.SoloAuth;
-import com.herfy.util.AnimUtil;
-import com.herfy.util.BuildUtil;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.helper.AnimUtil;
 import com.herfy.utils.helper.LocaleUtil;
 
 import java.util.ArrayList;
@@ -94,6 +94,7 @@ public class LanguageActivity extends BaseActivity implements LanguageContract.V
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

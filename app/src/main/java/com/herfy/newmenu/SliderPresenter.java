@@ -2,11 +2,11 @@ package com.herfy.newmenu;
 
 import android.net.Uri;
 
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CmsApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.herfy.util.AppLogger;
-import com.herfy.util.CacheUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;

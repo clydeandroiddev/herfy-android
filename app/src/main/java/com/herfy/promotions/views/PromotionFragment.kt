@@ -20,17 +20,17 @@ import com.bumptech.glide.request.target.Target
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
 import com.herfy.databinding.FragmentPromotionBinding
 import com.herfy.ext.cast
 import com.herfy.ext.isMet
 import com.herfy.promotions.adapters.PromotionRulesAdapter
+import com.herfy.util.ViewUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
+import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.PromotionRules
 import com.skylinedynamics.solosdk.util.GsonHelper
-import com.herfy.util.CacheUtil
-import com.herfy.util.ViewUtil
 import java.util.Locale
 
 class PromotionFragment : BaseFragment() {

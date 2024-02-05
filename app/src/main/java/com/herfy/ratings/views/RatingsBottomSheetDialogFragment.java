@@ -17,13 +17,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.base.BaseBottomSheetDialogFragment;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.ratings.RatingsContract;
 import com.herfy.ratings.RatingsPresenter;
 import com.herfy.ratings.RatingsRecyclerViewAdapter;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.ViewUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Rating;
 
 import java.util.ArrayList;

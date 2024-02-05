@@ -5,12 +5,17 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.herfy.R
-import com.herfy.data.constants.Text
 import com.herfy.databinding.DialogNetworkConnectivityBinding
-import com.herfy.util.CacheUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.CacheUtil
 
 class NetworkConnectivityDialog : DialogFragment() {
 

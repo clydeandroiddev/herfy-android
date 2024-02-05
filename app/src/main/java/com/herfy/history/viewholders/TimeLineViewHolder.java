@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.herfy.R;
 import com.herfy.font.FontHandler;
 import com.herfy.history.OrdersContract;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
@@ -21,7 +22,6 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.Rating;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.CacheUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

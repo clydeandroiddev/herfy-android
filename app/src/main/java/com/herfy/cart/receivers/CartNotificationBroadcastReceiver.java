@@ -18,12 +18,12 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import com.herfy.R;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.main.MainActivity;
-import com.herfy.util.BuildUtil;
-import com.herfy.util.CacheUtil;
 import com.herfy.analytics.FirebaseECommerceEventUtil;
 import com.herfy.util.ViewUtil;
+import com.herfy.utils.helper.BuildUtil;
+import com.herfy.utils.helper.CacheUtil;
 
 public class CartNotificationBroadcastReceiver extends BroadcastReceiver {
 

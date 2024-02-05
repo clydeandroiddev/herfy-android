@@ -9,7 +9,7 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentMenuItemsBinding
 import com.herfy.ext.onScrollStateChanged
 import com.herfy.menu.MenuContract
@@ -17,11 +17,11 @@ import com.herfy.newmenu.NewMenuTabListener
 import com.herfy.newmenu.adapter.NewMenuRecyclerViewAdapter
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
-import com.herfy.util.CacheUtil
 import com.herfy.util.scroll.ViewPagerContentRecyclerViewTouchEventInterceptor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.herfy.utils.helper.*
 
 class MenuItemsFragment : Fragment() {
     private var position = 0

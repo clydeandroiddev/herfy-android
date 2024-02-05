@@ -9,7 +9,7 @@ import com.herfy.home.R
 import com.herfy.home.databinding.ItemBannerHomeBinding
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 
-class SliderImageAdapter(val imageList : ArrayList<Slide> = arrayListOf()) : RecyclerView.Adapter<SliderImageAdapter.SliderImageViewHolder>(){
+class SliderImageAdapter(val imageList : ArrayList<Slide> = arrayListOf(), val sliderListener: SliderListener) : RecyclerView.Adapter<SliderImageAdapter.SliderImageViewHolder>(){
 
 
     inner class SliderImageViewHolder(val binding : ItemBannerHomeBinding) : RecyclerView.ViewHolder(binding.root)
@@ -29,6 +29,7 @@ class SliderImageAdapter(val imageList : ArrayList<Slide> = arrayListOf()) : Rec
     override fun onBindViewHolder(holder: SliderImageViewHolder, position: Int) {
         holder.binding.apply {
             slide = imageList[position]
+            listener = sliderListener
             executePendingBindings()
         }
     }
@@ -41,7 +42,9 @@ class SliderImageAdapter(val imageList : ArrayList<Slide> = arrayListOf()) : Rec
     }
 
 
-
+    interface SliderListener{
+        fun onSelectedImage(slide: Slide)
+    }
 
 }
 

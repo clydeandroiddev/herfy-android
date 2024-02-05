@@ -50,21 +50,21 @@ import com.google.android.material.tabs.TabLayout;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.cart.views.CartDialogFragment;
-import com.herfy.data.constants.Text;
-import com.herfy.data.constants.Values;
+import com.herfy.utils.constants.Text;
 import com.herfy.location.FusedLocationProvider;
 import com.herfy.order.OrderContract;
 import com.herfy.order.OrderPresenter;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.Rating;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.AnimUtil;
+import com.herfy.utils.helper.AnimUtil;
 import com.herfy.util.AppLogger;
-import com.herfy.util.AuthUtil;
-import com.herfy.util.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 
 import java.util.ArrayList;
@@ -188,6 +188,7 @@ public class AddressActivity extends BaseActivity implements OrderContract.View 
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         overridePendingTransition(AnimUtil.inF(), AnimUtil.inS());
         finish();
 //        Intent intent = new Intent(this, MainActivity.class);

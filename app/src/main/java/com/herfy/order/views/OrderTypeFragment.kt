@@ -57,8 +57,8 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartDialogFragment
 import com.herfy.cart.views.CartFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.ext.cast
 import com.herfy.ext.gone
 import com.herfy.ext.isVisible
@@ -74,7 +74,11 @@ import com.herfy.order.views.ordertype.OrderTypeNewFragmentArgs
 import com.herfy.order.views.ordertype.OrderTypeNewFragmentDirections
 import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
 import com.herfy.util.*
+import com.herfy.utils.helper.AnimUtil
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.NavigationUtils
 import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -137,7 +141,8 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
                 if (CacheUtil.getInstance().isSeparatedMenus) {
                     val cartItems = CacheUtil.getInstance().cart
                     if (cartItems.size > 0) {
-                        showPromptChangeOrderTypeDialog(CacheUtil.getInstance().getTranslations(
+                        showPromptChangeOrderTypeDialog(
+                            CacheUtil.getInstance().getTranslations(
                             Text.CHANGE_DELIVERY_INSTEAD_LABEL,
                             "Your current Pickup order will be removed from cart. Would you like to proceed and have your order delivered instead?"
                         ), { _, _ ->
@@ -1783,7 +1788,8 @@ class OrderTypeFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun showPromptChangeOrderType(address: Address) {
-        showPromptChangeOrderTypeDialog(CacheUtil.getInstance().getTranslations(
+        showPromptChangeOrderTypeDialog(
+        CacheUtil.getInstance().getTranslations(
             Text.CHANGE_DELIVERY_INSTEAD_LABEL,
             "Your current Pickup order will be removed from cart. Would you like to proceed and have your order delivered instead?"
         ), { _, _ ->

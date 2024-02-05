@@ -20,8 +20,8 @@ import androidx.appcompat.widget.AppCompatTextView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.herfy.R;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.data.constants.Text;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.helper.CacheUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -98,6 +98,7 @@ public class SetDialogFragment extends BaseDialogFragment {
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
     }
 
     private void setupViews() {

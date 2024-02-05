@@ -5,8 +5,9 @@ import android.text.SpannedString;
 import android.util.Patterns;
 
 import com.herfy.R;
-import com.herfy.data.constants.Text;
-import com.herfy.data.constants.Values;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 

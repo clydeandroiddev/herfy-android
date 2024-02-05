@@ -16,11 +16,11 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.base.BaseFragment;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.onboarding.OnboardingContract;
 import com.herfy.onboarding.OnboardingPresenter;
 import com.herfy.onboarding.OnboardingUtils;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.helper.CacheUtil;
 
 import java.util.HashMap;
 

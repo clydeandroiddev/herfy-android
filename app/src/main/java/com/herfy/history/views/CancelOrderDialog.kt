@@ -10,9 +10,9 @@ import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.herfy.R
-import com.herfy.data.constants.Text.*
+import com.herfy.utils.constants.Text.*
 import com.herfy.databinding.DialogCancelOrderBinding
-import com.herfy.util.CacheUtil
+import com.herfy.utils.helper.*
 
 class CancelOrderDialog : DialogFragment() {
 

@@ -13,15 +13,15 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.country.CountriesActivity;
 import com.herfy.main.MainActivity;
 import com.herfy.onboarding.OnboardingContract;
 import com.herfy.onboarding.OnboardingFragmentPagerAdapter;
 import com.herfy.onboarding.OnboardingPresenter;
 import com.herfy.selection.SelectionActivity;
-import com.herfy.util.CacheUtil;
 import com.herfy.analytics.FacebookAppEventUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
 import java.util.HashMap;
@@ -62,6 +62,7 @@ public class OnboardingActivity extends BaseActivity implements OnboardingContra
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         if (viewPager.getCurrentItem() == adapter.getItemCount() - 1) {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         } else {

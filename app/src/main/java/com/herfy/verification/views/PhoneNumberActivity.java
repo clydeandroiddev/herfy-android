@@ -13,10 +13,10 @@ import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.StringUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.herfy.verification.VerificationContract;
 import com.herfy.verification.VerificationPresenter;
 

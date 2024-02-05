@@ -24,8 +24,8 @@ import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.auth.views.SignInActivity
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.databinding.ItemMenuItemNewBinding
 import com.herfy.firebase.FirebaseService
 import com.herfy.main.MainActivity
@@ -34,6 +34,8 @@ import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addToCartEvent
 import com.herfy.util.scroll.ScrollableViewPagerContentTouchEventDelegator
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.views.SlantedTextView
 
@@ -190,7 +192,8 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
         }
         binding.addToBag.setOnClickListener { v: View? ->
             if (CacheUtil.getInstance().application.attributes.menuOnly) {
-                FirebaseService.newNotification(CacheUtil.getInstance().getTranslations(
+                FirebaseService.newNotification(
+                    CacheUtil.getInstance().getTranslations(
                     Text.MENU_ONLY_MESSAGE, "Sorry, ordering is not available at the moment"), binding.addToBag.context)
                 return@setOnClickListener
             }
@@ -214,7 +217,8 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
             binding.discountIndicator.visibility = View.GONE
         }
 
-        if (CacheUtil.getOrderStoreId() != null && menuItem.outOfStockLocations.contains(CacheUtil.getOrderStoreId())) {
+        if (CacheUtil.getOrderStoreId() != null && menuItem.outOfStockLocations.contains(
+                CacheUtil.getOrderStoreId())) {
             binding.stvSoldout.text = CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
             binding.stvSoldout.visibility = View.VISIBLE
             binding.imageItem.setColorFilter(soldOutColor)

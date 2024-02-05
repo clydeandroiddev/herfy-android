@@ -1,10 +1,10 @@
 package com.herfy.language;
 
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.UtilitiesApiCall;
 import com.herfy.util.AppLogger;
-import com.herfy.util.AuthUtil;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.DeviceUtil;
 import com.herfy.utils.helper.LocaleUtil;
 

@@ -3,6 +3,9 @@ package com.herfy.promotions
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
+import com.herfy.util.AppLogger
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
@@ -10,9 +13,6 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Promotion
 import com.skylinedynamics.solosdk.util.GsonHelper
-import com.herfy.util.AppLogger
-import com.herfy.util.AuthUtil
-import com.herfy.util.CacheUtil
 import okhttp3.ResponseBody
 import org.json.JSONException
 import org.json.JSONObject

@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;
 

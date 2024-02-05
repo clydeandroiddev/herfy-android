@@ -3,8 +3,9 @@ package com.herfy.notification;
 import androidx.annotation.Nullable;
 
 import com.google.gson.reflect.TypeToken;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.notification.views.NotificationViewHolder;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall;
 import com.skylinedynamics.solosdk.api.calls.NotificationApiCall;
@@ -14,7 +15,6 @@ import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData;
 import com.skylinedynamics.solosdk.api.models.objects.notification.Notification;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.ErrorHandler;
 
 import org.json.JSONArray;

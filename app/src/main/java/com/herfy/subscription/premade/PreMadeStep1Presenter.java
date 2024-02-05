@@ -1,13 +1,13 @@
 package com.herfy.subscription.premade;
 
 import com.herfy.base.BaseView;
+import com.herfy.utils.helper.AuthUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.herfy.subscription.premade.models.DeliveryTime;
 import com.herfy.subscription.premade.models.StubPreMadeModel;
 import com.herfy.util.AppLogger;
-import com.herfy.util.AuthUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;

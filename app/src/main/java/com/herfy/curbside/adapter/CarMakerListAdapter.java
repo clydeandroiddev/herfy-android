@@ -20,10 +20,10 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.herfy.R;
-import com.herfy.data.constants.Text;
-import com.herfy.data.constants.Values;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
-import com.herfy.util.CacheUtil;
 
 import java.util.List;
 

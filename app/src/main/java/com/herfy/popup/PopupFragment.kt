@@ -24,8 +24,9 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.herfy.base.BaseDialogFragment
 import com.herfy.databinding.FragmentDialogPopupBinding
-import com.herfy.util.CacheUtil
 import org.json.JSONException
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.model.Popup
 
 class PopupFragment: BaseDialogFragment() {
 

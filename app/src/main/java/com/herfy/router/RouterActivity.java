@@ -14,10 +14,10 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.data.constants.Values;
 import com.herfy.main.MainActivity;
 import com.herfy.splash.SplashActivity;
 import com.herfy.util.DeepLinkUtil;
+import com.herfy.utils.constants.Values;
 
 public class RouterActivity extends BaseActivity {
 

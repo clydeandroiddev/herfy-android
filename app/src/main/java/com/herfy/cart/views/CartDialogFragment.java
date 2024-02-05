@@ -25,11 +25,11 @@ import com.herfy.base.BaseDialogFragment;
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
 import com.herfy.cart.CartContract;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.order.OrderContract;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
-import com.herfy.util.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.ViewUtil;
 

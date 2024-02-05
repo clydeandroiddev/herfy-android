@@ -37,14 +37,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.analytics.MixpanelUtil
+import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.CartContract
 import com.herfy.cart.CartPresenter
 import com.herfy.cart.adapters.CartMenuItemsRecyclerViewAdapter
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.databinding.FragmentCartBinding
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.MySelectorDecorator
@@ -62,7 +62,11 @@ import com.herfy.payment.dialog.PaymentOrderTimeDialog
 import com.herfy.payment.views.OrderDialogFragment
 import com.herfy.payment.views.PaymentActivity
 import com.herfy.util.*
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.BuildUtil
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.NavigationUtils
 import com.herfy.views.DynamicTheme
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
@@ -1276,7 +1280,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             val promisedTime =
                 CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup
             paymentOrderTimeDialog =
-                PaymentOrderTimeDialog.newInstance(CacheUtil.getInstance().orderType,
+                PaymentOrderTimeDialog.newInstance(
+                    CacheUtil.getInstance().orderType,
                     promisedTime,
                     branch,
                     imageUrl,
@@ -1719,7 +1724,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         ))
                     ) {
                         for (modifierItem: ModifierItem in modifierGroup.modifierItems) {
-                            if ((!storeSelected || !modifierItem.locationIds.contains(CacheUtil.getInstance().orderStore.id)) && modifierItem.attributes.isSelected) {
+                            if ((!storeSelected || !modifierItem.locationIds.contains(
+                                    CacheUtil.getInstance().orderStore.id)) && modifierItem.attributes.isSelected) {
                                 if (!first) {
                                     stringBuilder.append(", ")
                                 } else {
@@ -2080,7 +2086,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         binding.paymentSlidingPanel.datePicker.setTextSize(resources.getDimensionPixelSize(R.dimen.font_size_16sp))
         binding.paymentSlidingPanel.datePicker.setDisplayMonths(false)
         binding.paymentSlidingPanel.datePicker.setTextColor(this.resources.getColor(R.color.silver_chalice))
-        binding.paymentSlidingPanel.datePicker.setSelectedTextColor(Color.parseColor(CacheUtil.getInstance().colorMain))
+        binding.paymentSlidingPanel.datePicker.setSelectedTextColor(Color.parseColor(
+            CacheUtil.getInstance().colorMain))
         binding.paymentSlidingPanel.datePicker.setTypeface(FontHandler.getMediumTypeface())
 
         var maxDays = CacheUtil.getInstance().concept.maxDaysAllowedInAdvanceOrder

@@ -1,10 +1,13 @@
 package com.herfy.auth;
 
-import static com.herfy.data.constants.AuthKt.AUTH_USERNAME_INVALID;
-import static com.herfy.data.constants.AuthKt.AUTH_USERNAME_REQUIRED;
+import static com.herfy.utils.constants.AuthKt.AUTH_USERNAME_INVALID;
+import static com.herfy.utils.constants.AuthKt.AUTH_USERNAME_REQUIRED;
 
-import com.herfy.data.constants.Text;
-import com.herfy.data.constants.Values;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.BuildUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
@@ -28,13 +31,10 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.LoginGoogleBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.ResendSMSBody;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
-import com.herfy.util.AuthUtil;
-import com.herfy.util.BuildUtil;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.DeviceUtil;
 import com.herfy.util.ErrorHandler;
 import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.analytics.MixpanelUtil;
+import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;
 
 import org.json.JSONArray;

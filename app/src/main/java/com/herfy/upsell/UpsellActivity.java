@@ -15,12 +15,12 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.cart.views.CartPromoDialogFragment;
-import com.herfy.data.constants.Text;
-import com.herfy.data.constants.Values;
+import com.herfy.utils.constants.Text;
 import com.herfy.payment.views.PaymentActivity;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;
@@ -90,6 +90,7 @@ public class UpsellActivity extends BaseActivity implements UpsellContract.View 
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         finish();
     }
 

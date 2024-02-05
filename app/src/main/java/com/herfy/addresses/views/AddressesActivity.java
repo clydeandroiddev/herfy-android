@@ -45,12 +45,12 @@ import com.herfy.addresses.AddressesPresenter;
 import com.herfy.addresses.adapters.AddressesRecyclerViewAdapter;
 import com.herfy.addresses.adapters.PlacesRecyclerViewAdapter;
 import com.herfy.base.BaseActivity;
-import com.herfy.data.constants.Text;
-import com.herfy.data.constants.Values;
+import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.location.FusedLocationProvider;
-import com.herfy.util.AuthUtil;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.ViewUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
@@ -169,6 +169,7 @@ public class AddressesActivity extends BaseActivity implements AddressesContract
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         Intent intent = new Intent();
         intent.putExtra("addresses", true);
         setResult(RESULT_OK, intent);

@@ -9,10 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.herfy.utils.helper.CacheUtil;
 import com.moneyhash.sdk.android.ResultType;
 import com.herfy.R;
-import com.herfy.data.constants.Text;
-import com.herfy.data.AppDatabase;
+import com.herfy.utils.constants.Text;
+import com.herfy.database.AppDatabase;
 import com.herfy.payment.PaymentContract;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
@@ -26,7 +27,6 @@ import com.skylinedynamics.solosdk.api.models.objects.PrayerTime;
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge;
 import com.skylinedynamics.solosdk.api.models.objects.Translated;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
-import com.herfy.util.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 

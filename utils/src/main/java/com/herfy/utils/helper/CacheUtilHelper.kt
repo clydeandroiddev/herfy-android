@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.reflect.TypeToken
 import com.skylinedynamics.solosdk.api.models.objects.Application
+import com.skylinedynamics.solosdk.api.models.objects.Store
 import com.skylinedynamics.solosdk.util.GsonHelper
 import org.json.JSONException
 import org.json.JSONObject
@@ -71,6 +72,13 @@ class CacheUtilHelper(val context : Context) {
         } else null
     }
 
+    fun getOrderStore(): Store? {
+        val orderStoreValue: String? = pref()[ORDER_STORE, null]
+        return if (orderStoreValue != null) {
+            GsonHelper.gsonFinal().fromJson(orderStoreValue, object : TypeToken<Store?>() {}.type)
+        } else null
+    }
+
     companion object {
 
         const val CACHE = "Cache"
@@ -78,6 +86,7 @@ class CacheUtilHelper(val context : Context) {
         const val ORDER_TYPE = "OrderType"
         private const val TRANSLATIONS = "Translations"
         private const val APPLICATION = "Application"
+        private const val ORDER_STORE = "OrderStore"
         inline fun SharedPreferences.edit(operation: (SharedPreferences.Editor) -> Unit) {
             val editor = this.edit()
             operation(editor)

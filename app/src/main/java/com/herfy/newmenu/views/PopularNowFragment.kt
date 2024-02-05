@@ -17,9 +17,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.analytics.MixpanelUtil
+import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.base.BaseFragment
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentPopularNowBinding
 import com.herfy.main.MainActivity
 import com.herfy.menu.MenuContract
@@ -27,6 +27,8 @@ import com.herfy.menu.MenuPresenter
 import com.herfy.newmenu.adapter.PopularMenuItemAdapter
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.NavigationUtils
 
 class PopularNowFragment : BaseFragment(), MenuContract.View {
 

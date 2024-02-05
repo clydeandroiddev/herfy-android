@@ -11,18 +11,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
 import com.herfy.databinding.FragmentUpsellBinding
 import com.herfy.ext.gone
 import com.herfy.ext.visible
 import com.herfy.payment.views.PaymentActivity
+import com.herfy.util.StringUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.NavigationUtils
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
-import com.herfy.util.CacheUtil
-import com.herfy.util.NavigationUtils
-import com.herfy.util.StringUtil
-import java.util.*
+import java.util.Locale
 
 
 class UpsellFragment : BaseFragment(), UpsellContract.View {

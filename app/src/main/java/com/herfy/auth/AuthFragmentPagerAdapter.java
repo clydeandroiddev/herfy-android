@@ -8,8 +8,8 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.herfy.auth.views.RegisterFragment;
 import com.herfy.auth.views.SignInFragment;
-import com.herfy.data.constants.Text;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.helper.CacheUtil;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,5 +1,6 @@
 package com.herfy.util
 
+import com.herfy.utils.helper.AuthUtil
 import com.skylinedynamics.solosdk.api.models.objects.device.Device
 import com.skylinedynamics.solosdk.util.GsonHelper
 import org.json.JSONException

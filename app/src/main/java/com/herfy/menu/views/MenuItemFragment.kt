@@ -42,8 +42,8 @@ import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.ext.cast
 import com.herfy.ext.gone
 import com.herfy.ext.invisible
@@ -66,6 +66,9 @@ import com.skylinedynamics.solosdk.util.GsonHelper
 import com.herfy.util.*
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.safeNavigate
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.BuildUtil
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
 import io.shipbook.shipbooksdk.Log

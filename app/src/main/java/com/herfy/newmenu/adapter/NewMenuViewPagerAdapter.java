@@ -18,13 +18,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.herfy.R;
-import com.herfy.data.constants.Values;
 import com.herfy.menu.MenuContract;
 import com.herfy.newmenu.NewMenuTabListener;
 import com.herfy.newmenu.TabModel;
 import com.herfy.newmenu.views.MenuItemsFragment;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
-import com.herfy.util.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 

@@ -1,6 +1,5 @@
 package com.herfy.utils.helper;
 
-import static android.os.Build.VERSION_CODES.R;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,6 +33,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.herfy.utils.R;
 
 import java.text.Normalizer;
 import java.util.Locale;
@@ -339,5 +339,14 @@ public class ViewUtil {
         }
         return ((displayMetrics.widthPixels - context.getResources().getDimensionPixelSize(R.dimen.spacing_18)) / 2);
     }*/
+
+    public static int getColorMain(Context context) {
+
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        return typedValue.data;
+
+    }
 
 }

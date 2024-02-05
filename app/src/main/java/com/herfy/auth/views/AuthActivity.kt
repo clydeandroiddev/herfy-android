@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.navigation.fragment.NavHostFragment
 import com.herfy.R
 import com.herfy.base.BaseActivity
-import com.herfy.util.CacheUtil
+import com.herfy.utils.helper.CacheUtil
 
 class AuthActivity : BaseActivity() {
 

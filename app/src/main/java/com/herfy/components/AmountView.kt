@@ -11,13 +11,13 @@ import androidx.core.content.withStyledAttributes
 import androidx.core.view.isVisible
 import com.herfy.R
 import com.herfy.databinding.AmountViewBinding
-import com.skylinedynamics.solosdk.api.models.objects.CurrencyFormat
-import com.herfy.util.CacheUtil
-import com.herfy.utils.helper.LocaleUtil
 import com.herfy.util.StringUtil.localize
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
+import com.skylinedynamics.solosdk.api.models.objects.CurrencyFormat
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.util.*
+import java.util.Locale
 
 
 @ExperimentalStdlibApi

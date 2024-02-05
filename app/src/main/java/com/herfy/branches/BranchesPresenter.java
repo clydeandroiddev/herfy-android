@@ -4,8 +4,9 @@ import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.reflect.TypeToken;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.location.FusedLocationProvider;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
 import com.skylinedynamics.solosdk.api.models.Pagination;
@@ -13,7 +14,6 @@ import com.skylinedynamics.solosdk.api.models.objects.Facility;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.ErrorHandler;
 
 import org.json.JSONArray;

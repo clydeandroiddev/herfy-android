@@ -12,8 +12,7 @@ import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.util.GsonHelper
-import com.herfy.util.CacheUtil
-import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.*
 
 class MoyasarActivity : BaseActivity(), PaymentSheetResultCallback {
     private lateinit var paymentSheet : PaymentSheet

@@ -14,13 +14,15 @@ import com.bumptech.glide.request.RequestOptions
 import com.herfy.BuildConfig
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentCountriesBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
 import com.herfy.util.*
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.EnvUtil
 import com.herfy.utils.helper.LocaleUtil
 
 class CountriesFragment : BaseFragment(), CountriesContract.View,
@@ -33,7 +35,7 @@ class CountriesFragment : BaseFragment(), CountriesContract.View,
 
     private lateinit var binding: FragmentCountriesBinding
 
-    private var country: SupportedCountry? = null
+    private var country: com.herfy.model.SupportedCountry? = null
     private lateinit var countriesPresenter: CountriesContract.Presenter
     private var countriesAdapter: CountriesAdapterNew? = null
     private var confirmConceptSelectionDialog: ConfirmConceptSelectionDialog? = null
@@ -82,7 +84,7 @@ class CountriesFragment : BaseFragment(), CountriesContract.View,
                 close()
             }
         }
-        var countriesList: List<SupportedCountry> = ArrayList()
+        var countriesList: List<com.herfy.model.SupportedCountry> = ArrayList()
         activity?.let {
             countriesList = CacheUtil.getSupportedCountries(BuildConfig.APPLICATION_ID, it)
         }

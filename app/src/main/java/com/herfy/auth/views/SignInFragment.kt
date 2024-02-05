@@ -25,12 +25,14 @@ import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.auth.AuthContract
 import com.herfy.auth.AuthPresenter
 import com.herfy.base.*
-import com.herfy.data.constants.AUTH_ENTER_MOBILE_OR_EMAIL_ADDRESS
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.AUTH_ENTER_MOBILE_OR_EMAIL_ADDRESS
+import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentSignInBinding
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries
 import com.skylinedynamics.solosdk.api.models.objects.LoginOption
 import com.herfy.util.*
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 
 class SignInFragment : BaseFragment(), AuthContract.View {

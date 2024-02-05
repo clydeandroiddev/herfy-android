@@ -19,8 +19,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.tabs.TabLayout;
 import com.herfy.R;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.order.OrderContract;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Facility;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
@@ -28,7 +29,6 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.Rating;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;
 
