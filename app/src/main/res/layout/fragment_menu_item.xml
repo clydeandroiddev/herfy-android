@@ -543,7 +543,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/add"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/add"
-            app:srcCompat="@drawable/ic_minus" />
+            app:srcCompat="@drawable/ic_new_minus" />
 
         <TextView
             android:id="@+id/quantity"

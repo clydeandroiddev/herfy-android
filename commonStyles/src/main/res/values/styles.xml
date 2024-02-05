@@ -120,4 +120,12 @@
     <item name="cornerFamily">rounded</item>
     <item name="cornerSize">12dp</item>
     </style>
+
+    <style name="ShapeAppearanceOverlay.MyApp.Image.Circle" parent="">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+    <style name="MyApp.CircleImageCardView" parent="">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MyApp.Image.Circle</item>
+    </style>
 </resources>

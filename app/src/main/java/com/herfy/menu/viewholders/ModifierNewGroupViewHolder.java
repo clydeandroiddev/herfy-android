@@ -45,10 +45,6 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
 
     @BindView(R.id.name) TextView name;
-    @BindView(R.id.minimum)
-    TextView txtMinimum;
-    @BindView(R.id.btnMinimum)
-    LinearLayout minimumLayout;
 
 
     @BindView(R.id.select) TextView select; // todo uncomment this one ui for select is now final
@@ -212,61 +208,54 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
         }
         name.setText(modifierGroup.getAttributes().getName());
 
-        ModifierGroupMinimumType modifierGroupMinimumType = ModifierGroupMinimumUtil.INSTANCE.validateType(modifierGroup.getAttributes().getMinimum());
+        // todo might needed this once designer change the ui
+//        ModifierGroupMinimumType modifierGroupMinimumType = ModifierGroupMinimumUtil.INSTANCE.validateType(modifierGroup.getAttributes().getMinimum());
 
-        switch (modifierGroupMinimumType) {
-            case OPTIONAL:
-                String optional = CacheUtil.getInstance().getTranslations(Text.OPTIONAL_KEY,"Optional");
-                minimumLayout.setVisibility(View.VISIBLE);
-                txtMinimum.setText(optional);
-                break;
-
-            case REQUIRED:
-                String required = CacheUtil.getInstance()
-                        .getTranslations(Text.REQUIRED_KEY, "Required");
-                minimumLayout.setVisibility(View.VISIBLE);
-                txtMinimum.setText(required);
-                break;
-
-
-            default:
-                minimumLayout.setVisibility(View.GONE);
-                break;
-        }
+//        switch (modifierGroupMinimumType) {
+//            case OPTIONAL:
+//                String optional = CacheUtil.getInstance().getTranslations(Text.OPTIONAL_KEY,"Optional");
+//                minimumLayout.setVisibility(View.VISIBLE);
+//                txtMinimum.setText(optional);
+//                break;
+//
+//            case REQUIRED:
+//                String required = CacheUtil.getInstance()
+//                        .getTranslations(Text.REQUIRED_KEY, "Required");
+//                minimumLayout.setVisibility(View.VISIBLE);
+//                txtMinimum.setText(required);
+//                break;
+//
+//
+//            default:
+//                minimumLayout.setVisibility(View.GONE);
+//                break;
+//        }
 
 
         if (visible) {
 
-            // todo uncomment for this is when desiginer has final ui for select
-//            int minimum = modifierGroup.getAttributes().getMinimum();
-//            int maximum = modifierGroup.getAttributes().getMaximum();
-//            if (minimum > 0) {
-//                if(LocaleUtil.getInstance().isArabic()) {
-//                    minimumMaximum.setText("(x)\\(y)".replace("(x)", StringUtil.localize(String.valueOf(menuPresenter.getModifierGroupSelectedModifierItemsCount(modifierGroup)))).replace("(y)", StringUtil.localize(String.valueOf(maximum))));
-//                } else {
-//                    minimumMaximum.setText("(x)/(y)".replace("(x)", StringUtil.localize(String.valueOf(menuPresenter.getModifierGroupSelectedModifierItemsCount(modifierGroup)))).replace("(y)", StringUtil.localize(String.valueOf(maximum))));
-//                }
-//                minimumMaximum.setVisibility(View.VISIBLE);
-//                if(maximum > minimum) {
-//                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_ATLEAST, "(Select at least (x))").replace("(x)", StringUtil.localize(String.valueOf(minimum))));
-//                    select.setVisibility(View.VISIBLE);
-//                } else if(maximum == minimum) {
-//                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_X, "(Select (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
-//                    select.setVisibility(View.VISIBLE);
-//                } else {
-//                    select.setVisibility(View.INVISIBLE);
-//                }
-//            } else if (minimum == 0) {
-//                minimumMaximum.setVisibility(View.GONE);
-//                if(maximum > 0) {
-//                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_UP_TO_X, "(Select up to (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
-//                    select.setVisibility(View.VISIBLE);
-//                } else {
-//                    select.setVisibility(View.INVISIBLE);
-//                }
-//            } else {
-//                select.setVisibility(View.INVISIBLE);
-//            }
+            int minimum = modifierGroup.getAttributes().getMinimum();
+            int maximum = modifierGroup.getAttributes().getMaximum();
+            if (minimum > 0) {
+                if(maximum > minimum) {
+                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_ATLEAST, "(Select at least (x))").replace("(x)", StringUtil.localize(String.valueOf(minimum))));
+                    select.setVisibility(View.VISIBLE);
+                } else if(maximum == minimum) {
+                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_X, "(Select (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
+                    select.setVisibility(View.VISIBLE);
+                } else {
+                    select.setVisibility(View.INVISIBLE);
+                }
+            } else if (minimum == 0) {
+                if(maximum > 0) {
+                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_UP_TO_X, "(Select up to (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
+                    select.setVisibility(View.VISIBLE);
+                } else {
+                    select.setVisibility(View.INVISIBLE);
+                }
+            } else {
+                select.setVisibility(View.INVISIBLE);
+            }
 
             //hamburgini hide free modifiers text
 

@@ -6,9 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/imageCardView"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:background="@drawable/background_modifier_group_image"
+        app:layout_constraintBottom_toBottomOf="@+id/select"
+        app:layout_constraintStart_toStartOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Circle"
+        app:layout_constraintTop_toTopOf="@+id/name">
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="wrap_content"
+            tools:src="@tools:sample/avatars"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.card.MaterialCardView>
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/name"
-        style="@style/TextAppearance.Subheadline"
+        style="@style/Styles.Text.Footnote.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_large"
@@ -16,47 +31,87 @@
         android:textAlignment="viewStart"
         android:textColor="@color/black"
         android:textStyle="bold"
-        app:fontFamily="@font/cairo_bold"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageCardView"
         app:layout_constraintTop_toTopOf="parent"
         app:lineHeight="16sp"
         tools:text="Topic Sauce" />
 
+    <TextView
+        android:id="@+id/select"
+        style="@style/Styles.Text.Footnote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="@dimen/margin_small"
+        android:textColor="@color/color_gray"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/name"
+        app:layout_constraintStart_toStartOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        tools:text="Select up to 2"
+        tools:visibility="visible" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:focusableInTouchMode="false"
         android:descendantFocusability="blocksDescendants"
-        app:layout_constraintTop_toBottomOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@+id/select"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/margin_large"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:paddingBottom="16dp"
-        tools:listitem="@layout/item_modifier_drinks_type"
+        tools:listitem="@layout/item_modifier_option_type"
         tools:itemCount="5" />
 
-    <LinearLayout
-        android:id="@+id/btnMinimum"
-        android:layout_width="80dp"
-        android:layout_height="30dp"
-        android:background="@drawable/bg_rounded_25_radius_background"
-        android:gravity="center"
-        android:textAlignment="viewEnd"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/name"
-        tools:visibility="visible">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/btnMinimum"-->
+<!--        android:layout_width="80dp"-->
+<!--        android:layout_height="30dp"-->
+<!--        android:background="@drawable/bg_rounded_25_radius_background"-->
+<!--        android:gravity="center"-->
+<!--        android:textAlignment="viewEnd"-->
+<!--        android:visibility="invisible"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/name"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/name"-->
+<!--        tools:visibility="visible">-->
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/minimum"
-            style="@style/Styles.Text.Footnote"
+<!--        <com.google.android.material.textview.MaterialTextView-->
+<!--            android:id="@+id/minimum"-->
+<!--            style="@style/Styles.Text.Footnote"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center"-->
+<!--            android:textColor="@color/white"-->
+<!--            tools:text="Required" />-->
+<!--    </LinearLayout>-->
+    <FrameLayout
+        android:id="@+id/check_layout"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        app:layout_constraintBottom_toBottomOf="@+id/select"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/name">
+
+        <ImageView
+            android:id="@+id/checkBox"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+
+            tools:src="@drawable/ic_modifier_group_checked_selected"
+            tools:visibility="visible" />
+
+    </FrameLayout>
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/white"
-            tools:text="Required" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@color/colorSeparator"
+
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginHorizontal="@dimen/margin_large"
+            app:layout_constraintTop_toBottomOf="@+id/recycler_view"
+            android:layout_height="2dp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>

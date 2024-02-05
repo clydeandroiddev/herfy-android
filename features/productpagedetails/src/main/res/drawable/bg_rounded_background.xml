@@ -10,6 +10,6 @@
         android:top="8dp"
         />
     <solid
-        android:color="#A5A5A5"/>
+        android:color="#FBE9E7"/>
 </shape>
 
