@@ -18,7 +18,7 @@
         android:id="@+id/cash_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/cairo_semibold"
+        android:fontFamily="@font/inter_semi_bold"
         android:layout_marginStart="18dp"
         android:textSize="16sp"
         android:textColor="@color/black"
@@ -42,9 +42,9 @@
     <View
         android:id="@+id/view2"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:layout_marginTop="10dp"
-        android:background="@color/stroke_color"
+        android:background="@color/gray_400"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cash_label" />
