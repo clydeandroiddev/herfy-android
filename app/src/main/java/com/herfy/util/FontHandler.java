@@ -5,7 +5,7 @@ import android.graphics.Typeface;
 
 import androidx.core.content.res.ResourcesCompat;
 
-import com.herfy.common.R;
+import com.herfy.R;
 
 public class FontHandler {
     private Typeface lightFont;
