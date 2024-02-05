@@ -22,8 +22,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager.widget.ViewPager
 import com.daimajia.androidanimations.library.Techniques
-import com.facebook.*
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.FacebookSdk
 import com.facebook.FacebookSdk.setApplicationId
+import com.facebook.GraphRequest
+import com.facebook.LoggingBehavior
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.phone.SmsRetriever
@@ -31,6 +36,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil.Companion.completeRegistrationEvent
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.auth.AuthContract
@@ -45,16 +51,19 @@ import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.newmenu.views.NewMenuHomePageFragment
-import com.herfy.order.views.OrderTypeFragment
-import com.skylinedynamics.solosdk.api.SoloAuth
-import com.herfy.util.*
+import com.herfy.order.views.ordertype.OrderTypeNewFragment
+import com.herfy.util.AppLogger
+import com.herfy.util.AuthUtil
+import com.herfy.util.BuildUtil
+import com.herfy.util.CacheUtil
+import com.herfy.util.NavigationUtils
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.verification.CodeBroadcastReceiver
 import com.herfy.verification.views.VerifyCodeDialogFragment
+import com.skylinedynamics.solosdk.api.SoloAuth
 import org.json.JSONException
-import java.util.*
+import java.util.Locale
 import java.util.regex.Pattern
-import com.herfy.R
-import com.herfy.utils.helper.LocaleUtil
 
 class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginResult>,
     SignInFragment.Listener {
@@ -153,10 +162,11 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
         authPresenter!!.start()
         LoginManager.getInstance().registerCallback(facebookCallbackManager, this)
         activity?.let {
-            val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(BuildUtil.googleInClient(it))
-                .requestEmail()
-                .build()
+            val googleSignInOptions =
+                GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(BuildUtil.googleInClient(it))
+                    .requestEmail()
+                    .build()
             googleSignInClient = GoogleSignIn.getClient(it, googleSignInOptions)
         }
     }
@@ -184,7 +194,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
             bundleOf(
                 NewMenuHomePageFragment.ARGS_KEY_HISTORY to args.history,
                 NewMenuHomePageFragment.ARGS_KEY_ACCOUNT to args.account,
-                OrderTypeFragment.ARGS_KEY_CURBSIDE to args.curbside,
+                OrderTypeNewFragment.ARGS_KEY_CURBSIDE to args.curbside,
                 CartFragment.ARGS_KEY_CHECKOUT to args.checkout
             )
         )
@@ -252,7 +262,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
 
     override fun forgotPassword(phoneNumber: String?, mobileFormatIndex: Int) {
         showLoadingDialog()
-        authPresenter!!.forgotPassword(phoneNumber,mobileFormatIndex)
+        authPresenter!!.forgotPassword(phoneNumber, mobileFormatIndex)
     }
 
     override fun signInFacebook() {
@@ -276,7 +286,13 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
         googleLauncher!!.launch(signInIntent)
     }
 
-    override fun signUp(fullName: String, phoneNumber: String, email: String, password: String, index: Int) {
+    override fun signUp(
+        fullName: String,
+        phoneNumber: String,
+        email: String,
+        password: String,
+        index: Int
+    ) {
         showLoadingDialog()
         authPresenter!!.signUp(fullName, phoneNumber, email, password, index)
     }
@@ -358,11 +374,14 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     override fun showGuest() {
         setFragmentResultListener(ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
             clearFragmentResultListener(ARGS_KEY_FRAGMENT_RESULT)
-            if(AuthUtil.getInstance().isSignedIn) {
+            if (AuthUtil.getInstance().isSignedIn) {
                 navigateUp()
             }
         }
-        NavigationUtils.navigateSafe(findNavController(), AuthFragmentDirections.actionAuthToGuest(args.checkout))
+        NavigationUtils.navigateSafe(
+            findNavController(),
+            AuthFragmentDirections.actionAuthToGuest(args.checkout)
+        )
     }
 
     override fun showPhoneNumber(customerId: String, email: String, password: String) {
@@ -384,7 +403,12 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
         })
         activity?.let {
             val intentFilter = IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION)
-            it.registerReceiver(codeBroadcastReceiver, intentFilter, SmsRetriever.SEND_PERMISSION, null)
+            it.registerReceiver(
+                codeBroadcastReceiver,
+                intentFilter,
+                SmsRetriever.SEND_PERMISSION,
+                null
+            )
             val task = SmsRetriever.getClient(it).startSmsUserConsent(null)
             task.addOnSuccessListener { aVoid: Void? -> }
             task.addOnFailureListener { e: Exception -> AppLogger.error(e.message) }
@@ -406,7 +430,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
             childFragmentManager,
             VerifyCodeDialogFragment::class.java.simpleName
         )
-        if(authPresenter.registrationMethod.isNotEmpty()) {
+        if (authPresenter.registrationMethod.isNotEmpty()) {
             logRegistrationEvent(authPresenter.registrationMethod)
         }
     }
@@ -467,7 +491,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
             childFragmentManager,
             VerifyCodeDialogFragment::class.java.simpleName
         )
-        if(authPresenter.registrationMethod.isNotEmpty()) {
+        if (authPresenter.registrationMethod.isNotEmpty()) {
             logRegistrationEvent(authPresenter.registrationMethod)
         }
     }
@@ -489,7 +513,12 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     ) {
         activity?.let {
             val baseActivity = it as BaseActivity
-            baseActivity.logEventAttributesMetric(eventName, eventAttributes, eventMetricName, eventMetricValue)
+            baseActivity.logEventAttributesMetric(
+                eventName,
+                eventAttributes,
+                eventMetricName,
+                eventMetricValue
+            )
         }
     }
 
@@ -526,11 +555,13 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
             FirebaseECommerceEventUtil.signInEvent(requireContext(), customerId)
         }
     }
+
     private fun isCanProceedFragmentTransaction(fragmentManager: FragmentManager): Boolean {
-        return  !fragmentManager.isStateSaved
+        return !fragmentManager.isStateSaved
     }
+
     override fun logRegistrationEvent(registrationMethod: String?) {
-        completeRegistrationEvent(requireContext(), registrationMethod!! )
+        completeRegistrationEvent(requireContext(), registrationMethod!!)
     }
 
     override fun dismissDialogs() {
@@ -551,7 +582,8 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
         val accessToken = loginResult.accessToken
         val token = accessToken.token
         val request =
-            GraphRequest.newMeRequest(loginResult.accessToken
+            GraphRequest.newMeRequest(
+                loginResult.accessToken
             ) { obj, response ->
                 obj?.let {
                     if (it.has("email")) {

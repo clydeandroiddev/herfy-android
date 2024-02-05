@@ -67,7 +67,6 @@ import com.herfy.main.adapter.SwitchServerAdapter
 import com.herfy.menu.views.MenuItemFragmentDirections
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.newmenu.views.*
-import com.herfy.order.views.OrderTypeFragment
 import com.herfy.promotions.views.PromotionsFragmentDirections
 import com.herfy.ratings.views.RatingsBottomSheetDialogFragment
 import com.herfy.splash.SplashActivity
@@ -123,7 +122,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private var notifCount = 0
     private var fromReOrder = false
     private var cartFragment: CartFragment? = null
-    private val orderTypeFragment: OrderTypeFragment? = null
     private var orderTypeArgs: Bundle? = null
     private var fromPayment = false
     private var fromFavorites = false
@@ -131,8 +129,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private var longPressTime: Long = 0
     var forceLocation = false
     var forceLocationMenuRefresh = false
-
-    private var orderTypeFragmentDialog: OrderTypeFragment? = null
 
     private var isFromLogOut = false
     private var isFromFavorites = false
@@ -670,7 +666,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.favorites.visibility = loggedInRules
         binding.sidebar.selectionLayout.visibility =
             if (BuildConfig.SUBSCRIPTION_ENABLED) View.VISIBLE else View.GONE
-            processLiveChat()
+        processLiveChat()
         if (CacheUtil.getInstance().isContactUsEnabled) {
             binding.sidebar.contactSupportLabel.apply {
                 visible()
@@ -736,7 +732,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             val brandLogoImage = CacheUtil.getInstance().application.attributes.logo
             if (brandLogoImage.isNotEmpty()) {
                 binding.sidebar.concept.loadImageFromUrl(brandLogoImage)
-            }else {
+            } else {
                 binding.sidebar.concept.setImageResource(R.drawable.header)
             }
         } else {
@@ -1063,10 +1059,17 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             val serverTypeStr = assets.readAssetsFile("servertypes.json")
 
             val envList = arrayListOf<ServerType>()
-            envList.addAll(GsonHelper.gsonFinal().fromJson(
-                serverTypeStr, object : TypeToken<ArrayList<ServerType>>() {}.type
-            ))
-            val env = envList.find { s -> s.url.equals(EnvUtil.getEnvironmentUrl(), ignoreCase = true)  }?.displayName?: ""
+            envList.addAll(
+                GsonHelper.gsonFinal().fromJson(
+                    serverTypeStr, object : TypeToken<ArrayList<ServerType>>() {}.type
+                )
+            )
+            val env = envList.find { s ->
+                s.url.equals(
+                    EnvUtil.getEnvironmentUrl(),
+                    ignoreCase = true
+                )
+            }?.displayName ?: ""
             val envMessage = "App is currently pointed to $env."
             Toast.makeText(this@MainActivity, envMessage, Toast.LENGTH_SHORT).show()
             dismissDialogs()
@@ -1096,7 +1099,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                         if (serverType.url.isEmpty()) {
                             showAlertDialog("Warning", "Custom url is required")
                             return@setOnClickListener
-                        }else {
+                        } else {
                             serverType.url = adapter.getCustomUrl()
                         }
                     }
