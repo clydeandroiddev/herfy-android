@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     android:id="@+id/clickable_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -43,7 +42,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
         <TextView
             android:id="@+id/txtModifierItemName"
             android:layout_width="wrap_content"
@@ -60,7 +58,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Coke Large" />
 
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtmodifierPrice"
             android:layout_width="wrap_content"
@@ -71,6 +68,5 @@
             app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
             tools:text="+Sar 2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </LinearLayout>
