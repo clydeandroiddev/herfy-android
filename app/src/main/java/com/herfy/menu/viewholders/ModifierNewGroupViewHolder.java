@@ -51,7 +51,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     LinearLayout minimumLayout;
 
 
-//    @BindView(R.id.select) TextView select; // todo uncomment this one ui for select is now final
+    @BindView(R.id.select) TextView select; // todo uncomment this one ui for select is now final
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
 

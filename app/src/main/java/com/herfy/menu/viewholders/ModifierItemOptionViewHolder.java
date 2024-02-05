@@ -51,7 +51,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
     LinearLayout clickableLayout;
     @BindView(R.id.quantityUp)
     ImageButton plus;
-    @BindView(R.id.modifierImage)
+    @BindView(R.id.image)
     ShapeableImageView modifierOptionImage;
     private ModifierProcessor modifierProcessor;
     @BindView(R.id.quantity_container)

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/color_background">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"
@@ -30,178 +30,228 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/margin_small"
                     app:layout_scrollFlags="scroll|enterAlways">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/imageCardView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:cardPreventCornerOverlap="true"
-                            tools:visibility="visible"
-                            app:cardUseCompatPadding="true"
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/materialImageCalendar"
+                            android:layout_width="361dp"
+                            android:layout_height="180dp"
+                            android:layout_marginTop="@dimen/margin_large"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Corner12dp"
+                            android:layout_marginHorizontal="@dimen/margin_large"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginEnd="@dimen/margin_large"
+                            android:background="@drawable/bg_menu_item_details_background"
+                            android:layout_marginStart="12dp"
+                            android:scaleType="fitXY"
                             app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" >
+
+                            <ImageView
+                                android:id="@+id/image"
+                                android:layout_width="163dp"
+                                tools:src="@tools:sample/avatars"
+                                android:layout_gravity="center_horizontal|center_vertical"
+                                android:layout_height="151dp"/>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <ImageView
+                            android:id="@+id/icClose"
+                            android:layout_width="36dp"
+                            android:src="@drawable/ic_close"
+                            app:layout_constraintStart_toStartOf="@id/materialImageCalendar"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_marginStart="@dimen/margin_large"
+                            android:layout_marginTop="@dimen/margin_xlarge"
+                            android:layout_height="36dp"/>
+
+                        <FrameLayout
+                            android:id="@+id/favorite_card"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginTop="@dimen/margin_xlarge"
+                            android:layout_marginEnd="@dimen/margin_large"
+                            android:background="@drawable/background_favourite"
+                            android:elevation="8dp"
+                            android:visibility="visible"
+                            app:layout_constraintEnd_toEndOf="@id/materialImageCalendar"
                             app:layout_constraintTop_toTopOf="parent">
 
-                            <androidx.constraintlayout.widget.ConstraintLayout
+                            <RelativeLayout
+                                android:id="@+id/favorite_container"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="match_parent">
 
-                                <com.google.android.material.imageview.ShapeableImageView
-                                    android:id="@+id/image"
-                                    android:layout_width="361dp"
-                                    android:layout_height="180dp"
-                                    android:layout_marginTop="@dimen/margin_large"
-                                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Corner12dp"
-                                    android:layout_marginHorizontal="@dimen/margin_large"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    android:layout_marginEnd="@dimen/margin_large"
-                                    android:src="@drawable/bg_menu_item_details_background"
-                                    android:layout_marginStart="12dp"
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/favorite_icon"
+                                    android:layout_width="20dp"
+                                    android:layout_height="18dp"
+                                    android:layout_centerInParent="true"
                                     android:scaleType="fitXY"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent" />
-
-                                <ImageView
-                                    android:id="@+id/icClose"
-                                    android:layout_width="36dp"
-                                    android:src="@drawable/ic_close"
-                                    app:layout_constraintStart_toStartOf="@id/image"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:layout_marginStart="@dimen/margin_large"
-                                    android:layout_marginTop="@dimen/margin_xlarge"
-                                    android:layout_height="36dp"/>
-
-                                <FrameLayout
-                                    android:id="@+id/favorite_card"
-                                    android:layout_width="36dp"
-                                    android:layout_height="36dp"
-                                    android:layout_marginTop="@dimen/margin_xlarge"
-                                    android:layout_marginEnd="@dimen/margin_large"
-                                    android:background="@drawable/background_favourite"
-                                    android:elevation="8dp"
-                                    android:visibility="visible"
-                                    app:layout_constraintEnd_toEndOf="@id/image"
-                                    app:layout_constraintTop_toTopOf="parent">
-
-                                    <RelativeLayout
-                                        android:id="@+id/favorite_container"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent">
-
-                                        <androidx.appcompat.widget.AppCompatImageView
-                                            android:id="@+id/favorite_icon"
-                                            android:layout_width="20dp"
-                                            android:layout_height="18dp"
-                                            android:layout_centerInParent="true"
-                                            android:scaleType="fitXY"
-                                            app:srcCompat="@drawable/ic_heart"
-                                            app:tint="#DEDEDE" />
+                                    app:srcCompat="@drawable/ic_heart"
+                                    app:tint="#DEDEDE" />
 
                                     </RelativeLayout>
 
-                                </FrameLayout>
+                        </FrameLayout>
 
-                                <androidx.constraintlayout.widget.Guideline
-                                    android:id="@+id/halfGuideline"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    app:layout_constraintGuide_percent="0.5" />
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/halfGuideline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_begin="206dp" />
 
-                                <TextView
-                                    android:id="@+id/name"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:ellipsize="end"
-                                    android:includeFontPadding="false"
-                                    android:layout_marginStart="@dimen/margin_large"
-                                    android:maxLines="1"
-                                    android:singleLine="true"
-                                    android:textColor="@color/primary_text"
-                                    android:textSize="18sp"
-                                    tools:text="Grill Chicken"
-                                    android:textStyle="bold"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/image" />
+                        <LinearLayout
+                            android:id="@+id/btnDriveThru"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_rounded_drive_thru"
+                            app:layout_constraintEnd_toEndOf="@+id/name"
+                            android:layout_marginTop="@dimen/margin_large"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            app:layout_constraintBottom_toTopOf="@+id/name"
+                            app:layout_constraintTop_toBottomOf="@id/materialImageCalendar">
 
-                                <TextView
-                                    android:id="@+id/total"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="-5dp"
-                                    style="@style/Styles.Text.Headline"
-                                    android:includeFontPadding="false"
-                                    android:layout_marginEnd="@dimen/margin_large"
-                                    app:layout_constraintBottom_toBottomOf="@+id/name"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@+id/name"
-                                    tools:text="SAR 44" />
+                            <com.google.android.material.textview.MaterialTextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                style="@style/Styles.Text.Caption"
+                                android:layout_gravity="center"
+                                android:drawablePadding="@dimen/margin_small"
+                                android:drawableStart="@drawable/ic_car"
+                                android:gravity="center_vertical"
+                                android:layout_weight="1"
+                                tools:text="Drive thru" />
 
-                                <TextView
-                                    android:id="@+id/description"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
+                        </LinearLayout>
 
-                                    android:gravity="start"
-                                    android:includeFontPadding="false"
-                                    android:lineSpacingExtra="-7dp"
-                                    android:textAlignment="viewStart"
-                                    android:textColor="#969696"
-                                    android:textSize="14sp"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintHorizontal_bias="0.0"
-                                    app:layout_constraintStart_toStartOf="@+id/name"
-                                    app:layout_constraintTop_toBottomOf="@+id/name"
-                                    tools:text="Grilled chicken patty, topped with a flavorful slice of cheese and shredded fresh lettuce" />
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/btnCalories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/white"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:strokeColor="#D9E8F3"
+                            app:strokeWidth="1dp"
+                            app:cardUseCompatPadding="true"
+                            app:cardCornerRadius="8dp"
+                            android:layout_marginStart="@dimen/margin_small"
+                            app:cardPreventCornerOverlap="true"
+                            app:contentPadding="@dimen/padding_small"
+                            app:layout_constraintBottom_toBottomOf="@+id/btnDriveThru"
+                            app:layout_constraintStart_toEndOf="@+id/btnDriveThru"
+                            app:layout_constraintTop_toTopOf="@+id/btnDriveThru">
 
-                                <TextView
-                                    android:id="@+id/calories"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="start"
-                                    android:textAlignment="viewStart"
-                                    android:textSize="14sp"
-                                    android:drawableStart="@drawable/ic_fire"
-                                    android:layout_marginBottom="@dimen/margin_small"
-                                    android:drawablePadding="10dp"
-                                    android:visibility="visible"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintEnd_toStartOf="@+id/txtMoreInfo"
-                                    app:layout_constraintStart_toStartOf="@+id/name"
-                                    app:layout_constraintTop_toBottomOf="@+id/description"
-                                    tools:text="350 Cal." />
-
-                                <com.google.android.material.textview.MaterialTextView
-                                    android:id="@+id/txtMoreInfo"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/margin_small"
-                                    android:textAlignment="viewStart"
-                                    android:visibility="gone"
-                                    android:textColor="#1877F2"
-                                    android:textSize="15sp"
-                                    app:layout_constraintBottom_toBottomOf="@+id/calories"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toEndOf="@+id/calories"
-                                    app:layout_constraintTop_toTopOf="@+id/calories"
-                                    app:lineHeight="20sp"
-                                    tools:text="More information" />
-
-                            </androidx.constraintlayout.widget.ConstraintLayout>
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/calories"
+                                style="@style/Styles.Text.Caption"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_vertical"
+                                android:layout_weight="1"
+                                android:drawableStart="@drawable/ic_fire"
+                                android:drawablePadding="@dimen/margin_small"
+                                android:gravity="center_vertical"
+                                tools:text="2200 Kcal" />
                         </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:layout_marginTop="@dimen/margin_small"
+                            android:fontFamily="@font/cairo_bold"
+                            android:includeFontPadding="false"
+                            android:layout_marginStart="@dimen/margin_large"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/primary_text"
+                            android:textSize="18sp"
+                            tools:text="Grill Chicken"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/btnDriveThru" />
+
+                        <TextView
+                            android:id="@+id/total"
+                            style="@style/Styles.Text.Headline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/margin_large"
+                            android:layout_marginBottom="-5dp"
+                            android:fontFamily="@font/cairo_regular"
+                            android:textColor="@color/shade_blue"
+                            android:includeFontPadding="false"
+                            app:layout_constraintBottom_toBottomOf="@+id/btnCalories"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/btnCalories"
+                            tools:text="SAR 44" />
+
+                        <TextView
+                            android:id="@+id/description"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/cairo_regular"
+                            android:gravity="start"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="-7dp"
+                            android:textAlignment="viewStart"
+                            android:textColor="#969696"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="@+id/name"
+                            app:layout_constraintTop_toBottomOf="@+id/name"
+                            tools:text="Grilled chicken patty, topped with a flavorful slice of cheese and shredded fresh lettuce" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/txtMoreInfo"
+                            style="@style/Styles.Text.Footnote.Medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableEnd="@drawable/ic_question_mark"
+                            android:drawablePadding="@dimen/margin_micro"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/shade_blue"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/description"
+                            android:layout_marginEnd="@dimen/margin_large"
+                            app:lineHeight="20sp"
+                            tools:text="More Info"
+                            tools:visibility="visible" />
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:id="@+id/imageSeparator"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="@dimen/margin_small"
+                        app:layout_constraintTop_toBottomOf="@+id/txtMoreInfo"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginHorizontal="@dimen/margin_large"
+                        android:background="@color/colorSeparator"
+                        android:layout_height="1dp"/>
                 </LinearLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
         <androidx.core.widget.NestedScrollView
             android:id="@+id/content_main"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="#FAFBFC"
+            app:layout_constraintTop_toBottomOf="@+id/appbar"
             android:fillViewport="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -212,17 +262,6 @@
                 android:layout_marginBottom="@dimen/margin_large"
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@+id/appbar">
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/sizes_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="5dp"
-                    app:cardElevation="0dp"
-                    app:cardPreventCornerOverlap="true"
-                    app:cardUseCompatPadding="true">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -304,24 +343,24 @@
                             tools:visibility="visible" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.cardview.widget.CardView>
+<!--                </androidx.cardview.widget.CardView>-->
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/menuItemGroupCardView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="5dp"
-                    app:cardElevation="0dp"
-                    app:cardPreventCornerOverlap="true"
-                    app:cardUseCompatPadding="true">
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:id="@+id/menuItemGroupCardView"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:visibility="gone"-->
+<!--                    app:cardBackgroundColor="@color/white"-->
+<!--                    app:cardCornerRadius="5dp"-->
+<!--                    app:cardElevation="0dp"-->
+<!--                    app:cardPreventCornerOverlap="true"-->
+<!--                    app:cardUseCompatPadding="true">-->
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingBottom="50dp">
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:paddingBottom="50dp">-->
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/modifier_groups_recycler_view"
@@ -332,24 +371,14 @@
                             android:focusableInTouchMode="false"
                             android:paddingTop="2dp"
                             android:visibility="gone"
+                            android:paddingBottom="50dp"
                             app:layout_behavior="@string/appbar_scrolling_view_behavior"
                             tools:visibility="visible" />
 
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/notes_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin_large"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="4dp"
-                    app:cardPreventCornerOverlap="false"
-                    app:cardUseCompatPadding="true">
 
                     <LinearLayout
+                        android:id="@+id/notes_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/margin_large"
@@ -376,6 +405,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
+                            android:fontFamily="@font/cairo_bold"
                             android:gravity="start"
                             android:includeFontPadding="false"
                             android:maxLines="1"
@@ -391,6 +421,7 @@
                             android:layout_height="80dp"
                             android:layout_marginTop="@dimen/margin_xlarge"
                             android:background="@drawable/bg_background_border"
+                            android:fontFamily="@font/cairo_regular"
                             android:gravity="start"
                             android:inputType="text"
                             android:maxLines="4"
@@ -400,17 +431,9 @@
                             android:textSize="14sp" />
 
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/frequentlyBoughtCardView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="5dp"
-                    app:cardElevation="0dp"
-                    app:cardPreventCornerOverlap="true"
-                    app:cardUseCompatPadding="true">
+
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -431,19 +454,18 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:clipToPadding="false"
-                            android:layout_marginTop="@dimen/margin_large"
                             android:descendantFocusability="blocksDescendants"
                             android:focusableInTouchMode="false"
                             android:layout_marginHorizontal="@dimen/margin_large"
                             android:orientation="vertical"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             android:paddingTop="2dp"
+                            android:visibility="gone"
                             app:layout_behavior="@string/appbar_scrolling_view_behavior"
                             tools:listitem="@layout/item_modifier_frequently_bought"
                             tools:visibility="visible" />
 
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
+
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
@@ -469,6 +491,7 @@
             android:layout_marginBottom="@dimen/margin_large"
             android:textAlignment="viewStart"
             style="@style/Styles.Text.Subheadline"
+            android:fontFamily="@font/cairo_bold"
             app:layout_constraintBottom_toTopOf="@+id/add"
             android:layout_marginStart="@dimen/margin_large"
             app:layout_constraintTop_toTopOf="parent"
@@ -481,6 +504,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="@dimen/margin_large"
+            android:fontFamily="@font/cairo_bold"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="1"
@@ -521,6 +545,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_large"
             android:background="@drawable/rounded_corner"
+            android:fontFamily="@font/cairo_bold"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="ADD TO Cart"

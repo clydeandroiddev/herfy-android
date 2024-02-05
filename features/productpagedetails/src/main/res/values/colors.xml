@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#F26224</color>
     <color name="colorAccent">#F26224</color> -->
     <color name="color_border">#D1D1D6</color>
+    <color name="colorBackground">#F7F7F7</color>
 </resources>
 
 

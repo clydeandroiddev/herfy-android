@@ -1,40 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="84dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="@dimen/margin_large"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    android:background="@drawable/bg_menu_item_details_background"
+    android:padding="10dp"
+    app:cardPreventCornerOverlap="false"
+    app:cardUseCompatPadding="true">
 <LinearLayout
     android:id="@+id/clickable_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:gravity="center_vertical"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    android:layout_gravity="center_vertical"
+    android:gravity="center_vertical">
 
-    <FrameLayout
-        android:id="@+id/check_layout"
-        android:layout_width="46dp"
-        android:layout_height="46dp"
-        android:background="?attr/selectableItemBackgroundBorderless">
-
-        <ImageView
-            android:id="@+id/check"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:src="@drawable/size" />
-
-    </FrameLayout>
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_gravity="center"
         android:scaleType="fitXY"
         android:src="@drawable/product_page_details_border"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Corner12dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Corner8dp"
         android:visibility="gone"
         tools:visibility="visible" />
 
@@ -67,6 +61,25 @@
             app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
             app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
             tools:text="+Sar 2" />
+
+
+        <FrameLayout
+            android:id="@+id/check_layout"
+            android:layout_width="46dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="46dp"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/check"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/size" />
+
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

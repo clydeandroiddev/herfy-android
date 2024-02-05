@@ -49,6 +49,9 @@
 
     <color name="background_color_blue">#0064AC</color>
     <color name="background_color_light_blue">#D9E8F3</color>
+    <color name="color_background">#F7F7F7</color>
+    <color name="shade_blue">#208DA7</color>
+    <color name="colorSeparator">#E6E8EB</color>
 </resources>
 
 
