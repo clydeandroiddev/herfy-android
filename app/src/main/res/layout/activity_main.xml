@@ -13,44 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_container_view"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".main.MainActivity">
-
-            <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/app_bar_layout"
-                app:layout_behavior="com.herfy.util.scroll.FixAppBarLayoutBehavior"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:elevation="0dp">
-
-                <com.google.android.material.appbar.CollapsingToolbarLayout
-                    android:id="@+id/collapsing_toolbar_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:contentScrim="?attr/colorPrimary"
-                    app:expandedTitleGravity="top"
-                    app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
-
-                    <include
-                        android:id="@+id/main_toolbar"
-                        layout="@layout/main_toolbar" />
-
-                </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-            </com.google.android.material.appbar.AppBarLayout>
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/fragment_container_view"
-                android:name="androidx.navigation.fragment.NavHostFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/app_bar_layout"
-                app:defaultNavHost="true"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            app:defaultNavHost="true" />
 
         <ImageView
             android:id="@+id/dummy_image"

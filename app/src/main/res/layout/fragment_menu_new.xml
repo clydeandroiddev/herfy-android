@@ -89,7 +89,7 @@
 					android:layout_height="@dimen/tab_layout_no_search"
 					app:layout_collapseMode="pin" />
 
-				<com.herfy.views.CenteringTabLayout
+				<com.herfy.menu.widgets.CenteringTabLayout
 					android:id="@+id/tabs_layout"
 					android:layout_width="wrap_content"
 					android:layout_height="112dp"
