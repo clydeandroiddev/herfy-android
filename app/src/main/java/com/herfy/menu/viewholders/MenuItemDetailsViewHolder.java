@@ -33,7 +33,7 @@ import com.herfy.data.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.menu.MenuContract;
 import com.herfy.menu.adapters.IngredientsRecyclerViewAdapter;
-import com.herfy.menu.adapters.ModifierGroupsRecyclerViewAdapter;
+import com.herfy.menu.adapters.ModifierGroupsNewRecyclerViewAdapter;
 import com.herfy.menu.adapters.RecyclerListAdapter;
 import com.herfy.menu.adapters.SizesRecyclerViewAdapter;
 import com.skylinedynamics.solosdk.api.models.objects.Allergen;
@@ -85,7 +85,7 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
     @BindView(R.id.ingredients_recycler_view) RecyclerView ingredientsRecyclerView;
 
     private SizesRecyclerViewAdapter sizesAdapter;
-    private ModifierGroupsRecyclerViewAdapter modifierGroupsAdapter;
+    private ModifierGroupsNewRecyclerViewAdapter modifierGroupsAdapter;
     private IngredientsRecyclerViewAdapter ingredientsAdapter;
 
     public MenuItemDetailsViewHolder(@NonNull View view, Context context, MenuContract.Presenter menuPresenter) {
@@ -215,22 +215,24 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
                 showModifierItemPrice.put(item.getModifierGroups().indexOf(group), group.getAttributes().getFreeModifiersCount() == 0);
             }
 
-            modifierGroupsAdapter = new ModifierGroupsRecyclerViewAdapter(context, menuPresenter, showModifierItemPrice);
-            modifierGroupsAdapter.setOnAction(new ModifierItemViewHolder.OnAction() {
-                @Override
-                public void onCheckedChanged(boolean isSelected, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem) {
-                    menuPresenter.selectModifierItem(isSelected, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
-                    setSizes(item);
-                    modifierGroupsAdapter.notifyDataSetChanged();
-                }
+            modifierGroupsAdapter = new ModifierGroupsNewRecyclerViewAdapter(context, menuPresenter, showModifierItemPrice);
 
-                @Override
-                public void onQuantityChanged(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem) {
-                    menuPresenter.changeModifierItemQuantity(add, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
-                    setSizes(item);
-                    modifierGroupsAdapter.notifyDataSetChanged();
-                }
-            });
+
+//            modifierGroupsAdapter.setOnAction(new ModifierItemViewHolder.OnAction() {
+//                @Override
+//                public void onCheckedChanged(boolean isSelected, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem) {
+//                    menuPresenter.selectModifierItem(isSelected, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
+//                    setSizes(item);
+//                    modifierGroupsAdapter.notifyDataSetChanged();
+//                }
+//
+//                @Override
+//                public void onQuantityChanged(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem) {
+//                    menuPresenter.changeModifierItemQuantity(add, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
+//                    setSizes(item);
+//                    modifierGroupsAdapter.notifyDataSetChanged();
+//                }
+//            });
 
             modifierGroupsRecyclerView.setAdapter(modifierGroupsAdapter);
 

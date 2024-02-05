@@ -35,11 +35,15 @@ import com.herfy.databinding.FragmentCurbsideBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
-import com.herfy.order.views.OrderTypeFragment
+import com.herfy.order.views.ordertype.OrderTypeNewFragment
+import com.herfy.util.AuthUtil
+import com.herfy.util.BuildUtil
+import com.herfy.util.CacheUtil
+import com.herfy.util.StringUtil
+import com.herfy.util.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
-import com.herfy.util.*
-import java.util.*
+import java.util.Locale
 
 class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListener {
 
@@ -240,7 +244,7 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
         setFragmentResult(
             ARGS_KEY_FRAGMENT_RESULT,
             bundleOf(
-                OrderTypeFragment.ARGS_KEY_CURBSIDE to args.curbside
+                OrderTypeNewFragment.ARGS_KEY_CURBSIDE to args.curbside
             )
         )
         findNavController().navigateUp()

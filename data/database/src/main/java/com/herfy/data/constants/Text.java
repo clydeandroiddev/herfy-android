@@ -14,6 +14,7 @@ public class Text {
     public static final String PROMO_DISCOUNT = "promo_discount";
     public static final String SUBTOTAL = "subtotal";
     public static final String PROCEED_CHECKOUT = "proceed_checkout";
+    public static final String MORE_INFROMATION = "more_information";
     public static final String WHAT_WOULD_YOU_LIKE_TO_EAT = "what_would_you_like_to_eat";
     public static final String HOME = "home";
     public static final String HOME_CAPS = "home_caps";
@@ -217,6 +218,7 @@ public class Text {
     public static final String RATE = "rate";
     public static final String OPTIONS = "options";
     public static final String QUANTITY = "quantity";
+    public static final String REQUIRED ="required";
     public static final String RATING_SENT = "rating_sent";
     public static final String INGREDIENTS = "ingredients";
     public static final String SIGN_IN_MESSAGE = "sign_in_message";
@@ -274,6 +276,8 @@ public class Text {
     public static final String CART_EMPTY_MESSAGE = "cart_empty_message";
     public static final String FREE = "free";
     public static final String FREE_CAPS = "free_caps";
+    public static final String OPTIONAL_KEY = "optional_key";
+    public static final String REQUIRED_KEY = "required_key";
     public static final String SHOW_FACILITY = "show_facility";
     public static final String HIDE_FACILITY = "hide_facility";
     public static final String CONFIRM_LOCATION = "confirm_location";
@@ -736,6 +740,8 @@ public class Text {
     public static final String DRIVER_NAME_CAPS = "driver_name_caps";
     public static final String DRIVER_NUMBER_CAPS = "driver_number_caps";
     public static final String NOTES_CAPS = "notes_caps";
+    public static final String SPECIAL_INSTRUCTION = "special_instruction";
+    public static final String NOTES_DESCRIPTION = "notes_description";
     public static final String GENDER_CAPS = "gender_caps";
     public static final String DATE_OF_BIRTH_CAPS = "date_of_birth_caps";
     public static final String MALE = "male";

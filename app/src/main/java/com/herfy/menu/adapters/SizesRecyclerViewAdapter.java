@@ -32,7 +32,7 @@ public class SizesRecyclerViewAdapter extends RecyclerView.Adapter<SizeViewHolde
     @Override
     public SizeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        SizeViewHolder sizeViewHolder = new SizeViewHolder(context, menuPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_size, parent, false));
+        SizeViewHolder sizeViewHolder = new SizeViewHolder(context, menuPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_new_size, parent, false));
         sizeViewHolder.setOnAction(onAction);
         return sizeViewHolder;
 

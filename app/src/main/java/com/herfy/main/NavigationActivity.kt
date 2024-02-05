@@ -45,7 +45,8 @@ class NavigationActivity : BaseActivity(), MainContract.View {
         binding = ActivityNavigationBinding.inflate(layoutInflater)
         setContentView(binding.root)
         mainPresenter = MainPresenter(this)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
         navController = navHostFragment.navController
 
         val inflater = navController.navInflater
@@ -56,26 +57,31 @@ class NavigationActivity : BaseActivity(), MainContract.View {
             navigation = it.getInt("navigation")
             currentDestination = navigation
             graph.setStartDestination(navigation)
-            when(navigation) {
+            binding.mainToolbar.root.visible()
+            when (navigation) {
                 R.id.nav_menu_item -> {
                     binding.mainToolbar.cart.visible()
                     bundle.putString("menu_category_id", it.getString("menu_category_id"))
                     bundle.putString("menu_item_id", it.getString("menu_item_id"))
                     bundle.putInt("cart_menu_item_position", it.getInt("cart_menu_item_position"))
                 }
+
                 R.id.nav_order_type -> {
+                    binding.mainToolbar.root.gone()
                     binding.mainToolbar.notif.gone()
                     binding.mainToolbar.cart.gone()
                     bundle.putInt("selectedOrderType", it.getInt("selectedOrderType"))
                     bundle.putBoolean("checkout", it.getBoolean("checkout"))
                     bundle.putString("storeId", it.getString("storeId"))
                 }
+
                 R.id.nav_curbside -> {
                     binding.mainToolbar.notif.gone()
                     binding.mainToolbar.cart.gone()
                     bundle.putBoolean("curbside", it.getBoolean("curbside"))
                     bundle.putInt("curbsideStorePosition", it.getInt("curbsideStorePosition"))
                 }
+
                 R.id.nav_cart -> {
                     binding.mainToolbar.notif.gone()
                     binding.mainToolbar.cart.gone()
@@ -89,7 +95,7 @@ class NavigationActivity : BaseActivity(), MainContract.View {
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             dismissDialogs()
             currentDestination = destination.id
-            if (destination.id == R.id.nav_auth || destination.id == R.id.nav_guest) {
+            if (destination.id == R.id.nav_auth || destination.id == R.id.nav_guest || destination.id == R.id.nav_order_type) {
                 binding.mainToolbar.root.gone()
             } else {
                 binding.mainToolbar.root.visible()
@@ -97,7 +103,8 @@ class NavigationActivity : BaseActivity(), MainContract.View {
             showToolbarActionButton(false)
             showToolbarWhatsappButton(false)
             showToolbarCustomActionButton(false)
-            binding.mainToolbar.title.text = CacheUtil.getInstance().getTranslations(destination.label.toString())
+            binding.mainToolbar.title.text =
+                CacheUtil.getInstance().getTranslations(destination.label.toString())
             binding.mainToolbar.title.isAllCaps = destination.id != R.id.nav_notifications
             binding.mainToolbar.menu.visibility = View.GONE
             if (destination.id != R.id.nav_dialog_order_type) {
@@ -107,7 +114,7 @@ class NavigationActivity : BaseActivity(), MainContract.View {
                     binding.mainToolbar.back.visible()
                 }
             }
-            if(destination.id == R.id.nav_menu) {
+            if (destination.id == R.id.nav_menu) {
                 showNotifIcon()
             } else {
                 binding.mainToolbar.notif.gone()
@@ -129,6 +136,7 @@ class NavigationActivity : BaseActivity(), MainContract.View {
                 R.id.nav_dialog_popup,
                 R.id.nav_dialog_order_type,
                 R.id.nav_fragment_countries -> binding.mainToolbar.cart.gone()
+
                 else -> {
                     binding.mainToolbar.cart.visible()
                     setCartQuantity(CacheUtil.getInstance().cartQuantity)
@@ -322,34 +330,40 @@ class NavigationActivity : BaseActivity(), MainContract.View {
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
+
             R.id.nav_home -> NavigationUtils.navigateSafe(
                 navController,
                 NewMenuHomePageFragmentDirections.actionHomeToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
+
             R.id.nav_menu_item -> NavigationUtils.navigateSafe(
                 navController,
                 MenuItemFragmentDirections.actionMenuItemToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
+
             R.id.nav_favorites -> NavigationUtils.navigateSafe(
                 navController,
                 FavoritesFragmentDirections.actionFavoritesToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
+
             R.id.nav_popular_now -> NavigationUtils.navigateSafe(
                 navController,
                 PopularNowFragmentDirections.actionPopularNowToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
+
             R.id.nav_digital_coupons -> NavigationUtils.navigateSafe(
                 navController,
                 DigitalCouponsFragmentDirections.actionDigitalCouponsToCart()
             )
+
             R.id.nav_digital_coupon -> NavigationUtils.navigateSafe(
                 navController,
                 DigitalCouponFragmentDirections.actionDigitalCouponToCart()
@@ -392,7 +406,7 @@ class NavigationActivity : BaseActivity(), MainContract.View {
         binding.mainToolbar.back.gone()
     }
 
-    fun isBackButtonVisible() : Boolean = binding.mainToolbar.back.isVisible
+    fun isBackButtonVisible(): Boolean = binding.mainToolbar.back.isVisible
 
     fun cartExpired() {
         val fragment =

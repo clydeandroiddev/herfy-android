@@ -23,11 +23,12 @@ import com.herfy.data.entities.MenuItemEntity;
 import com.herfy.data.entities.ModifierGroupDb;
 import com.herfy.data.entities.ModifierItemDb;
 import com.herfy.data.responses.MenuCategoryItemResponse;
+import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.IngredientViewHolder;
 import com.herfy.menu.viewholders.MenuCategoryViewHolder;
 import com.herfy.menu.viewholders.MenuItemViewHolder;
-import com.herfy.menu.viewholders.ModifierGroupViewHolder;
 import com.herfy.menu.viewholders.ModifierItemViewHolder;
+import com.herfy.menu.viewholders.ModifierNewGroupViewHolder;
 import com.herfy.menu.viewholders.ModifierItemViewHolderNew;
 import com.herfy.menu.viewholders.SizeViewHolder;
 import com.herfy.newmenu.viewholder.MenuCouponViewHolder;
@@ -36,6 +37,7 @@ import com.herfy.newmenu.viewholder.MenuPopularViewHolder;
 import com.herfy.newmenu.viewholder.MenuRecentViewHolder;
 import com.herfy.promotions.data.CampaignToAdd;
 import com.herfy.promotions.data.CouponToAdd;
+import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.ApiRequestWithHeadersListener;
 import com.skylinedynamics.solosdk.api.calls.ApplicationsApiCall;
@@ -83,7 +85,6 @@ import com.herfy.util.AuthUtil;
 import com.herfy.util.BuildUtil;
 import com.herfy.util.CacheUtil;
 import com.herfy.util.ErrorHandler;
-import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.MenuUtil;
 import com.herfy.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;
@@ -3573,7 +3574,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void onBindModifierGroupViewAtPosition(int position, ModifierGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice) {
+    public void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice) {
        /* ModifierGroup modifierGroup = menuItemModifierGroups.get(menuItem.getModifierGroups().get(position).getId());
         if(modifierGroup != null) {*/
         modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice);
@@ -3629,9 +3630,20 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, ModifierItemViewHolder modifierItemViewHolder) {
+    public void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, BaseModifierItemViewHolder modifierItemViewHolder) {
         modifierItemViewHolder.setModifierItem(modifierGroupPosition, modifierGroup, position, modifierGroup.getModifierItems().get(position), showModifierItemPrice);
     }
+
+    @Override
+    public void onBindModifierItemViewAtPositionOld(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, ModifierItemViewHolder modifierItemViewHolder) {
+        modifierItemViewHolder.setModifierItem(modifierGroupPosition, modifierGroup, position, modifierGroup.getModifierItems().get(position), showModifierItemPrice);
+    }
+
+    @Override
+    public ModifierGroupType getModifierGroupTypeByPosition(int position, ModifierGroup modifierGroup) {
+        return modifierGroup.getModifierItems().get(position).getModifierGroup().getType();
+    }
+
 
     @Override
     public int getModifierItemsCount(ModifierGroup modifierGroup) {

@@ -27,7 +27,7 @@
     <color name="separator">#f3f3f3</color>
     <color name="silver">#c4c4c4</color>
     <color name="silver_trans">#B3c4c4c4</color>
-    <color name="loyalty_green">#60BE75</color>
+    <color name="loyalty_green">#60BE75</color>placeholder_color
     <color name="loyalty_red">#BE6060</color>
     <color name="disabled">#bcbcbc</color>
     <!--    <color name="soldout">#F2bcbcbc</color>-->
@@ -44,6 +44,7 @@
     <color name="red">#FF0000</color>
     <color name="strikethrough">#9B9694</color>
     <color name="gray_light">#B9B9B9</color>
+    <color name="color_border">#D9D9D9</color>
     <color name="dodger_blue">#1A68FF</color>
 </resources>
 
