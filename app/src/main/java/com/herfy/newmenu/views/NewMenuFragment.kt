@@ -1417,7 +1417,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                             } else {
                                 binding.sliderViewPager.currentItem = pos
                             }
-                            sliderHandler!!.postDelayed(this, 3000)
+                            sliderHandler?.postDelayed(this, 3000)
                         }
                     }, 3000)
                 }
@@ -1425,52 +1425,14 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 //binding.emptySlider.visibility = View.VISIBLE
                 binding.sliderViewPager.visibility = View.VISIBLE
                 binding.dotsIndicator.visibility = View.GONE
-                properSliderHeights()
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    private fun properSliderHeights() {
-        /*try {
-            activity?.let {
-                sliderHeight = it.resources.getDimensionPixelSize(R.dimen.pixel_twenty_five)
-                if (!CacheUtil.getInstance().application.attributes.settings.categoryDisplay.equals(
-                        Values.IMAGE_TEXT,
-                        ignoreCase = true
-                    )
-                ) {
-                    binding.mainToolbar.layoutParams.height =
-                        sliderHeight + (it.resources.getDimensionPixelSize(R.dimen.menu_appbar_height_no_slider) - it.resources.getDimensionPixelSize(
-                            R.dimen.seventy_dp
-                        ))
-                } else {
-                    binding.mainToolbar.layoutParams.height =
-                        sliderHeight + it.resources.getDimensionPixelSize(R.dimen.menu_appbar_height_no_slider)
-                }
-                binding.sliderViewPager.layoutParams.height = sliderHeight
-                binding.emptySlider.layoutParams.height = sliderHeight
-                binding.newMenuBannerShimmer.layoutParams.height = sliderHeight
-                binding.mainToolbar.invalidate()
-                binding.sliderViewPager.invalidate()
-                binding.emptySlider.invalidate()
-                binding.newMenuBannerShimmer.invalidate()
-                binding.mainToolbar.visibility = View.GONE
-                binding.mainToolbar.visibility = View.VISIBLE
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }*/
-
-
     }
 
     override fun showSlidesError() {
         //binding.emptySlider.setBackgroundResource(R.color.page_background_white)
-        if (sliderPresenter.sliders.size <= 0) {
-            properSliderHeights()
-        }
     }
 
     override fun showMidBanner(banners: ArrayList<Slide>) {}
