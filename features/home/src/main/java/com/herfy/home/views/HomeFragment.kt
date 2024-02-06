@@ -258,8 +258,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 layoutLoyalty.apply {
                     tvPoints.text = viewModel.loyalty.value?.attributes?.pointsAccumulated.toString()
                     tierName.text = viewModel.loyalty.value?.attributes?.loyaltyTier.toString()
-                    progress.setMax(100)
-                    progress.setProgress(viewModel.loyalty.value?.attributes?.currentBalance)
+                    progress.max = 100
+                    progress.progress = viewModel.loyalty.value?.attributes?.currentBalance ?: 0
                 }
             }
         }

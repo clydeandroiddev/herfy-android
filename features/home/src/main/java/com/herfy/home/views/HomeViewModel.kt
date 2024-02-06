@@ -15,7 +15,6 @@ import com.herfy.utils.helper.Event
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
-import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -179,6 +178,22 @@ class HomeViewModel @Inject constructor(
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    fun getCustomerLoyalty(id: String){
+        invoke {
+            homeRepository.getCustomerLoyalty(id){homeResponse ->
+                if(homeResponse.success){
+                    homeResponse.data?.let { it ->
+                        it.cast<Loyalty> {
+                            _loyalty.value = it
+                        }
+                    }
+                }else {
+                    _showError.value = ErrorMsgItem(true, homeResponse.message)
                 }
             }
         }
