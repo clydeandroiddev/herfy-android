@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     android:id="@+id/clickable_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -9,38 +8,37 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:layout_marginTop="@dimen/margin_large"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
-    <!-- Todo uncomment this for now might needed when designer added check box -->
-<!--    <FrameLayout-->
-<!--        android:id="@+id/check_layout"-->
-<!--        android:layout_width="46dp"-->
-<!--        android:layout_height="46dp"-->
-<!--        android:background="?attr/selectableItemBackgroundBorderless">-->
 
-<!--        <ImageView-->
-<!--            android:id="@+id/checkBox"-->
-<!--            android:layout_width="20dp"-->
-<!--            android:layout_height="20dp"-->
-<!--            android:visibility="gone"-->
-<!--            tools:visibility="visible"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:src="@drawable/item_drawable_checked_state" />-->
-<!--        <ImageView-->
-<!--            android:id="@+id/radioButton"-->
-<!--            android:layout_width="20dp"-->
-<!--            android:layout_height="20dp"-->
-<!--            android:visibility="gone"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:button="@drawable/item_drawable_radio_state"/>-->
-<!--    </FrameLayout>-->
+    <!--    <FrameLayout-->
+    <!--        android:id="@+id/check_layout"-->
+    <!--        android:layout_width="46dp"-->
+    <!--        android:layout_height="46dp"-->
+    <!--        android:background="?attr/selectableItemBackgroundBorderless">-->
+
+    <!--        <ImageView-->
+    <!--            android:id="@+id/checkBox"-->
+    <!--            android:layout_width="20dp"-->
+    <!--            android:layout_height="20dp"-->
+    <!--            android:visibility="gone"-->
+    <!--            tools:visibility="visible"-->
+    <!--            android:layout_gravity="center"-->
+    <!--            android:src="@drawable/item_drawable_checked_state" />-->
+    <!--        <ImageView-->
+    <!--            android:id="@+id/radioButton"-->
+    <!--            android:layout_width="20dp"-->
+    <!--            android:layout_height="20dp"-->
+    <!--            android:visibility="gone"-->
+    <!--            android:layout_gravity="center"-->
+    <!--            android:button="@drawable/item_drawable_radio_state"/>-->
+    <!--    </FrameLayout>-->
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/modifierImage"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_gravity="center"
         android:scaleType="fitXY"
         android:src="@drawable/product_page_details_border"
@@ -52,46 +50,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
         <TextView
             android:id="@+id/txtModifierItemName"
             style="@style/Styles.Text.Footnote.Medium"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/margin_small"
-            android:fontFamily="@font/cairo_bold"
             android:gravity="start|center_vertical"
             android:paddingEnd="4dp"
             android:textAlignment="viewStart"
             android:textColor="#1e1e1e"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/quantity_container"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Coke Large" />
-
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtmodifierPrice"
             style="@style/Styles.Text.Footnote"
-            android:fontFamily="@font/cairo_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
             app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
             tools:text="+Sar 2" />
-        <!--        <ImageButton-->
-        <!--            android:id="@+id/quantityUp"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginEnd="@dimen/margin_large"-->
-        <!--            android:layout_marginStart="4dp"-->
-        <!--            android:background="?attr/selectableItemBackgroundBorderless"-->
-        <!--            android:src="@drawable/ic_add"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintTop_toTopOf="parent"-->
-        <!--            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />-->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/quantity_container"
             android:layout_width="wrap_content"
@@ -130,7 +114,6 @@
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:fontFamily="@font/cairo_regular"
                 android:gravity="center"
                 android:text="0"
                 android:textColor="@color/black"
@@ -142,6 +125,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </LinearLayout>

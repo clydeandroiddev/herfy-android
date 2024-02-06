@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import com.herfy.BuildConfig;
 import com.herfy.base.BaseView;
 import com.herfy.database.AppDatabase;
+import com.herfy.menu.viewholders.FrequentBoughtViewHolder;
 import com.herfy.model.CampaignToAdd;
 import com.herfy.model.CouponToAdd;
 import com.herfy.model.SupportedCountry;
@@ -66,6 +67,7 @@ import com.skylinedynamics.solosdk.api.models.objects.IngredientCdn;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategoryItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemCombo;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
@@ -132,6 +134,7 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     private MenuCategory menuCategory = new MenuCategory();
     private MenuItem menuItem = new MenuItem();
+
     private MenuItem itemById = new MenuItem();
     private ImageView currentImageViewToAnimate = null;
     private ArrayList<MenuItem> bestSellers = new ArrayList<>();
@@ -141,6 +144,8 @@ public class MenuPresenter implements MenuContract.Presenter {
     private ArrayList<Favorite> excludedFavItem = new ArrayList<>();
     private ArrayList<MenuItem> excludedPopularItem = new ArrayList<>();
     private ArrayList<MenuItem> excludedRecentOrder = new ArrayList<>();
+
+    private ArrayList<MenuItem> frequentBoughtMenuItems = new ArrayList<>();
     private ArrayList<Favorite> fave = new ArrayList<>();
     private String orderStoreId = null;
     private String itemNote = "";
@@ -805,6 +810,11 @@ public class MenuPresenter implements MenuContract.Presenter {
     @Override
     public void onBindDigitalCouponsViewAtPosition(int position, MenuCouponViewHolder couponViewHolder) {
         couponViewHolder.setCoupon(digitalCoupons.get(position));
+    }
+
+    @Override
+    public void onBindFrequentBoughtItemPosition(int position, FrequentBoughtViewHolder viewHolder) {
+        viewHolder.setFrequentBoughtMenuItem(frequentBoughtMenuItems.get(position));
     }
 
     @Override
@@ -2871,6 +2881,11 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
+    public int getFrequentBoughtItemCount() {
+        return frequentBoughtMenuItems.size();
+    }
+
+    @Override
     public void selectMenuItem(MenuCategory menuCategory, MenuItem menuItem) {
         if (menuCategory == null) {
             for (MenuCategory category : excludedMenuCategories(menuCategories)) {
@@ -4407,6 +4422,24 @@ public class MenuPresenter implements MenuContract.Presenter {
             }
         });
 
+    }
+
+    @Override
+    public void getFrequentBoughtItems() {
+         MenuItem mockMenuItem = new MenuItem();
+         mockMenuItem.setId("1201192");
+         mockMenuItem.setType("item");
+        // todo remove this mock data once api is already deployed
+        frequentBoughtMenuItems.clear();
+        MenuItemAttributes mockMenuItemAttributes = new MenuItemAttributes();
+        mockMenuItemAttributes.setName("Single Sandwich");
+        mockMenuItemAttributes.setDescription("The radian is the SI unit for measuring angles, and is the standard unit of angular measure used in many areas of mathematics. The length of an arc of a unit circle is numerically equal to the measurement in radians of the angle that it subtends; one radian is just under 57.3 degrees.");
+        mockMenuItemAttributes.setImage("https://console-uploads-sandbox.s3.eu-west-1.amazonaws.com/cszalrtpn.png");
+        mockMenuItemAttributes.setPrice(10);
+        mockMenuItemAttributes.setListPrice(0);
+        mockMenuItem.setAttributes(mockMenuItemAttributes);
+        frequentBoughtMenuItems.add(mockMenuItem);
+        menuView.setMenuItemDetails(mockMenuItem);
     }
 
     @Override
