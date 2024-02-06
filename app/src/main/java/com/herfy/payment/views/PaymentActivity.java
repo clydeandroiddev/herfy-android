@@ -1832,6 +1832,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                 });
 
             }, 2300);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

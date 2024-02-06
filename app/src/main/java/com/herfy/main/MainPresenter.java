@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.ably.AblyUtil;
+import com.herfy.analytics.kochava.KochavaTrackerUtil;
 import com.herfy.database.AppDatabase;
 import com.herfy.utils.constants.Text;
 import com.herfy.database.entities.AllergenDb;
@@ -21,6 +22,7 @@ import com.herfy.database.entities.ModifierItemDb;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.kochava.tracker.events.EventType;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.ApiRequestWithHeadersListener;
 import com.skylinedynamics.solosdk.api.calls.ApplicationsApiCall;
@@ -259,6 +261,7 @@ public class MainPresenter implements MainContract.Presenter {
         OrdersApiCall.getInstance().sendOrderFeedback(order.getId(), orderFeedbackBody, null, new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
+                KochavaTrackerUtil.trackEvent(EventType.RATING);
                 mainView.showMessage(CacheUtil.getInstance().getTranslations(Text.ORDER_RATING_SENT));
             }
 

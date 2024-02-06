@@ -23,7 +23,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -42,8 +41,6 @@ import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.ext.cast
 import com.herfy.ext.gone
 import com.herfy.ext.invisible
@@ -61,19 +58,20 @@ import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet.Companion.NAV
 import com.herfy.nutritiondetails.NutritionInfoParams
 import com.herfy.productpagedetails.databinding.FragmentMenuItemDetailsBinding
 import com.herfy.util.*
-import com.skylinedynamics.solosdk.api.models.objects.*
-import com.skylinedynamics.solosdk.util.GsonHelper
-import com.herfy.util.*
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.ninjaTap
-import com.herfy.utils.extensions.safeNavigate
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
+import com.kochava.tracker.events.EventType
+import com.skylinedynamics.solosdk.api.models.objects.*
+import com.skylinedynamics.solosdk.util.GsonHelper
 import io.shipbook.shipbooksdk.Log
 import java.util.*
-import kotlin.math.roundToInt
 
 class MenuItemFragment : BaseFragment(), MenuContract.View {
 
@@ -725,6 +723,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         Integer.parseInt(binding.quantity.text.toString())
                     );
                     FacebookAppEventUtil.addToCartEvent(baseActivity, menuItem, _totalPrice)
+                    com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent(EventType.ADD_TO_CART)
                 })
                 baseActivity.dismissDialogs()
                 menuItemSelected = menuItem

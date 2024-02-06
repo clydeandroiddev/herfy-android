@@ -37,14 +37,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.CartContract
 import com.herfy.cart.CartPresenter
 import com.herfy.cart.adapters.CartMenuItemsRecyclerViewAdapter
-import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.databinding.FragmentCartBinding
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.MySelectorDecorator
@@ -62,12 +59,17 @@ import com.herfy.payment.dialog.PaymentOrderTimeDialog
 import com.herfy.payment.views.OrderDialogFragment
 import com.herfy.payment.views.PaymentActivity
 import com.herfy.util.*
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
 import com.herfy.views.DynamicTheme
+import com.kochava.tracker.events.EventType
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
@@ -1368,6 +1370,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun showPayment() {
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_PLACE_ORDER)
+        trackEvent(EventType.CHECKOUT_START)
         activity?.runOnUiThread {
             continueCheckout = false
             activity?.cast<BaseActivity> {

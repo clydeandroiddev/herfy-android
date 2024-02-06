@@ -12,6 +12,7 @@ import com.facebook.FacebookSdk.sdkInitialize
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.FirebaseApp
 import com.herfy.BuildConfig
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.database.AppDatabase
 import com.herfy.font.FontHandler
 import com.herfy.util.glide.UnsafeOkHttpClient
@@ -34,12 +35,6 @@ class BaseApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
 
-      /*  startKoin {
-            androidContext(this@BaseApplication)
-            modules(listOf(appModule, viewModelModule))
-        }*/
-
-
 
         FirebaseApp.initializeApp(this)
         sdkInitialize(this)
@@ -49,6 +44,7 @@ class BaseApplication : Application(), ImageLoaderFactory {
         CacheUtil.init(this)
         LocaleUtil.init(this)
         FontHandler.init(this)
+        KochavaTrackerUtil.init(applicationContext, reveal(Keychain.HERFY_GUID))
 
         //FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG);
         SoloApi.init(this, EnvUtil.getEnvironmentUrl(), BuildUtil.soloAppKey())

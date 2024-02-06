@@ -236,6 +236,7 @@ dependencies {
     implementation project(path: ':features:nutritiondetails')
     implementation project(path: ':features:productpagedetails')
     implementation project(path: ':data:model')
+    implementation project(path: ':analytics:kochava')
 
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
     implementation 'com.google.android.play:review-ktx:2.0.1'
@@ -395,6 +396,8 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
+    def kochava_tracker_version = "5.2.0"
+    implementation("com.kochava.tracker:events:$kochava_tracker_version")
 }
 
 

@@ -10,10 +10,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.herfy.analytics.kochava.KochavaTrackerUtil;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.kochava.tracker.events.EventType;
 import com.moneyhash.sdk.android.MoneyHash;
 import com.moneyhash.sdk.android.ResultType;
 import com.herfy.BuildConfig;
@@ -1331,6 +1333,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                             finalObject.get("type").getAsString(),
                             paymentType.getValue()
                         );
+                        KochavaTrackerUtil.trackEvent(EventType.PURCHASE);
                         ApiLogUtil.sendOrderLog(ApiLogLevel.INFO, orderId, paymentType.getValue(), "Order Successful");
 
                         if (paymentType != PaymentType.CARD || validatedTotal <= 0) {
