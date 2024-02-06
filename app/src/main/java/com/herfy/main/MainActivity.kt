@@ -23,11 +23,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
@@ -196,8 +194,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         isDefaultHomeScreenDesign = false
 
         quickOrderSelected()
-        graph.setStartDestination(R.id.nav_menu)
-        currentDestination = R.id.nav_menu
+        graph.setStartDestination(R.id.nav_herfy_home)
+        currentDestination = R.id.nav_herfy_home
 
         navController.setGraph(graph, intent.extras)
 

@@ -10,7 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.DialogOrderTypeSelectionBinding
-import com.herfy.util.CacheUtil
+import com.herfy.utils.helper.*
 
 class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
 

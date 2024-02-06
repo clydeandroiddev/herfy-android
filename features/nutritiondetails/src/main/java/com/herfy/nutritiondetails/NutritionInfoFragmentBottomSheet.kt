@@ -1,17 +1,16 @@
 package com.herfy.nutritiondetails
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import com.herfy.common.base.BaseBottomSheetDialog
-import com.herfy.data.constants.Text
 import com.herfy.nutritiondetails.databinding.DialogNutritionInfoBottomSheetBinding
+import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.getParcelableValue
 import com.herfy.utils.extensions.loadImageWithUri
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.viewLifecycleScope
+
 class NutritionInfoFragmentBottomSheet: BaseBottomSheetDialog<DialogNutritionInfoBottomSheetBinding>() {
 
 

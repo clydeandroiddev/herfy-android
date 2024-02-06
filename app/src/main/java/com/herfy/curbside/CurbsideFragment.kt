@@ -36,9 +36,7 @@ import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.order.views.ordertype.OrderTypeNewFragment
-import com.herfy.util.AuthUtil
-import com.herfy.util.BuildUtil
-import com.herfy.util.CacheUtil
+import com.herfy.utils.helper.*
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker

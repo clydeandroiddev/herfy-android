@@ -59,7 +59,6 @@ import com.skylinedynamics.solosdk.api.SoloAuth
 import org.json.JSONException
 import java.util.Locale
 import java.util.regex.Pattern
-import com.herfy.R
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
