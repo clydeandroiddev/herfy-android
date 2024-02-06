@@ -41,20 +41,20 @@ import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.animation.ActivitySwitcher;
 import com.herfy.base.BaseActivity;
-import com.herfy.data.constants.Text;
-import com.herfy.data.constants.Values;
+import com.herfy.utils.constants.Text;
 import com.herfy.country.CountriesActivity;
 import com.herfy.language.LanguageActivity;
 import com.herfy.main.MainActivity;
 import com.herfy.onboarding.views.OnboardingActivity;
 import com.herfy.selection.SelectionActivity;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.BuildUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.SoloApi;
 import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
-import com.herfy.util.AuthUtil;
-import com.herfy.util.BuildUtil;
 import com.herfy.util.CacheHelper;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.DeepLinkUtil;
 import com.herfy.util.JsonUtil;
 import com.herfy.utils.helper.LocaleUtil;
@@ -179,6 +179,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

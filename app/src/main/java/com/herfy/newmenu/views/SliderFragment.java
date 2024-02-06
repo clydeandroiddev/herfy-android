@@ -22,8 +22,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.herfy.R;
 import com.herfy.base.BaseFragment;
-import com.herfy.data.constants.Values;
 import com.herfy.newmenu.SliderContract;
+import com.herfy.utils.constants.Values;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.herfy.util.StringUtil;
 

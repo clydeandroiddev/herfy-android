@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.herfy.databinding.ItemMenuItemNewBinding;
 import com.herfy.menu.MenuContract;
 import com.herfy.newmenu.viewholder.NewMenuViewHolder;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
-import com.herfy.util.CacheUtil;
 
 import java.util.ArrayList;
 import java.util.List;

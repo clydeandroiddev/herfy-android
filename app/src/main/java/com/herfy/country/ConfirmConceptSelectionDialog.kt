@@ -6,14 +6,18 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.widget.TextView
 import com.google.android.material.button.MaterialButton
 import com.herfy.R
 import com.herfy.base.BaseDialogFragment
-import com.herfy.data.constants.Text
 import com.herfy.databinding.DialogConfirmConceptSelectionBinding
-import com.herfy.util.CacheUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.CacheUtil
 
 class ConfirmConceptSelectionDialog : BaseDialogFragment() {
 

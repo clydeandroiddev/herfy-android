@@ -8,12 +8,12 @@ import android.widget.TextView;
 
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.main.MainActivity;
 import com.herfy.menu.views.MenuItemActivity;
 import com.herfy.order.views.OrderTypeActivity;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.herfy.verification.VerificationContract;
 import com.herfy.verification.VerificationPresenter;
 
@@ -83,16 +83,18 @@ public class VerifiedActivity extends BaseActivity implements VerificationContra
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         Intent intent = new Intent(this, MainActivity.class);
-        if(!orderType) {
+        if (!orderType) {
             intent.putExtra("cart", cart);
             /*if(orderHistory) {
                 intent = new Intent(this, OrdersActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            } else*/ if(favoriteHome) {
+            } else*/
+            if (favoriteHome) {
                 intent = new Intent(this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            } else if(favoriteMenuItem) {
+            } else if (favoriteMenuItem) {
                 intent = new Intent(this, MenuItemActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             } else {

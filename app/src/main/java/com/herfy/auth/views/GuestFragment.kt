@@ -37,13 +37,15 @@ import com.herfy.auth.AuthPresenter
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartFragment
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentGuestBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries
 import com.herfy.util.*
+import com.herfy.utils.helper.BuildUtil
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.verification.CodeBroadcastReceiver
 import com.herfy.verification.CodeBroadcastReceiver.CodeBroadcastReceiverListener
 import com.herfy.verification.views.CodeDialogFragment

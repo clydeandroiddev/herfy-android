@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Generic Mobile App</string>
+    <string name="deeplink_page" translatable="false">3tcl7ybwcop9wkji.page.link</string>
+    <string name="google_sign_in_client_id" translatable="false">@string/default_web_client_id</string>
+    <string name="facebook_app_id" translatable="false">527249325249681</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb527249325249681</string>
+    <string name="facebook_client_token" translatable="false">23e38f2054fe2a73fad78e295e230afa</string>
+    <string name="twitter_api_key" translatable="false">AZDmMqEM8WmT0nIQxDucG6IEm</string>
+    <string name="twitter_secret_key" translatable="false">thImDsCuAQVF7nLdBKkw8VsckQiR7DjGCTBjD0Y6tBJTwosetL</string>
+    <string name="google_maps_api_key" translatable="false">AIzaSyC9ydsI5xQh2vKLiWmJ9r3K4-XGGN1Lxrc</string>
+    <string name="google_maps_api_key_encoded" translatable="false">QUl6YVN5Qzl5ZHNJNXhRaDJ2S0xpV21KOXIzSzQtWEdHTjFMeHJj</string>
+    <string name="please_pick_a_language_title_en" translatable="false">Please pick a language</string>
+    <string name="please_pick_a_language_message_en" translatable="false">You can change this later in the sidebar</string>
+    <string name="proceed_en" translatable="false">PROCEED</string>
+
+    <string name="please_pick_a_language_title_ar" translatable="false">الرجاء اختيار اللغة</string>
+    <string name="please_pick_a_language_message_ar" translatable="false">يمكنك تغيير هذا لاحقًا في الإعدادات</string>
+    <string name="proceed_ar" translatable="false">المتابعة</string>
+
+    <string name="please_pick_a_language_title_fr" translatable="false">Veuillez choisir une langue</string>
+    <string name="please_pick_a_language_message_fr" translatable="false">Vous pouvez changer cela plus tard dans la barre latérale</string>
+    <string name="proceed_fr" translatable="false">CONTINUER</string>
+
+    <string name="arabic" translatable="false">عربي</string>
+    <string name="eng" translatable="false">ENG</string>
+    <string name="fr" translatable="false">FR</string>
+
+    <string-array name="custom_weekdays_common">
+        <item>M</item>
+        <item>T</item>
+        <item>W</item>
+        <item>T</item>
+        <item>F</item>
+        <item>S</item>
+        <item>S</item>
+    </string-array>
+    <string name="checkout_ui_callback_scheme" translatable="false">checkoutui</string>
+    <string name="contact_support_developed_by" translatable="false"></string>
+    <string name="contact_support_email" translatable="false"></string>
+    <string name="contact_support_email_subject"></string>
+    <string name="https">https://</string>
+    <string-array name="contact_support_phone"></string-array>
+    <string name="modifier_name_with_quantity_text">%1$s (%2$s)</string>
+    <string name="add_on">Add-ons</string>
+</resources>

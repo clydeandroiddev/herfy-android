@@ -1,22 +1,32 @@
 package com.herfy.home.views
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
 import com.herfy.home.R
 import com.herfy.home.adapter.PromotionsAdapter
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.home.databinding.FragmentHomeBinding
+import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.base.mvvm.BaseFragment
+import com.herfy.utils.constants.Navigation
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.observeNonNull
+import com.herfy.utils.helper.AnimUtil
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.ViewUtil
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
@@ -26,6 +36,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private lateinit var sliderImageAdapter: SliderImageAdapter
     private lateinit var promotionsAdapter: PromotionsAdapter
     private var sliderHandler : Handler? = null
+    private var promotionDetailBottomSheet : PromotionDetailBottomSheet? = null
     private val cacheUtilHelper by lazy {
         context?.let {
             CacheUtilHelper(it)
@@ -33,6 +44,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     }
     override fun initViews() {
         super.initViews()
+        viewModel.getMenuCategory()
         binding.apply {
             setupSlider()
             setupPromotions()
@@ -59,11 +71,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         activity?.let {
             viewModel.getSliders()
             binding.apply {
-                sliderImageAdapter = SliderImageAdapter()
+                sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
                 val displayMetrics = DisplayMetrics()
                 it.windowManager.defaultDisplay.getMetrics(displayMetrics)
-                val sliderHeight = displayMetrics.widthPixels / 2
+                val sliderHeight = (displayMetrics.widthPixels / 1.5).toInt()
                 layoutBanner.clSliderContainer.layoutParams.height = sliderHeight
+                layoutBanner.sliderViewPager.layoutParams.height = sliderHeight
+                layoutBanner.newMenuBannerShimmer.layoutParams.height = sliderHeight
                 layoutBanner.sliderViewPager.adapter = sliderImageAdapter
             }
         }
@@ -114,7 +128,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-
         viewModel.promotionsList.observeNonNull(this){promos ->
             binding.apply {
                 layoutPromotions.apply {
@@ -131,7 +144,57 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.showError.observeNonNull(this){
+            showAlertDialog(title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"), message = it.message)
+        }
 
+        viewModel.showLink.observeNonNull(this){
+            it.getContentIfNotHandled()?.let {
+                try {
+                    val activity = activity
+                    if (activity != null) {
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = it
+                        activity.startActivity(intent)
+                        activity.overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+        }
+        viewModel.showMenuItem.observeNonNull(this){
+            it.getContentIfNotHandled()?.let { pair->
+                activity?.let {
+                    it.runOnUiThread {
+                        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
+                        //fromMenuItem = true
+                        val intent = Intent()
+                        intent.setClassName(it, Navigation.NAVIGATION_ACTIVITY)
+                        intent.putExtra("navigation", "nav_menu_item")
+                        intent.putExtra("menu_category_id", pair.first)
+                        intent.putExtra("menu_item_id", pair.second)
+                        intent.putExtra("cart_menu_item_position", -1)
+                        it.startActivity(intent)
+                    }
+                }
+            }
+        }
+        viewModel.showMenuCategory.observeNonNull(this){
+            it.getContentIfNotHandled()?.let {
+                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
+                val request = NavDeepLinkRequest.Builder
+                    .fromUri(Uri.parse("android-app://com.herfy/nav_menu/${it.second.id}"))
+                    .build()
+                NavigationUtils.navigateSafe(findNavController(),request)
+            }
+        }
+
+        viewModel.showPromo.observeNonNull(this){
+            it.getContentIfNotHandled()?.let {
+                promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(it)
+                promotionDetailBottomSheet?.show(childFragmentManager, PromotionDetailBottomSheet::class.java.simpleName)
+            }
         }
     }
 
@@ -173,7 +236,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             viewModel.getPromotions()
             activity?.let{
                 val itemHeight = (ViewUtil.getScreenWidth(it) / 1.5).toInt()
-                promotionsAdapter = PromotionsAdapter(itemWidth = 0, itemHeight =  itemHeight)
+                promotionsAdapter = PromotionsAdapter(promoListener = viewModel,itemWidth = 0, itemHeight =  itemHeight)
                 binding.apply {
                     layoutPromotions.rvPromotions.apply {
                         adapter = promotionsAdapter

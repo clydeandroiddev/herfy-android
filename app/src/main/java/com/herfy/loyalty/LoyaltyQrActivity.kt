@@ -11,13 +11,14 @@ import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.Text
 import com.herfy.databinding.ActivityLoyaltyQrBinding
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
 import com.skylinedynamics.solosdk.api.models.objects.Tier
 import com.herfy.util.*
+import com.herfy.utils.helper.CacheUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit

@@ -1,6 +1,6 @@
 package com.herfy.loyalty;
 
-import static com.herfy.data.constants.Text.TOTAL_POINTS_MAX_OUT;
+import static com.herfy.utils.constants.Text.TOTAL_POINTS_MAX_OUT;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,16 +33,16 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Customer;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction;
 import com.skylinedynamics.solosdk.api.models.objects.Tier;
-import com.herfy.util.AnimUtil;
-import com.herfy.util.AuthUtil;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.helper.AnimUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.util.TimeUtil;
 

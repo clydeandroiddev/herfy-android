@@ -12,12 +12,12 @@ import android.util.TypedValue
 import android.view.*
 import androidx.fragment.app.FragmentManager
 import com.herfy.base.BaseDialogFragment
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.Text
 import com.herfy.databinding.DialogLoyaltyQrCodeBinding
-import com.herfy.util.CacheUtil
 import com.herfy.util.QRHelper
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import com.herfy.utils.helper.*
 
 class CustomerLoyaltyDialog(var qrData: String) : BaseDialogFragment() {
 

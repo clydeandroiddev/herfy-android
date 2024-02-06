@@ -9,14 +9,14 @@
             type="com.skylinedynamics.solosdk.api.models.objects.Campaign" />
 
         <variable
-            name="viewModel"
-            type="com.herfy.home.views.HomeViewModel" />
+            name="listener"
+            type="com.herfy.home.adapter.PromotionsAdapter.PromotionListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:onClick="@{() -> viewModel.selectPromotions(promo)}">
+        android:onClick="@{() -> listener.onSelectedPromo(promo)}">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_container"

@@ -36,13 +36,10 @@ android {
     }
     buildFeatures {
         viewBinding true
+        dataBinding true
     }
     dexOptions {
         javaMaxHeapSize "8g"
-    }
-
-    dataBinding { //Moneyhash requirements
-        enabled = true
     }
 
     signingConfigs project.signingConfigs
@@ -238,6 +235,7 @@ dependencies {
     implementation project(path: ':data:database')
     implementation project(path: ':features:nutritiondetails')
     implementation project(path: ':features:productpagedetails')
+    implementation project(path: ':data:model')
 
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
     implementation 'com.google.android.play:review-ktx:2.0.1'

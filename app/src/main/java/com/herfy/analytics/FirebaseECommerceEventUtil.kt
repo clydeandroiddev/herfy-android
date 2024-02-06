@@ -5,11 +5,11 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
-import com.herfy.util.AuthUtil
-import com.herfy.util.CacheUtil
-import com.herfy.utils.helper.LocaleUtil
 
 class FirebaseECommerceEventUtil {
 

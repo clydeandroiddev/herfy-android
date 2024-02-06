@@ -57,8 +57,6 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartDialogFragment
 import com.herfy.cart.views.CartFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
 import com.herfy.ext.cast
 import com.herfy.ext.gone
 import com.herfy.ext.isVisible
@@ -76,7 +74,10 @@ import com.herfy.order.views.DineInTableNumberDialogFragment
 import com.herfy.order.views.OrderTypeDialogFragment
 import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
 import com.herfy.util.*
-import com.herfy.utils.helper.LocaleUtil
+import com.herfy.util.StringUtil
+import com.herfy.utils.constants.*
+import com.herfy.utils.helper.*
+import com.herfy.utils.helper.ViewUtil
 import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout

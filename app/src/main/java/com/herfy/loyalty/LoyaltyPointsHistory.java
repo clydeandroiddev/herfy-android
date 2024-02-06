@@ -14,13 +14,13 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction;
 import com.skylinedynamics.solosdk.api.models.objects.Tier;
-import com.herfy.util.AnimUtil;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.helper.AnimUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

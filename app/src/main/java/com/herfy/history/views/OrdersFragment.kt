@@ -15,8 +15,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.databinding.FragmentOrdersBinding
 import com.herfy.ext.cast
 import com.herfy.history.OrdersContract
@@ -26,9 +26,8 @@ import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.CacheHelper
-import com.herfy.util.CacheUtil
-import com.herfy.analytics.MixpanelUtil
-import com.herfy.util.NavigationUtils
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.helper.*
 
 class OrdersFragment : BaseFragment(), OrdersContract.View {
 

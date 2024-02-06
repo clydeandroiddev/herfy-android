@@ -45,7 +45,7 @@ import com.herfy.auth.AuthPresenter
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartFragment
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentAuthBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
@@ -53,17 +53,17 @@ import com.herfy.main.NavigationActivity
 import com.herfy.newmenu.views.NewMenuHomePageFragment
 import com.herfy.order.views.ordertype.OrderTypeNewFragment
 import com.herfy.util.AppLogger
-import com.herfy.util.AuthUtil
-import com.herfy.util.BuildUtil
-import com.herfy.util.CacheUtil
-import com.herfy.util.NavigationUtils
-import com.herfy.utils.helper.LocaleUtil
 import com.herfy.verification.CodeBroadcastReceiver
 import com.herfy.verification.views.VerifyCodeDialogFragment
 import com.skylinedynamics.solosdk.api.SoloAuth
 import org.json.JSONException
 import java.util.Locale
 import java.util.regex.Pattern
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.BuildUtil
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.NavigationUtils
 
 class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginResult>,
     SignInFragment.Listener {

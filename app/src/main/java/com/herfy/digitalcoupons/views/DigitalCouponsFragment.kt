@@ -12,17 +12,16 @@ import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentDigitalCouponsBinding
 import com.herfy.digitalcoupons.DigitalCouponsContract
 import com.herfy.digitalcoupons.DigitalCouponsPresenter
 import com.herfy.digitalcoupons.DigitalCouponsRecyclerViewAdapter
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
-import com.herfy.util.CacheUtil
-import com.herfy.analytics.MixpanelUtil
-import com.herfy.util.NavigationUtils
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.helper.NavigationUtils
 import java.util.HashMap
-
+import com.herfy.utils.helper.*
 class DigitalCouponsFragment : BaseFragment(), DigitalCouponsContract.View {
 
     private lateinit var binding: FragmentDigitalCouponsBinding

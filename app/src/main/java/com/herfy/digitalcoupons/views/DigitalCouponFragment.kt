@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.herfy.digitalcoupons.DigitalCouponsContract
 import com.herfy.digitalcoupons.DigitalCouponsPresenter
-import com.herfy.util.CacheUtil
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
@@ -21,13 +20,14 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentDigitalCouponBinding
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
-import com.herfy.analytics.MixpanelUtil
-import com.herfy.util.NavigationUtils
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.helper.NavigationUtils
 import java.lang.Exception
 import java.util.*
+import com.herfy.utils.helper.*
 
 class DigitalCouponFragment : BaseFragment(), DigitalCouponsContract.View {
 

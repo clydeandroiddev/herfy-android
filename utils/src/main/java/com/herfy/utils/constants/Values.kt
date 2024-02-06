@@ -16,7 +16,9 @@ object Values {
     const val MENU_IMAGE_SIZE = 450
     const val SLIDER_IMAGE_WIDTH = 1000
     const val SLIDER_IMAGE_HEIGHT = 500
+    @JvmField
     var fromAddAddressBool = false
+    @JvmField
     var fromUpsell = false
     const val DIRECTIONS_URL = "https://maps.googleapis.com/maps/api/directions/"
     const val PROD_ABLY_API_KEY = "c8GwjQ.bc7afQ:8y41_MzTKIM5CpDa"
@@ -63,9 +65,13 @@ object Values {
     const val VALIDATE_QUANTITY = false
     const val DEFAULT_LATITUDE = 24.7193534
     const val DEFAULT_LONGITUDE = 46.4861749
+    @JvmField
     var sDeepLink = ""
+    @JvmField
     var sDeepLinkId = ""
+    @JvmField
     var sDeepLinkUtm: Bundle? = null
+    @JvmField
     var IMAGE_TEXT = "image_text"
     const val AL_TASAJ_CONCEPT_KEY = "8vhbIIrPWF3"
     const val AL_TASAJ_FEEDBACK_PAGE = "https://www.taza.com.sa/en/pages/you-are-heard"

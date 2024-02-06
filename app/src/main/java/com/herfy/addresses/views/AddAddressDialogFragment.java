@@ -33,12 +33,12 @@ import com.herfy.addresses.AddressesContract;
 import com.herfy.addresses.AddressesPresenter;
 import com.herfy.base.BaseActivity;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
-import com.herfy.util.AuthUtil;
-import com.herfy.util.BuildUtil;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.StringUtil;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.BuildUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.herfy.views.CustomTypefaceSpan;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 

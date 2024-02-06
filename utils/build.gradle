@@ -15,47 +15,122 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        buildConfigField "String", "SOLO_CONCEPT", "\"\""
+        buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
+        buildConfigField "String", "SPLASH_COLOR", "\"#FAFBFC\""
+        buildConfigField "boolean", "SPLASH_LOGO", "true"
+        buildConfigField "boolean", "SPLASH_BACKGROUND", "false"
+        buildConfigField "boolean", "SPLASH_VIDEO", "false"
+        buildConfigField "boolean", "ONBOARDING_ENABLED", "true"
+        buildConfigField "String", "SOLO_APP_TYPE", "\"Restaurant\""
+        buildConfigField "boolean", "SOLO_LOGO", "false"
+        buildConfigField "boolean", "FOODICS_LOGO", "true"
+        buildConfigField "boolean", "SUBSCRIPTION_ENABLED", "false"
+        buildConfigField "String", "TAP_TEST", "\"\""
+        buildConfigField "String", "TAP_LIVE", "\"\""
+        buildConfigField "boolean", "MULTI_COUNTRY_ENABLED", "false"
+        buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "true"
+        buildConfigField "boolean", "DISABLE_SPLASH_ANIMATION", "true"
     }
 
     buildTypes {
+        debug {
+            signingConfig null
+            debuggable true
+            minifyEnabled false
+            buildConfigField "String", "BASE_URL", "\"https://dev-api.getsolo.io/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
+        }
         staging {
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://staging-api.getsolo.io/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
+        //Use this for VAPT builds
         stagingrelease {
             debuggable false
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://staging-api.getsolo.io/\""
+            //buildConfigField "String", "BASE_URL", "\"https://staging2.api.solo.skylinedynamics.com/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         prod {
             debuggable true
             minifyEnabled false
-            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+            buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
         }
         releaselog {
             debuggable true
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+            buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
         }
         release {
-            minifyEnabled false
+            debuggable false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+            buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
         }
         consumer {
+            signingConfig null
             debuggable true
             minifyEnabled false
-            shrinkResources false
+            buildConfigField "String", "BASE_URL", "\"https://test-consumer-api.getsolo.io/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         marketing {
+            signingConfig null
             debuggable true
             minifyEnabled false
-            shrinkResources false
+            buildConfigField "String", "BASE_URL", "\"https://test-marketing-api.getsolo.io/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         merchant {
+            signingConfig null
             debuggable true
             minifyEnabled false
-            shrinkResources false
+            buildConfigField "String", "BASE_URL", "\"https://test-merchant-api.getsolo.io/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
     }
     compileOptions {
@@ -79,6 +154,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-common-ktx:2.7.6'
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
     implementation project(path: ':solosdk')
+    implementation project(path: ':data:model')
+    implementation 'com.google.firebase:firebase-config-ktx:21.6.0'
+
     def flowBindingVersion = "1.2.0"
     implementation "io.github.reactivecircus.flowbinding:flowbinding-android:$flowBindingVersion"
     implementation "io.github.reactivecircus.flowbinding:flowbinding-core:$flowBindingVersion"
@@ -110,4 +188,11 @@ dependencies {
 
     //Gson
     implementation 'com.google.code.gson:gson:2.10.1'
+
+    // Mixpanel
+    implementation 'com.mixpanel.android:mixpanel-android:7.3.1'
+
+    //Secured Preferences
+    implementation "androidx.security:security-crypto:1.1.0-alpha06"
+
 }

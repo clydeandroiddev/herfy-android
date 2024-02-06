@@ -32,16 +32,15 @@ import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseDialogFragment
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.Text
 import com.herfy.util.checkout.PaymentFormConstants.backIconSize
 import com.herfy.util.checkout.PaymentFormConstants.inputFieldColor
 import com.herfy.util.checkout.PaymentFormConstants.inputFieldCornerRadius
 import com.herfy.util.checkout.PaymentFormConstants.marginBottom
 import com.herfy.util.AppLogger
-import com.herfy.util.CacheUtil
-import com.herfy.util.EnvUtil
 import com.herfy.util.ViewUtil
 import org.json.JSONObject
+import com.herfy.utils.helper.*
 
 
 class CustomCheckoutDialog(private val context: Context) : BaseDialogFragment() {

@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.request.RequestOptions;
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
+import com.herfy.model.SupportedCountry;
 
 public interface CountriesContract {
 

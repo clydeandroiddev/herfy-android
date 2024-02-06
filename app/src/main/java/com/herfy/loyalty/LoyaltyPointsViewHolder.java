@@ -7,14 +7,14 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction;
 import com.skylinedynamics.solosdk.api.models.objects.Tier;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.CurrencyUtils;
 import com.herfy.util.StringUtil;
 import com.herfy.util.TimeUtil;

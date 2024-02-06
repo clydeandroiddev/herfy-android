@@ -1,7 +1,7 @@
 package com.herfy.di
 
 import android.content.Context
-import com.herfy.data.AppDatabase
+import com.herfy.database.AppDatabase
 import com.herfy.utils.helper.CacheUtilHelper
 import dagger.Module
 import dagger.Provides

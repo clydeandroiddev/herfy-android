@@ -22,8 +22,8 @@ import com.google.gson.JsonObject
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.curbside.adapter.CustomerCarAdapter
 import com.herfy.curbside.adapter.CustomerCarAdapter.CustomerCarListener
 import com.herfy.curbside.dialog.CarMakerDialog
@@ -36,13 +36,14 @@ import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.order.views.ordertype.OrderTypeNewFragment
-import com.herfy.util.AuthUtil
-import com.herfy.util.BuildUtil
-import com.herfy.util.CacheUtil
+import com.herfy.utils.helper.*
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.BuildUtil
+import com.herfy.utils.helper.CacheUtil
 import java.util.Locale
 
 class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListener {
@@ -331,14 +332,16 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
             }
             binding.carLayout.visibility = View.VISIBLE
             activity?.cast<MainActivity> {
-                it.setToolbarTitle(CacheUtil.getInstance().getTranslations(Text.CHOOSE_CAR, "CHOOSE CAR")
+                it.setToolbarTitle(
+                    CacheUtil.getInstance().getTranslations(Text.CHOOSE_CAR, "CHOOSE CAR")
                     .uppercase(
                         Locale.getDefault()
                     ))
                 it.setToolbarActionText(CacheUtil.getInstance().getTranslations(Text.EDIT_CAPS, "EDIT"))
             }
             activity?.cast<NavigationActivity> {
-                it.setToolbarTitle(CacheUtil.getInstance().getTranslations(Text.CHOOSE_CAR, "CHOOSE CAR")
+                it.setToolbarTitle(
+                    CacheUtil.getInstance().getTranslations(Text.CHOOSE_CAR, "CHOOSE CAR")
                     .uppercase(
                         Locale.getDefault()
                     ))
@@ -354,20 +357,24 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
             adapter!!.isEditMode = true
             binding.carLayout.visibility = View.GONE
             activity?.cast<MainActivity> {
-                it.setToolbarTitle(CacheUtil.getInstance().getTranslations(Text.EDIT_CARS, "EDIT CARS")
+                it.setToolbarTitle(
+                    CacheUtil.getInstance().getTranslations(Text.EDIT_CARS, "EDIT CARS")
                     .uppercase(
                         Locale.getDefault()
                     ))
-                it.setToolbarActionText(CacheUtil.getInstance().getTranslations(Text.DONE_CAPS, "DONE").uppercase(
+                it.setToolbarActionText(
+                    CacheUtil.getInstance().getTranslations(Text.DONE_CAPS, "DONE").uppercase(
                     Locale.getDefault()
                 ))
             }
             activity?.cast<NavigationActivity> {
-                it.setToolbarTitle(CacheUtil.getInstance().getTranslations(Text.EDIT_CARS, "EDIT CARS")
+                it.setToolbarTitle(
+                    CacheUtil.getInstance().getTranslations(Text.EDIT_CARS, "EDIT CARS")
                     .uppercase(
                         Locale.getDefault()
                     ))
-                it.setToolbarActionText(CacheUtil.getInstance().getTranslations(Text.DONE_CAPS, "DONE").uppercase(
+                it.setToolbarActionText(
+                    CacheUtil.getInstance().getTranslations(Text.DONE_CAPS, "DONE").uppercase(
                     Locale.getDefault()
                 ))
             }

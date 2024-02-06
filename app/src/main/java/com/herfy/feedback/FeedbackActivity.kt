@@ -28,14 +28,13 @@ import com.nguyenhoanglam.imagepicker.model.RootDirectory
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.registerImagePicker
 import com.herfy.R
 import com.herfy.base.BaseActivity
-import com.herfy.data.constants.Text
+import com.herfy.utils.constants.Text
 import com.herfy.databinding.ActivityFeedbackBinding
-import com.herfy.util.AuthUtil
-import com.herfy.util.CacheUtil
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import java.io.File
 import java.io.FileOutputStream
+import com.herfy.utils.helper.*
 
 class FeedbackActivity : BaseActivity(), FeedbackContract.View {
 

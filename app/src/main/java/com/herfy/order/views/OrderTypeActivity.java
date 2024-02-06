@@ -59,8 +59,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.cart.views.CartDialogFragment;
-import com.herfy.data.constants.Text;
-import com.herfy.data.constants.Values;
+import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.location.FusedLocationProvider;
 import com.herfy.main.MainActivity;
@@ -69,16 +68,17 @@ import com.herfy.order.OrderContract;
 import com.herfy.order.OrderPresenter;
 import com.herfy.order.adapters.AddressesRecyclerViewAdapter;
 import com.herfy.order.adapters.StoresRecyclerViewAdapter;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.Rating;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.AnimUtil;
+import com.herfy.utils.helper.AnimUtil;
 import com.herfy.util.AppLogger;
-import com.herfy.util.AuthUtil;
-import com.herfy.util.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;
@@ -283,29 +283,30 @@ public class OrderTypeActivity extends BaseActivity implements OrderContract.Vie
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         CacheUtil.getInstance().setOrderType(OrderType.NONE);
         CacheUtil.getInstance().setOrderStore(null);
         //if(!splash) {
-            dismissDialogs();
-            Intent intent;
-            if (cart || home || menu) {
-                intent = new Intent(this, MainActivity.class);
-                intent.putExtra("order_type", home);
-                intent.putExtra("cart", cart);
-                intent.putExtra("menu", menu);
+        dismissDialogs();
+        Intent intent;
+        if (cart || home || menu) {
+            intent = new Intent(this, MainActivity.class);
+            intent.putExtra("order_type", home);
+            intent.putExtra("cart", cart);
+            intent.putExtra("menu", menu);
                 /*if(!concepts) {
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 } else {
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 }*/
-            } else {
-                intent = new Intent(this, NavigationActivity.class);
-                intent.putExtra("order_type", true);
-            }
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            overridePendingTransition(AnimUtil.outF(), AnimUtil.outS());
-            //finish();
+        } else {
+            intent = new Intent(this, NavigationActivity.class);
+            intent.putExtra("order_type", true);
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+        overridePendingTransition(AnimUtil.outF(), AnimUtil.outS());
+        //finish();
         /*} else {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_HOME);

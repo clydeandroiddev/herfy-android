@@ -52,12 +52,12 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.data.constants.Text;
-import com.herfy.data.constants.Values;
+import com.herfy.utils.constants.Text;
 import com.herfy.location.FusedLocationProvider;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.herfy.util.AppLogger;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;
 import com.herfy.views.RecyclerViewUtil;
@@ -138,6 +138,7 @@ public class BranchesActivity extends BaseActivity implements BranchesContract.V
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         finish();
     }
 

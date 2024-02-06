@@ -16,12 +16,12 @@ import com.herfy.base.BaseActivity;
 import com.herfy.concepts.ConceptsContract;
 import com.herfy.concepts.ConceptsPresenter;
 import com.herfy.concepts.ConceptsRecyclerViewAdapter;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.splash.SplashActivity;
-import com.herfy.util.CacheUtil;
-import com.herfy.util.EnvUtil;
 import com.herfy.util.JsonUtil;
+import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.EnvUtil;
 import com.skylinedynamics.solosdk.api.SoloApi;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
 

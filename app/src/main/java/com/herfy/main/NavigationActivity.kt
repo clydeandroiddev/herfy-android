@@ -7,11 +7,11 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.request.RequestOptions
 import com.herfy.R
-import com.herfy.analytics.MixpanelUtil
+import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.cart.views.CartFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.databinding.ActivityNavigationBinding
 import com.herfy.digitalcoupons.views.DigitalCouponFragmentDirections
 import com.herfy.digitalcoupons.views.DigitalCouponsFragmentDirections
@@ -23,13 +23,11 @@ import com.herfy.menu.views.MenuItemFragmentDirections
 import com.herfy.newmenu.views.NewMenuFragmentDirections
 import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.newmenu.views.PopularNowFragmentDirections
+import com.herfy.utils.helper.*
+import com.herfy.util.StringUtil
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.cms.CmsPage
-import com.herfy.util.AuthUtil
-import com.herfy.util.CacheUtil
-import com.herfy.util.NavigationUtils
-import com.herfy.util.StringUtil
 
 class NavigationActivity : BaseActivity(), MainContract.View {
 
@@ -54,7 +52,13 @@ class NavigationActivity : BaseActivity(), MainContract.View {
 
         val bundle = Bundle()
         intent.extras?.let {
-            navigation = it.getInt("navigation")
+            it.getString("navigation")?.let {
+                val navString = it
+                navigation = this.resources.getIdentifier(navString, "id", this.packageName)
+            }?: {
+                navigation = it.getInt("navigation")
+            }
+
             currentDestination = navigation
             graph.setStartDestination(navigation)
             binding.mainToolbar.root.visible()

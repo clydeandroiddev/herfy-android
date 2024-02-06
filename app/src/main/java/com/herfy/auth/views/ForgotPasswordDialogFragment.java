@@ -37,9 +37,9 @@ import com.herfy.R;
 import com.herfy.auth.AuthContract;
 import com.herfy.auth.AuthPresenter;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.StringUtil;
 
 import org.jetbrains.annotations.NotNull;

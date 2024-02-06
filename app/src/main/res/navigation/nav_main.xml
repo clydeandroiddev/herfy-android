@@ -10,6 +10,12 @@
         android:label="home_caps"
         tools:layout="@layout/fragment_home">
 
+        <action
+            android:id="@+id/action_home_to_menu"
+            app:destination="@id/nav_menu"
+            app:popUpTo="@+id/nav_herfy_home" />
+
+
     </fragment>
 
     <fragment
@@ -115,6 +121,10 @@
             android:name="menu_category_id"
             android:defaultValue=""
             app:argType="string" />
+
+        <deepLink app:uri="android-app://com.herfy/nav_menu/{menu_category_id}"/>
+
+
 
         <action
             android:id="@+id/action_menu_to_order_type"

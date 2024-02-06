@@ -9,7 +9,10 @@ import com.herfy.home.R
 import com.herfy.home.databinding.ItemPromotionBinding
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 
-class PromotionsAdapter(val promoList : ArrayList<Campaign> = arrayListOf(), val itemHeight : Int, val itemWidth : Int) : RecyclerView.Adapter<PromotionsAdapter.ViewHolder>() {
+class PromotionsAdapter(
+    val promoList : ArrayList<Campaign> = arrayListOf(),
+    val promoListener : PromotionListener,
+    val itemHeight : Int, val itemWidth : Int) : RecyclerView.Adapter<PromotionsAdapter.ViewHolder>() {
     inner class ViewHolder(val binding : ItemPromotionBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,13 +32,20 @@ class PromotionsAdapter(val promoList : ArrayList<Campaign> = arrayListOf(), val
     override fun getItemCount(): Int = promoList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.promo = promoList[position]
-        holder.binding.executePendingBindings()
+        holder.binding.apply {
+            promo = promoList[position]
+            listener = promoListener
+            executePendingBindings()
+        }
     }
 
     fun updatePromoList(promoList: ArrayList<Campaign>){
         this.promoList.clear()
         this.promoList.addAll(promoList)
         notifyDataSetChanged()
+    }
+
+    interface PromotionListener{
+        fun onSelectedPromo(promo : Campaign)
     }
 }

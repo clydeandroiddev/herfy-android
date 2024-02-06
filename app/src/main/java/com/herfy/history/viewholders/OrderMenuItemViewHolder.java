@@ -12,9 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.herfy.R;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.history.OrdersContract;
 import com.herfy.history.adapters.OrderModifierPriceAdapter;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
@@ -26,7 +27,6 @@ import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.order.OrderIngredient;
 import com.skylinedynamics.solosdk.api.models.objects.order.OrderModifierItem;
 import com.herfy.util.AppLogger;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;

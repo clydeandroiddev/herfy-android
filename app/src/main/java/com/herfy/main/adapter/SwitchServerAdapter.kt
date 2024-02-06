@@ -11,24 +11,20 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.databinding.ItemSwitchServerBinding
 import com.herfy.ext.cast
-import com.herfy.util.CacheUtil
-import com.herfy.util.ServerType
+import com.herfy.utils.helper.*
 
 
-class SwitchServerAdapter(private val serverList: List<ServerType>, private var lastSelectedPos: Int = -1, private val callback: (ServerType) -> Unit) :
+class SwitchServerAdapter(private val serverList: List<com.herfy.model.ServerType>, private var lastSelectedPos: Int = -1, private val callback: (com.herfy.model.ServerType) -> Unit) :
     RecyclerView.Adapter<SwitchServerAdapter.SwitchServerViewHolder>() {
 
     private var customUrl = ""
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SwitchServerViewHolder {
-        val binding: ItemSwitchServerBinding = DataBindingUtil.inflate(
+        val binding: ItemSwitchServerBinding = ItemSwitchServerBinding.inflate(
             LayoutInflater.from(parent.context),
-            R.layout.item_switch_server,
             parent,
             false
         )

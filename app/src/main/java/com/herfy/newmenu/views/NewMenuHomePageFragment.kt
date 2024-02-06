@@ -31,12 +31,12 @@ import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.analytics.MixpanelUtil
+import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.browser.BrowserActivity
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.country.CountriesFragment
 import com.herfy.databinding.FragmentMenuNewHomePageBinding
 import com.herfy.ext.cast
@@ -55,7 +55,12 @@ import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
+import com.herfy.utils.helper.AnimUtil
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.BuildUtil
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.NavigationUtils
 import java.util.*
 import kotlin.collections.ArrayList
 

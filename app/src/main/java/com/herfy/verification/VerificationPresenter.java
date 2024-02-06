@@ -2,8 +2,10 @@ package com.herfy.verification;
 
 import android.os.Handler;
 
-import com.herfy.data.constants.Text;
-import com.herfy.data.constants.Values;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.calls.IntegrationsApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Integration;
@@ -13,12 +15,10 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddres
 import com.skylinedynamics.solosdk.api.models.requestbodies.LoginTwitterBody;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
-import com.herfy.util.AuthUtil;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.DeviceUtil;
 import com.herfy.util.ErrorHandler;
 import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.analytics.MixpanelUtil;
+import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.SoloAuth;

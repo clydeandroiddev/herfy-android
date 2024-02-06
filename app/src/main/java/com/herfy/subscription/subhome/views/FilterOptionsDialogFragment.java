@@ -31,10 +31,10 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.herfy.R;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.subscription.subhome.StubFilterModel;
 import com.herfy.subscription.subhome.adapter.FilterOptionsAdapter;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.helper.CacheUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -123,6 +123,7 @@ public class FilterOptionsDialogFragment extends BaseDialogFragment implements F
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
 
+        super.onDismiss(dialog);
         AnimationSet animationSet = new AnimationSet(true);
         Animation animation = new ScaleAnimation(1f, 0f, 1f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         animation.setDuration(300);

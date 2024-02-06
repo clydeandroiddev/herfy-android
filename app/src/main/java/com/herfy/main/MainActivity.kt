@@ -23,11 +23,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
@@ -43,7 +41,6 @@ import com.google.gson.reflect.TypeToken
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.account.views.AccountActivity
-import com.herfy.analytics.MixpanelUtil
 import com.herfy.animation.ActivitySwitcher
 import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
@@ -51,8 +48,6 @@ import com.herfy.browser.BrowserActivity
 import com.herfy.cart.views.CartFragment
 import com.herfy.contactsupport.ContactSupportBottomSheetDialogFragment
 import com.herfy.country.CountriesFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
 import com.herfy.databinding.ActivityMainBinding
 import com.herfy.digitalcoupons.views.DigitalCouponFragmentDirections
 import com.herfy.digitalcoupons.views.DigitalCouponsFragmentDirections
@@ -74,7 +69,16 @@ import com.herfy.util.*
 import com.herfy.util.extensions.loadImageFromUrl
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
+import com.herfy.utils.helper.AnimUtil
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.BuildUtil
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.EnvUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.NavigationUtils
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
@@ -190,8 +194,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         isDefaultHomeScreenDesign = false
 
         quickOrderSelected()
-        graph.setStartDestination(R.id.nav_menu)
-        currentDestination = R.id.nav_menu
+        graph.setStartDestination(R.id.nav_herfy_home)
+        currentDestination = R.id.nav_herfy_home
 
         navController.setGraph(graph, intent.extras)
 
@@ -1042,13 +1046,13 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         try {
 
 
-            var selectedServer: ServerType? = null;
+            var selectedServer: com.herfy.model.ServerType? = null;
             val serverTypeStr = assets.readAssetsFile("servertypes.json")
 
-            val envList = arrayListOf<ServerType>()
+            val envList = arrayListOf<com.herfy.model.ServerType>()
             envList.addAll(
                 GsonHelper.gsonFinal().fromJson(
-                    serverTypeStr, object : TypeToken<ArrayList<ServerType>>() {}.type
+                    serverTypeStr, object : TypeToken<ArrayList<com.herfy.model.ServerType>>() {}.type
                 )
             )
             val env = envList.find { s ->

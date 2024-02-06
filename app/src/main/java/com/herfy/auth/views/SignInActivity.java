@@ -37,14 +37,14 @@ import com.herfy.R;
 import com.herfy.auth.AuthContract;
 import com.herfy.auth.AuthPresenter;
 import com.herfy.base.BaseActivity;
-import com.herfy.data.constants.Text;
-import com.herfy.data.constants.Values;
+import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.main.MainActivity;
 import com.herfy.order.views.OrderTypeActivity;
-import com.herfy.util.BuildUtil;
-import com.herfy.util.CacheUtil;
 import com.herfy.analytics.FirebaseECommerceEventUtil;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.BuildUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.herfy.verification.views.CodeActivity;
 import com.herfy.verification.views.PhoneNumberActivity;
 

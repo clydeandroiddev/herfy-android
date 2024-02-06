@@ -25,9 +25,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.button.MaterialButton;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.data.constants.Text;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.util.StringUtil;
+import com.herfy.utils.helper.CacheUtil;
 
 import java.util.HashMap;
 

@@ -7,8 +7,8 @@
             name="slide"
             type="com.skylinedynamics.solosdk.api.models.objects.Slide" />
         <variable
-            name="viewModel"
-            type="com.herfy.home.views.HomeViewModel" />
+            name="listener"
+            type="com.herfy.home.adapter.SliderImageAdapter.SliderListener" />
     </data>
 
 
@@ -18,7 +18,8 @@
         app:imageUri="@{slide.imageUri}"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:onClick="@{()->viewModel.selectSliderImage(slide)}"
+        android:scaleType="fitXY"
+        android:onClick="@{()->listener.onSelectedImage(slide)}"
         android:contentDescription="@{slide.title != null ? slide.title : ``}" />
 
 

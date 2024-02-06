@@ -18,8 +18,11 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.herfy.addresses.viewholders.AddressViewHolder;
 import com.herfy.addresses.viewholders.PlaceViewHolder;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.location.FusedLocationProvider;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.BuildUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
@@ -27,10 +30,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddressBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerAddressBody;
 import com.herfy.util.AppLogger;
-import com.herfy.util.AuthUtil;
-import com.herfy.util.BuildUtil;
-import com.herfy.util.CacheUtil;
-import com.herfy.analytics.MixpanelUtil;
+import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.ErrorHandler;
 
 import org.json.JSONArray;

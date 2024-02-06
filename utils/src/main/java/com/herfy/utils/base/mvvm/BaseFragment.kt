@@ -1,16 +1,23 @@
 package com.herfy.utils.base.mvvm
 
 import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.herfy.utils.R
+import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.observeNonNull
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.NavigationCommand
+import com.herfy.utils.helper.ViewUtil
 
 abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment() {
     abstract val viewModel: T
@@ -20,6 +27,8 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
     lateinit var rootView: View
 
     private var progressDialog: ProgressDialog? = null
+
+    private var alertDialog : AlertDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,6 +89,160 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
     }
 
     open fun initTranslations(){
+
+    }
+
+
+    open fun showAlertDialog(title: String?, message: String?) {
+        activity?.apply {
+            runOnUiThread {
+                context?.let { ctx ->
+                    try {
+                        dismissProgressDialog()
+                        val builder = AlertDialog.Builder(ctx)
+                        builder.setCancelable(true)
+                        builder.setTitle(title)
+                        builder.setMessage(message)
+                        alertDialog = builder.create()
+                        alertDialog?.apply {
+                            setButton(
+                                AlertDialog.BUTTON_POSITIVE,
+                                CacheUtil.getInstance().getTranslations(Text.OK)
+                            ) { dialogInterface, i -> dialogInterface.dismiss() }
+                            setOnShowListener {
+                                getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps = false
+                                if (!CacheUtil.getInstance().colorMain.equals("#FFFFFF", ignoreCase = true)) {
+                                    getButton(AlertDialog.BUTTON_POSITIVE)
+                                        .setTextColor(ViewUtil.getColorMain(ctx))
+                                } else {
+                                    getButton(AlertDialog.BUTTON_POSITIVE)
+                                        .setTextColor(
+                                            ContextCompat.getColor(
+                                                ctx,
+                                                R.color.primary_text
+                                            )
+                                        )
+                                }
+                            }
+                            show()
+                        }
+
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    open fun showAlertDialog(
+        title: String?,
+        message: String?,
+        neutral: String?,
+        neutralOnClickListener: DialogInterface.OnClickListener?
+    ) {
+        activity?.apply {
+            runOnUiThread {
+                context?.let { ctx ->
+                    try {
+                        dismissProgressDialog()
+                        val builder = AlertDialog.Builder(this)
+                        builder.setCancelable(true)
+                        builder.setTitle(title)
+                        builder.setMessage(message)
+                        alertDialog = builder.create()
+                        alertDialog?.apply {
+                            setButton(AlertDialog.BUTTON_POSITIVE, neutral, neutralOnClickListener)
+                            setOnShowListener {
+                                getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps =
+                                    false
+                                if (!CacheUtil.getInstance().colorMain.equals("#FFFFFF", ignoreCase = true)) {
+                                    getButton(AlertDialog.BUTTON_POSITIVE)
+                                        .setTextColor(ViewUtil.getColorMain(ctx))
+                                } else {
+                                   getButton(AlertDialog.BUTTON_POSITIVE)
+                                        .setTextColor(
+                                            ContextCompat.getColor(
+                                                ctx,
+                                                R.color.primary_text
+                                            )
+                                        )
+                                }
+                            }
+                            show()
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    open fun showAlertDialog(
+        title: String?,
+        message: String?,
+        positive: String,
+        positiveOnClickListener: DialogInterface.OnClickListener?,
+        negative: String,
+        negativeOnClickListener: DialogInterface.OnClickListener?
+    ) {
+        activity?.apply {
+            runOnUiThread {
+                context?.let {ctx ->
+                    dismissProgressDialog()
+                    val builder = AlertDialog.Builder(ctx)
+                    builder.setCancelable(true)
+                    builder.setTitle(title)
+                    builder.setMessage(message)
+                    alertDialog = builder.create()
+                    alertDialog?.apply {
+                        if (positive != "") {
+                            setButton(AlertDialog.BUTTON_POSITIVE, positive, positiveOnClickListener)
+                        }
+                        if (negative != "") {
+                            setButton(AlertDialog.BUTTON_NEGATIVE, negative, negativeOnClickListener)
+                        }
+                        setOnShowListener {
+                            if (positive != "") {
+                                getButton(AlertDialog.BUTTON_POSITIVE).setAllCaps(false)
+                                if (!CacheUtil.getInstance().colorMain.equals(
+                                        "#FFFFFF",
+                                        ignoreCase = true
+                                    )
+                                ) {
+                                    getButton(AlertDialog.BUTTON_POSITIVE)
+                                        .setTextColor(ViewUtil.getColorMain(ctx))
+                                } else {
+                                    getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                                        ContextCompat.getColor(
+                                            ctx,
+                                            R.color.primary_text
+                                        )
+                                    )
+                                }
+                            }
+                            if (negative != "") {
+                                getButton(AlertDialog.BUTTON_NEGATIVE).setAllCaps(false)
+                                getButton(AlertDialog.BUTTON_NEGATIVE)
+                                    .setTextColor(
+                                        ContextCompat.getColor(
+                                            ctx,
+                                            R.color.secondary_text
+                                        )
+                                    )
+                            }
+                        }
+                        show()
+                    }
+
+                }
+            }
+        }
 
     }
 

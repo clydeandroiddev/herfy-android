@@ -28,13 +28,13 @@ import com.google.android.material.card.MaterialCardView;
 
 import com.herfy.R;
 import com.herfy.auth.views.SignInActivity;
-import com.herfy.data.constants.Values;
 import com.herfy.main.MainActivity;
 import com.herfy.menu.MenuContract;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
-import com.herfy.util.AuthUtil;
-import com.herfy.util.CacheUtil;
 import com.herfy.util.StringUtil;
 
 import java.util.List;

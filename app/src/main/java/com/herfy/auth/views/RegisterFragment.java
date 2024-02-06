@@ -31,10 +31,10 @@ import com.herfy.auth.AuthContract;
 import com.herfy.auth.AuthPresenter;
 import com.herfy.base.BaseActivity;
 import com.herfy.base.BaseFragment;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries;
 import com.skylinedynamics.solosdk.api.models.objects.LoginOption;
-import com.herfy.util.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 

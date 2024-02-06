@@ -1,8 +1,8 @@
 package com.herfy.di
 
-import com.herfy.data.AppDatabase
-import com.herfy.home.repository.HomeRepository
-import com.herfy.home.repository.HomeRepositoryImpl
+import com.herfy.database.AppDatabase
+import com.herfy.database.repositories.HomeRepository
+import com.herfy.database.repositories.HomeRepositoryImpl
 import com.herfy.utils.helper.CacheUtilHelper
 import dagger.Module
 import dagger.Provides

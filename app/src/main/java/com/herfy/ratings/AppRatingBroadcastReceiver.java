@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.herfy.base.BaseActivity;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
-import com.herfy.util.CacheUtil;
 
 public class AppRatingBroadcastReceiver extends BroadcastReceiver {
 

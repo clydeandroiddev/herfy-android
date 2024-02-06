@@ -18,8 +18,8 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.DialogFragment;
 
 import com.herfy.R;
-import com.herfy.data.constants.Text;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.helper.CacheUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

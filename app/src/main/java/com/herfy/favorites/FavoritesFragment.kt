@@ -24,18 +24,16 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.databinding.FragmentFavoritesBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.skylinedynamics.solosdk.api.models.objects.Favorite
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
-import com.herfy.util.AuthUtil
 import com.herfy.util.CacheHelper
-import com.herfy.util.CacheUtil
-import com.herfy.util.NavigationUtils
+import com.herfy.utils.helper.*
 
 class FavoritesFragment : BaseFragment(), FavoritesContract.View {
 

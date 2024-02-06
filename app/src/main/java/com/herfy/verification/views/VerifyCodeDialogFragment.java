@@ -37,12 +37,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.herfy.R;
 import com.herfy.auth.views.AuthFragment;
 import com.herfy.base.BaseDialogFragment;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.main.MainActivity;
 import com.herfy.order.views.OrderTypeActivity;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
-import com.herfy.util.AnimUtil;
-import com.herfy.util.CacheUtil;
+import com.herfy.utils.helper.AnimUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.verification.VerificationContract;
 import com.herfy.verification.VerificationPresenter;
@@ -219,7 +219,7 @@ public class VerifyCodeDialogFragment extends BaseDialogFragment implements Veri
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
-
+        super.onDismiss(dialog);
         AnimationSet animationSet = new AnimationSet(true);
         Animation animation = new ScaleAnimation(1f, 0f, 1f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         animation.setDuration(300);

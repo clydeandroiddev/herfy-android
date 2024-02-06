@@ -1,11 +1,11 @@
 package com.herfy.feedback;
 
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.util.AppLogger;
-import com.herfy.util.CacheUtil;
-import com.herfy.analytics.MixpanelUtil;
+import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.ErrorHandler;
 import com.herfy.util.StringUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.FeedbackApiCall;
 

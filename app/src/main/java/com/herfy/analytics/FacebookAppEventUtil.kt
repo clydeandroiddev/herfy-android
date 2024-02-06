@@ -23,9 +23,9 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
-import com.skylinedynamics.solosdk.api.models.objects.MenuItem
-import com.herfy.util.CacheUtil
 import com.herfy.util.StringUtil
+import com.herfy.utils.helper.CacheUtil
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import org.json.JSONArray
 
 

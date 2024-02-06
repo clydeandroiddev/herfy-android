@@ -35,11 +35,11 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.refundevent
-import com.herfy.analytics.MixpanelUtil
+import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.data.constants.Text
-import com.herfy.data.constants.Values
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.databinding.FragmentOrderBinding
 import com.herfy.ext.cast
 import com.herfy.ext.hasDecimalPart
@@ -58,7 +58,10 @@ import com.herfy.util.*
 import com.herfy.util.LatLngInterpolator.Spherical
 import com.herfy.util.extensions.dialPhoneNumber
 import com.herfy.util.extensions.removeSpecialCharacters
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.NavigationUtils
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -327,7 +330,8 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
                 displayId = orderDetails.id
             }
             activity?.cast<MainActivity> {
-                it.setToolbarTitle(CacheUtil.getInstance().getTranslations(Text.ORDER_CAPS, "ORDER (x)")
+                it.setToolbarTitle(
+                    CacheUtil.getInstance().getTranslations(Text.ORDER_CAPS, "ORDER (x)")
                     .replace("(x)", StringUtil.localize(displayId)))
             }
             store?.attributes?.apply {

@@ -3,8 +3,8 @@ package com.herfy.newmenu.adapter;
 import android.widget.ImageView;
 
 
-import com.herfy.data.constants.Values;
 import com.herfy.newmenu.SliderContract;
+import com.herfy.utils.constants.Values;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.herfy.util.StringUtil;
 

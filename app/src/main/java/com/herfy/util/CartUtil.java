@@ -1,6 +1,7 @@
 package com.herfy.util;
 
 import com.google.gson.reflect.TypeToken;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 

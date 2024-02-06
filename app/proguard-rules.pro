@@ -24,9 +24,9 @@
 
 -keep class com.skylinedynamics.solosdk.api.models.** { *; }
 -keep class com.herfy.country.** { *; }
--keep class com.herfy.data.converters.** { *; }
--keep class com.herfy.data.entities.** { *; }
--keep class com.herfy.data.responses.** { *; }
+-keep class com.herfy.database.converters.** { *; }
+-keep class com.herfy.database.entities.** { *; }
+-keep class com.herfy.database.responses.** { *; }
 -keep class com.herfy.util.checkout.** { *; }
 -keep class com.herfy.util.obfuscator.** { *; }
 -keep class com.herfy.promotions.data.** { *; }

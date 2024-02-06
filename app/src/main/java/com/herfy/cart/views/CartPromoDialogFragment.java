@@ -25,13 +25,13 @@ import com.google.android.material.button.MaterialButton;
 import com.herfy.R;
 import com.herfy.cart.CartContract;
 import com.herfy.cart.adapters.CartPromoAdapter;
-import com.herfy.data.constants.Text;
+import com.herfy.utils.constants.Text;
 import com.herfy.main.NavigationActivity;
+import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.CacheUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
