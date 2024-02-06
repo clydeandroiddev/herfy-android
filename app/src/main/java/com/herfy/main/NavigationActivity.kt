@@ -52,12 +52,13 @@ class NavigationActivity : BaseActivity(), MainContract.View {
 
         val bundle = Bundle()
         intent.extras?.let {
-            it.getString("navigation")?.let {
+            //TODO: fix navigation
+            /*it.getString("navigation")?.let {
                 val navString = it
                 navigation = this.resources.getIdentifier(navString, "id", this.packageName)
-            }?: {
+            }?: {*/
                 navigation = it.getInt("navigation")
-            }
+            //}
 
             currentDestination = navigation
             graph.setStartDestination(navigation)
