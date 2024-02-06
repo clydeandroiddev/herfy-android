@@ -1,13 +1,11 @@
 package com.herfy.analytics.kochava
 
 import android.content.Context
-import com.herfy.utils.BuildConfig
 import com.herfy.utils.helper.StringUtil
 import com.kochava.tracker.Tracker
 import com.kochava.tracker.events.Event
 import com.kochava.tracker.events.EventType
 import com.kochava.tracker.events.Events
-import com.kochava.tracker.log.LogLevel
 
 
 object KochavaTrackerUtil {
