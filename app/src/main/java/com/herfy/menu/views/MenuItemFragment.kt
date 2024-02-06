@@ -98,6 +98,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     private var sandwichId = ""
     private var sizesAdapter: SizesRecyclerViewAdapter? = null
     private var modifierGroupsAdapter: ModifierGroupsNewRecyclerViewAdapter? = null
+    private var frequentBoughItemsAdapter: FrequentBoughItemsAdapter? = null
     private var ingredientsAdapter: IngredientsRecyclerViewAdapter? = null
     private var initialModifierId = ""
     private var listener: NewMenuFragmentCommonListener? = null
@@ -113,6 +114,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             listener = it
         }
         menuPresenter = MenuPresenter(this)
+
     }
 
     override fun onCreateView(
@@ -132,6 +134,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         super.onViewCreated(view, savedInstanceState)
         checkBackground()
         menuPresenter.start()
+        menuPresenter.getFrequentBoughtItems();
+
         initialModifierId = ""
         activity?.cast<BaseActivity> {
             if (BuildUtil.soloAppKey().equals("SpeWD37HZx9Uqora", ignoreCase = true)) {
@@ -284,6 +288,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 binding.appbar.stateListAnimator =
                     AnimatorInflater.loadStateListAnimator(activity, R.animator.appbar_elevation)
                 binding.sizesRecyclerView.layoutManager = LinearLayoutManager(activity)
+                binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(activity);
                 binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(activity)
                 (binding.modifierGroupsRecyclerView.itemAnimator as SimpleItemAnimator?)!!.supportsChangeAnimations =
                     false
@@ -358,6 +363,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             it.runOnUiThread {
 //                binding.mealDealsContainer.visibility = View.GONE
                 binding.txtMoreInfo.isVisible = !menuItem.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
+                frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(),menuPresenter)
+                frequentBoughItemsAdapter?.notifyDataSetChanged()
+                binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(requireContext())
+
+                binding.frequentlyBoughRecycleview.adapter = frequentBoughItemsAdapter
                 binding.txtMoreInfo.ninjaTap(viewLifecycleScope) {
                     val bundle = Bundle()
                     bundle.putParcelable(NAV_ARGS_INFO_KEY,  NutritionInfoParams(
