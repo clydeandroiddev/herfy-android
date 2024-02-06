@@ -14,6 +14,7 @@ import com.herfy.utils.extensions.cast
 import com.herfy.utils.helper.Event
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -44,11 +45,12 @@ class HomeViewModel @Inject constructor(
     private val _showPromo = MutableLiveData<Event<Campaign>>()
     val showPromo: LiveData<Event<Campaign>> = _showPromo
 
-
-
     private val menuCategories: ArrayList<MenuCategory> = ArrayList()
     var excludedMenu: ArrayList<MenuCategory> = ArrayList()
     private val excludedCategories = HashMap<String, HashSet<MenuCategory>>()
+
+    private val _loyalty = MutableLiveData<Loyalty>()
+    val loyalty : LiveData<Loyalty> = _loyalty
 
     fun getSliders() {
         invoke {
@@ -176,6 +178,22 @@ class HomeViewModel @Inject constructor(
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    fun getCustomerLoyalty(id: String){
+        invoke {
+            homeRepository.getCustomerLoyalty(id){homeResponse ->
+                if(homeResponse.success){
+                    homeResponse.data?.let { it ->
+                        it.cast<Loyalty> {
+                            _loyalty.value = it
+                        }
+                    }
+                }else {
+                    _showError.value = ErrorMsgItem(true, homeResponse.message)
                 }
             }
         }

@@ -10,8 +10,10 @@ import com.herfy.utils.helper.CacheUtilHelper.Companion.get
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.CmsApiCall
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall
+import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Promotion
 import com.skylinedynamics.solosdk.api.models.objects.Slide
@@ -37,6 +39,8 @@ interface HomeRepository {
     fun getOrderStore(): Store?
 
     suspend fun getMenuItemWith(menuItemId : String, response: (HomeResponse) -> Unit)
+
+    suspend fun getCustomerLoyalty(id: String, response: (HomeResponse) -> Unit)
 }
 
 class HomeRepositoryImpl @Inject constructor(
@@ -132,6 +136,27 @@ class HomeRepositoryImpl @Inject constructor(
                 response(HomeResponse(false, null, o.toString()))
             }
         })
+    }
+
+    override suspend fun getCustomerLoyalty(id: String, response: (HomeResponse) -> Unit) {
+        CustomersApiCall.getInstance().getCustomerLoyalty(id,
+            object : ApiRequestListener {
+                override fun onSuccess(o: Any) {
+                    try {
+                        val `object` = JSONObject(o.toString())
+                        val data = `object`.getJSONObject("data")
+                        val loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty::class.java)
+                        response(HomeResponse(true, loyalty, ""))
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                        onError(e)
+                    }
+                }
+
+                override fun onError(o: Any) {
+                    response(HomeResponse(false, null, o.toString()))
+                }
+            })
     }
 
     override suspend fun getSliderId(): String {

@@ -88,15 +88,12 @@
                         app:flow_verticalGap="24dp"
                         />
 
-                    <View
+                    <include
                         android:id="@+id/layout_loyalty"
-                        android:layout_width="0dp"
-                        android:layout_height="193dp"
-                        android:layout_marginHorizontal="16dp"
-                        android:background="@color/white"
+                        layout="@layout/customer_loyalty"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/layout_order_type" />
+                        app:layout_constraintTop_toBottomOf="@id/layout_order_type"/>
 
                     <include
                         android:id="@+id/layout_promotions"

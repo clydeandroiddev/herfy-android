@@ -48,6 +48,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         binding.apply {
             setupSlider()
             setupPromotions()
+            setupCustomerLoyalty("customerId")
         }
     }
 
@@ -248,6 +249,20 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         }
 
+    }
+
+    private fun setupCustomerLoyalty(id: String){
+        context?.let { ctx ->
+            viewModel.getCustomerLoyalty(id)
+            binding.apply {
+                layoutLoyalty.apply {
+                    tvPoints.text = viewModel.loyalty.value?.attributes?.pointsAccumulated.toString()
+                    tierName.text = viewModel.loyalty.value?.attributes?.loyaltyTier.toString()
+                    progress.max = 100
+                    progress.progress = viewModel.loyalty.value?.attributes?.currentBalance ?: 0
+                }
+            }
+        }
     }
 
 }
