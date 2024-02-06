@@ -1,6 +1,8 @@
 package com.herfy.utils.helper
 
 
+import android.content.Context
+import com.herfy.utils.R
 import com.herfy.utils.constants.Values
 
 
@@ -31,5 +33,14 @@ object StringUtil {
                 .replace("(h)", height.toString()) + end
         }
         return imageUrl
+    }
+
+    fun getAppName(context: Context): String? {
+        val appName = context.resources.getString(R.string.app_name)
+        return if (CacheUtil.getInstance().country != null) {
+            CacheUtil.getInstance().country.applicationName
+        } else {
+            appName
+        }
     }
 }

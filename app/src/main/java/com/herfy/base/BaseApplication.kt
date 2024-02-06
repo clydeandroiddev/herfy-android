@@ -22,6 +22,7 @@ import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.EnvUtil
+import com.herfy.utils.helper.KochavaTrackerUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
@@ -34,12 +35,6 @@ class BaseApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
 
-      /*  startKoin {
-            androidContext(this@BaseApplication)
-            modules(listOf(appModule, viewModelModule))
-        }*/
-
-
 
         FirebaseApp.initializeApp(this)
         sdkInitialize(this)
@@ -49,6 +44,7 @@ class BaseApplication : Application(), ImageLoaderFactory {
         CacheUtil.init(this)
         LocaleUtil.init(this)
         FontHandler.init(this)
+        KochavaTrackerUtil.init(applicationContext, reveal(Keychain.HERFY_GUID))
 
         //FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG);
         SoloApi.init(this, EnvUtil.getEnvironmentUrl(), BuildUtil.soloAppKey())

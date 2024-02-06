@@ -1,5 +1,7 @@
 package com.herfy.menu;
 
+import static com.herfy.utils.helper.KochavaTrackerUtil.*;
+
 import android.util.Pair;
 import android.widget.ImageView;
 
@@ -41,7 +43,9 @@ import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.KochavaTrackerUtil;
 import com.herfy.utils.helper.LocaleUtil;
+import com.kochava.tracker.events.EventType;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.ApiRequestWithHeadersListener;
 import com.skylinedynamics.solosdk.api.calls.ApplicationsApiCall;
@@ -2936,6 +2940,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     @Override
     public void search(String query) {
         MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_SEARCH_ITEM);
+        trackEvent(EventType.SEARCH);
         String storeId = CacheUtil.getOrderStoreId();
         AppDatabase appDatabase = AppDatabase.getInstance();
         ArrayList<MenuItem> menuItemData = getMenuItemDataByName(appDatabase, "%" + query + "%");
@@ -3681,6 +3686,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 public void onSuccess(Object o) {
 
                     MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM);
+                    trackEvent(EventType.ADD_TO_WISH_LIST);
 
                     getFavorites(true, 1);
 

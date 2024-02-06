@@ -27,6 +27,8 @@ import com.herfy.databinding.FragmentDialogPopupBinding
 import org.json.JSONException
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.model.Popup
+import com.herfy.utils.helper.KochavaTrackerUtil
+import com.kochava.tracker.events.EventType
 
 class PopupFragment: BaseDialogFragment() {
 
@@ -100,6 +102,7 @@ class PopupFragment: BaseDialogFragment() {
 
         }
         binding.btnAction.setOnClickListener {
+            KochavaTrackerUtil.trackEvent(EventType.AD_VIEW)
             dismiss()
             setFragmentResult(
                 ARGS_KEY_FRAGMENT_RESULT,
