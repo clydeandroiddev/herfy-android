@@ -7,11 +7,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.request.RequestOptions
 import com.herfy.R
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.cart.views.CartFragment
-import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.databinding.ActivityNavigationBinding
 import com.herfy.digitalcoupons.views.DigitalCouponFragmentDirections
 import com.herfy.digitalcoupons.views.DigitalCouponsFragmentDirections
@@ -23,8 +20,13 @@ import com.herfy.menu.views.MenuItemFragmentDirections
 import com.herfy.newmenu.views.NewMenuFragmentDirections
 import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.newmenu.views.PopularNowFragmentDirections
-import com.herfy.utils.helper.*
 import com.herfy.util.StringUtil
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.NavigationUtils
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.cms.CmsPage
@@ -53,12 +55,14 @@ class NavigationActivity : BaseActivity(), MainContract.View {
         val bundle = Bundle()
         intent.extras?.let {
             //TODO: fix navigation
-            /*it.getString("navigation")?.let {
-                val navString = it
-                navigation = this.resources.getIdentifier(navString, "id", this.packageName)
-            }?: {*/
-                navigation = it.getInt("navigation")
-            //}
+
+            navigation =  it.getString("navigation")?.let { nav -> this.resources.getIdentifier(nav, "id", this.packageName) }?: it.getInt("navigation")
+
+           /* it.getString("navigation")?.let { nav ->
+                navigation =
+            }?: run {
+                navigation =
+            }*/
 
             currentDestination = navigation
             graph.setStartDestination(navigation)
