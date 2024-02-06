@@ -64,7 +64,7 @@ import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
-import com.herfy.utils.helper.KochavaTrackerUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
 import com.kochava.tracker.events.EventType
@@ -723,7 +723,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         Integer.parseInt(binding.quantity.text.toString())
                     );
                     FacebookAppEventUtil.addToCartEvent(baseActivity, menuItem, _totalPrice)
-                    KochavaTrackerUtil.trackEvent(EventType.ADD_TO_CART)
+                    com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent(EventType.ADD_TO_CART)
                 })
                 baseActivity.dismissDialogs()
                 menuItemSelected = menuItem

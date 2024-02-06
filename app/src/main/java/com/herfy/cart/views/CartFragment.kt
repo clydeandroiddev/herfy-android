@@ -65,7 +65,7 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
-import com.herfy.utils.helper.KochavaTrackerUtil.trackEvent
+import com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
 import com.herfy.views.DynamicTheme

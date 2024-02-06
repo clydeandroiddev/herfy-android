@@ -236,6 +236,7 @@ dependencies {
     implementation project(path: ':features:nutritiondetails')
     implementation project(path: ':features:productpagedetails')
     implementation project(path: ':data:model')
+    implementation project(path: ':analytics:kochava')
 
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
     implementation 'com.google.android.play:review-ktx:2.0.1'

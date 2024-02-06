@@ -194,12 +194,4 @@ dependencies {
 
     //Secured Preferences
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
-
-    //Kochava
-    def kochava_tracker_version = "5.2.0"
-    implementation("com.kochava.tracker:tracker:$kochava_tracker_version")
-    implementation("com.kochava.tracker:events:$kochava_tracker_version")
-    implementation("com.kochava.tracker:engagement:$kochava_tracker_version")
-    implementation("com.kochava.tracker:datapointnetwork:$kochava_tracker_version")
-    implementation("com.kochava.tracker:legacyreferrer:$kochava_tracker_version")
 }

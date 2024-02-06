@@ -12,6 +12,7 @@ import com.facebook.FacebookSdk.sdkInitialize
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.FirebaseApp
 import com.herfy.BuildConfig
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.database.AppDatabase
 import com.herfy.font.FontHandler
 import com.herfy.util.glide.UnsafeOkHttpClient
@@ -22,7 +23,6 @@ import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.EnvUtil
-import com.herfy.utils.helper.KochavaTrackerUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
