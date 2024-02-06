@@ -19,10 +19,6 @@ object KochavaTrackerUtil {
         Event.buildWithEventType(eventType)
             .send()
     }
-
-    @JvmStatic
-    fun shutdownKochava(context: Context){
-        Tracker.getInstance().shutdown(context, false)
-    }
+    
 
 }
