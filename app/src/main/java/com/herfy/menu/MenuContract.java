@@ -5,6 +5,7 @@ import android.widget.ImageView;
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
 import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
+import com.herfy.menu.viewholders.FrequentBoughtViewHolder;
 import com.herfy.menu.viewholders.IngredientViewHolder;
 import com.herfy.menu.viewholders.MenuCategoryViewHolder;
 import com.herfy.menu.viewholders.MenuItemViewHolder;
@@ -23,6 +24,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategoryItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType;
@@ -61,6 +63,7 @@ public interface MenuContract {
         void setMenuItemDetails(MenuItem menuItem);
 
         void setMenuItem(MenuCategory menuCategory, MenuItem menuItem);
+
 
         void setFavorite(MenuItem menuItem);
 
@@ -190,6 +193,8 @@ public interface MenuContract {
 
         void onBindDigitalCouponsViewAtPosition(int position, MenuCouponViewHolder couponViewHolder);
 
+        void onBindFrequentBoughtItemPosition(int position, FrequentBoughtViewHolder viewHolder);
+
         void onBindRecentOrderViewAtPosition(int position, MenuRecentViewHolder orderViewHolder);
 
         int getFavoritesCount();
@@ -223,6 +228,7 @@ public interface MenuContract {
         void onBindMenuCategoryViewAtPosition(int position, MenuCategoryViewHolder menuCategoryViewHolder, boolean selected);
 
         int getMenuCategoriesCount();
+        int getFrequentBoughtItemCount();
 
         int getSearchItemsSize();
 
@@ -251,6 +257,7 @@ public interface MenuContract {
         void onBindMenuItemViewAtPosition(MenuCategory menuCategory, int position, MenuItemViewHolder menuItemViewHolder);
 
         int getMenuItemsCount(MenuCategory menuCategory);
+
 
         void selectMenuItem(MenuCategory menuCategory, MenuItem menuItem);
 
@@ -338,6 +345,8 @@ public interface MenuContract {
         double getMenuItemTotalPrice(MenuItem item, int modifierGroupPosition);
 
         void getGuestDigitalCoupons();
+
+        void getFrequentBoughtItems();
 
         void selectDigitalCoupon(int position);
 
