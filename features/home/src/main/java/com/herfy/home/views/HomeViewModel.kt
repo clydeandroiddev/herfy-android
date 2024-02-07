@@ -15,6 +15,7 @@ import com.herfy.utils.helper.Event
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -37,7 +38,7 @@ class HomeViewModel @Inject constructor(
     val showLink: LiveData<Event<Uri>> = _showLink
 
     private val _showMenuCategory = MutableLiveData<Event<Pair<Int, MenuCategory>>>()
-    val showMenuCategory : LiveData<Event<Pair<Int, MenuCategory>>> = _showMenuCategory
+    val showMenuCategory: LiveData<Event<Pair<Int, MenuCategory>>> = _showMenuCategory
 
     private val _showMenuItem = MutableLiveData<Event<Pair<String, String>>>()
     val showMenuItem: LiveData<Event<Pair<String, String>>> = _showMenuItem
@@ -50,7 +51,10 @@ class HomeViewModel @Inject constructor(
     private val excludedCategories = HashMap<String, HashSet<MenuCategory>>()
 
     private val _loyalty = MutableLiveData<Loyalty>()
-    val loyalty : LiveData<Loyalty> = _loyalty
+    val loyalty: LiveData<Loyalty> = _loyalty
+
+    private val _orderTypes = MutableLiveData<Set<OrderType>>()
+    val orderTypes: LiveData<Set<OrderType>> = _orderTypes
 
     fun getSliders() {
         invoke {
@@ -65,6 +69,12 @@ class HomeViewModel @Inject constructor(
                     _showError.value = ErrorMsgItem(true, homeResponse.message)
                 }
             }
+        }
+    }
+
+    fun getOrderTypes() {
+        invoke {
+            _orderTypes.value = homeRepository.getGetOrderTypes()
         }
     }
 
@@ -83,20 +93,25 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
     private fun getMenuCategoryWith(menuCategoryId: String) {
         invoke {
             val menu: List<MenuCategory> = excludedMenuCategories(menuCategories)
             menu.sortedWith { menuCategory1, menuCategory2 -> menuCategory1.displayOrder - menuCategory2.displayOrder }
-            menu.find { menuCategory ->  menuCategory.id.equals(menuCategoryId, ignoreCase = true) }?.let {
-                _showMenuCategory.value = Event(Pair(menu.indexOf(it), it))
-            }
+            menu.find { menuCategory -> menuCategory.id.equals(menuCategoryId, ignoreCase = true) }
+                ?.let {
+                    _showMenuCategory.value = Event(Pair(menu.indexOf(it), it))
+                }
         }
     }
 
     private fun excludedMenuCategories(menuCategories: List<MenuCategory>): List<MenuCategory> {
         excludedMenu.clear()
         val orderStore = homeRepository.getOrderStore()
-        if (orderStore != null && !excludedCategories.isEmpty() && excludedCategories.containsKey(orderStore.id)) {
+        if (orderStore != null && !excludedCategories.isEmpty() && excludedCategories.containsKey(
+                orderStore.id
+            )
+        ) {
             val categories: MutableList<MenuCategory> = java.util.ArrayList(menuCategories)
             categories.removeAll(excludedCategories[orderStore.id]!!)
             excludedMenu.addAll(categories)
@@ -109,14 +124,14 @@ class HomeViewModel @Inject constructor(
 
     private fun getMenuItemWith(menuItemId: String) {
         invokeAtBackground {
-          homeRepository.getMenuItemWith(menuItemId){ homeResponse ->
-              homeResponse.data?.cast<MenuItemEntity> { menuItemEntity ->
-                  val categoryId = menuItemEntity.menuCategoryId
-                  if (categoryId.isNotEmpty()) {
-                      _showMenuItem.value = Event(Pair(categoryId, menuItemEntity.id))
-                  }
-              }
-          }
+            homeRepository.getMenuItemWith(menuItemId) { homeResponse ->
+                homeResponse.data?.cast<MenuItemEntity> { menuItemEntity ->
+                    val categoryId = menuItemEntity.menuCategoryId
+                    if (categoryId.isNotEmpty()) {
+                        _showMenuItem.value = Event(Pair(categoryId, menuItemEntity.id))
+                    }
+                }
+            }
         }
     }
 
@@ -143,9 +158,9 @@ class HomeViewModel @Inject constructor(
             val orderStore = homeRepository.getOrderStore()
             val storeSelected = orderStore != null
             homeRepository.getMenuCategories { homeResponse ->
-                homeResponse.data?.let {data->
+                homeResponse.data?.let { data ->
                     data.cast<ArrayList<MenuCategory>> {
-                        for(category in it){
+                        for (category in it) {
                             if (category.excludedLocations.isNotEmpty()) {
                                 for (excluded in category.excludedLocations) {
                                     if (excludedCategories.containsKey(excluded)) {
@@ -159,12 +174,15 @@ class HomeViewModel @Inject constructor(
                             }
                             if (category.getEnabled() == 1) {
                                 invokeAtBackground {
-                                    homeRepository.getMenuItemBy(category.id){ response ->
+                                    homeRepository.getMenuItemBy(category.id) { response ->
                                         response.data?.cast<List<MenuItemEntity>> { menuItemDbs ->
                                             if (menuItemDbs.isNotEmpty()) {
                                                 category.menuItems = menuItemDbs.toDomain()
                                                 menuCategories.add(category)
-                                                if (!storeSelected || !category.excludedLocations.contains(orderStore?.id ?: "")) {
+                                                if (!storeSelected || !category.excludedLocations.contains(
+                                                        orderStore?.id ?: ""
+                                                    )
+                                                ) {
                                                     excludedMenu.add(category)
                                                 }
                                             }
@@ -183,16 +201,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getCustomerLoyalty(id: String){
+    fun getCustomerLoyalty(id: String) {
         invoke {
-            homeRepository.getCustomerLoyalty(id){homeResponse ->
-                if(homeResponse.success){
+            homeRepository.getCustomerLoyalty(id) { homeResponse ->
+                if (homeResponse.success) {
                     homeResponse.data?.let { it ->
                         it.cast<Loyalty> {
                             _loyalty.value = it
                         }
                     }
-                }else {
+                } else {
                     _showError.value = ErrorMsgItem(true, homeResponse.message)
                 }
             }

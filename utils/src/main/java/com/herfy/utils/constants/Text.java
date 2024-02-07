@@ -819,6 +819,9 @@ public class Text {
     public static final String CATER_WITH_US="cater_with_us";
     public static final String CATER_WITH_HERFY_DESC="cater_with_herfy_desc";
     public static final String ORDER_CATERING = "order_catering";
-
     public static final String CLAIM_PROMO = "claim_promo_label";
+
+    public static final String GOOD_MORNING_LABEL = "good_morning_label";
+
+    public static final String HOW_WILL_YOU_ORDER_TODAY = "how_will_you_order_today";
 }
