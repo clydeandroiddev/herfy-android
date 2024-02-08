@@ -91,6 +91,10 @@
         <item name="android:textAppearance">@style/TextAppearance.Caption</item>
         <item name="lineHeight">@dimen/line_height_caption</item>
     </style>
+    <style name="Styles.Text.Caption.Regular" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.Caption.Regular</item>
+        <item name="lineHeight">@dimen/line_height_caption</item>
+    </style>
 
     <style name="Styles.Text.Caption.Semibold" parent="Widget.MaterialComponents.TextView">
         <item name="android:textAppearance">@style/TextAppearance.Caption.Semibold</item>

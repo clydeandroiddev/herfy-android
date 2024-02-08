@@ -12,7 +12,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.herfy.home.R
+import com.herfy.home.adapter.PromotionCategoryAdapter
 import com.herfy.home.adapter.PromotionsAdapter
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.home.databinding.FragmentHomeBinding
@@ -41,6 +43,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     override val layout: Int = R.layout.fragment_home
     private lateinit var sliderImageAdapter: SliderImageAdapter
     private lateinit var promotionsAdapter: PromotionsAdapter
+    private lateinit var promotionCategoryAdapter: PromotionCategoryAdapter
     private var sliderHandler: Handler? = null
     private var promotionDetailBottomSheet: PromotionDetailBottomSheet? = null
     private val cacheUtilHelper by lazy {
@@ -54,6 +57,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.getMenuCategory()
         binding.apply {
             setupSlider()
+            setupPromoCategory()
             setupPromotions()
             setupOrderType()
             if(AuthUtil.getInstance().isSignedIn) {
@@ -70,7 +74,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         binding.apply {
             cacheUtilHelper?.let { cacheHelper ->
                 layoutPromotions.tvPromotions.text =
-                    cacheHelper.getTranslations(Text.PROMOS, "PROMOTIONS")
+                    cacheHelper.getTranslations(Text.PROMOTIONS, "PROMOTIONS")
                 layoutCatering.apply {
 
                     tvCaterTitle.text  = cacheHelper.getTranslations(Text.CATER_WITH_HERFY, "Cater with Herfy"
@@ -168,6 +172,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 layoutPromotions.apply {
                     placeholderPromotions.clPlaceholderPromo.visibility = View.GONE
                     if (promos.size > 0) {
+                        clPromotions.visibility = View.VISIBLE
                         grpPromo.visibility = View.VISIBLE
                         promotionsAdapter.updatePromoList(promos)
                     } else {
@@ -357,6 +362,37 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 it.startActivity(intent)
             }
         }
+        viewModel.promotionCategoryList.observeNonNull(this){ promoCategories ->
+            binding.layoutPromotions.apply {
+                if(promoCategories.size > 0){
+                    promotionCategoryAdapter.updateList(promoCategories)
+                }
+            }
+        }
+        viewModel.updatePromoCategoryList.observeNonNull(this){
+            it.getContentIfNotHandled()?.let {selectedCategory ->
+                promotionCategoryAdapter.updateCategoryList(selectedCategory)
+                binding.layoutPromotions.apply {
+                    rvPromotions.visibility = View.GONE
+                    placeholderPromotions.apply {
+                        shimmerPromotionsTitle.visibility = View.GONE
+                        shimmerPromotionsCategory.visibility = View.GONE
+                        shimmerPromotionsList.visibility = View.VISIBLE
+                        clPlaceholderPromo.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+        viewModel.loyalty.observe(this){
+            binding.apply {
+                layoutLoyalty.apply {
+                    tvPoints.text = viewModel.loyalty.value?.attributes?.pointsAccumulated.toString()
+                    tierName.text = viewModel.loyalty.value?.attributes?.loyaltyTier.toString()
+                    progress.max = 100
+                    progress.progress = viewModel.loyalty.value?.attributes?.currentBalance ?: 0
+                }
+            }
+        }
     }
 
     private fun properSliderHeights() {
@@ -419,7 +455,23 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
-
+    private fun setupPromoCategory() {
+        context?.let { ctx ->
+            viewModel.getPromotionCategoryList()
+            binding.apply {
+                promotionCategoryAdapter = PromotionCategoryAdapter(categoryListener = viewModel)
+                binding.apply {
+                    layoutPromotions.rvPromoCategory.apply {
+                        adapter = promotionCategoryAdapter
+                        layoutManager =
+                            LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false)
+                        setHasFixedSize(true)
+                        isNestedScrollingEnabled = true
+                    }
+                }
+            }
+        }
+    }
 
     private fun setupOrderType() {
         context?.let {
@@ -429,7 +481,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     private fun setupCustomerLoyalty(){
         context?.let { ctx ->
-            viewModel.getLoyalty()
+            viewModel.getCustomerLoyalty(id)
         }
     }
 

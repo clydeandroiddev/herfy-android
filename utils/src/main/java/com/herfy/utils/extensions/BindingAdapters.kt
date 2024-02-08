@@ -1,6 +1,7 @@
 package com.herfy.utils.extensions
 
 import android.graphics.drawable.Drawable
+import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
@@ -55,3 +56,17 @@ fun loadImageWithUri(imageView: ImageView, imageUri: String?){
     }
 
 }
+
+@BindingAdapter("selectedBackground", "unselectedBackground", "isSelected", requireAll = false)
+fun View.updateBackgroundWith(selectedBackground : Drawable, unselectedBackground : Drawable? = null, isSelected : Boolean){
+    if (isSelected){
+        background = selectedBackground
+    }else {
+        unselectedBackground?.let {
+            background = it
+        }?: run {
+            setBackgroundResource(0)
+        }
+    }
+}
+

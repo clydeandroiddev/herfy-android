@@ -9,14 +9,15 @@
 
     <include
         android:id="@+id/placeholder_promotions"
-        layout="@layout/placeholder_promotions"/>
+        layout="@layout/placeholder_promotions"
+        android:visibility="visible"/>
 
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/grp_promo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="tv_promotions,rv_promotions"
+        app:constraint_referenced_ids="tv_promotions,rv_promo_category,rv_promotions"
         android:visibility="gone"/>
     
     <TextView
@@ -26,17 +27,27 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp"
-        android:textSize="20sp"
         android:textColor="@color/black"
+        style="@style/Styles.Text.Headline1"
         tools:text="Promotions"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_promo_category"
+        android:layout_width="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="14dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tv_promotions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_promotions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="10dp"
         android:layout_marginHorizontal="8.5dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_promotions"
+        app:layout_constraintTop_toBottomOf="@id/rv_promo_category"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 

@@ -853,4 +853,6 @@ public class Text {
     public static final String SOCIAL_MEDIA_LABEL = "social_media_label";
     public static final String FAVOURITES_LABEL ="favourites_label";
     public static final String GET_STARTED_LABEL = "get_started_label";
+
+    public static final String ALL_LABEL="all_label";
 }
