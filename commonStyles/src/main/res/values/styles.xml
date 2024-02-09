@@ -42,7 +42,7 @@
         <item name="colorControlActivated">#FFC96F</item>
     </style>
 
-    <style name="BottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+    <style name="BottomSheetDialogTheme" parent="">
         <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
     </style>
 

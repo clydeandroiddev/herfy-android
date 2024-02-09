@@ -22,14 +22,14 @@
         android:layout_height="wrap_content"
         android:paddingVertical="8dp"
         android:paddingHorizontal="16dp"
-        android:textColor="@{category.selected ? @color/white : @color/primaryDark}"
+        android:textColor="@{category.selected ? @color/white : @color/colorPrimaryDark}"
         android:onClick="@{() -> listener.selectedCategory(category)}"
         style="@style/Styles.Text.Footnote.Medium"
         tools:text="All"
         android:text="@{category.name}"
         android:layout_marginHorizontal="2dp"
-        app:selectedBackground="@drawable/background_promo_category"
         app:isSelected="@{category.selected}"
+        app:selectedBackground="@{@drawable/background_promo_category}"
          />
 
 

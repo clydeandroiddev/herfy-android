@@ -21,6 +21,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
     private var promo : Campaign? = null
     private lateinit var binding : BottomSheetPromotionDetailBinding
+    private var action : onAction? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,11 +76,28 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
         }
     }
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.apply {
+            ibClose.setOnClickListener {
+                dismissAllowingStateLoss()
+            }
+
+            btnClaim.setOnClickListener {
+                this@PromotionDetailBottomSheet.promo?.let {
+                    action?.onClickClaimPromo(it)
+                }
+
+            }
+        }
+    }
     companion object {
         const val KEY_PROMO = "key_promo"
         @JvmStatic
-        fun newInstance(promo: Campaign) =
+        fun newInstance(promo: Campaign, action: onAction) =
             PromotionDetailBottomSheet().apply {
+                this.action = action
                 arguments = Bundle().apply {
                     putString(KEY_PROMO, GsonHelper.gsonFinal().toJson(promo))
                 }

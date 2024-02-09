@@ -32,6 +32,7 @@ import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
+import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
@@ -234,8 +235,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.showPromo.observeNonNull(this) {
-            it.getContentIfNotHandled()?.let {
-                promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(it)
+            it.getContentIfNotHandled()?.let {promo ->
+                promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(promo, object : PromotionDetailBottomSheet.onAction{
+                    override fun onClickClaimPromo(promo: Campaign) {
+
+                    }
+
+                })
                 promotionDetailBottomSheet?.show(
                     childFragmentManager, PromotionDetailBottomSheet::class.java.simpleName
                 )
@@ -375,8 +381,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 binding.layoutPromotions.apply {
                     rvPromotions.visibility = View.GONE
                     placeholderPromotions.apply {
-                        shimmerPromotionsTitle.visibility = View.GONE
-                        shimmerPromotionsCategory.visibility = View.GONE
+                        shimmerPromotionsTitle.visibility = View.INVISIBLE
+                        shimmerPromotionsCategory.visibility = View.INVISIBLE
                         shimmerPromotionsList.visibility = View.VISIBLE
                         clPlaceholderPromo.visibility = View.VISIBLE
                     }
@@ -385,13 +391,20 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
         viewModel.loyalty.observe(this){
             binding.apply {
-                layoutLoyalty.apply {
-                    tvPoints.text = viewModel.loyalty.value?.attributes?.pointsAccumulated.toString()
-                    tierName.text = viewModel.loyalty.value?.attributes?.loyaltyTier.toString()
-                    progress.max = 100
-                    progress.progress = viewModel.loyalty.value?.attributes?.currentBalance ?: 0
+                it?.let {loyalty ->
+                    layoutLoyalty.apply {
+                        tvPoints.text = loyalty.attributes?.pointsAccumulated.toString()
+                        tierName.text = loyalty.attributes?.loyaltyTier.toString()
+                        progress.max = 100
+                        progress.progress = loyalty.attributes?.currentBalance ?: 0
+                    }
+
+                }?: run {
+                    layoutLoyalty.clCustomerLoyalty.visibility = View.GONE
                 }
             }
+
+
         }
     }
 
