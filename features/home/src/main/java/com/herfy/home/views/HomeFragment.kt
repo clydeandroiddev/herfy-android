@@ -76,7 +76,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 val displayMetrics = DisplayMetrics()
                 it.windowManager.defaultDisplay.getMetrics(displayMetrics)
                 val sliderHeight = (displayMetrics.widthPixels / 1.5).toInt()
-                layoutBanner.clSliderContainer.layoutParams.height = sliderHeight
+                layoutBanner.mainToolbar.layoutParams.height = sliderHeight
                 layoutBanner.sliderViewPager.layoutParams.height = sliderHeight
                 layoutBanner.newMenuBannerShimmer.layoutParams.height = sliderHeight
                 layoutBanner.sliderViewPager.adapter = sliderImageAdapter
