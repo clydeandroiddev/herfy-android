@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
+import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.*;
 import com.herfy.menu.MenuContract;
 import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
