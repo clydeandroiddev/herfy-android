@@ -51,7 +51,7 @@
     </style>
 
     <style name="TextAppearance.Headline" parent="">
-        <item name="fontFamily">@font/cairo_bold</item>
+        <item name="fontFamily">@font/inter_bold</item>
         <item name="android:textSize">17sp</item>
         <item name="android:letterSpacing">0</item>
     </style>

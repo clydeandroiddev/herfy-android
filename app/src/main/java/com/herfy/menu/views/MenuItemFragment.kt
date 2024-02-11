@@ -290,7 +290,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(activity)
                 (binding.modifierGroupsRecyclerView.itemAnimator as SimpleItemAnimator?)!!.supportsChangeAnimations =
                     false
-//                binding.ingredientsRecyclerView.layoutManager = LinearLayoutManager(activity)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -968,7 +967,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 binding.sizesLabel.visible()
                 binding.txtSelectOne.visible()
                 binding.sizesLabel.text = menuItem.sizes.attributes.name
-                binding.txtRequired.text = CacheUtil.getInstance().getTranslations(Text.REQUIRED,"Required")
                 if (menuItem.sizes.modifierItems.size <= 3) {
                     menuItem.getSizes().getModifierItems().forEach { modifierItem ->
                         val view = LayoutInflater.from(activity)
@@ -983,51 +981,47 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             card.findViewById<ImageView>(R.id.radioButton)
                         if (modifierItem.getAttributes().isSelected) {
                             if (!initialSelectedEncountered) {
-                                card.strokeColor = ContextCompat.getColor(requireContext(), R.color.colorStrokeBorder)
+                                card.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_blue)
                                 card.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
-                                card.radius = resources.getDimensionPixelSize(R.dimen.radius_small).toFloat()
-                                txtSizesName.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                                txtPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.color_gray))
-                                card.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorStrokeBorder))
-                                sizesRadiButton.setImageResource(R.drawable.modifier_radio_item_selected)
+                                card.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
+                                txtSizesName.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                                txtPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.white))
+                                card.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_blue))
+                                sizesRadiButton.setImageResource(R.drawable.ic_size_drawable_checked)
                                 initialSelectedEncountered =true
                             }else {
-                                card.strokeWidth =
-                                    ViewUtil.dpToPx(requireActivity(), 1)
-                                card.strokeColor = ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.color_border
-                                )
+//                                card.strokeWidth =
+//                                    ViewUtil.dpToPx(requireActivity(), 1)
+//                                card.strokeColor = ContextCompat.getColor(
+//                                    requireContext(),
+//                                    R.color.color_light_blue_shade
+//                                )
+//                                card.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
+//                                txtSizesName.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+//                                card.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.color_light_blue_shade))
+//                                txtPrice.setTextColor(
+//                                    ContextCompat.getColor(
+//                                        requireContext(),
+//                                        R.color.color_gray
+//                                    )
+//                                )
+                                card.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade)
+                                card.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
+                                card.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
                                 txtSizesName.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                                card.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white))
-                                txtPrice.setTextColor(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.color_gray
-                                    )
-                                )
+                                txtPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.color_gray))
+                                card.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade))
+                                sizesRadiButton.setImageResource(R.drawable.modifier_item_radio_unselected)
                             }
 
                         } else {
-                            card.strokeWidth =
-                                ViewUtil.dpToPx(requireActivity(), 1)
-                            card.strokeColor = ContextCompat.getColor(
-                                requireContext(),
-                                R.color.color_border
-                            )
-                            card.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white))
-                            txtPrice.setTextColor(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.black
-                                )
-                            )
-                            txtPrice.setTextColor(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.black
-                                )
-                            )
+                            card.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade)
+                            card.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
+                            card.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
+                            txtSizesName.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                            txtPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.color_gray))
+                            card.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade))
+                            sizesRadiButton.setImageResource(R.drawable.modifier_item_radio_unselected)
 
                         }
                         val container = view!!.findViewById<ConstraintLayout>(R.id.container)
@@ -1041,46 +1035,41 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 val txtModifierPrice = childView.findViewById<MaterialTextView>(R.id.txtSizesPrice)
                                 val sizesRadioBtn = childView.findViewById<ImageView>(R.id.radioButton)
                                 if (childView.tag == view1.tag) {
-                                    childCard.setContentPadding(0, 0, 0, 0)
-                                    childCard.strokeWidth =
-                                        ViewUtil.dpToPx(requireActivity(), 1)
-                                        txtModifierSizes.setTextColor(
-                                            ContextCompat.getColor(
-                                                requireContext(),
-                                                R.color.black
-                                            )
-                                        )
-                                    childCard.strokeColor = ContextCompat.getColor(requireContext(), R.color.colorStrokeBorder)
-                                    childCard.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorStrokeBorder))
-                                    txtModifierPrice.setTextColor(
-                                            ContextCompat.getColor(
-                                                requireContext(),
-                                                R.color.color_gray
-                                            )
-                                        )
-                                    sizesRadioBtn.setImageResource(R.drawable.modifier_radio_item_selected)
-
+//                                    childCard.setContentPadding(0, 0, 0, 0)
+//                                    childCard.strokeWidth =
+//                                        ViewUtil.dpToPx(requireActivity(), 1)
+//                                        txtModifierSizes.setTextColor(
+//                                            ContextCompat.getColor(
+//                                                requireContext(),
+//                                                R.color.white
+//                                            )
+//                                        )
+//                                    childCard.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_blue)
+//                                    childCard.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
+//                                    childCard.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_blue))
+//                                    txtModifierPrice.setTextColor(
+//                                            ContextCompat.getColor(
+//                                                requireContext(),
+//                                                R.color.color_light_blue_shade
+//                                            )
+//                                        )
+//                                    sizesRadioBtn.setImageResource(R.drawable.ic_size_drawable_checked)
+                                    childCard.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_blue)
+                                    childCard.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
+                                    childCard.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
+                                    txtModifierSizes.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade))
+                                    txtModifierPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.white))
+                                    childCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_blue))
+                                    sizesRadioBtn.setImageResource(R.drawable.ic_size_drawable_checked)
 
                                 } else {
-                                    childCard.strokeWidth =
-                                        ViewUtil.dpToPx(requireActivity(), 1)
-                                    childCard.strokeColor = ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.color_border
-                                    )
-                                    childCard.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white))
-                                        txtModifierSizes.setTextColor(
-                                            ContextCompat.getColor(
-                                                requireContext(),
-                                                R.color.black
-                                            )
-                                        )
-                                        txtModifierPrice.setTextColor(
-                                            ContextCompat.getColor(
-                                                requireContext(),
-                                                R.color.gray
-                                            )
-                                        )
+//
+                                    childCard.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade)
+                                    childCard.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
+                                    childCard.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
+                                    txtModifierSizes.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                                    txtModifierPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.color_gray))
+                                    childCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade))
                                     sizesRadioBtn.setImageResource(R.drawable.modifier_item_radio_unselected)
 
                                     }

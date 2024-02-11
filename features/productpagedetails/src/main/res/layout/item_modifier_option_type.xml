@@ -4,11 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="84dp"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginBottom="@dimen/margin_small"
+    android:layout_marginBottom="@dimen/margin_large"
     android:background="@drawable/bg_modifier_item_selector"
     android:padding="10dp"
     app:cardPreventCornerOverlap="false"
+    android:layout_marginHorizontal="@dimen/margin_small"
     app:contentPadding="8dp"
+    android:id="@+id/optionCardView"
     app:cardUseCompatPadding="true">
     <LinearLayout
         android:id="@+id/clickable_layout"
@@ -48,7 +50,7 @@
                 android:paddingStart="10dp"
                 android:paddingEnd="4dp"
                 android:textAlignment="viewStart"
-                android:textColor="#1e1e1e"
+                android:textColor="#0C0C0C"
                 tools:text="Marinara dip" />
 
             <TextView
@@ -76,13 +78,13 @@
                 android:id="@+id/txtmodifierPrice"
                 android:layout_width="wrap_content"
                 style="@style/Styles.Text.Footnote_Bold"
-                android:textColor="#208DA7"
+                android:textColor="@color/color_light_blue"
                 android:layout_marginTop="@dimen/margin_large"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginBottom="@dimen/margin_large"
-                app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
                 app:layout_constraintTop_toBottomOf="@+id/modifierDescription"
+                app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
                 tools:text="+Sar 2" />
 
             <com.google.android.material.card.MaterialCardView
@@ -95,7 +97,7 @@
                 android:visibility="gone"
                 app:cardCornerRadius="6dp"
                 app:contentPadding="0dp"
-                app:cardUseCompatPadding="false"
+                app:cardUseCompatPadding="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/check_layout"
                 android:layout_gravity="center_vertical"
@@ -104,10 +106,11 @@
                 tools:visibility="visible">
 
                 <com.google.android.material.textview.MaterialTextView
+                    style="@style/Styles.Text.Footnote"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/Styles.Text.Footnote"
                     android:layout_gravity="center_vertical"
+                    android:padding="@dimen/padding_smallest"
                     android:gravity="center_vertical"
                     android:textColor="#CA3B32"
                     app:layout_constraintBottom_toBottomOf="parent"

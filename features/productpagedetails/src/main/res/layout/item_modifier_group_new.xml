@@ -6,10 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:id="@+id/imageCardView"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:background="@drawable/background_modifier_group_image"
         app:layout_constraintBottom_toBottomOf="@+id/select"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,10 +18,10 @@
         app:layout_constraintTop_toTopOf="@+id/name">
         <com.google.android.material.imageview.ShapeableImageView
             android:layout_width="wrap_content"
-            tools:src="@tools:sample/avatars"
+            android:padding="@dimen/padding_small"
+            tools:src="@drawable/ic_car_drive_thru"
             android:layout_height="wrap_content"/>
-    </com.google.android.material.card.MaterialCardView>
-
+    </LinearLayout>
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/name"
         style="@style/Styles.Text.Footnote.Medium"
@@ -54,6 +55,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:focusableInTouchMode="false"
         android:descendantFocusability="blocksDescendants"
         app:layout_constraintTop_toBottomOf="@+id/select"
@@ -97,8 +99,8 @@
 
         <ImageView
             android:id="@+id/checkBox"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="34dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:visibility="gone"
 

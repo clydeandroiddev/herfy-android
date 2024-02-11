@@ -17,7 +17,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
 import com.herfy.utils.constants.*;
 import com.herfy.menu.MenuContract;
@@ -49,11 +51,17 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
     TextView txtModifierPrice;
     @BindView(R.id.clickable_layout)
     LinearLayout clickableLayout;
+    @BindView(R.id.optionCardView)
+    MaterialCardView modifierItemCardView;
+
 //    @BindView(R.id.quantityUp)
 //    ImageButton plus;
     @BindView(R.id.image)
     ShapeableImageView modifierOptionImage;
     private ModifierProcessor modifierProcessor;
+
+    @BindView(R.id.modifierDescription)
+    MaterialTextView modifierDescription;
 //    @BindView(R.id.quantity_container)
 //    ConstraintLayout quantityContainer;
 
@@ -107,16 +115,16 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         radioButton.setVisibility(modifierGroupAttributes.getMaximum() == 1 && modifierGroupAttributes.getMinimum() == 1 ? View.VISIBLE : View.GONE);
         check.setVisibility(modifierGroup.getAttributes().getMaximum() > 1 ? View.VISIBLE : View.GONE);
         if (modifierItem.getAttributes().isSelected()) {
+            modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state);
             radioButton.setImageResource(R.drawable.modifier_radio_item_selected);
-        }else {
-            radioButton.setImageResource(R.drawable.modifier_item_radio_unselected);
-        }
-        if (modifierItem.getAttributes().isSelected()) {
-
             check.setImageResource(R.drawable.modifier_item_checked_selected);
-        } else {
+        }else {
+            modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_unselected_state);
+            radioButton.setImageResource(R.drawable.modifier_item_radio_unselected);
             check.setImageResource(R.drawable.modifier_item_unselected);
         }
+
+        modifierDescription.setText(modifierItem.getAttributes().getDescription()); // todo ask maam rio or BE where to get the data for description
 //        quantity.setText(StringUtil.localize(String.valueOf(modifierItem.getAttributes().getQuantity())));
         checkLayout.setOnClickListener(new View.OnClickListener() {
             @Override

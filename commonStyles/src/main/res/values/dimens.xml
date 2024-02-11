@@ -38,6 +38,7 @@
     <dimen name="search_box_bottom_padding_start_text">25dp</dimen>
     <dimen name="title_text_size">30sp</dimen>
     <dimen name="menu_item_details_image_height">238dp</dimen>
+    <dimen name="padding_smallest">2dp</dimen>
     <dimen name="padding_micro">4dp</dimen>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_medium">12dp</dimen>
