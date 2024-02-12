@@ -72,17 +72,15 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 layoutPromotions.tvPromotions.text =
                     cacheHelper.getTranslations(Text.PROMOS, "PROMOTIONS")
                 layoutCatering.apply {
-                    tvCatering.text =
-                        cacheHelper.getTranslations(Text.CATER_WITH_HERFY, "Cater with Herfy")
-                    tvCaterTitle.text = cacheHelper.getTranslations(
-                        Text.CATER_WITH_US, "Cater with us for your next event."
+
+                    tvCaterTitle.text  = cacheHelper.getTranslations(Text.CATER_WITH_HERFY, "Cater with Herfy"
                     )
                     tvCaterDescription.text = cacheHelper.getTranslations(
                         Text.CATER_WITH_HERFY_DESC,
-                        "We make sure that your event be the best and in the best budget. More text to tell about catering."
+                        "Best event. Best budget. Check out our catering!"
                     )
                     btnCatering.text =
-                        cacheHelper.getTranslations(Text.ORDER_CATERING, "ORDER CATERING")
+                        cacheHelper.getTranslations(Text.ORDER_CATERING, "Order Catering")
                 }
                 layoutOrderTypeMain.apply {
                     if (AuthUtil.getInstance().isSignedIn) {

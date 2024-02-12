@@ -7,82 +7,107 @@
     android:background="@color/white">
 
     <TextView
-        android:id="@+id/tv_catering"
+        android:id="@+id/tv_cater_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:textSize="20sp"
+        android:textSize="18sp"
+        style="@style/TextAppearance.Title1"
         android:textColor="@color/black"
-        tools:text="Cater with Herfy"/>
+        tools:text="Cater with Herfy"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="12dp"
-        app:cardCornerRadius="8dp"
-        app:cardBackgroundColor="#E5E5EA"
+        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="@color/background_color_light_blue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_catering"
+        app:layout_constraintTop_toBottomOf="@id/tv_cater_title"
         app:layout_constraintBottom_toBottomOf="parent">
 
-
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_margin="16dp">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tv_cater_title"
-                android:layout_width="329dp"
-                android:layout_height="25dp"
-                android:textSize="20sp"
-                android:lineSpacingExtra="2sp"
-                android:translationY="-1sp"
-                android:gravity="top"
-                android:textColor="@color/black"
-                tools:text="Cater with us for your next event."
-                />
-
-            <TextView
-                android:id="@+id/tv_cater_description"
-                android:layout_width="329dp"
-                android:layout_height="42dp"
-                android:lineSpacingExtra="3sp"
-                android:translationY="-1.3sp"
-                android:gravity="top"
-                android:textColor="#1C1C1E"
-                android:layout_marginTop="8dp"
-                tools:text="We make sure that your event be the best and in the best budget. More text to tell about catering."
-                />
-
-            
-            
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_catering"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:insetRight="0dp"
-                android:insetLeft="0dp"
-                android:insetBottom="0dp"
-                android:insetTop="0dp"
-                android:paddingHorizontal="20dp"
-                android:textColor="@color/white"
-                android:layout_marginTop="33dp"
-                android:textAllCaps="false"
-                app:cornerRadius="30dp"
-                app:backgroundTint="@color/black"
-                tools:text="Order Catering"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/ln_content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginVertical="16dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintWidth_percent=".5"
+                app:layout_constraintHorizontal_bias=".0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_cater"
+                app:layout_constraintBottom_toBottomOf="parent"
+               >
 
 
 
+                <TextView
+                    android:id="@+id/tv_cater_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    style="@style/TextAppearance.Footnote_Bold"
+                    android:gravity="top"
+                    android:textColor="#1C1C1E"
+                    tools:text="Best event. Best budget. Check out our catering!"
+                    />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_catering"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:insetRight="0dp"
+                    android:insetLeft="0dp"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="46dp"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.Footnote_Bold"
+                    app:cornerRadius="50dp"
+                    app:backgroundTint="@color/background_color_blue"
+                    tools:text="Order Catering"/>
+
+
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.santalu.diagonalimageview.DiagonalImageView
+                android:id="@+id/iv_cater"
+                android:src="@drawable/image_herfy_catering"
+                app:layout_constraintWidth_percent=".5"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:di_start="left"
+                app:di_end="left"
+                app:di_distance="20dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
 
 
