@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.View
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
@@ -21,11 +22,14 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.helper.AnimUtil
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.NavigationUtils
+import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.ViewUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -48,8 +52,15 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         binding.apply {
             setupSlider()
             setupPromotions()
-            setupCustomerLoyalty("customerId")
+            if(AuthUtil.getInstance().isSignedIn) {
+                setupCustomerLoyalty()
+            }else{
+              layoutLoyalty.clCustomerLoyalty.visibility = View.GONE
+            }
+
         }
+
+
     }
 
     override fun initTranslations() {
@@ -197,6 +208,41 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 promotionDetailBottomSheet?.show(childFragmentManager, PromotionDetailBottomSheet::class.java.simpleName)
             }
         }
+
+        viewModel.pointsToNextTier.observeNonNull(this){]
+            binding.apply {
+                layoutLoyalty.apply {
+                    if(it<=0){
+                        if(viewModel.tier.value == null){
+                            progress.max = 100
+                            progress.progress = 0
+                            progressLabel.text = "You are now a Tier member"
+                        }else{
+                            progress.max = 100
+                            progress.progress = 100
+                            progressLabel.text = CacheUtil.getInstance().getTranslations(
+                                Text.TOTAL_POINTS_MAX_OUT,
+                                "You have maxed out on our tier levels"
+                            )
+                        }
+                    }else{
+                        progress.max = viewModel.startPoints.value!!
+                        progress.progress = viewModel.totalPointsAccumulated.value!!
+                        progressLabel.text = HtmlCompat.fromHtml(
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.LOYALTY_POINTS_UNTIL_TIER,
+                                    "(x) points till you reach (y) Tier"
+                                ).replace("(x)",viewModel.pointsToNextTier.toString()).replace(
+                                    "(y)", "<b>" + viewModel.tier.value!!.name.substring(0, 1).uppercase(
+                                        Locale.getDefault()
+                                    ) + viewModel.tier.value!!.name.substring(1).lowercase(Locale.getDefault())
+                                )
+                            + "</b>", HtmlCompat.FROM_HTML_MODE_LEGACY
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun properSliderHeights() {
@@ -246,20 +292,18 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     }
                 }
             }
-
         }
-
     }
 
-    private fun setupCustomerLoyalty(id: String){
+    private fun setupCustomerLoyalty(){
         context?.let { ctx ->
-            viewModel.getCustomerLoyalty(id)
+            viewModel.getLoyalty()
             binding.apply {
                 layoutLoyalty.apply {
+                    layoutLoyalty.clCustomerLoyalty.visibility = View.VISIBLE
                     tvPoints.text = viewModel.loyalty.value?.attributes?.pointsAccumulated.toString()
                     tierName.text = viewModel.loyalty.value?.attributes?.loyaltyTier.toString()
-                    progress.max = 100
-                    progress.progress = viewModel.loyalty.value?.attributes?.currentBalance ?: 0
+
                 }
             }
         }

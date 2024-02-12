@@ -5,6 +5,8 @@ import com.herfy.database.AppDatabase
 import com.herfy.database.entities.MenuCategoryEntity.Companion.toDomain
 import com.herfy.database.entities.MenuItemEntity
 import com.herfy.model.HomeResponse
+import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.CacheUtilHelper.Companion.get
 import com.skylinedynamics.solosdk.api.ApiRequestListener
@@ -18,9 +20,11 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Promotion
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import com.skylinedynamics.solosdk.api.models.objects.Store
+import com.skylinedynamics.solosdk.api.models.objects.Tier
 import com.skylinedynamics.solosdk.util.GsonHelper
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.Collections
 import javax.inject.Inject
 
 
@@ -41,6 +45,8 @@ interface HomeRepository {
     suspend fun getMenuItemWith(menuItemId : String, response: (HomeResponse) -> Unit)
 
     suspend fun getCustomerLoyalty(id: String, response: (HomeResponse) -> Unit)
+
+    suspend fun getLoyaltyTiers(response: (HomeResponse) -> Unit)
 }
 
 class HomeRepositoryImpl @Inject constructor(
@@ -157,6 +163,31 @@ class HomeRepositoryImpl @Inject constructor(
                     response(HomeResponse(false, null, o.toString()))
                 }
             })
+    }
+
+    override suspend fun getLoyaltyTiers(response: (HomeResponse) -> Unit) {
+        CustomersApiCall.getInstance().getLoyaltyTiers(object : ApiRequestListener {
+            override fun onSuccess(o: Any) {
+                try {
+                    val `object` = JSONObject(o.toString())
+                    val tiersArray = `object`.getJSONArray("data")
+                    val type = object :
+                        TypeToken<List<Tier?>?>() {}.type
+                    val tiers = GsonHelper.gsonFinal()
+                        .fromJson<List<Tier>>(tiersArray.toString(), type)
+                    // TODO: Should set Tier as Comparable in SDK
+                    Collections.sort(tiers,
+                        java.util.Comparator { o1: Tier, o2: Tier -> o1.startPoint - o2.startPoint } as java.util.Comparator<Tier>)
+                    response(HomeResponse(true, tiers, ""))
+                } catch (ex: JSONException) {
+                    ex.printStackTrace()
+                }
+            }
+
+            override fun onError(o: Any) {
+                response(HomeResponse(false, null, o.toString()))
+            }
+        })
     }
 
     override suspend fun getSliderId(): String {
