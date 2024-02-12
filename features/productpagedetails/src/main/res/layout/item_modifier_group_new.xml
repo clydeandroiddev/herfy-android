@@ -14,6 +14,7 @@
         android:background="@drawable/background_modifier_group_image"
         app:layout_constraintBottom_toBottomOf="@+id/select"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/margin_large"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Circle"
         app:layout_constraintTop_toTopOf="@+id/name">
         <com.google.android.material.imageview.ShapeableImageView

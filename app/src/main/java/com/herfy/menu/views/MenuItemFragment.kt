@@ -359,6 +359,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         activity?.cast<BaseActivity> {
             it.runOnUiThread {
 //                binding.mealDealsContainer.visibility = View.GONE
+
                 binding.txtMoreInfo.isVisible = !menuItem.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
                 frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(),menuPresenter)
                 frequentBoughItemsAdapter?.notifyDataSetChanged()
@@ -1098,6 +1099,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     }
                     binding.sizesLayoutTextContainer.visible()
                     binding.sizesContainer.visible()
+                    binding.sizesSepartor.visible()
                     binding.viewSizesSeparator.visible()
                     binding.sizesRecyclerView.gone()
                     binding.viewRecycleViewSepartor.gone()
