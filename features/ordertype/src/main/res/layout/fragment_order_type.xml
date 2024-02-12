@@ -61,7 +61,7 @@
                     <RadioGroup
                         android:id="@+id/typeGroup"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="42dp"
                         android:layout_marginStart="10dp"
                         android:background="@drawable/background_bg_order_types"
                         android:orientation="horizontal"
@@ -70,48 +70,64 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/back"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:checkedButton="@id/pickupButton">
+                        tools:checkedButton="@id/dineInButton">
 
-                        <RadioButton
+                        <androidx.appcompat.widget.AppCompatRadioButton
                             android:id="@+id/deliveryButton"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/bg_types"
                             android:button="@null"
-                            android:fontFamily="@font/cairo_regular"
+                            android:drawableStart="@drawable/ic_delivery_small"
+                            android:drawablePadding="5dp"
+                            android:ellipsize="end"
                             android:gravity="center"
+                            android:maxLines="2"
+                            android:paddingStart="5dp"
+                            android:paddingEnd="22dp"
                             android:textColor="@drawable/bg_types_text"
+                            android:textSize="12sp"
                             android:visibility="gone"
                             tools:text="Delivery"
                             tools:visibility="visible" />
 
-
-                        <RadioButton
+                        <androidx.appcompat.widget.AppCompatRadioButton
                             android:id="@+id/pickupButton"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/bg_types"
                             android:button="@null"
-                            android:fontFamily="@font/cairo_regular"
+                            android:drawableStart="@drawable/ic_pickup_small"
+                            android:drawablePadding="5dp"
+                            android:ellipsize="end"
                             android:gravity="center"
+                            android:maxLines="2"
+                            android:paddingStart="5dp"
+                            android:paddingEnd="22dp"
                             android:textColor="@drawable/bg_types_text"
+                            android:textSize="12sp"
                             android:visibility="gone"
                             tools:text="Pickup"
                             tools:visibility="visible" />
 
-
-                        <RadioButton
+                        <androidx.appcompat.widget.AppCompatRadioButton
                             android:id="@+id/dineInButton"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@drawable/bg_types"
                             android:button="@null"
-                            android:fontFamily="@font/cairo_regular"
+                            android:drawableStart="@drawable/ic_dine_in_small"
+                            android:drawablePadding="5dp"
+                            android:ellipsize="end"
                             android:gravity="center"
+                            android:maxLines="2"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="23dp"
                             android:textColor="@drawable/bg_types_text"
+                            android:textSize="12sp"
                             android:visibility="gone"
                             tools:text="Dine In"
                             tools:visibility="visible" />
@@ -650,7 +666,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/confirm_container"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="68dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardElevation="6dp"
                 app:cardUseCompatPadding="false"
@@ -664,11 +680,11 @@
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/continueButton"
+                        style="@style/Styles.Text.Caption"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="48dp"
                         android:layout_marginTop="10dp"
                         android:background="@drawable/background_bg_button_common"
-                        android:fontFamily="@font/cairo_bold"
                         android:gravity="center"
                         android:textColor="@color/white"
                         android:textSize="16sp"
