@@ -5,8 +5,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/tv_good_morning_user"
@@ -20,6 +19,7 @@
             tools:text="Good morning, Ahmed" />
 
         <ImageView
+            android:id="@+id/sun"
             android:layout_width="18dp"
             android:layout_height="22dp"
             android:layout_marginStart="5dp"

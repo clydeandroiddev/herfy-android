@@ -79,15 +79,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 }
                 layoutOrderTypeMain.apply {
                     if (AuthUtil.getInstance().isSignedIn) {
+                        sun.visibility = View.VISIBLE
                         tvGoodMorningUser.visibility = View.VISIBLE
                         val name = AuthUtil.getInstance().customer.attributes.firstName
-                        tvGoodMorningUser.text =
-                            cacheHelper.getTranslations(
-                                Text.GOOD_MORNING_LABEL,
-                                "Good morning, (x)!"
-                            )
-                                .replace("(x)", name)
+                        tvGoodMorningUser.text = cacheHelper.getTranslations(
+                            Text.GOOD_MORNING_LABEL, "Good morning, (x)!"
+                        ).replace("(x)", name)
                     } else {
+                        sun.visibility = View.GONE
                         tvGoodMorningUser.visibility = View.GONE
                     }
                     tvHowWillYouLabel.text = cacheHelper.getTranslations(
@@ -274,7 +273,19 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     }
 
     private fun orderTypeClick(orderType: OrderType) {
-        // TODO connect home to ordertype fragment in app module
+        activity?.let {
+            it.runOnUiThread {
+                val intent = Intent()
+                val storeId = CacheUtil.getOrderStoreId() ?: ""
+                intent.setClassName(it, Navigation.NAVIGATION_ACTIVITY)
+                intent.putExtra("navigation", "nav_order_type")
+                intent.putExtra("selectedOrderType", orderType.value)
+                intent.putExtra("fromCart", false)
+                intent.putExtra("checkout", false)
+                intent.putExtra("storeId", storeId)
+                it.startActivity(intent)
+            }
+        }
     }
 
     private fun properSliderHeights() {
