@@ -78,16 +78,23 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         cacheHelper.getTranslations(Text.ORDER_CATERING, "ORDER CATERING")
                 }
                 layoutOrderTypeMain.apply {
-                    tvGoodMorningUser.text =
-                        cacheHelper.getTranslations(Text.GOOD_MORNING_LABEL, "Good morning, (x)!")
-                            .replace("(x)", AuthUtil.getInstance().customer.attributes.firstName)
-
+                    if (AuthUtil.getInstance().isSignedIn) {
+                        tvGoodMorningUser.visibility = View.VISIBLE
+                        val name = AuthUtil.getInstance().customer.attributes.firstName
+                        tvGoodMorningUser.text =
+                            cacheHelper.getTranslations(
+                                Text.GOOD_MORNING_LABEL,
+                                "Good morning, (x)!"
+                            )
+                                .replace("(x)", name)
+                    } else {
+                        tvGoodMorningUser.visibility = View.GONE
+                    }
                     tvHowWillYouLabel.text = cacheHelper.getTranslations(
                         Text.HOW_WILL_YOU_ORDER_TODAY, "How will you order today?"
                     )
                 }
             }
-
         }
     }
 
