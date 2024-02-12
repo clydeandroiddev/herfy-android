@@ -140,6 +140,19 @@
             app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
             tools:text="+Sar 2" />
 
+        <ImageButton
+            android:id="@+id/quantityDown"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/quantity_up_blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+            tools:layout_editor_absoluteY="95dp" />
+
+        <!--       Todo might needed uncomment for now once designer add minus and quantity text-->
 <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
 <!--            android:id="@+id/quantity_container"-->
 <!--            android:layout_width="wrap_content"-->
