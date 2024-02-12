@@ -220,7 +220,7 @@ public class Text {
     public static final String RATE = "rate";
     public static final String OPTIONS = "options";
     public static final String QUANTITY = "quantity";
-    public static final String REQUIRED ="required";
+    public static final String REQUIRED = "required";
     public static final String RATING_SENT = "rating_sent";
     public static final String INGREDIENTS = "ingredients";
     public static final String SIGN_IN_MESSAGE = "sign_in_message";
@@ -380,6 +380,8 @@ public class Text {
     public static final String LOYALTY_MOBILE_NUMBER_LABEL = "mobile_number_caps";
     public static final String ORDER_SESSION_EXPIRED = "order_session_expired";
     public static final String CONTINUE_TITLE = "continue_title";
+
+    public static final String CONTINUE_LABEL = "continue_label";
     public static final String REORDER_ERROR = "reorder_error";
     public static final String EXPLORE_OUR_MENU_TITLE = "explore_our_menu_title";
     public static final String EXPLORE_OUR_MENU_MESSAGE = "explore_our_menu_message";
@@ -815,13 +817,21 @@ public class Text {
     public static final String LOYALTY_TO_NEXT_TIER = "loyalty_to_next_tier";
     public static final String MINIMUM_DELIVERY_FOR_AREA = "minimum_delivery_for_area";
 
-    public static final String CATER_WITH_HERFY= "cater_with_herfy";
-    public static final String CATER_WITH_US="cater_with_us";
-    public static final String CATER_WITH_HERFY_DESC="cater_with_herfy_desc";
+    public static final String CATER_WITH_HERFY = "cater_with_herfy";
+    public static final String CATER_WITH_US = "cater_with_us";
+    public static final String CATER_WITH_HERFY_DESC = "cater_with_herfy_desc";
     public static final String ORDER_CATERING = "order_catering";
     public static final String CLAIM_PROMO = "claim_promo_label";
 
     public static final String GOOD_MORNING_LABEL = "good_morning_label";
 
     public static final String HOW_WILL_YOU_ORDER_TODAY = "how_will_you_order_today";
+
+    public static final String CHOOSE_PICKUP_METHOD = "choose_pickup_method";
+    public static final String WALK_IN_PICKUP = "walk_in_pickup";
+    public static final String PICKUP_DESCRIPTION = "pickup_description";
+    public static final String CURBSIDE_PICKUP_LABEL = "curbside_pickup_label";
+    public static final String CURBSIDE_DESCRIPTION = "curbside_description";
+    public static final String DRIVE_THRU = "drive_thru";
+    public static final String DRIVE_THRU_DESCRIPTION = "drive_thru_description¬";
 }

@@ -514,7 +514,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         binding.curbsideProceed.text =
             CacheUtil.getInstance().getTranslations(Text.CURBSIDE_YES_PLEASE_CAPS, "YES, PLEASE")
         binding.continueButton.text =
-            CacheUtil.getInstance().getTranslations(Text.CONTINUE_TITLE, "Continue")
+            CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue")
         binding.deliveryButton.text =
             CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
         binding.pickupButton.text = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
