@@ -84,7 +84,7 @@
         android:layout_width="275dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/background"
+        android:background="@drawable/background_side_bar"
         android:scrollbars="none">
 
         <include
