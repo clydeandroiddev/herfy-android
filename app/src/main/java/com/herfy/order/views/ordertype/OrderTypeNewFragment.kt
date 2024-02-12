@@ -794,7 +794,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun showLocation(isPlace: Boolean, latLng: LatLng, address: String) {
         try {
             binding.location.setImageResource(R.drawable.ic_location_enabled)
-            binding.location.setColorFilter(Color.parseColor(CacheUtil.getInstance().colorMain))
+            binding.location.setColorFilter(Color.parseColor("#212121"))
             if (locationMarker != null) {
                 locationMarker?.remove()
             }
@@ -1186,7 +1186,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 } else {
                     storeMarker?.setIcon(
                         ViewUtil.vectorDrawableToBitmapDescriptor(
-                            activity, R.drawable.branch_icon_new
+                            activity, R.drawable.branch_pin
                         )
                     )
                     storeMarker?.setAnchor(0.5f, 1f)
