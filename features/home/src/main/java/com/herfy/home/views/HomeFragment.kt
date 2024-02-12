@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
@@ -21,11 +22,14 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.helper.AnimUtil
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.ViewUtil
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -35,13 +39,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     override val layout: Int = R.layout.fragment_home
     private lateinit var sliderImageAdapter: SliderImageAdapter
     private lateinit var promotionsAdapter: PromotionsAdapter
-    private var sliderHandler : Handler? = null
-    private var promotionDetailBottomSheet : PromotionDetailBottomSheet? = null
+    private var sliderHandler: Handler? = null
+    private var promotionDetailBottomSheet: PromotionDetailBottomSheet? = null
     private val cacheUtilHelper by lazy {
         context?.let {
             CacheUtilHelper(it)
         }
     }
+
     override fun initViews() {
         super.initViews()
         viewModel.getMenuCategory()
@@ -49,22 +54,46 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             setupSlider()
             setupPromotions()
             setupCustomerLoyalty("customerId")
+            setupOrderType()
         }
     }
 
     override fun initTranslations() {
         super.initTranslations()
         binding.apply {
-            cacheUtilHelper?.let {cacheHelper ->
-                layoutPromotions.tvPromotions.text = cacheHelper.getTranslations(Text.PROMOS, "PROMOTIONS")
+            cacheUtilHelper?.let { cacheHelper ->
+                layoutPromotions.tvPromotions.text =
+                    cacheHelper.getTranslations(Text.PROMOS, "PROMOTIONS")
                 layoutCatering.apply {
-                    tvCatering.text = cacheHelper.getTranslations(Text.CATER_WITH_HERFY, "Cater with Herfy")
-                    tvCaterTitle.text = cacheHelper.getTranslations(Text.CATER_WITH_US, "Cater with us for your next event.")
-                    tvCaterDescription.text = cacheHelper.getTranslations(Text.CATER_WITH_HERFY_DESC, "We make sure that your event be the best and in the best budget. More text to tell about catering.")
-                    btnCatering.text = cacheHelper.getTranslations(Text.ORDER_CATERING, "ORDER CATERING")
+                    tvCatering.text =
+                        cacheHelper.getTranslations(Text.CATER_WITH_HERFY, "Cater with Herfy")
+                    tvCaterTitle.text = cacheHelper.getTranslations(
+                        Text.CATER_WITH_US, "Cater with us for your next event."
+                    )
+                    tvCaterDescription.text = cacheHelper.getTranslations(
+                        Text.CATER_WITH_HERFY_DESC,
+                        "We make sure that your event be the best and in the best budget. More text to tell about catering."
+                    )
+                    btnCatering.text =
+                        cacheHelper.getTranslations(Text.ORDER_CATERING, "ORDER CATERING")
+                }
+                layoutOrderTypeMain.apply {
+                    if (AuthUtil.getInstance().isSignedIn) {
+                        sun.visibility = View.VISIBLE
+                        tvGoodMorningUser.visibility = View.VISIBLE
+                        val name = AuthUtil.getInstance().customer.attributes.firstName
+                        tvGoodMorningUser.text = cacheHelper.getTranslations(
+                            Text.GOOD_MORNING_LABEL, "Good morning, (x)!"
+                        ).replace("(x)", name)
+                    } else {
+                        sun.visibility = View.GONE
+                        tvGoodMorningUser.visibility = View.GONE
+                    }
+                    tvHowWillYouLabel.text = cacheHelper.getTranslations(
+                        Text.HOW_WILL_YOU_ORDER_TODAY, "How will you order today?"
+                    )
                 }
             }
-
         }
     }
 
@@ -87,18 +116,18 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     override fun observe() {
         super.observe()
-        viewModel.slideList.observeNonNull(this){slides ->
+        viewModel.slideList.observeNonNull(this) { slides ->
             binding.apply {
                 layoutBanner.apply {
                     newMenuBannerShimmer.visibility = View.GONE
                     emptySlider.setBackgroundResource(R.color.white)
-                    if(slides.size > 0){
+                    if (slides.size > 0) {
                         emptySlider.visibility = View.GONE
                         sliderViewPager.visibility = View.VISIBLE
                         sliderImageAdapter.updateImageList(slides)
-                        if(slides.size > 1){
+                        if (slides.size > 1) {
                             dotsIndicator.setViewPager2(sliderViewPager)
-                        }else {
+                        } else {
                             dotsIndicator.visibility = View.GONE
                         }
                         sliderHandler?.removeCallbacksAndMessages(null)
@@ -116,10 +145,10 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                         }
                                         sliderHandler?.postDelayed(this, 3000)
                                     }
-                                },3000)
+                                }, 3000)
                             }
                         }
-                    }else {
+                    } else {
                         emptySlider.visibility = View.VISIBLE
                         sliderViewPager.visibility = View.VISIBLE
                         dotsIndicator.visibility = View.GONE
@@ -129,14 +158,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.promotionsList.observeNonNull(this){promos ->
+        viewModel.promotionsList.observeNonNull(this) { promos ->
             binding.apply {
                 layoutPromotions.apply {
                     placeholderPromotions.clPlaceholderPromo.visibility = View.GONE
-                    if(promos.size > 0){
+                    if (promos.size > 0) {
                         grpPromo.visibility = View.VISIBLE
                         promotionsAdapter.updatePromoList(promos)
-                    }else {
+                    } else {
                         clPromotions.visibility = View.GONE
                         grpPromo.visibility = View.GONE
                     }
@@ -144,11 +173,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.showError.observeNonNull(this){
-            showAlertDialog(title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"), message = it.message)
+        viewModel.showError.observeNonNull(this) {
+            showAlertDialog(
+                title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
+                message = it.message
+            )
         }
 
-        viewModel.showLink.observeNonNull(this){
+        viewModel.showLink.observeNonNull(this) {
             it.getContentIfNotHandled()?.let {
                 try {
                     val activity = activity
@@ -164,8 +196,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
 
         }
-        viewModel.showMenuItem.observeNonNull(this){
-            it.getContentIfNotHandled()?.let { pair->
+        viewModel.showMenuItem.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { pair ->
                 activity?.let {
                     it.runOnUiThread {
                         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
@@ -181,20 +213,77 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 }
             }
         }
-        viewModel.showMenuCategory.observeNonNull(this){
+        viewModel.showMenuCategory.observeNonNull(this) {
             it.getContentIfNotHandled()?.let {
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
-                val request = NavDeepLinkRequest.Builder
-                    .fromUri(Uri.parse("android-app://com.herfy/nav_menu/${it.second.id}"))
-                    .build()
-                NavigationUtils.navigateSafe(findNavController(),request)
+                val request =
+                    NavDeepLinkRequest.Builder.fromUri(Uri.parse("android-app://com.herfy/nav_menu/${it.second.id}"))
+                        .build()
+                NavigationUtils.navigateSafe(findNavController(), request)
             }
         }
 
-        viewModel.showPromo.observeNonNull(this){
+        viewModel.showPromo.observeNonNull(this) {
             it.getContentIfNotHandled()?.let {
                 promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(it)
-                promotionDetailBottomSheet?.show(childFragmentManager, PromotionDetailBottomSheet::class.java.simpleName)
+                promotionDetailBottomSheet?.show(
+                    childFragmentManager, PromotionDetailBottomSheet::class.java.simpleName
+                )
+            }
+        }
+
+        viewModel.orderTypes.observeNonNull(this) { orderTypes ->
+            orderTypes.let {
+                if (it.isNotEmpty()) {
+                    cacheUtilHelper?.let { cacheHelper ->
+                        binding.layoutOrderTypeMain.apply {
+                            deliveryContainer.isVisible = false
+                            pickupContainer.isVisible = false
+                            dineinContainer.isVisible = false
+                            layoutTypeList.isVisible = true
+                            for (orderType: OrderType in orderTypes) {
+                                if (orderType === OrderType.DELIVERY) {
+                                    deliveryLabel.text =
+                                        cacheHelper.getTranslations(Text.DELIVERY, "Delivery")
+                                    deliveryContainer.isVisible = true
+                                    deliveryContainer.setOnClickListener {
+                                        orderTypeClick(OrderType.DELIVERY)
+                                    }
+                                } else if (orderType === OrderType.PICKUP) {
+                                    pickupLabel.text =
+                                        cacheHelper.getTranslations(Text.PICKUP, "Pickup")
+                                    pickupContainer.isVisible = true
+                                    pickupContainer.setOnClickListener {
+                                        orderTypeClick(OrderType.PICKUP)
+                                    }
+                                } else if (orderType === OrderType.DINE_IN) {
+                                    dineinLabel.text =
+                                        cacheHelper.getTranslations(Text.DINE_IN, "Dine In")
+                                    dineinContainer.isVisible = true
+                                    dineinContainer.setOnClickListener {
+                                        orderTypeClick(OrderType.DINE_IN)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun orderTypeClick(orderType: OrderType) {
+        activity?.let {
+            it.runOnUiThread {
+                val intent = Intent()
+                val storeId = CacheUtil.getOrderStoreId() ?: ""
+                intent.setClassName(it, Navigation.NAVIGATION_ACTIVITY)
+                intent.putExtra("navigation", "nav_order_type")
+                intent.putExtra("selectedOrderType", orderType.value)
+                intent.putExtra("fromCart", false)
+                intent.putExtra("checkout", false)
+                intent.putExtra("storeId", storeId)
+                it.startActivity(intent)
             }
         }
     }
@@ -203,13 +292,21 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         binding.apply {
             layoutBanner.apply {
                 try {
-                    activity?.let {act->
-                        val sliderHeight = act.resources.getDimensionPixelSize(R.dimen.pixel_twenty_five)
+                    activity?.let { act ->
+                        val sliderHeight =
+                            act.resources.getDimensionPixelSize(R.dimen.pixel_twenty_five)
                         cacheUtilHelper?.getApplication()?.let {
-                            if(it.attributes.settings.categoryDisplay.equals(Values.IMAGE_TEXT, ignoreCase = true)){
-                                mainToolbar.layoutParams.height =  sliderHeight + (act.resources.getDimensionPixelSize(R.dimen.menu_appbar_height_no_slider) - act.resources.getDimensionPixelSize(R.dimen.seventy_dp))
-                            }else {
-                                mainToolbar.layoutParams.height = sliderHeight + act.resources.getDimensionPixelSize(R.dimen.menu_appbar_height_no_slider)
+                            if (it.attributes.settings.categoryDisplay.equals(
+                                    Values.IMAGE_TEXT, ignoreCase = true
+                                )
+                            ) {
+                                mainToolbar.layoutParams.height =
+                                    sliderHeight + (act.resources.getDimensionPixelSize(R.dimen.menu_appbar_height_no_slider) - act.resources.getDimensionPixelSize(
+                                        R.dimen.seventy_dp
+                                    ))
+                            } else {
+                                mainToolbar.layoutParams.height =
+                                    sliderHeight + act.resources.getDimensionPixelSize(R.dimen.menu_appbar_height_no_slider)
                             }
                         }
                         sliderViewPager.layoutParams.height = sliderHeight
@@ -232,12 +329,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     }
 
-    private fun setupPromotions(){
+    private fun setupPromotions() {
         context?.let { ctx ->
             viewModel.getPromotions()
-            activity?.let{
+            activity?.let {
                 val itemHeight = (ViewUtil.getScreenWidth(it) / 1.5).toInt()
-                promotionsAdapter = PromotionsAdapter(promoListener = viewModel,itemWidth = 0, itemHeight =  itemHeight)
+                promotionsAdapter = PromotionsAdapter(
+                    promoListener = viewModel, itemWidth = 0, itemHeight = itemHeight
+                )
                 binding.apply {
                     layoutPromotions.rvPromotions.apply {
                         adapter = promotionsAdapter
@@ -251,12 +350,20 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     }
 
-    private fun setupCustomerLoyalty(id: String){
+
+    private fun setupOrderType() {
+        context?.let {
+            viewModel.getOrderTypes()
+        }
+    }
+
+    private fun setupCustomerLoyalty(id: String) {
         context?.let { ctx ->
             viewModel.getCustomerLoyalty(id)
             binding.apply {
                 layoutLoyalty.apply {
-                    tvPoints.text = viewModel.loyalty.value?.attributes?.pointsAccumulated.toString()
+                    tvPoints.text =
+                        viewModel.loyalty.value?.attributes?.pointsAccumulated.toString()
                     tierName.text = viewModel.loyalty.value?.attributes?.loyaltyTier.toString()
                     progress.max = 100
                     progress.progress = viewModel.loyalty.value?.attributes?.currentBalance ?: 0
