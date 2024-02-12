@@ -3,6 +3,7 @@ package com.herfy.home.views
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.reflect.TypeToken
 import com.herfy.database.entities.MenuItemEntity
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.database.repositories.HomeRepository
@@ -12,11 +13,21 @@ import com.herfy.model.ErrorMsgItem
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.helper.Event
+import com.skylinedynamics.solosdk.api.ApiRequestListener
+import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
-import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyAttributes
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTier
+import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.Slide
+import com.skylinedynamics.solosdk.api.models.objects.Tier
+import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.json.JSONException
+import org.json.JSONObject
+import java.util.Arrays
+import java.util.Collections
 import javax.inject.Inject
 
 @HiltViewModel
@@ -197,5 +208,59 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun fetchAndShowNextTier() {
+        CustomersApiCall.getInstance().getLoyaltyTiers(object : ApiRequestListener {
+            override fun onSuccess(o: Any) {
+                try {
+                    val `object` = JSONObject(o.toString())
+                    val tiersArray = `object`.getJSONArray("data")
+                    val type = object : TypeToken<List<Tier?>?>() {}.type
+                    val tiers =
+                        GsonHelper.gsonFinal().fromJson<List<Tier>>(tiersArray.toString(), type)
+                    Collections.sort(tiers,
+                        Comparator { o1: Tier, o2: Tier -> o1.startPoint - o2.startPoint } as Comparator<Tier>)
+                    val loyalty: Loyalty = AuthUtil.getInstance().getCustomerLoyalty()
+                    val totalPointsAccumulated = loyalty.attributes.pointsAccumulated
+                    val eligibleTiers: List<Tier> =
+                        io.reactivex.Observable.fromIterable<Tier>(tiers)
+                            .filter(io.reactivex.functions.Predicate<Tier> { tier: Tier -> totalPointsAccumulated <= tier.endPoint })
+                            .toList()
+                            .blockingGet()
+                    val nextTier =
+                        if (eligibleTiers.isEmpty()) tiers[tiers.size - 1] else eligibleTiers[0]
+                    val pointsToNextTier =
+                        if (eligibleTiers.size > 1) nextTier.startPoint - totalPointsAccumulated else 0
+                    val startPoints = nextTier.startPoint
+                    loyaltyView.showNextTier(
+                        nextTier,
+                        totalPointsAccumulated,
+                        pointsToNextTier,
+                        startPoints
+                    )
+                } catch (ex: JSONException) {
+                    ex.printStackTrace()
+                }
+            }
+
+            override fun onError(o: Any) {
+                val loyaltyAttributes = LoyaltyAttributes()
+                val loyaltyTier = LoyaltyTier()
+                loyaltyTier.name = "Classic"
+                loyaltyAttributes.loyaltyTier = loyaltyTier
+                loyaltyAttributes.currentBalance = 0
+                val currentTier = Tier()
+                currentTier.name = "Classic"
+                currentTier.startPoint = 0
+                val nextTier = Tier()
+                nextTier.name = "Silver"
+                nextTier.startPoint = 100
+                loyaltyAttributes.loyaltyTier = loyaltyTier
+                loyaltyAttributes.currentBalance = 0
+                tiers = java.util.ArrayList<Tier>(Arrays.asList<Tier>(currentTier))
+                loyaltyView.showNextTier(nextTier, 0, 100, 100)
+            }
+        })
     }
 }
