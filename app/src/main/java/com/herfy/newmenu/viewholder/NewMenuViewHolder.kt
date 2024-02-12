@@ -94,7 +94,12 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
     }
 
     override fun setIngredient(ingredient: Ingredient) {}
-    override fun setModifierGroup(position: Int, modifierGroup: ModifierGroup, showModifierItemPrice: Boolean) {}
+    override fun setModifierGroup(
+        position: Int,
+        modifierGroup: ModifierGroup,
+        showModifierItemPrice: Boolean,
+        showShowModifierCheckBox: Boolean
+    ) {}
     override fun setMenuItemQuantity(quantity: Int) {}
     override fun setMenuItemTotalPrice(totalPrice: Double) {}
     override fun selectSize() {}
@@ -113,6 +118,12 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
     }
 
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
+    override fun showModifierSelectionIndicator(
+        hasAtleastOneSelectedItem: Boolean,
+        modifierGroupPosition: Int
+    ) {
+    }
+
     override fun showFavorites(fromAddRemove: Boolean, favorites: ArrayList<Favorite>) {}
     override fun setFavorite(favorite: Favorite, outOfStockLocations: ArrayList<String>, discount:  Double, specialPrice: Double) {}
     override fun setMenuItem(menuCategory: MenuCategory, menuItem: MenuItem) {

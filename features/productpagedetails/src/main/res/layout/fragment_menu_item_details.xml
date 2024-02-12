@@ -11,8 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/footer"
-        tools:visibility="visible"
-        android:visibility="invisible">
+        android:visibility="invisible"
+        tools:visibility="visible">
+
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
@@ -29,46 +30,54 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_marginBottom="@dimen/margin_small"
+                    android:orientation="vertical"
                     app:layout_scrollFlags="scroll|enterAlways">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <LinearLayout
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/descriptionGuideline"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:orientation="horizontal"
+                            app:layout_constraintGuide_percent="0.64"/>
+
+                        <ImageView
                             android:id="@+id/materialImageCalendar"
                             android:layout_width="match_parent"
-                            android:layout_height="180dp"
-                            android:layout_marginTop="@dimen/margin_large"
-                            android:layout_marginHorizontal="@dimen/margin_large"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            android:layout_marginEnd="@dimen/margin_large"
-                            android:orientation="vertical"
-                            android:background="@drawable/bg_menu_item_details_background"
-                            android:layout_marginStart="12dp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal|center_vertical"
+                            android:orientation="vertical"
+                            android:src="@drawable/ic_menu_image_background"
+                            android:scaleType="fitXY"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" >
+                            app:layout_constraintTop_toTopOf="parent"/>
 
-                            <ImageView
-                                android:id="@+id/image"
-                                android:layout_width="163dp"
-                                android:layout_gravity="center_horizontal|center_vertical"
-                                tools:src="@tools:sample/avatars"
-                                android:layout_height="151dp"/>
-                        </LinearLayout>
+                        <ImageView
+                            android:id="@+id/image"
+                            android:layout_width="233dp"
+                            android:layout_height="0dp"
+                            android:scaleType="centerCrop"
+                            android:layout_gravity="center_horizontal|center_vertical"
+                            app:layout_constraintBottom_toBottomOf="@+id/materialImageCalendar"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/icClose"
+                            tools:src="@tools:sample/avatars" />
 
                         <ImageView
                             android:id="@+id/icClose"
                             android:layout_width="36dp"
-                            android:src="@drawable/ic_close"
-                            app:layout_constraintStart_toStartOf="@id/materialImageCalendar"
-                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_height="36dp"
                             android:layout_marginStart="@dimen/margin_large"
                             android:layout_marginTop="@dimen/margin_xlarge"
-                            android:layout_height="36dp"/>
+                            android:src="@drawable/ic_close"
+                            app:layout_constraintStart_toStartOf="@id/materialImageCalendar"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <FrameLayout
                             android:id="@+id/favorite_card"
@@ -107,449 +116,474 @@
                             android:orientation="vertical"
                             app:layout_constraintGuide_begin="206dp" />
 
-                        <LinearLayout
-                            android:id="@+id/btnDriveThru"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_large"
-
-                            android:background="@drawable/bg_rounded_drive_thru"
-                            android:gravity="center"
-                            android:orientation="horizontal"
-                            app:layout_constraintBottom_toTopOf="@+id/name"
-
-                            app:layout_constraintStart_toStartOf="@+id/materialImageCalendar"
-                            app:layout_constraintTop_toBottomOf="@id/materialImageCalendar">
-
-                            <com.google.android.material.textview.MaterialTextView
-                                style="@style/Styles.Text.Caption"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center"
-                                android:layout_weight="1"
-                                android:drawableStart="@drawable/ic_car_drive_thru"
-                                android:drawablePadding="@dimen/margin_small"
-                                android:gravity="center_vertical"
-                                android:text="Drive thru" />
-
-                        </LinearLayout>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/btnCalories"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="@color/white"
-                            android:gravity="center"
-                            android:orientation="horizontal"
-                            app:strokeColor="#D9E8F3"
-                            app:strokeWidth="1dp"
-                            app:cardUseCompatPadding="true"
-                            app:cardCornerRadius="8dp"
-                            android:layout_marginStart="@dimen/margin_small"
-                            app:cardPreventCornerOverlap="true"
-                            app:contentPadding="@dimen/padding_small"
-                            app:layout_constraintBottom_toBottomOf="@+id/btnDriveThru"
-                            app:layout_constraintStart_toEndOf="@+id/btnDriveThru"
-                            app:layout_constraintTop_toTopOf="@+id/btnDriveThru">
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/calories"
-                                style="@style/Styles.Text.Caption"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center_vertical"
-                                android:layout_weight="1"
-                                android:drawableStart="@drawable/ic_fire"
-                                android:drawablePadding="@dimen/margin_small"
-                                android:gravity="center_vertical"
-                                tools:text="2200 Kcal" />
-                        </androidx.cardview.widget.CardView>
-
-                        <TextView
-                            android:id="@+id/name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:layout_marginTop="@dimen/margin_small"
-                            style="@style/TextAppearance.Headline1"
-                            android:includeFontPadding="false"
-                            android:layout_marginStart="@dimen/margin_large"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/primary_text"
-                            android:textSize="18sp"
-                            tools:text="Grill Chicken"
-                            android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/btnDriveThru" />
-
-                        <TextView
-                            android:id="@+id/total"
-                            style="@style/Styles.Text.Headline"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/margin_large"
-                            android:layout_marginBottom="-5dp"
-                            android:textColor="@color/shade_blue"
-                            android:includeFontPadding="false"
-                            app:layout_constraintBottom_toBottomOf="@+id/btnCalories"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/btnCalories"
-                            tools:text="SAR 44" />
-
-                        <TextView
-                            android:id="@+id/description"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            style="@style/TextAppearance.Footnote.Medium_Regular"
-                            android:gravity="start"
-                            android:includeFontPadding="false"
-                            android:lineSpacingExtra="-7dp"
-                            android:textAlignment="viewStart"
-                            android:textColor="#969696"
-                            android:textSize="14sp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toStartOf="@+id/name"
-                            app:layout_constraintTop_toBottomOf="@+id/name"
-                            tools:text="Grilled chicken patty, topped with a flavorful slice of cheese and shredded fresh lettuce" />
-
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/txtMoreInfo"
-                            style="@style/Styles.Text.Footnote.Medium"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:drawableEnd="@drawable/ic_question_mark"
-                            android:drawablePadding="@dimen/margin_micro"
-                            android:textAlignment="viewStart"
-                            android:textColor="@color/shade_blue"
-                            android:visibility="gone"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/description"
-                            android:layout_marginEnd="@dimen/margin_large"
-                            app:lineHeight="20sp"
-                            tools:text="More Info"
-                            tools:visibility="visible" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </LinearLayout>
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-        </com.google.android.material.appbar.AppBarLayout>
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/content_main"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/color_background"
-            android:fillViewport="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
-                android:layout_marginBottom="@dimen/margin_large"
-                android:orientation="vertical"
-                app:layout_constraintTop_toBottomOf="@+id/appbar">
-                <View
-                    android:id="@+id/imageSeparator"
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="@dimen/margin_small"
-                    app:layout_constraintTop_toBottomOf="@+id/txtMoreInfo"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginHorizontal="@dimen/margin_large"
-                    android:background="@color/colorSeparator"
-                    android:layout_height="1dp"/>
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/sizesLayoutTextContainer"
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/descriptionLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:visibility="gone"
+
+                            android:background="@drawable/rounded_top_corner"
+                            android:orientation="vertical"
+
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="@+id/image"
+                            app:layout_constraintStart_toStartOf="@+id/materialImageCalendar">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+
+                                <LinearLayout
+                                    android:id="@+id/btnDriveThru"
+                                    android:layout_width="wrap_content"
+                                    android:layout_marginStart="@dimen/margin_large"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/margin_large"
+                                    android:background="@drawable/bg_rounded_drive_thru"
+                                    android:gravity="center"
+                                    android:orientation="horizontal"
+                                    app:layout_constraintBottom_toTopOf="@+id/name"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <com.google.android.material.textview.MaterialTextView
+                                        style="@style/Styles.Text.Caption"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:paddingStart="@dimen/padding_micro"
+                                        android:paddingEnd="@dimen/padding_micro"
+                                        android:layout_weight="1"
+                                        android:textColor="@color/white"
+                                        android:drawableStart="@drawable/ic_car_drive_thru"
+                                        android:drawablePadding="@dimen/margin_small"
+                                        android:gravity="center_vertical"
+                                        android:text="Drive thru" />
+
+                                </LinearLayout>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/btnCalories"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/margin_small"
+                                    android:backgroundTint="@color/white"
+                                    android:gravity="center"
+                                    android:orientation="horizontal"
+                                    app:cardCornerRadius="12dp"
+                                    app:cardPreventCornerOverlap="true"
+                                    app:cardUseCompatPadding="false"
+                                    app:layout_constraintBottom_toBottomOf="@+id/btnDriveThru"
+                                    app:layout_constraintStart_toEndOf="@+id/btnDriveThru"
+                                    app:layout_constraintTop_toTopOf="@+id/btnDriveThru"
+                                    app:strokeColor="#D9E8F3"
+                                    app:strokeWidth="1dp">
+
+                                    <com.google.android.material.textview.MaterialTextView
+                                        android:id="@+id/calories"
+                                        style="@style/Styles.Text.Caption"
+                                        android:layout_width="wrap_content"
+                                        android:paddingTop="@dimen/padding_micro"
+                                        android:paddingStart="@dimen/padding_micro"
+                                        android:paddingEnd="@dimen/padding_micro"
+                                        android:paddingBottom="@dimen/padding_micro"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_weight="1"
+                                        android:drawableStart="@drawable/ic_fire"
+                                        android:drawablePadding="@dimen/margin_small"
+                                        android:gravity="center_vertical"
+                                        tools:text="2200 Kcal" />
+                                </androidx.cardview.widget.CardView>
+
+                                <TextView
+                                    android:id="@+id/name"
+                                    style="@style/TextAppearance.Headline1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/margin_large"
+                                    android:layout_marginTop="@dimen/margin_small"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:singleLine="true"
+                                    android:textColor="@color/primary_text"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/btnDriveThru"
+                                    tools:text="Grill Chicken" />
+
+                                <TextView
+                                    android:id="@+id/total"
+                                    style="@style/Styles.Text.Headline1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="@dimen/margin_large"
+                                    android:layout_marginBottom="-5dp"
+                                    android:includeFontPadding="false"
+                                    android:textColor="@color/shade_blue"
+                                    app:layout_constraintBottom_toBottomOf="@+id/btnCalories"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="@+id/btnCalories"
+                                    tools:text="SAR 44" />
+
+                                <TextView
+                                    android:id="@+id/description"
+                                    style="@style/TextAppearance.Footnote.Medium_Regular"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="start"
+                                    android:includeFontPadding="false"
+                                    android:lineSpacingExtra="-7dp"
+                                    android:textAlignment="viewStart"
+                                    android:textColor="#969696"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintHorizontal_bias="1.0"
+                                    app:layout_constraintStart_toStartOf="@+id/name"
+                                    app:layout_constraintTop_toBottomOf="@+id/name"
+                                    tools:text="Grilled chicken patty, topped with a flavorful slice of cheese and shredded fresh lettuce" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/txtMoreInfo"
+                                    style="@style/Styles.Text.Footnote.Medium"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="@dimen/margin_large"
+                                    android:drawableEnd="@drawable/ic_question_mark"
+                                    android:drawablePadding="@dimen/margin_micro"
+                                    android:textAlignment="viewStart"
+                                    android:textColor="@color/shade_blue"
+                                    android:visibility="gone"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/description"
+                                    app:lineHeight="20sp"
+                                    tools:text="More Info"
+                                    tools:visibility="visible" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/content_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/color_background"
+                    android:fillViewport="true"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_small"
+                        android:layout_marginBottom="@dimen/margin_large"
+                        android:orientation="vertical"
+                        app:layout_constraintTop_toBottomOf="@+id/appbar">
+
+                        <View
+                            android:id="@+id/imageSeparator"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginHorizontal="@dimen/margin_large"
+                            android:layout_marginTop="@dimen/margin_small"
+                            android:background="@color/colorSeparator"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:visibility="visible">
+                            app:layout_constraintTop_toBottomOf="@+id/txtMoreInfo" />
 
-                            <!-- Commented for now might needed this when designer change the ui again -->
-                            <!--                        <LinearLayout-->
-                            <!--                            android:id="@+id/btnRequired"-->
-                            <!--                            android:layout_width="73dp"-->
-                            <!--                            android:layout_height="28dp"-->
-                            <!--                            android:background="@drawable/bg_rounded_25_radius_background"-->
-                            <!--                            android:gravity="center"-->
-                            <!--                            android:textAlignment="viewEnd"-->
-                            <!--                            app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"-->
-                            <!--                            app:layout_constraintEnd_toEndOf="parent"-->
-                            <!--                            app:layout_constraintTop_toTopOf="parent">-->
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                            <!--                            <com.google.android.material.textview.MaterialTextView-->
-                            <!--                                android:id="@+id/txtRequired"-->
-                            <!--                                android:layout_width="wrap_content"-->
-                            <!--                                android:layout_height="wrap_content"-->
-                            <!--                                android:gravity="center"-->
-                            <!--                                android:padding="0dp"-->
-                            <!--                                android:textColor="@color/white"-->
-                            <!--                                android:textSize="12sp"-->
-                            <!--                                tools:text="Required" />-->
-                            <!--                        </LinearLayout>-->
-                            <FrameLayout
-                                android:id="@+id/check_layout"
-                                android:layout_width="46dp"
-                                android:layout_height="46dp"
-                                app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/sizesLayoutTextContainer"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent">
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:visibility="visible">
+
+                                <!-- Commented for now might needed this when designer change the ui again -->
+                                <!--                        <LinearLayout-->
+                                <!--                            android:id="@+id/btnRequired"-->
+                                <!--                            android:layout_width="73dp"-->
+                                <!--                            android:layout_height="28dp"-->
+                                <!--                            android:background="@drawable/bg_rounded_25_radius_background"-->
+                                <!--                            android:gravity="center"-->
+                                <!--                            android:textAlignment="viewEnd"-->
+                                <!--                            app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"-->
+                                <!--                            app:layout_constraintEnd_toEndOf="parent"-->
+                                <!--                            app:layout_constraintTop_toTopOf="parent">-->
+
+                                <!--                            <com.google.android.material.textview.MaterialTextView-->
+                                <!--                                android:id="@+id/txtRequired"-->
+                                <!--                                android:layout_width="wrap_content"-->
+                                <!--                                android:layout_height="wrap_content"-->
+                                <!--                                android:gravity="center"-->
+                                <!--                                android:padding="0dp"-->
+                                <!--                                android:textColor="@color/white"-->
+                                <!--                                android:textSize="12sp"-->
+                                <!--                                tools:text="Required" />-->
+                                <!--                        </LinearLayout>-->
+
 
                                 <ImageView
                                     android:id="@+id/checkBox"
                                     android:layout_width="34dp"
                                     android:layout_height="25dp"
                                     android:layout_gravity="center"
+                                    android:layout_marginEnd="@dimen/margin_large"
+                                    android:src="@drawable/ic_modifier_group_checked_selected"
                                     android:visibility="gone"
-
-                                    tools:src="@drawable/ic_modifier_group_checked_selected"
+                                    app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
                                     tools:visibility="visible" />
 
-                            </FrameLayout>
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/sizes_label"
+                                    style="@style/Styles.Text.Footnote.Medium"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/margin_large"
+                                    android:layout_marginTop="@dimen/margin_large"
+                                    android:gravity="start"
+                                    android:includeFontPadding="false"
+                                    android:text="Choose size"
+                                    android:textAlignment="viewStart"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toEndOf="@+id/imageCardView"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <LinearLayout
+                                    android:id="@+id/imageCardView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/background_modifier_group_image"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"
+                                    app:layout_constraintStart_toStartOf="parent"
+
+                                    app:layout_constraintTop_toTopOf="@+id/sizes_label">
+
+                                    <ImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:padding="@dimen/padding_small"
+                                        android:src="@drawable/ic_car_drive_thru" />
+                                </LinearLayout>
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/txtSelectOne"
+                                    style="@style/Styles.Text.Footnote"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/margin_small"
+                                    android:textSize="12sp"
+                                    app:layout_constraintStart_toStartOf="@+id/sizes_label"
+                                    app:layout_constraintTop_toBottomOf="@+id/sizes_label"
+                                    tools:text="Select up to 2" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <LinearLayout
+                                android:id="@+id/sizes_container"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="12dp"
+                                android:orientation="horizontal"
+                                android:visibility="gone"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/sizesLayoutTextContainer"
+                                tools:visibility="visible" />
+
+                            <View
+                                android:id="@+id/viewSizesSeparator"
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="@dimen/margin_large"
+                                android:background="#E6E8EB"
+                                app:layout_constraintEnd_toEndOf="@+id/sizes_container"
+                                app:layout_constraintStart_toStartOf="@+id/sizes_container"
+                                app:layout_constraintTop_toBottomOf="@+id/sizes_container" />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/sizes_recycler_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:clipToPadding="false"
+                                android:descendantFocusability="blocksDescendants"
+                                android:focusableInTouchMode="false"
+                                android:orientation="horizontal"
+                                android:visibility="gone"
+
+                                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/sizes_container"
+                                tools:itemCount="2"
+                                tools:listitem="@layout/item_new_size"
+                                tools:visibility="visible" />
+
+                            <View
+                                android:id="@+id/viewRecycleViewSepartor"
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="@dimen/margin_large"
+                                android:background="#E6E8EB"
+                                app:layout_constraintEnd_toEndOf="@+id/sizes_recycler_view"
+                                app:layout_constraintStart_toStartOf="@+id/sizes_recycler_view"
+                                app:layout_constraintTop_toBottomOf="@+id/sizes_recycler_view" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        <!--                </androidx.cardview.widget.CardView>-->
+
+                        <!--                <androidx.cardview.widget.CardView-->
+                        <!--                    android:id="@+id/menuItemGroupCardView"-->
+                        <!--                    android:layout_width="match_parent"-->
+                        <!--                    android:layout_height="wrap_content"-->
+                        <!--                    android:visibility="gone"-->
+                        <!--                    app:cardBackgroundColor="@color/white"-->
+                        <!--                    app:cardCornerRadius="5dp"-->
+                        <!--                    app:cardElevation="0dp"-->
+                        <!--                    app:cardPreventCornerOverlap="true"-->
+                        <!--                    app:cardUseCompatPadding="true">-->
+
+                        <!--                    <LinearLayout-->
+                        <!--                        android:layout_width="match_parent"-->
+                        <!--                        android:layout_height="wrap_content"-->
+                        <!--                        android:orientation="vertical"-->
+                        <!--                        android:paddingBottom="50dp">-->
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/modifier_groups_recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clipToPadding="false"
+                            android:descendantFocusability="blocksDescendants"
+                            android:focusableInTouchMode="false"
+                            android:paddingTop="2dp"
+                            android:visibility="gone"
+                            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                            tools:itemCount="5"
+                            tools:listitem="@layout/item_modifier_group_new"
+                            tools:visibility="visible" />
+
+                        <LinearLayout
+                            android:id="@+id/notes_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/margin_large"
+                            android:layout_marginBottom="@dimen/margin_large"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/notes_label"
+                                style="@style/TextAppearance.Footnote.Medium"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/margin_large"
+                                android:gravity="start"
+                                android:includeFontPadding="false"
+                                android:text="@string/special_instruction"
+                                android:textAlignment="viewStart"
+                                android:textAllCaps="true"
+                                android:textColor="#0C0C0C"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/notes_description"
+                                style="@style/TextAppearance.Footnote"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:gravity="start"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textAlignment="viewStart"
+                                android:textAllCaps="false"
+                                android:textColor="#ACACAC"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <EditText
+                                android:id="@+id/et_item_notes"
+                                style="@style/Styles.Text.Caption"
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                android:layout_marginTop="@dimen/margin_xlarge"
+                                android:background="@drawable/bg_background_border"
+                                android:gravity="start"
+                                android:inputType="text"
+                                android:maxLength="512"
+                                android:maxLines="4"
+                                android:textAlignment="viewStart"
+                                android:textColorHint="#ACACAC"
+                                android:textSize="14sp" />
+
+                            <View
+                                android:id="@+id/notesDivider"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="@dimen/margin_large"
+                                android:background="#E6E8EB" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
 
                             <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/sizes_label"
+                                android:id="@+id/txtFrequntlyBought"
                                 style="@style/Styles.Text.Footnote.Medium"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/margin_large"
-                                android:layout_marginTop="@dimen/margin_large"
-                                android:gravity="start"
-                                android:includeFontPadding="false"
-                                android:text="Choose size"
-                                android:textAlignment="viewStart"
-                                android:textColor="@color/black"
-                                android:textSize="14sp"
-                                app:layout_constraintStart_toEndOf="@+id/imageCardView"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <LinearLayout
-                                android:id="@+id/imageCardView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/background_modifier_group_image"
-                                android:orientation="vertical"
-                                app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"
-                                app:layout_constraintStart_toStartOf="parent"
-
-                                app:layout_constraintTop_toTopOf="@+id/sizes_label">
-
-                                <ImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_vertical"
-                                    android:padding="@dimen/padding_small"
-                                    android:src="@drawable/ic_car_drive_thru" />
-                            </LinearLayout>
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/txtSelectOne"
-                                style="@style/Styles.Text.Footnote"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/margin_small"
-                                android:textSize="12sp"
-                                app:layout_constraintStart_toStartOf="@+id/sizes_label"
-                                app:layout_constraintTop_toBottomOf="@+id/sizes_label"
-                                tools:text="Select up to 2" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                        <LinearLayout
-                            android:id="@+id/sizes_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="12dp"
-                            android:orientation="horizontal"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/sizesLayoutTextContainer"
-                            tools:visibility="visible"
-                            android:visibility="gone" />
-                        <View
-                            android:id="@+id/viewSizesSeparator"
-                            android:layout_width="0dp"
-                            android:background="#E6E8EB"
-                            android:layout_marginTop="@dimen/margin_large"
-                            app:layout_constraintTop_toBottomOf="@+id/sizes_container"
-                            app:layout_constraintStart_toStartOf="@+id/sizes_container"
-                            app:layout_constraintEnd_toEndOf="@+id/sizes_container"
-                            android:layout_height="1dp"/>
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/sizes_recycler_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clipToPadding="false"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusableInTouchMode="false"
-                            android:orientation="horizontal"
-                            tools:listitem="@layout/item_new_size"
+                                android:text="Frequently Bought Together"
+                                android:textColor="@color/dark_shade_of_grey"
+                                android:textSize="16sp" />
 
-                            android:visibility="gone"
-                            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/sizes_container"
-                            tools:itemCount="2"
-                            tools:visibility="visible" />
-                        <View
-                            android:id="@+id/viewRecycleViewSepartor"
-                            android:layout_width="0dp"
-                            android:background="#E6E8EB"
-                            android:layout_marginTop="@dimen/margin_large"
-                            app:layout_constraintTop_toBottomOf="@+id/sizes_recycler_view"
-                            app:layout_constraintStart_toStartOf="@+id/sizes_recycler_view"
-                            app:layout_constraintEnd_toEndOf="@+id/sizes_recycler_view"
-                            android:layout_height="1dp"/>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-<!--                </androidx.cardview.widget.CardView>-->
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/frequently_bough_recycleview"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/margin_large"
+                                android:clipToPadding="false"
+                                android:descendantFocusability="blocksDescendants"
+                                android:focusableInTouchMode="false"
+                                android:orientation="vertical"
+                                android:paddingTop="2dp"
+                                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                                tools:visibility="visible" />
 
-<!--                <androidx.cardview.widget.CardView-->
-<!--                    android:id="@+id/menuItemGroupCardView"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:visibility="gone"-->
-<!--                    app:cardBackgroundColor="@color/white"-->
-<!--                    app:cardCornerRadius="5dp"-->
-<!--                    app:cardElevation="0dp"-->
-<!--                    app:cardPreventCornerOverlap="true"-->
-<!--                    app:cardUseCompatPadding="true">-->
-
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:orientation="vertical"-->
-<!--                        android:paddingBottom="50dp">-->
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/modifier_groups_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:descendantFocusability="blocksDescendants"
-                    android:focusableInTouchMode="false"
-                    android:paddingTop="2dp"
-                    android:visibility="gone"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    tools:itemCount="5"
-                    tools:listitem="@layout/item_modifier_group_new"
-                    tools:visibility="visible" />
-
-                <LinearLayout
-                        android:id="@+id/notes_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/margin_large"
-                        android:layout_marginBottom="@dimen/margin_large"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/notes_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_large"
-                            android:gravity="start"
-                            android:includeFontPadding="false"
-                            android:text="@string/special_instruction"
-                            android:textAlignment="viewStart"
-                            android:textAllCaps="true"
-                            android:textColor="#0C0C0C"
-                            android:textSize="14sp"
-                            style="@style/TextAppearance.Footnote.Medium" />
-
-                        <TextView
-                            android:id="@+id/notes_description"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            style="@style/TextAppearance.Footnote"
-                            android:gravity="start"
-                            android:includeFontPadding="false"
-                            android:maxLines="1"
-                            android:textAlignment="viewStart"
-                            android:textAllCaps="false"
-                            android:textColor="#ACACAC"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-
-                        <EditText
-                            android:id="@+id/et_item_notes"
-                            android:layout_width="match_parent"
-                            android:layout_height="80dp"
-                            android:layout_marginTop="@dimen/margin_xlarge"
-                            android:background="@drawable/bg_background_border"
-                           style="@style/Styles.Text.Caption"
-                            android:gravity="start"
-                            android:inputType="text"
-                            android:maxLines="4"
-                            android:maxLength="512"
-                            android:textAlignment="viewStart"
-                            android:textColorHint="#ACACAC"
-                            android:textSize="14sp" />
-                    <View
-                        android:id="@+id/notesDivider"
-                        android:layout_width="match_parent"
-                        android:background="#E6E8EB"
-                        android:layout_marginTop="@dimen/margin_large"
-                        android:layout_height="1dp"/>
-                    </LinearLayout>
-
-
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/txtFrequntlyBought"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/dark_shade_of_grey"
-                            android:layout_marginStart="@dimen/margin_large"
-                            android:layout_marginTop="@dimen/margin_small"
-                            android:text="Frequently Bought Together"
-                            android:textSize="16sp"
-                            style="@style/Styles.Text.Footnote.Medium" />
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/frequently_bough_recycleview"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clipToPadding="false"
-                            android:descendantFocusability="blocksDescendants"
-                            android:focusableInTouchMode="false"
-                            android:layout_marginHorizontal="@dimen/margin_large"
-                            android:orientation="vertical"
-                            android:paddingTop="2dp"
-                            android:visibility="gone"
-                            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                            tools:visibility="visible" />
+                        </LinearLayout>
 
                     </LinearLayout>
-
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+                </androidx.core.widget.NestedScrollView>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/white"
         android:layout_marginTop="@dimen/margin_xlarge"
+        android:background="@color/white"
         android:elevation="5dp"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
@@ -558,27 +592,27 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtQuantity"
+            style="@style/Styles.Text.Subheadline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_large"
             android:layout_marginTop="@dimen/margin_large"
             android:layout_marginBottom="@dimen/margin_large"
-            android:textAlignment="viewStart"
-            style="@style/Styles.Text.Subheadline"
 
+            android:textAlignment="viewStart"
             app:layout_constraintBottom_toTopOf="@+id/add"
-            android:layout_marginStart="@dimen/margin_large"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Quantity" />
 
         <LinearLayout
             android:id="@+id/clickableParentQuantityLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_large"
             android:background="@drawable/rounded_corner"
             android:backgroundTint="#D9E8F3"
             android:orientation="horizontal"
-            android:layout_marginEnd="@dimen/margin_large"
             app:layout_constraintBottom_toTopOf="@+id/add"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -627,23 +661,24 @@
                     app:srcCompat="@drawable/ic_new_minus" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
+
         <Button
             android:id="@+id/add"
+            style="@style/Styles.Text.Subheadline"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_large"
+            android:layout_marginBottom="@dimen/margin_xlarge"
             android:background="@drawable/rounded_corner"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="ADD TO Cart"
-            style="@style/Styles.Text.Subheadline"
-            android:textColor="@color/white"
             android:textAlignment="center"
-            android:layout_marginTop="@dimen/margin_large"
             android:textAllCaps="true"
+            android:textColor="@color/white"
             android:textStyle="bold"
             app:cornerRadius="36dp"
-            android:layout_marginBottom="@dimen/margin_xlarge"
             app:layout_constraintBottom_toBottomOf="parent"
 
             app:layout_constraintEnd_toEndOf="parent"

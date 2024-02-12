@@ -1,11 +1,7 @@
 package com.herfy.newmenu.views
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,16 +9,12 @@ import android.os.Handler
 import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -52,7 +44,6 @@ import com.herfy.base.BaseFragment
 import com.herfy.country.CountriesFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
-import com.herfy.databinding.FragmentMenuNewBinding
 import com.herfy.ext.cast
 import com.herfy.ext.smoothSnapToPosition
 import com.herfy.main.MainActivity
@@ -1233,7 +1224,8 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     override fun setModifierGroup(
         position: Int,
         modifierGroup: ModifierGroup,
-        showModifierItemPrice: Boolean
+        showModifierItemPrice: Boolean,
+        showShowModifierCheckBox: Boolean
     ) {
     }
 
@@ -1378,6 +1370,13 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     }
 
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
+    override fun showModifierSelectionIndicator(
+        hasAtleastOneSelectedItem: Boolean,
+        modifierGroupPosition: Int
+    ) {
+        TODO("Not yet implemented")
+    }
+
     override fun showFavorites(fromAddRemove: Boolean, favorites: ArrayList<Favorite>) {}
     override fun setFavorite(favorite: Favorite, outOfStockLocations: ArrayList<String>, discount:  Double, specialPrice: Double) {}
     override fun showMenuItem(categoryId: String, menuItemId: String) {

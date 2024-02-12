@@ -1,9 +1,9 @@
 package com.herfy.menu.viewholders;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -15,8 +15,6 @@ import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.*;
 import com.herfy.menu.MenuContract;
 import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
-import com.herfy.productpagedetails.ui.viewholder.util.ModifierGroupMinimumType;
-import com.herfy.productpagedetails.ui.viewholder.util.ModifierGroupMinimumUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
@@ -51,7 +49,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     @BindView(R.id.select) TextView select; // todo uncomment this one ui for select is now final
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
-
+    @BindView(R.id.checkBox) ImageView modifierCheckBox;
 
 
     private BaseModifierItemViewHolder.OnAction onAction;
@@ -193,7 +191,8 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+        Log.d("FAFA","Show shoulld modifier item " + showShowModifierCheckBox);
         boolean visible = false;
         VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
         if (visibilityConfig != null) {
@@ -208,7 +207,8 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
             recyclerView.setVisibility(View.VISIBLE);
         }
         name.setText(modifierGroup.getAttributes().getName());
-
+        modifierCheckBox.setVisibility(showShowModifierCheckBox ? View.VISIBLE : View.GONE);
+        Log.d("FAFA", "Modifier check box " + (modifierCheckBox.getVisibility() == View.VISIBLE));
         // todo might needed this once designer change the ui
 //        ModifierGroupMinimumType modifierGroupMinimumType = ModifierGroupMinimumUtil.INSTANCE.validateType(modifierGroup.getAttributes().getMinimum());
 
@@ -357,6 +357,11 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
+
+    }
+
+    @Override
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
 
     }
 

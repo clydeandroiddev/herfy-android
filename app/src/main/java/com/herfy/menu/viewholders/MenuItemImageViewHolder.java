@@ -166,7 +166,7 @@ public class MenuItemImageViewHolder extends RecyclerListAdapter.ViewHolder<Obje
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
 
     }
 
@@ -217,6 +217,11 @@ public class MenuItemImageViewHolder extends RecyclerListAdapter.ViewHolder<Obje
 
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
+
+    }
+
+    @Override
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
 
     }
 

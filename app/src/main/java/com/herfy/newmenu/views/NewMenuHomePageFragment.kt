@@ -972,7 +972,8 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     override fun setModifierGroup(
         position: Int,
         modifierGroup: ModifierGroup,
-        showModifierItemPrice: Boolean
+        showModifierItemPrice: Boolean,
+        showShowModifierCheckBox: Boolean
     ) {
     }
 
@@ -1090,6 +1091,12 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     }
 
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
+    override fun showModifierSelectionIndicator(
+        hasAtleastOneSelectedItem: Boolean,
+        modifierGroupPosition: Int
+    ) {
+        TODO("Not yet implemented")
+    }
 
     fun refreshFavorites() {
         try {

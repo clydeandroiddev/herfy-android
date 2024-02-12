@@ -1,5 +1,6 @@
 package com.herfy.menu;
 
+import android.util.Log;
 import android.util.Pair;
 import android.widget.ImageView;
 
@@ -350,6 +351,24 @@ public class MenuPresenter implements MenuContract.Presenter {
         return data;
     }
 
+    @Override
+    public void updateModifierGroupSelectionIndicator(Boolean hasSelectedModifierItem, int modifierGroupPosition) {
+        int selectedModifierItemCount = countSelectedModifierItems(modifierGroupPosition);
+        boolean shouldShowIndicator = hasSelectedModifierItem || selectedModifierItemCount >= 1;
+        menuView.showModifierSelectionIndicator(shouldShowIndicator, modifierGroupPosition);
+    }
+    private int countSelectedModifierItems(int modifierGroupPosition) {
+        int selectedModifierItemCount = 0;
+        ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
+        if (group != null) {
+            for (ModifierItem item : group.getModifierItems()) {
+                if (item.getAttributes().isSelected()) {
+                    selectedModifierItemCount++;
+                }
+            }
+        }
+        return selectedModifierItemCount;
+    }
     @Override
     public MenuItem getMenuItemSingle(String id) {
         AppDatabase appDatabase = AppDatabase.getInstance();
@@ -3368,7 +3387,9 @@ public class MenuPresenter implements MenuContract.Presenter {
             }
             ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
             for (ModifierItem item : group.getModifierItems()) {
-                item.getAttributes().setSelected(isSelected && item.getId().equals(modifierItem.getId()));
+                boolean isCheckboxSelected = isSelected && item.getId().equals(modifierItem.getId());
+                item.getAttributes().setSelected(isCheckboxSelected);
+                Log.d("FAFA","Modifier name " + item.getName() + " Selected bai " + isCheckboxSelected);
             }
         } else {
             int selectedItems = 0;
@@ -3376,18 +3397,27 @@ public class MenuPresenter implements MenuContract.Presenter {
             if (group != null) {
                 for (ModifierItem item : group.getModifierItems()) {
                     if (item.getAttributes().isSelected()) {
+                        Log.d("FAFA","Name " + item.getName()  + "Selected");
                         selectedItems += item.getAttributes().getQuantity();
+                    }else {
+//                        Log.d("FAFA","Name " + item.getName()  + "Not selected");
+//                        menuView.showShowModifierCheckBox(false,modifierGroupPosition);
                     }
                 }
+
                 if (isSelected && selectedItems >= modifierGroup.getAttributes().getMaximum()) {
                     menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT));
                 } else {
                     ModifierItem item = group.getModifierItems().get(modifierItemPosition);
-                    if (item.getId().equals(modifierItem.getId())) {
+                    if (item.getId().equals(modifierItem.getId()))
+                    {
                         item.getAttributes().setSelected(isSelected);
                         if (!isSelected) {
                             item.getAttributes().setQuantity(1);
                         }
+                    }else {
+//                        Log.d("FAFA","Gwapo selected bai " + item.getName()  + "Not selected");
+//                        menuView.showShowModifierCheckBox(false,modifierGroupPosition);
                     }
                 }
             }
@@ -3592,10 +3622,11 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice) {
+    public void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox) {
+
        /* ModifierGroup modifierGroup = menuItemModifierGroups.get(menuItem.getModifierGroups().get(position).getId());
         if(modifierGroup != null) {*/
-        modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice);
+        modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice,  showShowModifierCheckBox);
         //}
     }
 

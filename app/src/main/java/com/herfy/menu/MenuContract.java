@@ -24,7 +24,6 @@ import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategoryItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
-import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType;
@@ -79,7 +78,7 @@ public interface MenuContract {
 
         void setIngredient(Ingredient ingredient);
 
-        void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice);
+        void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox);
 
         void setMenuItemQuantity(int quantity);
 
@@ -100,6 +99,7 @@ public interface MenuContract {
         void showError(String error);
 
         void showHideModifierItemPrice(boolean show, int modifierGroupPosition);
+        void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition);
 
         void showFavorites(boolean fromAddRemove, ArrayList<Favorite> favorites);
 
@@ -152,7 +152,7 @@ public interface MenuContract {
     }
 
     interface Presenter extends BasePresenter {
-
+        public void updateModifierGroupSelectionIndicator(Boolean hasSelectedModifierItem, int modifierGroupPosition);
         MenuItem getMenuItemSingle(String id);
 
         void getFavorites(boolean fromAddRemove, int page);
@@ -291,7 +291,7 @@ public interface MenuContract {
 
         int getIngredientsCount();
 
-        void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice);
+        void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox);
 
         int getModifierGroupsCount();
 

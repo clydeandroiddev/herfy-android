@@ -89,13 +89,7 @@
 <!--            android:textColor="@color/white"-->
 <!--            tools:text="Required" />-->
 <!--    </LinearLayout>-->
-    <FrameLayout
-        android:id="@+id/check_layout"
-        android:layout_width="46dp"
-        android:layout_height="46dp"
-        app:layout_constraintBottom_toBottomOf="@+id/select"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/name">
+
 
         <ImageView
             android:id="@+id/checkBox"
@@ -103,11 +97,12 @@
             android:layout_height="25dp"
             android:layout_gravity="center"
             android:visibility="gone"
-
-            tools:src="@drawable/ic_modifier_group_checked_selected"
+            app:layout_constraintBottom_toBottomOf="@+id/select"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/name"
+            android:layout_marginEnd="@dimen/margin_large"
+            android:src="@drawable/ic_modifier_group_checked_selected"
             tools:visibility="visible" />
-
-    </FrameLayout>
         <View
             android:layout_width="match_parent"
             android:background="@color/colorSeparator"

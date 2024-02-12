@@ -115,7 +115,8 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
     override fun setModifierGroup(
         position: Int,
         modifierGroup: ModifierGroup,
-        showModifierItemPrice: Boolean
+        showModifierItemPrice: Boolean,
+        showShowModifierCheckBox: Boolean
     ) {
     }
 
@@ -165,6 +166,13 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
     override fun showMessage(message: String) {}
     override fun showError(error: String) {}
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
+    override fun showModifierSelectionIndicator(
+        hasAtleastOneSelectedItem: Boolean,
+        modifierGroupPosition: Int
+    ) {
+
+    }
+
     override fun showFavorites(fromAddRemove: Boolean, favorites: ArrayList<Favorite>) {}
     override fun setFavorite(favorite: Favorite, outOfStockLocations: ArrayList<String>, discount:  Double, specialPrice: Double) {}
     override fun showMenuItem(categoryId: String, menuItemId: String) {

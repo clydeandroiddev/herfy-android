@@ -61,10 +61,10 @@ import com.herfy.util.*
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.ninjaTap
+import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
-import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
 import com.kochava.tracker.events.EventType
@@ -580,12 +580,17 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         showModifierItemPrice[indexOfGroup] =
                             group.attributes.freeModifiersCount == 0
                     }
+                    val shouldShowModifierCheckbox = HashMap<Int, Boolean>()
+                    menuItem.modifierGroups.forEachIndexed { index, group ->
+                        shouldShowModifierCheckbox[index] = group.modifierItems.any { it.attributes.isSelected }
+                    }
                     shouldReset = false
                     modifierGroupsAdapter =
                         ModifierGroupsNewRecyclerViewAdapter(
                             activity,
                             menuPresenter,
-                            showModifierItemPrice
+                            showModifierItemPrice,
+                            shouldShowModifierCheckbox
                         )
                     modifierGroupsAdapter!!.setOnAction(object : BaseModifierItemViewHolder.OnAction {
                         @SuppressLint("NotifyDataSetChanged")
@@ -601,13 +606,17 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                     ", modifierGroupPosition: " + modifierGroupPosition +
                                     ", modifierGroup: " + modifierGroup +
                                     ", modifierItemPosition: " + modifierItemPosition +
-                                    ", modifierItem: " + modifierItem);
+                                    ", modifierItem: " + modifierItem.name);
+
                             menuPresenter!!.selectModifierItem(
                                 isSelected,
                                 modifierGroupPosition,
                                 modifierGroup,
                                 modifierItemPosition,
                                 modifierItem
+                            )
+                            menuPresenter.updateModifierGroupSelectionIndicator(
+                                isSelected, modifierGroupPosition,
                             )
                             setSizes(menuItem)
                             shouldReset = false
@@ -966,6 +975,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             if (menuItem.sizes.modifierItems.size > 1) {
                 binding.sizesLabel.visible()
                 binding.txtSelectOne.visible()
+                binding.checkBox.setVisible(true)
                 binding.sizesLabel.text = menuItem.sizes.attributes.name
                 if (menuItem.sizes.modifierItems.size <= 3) {
                     menuItem.getSizes().getModifierItems().forEach { modifierItem ->
@@ -1061,6 +1071,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                     txtModifierPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.white))
                                     childCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_blue))
                                     sizesRadioBtn.setImageResource(R.drawable.ic_size_drawable_checked)
+                                    binding.checkBox.setVisible(true)
 
                                 } else {
 //
@@ -1157,7 +1168,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun setModifierGroup(
         position: Int,
         modifierGroup: ModifierGroup,
-        showModifierItemPrice: Boolean
+        showModifierItemPrice: Boolean,
+        showShowModifierCheckBox: Boolean
     ) {
     }
 
@@ -1276,6 +1288,13 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {
         modifierGroupsAdapter!!.showModifierItemPrice(show, modifierGroupPosition)
+    }
+
+    override fun showModifierSelectionIndicator(
+        hasAtleastOneSelectedItem: Boolean,
+        modifierGroupPosition: Int
+    ) {
+       modifierGroupsAdapter!!.shouldShowCheckBox(hasAtleastOneSelectedItem,modifierGroupPosition)
     }
 
     override fun showFavorites(fromAddRemove: Boolean, favorites: ArrayList<Favorite>) {}

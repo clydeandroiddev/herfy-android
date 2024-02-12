@@ -215,7 +215,7 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
                 showModifierItemPrice.put(item.getModifierGroups().indexOf(group), group.getAttributes().getFreeModifiersCount() == 0);
             }
 
-            modifierGroupsAdapter = new ModifierGroupsNewRecyclerViewAdapter(context, menuPresenter, showModifierItemPrice);
+            modifierGroupsAdapter = new ModifierGroupsNewRecyclerViewAdapter(context, menuPresenter, showModifierItemPrice,calculateShouldShowModifierCheckbox(item.getModifierGroups()));
 
 
 //            modifierGroupsAdapter.setOnAction(new ModifierItemViewHolder.OnAction() {
@@ -471,7 +471,7 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
 
     }
 
@@ -522,6 +522,11 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
 
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
+
+    }
+
+    @Override
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
 
     }
 
@@ -644,5 +649,21 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
     public void updateFloatingTotalPrice() {
 
     }
+    public HashMap<Integer, Boolean> calculateShouldShowModifierCheckbox(List<ModifierGroup> modifierGroups) {
+        HashMap<Integer, Boolean> shouldShowModifierCheckbox = new HashMap<>();
 
+        for (int index = 0; index < modifierGroups.size(); index++) {
+            ModifierGroup group = modifierGroups.get(index);
+            boolean anySelected = false;
+            for (ModifierItem item : group.getModifierItems()) {
+                if (item.getAttributes().isSelected()) {
+                    anySelected = true;
+                    break;
+                }
+            }
+            shouldShowModifierCheckbox.put(index, anySelected);
+        }
+
+        return shouldShowModifierCheckbox;
+    }
 }
