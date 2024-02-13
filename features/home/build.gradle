@@ -73,7 +73,8 @@ android {
 }
 
 dependencies {
-
+    api(project(":commonStyles"))
+    api(project(":utils"))
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
@@ -122,6 +123,10 @@ dependencies {
 
     //Dot Indicator
     implementation 'com.github.ac-opensource:dotsindicator:5.0.2'
+
+    //RXJava
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
 
 
 }
