@@ -24,6 +24,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.clearFragmentResultListener
@@ -53,6 +54,7 @@ import com.google.android.gms.maps.model.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.tabs.TabLayout
 import com.herfy.R
+import com.herfy.R2.id.textView
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartDialogFragment
@@ -61,6 +63,7 @@ import com.herfy.ext.cast
 import com.herfy.ext.gone
 import com.herfy.ext.isVisible
 import com.herfy.ext.visible
+import com.herfy.font.FontHandler
 import com.herfy.location.FusedLocationProvider
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
@@ -82,6 +85,7 @@ import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import java.util.*
+
 
 class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
@@ -510,7 +514,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         binding.curbsideProceed.text =
             CacheUtil.getInstance().getTranslations(Text.CURBSIDE_YES_PLEASE_CAPS, "YES, PLEASE")
         binding.continueButton.text =
-            CacheUtil.getInstance().getTranslations(Text.CONTINUE_TITLE, "Continue")
+            CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue")
         binding.deliveryButton.text =
             CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
         binding.pickupButton.text = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
@@ -606,6 +610,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun createOrderType(orderType: OrderType) {}
 
     override fun selectOrderType(type: OrderType) {
+        binding.deliveryButton.typeface = FontHandler.getRegularTypeface()
+        binding.dineInButton.typeface = FontHandler.getRegularTypeface()
+        binding.pickupButton.typeface = FontHandler.getRegularTypeface()
         val isNone = false
         var orderType = type
         if (type === OrderType.NONE) {
@@ -655,14 +662,18 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         var title: String? = ""
         if (orderType === OrderType.DELIVERY) {
             selectDelivery()
+            binding.deliveryButton.typeface = FontHandler.getSemiboldTypeface()
             title = CacheUtil.getInstance().getTranslations(Text.DELIVERY)
         } else if (orderType === OrderType.PICKUP) {
             selectPickup()
+            binding.pickupButton.typeface = FontHandler.getSemiboldTypeface()
             title = CacheUtil.getInstance().getTranslations(Text.PICKUP)
         } else if (orderType === OrderType.DINE_IN) {
+            binding.dineInButton.typeface = FontHandler.getSemiboldTypeface()
             selectDineIn()
             title = CacheUtil.getInstance().getTranslations(Text.DINE_IN)
         } else if (orderType === OrderType.CURBSIDE) {
+            binding.pickupButton.typeface = FontHandler.getSemiboldTypeface()
             selectPickup()
             processCurbside()
             title = CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP_CAPS, "CURBSIDE")
@@ -783,7 +794,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun showLocation(isPlace: Boolean, latLng: LatLng, address: String) {
         try {
             binding.location.setImageResource(R.drawable.ic_location_enabled)
-            binding.location.setColorFilter(Color.parseColor(CacheUtil.getInstance().colorMain))
+            binding.location.setColorFilter(Color.parseColor("#212121"))
             if (locationMarker != null) {
                 locationMarker?.remove()
             }
@@ -1175,7 +1186,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 } else {
                     storeMarker?.setIcon(
                         ViewUtil.vectorDrawableToBitmapDescriptor(
-                            activity, R.drawable.branch_icon_new
+                            activity, R.drawable.branch_pin
                         )
                     )
                     storeMarker?.setAnchor(0.5f, 1f)

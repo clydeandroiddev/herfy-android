@@ -25,7 +25,7 @@ public class StoresRecyclerViewAdapter extends RecyclerView.Adapter<StoreViewHol
     @NonNull
     @Override
     public StoreViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new StoreViewHolder(orderPresenter, isDineIn, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_store, parent, false));
+        return new StoreViewHolder(orderPresenter, isDineIn, LayoutInflater.from(parent.getContext()).inflate(com.herfy.ordertype.R.layout.item_stores_pickup, parent, false));
     }
 
     @Override
@@ -35,7 +35,7 @@ public class StoresRecyclerViewAdapter extends RecyclerView.Adapter<StoreViewHol
 
     @Override
     public int getItemCount() {
-        if(orderPresenter.getStoresCount(isDineIn) > 0) {
+        if (orderPresenter.getStoresCount(isDineIn) > 0) {
             return orderPresenter.getStoresCount(isDineIn) + 3;
         }
         return 0;

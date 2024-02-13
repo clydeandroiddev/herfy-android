@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,31 +51,44 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
 
     @BindView(R.id.card)
     MaterialCardView card;
-    @BindView(R.id.distance_container)
-    MaterialCardView distanceContainer;
-    @BindView(R.id.open_closed_container)
-    MaterialCardView openClosedContainer;
 
     @BindView(R.id.container)
-    LinearLayout container;
+    ConstraintLayout container;
 
-    @BindView(R.id.deliveryHours) TextView deliveryHours;
-    @BindView(R.id.pickupHours) TextView pickupHours;
+    @BindView(R.id.indicator)
+    ImageView indicator;
 
-    @BindView(R.id.name)
-    TextView name;
-    @BindView(R.id.address)
-    TextView address;
-    @BindView(R.id.distance)
-    TextView distance;
-    @BindView(R.id.telephone)
-    TextView telephone;
-    @BindView(R.id.hours)
-    TextView hours;
-    @BindView(R.id.open_closed)
-    TextView openClosed;
-    @BindView(R.id.facilities)
-    LinearLayout facilities;
+    @BindView(R.id.nearestLabel)
+    AppCompatTextView nearestLabel;
+    @BindView(R.id.directionsImage)
+    ImageView directionsImage;
+
+    @BindView(R.id.kmCount)
+    AppCompatTextView kmCount;
+
+    @BindView(R.id.branchName)
+    AppCompatTextView branchName;
+
+    @BindView(R.id.branchAddress)
+    AppCompatTextView branchAddress;
+
+    @BindView(R.id.branchTime)
+    AppCompatTextView branchTime;
+
+    @BindView(R.id.pickupMethodsLabel)
+    AppCompatTextView pickupMethodsLabel;
+
+    @BindView(R.id.pickupMethodsContainer)
+    ConstraintLayout pickupMethodsContainer;
+
+    @BindView(R.id.walkInLabel)
+    AppCompatTextView walkInLabel;
+
+    @BindView(R.id.curbsideLabel)
+    AppCompatTextView curbsideLabel;
+
+    @BindView(R.id.driveThruLabel)
+    AppCompatTextView driveThruLabel;
 
     public StoreViewHolder(OrderContract.Presenter orderPresenter, boolean isDineIn, View itemView) {
 
@@ -107,10 +122,7 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
 
     @Override
     public void setupViews() {
-        int color = Color.parseColor(CacheUtil.getInstance().getColorMain());
-        name.setTextColor(color);
-        openClosed.setTextColor(color);
-        distance.setTextColor(color);
+
     }
 
     @Override
@@ -195,9 +207,22 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
     public void setStore(Store store, boolean selected) {
 
         if (store != null) {
+
+            nearestLabel.setText(CacheUtil.getInstance().getTranslations(Text.NEAREST_CAPS, "NEAREST"));
+            pickupMethodsLabel.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP_METHODS, "Pickup Methods"));
+            walkInLabel.setText(CacheUtil.getInstance().getTranslations(Text.WALK_IN, "Walk In"));
+            curbsideLabel.setText(CacheUtil.getInstance().getTranslations(Text.CURBSIDE_LABEL, "Curbside"));
+            driveThruLabel.setText(CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU, "Drive Thru"));
+
             if (selected) {
+                indicator.setImageResource(R.drawable.ic_store_selected);
+                directionsImage.setImageResource(R.drawable.ic_direction_selected);
+                pickupMethodsContainer.setVisibility(View.VISIBLE);
                 card.setStrokeColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));
             } else {
+                indicator.setImageResource(R.drawable.ic_store_unselected);
+                pickupMethodsContainer.setVisibility(View.GONE);
+                directionsImage.setImageResource(R.drawable.ic_direction_unselected);
                 card.setStrokeColor(ContextCompat.getColor(itemView.getContext(), android.R.color.transparent));
             }
 
@@ -211,68 +236,51 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
             boolean deliverHoursAvailable = store.getAttributes().openingHoursDeliver != null && day < store.getAttributes().openingHoursDeliver.size();
             boolean hoursAvailable = store.getAttributes().openingHoursUtc != null && day < store.getAttributes().openingHoursUtc.size();
 
-            /*if (pickupHoursAvailable) {
-                String hoursText = StringUtil.formatOpenHours(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed());
-                pickupHours.setText(CacheUtil.getInstance().getTranslations("pickup", "Pickup") + ": " + hoursText);
-            }
-
-            if (deliverHoursAvailable) {
-                String hoursText = StringUtil.formatOpenHours(store.getAttributes().openingHoursDeliver.get(day).getOpen(), store.getAttributes().openingHoursDeliver.get(day).getClosed());
-                deliveryHours.setText(CacheUtil.getInstance().getTranslations("delivery", "Delivery") + ": " + hoursText);
-            }
-
-            if (!pickupHoursAvailable && !deliverHoursAvailable && hoursAvailable) {
-                String hoursText = StringUtil.formatOpenHours(store.getAttributes().openingHoursUtc.get(day).getOpen(), store.getAttributes().openingHoursUtc.get(day).getClosed());
-                pickupHours.setText(CacheUtil.getInstance().getTranslations("pickup", "Pickup") + ": " + hoursText);
-                deliveryHours.setText(CacheUtil.getInstance().getTranslations("delivery", "Delivery") + ": " + hoursText);
-            }*/
             boolean isOpen = false;
+            branchTime.setVisibility(View.VISIBLE);
             if (!pickupHoursAvailable && !deliverHoursAvailable && hoursAvailable) {
                 String openingHours = StringUtil.getOpeningHours(store);
                 String openingFinal = (!openingHours.isEmpty() ? openingHours : "-");
-                hours.setText(openingFinal);
-                hours.setVisibility(View.VISIBLE);
-                deliveryHours.setVisibility(View.GONE);
-                pickupHours.setVisibility(View.GONE);
-                if (store.getAttributes().getOpen()) {
-                    isOpen = true;
-                    openClosedContainer.setCardBackgroundColor(Color.parseColor("#0D10C735"));
-                    openClosed.setText(CacheUtil.getInstance().getTranslations(Text.OPEN_CAPS, "OPEN"));
-                    openClosed.setTextColor(Color.parseColor("#10C735"));
-                }
+                branchTime.setText(openingFinal);
+//                if (store.getAttributes().getOpen()) {
+//                    isOpen = true;
+//                    openClosedContainer.setCardBackgroundColor(Color.parseColor("#0D10C735"));
+//                    openClosed.setText(CacheUtil.getInstance().getTranslations(Text.OPEN_CAPS, "OPEN"));
+//                    openClosed.setTextColor(Color.parseColor("#10C735"));
+//                }
             } else {
-                hours.setVisibility(View.GONE);
-                if (deliverHoursAvailable) {
-                    String hoursText = StringUtil.formatOpenHours(store.getAttributes().openingHoursDeliver.get(day).getOpen(), store.getAttributes().openingHoursDeliver.get(day).getClosed());
-                    deliveryHours.setText(CacheUtil.getInstance().getTranslations("delivery", "Delivery") + ": " + hoursText);
-                    deliveryHours.setVisibility(View.VISIBLE);
-                } else {
-                    deliveryHours.setVisibility(View.GONE);
-                }
+//                if (deliverHoursAvailable) {
+//                    String hoursText = StringUtil.formatOpenHours(store.getAttributes().openingHoursDeliver.get(day).getOpen(), store.getAttributes().openingHoursDeliver.get(day).getClosed());
+//                    deliveryHours.setText(CacheUtil.getInstance().getTranslations("delivery", "Delivery") + ": " + hoursText);
+//                    deliveryHours.setVisibility(View.VISIBLE);
+//                } else {
+//                    deliveryHours.setVisibility(View.GONE);
+//                }
                 if (pickupHoursAvailable) {
                     String hoursText = StringUtil.formatOpenHours(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed());
-                    pickupHours.setText(CacheUtil.getInstance().getTranslations("pickup", "Pickup") + ": " + hoursText);
-                    pickupHours.setVisibility(View.VISIBLE);
-                    if (store.getAttributes().getOpenPickup()) {
-                        isOpen = true;
-                        openClosedContainer.setCardBackgroundColor(Color.parseColor("#0D10C735"));
-                        openClosed.setText(CacheUtil.getInstance().getTranslations(Text.OPEN_CAPS, "OPEN"));
-                        openClosed.setTextColor(Color.parseColor("#10C735"));
-                    } else {
-                        openClosedContainer.setCardBackgroundColor(Color.parseColor("#0DF22424"));
-                        openClosed.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_CAPS, "CLOSED"));
-                        openClosed.setTextColor(Color.parseColor("#F22424"));
-                    }
+                    branchTime.setText(hoursText);
+//                    pickupHours.setVisibility(View.VISIBLE);
+//                    if (store.getAttributes().getOpenPickup()) {
+//                        isOpen = true;
+//                        openClosedContainer.setCardBackgroundColor(Color.parseColor("#0D10C735"));
+//                        openClosed.setText(CacheUtil.getInstance().getTranslations(Text.OPEN_CAPS, "OPEN"));
+//                        openClosed.setTextColor(Color.parseColor("#10C735"));
+//                    } else {
+//                        openClosedContainer.setCardBackgroundColor(Color.parseColor("#0DF22424"));
+//                        openClosed.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_CAPS, "CLOSED"));
+//                        openClosed.setTextColor(Color.parseColor("#F22424"));
+//                    }
                 } else {
-                    pickupHours.setVisibility(View.GONE);
+                    branchTime.setVisibility(View.GONE);
+                    //pickupHours.setVisibility(View.GONE);
                 }
             }
 
-            if(!isOpen) {
-                openClosedContainer.setCardBackgroundColor(Color.parseColor("#0DF22424"));
-                openClosed.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_CAPS, "CLOSED"));
-                openClosed.setTextColor(Color.parseColor("#F22424"));
-            }
+//            if (!isOpen) {
+//                openClosedContainer.setCardBackgroundColor(Color.parseColor("#0DF22424"));
+//                openClosed.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_CAPS, "CLOSED"));
+//                openClosed.setTextColor(Color.parseColor("#F22424"));
+//            }
 
             if (selected) {
                 card.setStrokeColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));
@@ -287,13 +295,10 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
                 }
             });
 
-            name.setText(store.getAttributes().getName());
-
-            distanceContainer.setCardBackgroundColor(Color.parseColor(String.format("#0D%06X", (0xFFFFFF & ViewUtil.getColorMain(itemView.getContext())))));
-            name.setText(store.getAttributes().getName());
+            branchName.setText(store.getAttributes().getName());
 
             String addressValue = store.getAttributes().getLine1();
-            address.setText(!addressValue.isEmpty() ? addressValue : "");
+            branchAddress.setText(!addressValue.isEmpty() ? addressValue : "");
 
             /*if (store.getAttributes().getOpen()) {
                 openClosedContainer.setCardBackgroundColor(Color.parseColor("#0D10C735"));
@@ -305,68 +310,66 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
                 openClosed.setTextColor(Color.parseColor("#F22424"));
             }*/
 
-            distanceContainer.setCardBackgroundColor(Color.parseColor(String.format("#0D%06X", (0xFFFFFF & ViewUtil.getColorMain(itemView.getContext())))));
-
-            if(store.getAttributes().getDistance() != -1) {
+            if (store.getAttributes().getDistance() != -1) {
                 String distanceValue = StringUtil.getDistance(store.getAttributes().getDistance());
                 if (!distanceValue.isEmpty()) {
-                    distance.setText(distanceValue);
-                    distance.setVisibility(View.VISIBLE);
+                    kmCount.setText(distanceValue);
+                    kmCount.setVisibility(View.VISIBLE);
                 } else {
-                    distance.setVisibility(View.GONE);
+                    kmCount.setVisibility(View.GONE);
                 }
             } else {
-                distance.setVisibility(View.GONE);
+                kmCount.setVisibility(View.GONE);
             }
 
-            String telephoneValue = store.getAttributes().getTelephone();
-            telephone.setText(!telephoneValue.isEmpty() ? telephoneValue : "-");
+//            String telephoneValue = store.getAttributes().getTelephone();
+//            telephone.setText(!telephoneValue.isEmpty() ? telephoneValue : "-");
+//
+//            telephone.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    orderPresenter.callStore(isDineIn, getAdapterPosition());
+//                }
+//            });
 
-            telephone.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    orderPresenter.callStore(isDineIn, getAdapterPosition());
-                }
-            });
 
-
-            if(store.getFacilities().size() > 0) {
-
-                facilities.setVisibility(View.VISIBLE);
-                facilities.removeAllViews();
-
-                ArrayList<Facility> distinctFacilities = new ArrayList<>();
-                for(Facility facility : store.getFacilities()) {
-                    if (!distinctFacilities.contains(facility)) {
-                        distinctFacilities.add(facility);
-                    }
-                }
-
-                for(Facility facility : distinctFacilities) {
-
-                    LayoutInflater inflater = (LayoutInflater) facilities.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View facilityView = inflater.inflate(R.layout.item_facility, null);
-
-                    MaterialCardView facilityContainer = facilityView.findViewById(R.id.facility_container);
-                    TextView facilityName = facilityView.findViewById(R.id.name);
-                    ImageView facilityIcon = facilityView.findViewById(R.id.icon);
-                    
-                    String primaryColor = CacheUtil.getInstance().getColorMain().replace("#","#26");
-
-                    facilityContainer.setCardBackgroundColor(Color.parseColor(primaryColor));
-
-                    facilityName.setTextColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));
-                    facilityName.setText(facility.getAttributes().getName());
-
-                    Glide.with(facilities.getContext()).load(facility.getAttributes().getIcon()).apply(RequestOptions.centerCropTransform()).into(facilityIcon);
-
-                    facilities.addView(facilityView);
-
-                }
-
-            } else {
-                facilities.setVisibility(View.GONE);
-            }
+//            if (store.getFacilities().size() > 0) {
+//
+//                facilities.setVisibility(View.VISIBLE);
+//                facilities.removeAllViews();
+//
+//                ArrayList<Facility> distinctFacilities = new ArrayList<>();
+//                for (Facility facility : store.getFacilities()) {
+//                    if (!distinctFacilities.contains(facility)) {
+//                        distinctFacilities.add(facility);
+//                    }
+//                }
+//
+//                for (Facility facility : distinctFacilities) {
+//
+//                    LayoutInflater inflater = (LayoutInflater) facilities.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//                    View facilityView = inflater.inflate(R.layout.item_facility, null);
+//
+//                    MaterialCardView facilityContainer = facilityView.findViewById(R.id.facility_container);
+//                    TextView facilityName = facilityView.findViewById(R.id.name);
+//                    ImageView facilityIcon = facilityView.findViewById(R.id.icon);
+//
+//                    String primaryColor = CacheUtil.getInstance().getColorMain().replace("#", "#26");
+//
+//                    facilityContainer.setCardBackgroundColor(Color.parseColor(primaryColor));
+//
+//                    facilityName.setTextColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));
+//                    facilityName.setText(facility.getAttributes().getName());
+//
+//                    Glide.with(facilities.getContext()).load(facility.getAttributes().getIcon()).apply(RequestOptions.centerCropTransform()).into(facilityIcon);
+//
+//                    facilities.addView(facilityView);
+//
+//                }
+//
+//            } else {
+//                facilities.setVisibility(View.GONE);
+//            }
 
             /*String openingHours = StringUtil.getOpeningHours(store);
             hours.setText(!openingHours.isEmpty() ? openingHours : "-");*/
