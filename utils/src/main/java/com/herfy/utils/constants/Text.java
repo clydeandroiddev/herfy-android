@@ -833,5 +833,12 @@ public class Text {
     public static final String CURBSIDE_PICKUP_LABEL = "curbside_pickup_label";
     public static final String CURBSIDE_DESCRIPTION = "curbside_description";
     public static final String DRIVE_THRU = "drive_thru";
-    public static final String DRIVE_THRU_DESCRIPTION = "drive_thru_description¬";
+    public static final String DRIVE_THRU_DESCRIPTION = "drive_thru_description";
+
+    public static final String NEAREST_CAPS = "nearest_caps";
+
+    public static final String PICKUP_METHODS = "pickup_methods";
+
+    public static final String WALK_IN = "walk_in";
+    public static final String CURBSIDE_LABEL = "curbside_label";
 }
