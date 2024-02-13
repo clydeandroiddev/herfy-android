@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Herfy</string>
     <string name="deeplink_page" translatable="false">gsg2h3zn9bduts4b.page.link</string>
-    <string name="google_sign_in_client_id" translatable="false">GOOGLE_SIGN_IN_CLIENT_ID</string>
+    <string name="google_sign_in_client_id" translatable="false">650260545167-lruhahepj34bscml0dqiafk285camtum.apps.googleusercontent.com</string>
     <string name="facebook_app_id" translatable="false">FACEBOOK_APP_ID</string>
     <string name="fb_login_protocol_scheme" translatable="false">FACEBOOK_LOGIN_PROTOCOL_SCHEME</string>
     <string name="twitter_api_key" translatable="false">TWITTER_API_KEY</string>

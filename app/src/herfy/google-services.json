@@ -12,7 +12,20 @@
           "package_name": "com.herfy.android"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "650260545167-mv1pomm5and5hfrtin25oatnd4s05fhk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.herfy.android",
+            "certificate_hash": "344014165ca26951d4ec3bb2f1dec773509efae9"
+          }
+        },
+        {
+          "client_id": "650260545167-lruhahepj34bscml0dqiafk285camtum.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAYNNFbwHNnVgK0ACwB7L9UBX4tpqTHs9M"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "650260545167-lruhahepj34bscml0dqiafk285camtum.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "650260545167-3vagrsd614k25bd8d52j8io9r2ctio4r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.herfyrestaurant.ios"
+              }
+            }
+          ]
         }
       }
     }
