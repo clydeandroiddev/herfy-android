@@ -10,6 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.DialogOrderTypeSelectionBinding
+import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.*
 
 class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
@@ -48,17 +49,29 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        binding.soloType.text =
-            CacheUtil.getInstance().getTranslations("choose_pickup_type", "Choose Pickup Type")
+        binding.soloType.text = CacheUtil.getInstance()
+            .getTranslations(Text.CHOOSE_PICKUP_METHOD, "Choose Pickup Method")
         binding.storePickup.text =
-            CacheUtil.getInstance().getTranslations("store_pickup_label", "Store Pickup")
+            CacheUtil.getInstance().getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
         binding.descriptionPickup.text = CacheUtil.getInstance()
-            .getTranslations("description_pickup", "Pickup your order from the store.")
-        binding.curbside.text = CacheUtil.getInstance().getTranslations("curbside", "Curbside")
-        binding.descriptionCurbside.text = CacheUtil.getInstance()
-            .getTranslations("description_curbside", "Your order will be served in your car.")
+            .getTranslations(Text.PICKUP_DESCRIPTION, "Pickup your order inside the restaurant")
+        binding.curbside.text =
+            CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP_LABEL, "Curbside pickup")
+        binding.descriptionCurbside.text = CacheUtil.getInstance().getTranslations(
+                Text.CURBSIDE_DESCRIPTION,
+                "Park at the restaurant and your order will be served in your car"
+            )
+        binding.driveThru.text =
+            CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU, "Drive Thru")
+        binding.descriptionDriveThru.text = CacheUtil.getInstance().getTranslations(
+                Text.DRIVE_THRU_DESCRIPTION, "Pick up your order from the drive thru."
+            )
 
         binding.choosePickup.setOnClickListener {
+            onSubmit?.isPickup()
+        }
+
+        binding.chooseDriveThru.setOnClickListener {
             onSubmit?.isPickup()
         }
 
