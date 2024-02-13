@@ -58,6 +58,7 @@ import com.herfy.ext.visible
 import com.herfy.favorites.FavoritesFragmentDirections
 import com.herfy.feedback.FeedbackActivity
 import com.herfy.loyalty.LoyaltyActivity
+import com.herfy.main.adapter.LanguageAdapter
 import com.herfy.main.adapter.SwitchServerAdapter
 import com.herfy.menu.views.MenuItemFragmentDirections
 import com.herfy.newmenu.NewMenuFragmentCommonListener
@@ -138,6 +139,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private var isFromFavorites = false
     private var fromChangeLanguage = false
     var currentDestination = -1
+    private var languageAdapter : LanguageAdapter? = null
 
     private var authLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -312,76 +314,79 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     fun setupLanguage() {
-        val secondaryLanguage = CacheUtil.getInstance().concept.secondaryLanguage
-        if (secondaryLanguage == null || secondaryLanguage.isEmpty()) {
-            binding.sidebar.language.languageContainer.visibility = View.INVISIBLE
-        } else {
-            val languages = CacheUtil.getInstance().concept.languages.toList()
-            binding.sidebar.language.apply {
-                french.isVisible =
-                    !(languages.find { lang -> lang.equals(LocaleUtil.FR, true) }.isNullOrEmpty())
-                english.isVisible = !(languages.find { lang -> lang.equals(LocaleUtil.EN_US, true) }
-                    .isNullOrEmpty())
-                arabic.isVisible = !(languages.find { lang -> lang.equals(LocaleUtil.AR_SA, true) }
-                    .isNullOrEmpty())
-            }
+        binding.sidebar.apply {
+            val secondaryLanguage = CacheUtil.getInstance().concept.secondaryLanguage
+            if (secondaryLanguage == null || secondaryLanguage.isEmpty()) {
+                cvLang.visibility = View.INVISIBLE
+            } else {
+                val languages = CacheUtil.getInstance().concept.languages.toList()
+                /*binding.sidebar.language.apply {
+                    french.isVisible =
+                        !(languages.find { lang -> lang.equals(LocaleUtil.FR, true) }.isNullOrEmpty())
+                    english.isVisible = !(languages.find { lang -> lang.equals(LocaleUtil.EN_US, true) }
+                        .isNullOrEmpty())
+                    arabic.isVisible = !(languages.find { lang -> lang.equals(LocaleUtil.AR_SA, true) }
+                        .isNullOrEmpty())
+                }*/
 
-            binding.sidebar.language.languageSegmented.apply {
-                val position = when {
-                    LocaleUtil.getInstance().isArabic -> 0
-                    LocaleUtil.getInstance().isFrench -> 1
-                    else -> 2
-                }
-                setPosition(position, true)
-                onPositionChangedListener = OnPositionChangedListener { position ->
-                    var language: String = ""
-
-                    when (getButton(position)) {
-                        binding.sidebar.language.english -> language =
-                            if (!LocaleUtil.getInstance().isEnglish) "en" else ""
-
-                        binding.sidebar.language.arabic -> language =
-                            if (!LocaleUtil.getInstance().isArabic) "ar" else ""
-
-                        binding.sidebar.language.french -> language =
-                            if (!LocaleUtil.getInstance().isFrench) "fr" else ""
+               /* binding.sidebar.language.languageSegmented.apply {
+                    val position = when {
+                        LocaleUtil.getInstance().isArabic -> 0
+                        LocaleUtil.getInstance().isFrench -> 1
+                        else -> 2
                     }
-                    if (language.isNotEmpty()) {
-                        binding.drawerLayout.closeDrawer(GravityCompat.START)
-                        val eventAttributes: HashMap<String, String> = HashMap()
-                        LocaleUtil.getInstance().language = language
-                        eventAttributes["ChangeLanguage"] = language.uppercase(Locale.getDefault())
-                        logEvent("ChangeLanguage", eventAttributes, null, 0.0)
-                        LocaleUtil.getInstance().setLocale(this@MainActivity)
-                        val config: Configuration = Configuration()
-                        config.locale = Locale(language)
-                        resources.updateConfiguration(config, resources.displayMetrics)
-                        SoloAuth.getInstance()
-                            .setLanguage(LocaleUtil.getInstance().languageSymbol)
-                        mainPresenter.changeLanguage()
+                    setPosition(position, true)
+                    onPositionChangedListener = OnPositionChangedListener { position ->
+                        var language: String = ""
 
-                        val intent: Intent = Intent(this@MainActivity, SplashActivity::class.java)
-                        intent.putExtra("fromChangeLanguage", true)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                        ActivitySwitcher.animationOut(
-                            this@MainActivity.findViewById(R.id.drawer_layout),
-                            windowManager,
-                            object : ActivitySwitcher.AnimationListener {
-                                override fun onAnimationStarted() {
-                                    startActivity(intent)
-                                    overridePendingTransition(0, 0)
-                                    finish()
-                                }
+                        when (getButton(position)) {
+                            binding.sidebar.language.english -> language =
+                                if (!LocaleUtil.getInstance().isEnglish) "en" else ""
 
-                                override fun onAnimationFinished() {}
-                            })
+                            binding.sidebar.language.arabic -> language =
+                                if (!LocaleUtil.getInstance().isArabic) "ar" else ""
+
+                            binding.sidebar.language.french -> language =
+                                if (!LocaleUtil.getInstance().isFrench) "fr" else ""
+                        }
+                        if (language.isNotEmpty()) {
+                            binding.drawerLayout.closeDrawer(GravityCompat.START)
+                            val eventAttributes: HashMap<String, String> = HashMap()
+                            LocaleUtil.getInstance().language = language
+                            eventAttributes["ChangeLanguage"] = language.uppercase(Locale.getDefault())
+                            logEvent("ChangeLanguage", eventAttributes, null, 0.0)
+                            LocaleUtil.getInstance().setLocale(this@MainActivity)
+                            val config: Configuration = Configuration()
+                            config.locale = Locale(language)
+                            resources.updateConfiguration(config, resources.displayMetrics)
+                            SoloAuth.getInstance()
+                                .setLanguage(LocaleUtil.getInstance().languageSymbol)
+                            mainPresenter.changeLanguage()
+
+                            val intent: Intent = Intent(this@MainActivity, SplashActivity::class.java)
+                            intent.putExtra("fromChangeLanguage", true)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                            ActivitySwitcher.animationOut(
+                                this@MainActivity.findViewById(R.id.drawer_layout),
+                                windowManager,
+                                object : ActivitySwitcher.AnimationListener {
+                                    override fun onAnimationStarted() {
+                                        startActivity(intent)
+                                        overridePendingTransition(0, 0)
+                                        finish()
+                                    }
+
+                                    override fun onAnimationFinished() {}
+                                })
+                        }
+
+
                     }
-
-
-                }
+                }*/
+                cvLang.visibility = View.VISIBLE
             }
-            binding.sidebar.language.languageContainer.visibility = View.VISIBLE
         }
+
     }
 
     private fun showCountries() {
@@ -458,41 +463,42 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     fun showSocialMediaLinks() {
         hasLinks = false
         if (CacheUtil.getInstance().concept.facebookLink != null && !CacheUtil.getInstance().concept.facebookLink.isEmpty()) {
-            binding.sidebar.ivFacebook.visibility = View.VISIBLE
+            binding.sidebar.cvFacebook.visibility = View.VISIBLE
             hasLinks = true
-            binding.sidebar.ivFacebook.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.facebookLink) }
+            binding.sidebar.cvFacebook.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.facebookLink) }
         } else {
-            binding.sidebar.ivFacebook.visibility = View.GONE
+            binding.sidebar.cvFacebook.visibility = View.GONE
         }
         if (CacheUtil.getInstance().concept.twitterLink != null && !CacheUtil.getInstance().concept.twitterLink.isEmpty()) {
-            binding.sidebar.ivTwitter.visibility = View.VISIBLE
+            binding.sidebar.cvTwitter.visibility = View.VISIBLE
             hasLinks = true
-            binding.sidebar.ivTwitter.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.twitterLink) }
+            binding.sidebar.cvTwitter.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.twitterLink) }
         } else {
-            binding.sidebar.ivTwitter.visibility = View.GONE
+            binding.sidebar.cvTwitter.visibility = View.GONE
         }
         if (CacheUtil.getInstance().concept.instagramLink != null && !CacheUtil.getInstance().concept.instagramLink.isEmpty()) {
-            binding.sidebar.ivInstagram.visibility = View.VISIBLE
+            binding.sidebar.cvIg.visibility = View.VISIBLE
             hasLinks = true
-            binding.sidebar.ivInstagram.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.instagramLink) }
+            binding.sidebar.cvIg.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.instagramLink) }
         } else {
-            binding.sidebar.ivInstagram.visibility = View.GONE
+            binding.sidebar.cvIg.visibility = View.GONE
         }
         if (CacheUtil.getInstance().concept.youtubeLink != null && !CacheUtil.getInstance().concept.youtubeLink.isEmpty()) {
-            binding.sidebar.ivYoutube.visibility = View.VISIBLE
+            binding.sidebar.cvYoutube.visibility = View.VISIBLE
             hasLinks = true
-            binding.sidebar.ivYoutube.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.youtubeLink) }
+            binding.sidebar.cvYoutube.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.youtubeLink) }
         } else {
-            binding.sidebar.ivYoutube.visibility = View.GONE
+            binding.sidebar.cvYoutube.visibility = View.GONE
         }
         if (CacheUtil.getInstance().concept.websiteLink != null && !CacheUtil.getInstance().concept.websiteLink.isEmpty()) {
-            binding.sidebar.ivWeb.visibility = View.VISIBLE
+            binding.sidebar.cvWeb.visibility = View.VISIBLE
             hasLinks = true
-            binding.sidebar.ivWeb.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.websiteLink) }
+            binding.sidebar.cvWeb.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.websiteLink) }
         } else {
-            binding.sidebar.ivWeb.visibility = View.GONE
+            binding.sidebar.cvWeb.visibility = View.GONE
         }
-        binding.sidebar.icShare.setOnClickListener {
+        binding.sidebar.cvTiktok.visibility = View.GONE
+        binding.sidebar.cvShare.setOnClickListener {
             try {
                 val shareIntent = Intent(Intent.ACTION_SEND)
                 shareIntent.type = "text/plain"
@@ -619,8 +625,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             Text.YOU_ARE_CURRENTLY_SIGNED_IN_AS_A_GUEST,
             "You are currently signed in as a guest"
         )
-        binding.sidebar.welcome.text =
-            if (isSignedIn) (if (isGuest) signedInGuest else signedInFull) else signedOut
         binding.sidebar.customerName.visibility =
             if (isSignedIn && !isGuest) View.VISIBLE else View.GONE
         binding.sidebar.customerName.text =
@@ -736,7 +740,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 binding.sidebar.concept.setImageResource(R.drawable.header)
             }
 
-            if (conceptObject.removeBranding) {
+            /*if (conceptObject.removeBranding) {
                 binding.sidebar.imageSolo.visibility = View.GONE
             } else if (conceptAppBrandLogoUrl != null && conceptObject.appBrandLogo.isNotEmpty()) {
                 binding.sidebar.imageSolo.loadImageFromUrl(conceptAppBrandLogoUrl)
@@ -751,7 +755,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 } else {
                     binding.sidebar.imageSolo.visibility = View.GONE
                 }
-            }
+            }*/
         }
     }
 
@@ -1631,5 +1635,4 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             it.refreshFavorites()
         }
     }
-
 }
