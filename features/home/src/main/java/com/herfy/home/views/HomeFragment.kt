@@ -277,6 +277,72 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 }
             }
         }
+
+        viewModel.loyalty.observeNonNull(this){ loyalty ->
+            binding.layoutLoyalty.apply {
+                clCustomerLoyalty.visibility = View.VISIBLE
+                tvPoints.text = loyalty.attributes.pointsAccumulated.toString()
+                tierName.text = loyalty.attributes.loyaltyTier.name.toString()
+            }
+        }
+
+        viewModel.pointsToNextTier.observeNonNull(this){pointsToNextTier->
+            if(pointsToNextTier<= 0){
+                viewModel.tier.observeNonNull(this){tier->
+                    if(tier==null){
+                        binding.layoutLoyalty.apply {
+                            progress.max = 100
+                            progress.progress = 0
+                            progressLabel.text = "You are now a Tier member"
+                            progressTextIndicator.text = "${progress.progress}/${ progress.max}"
+                        }
+                    }else{
+                        binding.layoutLoyalty.apply {
+                            progress.max = 100
+                            progress.progress = 100
+                            progressLabel.text = CacheUtil.getInstance().getTranslations(
+                                Text.TOTAL_POINTS_MAX_OUT,
+                                "You have maxed out on our tier levels"
+                            )
+                            progressTextIndicator.text = "${progress.progress}/${ progress.max}"
+                        }
+                    }
+
+                }
+            }else{
+                viewModel.startPoints.observeNonNull(this){startPoints->
+                    binding.layoutLoyalty.apply {
+                        progress.max = startPoints
+                  }
+
+                    viewModel.totalPointsAccumulated.observeNonNull(this){totalPointsAccumulated->
+                        binding.layoutLoyalty.apply {
+                            progress.progress = totalPointsAccumulated
+                            progressTextIndicator.text = "${progress.progress}/${ progress.max}"
+                        }
+                    }
+
+                }
+
+
+
+                viewModel.tier.observeNonNull(this) { tier ->
+                    binding.layoutLoyalty.apply {
+                        progressLabel.text = HtmlCompat.fromHtml(
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.LOYALTY_POINTS_UNTIL_TIER,
+                                    "(x) points till you reach (y) Tier").replace("(x)", pointsToNextTier.toString()).replace(
+                                    "(y)", "<b>" + tier!!.name.substring(0, 1).uppercase(
+                                        Locale.getDefault()
+                                    ) + tier.name.substring(1).lowercase(Locale.getDefault())
+                                ) + "</b>", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    }
+                }
+
+            }
+        }
+
+
     }
 
     private fun orderTypeClick(orderType: OrderType) {
@@ -291,41 +357,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 intent.putExtra("checkout", false)
                 intent.putExtra("storeId", storeId)
                 it.startActivity(intent)
-            }
-        }
-
-        viewModel.pointsToNextTier.observeNonNull(this){
-            binding.apply {
-                layoutLoyalty.apply {
-                    if(it<=0){
-                        if(viewModel.tier.value == null){
-                            progress.max = 100
-                            progress.progress = 0
-                            progressLabel.text = "You are now a Tier member"
-                        }else{
-                            progress.max = 100
-                            progress.progress = 100
-                            progressLabel.text = CacheUtil.getInstance().getTranslations(
-                                Text.TOTAL_POINTS_MAX_OUT,
-                                "You have maxed out on our tier levels"
-                            )
-                        }
-                    }else{
-                        progress.max = viewModel.startPoints.value!!
-                        progress.progress = viewModel.totalPointsAccumulated.value!!
-                        progressLabel.text = HtmlCompat.fromHtml(
-                                CacheUtil.getInstance().getTranslations(
-                                    Text.LOYALTY_POINTS_UNTIL_TIER,
-                                    "(x) points till you reach (y) Tier"
-                                ).replace("(x)",viewModel.pointsToNextTier.toString()).replace(
-                                    "(y)", "<b>" + viewModel.tier.value!!.name.substring(0, 1).uppercase(
-                                        Locale.getDefault()
-                                    ) + viewModel.tier.value!!.name.substring(1).lowercase(Locale.getDefault())
-                                )
-                            + "</b>", HtmlCompat.FROM_HTML_MODE_LEGACY
-                        )
-                    }
-                }
             }
         }
     }
@@ -401,14 +432,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private fun setupCustomerLoyalty(){
         context?.let { ctx ->
             viewModel.getLoyalty()
-            binding.apply {
-                layoutLoyalty.apply {
-                    layoutLoyalty.clCustomerLoyalty.visibility = View.VISIBLE
-                    tvPoints.text = viewModel.loyalty.value?.attributes?.pointsAccumulated.toString()
-                    tierName.text = viewModel.loyalty.value?.attributes?.loyaltyTier.toString()
-
-                }
-            }
         }
     }
 
