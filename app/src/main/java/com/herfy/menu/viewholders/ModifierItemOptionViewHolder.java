@@ -124,7 +124,6 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             check.setImageResource(R.drawable.modifier_item_unselected);
         }
 
-        modifierDescription.setText(modifierItem.getAttributes().getDescription()); // todo ask maam rio or BE where to get the data for description
 //        quantity.setText(StringUtil.localize(String.valueOf(modifierItem.getAttributes().getQuantity())));
         checkLayout.setOnClickListener(new View.OnClickListener() {
             @Override
