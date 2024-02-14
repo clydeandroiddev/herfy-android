@@ -11,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +33,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -68,6 +68,7 @@ import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
+import com.herfy.utils.widgets.AppBarStateChangeListener
 import com.kochava.tracker.events.EventType
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.util.GsonHelper
@@ -125,24 +126,17 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         return binding.root
     }
 
-
+    private fun checkBackground() {
+        binding.contentMain.setBackgroundResource(R.color.page_background_color)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        checkBackground()
+        menuPresenter.start()
+        menuPresenter.getFrequentBoughtItems();
 
-        activity?.let { act->
-            val displayMetrics = DisplayMetrics()
-            act.windowManager.defaultDisplay.getMetrics(displayMetrics)
-            val toolbarHeight = (displayMetrics.widthPixels / 1.5).toInt()
-            binding.mainToolbar.layoutParams.height = toolbarHeight
-            binding.image.layoutParams.height = toolbarHeight
-            binding.mainToolbar.invalidate()
-            binding.image.invalidate()
-            menuPresenter.start()
-            menuPresenter.getFrequentBoughtItems();
-        }
-
-
+        initialModifierId = ""
         activity?.cast<BaseActivity> {
             if (BuildUtil.soloAppKey().equals("SpeWD37HZx9Uqora", ignoreCase = true)) {
                 it.showLoadingDialog()
@@ -288,11 +282,23 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun setupViews() {
+        binding.appbar.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
+            override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
+                binding.toolbar.apply {
+                    when(state) {
+                        State.EXPANDED ->
+                            setBackgroundResource(R.drawable.bg_menu_item_background)
+                        State.COLLAPSED ->
+                            setBackgroundColor(Color.parseColor("#F7F7F7"))
+                        else -> {}
+                    }
+                }
+            }
+        })
+
         try {
             val activity: Activity? = activity
             if (activity != null) {
-//                binding.appbar.stateListAnimator =
-//                    AnimatorInflater.loadStateListAnimator(activity, R.animator.appbar_elevation)
                 binding.sizesRecyclerView.layoutManager = LinearLayoutManager(activity)
                 binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(activity);
                 binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(activity)
@@ -1108,10 +1114,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     }
                     binding.sizesLayoutTextContainer.visible()
                     binding.sizesContainer.visible()
-                    binding.sizesSepartor.visible()
                     binding.viewSizesSeparator.visible()
                     binding.sizesRecyclerView.gone()
-                    binding.viewRecycleViewSepartor.gone()
                 } else {
                     try {
                         val activity: Activity? = activity
@@ -1129,7 +1133,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             ViewCompat.setNestedScrollingEnabled(binding.sizesRecyclerView, false)
                             binding.sizesLabel.visibility = View.VISIBLE
                             binding.sizesRecyclerView.visibility = View.VISIBLE
-                            binding.viewRecycleViewSepartor.visible()
+                            binding.viewSizesSeparator.visible()
                             binding.sizesLayoutTextContainer.visible()
                         }
                     } catch (e: Exception) {
@@ -1137,8 +1141,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     }
                 }
             } else {
-                binding.viewSizesSeparator.gone()
-                binding.viewRecycleViewSepartor.gone()
                 binding.sizesLayoutTextContainer.gone()
                 binding.sizesContainer.visibility = View.GONE
                 binding.sizesRecyclerView.visibility = View.GONE
@@ -1150,7 +1152,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 }
             }
         } else {
-            binding.viewSizesSeparator.gone()
             binding.sizesLayoutTextContainer.gone()
             binding.sizesContainer.gone()
             binding.sizesRecyclerView.gone()
