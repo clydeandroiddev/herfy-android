@@ -1,30 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:id="@+id/imageCardView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/background_modifier_group_image"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/modifierImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="@dimen/margin_small"
+        android:background="@color/white"
+        android:padding="@dimen/padding_small"
+        android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="@+id/select"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="@dimen/margin_small"
+        app:layout_constraintTop_toTopOf="@+id/name"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Circle"
-        app:layout_constraintTop_toTopOf="@+id/name">
-        <ImageView
-            android:id="@+id/modifierImage"
-            android:layout_width="40dp"
-            android:padding="@dimen/padding_small"
-            tools:src="@tools:sample/avatars"
-            android:scaleType="centerCrop"
-            android:layout_height="40dp"/>
-    </LinearLayout>
+        app:strokeColor="@color/background_color_light_blue"
+        app:strokeWidth="2dp"
+        tools:src="@tools:sample/avatars" />
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/name"
         style="@style/Styles.Text.Footnote.Medium"
@@ -35,7 +31,7 @@
         android:textAlignment="viewStart"
         android:textColor="@color/black"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/imageCardView"
+        app:layout_constraintStart_toEndOf="@+id/modifierImage"
         app:layout_constraintTop_toTopOf="parent"
         app:lineHeight="16sp"
         tools:text="Topic Sauce" />
@@ -54,64 +50,66 @@
         app:layout_constraintTop_toBottomOf="@+id/name"
         tools:text="Select up to 2"
         tools:visibility="visible" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:focusableInTouchMode="false"
-        android:descendantFocusability="blocksDescendants"
-        app:layout_constraintTop_toBottomOf="@+id/select"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/margin_large"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:descendantFocusability="blocksDescendants"
+        android:focusableInTouchMode="false"
         android:paddingBottom="16dp"
-        tools:listitem="@layout/item_modifier_option_type"
-        tools:itemCount="5" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/select"
+        tools:itemCount="5"
+        tools:listitem="@layout/item_modifier_option_type" />
 
-<!--    <LinearLayout-->
-<!--        android:id="@+id/btnMinimum"-->
-<!--        android:layout_width="80dp"-->
-<!--        android:layout_height="30dp"-->
-<!--        android:background="@drawable/bg_rounded_25_radius_background"-->
-<!--        android:gravity="center"-->
-<!--        android:textAlignment="viewEnd"-->
-<!--        android:visibility="invisible"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/name"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/name"-->
-<!--        tools:visibility="visible">-->
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/btnMinimum"-->
+    <!--        android:layout_width="80dp"-->
+    <!--        android:layout_height="30dp"-->
+    <!--        android:background="@drawable/bg_rounded_25_radius_background"-->
+    <!--        android:gravity="center"-->
+    <!--        android:textAlignment="viewEnd"-->
+    <!--        android:visibility="invisible"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/name"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/name"-->
+    <!--        tools:visibility="visible">-->
 
-<!--        <com.google.android.material.textview.MaterialTextView-->
-<!--            android:id="@+id/minimum"-->
-<!--            style="@style/Styles.Text.Footnote"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:gravity="center"-->
-<!--            android:textColor="@color/white"-->
-<!--            tools:text="Required" />-->
-<!--    </LinearLayout>-->
+    <!--        <com.google.android.material.textview.MaterialTextView-->
+    <!--            android:id="@+id/minimum"-->
+    <!--            style="@style/Styles.Text.Footnote"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:gravity="center"-->
+    <!--            android:textColor="@color/white"-->
+    <!--            tools:text="Required" />-->
+    <!--    </LinearLayout>-->
 
 
-        <ImageView
-            android:id="@+id/checkBox"
-            android:layout_width="34dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/select"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/name"
-            android:layout_marginEnd="@dimen/margin_large"
-            android:src="@drawable/ic_modifier_group_checked_selected"
-            tools:visibility="visible" />
-        <View
-            android:layout_width="match_parent"
-            android:background="@color/colorSeparator"
+    <ImageView
+        android:id="@+id/checkBox"
+        android:layout_width="34dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:src="@drawable/ic_modifier_group_checked_selected"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/select"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/name"
+        tools:visibility="visible" />
 
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginHorizontal="@dimen/margin_large"
-            app:layout_constraintTop_toBottomOf="@+id/recycler_view"
-            android:layout_height="2dp"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+
+        android:layout_marginHorizontal="@dimen/margin_large"
+        android:background="@color/colorSeparator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recycler_view" />
+</androidx.constraintlayout.widget.ConstraintLayout>
