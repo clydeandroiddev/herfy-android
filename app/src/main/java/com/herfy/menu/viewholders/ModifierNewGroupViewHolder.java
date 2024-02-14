@@ -48,7 +48,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
 
     @BindView(R.id.name) TextView name;
-    @BindView(R.id.modifierImage)  ShapeableImageView modifierImage;
+    @BindView(R.id.modifierImage)  ImageView modifierImage;
 
     @BindView(R.id.select) TextView select; // todo uncomment this one ui for select is now final
 
@@ -198,6 +198,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
         Log.d("FAFA","Show shoulld modifier item " + showShowModifierCheckBox);
         String imageUrl = modifierGroup.getAttributes().getImage();
+        Log.d("FAFA","Image url test"  + imageUrl);
         boolean visible = false;
         VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
         if (visibilityConfig != null) {
@@ -215,10 +216,8 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
         name.setText(modifierGroup.getAttributes().getName());
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(modifierImage);
-            modifierImage.setVisibility(View.VISIBLE);
         }
         modifierCheckBox.setVisibility(showShowModifierCheckBox ? View.VISIBLE : View.GONE);
-        Log.d("FAFA", "Modifier check box " + (modifierCheckBox.getVisibility() == View.VISIBLE));
         // todo might needed this once designer change the ui
 //        ModifierGroupMinimumType modifierGroupMinimumType = ModifierGroupMinimumUtil.INSTANCE.validateType(modifierGroup.getAttributes().getMinimum());
 
