@@ -4472,6 +4472,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         mockMenuItemAttributes.setImage("https://console-uploads-sandbox.s3.eu-west-1.amazonaws.com/cszalrtpn.png");
         mockMenuItemAttributes.setPrice(10);
         mockMenuItemAttributes.setListPrice(0);
+        mockMenuItemAttributes.setDescription("2200 Kcal");
         mockMenuItem.setAttributes(mockMenuItemAttributes);
         frequentBoughtMenuItems.add(mockMenuItem);
         menuView.setMenuItemDetails(mockMenuItem);

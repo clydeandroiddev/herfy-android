@@ -1,0 +1,23 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Shape with rounded corners -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#F7F7F7" />
+            <corners
+                android:topLeftRadius="24dp"
+                android:topRightRadius="24dp" />
+        </shape>
+    </item>
+
+    <!-- Elevation shadow layer -->
+    <item android:top="8dp" android:right="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#33000000" />
+            <corners
+                android:topLeftRadius="24dp"
+                android:topRightRadius="24dp" />
+        </shape>
+    </item>
+
+</layer-list>

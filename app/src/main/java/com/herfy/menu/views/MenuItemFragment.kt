@@ -335,8 +335,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun setupFonts() {}
     override fun setupTranslations() {
         binding.txtMoreInfo.text = CacheUtil.getInstance()
-            .getTranslations(Text.MORE_INFROMATION, "More information")
-        val originalQuantityWithColon = CacheUtil.getInstance().getTranslations(Text.QUANTITY,"Quantity")
+            .getTranslations(Text.MORE_INFO, "More Info")
+        val originalQuantityWithColon = CacheUtil.getInstance().getTranslations(Text.ITEM_QUANTITY,"Item quantity")
         val formattedQuantityWithoutColon = originalQuantityWithColon.replace(":", "")
         binding.txtQuantity.text = formattedQuantityWithoutColon
     }

@@ -14,10 +14,11 @@
         android:background="@drawable/background_modifier_group_image"
         app:layout_constraintBottom_toBottomOf="@+id/select"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_small"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Circle"
         app:layout_constraintTop_toTopOf="@+id/name">
         <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/modifierImage"
             android:layout_width="wrap_content"
             android:padding="@dimen/padding_small"
             tools:src="@drawable/ic_car_drive_thru"

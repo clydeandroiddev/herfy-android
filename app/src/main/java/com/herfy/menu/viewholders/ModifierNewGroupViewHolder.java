@@ -10,6 +10,10 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.herfy.R;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.*;
@@ -44,7 +48,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
 
     @BindView(R.id.name) TextView name;
-
+    @BindView(R.id.modifierImage)  ShapeableImageView modifierImage;
 
     @BindView(R.id.select) TextView select; // todo uncomment this one ui for select is now final
 
@@ -193,6 +197,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     @Override
     public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
         Log.d("FAFA","Show shoulld modifier item " + showShowModifierCheckBox);
+        String imageUrl = modifierGroup.getAttributes().getImage();
         boolean visible = false;
         VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
         if (visibilityConfig != null) {
@@ -206,7 +211,12 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
             visible = true;
             recyclerView.setVisibility(View.VISIBLE);
         }
+
         name.setText(modifierGroup.getAttributes().getName());
+        if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
+            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(modifierImage);
+            modifierImage.setVisibility(View.VISIBLE);
+        }
         modifierCheckBox.setVisibility(showShowModifierCheckBox ? View.VISIBLE : View.GONE);
         Log.d("FAFA", "Modifier check box " + (modifierCheckBox.getVisibility() == View.VISIBLE));
         // todo might needed this once designer change the ui

@@ -17,8 +17,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/main_toolbar"
@@ -52,7 +51,6 @@
                             android:layout_gravity="center_horizontal|center_vertical"
                             android:orientation="vertical"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/ic_menu_image_background"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -60,8 +58,8 @@
 
                         <ImageView
                             android:id="@+id/icClose"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:layout_marginStart="@dimen/margin_large"
                             android:layout_marginTop="@dimen/margin_xlarge"
                             android:src="@drawable/ic_close"
@@ -70,8 +68,8 @@
 
                         <FrameLayout
                             android:id="@+id/favorite_card"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:layout_marginTop="@dimen/margin_xlarge"
                             android:layout_marginEnd="@dimen/margin_large"
                             android:background="@drawable/background_favourite"
@@ -112,14 +110,13 @@
             android:background="@drawable/bg_menu_item_backgound"
             android:fillViewport="true"
             android:fitsSystemWindows="true"
-            android:paddingBottom="25dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintTop_toBottomOf="@+id/appbar">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
+
                 android:layout_marginBottom="@dimen/margin_large"
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@+id/appbar">
@@ -144,8 +141,8 @@
                         android:id="@+id/btnDriveThru"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_large"
-                        android:layout_marginTop="@dimen/margin_large"
+                        android:layout_marginStart="@dimen/margin_small"
+                        android:layout_marginTop="@dimen/margin_xlarge"
                         android:background="@drawable/bg_rounded_drive_thru"
                         android:gravity="center"
                         android:orientation="horizontal"
@@ -351,6 +348,7 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/background_modifier_group_image"
                             android:orientation="vertical"
+                            android:layout_marginStart="@dimen/margin_large"
                             app:layout_constraintTop_toTopOf="@+id/sizes_label"
                             app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"
                             app:layout_constraintStart_toStartOf="parent">
@@ -380,6 +378,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="12dp"
                         android:orientation="horizontal"
+                        android:layout_marginStart="@dimen/margin_large"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -405,7 +404,7 @@
                         android:focusableInTouchMode="false"
                         android:orientation="horizontal"
                         android:visibility="gone"
-
+                        android:layout_marginHorizontal="@dimen/margin_small"
                         app:layout_behavior="@string/appbar_scrolling_view_behavior"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -451,6 +450,7 @@
                     android:clipToPadding="false"
                     android:descendantFocusability="blocksDescendants"
                     android:focusableInTouchMode="false"
+                    android:layout_marginHorizontal="@dimen/margin_small"
                     android:paddingTop="2dp"
                     android:visibility="gone"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -539,7 +539,7 @@
                         android:id="@+id/frequently_bough_recycleview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/margin_large"
+                        android:layout_marginHorizontal="@dimen/margin_small"
                         android:clipToPadding="false"
                         android:descendantFocusability="blocksDescendants"
                         android:focusableInTouchMode="false"
@@ -561,7 +561,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="@dimen/margin_xlarge"
-        android:background="@color/white"
         android:elevation="5dp"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
@@ -575,8 +574,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_large"
             android:layout_marginTop="@dimen/margin_large"
+            android:fontFamily="@font/inter_semi_bold"
             android:layout_marginBottom="@dimen/margin_large"
-
+                android:textColor="#0C0C0C"
             android:textAlignment="viewStart"
             app:layout_constraintBottom_toTopOf="@+id/add"
             app:layout_constraintStart_toStartOf="parent"
@@ -642,7 +642,7 @@
 
         <Button
             android:id="@+id/add"
-            style="@style/Styles.Text.Subheadline"
+            style="@style/TextAppearance.Footnote.Medium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_large"

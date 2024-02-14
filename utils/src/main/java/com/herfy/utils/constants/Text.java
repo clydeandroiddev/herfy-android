@@ -1,8 +1,6 @@
 package com.herfy.utils.constants;
 
 
-import org.jetbrains.annotations.Nullable;
-
 public class Text {
 
     public static final String CART = "cart";
@@ -16,7 +14,7 @@ public class Text {
     public static final String PROMO_DISCOUNT = "promo_discount";
     public static final String SUBTOTAL = "subtotal";
     public static final String PROCEED_CHECKOUT = "proceed_checkout";
-    public static final String MORE_INFROMATION = "more_information";
+    public static final String MORE_INFO = "more_information";
     public static final String WHAT_WOULD_YOU_LIKE_TO_EAT = "what_would_you_like_to_eat";
     public static final String HOME = "home";
     public static final String HOME_CAPS = "home_caps";
@@ -220,7 +218,8 @@ public class Text {
     public static final String RATE = "rate";
     public static final String OPTIONS = "options";
     public static final String QUANTITY = "quantity";
-    public static final String REQUIRED = "required";
+    public static final String ITEM_QUANTITY = "item_quantity";
+    public static final String REQUIRED ="required";
     public static final String RATING_SENT = "rating_sent";
     public static final String INGREDIENTS = "ingredients";
     public static final String SIGN_IN_MESSAGE = "sign_in_message";
