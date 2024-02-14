@@ -23,7 +23,7 @@
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/main_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="435dp"
+                android:layout_height="385dp"
                 android:animateLayoutChanges="true"
                 android:fitsSystemWindows="true"
                 app:contentInsetLeft="0dp"
@@ -39,7 +39,7 @@
                     <ImageView
                         android:id="@+id/image"
                         android:layout_width="match_parent"
-                        android:layout_height="335dp"
+                        android:layout_height="285dp"
                         android:layout_gravity="center_horizontal|center_vertical"
                         android:orientation="vertical"
                         android:scaleType="centerCrop"
