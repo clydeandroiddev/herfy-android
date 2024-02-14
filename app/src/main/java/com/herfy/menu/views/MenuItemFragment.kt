@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -124,17 +125,24 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         return binding.root
     }
 
-    private fun checkBackground() {
-        binding.contentMain.setBackgroundResource(R.color.page_background_color)
-    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkBackground()
-        menuPresenter.start()
-        menuPresenter.getFrequentBoughtItems();
 
-        initialModifierId = ""
+        activity?.let { act->
+            val displayMetrics = DisplayMetrics()
+            act.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            val toolbarHeight = (displayMetrics.widthPixels / 1.5).toInt()
+            binding.mainToolbar.layoutParams.height = toolbarHeight
+            binding.image.layoutParams.height = toolbarHeight
+            binding.mainToolbar.invalidate()
+            binding.image.invalidate()
+            menuPresenter.start()
+            menuPresenter.getFrequentBoughtItems();
+        }
+
+
         activity?.cast<BaseActivity> {
             if (BuildUtil.soloAppKey().equals("SpeWD37HZx9Uqora", ignoreCase = true)) {
                 it.showLoadingDialog()
@@ -283,8 +291,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         try {
             val activity: Activity? = activity
             if (activity != null) {
-                binding.appbar.stateListAnimator =
-                    AnimatorInflater.loadStateListAnimator(activity, R.animator.appbar_elevation)
+//                binding.appbar.stateListAnimator =
+//                    AnimatorInflater.loadStateListAnimator(activity, R.animator.appbar_elevation)
                 binding.sizesRecyclerView.layoutManager = LinearLayoutManager(activity)
                 binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(activity);
                 binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(activity)
@@ -684,19 +692,20 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 binding.coordinatorLayout.visibility = View.VISIBLE
                 binding.footer.visibility = View.VISIBLE
                 if (CacheUtil.getInstance().application.attributes.menuOnly) {
-                    binding.add.backgroundTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.disabled_tint
-                        )
-                    )
+//                    binding.add.backgroundTintList = ColorStateList.valueOf(
+//                        ContextCompat.getColor(
+//                            requireContext(),
+//                            R.color.disabled_tint
+//                        )
+//                    )
                 } else {
-                    binding.add.backgroundTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.primary_tint
-                        )
-                    )
+//                    binding.add.backgroundTintList = ColorStateList.valueOf(
+//                        ContextCompat.getColor(
+//                            requireContext(),
+//                            R.color.primary_tint
+//                        )
+//                    )
+//                }
                 }
                 binding.add.setOnClickListener(View.OnClickListener {
                     if (CacheUtil.getInstance().application.attributes.menuOnly) {
@@ -755,12 +764,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             R.color.soldout
                         )
                     )
-                    binding.add.backgroundTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.disabled_tint
-                        )
-                    )
+//                    binding.add.backgroundTintList = ColorStateList.valueOf(
+//                        ContextCompat.getColor(
+//                            requireContext(),
+//                            R.color.disabled_tint
+//                        )
+//                    )
                     binding.add.isEnabled = false
                 }
 //                if (menuItem.listPrice > 0.0) {
