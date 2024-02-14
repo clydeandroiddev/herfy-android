@@ -60,8 +60,6 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
     ShapeableImageView modifierOptionImage;
     private ModifierProcessor modifierProcessor;
 
-    @BindView(R.id.modifierDescription)
-    MaterialTextView modifierDescription;
 //    @BindView(R.id.quantity_container)
 //    ConstraintLayout quantityContainer;
 
