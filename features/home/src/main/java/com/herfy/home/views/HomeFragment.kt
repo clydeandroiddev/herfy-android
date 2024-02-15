@@ -29,10 +29,9 @@ import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.NavigationUtils
-import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.ViewUtil
-import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
@@ -287,11 +286,16 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.loyalty.observeNonNull(this){ loyalty ->
+        viewModel.loyalty.observe(this){ loyalty ->
+
             binding.layoutLoyalty.apply {
-                clCustomerLoyalty.visibility = View.VISIBLE
-                tvPoints.text = loyalty.attributes.pointsAccumulated.toString()
-                tierName.text = loyalty.attributes.loyaltyTier.name.toString()
+                loyalty?.let {
+                    clCustomerLoyalty.visibility = View.VISIBLE
+                    tvPoints.text = loyalty.attributes.pointsAccumulated.toString()
+                    tierName.text = loyalty.attributes.loyaltyTier?.name.toString()
+                }?: run {
+                    clCustomerLoyalty.visibility = View.GONE
+                }
             }
         }
 
@@ -351,23 +355,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-
-    }
-
-    private fun orderTypeClick(orderType: OrderType) {
-        activity?.let {
-            it.runOnUiThread {
-                val intent = Intent()
-                val storeId = CacheUtil.getOrderStoreId() ?: ""
-                intent.setClassName(it, Navigation.NAVIGATION_ACTIVITY)
-                intent.putExtra("navigation", "nav_order_type")
-                intent.putExtra("selectedOrderType", orderType.value)
-                intent.putExtra("fromCart", false)
-                intent.putExtra("checkout", false)
-                intent.putExtra("storeId", storeId)
-                it.startActivity(intent)
-            }
-        }
         viewModel.promotionCategoryList.observeNonNull(this){ promoCategories ->
             binding.layoutPromotions.apply {
                 if(promoCategories.size > 0){
@@ -389,22 +376,21 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 }
             }
         }
-        viewModel.loyalty.observe(this){
-            binding.apply {
-                it?.let {loyalty ->
-                    layoutLoyalty.apply {
-                        tvPoints.text = loyalty.attributes?.pointsAccumulated.toString()
-                        tierName.text = loyalty.attributes?.loyaltyTier.toString()
-                        progress.max = 100
-                        progress.progress = loyalty.attributes?.currentBalance ?: 0
-                    }
+    }
 
-                }?: run {
-                    layoutLoyalty.clCustomerLoyalty.visibility = View.GONE
-                }
+    private fun orderTypeClick(orderType: OrderType) {
+        activity?.let {
+            it.runOnUiThread {
+                val intent = Intent()
+                val storeId = CacheUtil.getOrderStoreId() ?: ""
+                intent.setClassName(it, Navigation.NAVIGATION_ACTIVITY)
+                intent.putExtra("navigation", "nav_order_type")
+                intent.putExtra("selectedOrderType", orderType.value)
+                intent.putExtra("fromCart", false)
+                intent.putExtra("checkout", false)
+                intent.putExtra("storeId", storeId)
+                it.startActivity(intent)
             }
-
-
         }
     }
 
@@ -494,7 +480,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     private fun setupCustomerLoyalty(){
         context?.let { ctx ->
-            viewModel.getCustomerLoyalty(id)
+            viewModel.getLoyalty()
         }
     }
 

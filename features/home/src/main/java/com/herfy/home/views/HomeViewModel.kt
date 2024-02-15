@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.reflect.TypeToken
 import com.herfy.database.entities.MenuItemEntity
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.home.adapter.PromotionCategoryAdapter
@@ -16,31 +15,22 @@ import com.herfy.repository.HomeRepository
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
-import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.Event
-import com.skylinedynamics.solosdk.api.ApiRequestListener
-import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
-import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyAttributes
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTier
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import com.skylinedynamics.solosdk.api.models.objects.Tier
-import com.skylinedynamics.solosdk.util.AppLogger
-import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
-import io.reactivex.disposables.Disposable
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
 import java.util.Arrays
-import java.util.Collections
 import javax.inject.Inject
 
 @HiltViewModel
@@ -123,7 +113,12 @@ class HomeViewModel @Inject constructor(
 
     fun getOrderTypes() {
         invoke {
-            _orderTypes.value = homeRepository.getGetOrderTypes()
+            homeRepository.getOrderTypes { res ->
+                res.data?.cast<Set<OrderType>> { orderTypes ->
+                    _orderTypes.value = orderTypes
+                }
+
+            }
         }
     }
 
@@ -324,7 +319,7 @@ class HomeViewModel @Inject constructor(
         return Single.create<List<Tier>?> { source: SingleEmitter<List<Tier>?> ->
 
             invoke {
-                homeRepository.getLoyaltyTiers(){homeResponse ->
+                homeRepository.getLoyaltyTiers{homeResponse ->
                     if(homeResponse.success){
                         homeResponse.data?.let { it ->
                             it.cast<ArrayList<Tier>> {

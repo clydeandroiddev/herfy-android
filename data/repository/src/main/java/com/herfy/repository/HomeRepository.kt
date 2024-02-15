@@ -24,9 +24,11 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Promotion
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import com.skylinedynamics.solosdk.api.models.objects.Store
+import com.skylinedynamics.solosdk.api.models.objects.Tier
 import com.skylinedynamics.solosdk.util.GsonHelper
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.Collections
 import java.util.Locale
 import javax.inject.Inject
 
@@ -52,6 +54,7 @@ interface HomeRepository {
     suspend fun getCampaignCancellableAll(category : OrderType, response: (HomeResponse) -> Unit)
 
     suspend fun getOrderTypes(response: (HomeResponse) -> Unit)
+    suspend fun getLoyaltyTiers(response: (HomeResponse) -> Unit)
 }
 
 class HomeRepositoryImpl @Inject constructor(
@@ -565,6 +568,31 @@ class HomeRepositoryImpl @Inject constructor(
             }
         }
         return totalPrice
+    }
+
+    override suspend fun getLoyaltyTiers(response: (HomeResponse) -> Unit) {
+        CustomersApiCall.getInstance().getLoyaltyTiers(object : ApiRequestListener {
+            override fun onSuccess(o: Any) {
+                try {
+                    val `object` = JSONObject(o.toString())
+                    val tiersArray = `object`.getJSONArray("data")
+                    val type = object :
+                        TypeToken<List<Tier?>?>() {}.type
+                    val tiers = GsonHelper.gsonFinal()
+                        .fromJson<List<Tier>>(tiersArray.toString(), type)
+                    // TODO: Should set Tier as Comparable in SDK
+                    Collections.sort(tiers,
+                        java.util.Comparator { o1: Tier, o2: Tier -> o1.startPoint - o2.startPoint } as java.util.Comparator<Tier>)
+                    response(HomeResponse(true, tiers, ""))
+                } catch (ex: JSONException) {
+                    ex.printStackTrace()
+                }
+            }
+
+            override fun onError(o: Any) {
+                response(HomeResponse(false, null, o.toString()))
+            }
+        })
     }
 
 
