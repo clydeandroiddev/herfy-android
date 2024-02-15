@@ -17,6 +17,7 @@ import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
 import com.herfy.util.PriceFormatter;
+import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
@@ -42,8 +43,13 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
     ShapeableImageView image;
     @BindView(R.id.txtModifierItemName)
     MaterialTextView name;
+
+    @BindView(R.id.modifierDescription)
+    MaterialTextView txtModifierDescription;
     @BindView(R.id.txtmodifierPrice)
     MaterialTextView txtModifierPrice;
+    @BindView(R.id.txtCalories)
+    MaterialTextView txtCalories;
     private Context context;
 
     public FrequentBoughtViewHolder(Context context, MenuContract.Presenter menuPresenter, @NonNull View itemView) {
@@ -65,8 +71,9 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         }
       MenuItemAttributes menuItemAttributes = menuItem.getAttributes();
         name.setText(menuItemAttributes.getName());
+        txtModifierDescription.setText(menuItem.getDescription(LocaleUtil.getInstance().getLanguage()));
         txtModifierPrice.setText(PriceFormatter.INSTANCE.formatPriceWithLocale(menuItemAttributes.getPrice(),menuItemAttributes.getName()));
-
+        txtCalories.setText(menuItem.getCalories());
     }
 
 }

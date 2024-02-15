@@ -27,8 +27,6 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
-import com.herfy.utils.helper.CacheUtil;
-import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;
@@ -191,7 +189,7 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
         boolean visible = false;
         VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
         if(visibilityConfig != null) {
@@ -348,6 +346,11 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
 
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
+
+    }
+
+    @Override
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
 
     }
 

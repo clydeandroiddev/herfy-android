@@ -239,7 +239,7 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
 
     }
 
@@ -290,6 +290,11 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
 
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
+
+    }
+
+    @Override
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
 
     }
 

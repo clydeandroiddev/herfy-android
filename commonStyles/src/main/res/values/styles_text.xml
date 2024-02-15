@@ -69,13 +69,16 @@
         <item name="android:textAppearance">@style/TextAppearance.Footnote.Medium</item>
         <item name="lineHeight">@dimen/line_height_footnote</item>
     </style>
-
+    <style name="Styles.Text.Footnote.Medium_Regular" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.Footnote.Medium_Regular</item>
+        <item name="lineHeight">@dimen/line_height_footnote</item>
+    </style>
     <style name="Styles.Text.Footnote" parent="Widget.MaterialComponents.TextView">
         <item name="android:textAppearance">@style/TextAppearance.Footnote</item>
         <item name="lineHeight">@dimen/line_height_footnote</item>
     </style>
     <style name="Styles.Text.Footnote_Bold" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textAppearance">@style/TextAppearance.Footnote</item>
+        <item name="android:textAppearance">@style/TextAppearance.Footnote_Bold</item>
         <item name="lineHeight">@dimen/line_height_footnote</item>
     </style>
 

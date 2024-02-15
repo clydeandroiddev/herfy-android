@@ -1,21 +1,24 @@
 package com.herfy.menu.viewholders;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.herfy.R;
+import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.*;
 import com.herfy.menu.MenuContract;
 import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
-import com.herfy.productpagedetails.ui.viewholder.util.ModifierGroupMinimumType;
-import com.herfy.productpagedetails.ui.viewholder.util.ModifierGroupMinimumUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
@@ -45,16 +48,12 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
 
     @BindView(R.id.name) TextView name;
-    @BindView(R.id.minimum)
-    TextView txtMinimum;
-    @BindView(R.id.btnMinimum)
-    LinearLayout minimumLayout;
+    @BindView(R.id.modifierImage)  ImageView modifierImage;
 
-
-//    @BindView(R.id.select) TextView select; // todo uncomment this one ui for select is now final
+    @BindView(R.id.select) TextView select; // todo uncomment this one ui for select is now final
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
-
+    @BindView(R.id.checkBox) ImageView modifierCheckBox;
 
 
     private BaseModifierItemViewHolder.OnAction onAction;
@@ -196,7 +195,10 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+        Log.d("FAFA","Show shoulld modifier item " + showShowModifierCheckBox);
+        String imageUrl = modifierGroup.getAttributes().getImage();
+        Log.d("FAFA","Image url test"  + imageUrl);
         boolean visible = false;
         VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
         if (visibilityConfig != null) {
@@ -210,63 +212,60 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
             visible = true;
             recyclerView.setVisibility(View.VISIBLE);
         }
+
         name.setText(modifierGroup.getAttributes().getName());
-
-        ModifierGroupMinimumType modifierGroupMinimumType = ModifierGroupMinimumUtil.INSTANCE.validateType(modifierGroup.getAttributes().getMinimum());
-
-        switch (modifierGroupMinimumType) {
-            case OPTIONAL:
-                String optional = CacheUtil.getInstance().getTranslations(Text.OPTIONAL_KEY,"Optional");
-                minimumLayout.setVisibility(View.VISIBLE);
-                txtMinimum.setText(optional);
-                break;
-
-            case REQUIRED:
-                String required = CacheUtil.getInstance()
-                        .getTranslations(Text.REQUIRED_KEY, "Required");
-                minimumLayout.setVisibility(View.VISIBLE);
-                txtMinimum.setText(required);
-                break;
-
-
-            default:
-                minimumLayout.setVisibility(View.GONE);
-                break;
+        if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
+            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(modifierImage);
         }
+        modifierCheckBox.setVisibility(showShowModifierCheckBox ? View.VISIBLE : View.GONE);
+        // todo might needed this once designer change the ui
+//        ModifierGroupMinimumType modifierGroupMinimumType = ModifierGroupMinimumUtil.INSTANCE.validateType(modifierGroup.getAttributes().getMinimum());
+
+//        switch (modifierGroupMinimumType) {
+//            case OPTIONAL:
+//                String optional = CacheUtil.getInstance().getTranslations(Text.OPTIONAL_KEY,"Optional");
+//                minimumLayout.setVisibility(View.VISIBLE);
+//                txtMinimum.setText(optional);
+//                break;
+//
+//            case REQUIRED:
+//                String required = CacheUtil.getInstance()
+//                        .getTranslations(Text.REQUIRED_KEY, "Required");
+//                minimumLayout.setVisibility(View.VISIBLE);
+//                txtMinimum.setText(required);
+//                break;
+//
+//
+//            default:
+//                minimumLayout.setVisibility(View.GONE);
+//                break;
+//        }
 
 
         if (visible) {
 
-            // todo uncomment for this is when desiginer has final ui for select
-//            int minimum = modifierGroup.getAttributes().getMinimum();
-//            int maximum = modifierGroup.getAttributes().getMaximum();
-//            if (minimum > 0) {
-//                if(LocaleUtil.getInstance().isArabic()) {
-//                    minimumMaximum.setText("(x)\\(y)".replace("(x)", StringUtil.localize(String.valueOf(menuPresenter.getModifierGroupSelectedModifierItemsCount(modifierGroup)))).replace("(y)", StringUtil.localize(String.valueOf(maximum))));
-//                } else {
-//                    minimumMaximum.setText("(x)/(y)".replace("(x)", StringUtil.localize(String.valueOf(menuPresenter.getModifierGroupSelectedModifierItemsCount(modifierGroup)))).replace("(y)", StringUtil.localize(String.valueOf(maximum))));
-//                }
-//                minimumMaximum.setVisibility(View.VISIBLE);
-//                if(maximum > minimum) {
-//                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_ATLEAST, "(Select at least (x))").replace("(x)", StringUtil.localize(String.valueOf(minimum))));
-//                    select.setVisibility(View.VISIBLE);
-//                } else if(maximum == minimum) {
-//                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_X, "(Select (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
-//                    select.setVisibility(View.VISIBLE);
-//                } else {
-//                    select.setVisibility(View.INVISIBLE);
-//                }
-//            } else if (minimum == 0) {
-//                minimumMaximum.setVisibility(View.GONE);
-//                if(maximum > 0) {
-//                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_UP_TO_X, "(Select up to (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
-//                    select.setVisibility(View.VISIBLE);
-//                } else {
-//                    select.setVisibility(View.INVISIBLE);
-//                }
-//            } else {
-//                select.setVisibility(View.INVISIBLE);
-//            }
+            int minimum = modifierGroup.getAttributes().getMinimum();
+            int maximum = modifierGroup.getAttributes().getMaximum();
+            if (minimum > 0) {
+                if(maximum > minimum) {
+                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_ATLEAST, "(Select at least (x))").replace("(x)", StringUtil.localize(String.valueOf(minimum))));
+                    select.setVisibility(View.VISIBLE);
+                } else if(maximum == minimum) {
+                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_X, "(Select (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
+                    select.setVisibility(View.VISIBLE);
+                } else {
+                    select.setVisibility(View.INVISIBLE);
+                }
+            } else if (minimum == 0) {
+                if(maximum > 0) {
+                    select.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_UP_TO_X, "(Select up to (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum))));
+                    select.setVisibility(View.VISIBLE);
+                } else {
+                    select.setVisibility(View.INVISIBLE);
+                }
+            } else {
+                select.setVisibility(View.INVISIBLE);
+            }
 
             //hamburgini hide free modifiers text
 
@@ -367,6 +366,11 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
+
+    }
+
+    @Override
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
 
     }
 

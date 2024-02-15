@@ -1,6 +1,7 @@
 package com.herfy.menu.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -20,16 +21,18 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     private final MenuContract.Presenter menuPresenter;
     private HashMap<Integer, Boolean> showModifierItemPrice = new HashMap<>();
-
+    private HashMap<Integer, Boolean> shouldShowModifierGroupCheckbox = new HashMap<>();
     BaseModifierItemViewHolder.OnAction onAction;
 
     public void setOnAction(BaseModifierItemViewHolder.OnAction  onAction) {
         this.onAction = onAction;
     }
-    public ModifierGroupsNewRecyclerViewAdapter(Context context, MenuContract.Presenter menuPresenter, HashMap<Integer, Boolean> showModifierItemPrice) {
+    public ModifierGroupsNewRecyclerViewAdapter(Context context, MenuContract.Presenter menuPresenter, HashMap<Integer, Boolean> showModifierItemPrice,
+                                                HashMap<Integer, Boolean> shouldShowModifierGroupCheckbox) {
         this.context = context;
         this.menuPresenter = menuPresenter;
         this.showModifierItemPrice = showModifierItemPrice;
+        this.shouldShowModifierGroupCheckbox = shouldShowModifierGroupCheckbox;
     }
 
     @NonNull
@@ -44,7 +47,7 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     @Override
     public void onBindViewHolder(@NonNull ModifierNewGroupViewHolder holder, int position) {
-        menuPresenter.onBindModifierGroupViewAtPosition(position, holder, showModifierItemPrice.get(position));
+        menuPresenter.onBindModifierGroupViewAtPosition(position, holder, showModifierItemPrice.get(position),shouldShowModifierGroupCheckbox.get(position));
     }
 
     @Override
@@ -56,5 +59,8 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
         showModifierItemPrice.put(position, show);
         notifyItemChanged(position);
     }
-
+    public void shouldShowCheckBox(boolean show, int position) {
+        shouldShowModifierGroupCheckbox.put(position, show);
+        notifyItemChanged(position);
+    }
 }
