@@ -1,3 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="spinner_padding_start">20dp</dimen>
+    <dimen name="spinner_padding_end">30dp</dimen>
 </resources>

@@ -18,18 +18,16 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
-import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.OnPositionChangedListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.facebook.login.LoginManager
@@ -67,7 +65,6 @@ import com.herfy.promotions.views.PromotionsFragmentDirections
 import com.herfy.ratings.views.RatingsBottomSheetDialogFragment
 import com.herfy.splash.SplashActivity
 import com.herfy.util.*
-import com.herfy.util.extensions.loadImageFromUrl
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
 import com.herfy.utils.analytics.MixpanelUtil
@@ -282,14 +279,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             binding.mainToolbar.schedule.visibility = View.GONE
             binding.mainToolbar.whatsapp.visibility = View.GONE*/
         }
-
-        checkBackground()
-
         mainPresenter = MainPresenter(this@MainActivity)
         mainPresenter.start()
 
         if (BuildConfig.MULTI_COUNTRY_ENABLED) {
-            binding.sidebar.brands.visibility = View.VISIBLE
+            binding.sidebar.fmBrands.visibility = View.VISIBLE
             binding.sidebar.concept.setOnClickListener { view: View? ->
                 showCountries()
             }
@@ -297,7 +291,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 showCountries()
             }
         } else {
-            binding.sidebar.brands.visibility = View.GONE
+            binding.sidebar.fmBrands.visibility = View.GONE
             binding.sidebar.concept.setOnClickListener(null)
             binding.sidebar.brands.setOnClickListener(null)
         }
@@ -317,38 +311,47 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.apply {
             val secondaryLanguage = CacheUtil.getInstance().concept.secondaryLanguage
             if (secondaryLanguage == null || secondaryLanguage.isEmpty()) {
-                cvLang.visibility = View.INVISIBLE
+                spinnerLang.visibility = View.INVISIBLE
             } else {
-                val languages = CacheUtil.getInstance().concept.languages.toList()
-                /*binding.sidebar.language.apply {
-                    french.isVisible =
-                        !(languages.find { lang -> lang.equals(LocaleUtil.FR, true) }.isNullOrEmpty())
-                    english.isVisible = !(languages.find { lang -> lang.equals(LocaleUtil.EN_US, true) }
-                        .isNullOrEmpty())
-                    arabic.isVisible = !(languages.find { lang -> lang.equals(LocaleUtil.AR_SA, true) }
-                        .isNullOrEmpty())
-                }*/
-
-               /* binding.sidebar.language.languageSegmented.apply {
-                    val position = when {
-                        LocaleUtil.getInstance().isArabic -> 0
-                        LocaleUtil.getInstance().isFrench -> 1
-                        else -> 2
+                var currentItemIndex = 0
+                val availableLanguages = CacheUtil.getInstance().concept.languages.toList()
+                val languages = arrayListOf<String>()
+                availableLanguages.find { lang -> lang.equals(LocaleUtil.EN_US, ignoreCase = true)}?.let{
+                    languages.add(getString(R.string.eng))
+                }
+                availableLanguages.find { lang -> lang.equals(LocaleUtil.AR_SA, ignoreCase = true)}?.let{
+                    languages.add(getString(R.string.arabic))
+                }
+                availableLanguages.find { lang -> lang.equals(LocaleUtil.FR, ignoreCase = true)}?.let{
+                    languages.add(getString(R.string.fr))
+                }
+                val currentSelectedLanguage = LocaleUtil.getLocale().language
+                for(i in languages.indices){
+                    if(currentSelectedLanguage.equals("en", true) && languages[i].equals(getString(R.string.eng))){
+                        currentItemIndex = i
+                    }else if(currentSelectedLanguage.equals("ar", true) && languages[i].equals(getString(R.string.arabic))){
+                        currentItemIndex = i
+                    }else if (currentSelectedLanguage.equals("fr", true) && languages[i].equals(getString(R.string.fr))){
+                        currentItemIndex = i
                     }
-                    setPosition(position, true)
-                    onPositionChangedListener = OnPositionChangedListener { position ->
-                        var language: String = ""
+                }
 
-                        when (getButton(position)) {
-                            binding.sidebar.language.english -> language =
-                                if (!LocaleUtil.getInstance().isEnglish) "en" else ""
-
-                            binding.sidebar.language.arabic -> language =
-                                if (!LocaleUtil.getInstance().isArabic) "ar" else ""
-
-                            binding.sidebar.language.french -> language =
-                                if (!LocaleUtil.getInstance().isFrench) "fr" else ""
+                languageAdapter = LanguageAdapter(this@MainActivity, R.layout.item_language,  languages, currentItemIndex, R.id.text1 )
+                spinnerLang.adapter = languageAdapter
+                spinnerLang.setSelection(currentItemIndex)
+                spinnerLang.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                        if(p2 == currentItemIndex){
+                            return
                         }
+
+                        val language : String = when(languages[p2]) {
+                            getString(R.string.eng) -> "en"
+                            getString(R.string.arabic) -> "ar"
+                            getString(R.string.fr) -> "fr"
+                            else -> ""
+                        }
+
                         if (language.isNotEmpty()) {
                             binding.drawerLayout.closeDrawer(GravityCompat.START)
                             val eventAttributes: HashMap<String, String> = HashMap()
@@ -379,11 +382,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                                     override fun onAnimationFinished() {}
                                 })
                         }
-
-
                     }
-                }*/
-                cvLang.visibility = View.VISIBLE
+
+                    override fun onNothingSelected(p0: AdapterView<*>?) {
+                    }
+                }
+                spinnerLang.visibility = View.VISIBLE
             }
         }
 
@@ -398,10 +402,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         fragment?.cast<NewMenuHomePageFragment> {
             it.showCountries()
         }
-    }
-
-    private fun checkBackground() {
-        binding.navigationLayout.setBackgroundResource(R.color.page_background_color)
     }
 
     override fun preloadImage(imageUrl: String, requestOptions: RequestOptions) {
@@ -625,23 +625,23 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             Text.YOU_ARE_CURRENTLY_SIGNED_IN_AS_A_GUEST,
             "You are currently signed in as a guest"
         )
-        binding.sidebar.customerName.visibility =
-            if (isSignedIn && !isGuest) View.VISIBLE else View.GONE
-        binding.sidebar.customerName.text =
-            if (isSignedIn) customer.attributes.firstName + " " + customer.attributes.lastName else ""
-        binding.sidebar.account.visibility = if (isSignedIn) View.VISIBLE else View.GONE
-        binding.sidebar.activeSubscription.visibility =
+        val customerNameVisibility = if (isSignedIn && !isGuest) View.VISIBLE else View.GONE
+        binding.sidebar.lnCustomerName.visibility = customerNameVisibility
+        val customerNameLabel = CacheUtil.getInstance().getTranslations(Text.HI_LABEL, "Hi (x) !")
+        binding.sidebar.customerName.text = customerNameLabel.replace("(x)",if (isSignedIn) customer.attributes.firstName else "")
+        binding.sidebar.fmAccount.visibility = if (isSignedIn) View.VISIBLE else View.GONE
+        binding.sidebar.fmActiveSubscription.visibility =
             if (isSubs && isSignedIn) View.VISIBLE else View.GONE
         if (!isSignedIn && CacheUtil.getInstance().concept.socialLoginOption.contains("solo-guest")) {
-            binding.sidebar.guest.visibility = View.VISIBLE
+            binding.sidebar.fmGuest.visibility = View.VISIBLE
         } else {
-            binding.sidebar.guest.visibility = View.GONE
+            binding.sidebar.fmGuest.visibility = View.GONE
         }
         binding.sidebar.signin.visibility = if (isSignedIn) View.GONE else View.VISIBLE
-        binding.sidebar.register.visibility =
+        binding.sidebar.fmSignin.visibility =
             if (isSignedIn && !isGuest) View.GONE else View.VISIBLE
         val loggedInRules = if (isSignedIn) (if (isSubs) View.GONE else View.VISIBLE) else View.GONE
-        binding.sidebar.history.visibility = loggedInRules
+        binding.sidebar.fmHistory.visibility = loggedInRules
         val containsLoyalty =
             CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes().contains(
                 PaymentType.LOYALTY
@@ -653,17 +653,17 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         val isNotificationCenterEnabled =
             CacheUtil.getInstance().concept.isNotificationCenterEnabled
         if (containsLoyalty && isFullSignedIn) {
-            binding.sidebar.loyalty.visibility = View.VISIBLE
+            binding.sidebar.fmLoyalty.visibility = View.VISIBLE
         } else {
-            binding.sidebar.loyalty.visibility = View.GONE
+            binding.sidebar.fmLoyalty.visibility = View.GONE
         }
-        binding.sidebar.notification.visibility = loggedInRules
-        binding.sidebar.favorites.visibility = loggedInRules
+        binding.sidebar.clNotification.visibility = loggedInRules
+        binding.sidebar.fmFavorites.visibility = loggedInRules
         binding.sidebar.selectionLayout.visibility =
             if (BuildConfig.SUBSCRIPTION_ENABLED) View.VISIBLE else View.GONE
         processLiveChat()
         if (CacheUtil.getInstance().isContactUsEnabled) {
-            binding.sidebar.contactSupportLabel.apply {
+            binding.sidebar.fmSupport.apply {
                 visible()
                 setOnClickListener {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -675,9 +675,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 }
             }
         } else {
-            binding.sidebar.contactSupportLabel.gone()
+            binding.sidebar.support.gone()
         }
-        setupLogo()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -719,79 +718,13 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         )
     }
 
-    private fun setupLogo() {
-        binding.sidebar.concept.visibility = View.VISIBLE
-        val conceptObject = CacheUtil.getInstance().concept
-
-        if (BuildConfig.MULTI_COUNTRY_ENABLED || BuildConfig.FEATURE_PHASE < 1.3f) {
-            val brandLogoImage = CacheUtil.getInstance().application.attributes.logo
-            if (brandLogoImage.isNotEmpty()) {
-                binding.sidebar.concept.loadImageFromUrl(brandLogoImage)
-            } else {
-                binding.sidebar.concept.setImageResource(R.drawable.header)
-            }
-        } else {
-            val conceptLogo: String = conceptObject.logo
-            val conceptAppBrandLogoUrl = conceptObject.appBrandLogo
-            if (conceptLogo != null && conceptLogo.isNotEmpty()) {
-                binding.sidebar.concept.visibility = View.VISIBLE
-                binding.sidebar.concept.loadImageFromUrl(conceptLogo)
-            } else {
-                binding.sidebar.concept.setImageResource(R.drawable.header)
-            }
-
-            /*if (conceptObject.removeBranding) {
-                binding.sidebar.imageSolo.visibility = View.GONE
-            } else if (conceptAppBrandLogoUrl != null && conceptObject.appBrandLogo.isNotEmpty()) {
-                binding.sidebar.imageSolo.loadImageFromUrl(conceptAppBrandLogoUrl)
-                binding.sidebar.imageSolo.visibility = View.VISIBLE
-            } else {
-                if (BuildUtil.soloLogo()) {
-                    binding.sidebar.imageSolo.setImageResource(R.drawable.solo)
-                    binding.sidebar.imageSolo.visibility = View.VISIBLE
-                } else if (BuildUtil.foodicsLogo()) {
-                    binding.sidebar.imageSolo.setImageResource(R.drawable.img_foodics_new)
-                    binding.sidebar.imageSolo.visibility = View.VISIBLE
-                } else {
-                    binding.sidebar.imageSolo.visibility = View.GONE
-                }
-            }*/
-        }
-    }
-
 
     override fun setupViews() {
         binding.sidebar.concept.setImageResource(R.drawable.header)
         mainPresenter.getCaloriesPage()
         binding.drawerLayout.setScrimColor(Color.TRANSPARENT)
         showSocialMediaLinks()
-        /*if (BuildUtil.soloAppKey().equals("7r5YQwmSgZCtM0ux", ignoreCase = true)) {
-            binding.mainToolbar.title.visibility = View.GONE
-            binding.mainToolbar.topLogo.visibility = View.VISIBLE
-        }
-        if (CacheUtil.getInstance().application.attributes.menuOnly) {
-            binding.mainToolbar.viewOnlyLayout.visibility = View.VISIBLE
-        } else {
-            binding.mainToolbar.viewOnlyLayout.visibility = View.GONE
-        }*/
-        val actionBarDrawerToggle: ActionBarDrawerToggle = object :
-            ActionBarDrawerToggle(
-                this,
-                binding.drawerLayout,
-                R.string.app_name,
-                R.string.app_name
-            ) {
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
-                super.onDrawerSlide(drawerView, slideOffset)
-                val slideX = drawerView.width * slideOffset
-                if (LocaleUtil.getInstance().isEnglish || LocaleUtil.getInstance().isFrench) {
-                    binding.drawerMain.translationX = slideX
-                } else {
-                    binding.drawerMain.translationX = -slideX
-                }
-            }
-        }
-        binding.drawerLayout.addDrawerListener(actionBarDrawerToggle)
+
         binding.sidebar.signin.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             val intent = Intent(this, AuthActivity::class.java)
@@ -928,33 +861,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
-        /*binding.mainToolbar.menu.setOnClickListener {
-            val selectedCountry = CacheUtil.getInstance().country
-            selectedCountry?.let { country ->
-                val brandImageUrl = country.imageUrl
-                if (brandImageUrl.isNotEmpty()) {
-                    binding.sidebar.concept.loadImageFromUrl(brandImageUrl)
-                }
-            }
-            binding.drawerLayout.openDrawer(GravityCompat.START)
-        }
-        binding.mainToolbar.back.setOnClickListener {
-            onBackPressed()
-        }
-        binding.mainToolbar.cart.setOnClickListener(View.OnClickListener {
-            if (CacheUtil.getInstance().application.attributes.menuOnly) {
-                return@OnClickListener
-            }
-            showCart()
-        })
-        binding.mainToolbar.notif.setOnClickListener {
-            if (CacheUtil.getInstance().concept.isNotificationCenterEnabled) {
-                notifCount = 0
-                binding.mainToolbar.notifCounter.text = null
-                binding.mainToolbar.notifCounter.visibility = View.GONE
-                showNotifications()
-            }
-        }*/
 
         binding.sidebar.promotions.setOnClickListener { view: View? ->
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -1310,12 +1216,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             CacheUtil.getInstance().getTranslations(Text.BRANDS, "Brands")
         binding.sidebar.promotions.text =
             CacheUtil.getInstance().getTranslations(Text.PROMOTIONS, "Promotions")
-        /*binding.mainToolbar.viewOnlyLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.VIEW_ONLY, "View Only")*/
         binding.sidebar.liveChat.text = CacheUtil.getInstance()
             .getTranslations(Text.LIVE_CHAT, "Live Chat")
-        /*binding.mainToolbar.back.text =
-            CacheUtil.getInstance().getTranslations(Text.BACK, "Back")*/
         binding.sidebar.signin.text = CacheUtil.getInstance().getTranslations(Text.SIGN_IN)
         binding.sidebar.register.text = CacheUtil.getInstance()
             .getTranslations(Text.REGISTER, "Register")
@@ -1327,15 +1229,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         //registerTwo.setText(CacheUtil.getInstance().getTranslations(Text.REGISTER, "Register"));
         binding.sidebar.guest.text = CacheUtil.getInstance()
             .getTranslations(Text.SIGN_IN_AS_GUEST, "Sign in as guest")
-        binding.sidebar.history.text =
-            CacheUtil.getInstance().getTranslations(Text.ORDER_HISTORY)
-        binding.sidebar.loyalty.text = CacheUtil.getInstance()
-            .getTranslations(Text.LOYALTY, "Loyalty")
-        binding.sidebar.feedback.text = CacheUtil.getInstance()
-            .getTranslations(Text.FEEDBACK, "Feedback")
-        binding.sidebar.account.text =
-            CacheUtil.getInstance().getTranslations(Text.ACCOUNT)
-        binding.sidebar.favorites.text = CacheUtil.getInstance().getTranslations(Text.FAVORITES)
+        binding.sidebar.history.text = CacheUtil.getInstance().getTranslations(Text.YOUR_ORDERS_LABEL, "Your Orders")
+        binding.sidebar.loyalty.text = CacheUtil.getInstance().getTranslations(Text.LOYALTY_REWARDS_LABEL, "Loyalty & Rewards")
+        binding.sidebar.feedback.text = CacheUtil.getInstance().getTranslations(Text.FEEDBACK, "Feedback")
+        binding.sidebar.account.text = CacheUtil.getInstance().getTranslations(Text.MY_PROFILE_LABEL, "My Profile")
+        binding.sidebar.favorites.text = CacheUtil.getInstance().getTranslations(Text.FAVOURITES_LABEL, "Favourites")
         binding.sidebar.activeSubscription.text = CacheUtil.getInstance().getTranslations(
             Text.ACTIVE_SUBSCRIPTION,
             "Active Subscription"
@@ -1348,13 +1246,16 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             .getTranslations(Text.NOTIFICATIONS, "Notifications")
         if (hasLinks) {
             binding.sidebar.tvReachUs.text = CacheUtil.getInstance()
-                .getTranslations(Text.REACH_US_THROUGH, "Reach us through:")
+                .getTranslations(Text.SOCIAL_MEDIA_LABEL, "Follow Us On Social Media")
         } else {
             binding.sidebar.tvReachUs.text = CacheUtil.getInstance()
                 .getTranslations(Text.SHARE_OUR_APP, "Share our app:")
         }
-        binding.sidebar.contactSupportLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.CONTACT_SUPPORT, "Contact Support")
+        binding.sidebar.support.text = CacheUtil.getInstance()
+            .getTranslations(Text.HELP_SUPPORT_LABEL, "Help & Support")
+        binding.sidebar.faqs.text = CacheUtil.getInstance().getTranslations(Text.FAQS_LABEL, "FAQs")
+        binding.sidebar.aboutUs.text = CacheUtil.getInstance().getTranslations(Text.ABOUT_US_LABEL, "About Us")
+        binding.sidebar.terms.text = CacheUtil.getInstance().getTranslations(Text.TERMS_LABEL, "Terms & Condition")
     }
 
     override fun setCaloriesPage(caloriesPage: CmsPage) {

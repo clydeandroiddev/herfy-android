@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import com.herfy.R
 
 class LanguageAdapter(
     private val context: Context,
@@ -24,7 +25,8 @@ class LanguageAdapter(
         }
 
         view?.let {
-
+            val tvText : TextView = it.findViewById(R.id.text1)
+            tvText.text = getItem(position)
         }
 
 
@@ -51,7 +53,8 @@ class LanguageAdapter(
                 view = inflater.inflate(resource, parent, false)
             }
             view?.let {
-
+                val tvText : TextView = it.findViewById(R.id.text1)
+                tvText.text = getItem(position)
             }
         }
 

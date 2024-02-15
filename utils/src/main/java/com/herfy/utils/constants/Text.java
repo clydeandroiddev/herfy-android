@@ -840,4 +840,13 @@ public class Text {
 
     public static final String WALK_IN = "walk_in";
     public static final String CURBSIDE_LABEL = "curbside_label";
+    public static final String HI_LABEL = "hi_label";
+    public static final String YOUR_ORDERS_LABEL = "your_orders_label";
+    public static final String LOYALTY_REWARDS_LABEL = "loyalty_rewards_label";
+    public static final String MY_PROFILE_LABEL = "my_profile_label";
+    public static final String HELP_SUPPORT_LABEL = "help_support_label";
+    public static final String FAQS_LABEL = "faqs_label";
+    public static final String ABOUT_US_LABEL = "about_us_label";
+    public static final String TERMS_LABEL = "terms_label";
+    public static final String SOCIAL_MEDIA_LABEL = "social_media_label";
 }
