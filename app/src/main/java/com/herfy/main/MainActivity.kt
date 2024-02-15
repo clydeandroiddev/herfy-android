@@ -632,14 +632,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.fmAccount.visibility = if (isSignedIn) View.VISIBLE else View.GONE
         binding.sidebar.fmActiveSubscription.visibility =
             if (isSubs && isSignedIn) View.VISIBLE else View.GONE
-        if (!isSignedIn && CacheUtil.getInstance().concept.socialLoginOption.contains("solo-guest")) {
-            binding.sidebar.fmGuest.visibility = View.VISIBLE
-        } else {
-            binding.sidebar.fmGuest.visibility = View.GONE
-        }
-        binding.sidebar.signin.visibility = if (isSignedIn) View.GONE else View.VISIBLE
-        binding.sidebar.fmSignin.visibility =
-            if (isSignedIn && !isGuest) View.GONE else View.VISIBLE
+        binding.sidebar.fmSignin.visibility = if (isSignedIn && !isGuest) View.GONE else View.VISIBLE
         val loggedInRules = if (isSignedIn) (if (isSubs) View.GONE else View.VISIBLE) else View.GONE
         binding.sidebar.fmHistory.visibility = loggedInRules
         val containsLoyalty =
@@ -657,7 +650,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         } else {
             binding.sidebar.fmLoyalty.visibility = View.GONE
         }
-        binding.sidebar.clNotification.visibility = loggedInRules
         binding.sidebar.fmFavorites.visibility = loggedInRules
         binding.sidebar.selectionLayout.visibility =
             if (BuildConfig.SUBSCRIPTION_ENABLED) View.VISIBLE else View.GONE
@@ -735,25 +727,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             authLauncher.launch(intent)
         }
         binding.sidebar.liveChatLayout.setOnClickListener { view: View? -> openWhatsApp() }
-        binding.sidebar.register.setOnClickListener {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            val intent = Intent(this, AuthActivity::class.java)
-            intent.putExtra("sign_in", false)
-            intent.putExtra("guest", false)
-            intent.putExtra("curbside", false)
-            intent.putExtra("checkout", false)
-            authLauncher.launch(intent)
-        }
 
-        binding.sidebar.guest.setOnClickListener {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            val intent = Intent(this, AuthActivity::class.java)
-            intent.putExtra("sign_in", false)
-            intent.putExtra("guest", true)
-            intent.putExtra("curbside", false)
-            intent.putExtra("checkout", false)
-            authLauncher.launch(intent)
-        }
         binding.sidebar.history.setOnClickListener { showHistory() }
         binding.sidebar.loyalty.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -786,8 +760,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         binding.sidebar.clNotification.setOnClickListener {
             notifCount = 0
-            //binding.mainToolbar.notifCounter.setText(null)
-            //binding.mainToolbar.notifCounter.visibility = View.GONE
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             showNotifications()
         }
@@ -1218,17 +1190,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             CacheUtil.getInstance().getTranslations(Text.PROMOTIONS, "Promotions")
         binding.sidebar.liveChat.text = CacheUtil.getInstance()
             .getTranslations(Text.LIVE_CHAT, "Live Chat")
-        binding.sidebar.signin.text = CacheUtil.getInstance().getTranslations(Text.SIGN_IN)
-        binding.sidebar.register.text = CacheUtil.getInstance()
-            .getTranslations(Text.REGISTER, "Register")
+        binding.sidebar.signin.text = CacheUtil.getInstance().getTranslations(Text.GET_STARTED_LABEL, "Get Started with Herfy")
         binding.scheduleOrderLabel.text = CacheUtil.getInstance().getTranslations(
             Text.TAP_HERE_TO_SCHEDULE_YOUR_ORDER,
             "Tap here to schedule your order"
         )
-        //registerGuest.setText(CacheUtil.getInstance().getTranslations(Text.REGISTER, "Register"));
-        //registerTwo.setText(CacheUtil.getInstance().getTranslations(Text.REGISTER, "Register"));
-        binding.sidebar.guest.text = CacheUtil.getInstance()
-            .getTranslations(Text.SIGN_IN_AS_GUEST, "Sign in as guest")
         binding.sidebar.history.text = CacheUtil.getInstance().getTranslations(Text.YOUR_ORDERS_LABEL, "Your Orders")
         binding.sidebar.loyalty.text = CacheUtil.getInstance().getTranslations(Text.LOYALTY_REWARDS_LABEL, "Loyalty & Rewards")
         binding.sidebar.feedback.text = CacheUtil.getInstance().getTranslations(Text.FEEDBACK, "Feedback")

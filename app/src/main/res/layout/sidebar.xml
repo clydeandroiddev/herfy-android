@@ -100,88 +100,23 @@
             <FrameLayout
                 android:id="@+id/fm_signin"
                 android:layout_width="match_parent"
-                android:layout_height="56dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
+                android:layout_height="60dp">
 
                 <TextView
                     android:id="@+id/signin"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:background="?selectableItemBackground"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:background="@drawable/background_get_started"
                     android:clickable="true"
                     android:focusable="true"
-                    android:gravity="start|center_vertical"
+                    android:gravity="center"
                     android:includeFontPadding="false"
-                    android:text="Sign in"
-                    android:textAlignment="viewStart"
+                    android:text="Get Started With Herfy"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    style="@style/Styles.Text.Caption"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:alpha=".4"
-                    android:background="@color/white"
-                    android:layout_marginTop="6dp"
-                    android:layout_gravity="bottom"
-                    />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/fm_register"
-                android:layout_width="match_parent"
-                android:layout_height="56dp">
-
-                <TextView
-                    android:id="@+id/register"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:background="?selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="start|center_vertical"
-                    android:includeFontPadding="false"
-                    android:text="Register"
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    style="@style/Styles.Text.Caption"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:alpha=".4"
-                    android:background="@color/white"
-                    android:layout_marginTop="6dp"
-                    android:layout_gravity="bottom"
-                    />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/fm_guest"
-                android:layout_width="match_parent"
-                android:layout_height="56dp">
-
-                <TextView
-                    android:id="@+id/guest"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:background="?selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="start|center_vertical"
-                    android:includeFontPadding="false"
-                    android:text="Sign in as guest"
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
+                    android:paddingVertical="14dp"
+                    android:paddingHorizontal="20dp"
                     style="@style/Styles.Text.Caption"/>
                 <View
                     android:layout_width="match_parent"
