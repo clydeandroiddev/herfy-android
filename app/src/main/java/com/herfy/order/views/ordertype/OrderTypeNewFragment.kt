@@ -102,6 +102,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private lateinit var orderPresenter: OrderContract.Presenter
 
+    private var currentSelectedStore: Store? = null
     private var isSingleOrderType = false
     private var isDeliveryAvailable = false
     private var isCurbsideAvailable = false
@@ -1007,6 +1008,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun setStore(store: Store, selected: Boolean) {}
     override fun callStore(store: Store) {}
     override fun selectStore(position: Int, store: Store, initialLoad: Boolean) {
+        currentSelectedStore = store
         binding.orderTypeLocation.text = store.attributes.name
 
         if (!curbsideTabSelected) {
@@ -1810,7 +1812,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
         choosePickupTypeDialog =
-            ChoosePickupTypeDialog.newInstance(object : ChoosePickupTypeDialog.OnSubmit {
+            ChoosePickupTypeDialog.newInstance(currentSelectedStore, object : ChoosePickupTypeDialog.OnSubmit {
                 override fun isPickup() {
                     continueSelectingType(activity)
                     dismissPickupTypeDialog()

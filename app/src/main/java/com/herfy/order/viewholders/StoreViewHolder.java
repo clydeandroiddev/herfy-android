@@ -81,6 +81,15 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
     @BindView(R.id.pickupMethodsContainer)
     ConstraintLayout pickupMethodsContainer;
 
+    @BindView(R.id.driveThruContainer)
+    LinearLayout driveThruContainer;
+
+    @BindView(R.id.walkInContainer)
+    LinearLayout walkInContainer;
+
+    @BindView(R.id.curbsideContainer)
+    LinearLayout curbsideContainer;
+
     @BindView(R.id.walkInLabel)
     AppCompatTextView walkInLabel;
 
@@ -214,7 +223,26 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
             curbsideLabel.setText(CacheUtil.getInstance().getTranslations(Text.CURBSIDE_LABEL, "Curbside"));
             driveThruLabel.setText(CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU, "Drive Thru"));
 
+            if (store.getAttributes().getIsDriveThruEnabled()) {
+                driveThruContainer.setVisibility(View.VISIBLE);
+            } else {
+                driveThruContainer.setVisibility(View.GONE);
+            }
+
+            if (store.getAttributes().getPickupEnabled() == 1) {
+                walkInContainer.setVisibility(View.VISIBLE);
+            } else {
+                walkInContainer.setVisibility(View.GONE);
+            }
+
+            if (store.getAttributes().getCurbsideEnabled() == 1) {
+                curbsideContainer.setVisibility(View.VISIBLE);
+            } else {
+                curbsideContainer.setVisibility(View.GONE);
+            }
+
             if (selected) {
+
                 indicator.setImageResource(R.drawable.ic_store_selected);
                 directionsImage.setImageResource(R.drawable.ic_direction_selected);
                 pickupMethodsContainer.setVisibility(View.VISIBLE);
