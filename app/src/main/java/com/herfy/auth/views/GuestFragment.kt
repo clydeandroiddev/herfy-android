@@ -36,7 +36,7 @@ import com.herfy.auth.AuthContract
 import com.herfy.auth.AuthPresenter
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.cart.views.NewCartFragment
+import com.herfy.cart.views.CartFragment
 import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentGuestBinding
 import com.herfy.ext.cast
@@ -579,7 +579,7 @@ class GuestFragment : BaseFragment(), AuthContract.View {
         setFragmentResult(
             AuthFragment.ARGS_KEY_FRAGMENT_RESULT,
             bundleOf(
-                NewCartFragment.ARGS_KEY_CHECKOUT to args.checkout
+                CartFragment.ARGS_KEY_CHECKOUT to args.checkout
             )
         )
         findNavController().navigateUp()

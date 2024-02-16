@@ -44,7 +44,7 @@ import com.herfy.auth.AuthFragmentPagerAdapter
 import com.herfy.auth.AuthPresenter
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.cart.views.NewCartFragment
+import com.herfy.cart.views.CartFragment
 import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentAuthBinding
 import com.herfy.ext.cast
@@ -195,7 +195,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
                 NewMenuHomePageFragment.ARGS_KEY_HISTORY to args.history,
                 NewMenuHomePageFragment.ARGS_KEY_ACCOUNT to args.account,
                 OrderTypeNewFragment.ARGS_KEY_CURBSIDE to args.curbside,
-                NewCartFragment.ARGS_KEY_CHECKOUT to args.checkout
+                CartFragment.ARGS_KEY_CHECKOUT to args.checkout
             )
         )
         findNavController().navigateUp()

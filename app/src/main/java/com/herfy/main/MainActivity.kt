@@ -43,7 +43,7 @@ import com.herfy.animation.ActivitySwitcher
 import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
 import com.herfy.browser.BrowserActivity
-import com.herfy.cart.views.NewCartFragment
+import com.herfy.cart.views.CartFragment
 import com.herfy.contactsupport.ContactSupportBottomSheetDialogFragment
 import com.herfy.country.CountriesFragment
 import com.herfy.databinding.ActivityMainBinding
@@ -124,7 +124,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private var cQuantity = 0
     private var notifCount = 0
     private var fromReOrder = false
-    private var newCartFragment: NewCartFragment? = null
+    private var cartFragment: CartFragment? = null
     private var orderTypeArgs: Bundle? = null
     private var fromPayment = false
     private var fromFavorites = false
@@ -519,7 +519,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     fragment?.cast<NewMenuHomePageFragment> {
                         it.showOrder(orderId)
                     }
-                    fragment?.cast<NewCartFragment> {
+                    fragment?.cast<CartFragment> {
                         it.showOrder(orderId)
                     }
                 }

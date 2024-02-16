@@ -58,7 +58,7 @@ import com.herfy.R2.id.textView
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartDialogFragment
-import com.herfy.cart.views.NewCartFragment
+import com.herfy.cart.views.CartFragment
 import com.herfy.ext.cast
 import com.herfy.ext.gone
 import com.herfy.ext.isVisible
@@ -291,7 +291,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         val isSameBranch = args.storeId == (CacheUtil.getOrderStoreId() ?: "")
         setFragmentResult(
             ARGS_KEY_FRAGMENT_RESULT, bundleOf(
-                NewCartFragment.ARGS_KEY_CHECKOUT to args.checkout,
+                CartFragment.ARGS_KEY_CHECKOUT to args.checkout,
                 ARGS_KEY_IS_SAME_BRANCH to isSameBranch
             )
         )

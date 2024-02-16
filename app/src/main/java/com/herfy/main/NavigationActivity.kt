@@ -8,7 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.request.RequestOptions
 import com.herfy.R
 import com.herfy.base.BaseActivity
-import com.herfy.cart.views.NewCartFragment
+import com.herfy.cart.views.CartFragment
 import com.herfy.databinding.ActivityNavigationBinding
 import com.herfy.digitalcoupons.views.DigitalCouponFragmentDirections
 import com.herfy.digitalcoupons.views.DigitalCouponsFragmentDirections
@@ -420,7 +420,7 @@ class NavigationActivity : BaseActivity(), MainContract.View {
     fun cartExpired() {
         val fragment =
             supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
-        fragment?.cast<NewCartFragment> {
+        fragment?.cast<CartFragment> {
             it.cartExpired()
         }
     }

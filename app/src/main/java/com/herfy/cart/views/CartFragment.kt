@@ -68,7 +68,7 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import java.util.*
 
 
-class NewCartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
+class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     companion object {
         const val ARGS_KEY_FRAGMENT_RESULT = "fragmentResult"
