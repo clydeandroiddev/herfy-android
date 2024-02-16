@@ -302,7 +302,7 @@
 
     <fragment
         android:id="@+id/nav_cart"
-        android:name="com.herfy.cart.views.CartFragment"
+        android:name="com.herfy.cart.views.NewCartFragment"
         android:label="bag"
         tools:layout="@layout/fragment_cart">
 

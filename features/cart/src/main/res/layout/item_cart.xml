@@ -4,286 +4,294 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_main"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#FAFBFC">
+    android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="5dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:tint="#E6F0F7"
-            android:id="@+id/image"
-            android:layout_width="54dp"
-            android:layout_height="64dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:src="@drawable/image_placeholder" />
-
+        android:layout_height="wrap_content">
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:paddingStart="12dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="3dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/image"
-            app:layout_constraintTop_toTopOf="parent">
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAlignment="viewStart"
-                android:includeFontPadding="false"
-                android:lineSpacingExtra="-8dp"
-                android:maxLines="2"
-                android:paddingStart="0dp"
-                android:paddingEnd="10dp"
-                android:textColor="@color/primary_text"
-                android:textSize="14sp"
-               app:layout_constraintEnd_toEndOf="parent"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:tint="#E6F0F7"
+                android:id="@+id/image"
+                android:layout_width="54dp"
+                android:layout_height="64dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Chicken Classic Peri Peri asdf asdf adsf x2" />
-
-            <TextView
-                android:id="@+id/modifierItemName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAlignment="viewStart"
-                android:includeFontPadding="false"
-                android:lineSpacingExtra="-8dp"
-                android:maxLines="2"
-                android:paddingStart="0dp"
-                android:paddingEnd="10dp"
-                android:visibility="gone"
-                android:textColor="@color/primary_text"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/name"
-                tools:text="Chicken Classic Peri Peri asdf asdf adsf x2" />
-
-            <TextView
-                android:id="@+id/modifierItemPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:textAllCaps="true"
-                android:textColor="@color/dusty_gray"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textAlignment="viewEnd"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@+id/modifierItemName"
-                app:layout_constraintTop_toTopOf="@+id/modifierItemName"
-                tools:text="40.00 SR" />
-
-            <TextView
-                android:id="@+id/txtAddOnTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="viewStart"
-                android:textColor="@color/dusty_gray"
-                android:textSize="12sp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/txtAddOn"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/txtAddOn"
-                tools:text="3"
-                tools:visibility="visible" />
-
-            <TextView
-                android:id="@+id/txtAddOn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:includeFontPadding="false"
-                android:lineSpacingExtra="-8dp"
-                android:maxLines="2"
-                android:paddingStart="0dp"
-                android:textAlignment="viewStart"
-                android:textColor="@color/dusty_gray"
-                android:textSize="12sp"
-                app:layout_constraintStart_toEndOf="@+id/txtAddOnTotal"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@+id/name"
-                tools:text="Additional Items"
-                tools:visibility="visible" />
-
-            <ImageView
-                android:id="@+id/icModifierItemsDropDown"
-                android:layout_width="wrap_content"
-                app:layout_constraintStart_toEndOf="@+id/txtAddOn"
-                app:layout_constraintTop_toTopOf="@+id/txtAddOn"
-                android:layout_marginStart="10dp"
-                android:visibility="gone"
-                android:textAlignment="viewEnd"
-                app:layout_constraintBottom_toBottomOf="@+id/txtAddOn"
-                android:layout_height="wrap_content"/>
-
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/modifierRecycleView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/item_cart_modifiers"
-                tools:itemCount="5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/ingredients"
-                app:layout_constraintTop_toBottomOf="@+id/txtAddOn"
-                app:layout_constraintEnd_toStartOf="@+id/quantity_layout"
-                android:visibility="gone"
-                tools:visibility="visible"
-                />
-
-
-            <com.google.android.material.card.MaterialCardView
-                app:cardBackgroundColor="#E6F0F7"
-                app:cardCornerRadius="24dp"
-                android:id="@+id/quantity_layout"
-                android:layout_width="0dp"
-                android:layout_height="33dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="2dp"
-                app:layout_constraintTop_toBottomOf="@+id/txtAddOn"
-                app:layout_constraintBottom_toBottomOf="@+id/modifierRecycleView"
-                app:layout_constraintEnd_toEndOf="parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp">
-
-                    <FrameLayout
-                        android:id="@+id/minus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_minus" />
-
-                    </FrameLayout>
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/quantity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginEnd="12dp"
-                        android:gravity="center_vertical"
-                        android:maxLines="1"
-                        android:textColor="#0064AC"
-                        android:textStyle="bold"
-                        android:textSize="14sp"
-                        app:layout_constraintEnd_toStartOf="@id/quantity_layout"
-                        app:layout_constraintStart_toStartOf="parent"
-                        tools:text="1" />
-
-                    <FrameLayout
-                        android:id="@+id/plus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_plus" />
-
-                    </FrameLayout>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-            <View
-                android:id="@+id/modifierLineSeparator"
-                android:layout_width="3dp"
-                android:layout_height="0dp"
-                android:background="#D1D1D6"
-                android:visibility="gone"
-                android:layout_marginBottom="4dp"
-                tools:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/modifierRecycleView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/modifierRecycleView" />
-            <TextView
-                android:visibility="gone"
-                android:layout_marginTop="6dp"
-                android:id="@+id/ingredients"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:includeFontPadding="false"
-                android:textColor="#969696"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/modifierRecycleView"
-                tools:text="Ingredients" />
-
-            <LinearLayout
-                android:layout_marginTop="6dp"
-                app:layout_constraintTop_toBottomOf="@+id/ingredients"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                tools:src="@drawable/image_placeholder" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toTopOf="parent">
+
                 <TextView
-                    android:id="@+id/total_price"
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="viewStart"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="-8dp"
+                    android:maxLines="2"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="10dp"
+                    android:textColor="@color/primary_text"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Chicken Classic Peri Peri asdf asdf adsf x2" />
+
+                <TextView
+                    android:id="@+id/modifierItemName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="viewStart"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="-8dp"
+                    android:maxLines="2"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="10dp"
+                    android:visibility="gone"
+                    android:textColor="@color/primary_text"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name"
+                    tools:text="Chicken Classic Peri Peri asdf asdf adsf x2" />
+
+                <TextView
+                    android:id="@+id/modifierItemPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary_text"
-                    android:textSize="12sp"
+                    android:includeFontPadding="false"
+                    android:textAllCaps="true"
+                    android:textColor="@color/dusty_gray"
+                    android:textSize="14sp"
                     android:textStyle="bold"
-                    android:textAlignment="viewStart"
-                    android:layout_marginEnd="8dp"
-                    tools:text="SAR 12"/>
-
-                <View
-                    android:layout_width="2dp"
-                    android:layout_height="14dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="#D1D1D6"
+                    android:textAlignment="viewEnd"
                     android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/modifierRecycleView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/modifierItemName"
+                    app:layout_constraintTop_toTopOf="@+id/modifierItemName"
+                    tools:text="40.00 SR" />
+
+                <TextView
+                    android:id="@+id/txtAddOnTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/dusty_gray"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/txtAddOn"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/modifierRecycleView"
+                    app:layout_constraintTop_toTopOf="@+id/txtAddOn"
+                    tools:text="3"
                     tools:visibility="visible" />
 
                 <TextView
-                    android:layout_marginStart="8dp"
-                    android:id="@+id/edit"
+                    android:id="@+id/txtAddOn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#0064AC"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
+                    android:layout_marginStart="4dp"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="-8dp"
+                    android:maxLines="2"
+                    android:paddingStart="0dp"
                     android:textAlignment="viewStart"
-                    tools:text="Edit"/>
-            </LinearLayout>
+                    android:textColor="@color/dusty_gray"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toEndOf="@+id/txtAddOnTotal"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@+id/name"
+                    tools:text="Additional Items"
+                    tools:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/icModifierItemsDropDown"
+                    android:layout_width="wrap_content"
+                    app:layout_constraintStart_toEndOf="@+id/txtAddOn"
+                    app:layout_constraintTop_toTopOf="@+id/txtAddOn"
+                    android:layout_marginStart="10dp"
+                    android:visibility="gone"
+                    android:textAlignment="viewEnd"
+                    app:layout_constraintBottom_toBottomOf="@+id/txtAddOn"
+                    android:layout_height="wrap_content"/>
+
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/modifierRecycleView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/item_cart_modifiers"
+                    tools:itemCount="5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/ingredients"
+                    app:layout_constraintTop_toBottomOf="@+id/txtAddOn"
+                    app:layout_constraintEnd_toStartOf="@+id/quantity_layout"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    />
+
+
+                <com.google.android.material.card.MaterialCardView
+                    app:cardBackgroundColor="#E6F0F7"
+                    app:cardCornerRadius="24dp"
+                    android:id="@+id/quantity_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="33dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="2dp"
+                    app:layout_constraintTop_toBottomOf="@+id/txtAddOn"
+                    app:layout_constraintBottom_toBottomOf="@+id/modifierRecycleView"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp">
+
+                        <FrameLayout
+                            android:id="@+id/minus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_minus" />
+
+                        </FrameLayout>
+
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/quantity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginEnd="12dp"
+                            android:gravity="center_vertical"
+                            android:maxLines="1"
+                            android:textColor="#0064AC"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toStartOf="@id/quantity_layout"
+                            app:layout_constraintStart_toStartOf="parent"
+                            tools:text="1" />
+
+                        <FrameLayout
+                            android:id="@+id/plus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_plus" />
+
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+                <View
+                    android:id="@+id/modifierLineSeparator"
+                    android:layout_width="3dp"
+                    android:layout_height="0dp"
+                    android:background="#D1D1D6"
+                    android:visibility="gone"
+                    android:layout_marginBottom="4dp"
+                    tools:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/modifierRecycleView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/modifierRecycleView" />
+                <TextView
+                    android:visibility="gone"
+                    android:layout_marginTop="6dp"
+                    android:id="@+id/ingredients"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:includeFontPadding="false"
+                    android:textColor="#969696"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/modifierRecycleView"
+                    tools:text="Ingredients" />
+
+                <LinearLayout
+                    android:layout_marginTop="6dp"
+                    app:layout_constraintTop_toBottomOf="@+id/ingredients"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/total_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/primary_text"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textAlignment="viewStart"
+                        android:layout_marginEnd="8dp"
+                        tools:text="SAR 12"/>
+
+                    <View
+                        android:layout_width="2dp"
+                        android:layout_height="14dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="#D1D1D6"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/modifierRecycleView"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/modifierRecycleView"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:layout_marginStart="8dp"
+                        android:id="@+id/edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#0064AC"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textAlignment="viewStart"
+                        tools:text="Edit"/>
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
