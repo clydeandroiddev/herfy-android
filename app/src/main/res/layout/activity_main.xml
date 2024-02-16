@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".main.MainActivity"
-    tools:openDrawer="start">
+    tools:openDrawer="start"
+    android:background="@android:color/transparent"
+    app:elevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/drawer_main"
@@ -81,11 +83,11 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationLayout"
-        android:layout_width="275dp"
+        android:layout_width="265dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/background"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        android:background="@android:color/transparent">
 
         <include
             android:id="@+id/sidebar"
