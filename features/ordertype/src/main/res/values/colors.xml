@@ -7,4 +7,7 @@
     <color name="colorPrimary">#000000</color>
     <color name="page_background_white">#FFFFFF</color>
     <color name="placeholder_color">#cccccc</color>
+    <color name="card_bg_selected">#E6F0F7</color>
+    <color name="card_bg_unselected">#FFFFFF</color>
+    <color name="card_bg_stroke">#D9E8F3</color>
 </resources>

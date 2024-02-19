@@ -417,6 +417,8 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                             Locale.getDefault()
                         )
                 }
+
+                else -> {}
             }
         }
         if (CacheUtil.getInstance().favoriteMenuCategory != null && CacheUtil.getInstance().favoriteMenuItem != null) {

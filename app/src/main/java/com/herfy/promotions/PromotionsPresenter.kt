@@ -225,6 +225,7 @@ class PromotionsPresenter(view: PromotionsContract.View) : PromotionsContract.Pr
                 }
 
                 OrderType.NONE -> deliveryCharge = 0.0
+                else -> {}
             }
         }
         val vatAmount = 0.0

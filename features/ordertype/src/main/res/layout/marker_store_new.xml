@@ -12,6 +12,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/branch_pin_selected" />
+        app:srcCompat="@drawable/branch_selected" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
