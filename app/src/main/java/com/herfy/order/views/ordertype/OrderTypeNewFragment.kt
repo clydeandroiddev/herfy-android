@@ -180,8 +180,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     private var deliveryTabSelected = false
     private var curbsideTabSelected = false
     private var dineInTabSelected = false
-    private var forceLocation = false
-    private var fromCart = false
     private var isPreselectedBranch = false
     private var isMenuSeparate = false
     private var typeOrder: Int = 0
@@ -422,6 +420,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
         binding.pickupButton.text = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
         binding.dineInButton.text = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
+        binding.deliveryLayout.useCurrentLocationLabel.text = CacheUtil.getInstance()
+            .getTranslations(Text.USE_CURRENT_LOCATION, "Use current location")
     }
 
     private fun adjustOrderType(withVisibility: Boolean, orderTypes: MutableSet<OrderType>) {
@@ -1069,7 +1069,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         deliveryTabSelected = true
         curbsideTabSelected = false
         dineInTabSelected = false
-        binding.confirmContainer.visibility = View.GONE
+        binding.deliveryFrame.visible()
+        binding.pickupFrame.gone()
+        binding.continueButton.text =
+            CacheUtil.getInstance().getTranslations(Text.ADD_NEW_ADDRESS, "Add new address")
         binding.slidingPanel.post {
             binding.slidingPanel.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
         }
@@ -1099,7 +1102,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         deliveryTabSelected = false
         curbsideTabSelected = true
         dineInTabSelected = false
-        binding.confirmContainer.visibility = View.VISIBLE
         binding.storesRecyclerView.adapter = pickupCurbsideStoresRecyclerViewAdapter
         pickupCurbsideStoresRecyclerViewAdapter?.notifyDataSetChanged()
         binding.slidingPanel.post {
@@ -1125,6 +1127,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         deliveryTabSelected = false
         curbsideTabSelected = true
         dineInTabSelected = false
+        binding.pickupFrame.visible()
+        binding.deliveryFrame.gone()
         binding.storesRecyclerView.adapter = pickupCurbsideStoresRecyclerViewAdapter
         if (orderPresenter.pickupCurbsideStores.size == 1) {
             pickupCurbsideStoresRecyclerViewAdapter?.selected = 0
@@ -1154,17 +1158,22 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
         binding.continueButton.isFocusable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
         binding.continueButton.isClickable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
-        binding.confirmContainer.visibility = View.VISIBLE
         activity?.cast<BaseActivity> {
             it.dismissDialogs()
         }
+        binding.continueButton.text =
+            CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue")
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun selectDineIn() {
+        binding.continueButton.text =
+            CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue")
         deliveryTabSelected = false
         curbsideTabSelected = false
         dineInTabSelected = true
+        binding.pickupFrame.visible()
+        binding.deliveryFrame.gone()
         binding.storesRecyclerView.adapter = dineInStoresRecyclerViewAdapter
         if (orderPresenter.dineInStores.size == 1) {
             dineInStoresRecyclerViewAdapter?.selected = 0
@@ -1300,7 +1309,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             }
             binding.continueButton.isFocusable = enable
             binding.continueButton.isClickable = enable
-            binding.confirmContainer.visibility = View.VISIBLE
         }
     }
 
@@ -1456,8 +1464,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
-            currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {

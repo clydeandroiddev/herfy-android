@@ -873,8 +873,9 @@ public class Text {
     public static final String REMOVE_PROMO_LABEL="remove_promo";
     public static final String HERFY_SUPPORT = "herfy_support";
     public static final String MINS = "mins";
-
     public static final String YOUR_BASKET_LABEL = "your_basket_label";
     public static final String HELP_LABEL = "help_label";
     public static final String YOUR_BAG_LABEL = "your_bag_label";
+    public static final String USE_CURRENT_LOCATION = "use_current_location";
+    public static final String ADD_NEW_ADDRESS = "add_new_address";
 }
