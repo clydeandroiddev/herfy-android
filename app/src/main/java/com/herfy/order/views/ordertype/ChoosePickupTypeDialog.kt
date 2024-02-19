@@ -14,6 +14,7 @@ import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.DialogOrderTypeSelectionBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.*
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Store
 
 class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
@@ -25,8 +26,7 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
     private lateinit var binding: DialogOrderTypeSelectionBinding
 
     interface OnSubmit {
-        fun isPickup()
-        fun isCurbside()
+        fun orderType(type: OrderType)
         fun exit()
     }
 
@@ -73,15 +73,15 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
             )
 
             choosePickup.setOnClickListener {
-                onSubmit?.isPickup()
+                onSubmit?.orderType(OrderType.EAT_IN)
             }
 
             chooseDriveThru.setOnClickListener {
-                onSubmit?.isPickup()
+                onSubmit?.orderType(OrderType.DRIVE_THRU)
             }
 
             chooseCurbside.setOnClickListener {
-                onSubmit?.isCurbside()
+                onSubmit?.orderType(OrderType.CURBSIDE)
             }
 
             back.setOnClickListener {

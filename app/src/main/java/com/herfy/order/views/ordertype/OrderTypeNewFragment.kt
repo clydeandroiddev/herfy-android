@@ -195,7 +195,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     ) { result: ActivityResult? ->
         if (result?.resultCode == Activity.RESULT_OK) {
             selectOrderType(OrderType.CURBSIDE)
-            processCurbside()
         }
     }
 
@@ -461,7 +460,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 } else if (orderType === OrderType.DINE_IN) {
                     title = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
                 } else if (orderType === OrderType.CURBSIDE) {
-                    processCurbside()
                     title = CacheUtil.getInstance()
                         .getTranslations(Text.CURBSIDE_PICKUP_CAPS, "Curbside").uppercase(
                             Locale.getDefault()
@@ -579,7 +577,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         } else if (orderType === OrderType.CURBSIDE) {
             binding.pickupButton.typeface = FontHandler.getSemiboldTypeface()
             selectPickup()
-            processCurbside()
             title = CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP_CAPS, "CURBSIDE")
                 .uppercase(
                     Locale.getDefault()
@@ -895,15 +892,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
             binding.continueButton.isClickable =
                 pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
-            if (CacheUtil.getInstance().application.attributes.getOrderTypes()
-                    .contains(OrderType.CURBSIDE) && store.attributes.curbsideEnabled == 1
-            ) {
-                if (CacheUtil.getInstance().curbsideCar == null) {
-                } else {
-                    processCurbside()
-                }
-            } else {
-            }
         }
         showStore(false, position)
     }
@@ -1106,10 +1094,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
     }
 
-    private fun processCurbside() {
-
-    }
-
     @SuppressLint("NotifyDataSetChanged")
     override fun selectCurbside() {
         deliveryTabSelected = false
@@ -1125,7 +1109,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             binding.pickupLayout.location.visibility = View.VISIBLE
             it.dismissDialogs()
         }
-        processCurbside()
     }
 
     private fun showCurbside() {
@@ -1422,17 +1405,22 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
     }
 
-    private fun continueSelectingType(it: BaseActivity) {
+    private fun proceedToCurbside() {
+        //TODO Proceed to curbside page
+    }
+
+    private fun continueSelectingType(it: BaseActivity, otPickupSelected: OrderType) {
         it.showLoadingDialog()
         val cachedOrderType = CacheUtil.getInstance().orderType
         if (orderTypeSelected == OrderType.PICKUP) {
-            if (curbsideTabSelected && CacheUtil.getInstance().curbsideCar != null) {
+            if (otPickupSelected == OrderType.CURBSIDE && CacheUtil.getInstance().curbsideCar != null) {
                 orderTypeSelected = OrderType.CURBSIDE
-            } else if (dineInTabSelected) {
-                orderTypeSelected = OrderType.DINE_IN
+            } else if (otPickupSelected == OrderType.DRIVE_THRU) {
+                orderTypeSelected = OrderType.DRIVE_THRU
+            } else if (otPickupSelected == OrderType.EAT_IN) {
+                orderTypeSelected = OrderType.EAT_IN
             }
         }
-
 
         if (isMenuSeparate && cachedOrderType == OrderType.DELIVERY && orderTypeSelected == OrderType.PICKUP) {
             val itemsInCart = CacheUtil.getInstance().cart
@@ -1471,13 +1459,12 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
             currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
-                override fun isPickup() {
-                    continueSelectingType(activity)
-                    dismissPickupTypeDialog()
-                }
-
-                override fun isCurbside() {
-                    continueSelectingType(activity)
+                override fun orderType(type: OrderType) {
+                    if (type == OrderType.CURBSIDE) {
+                        proceedToCurbside()
+                    } else {
+                        continueSelectingType(activity, type)
+                    }
                     dismissPickupTypeDialog()
                 }
 
