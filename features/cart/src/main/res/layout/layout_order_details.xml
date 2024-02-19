@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F7F7F7">
     <androidx.constraintlayout.widget.ConstraintLayout
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +38,7 @@
             android:layout_marginTop="4dp"
             android:nestedScrollingEnabled="false"
             app:layout_constraintTop_toBottomOf="@+id/your_order_label"
-            tools:itemCount="5"
+            tools:itemCount="3"
             tools:listitem="@layout/item_cart"
             tools:visibility="visible" />
 
@@ -45,7 +46,7 @@
             android:backgroundTint="@color/white"
             android:id="@+id/add_more"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:enabled="false"
             android:gravity="center"
             android:paddingStart="5dp"
@@ -54,61 +55,36 @@
             android:paddingBottom="0dp"
             android:textColor="#0064AC"
             android:textSize="14sp"
-            app:cornerRadius="4dp"
+            app:cornerRadius="12dp"
             app:strokeColor="#0064AC"
             app:strokeWidth="1dp"
+            android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rv_cart_items"
             tools:enabled="true"
-            tools:text="Add more item" />
+            android:text="Add more item" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_marginTop="4dp"
             app:layout_constraintTop_toBottomOf="@+id/add_more"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/promotion_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/promotion_icon"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/ic_unlock"/>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                app:layout_constraintTop_toTopOf="@id/promotion_icon"
-                app:layout_constraintBottom_toBottomOf="@id/promotion_icon"
-                app:layout_constraintStart_toEndOf="@id/promotion_icon"
-                app:layout_constraintEnd_toStartOf="@id/ic_arrow_right_promo"
-                android:id="@+id/promotion_description"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="32dp"
-                android:includeFontPadding="false"
-                android:textColor="@color/primary_text"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                tools:text="Add 2 more items to your order to unlock free delivery!" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ic_arrow_right_promo"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/promotion_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/promotion_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/ic_arrow_right"/>
+            android:id="@+id/promotion_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="32dp"
+            android:includeFontPadding="false"
+            android:textColor="#D12928"
+            android:textStyle="bold"
+            android:textSize="11sp"
+            android:text="Add 2 more items to your order to unlock free delivery!" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

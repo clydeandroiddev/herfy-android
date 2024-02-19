@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,11 +27,11 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.herfy.R;
 import com.herfy.cart.CartContract;
+import com.herfy.cart.adapters.CartModifierPriceAdapter;
+import com.herfy.history.adapters.OrderModifierPriceAdapter;
 import com.herfy.utils.constants.Text;
-import com.herfy.database.AppDatabase;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
@@ -69,23 +70,27 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
     AppCompatTextView totalPrice;
     @BindView(R.id.name)
     AppCompatTextView name;
-    @BindView(R.id.modifier_items)
-    AppCompatTextView modifierItems;
-    @BindView(R.id.ingredients)
-    AppCompatTextView ingredients;
 
     @BindView(R.id.plus)
     FrameLayout plus;
     @BindView(R.id.minus)
     FrameLayout minus;
 
-    @BindView(R.id.delete)
-    AppCompatImageButton delete;
+      /*
+    @BindView(R.id.modifier_items)
+    AppCompatTextView modifierItems;
+    @BindView(R.id.ingredients)
+    AppCompatTextView ingredients;
+
+
+
+  @BindView(R.id.delete)
+    AppCompatImageButton delete;*/
 
     @BindView(R.id.edit)
-    FloatingActionButton edit;
+    TextView edit;
 
-    @BindView(R.id.notes_container)
+ /*   @BindView(R.id.notes_container)
     LinearLayout notesContainer;
     @BindView(R.id.notes)
     EditText notes;
@@ -93,7 +98,11 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
     @BindView(R.id.old_price_view)
     AppCompatTextView oldPriceView;
     @BindView(R.id.old_price)
-    AppCompatTextView oldPrice;
+    AppCompatTextView oldPrice;*/
+
+
+    @BindView(R.id.modifierRecycleView)
+    RecyclerView modifierItems;
 
     public CartMenuItemViewHolder(Context context, CartContract.Presenter cartPresenter, View itemView) {
 
@@ -141,7 +150,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
 
     @Override
     public void setupTranslations() {
-        notes.setHint(CacheUtil.getInstance().getTranslations(Text.ADD_NOTE, "Add note"));
+        //notes.setHint(CacheUtil.getInstance().getTranslations(Text.ADD_NOTE, "Add note"));
     }
 
     @Override
@@ -181,7 +190,8 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
 
     @Override
     public void setMenuItem(MenuItem menuItem) {
-        AppDatabase appDatabase = AppDatabase.getInstance();
+        final Boolean[] isShouldShowModifierItems = {false};
+
         plus.setVisibility(menuItem.isPromo() ? View.INVISIBLE : View.VISIBLE);
         minus.setVisibility(menuItem.isPromo() ? View.INVISIBLE : View.VISIBLE);
 
@@ -192,6 +202,30 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
                 cartPresenter.changeQuantity(getAdapterPosition(), true);
             }
         });
+
+        int orderModifierItemSize = menuItem.getOrderModifierItems().size();
+        /*if (orderModifierItemSize > 1) {
+            txtAddOn.setText(CacheUtil.getInstance().getTranslations(Text.ADD_ONS_CAPS,context.getString(R.string.add_on)));
+            txtAddOn.setVisibility(View.VISIBLE);
+            txtAddOnTotal.setVisibility(View.VISIBLE);
+            txtAddOnTotal.setText(String.valueOf(orderModifierItemSize));
+            icModifierItemsDropDown.setVisibility(View.VISIBLE);
+            modifierLineSeparator.setVisibility(View.VISIBLE);
+            icModifierItemsDropDown.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isShouldShowModifierItems[0] = !isShouldShowModifierItems[0];
+                    modifierItems.setVisibility(isShouldShowModifierItems[0] ? View.VISIBLE : View.GONE);
+                    modifierLineSeparator.setVisibility(isShouldShowModifierItems[0] ? View.VISIBLE : View.GONE);
+                    icModifierItemsDropDown.setImageResource(isShouldShowModifierItems[0] ? R.drawable.ic_chevron_up : R.drawable.ic_chevron_down);
+
+                }
+            });*/
+
+        CartModifierPriceAdapter adapter = new CartModifierPriceAdapter(context,menuItem.getModifierItems());
+        modifierItems.setVisibility(isShouldShowModifierItems[0] ? View.VISIBLE : View.GONE);
+        adapter.notifyDataSetChanged();
+        modifierItems.setAdapter(adapter);
 
         minus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -374,7 +408,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
             e.printStackTrace();
         }
 
-        modifierItems.setText(stringBuilder.toString());
+       // modifierItems.setText(stringBuilder.toString());
 
         first = true;
 
@@ -394,7 +428,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
             }
         }
 
-        if (removedIngredients > 0) {
+        /*if (removedIngredients > 0) {
             ingredients.setText(CacheUtil.getInstance().getTranslations(Text.REMOVE) + " " + stringBuilder.toString());
             ingredients.setVisibility(View.VISIBLE);
         } else {
@@ -419,7 +453,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
 
                 cartPresenter.deleteCartItem(false, getAdapterPosition());
             }
-        });
+        });*/
 
         edit.setVisibility(menuItem.isPromo() ? View.INVISIBLE : View.VISIBLE);
 
@@ -430,7 +464,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
             }
         });
 
-        if (!CacheUtil.getInstance().getConcept().isCartItemsNotesEnabled()) {
+        /*if (!CacheUtil.getInstance().getConcept().isCartItemsNotesEnabled()) {
             notesContainer.setVisibility(View.GONE);
         } else {
             notesContainer.setVisibility(View.VISIBLE);
@@ -457,7 +491,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
                     cartPresenter.addNotes(getAdapterPosition(), s.toString());
                 }
             });
-        }
+        }*/
 
 
     }

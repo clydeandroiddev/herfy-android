@@ -30,7 +30,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 app:cardBackgroundColor="#E6F0F7"
-                app:cardCornerRadius="6dp"
+                app:cardCornerRadius="12dp"
                 android:layout_marginTop="12dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -47,6 +47,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
+                        android:paddingLeft="12dp"
+                        android:paddingEnd="12dp"
                         android:orientation="horizontal"
                         android:weightSum="2">
 
@@ -76,16 +78,17 @@
                         </LinearLayout>
 
                         <com.google.android.material.button.MaterialButton
-                            android:layout_weight="1"
-                            android:backgroundTint="#0064AC"
                             android:id="@+id/view_coupon"
                             android:layout_width="wrap_content"
                             android:layout_height="48dp"
                             android:layout_gravity="end"
-                            android:textAllCaps="true"
+                            android:layout_weight="1"
+                            android:backgroundTint="#2865A8"
+                            android:textAllCaps="false"
                             android:textColor="@color/white"
                             android:textSize="12sp"
-                            tools:text="VIEW COUPONS" />
+                            app:cornerRadius="12dp"
+                            tools:text="View Coupons" />
 
                     </LinearLayout>
 
@@ -217,7 +220,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="30dp"
-                tools:text="PAYMENT SUMMARY"/>
+                android:text="PAYMENT SUMMARY"/>
 
 
 
@@ -263,45 +266,53 @@
                 android:background="#C9C9C9" />
 
             <LinearLayout
+                android:id="@+id/discount_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/coupon_discount_label"
-                    android:layout_width="0dp"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:includeFontPadding="false"
-                    android:textAlignment="viewStart"
-                    android:textColor="#55667B"
-                    android:textSize="16sp"
-                    tools:text="Coupon Discount" />
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/coupon_discount_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:includeFontPadding="false"
+                        android:textAlignment="viewStart"
+                        android:textColor="#55667B"
+                        android:textSize="16sp"
+                        tools:text="Coupon Discount" />
 
-                <TextView
-                    android:id="@+id/coupon_discount"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end"
-                    android:includeFontPadding="false"
-                    android:textAlignment="viewEnd"
-                    android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    tools:text="-2 SR" />
+                    <TextView
+                        android:id="@+id/coupon_discount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:includeFontPadding="false"
+                        android:textAlignment="viewEnd"
+                        android:textAllCaps="true"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="-2 SR" />
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#C9C9C9" />
 
             </LinearLayout>
 
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#C9C9C9" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"

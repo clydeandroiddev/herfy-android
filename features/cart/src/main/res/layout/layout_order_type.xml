@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:src="@drawable/ic_delivery"/>
+                android:src="@drawable/ic_herfy_delivery"/>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 app:layout_constraintTop_toTopOf="@+id/order_type_icon"

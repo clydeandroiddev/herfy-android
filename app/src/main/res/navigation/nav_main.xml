@@ -304,7 +304,7 @@
         android:id="@+id/nav_cart"
         android:name="com.herfy.cart.views.CartFragment"
         android:label="bag"
-        tools:layout="@layout/fragment_cart">
+        tools:layout="@layout/fragment_herfy_cart">
 
         <argument
             android:name="isBranchPreselected"
