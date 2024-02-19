@@ -51,7 +51,7 @@ interface HomeRepository {
 
     suspend fun getCustomerLoyalty(id: String, response: (HomeResponse) -> Unit)
 
-    suspend fun getCampaignCancellableAll(category : OrderType, response: (HomeResponse) -> Unit)
+    suspend fun getCampaignCancellableAll(response: (HomeResponse) -> Unit)
 
     suspend fun getOrderTypes(response: (HomeResponse) -> Unit)
     suspend fun getLoyaltyTiers(response: (HomeResponse) -> Unit)
@@ -219,10 +219,9 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCampaignCancellableAll(
-        category: OrderType,
         response: (HomeResponse) -> Unit
     ) {
-        createOrderBody(category){params ->
+        createOrderBody(cacheUtilHelper.getOrderType()){params ->
             CouponsApiCall.getInstance().getCampaignsCancelableAll(params, object : ApiRequestListener{
                 override fun onSuccess(o: Any?) {
                     val `object` = JSONObject(o.toString())
@@ -315,7 +314,7 @@ class HomeRepositoryImpl @Inject constructor(
             "discount",
             String.format(Locale.ENGLISH, "%.2f", discount).toDouble()
         )
-        orderBody.addProperty("type", "pickup")
+        orderBody.addProperty("type", "")
         when (category){
             OrderType.PICKUP -> {
                 orderBody.addProperty("type", "pickup")

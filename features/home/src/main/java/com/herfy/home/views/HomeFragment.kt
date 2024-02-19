@@ -376,6 +376,25 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 }
             }
         }
+
+        viewModel.promoFilteredList.observe(this){promos ->
+            binding.apply {
+                layoutPromotions.apply {
+                    placeholderPromotions.clPlaceholderPromo.visibility = View.GONE
+                    promos?.let {
+                        if(it.isNotEmpty()){
+                            rvPromotions.visibility = View.VISIBLE
+                            promotionsAdapter.updatePromoList(promos)
+                        }else {
+                            rvPromotions.visibility = View.GONE
+                        }
+                    }?: run {
+                        rvPromotions.visibility = View.GONE
+                    }
+                }
+            }
+
+        }
     }
 
     private fun orderTypeClick(orderType: OrderType) {
@@ -439,9 +458,11 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         context?.let { ctx ->
             viewModel.getPromotions()
             activity?.let {
-                val itemHeight = (ViewUtil.getScreenWidth(it) / 1.5).toInt()
+                val itemHeight = (ViewUtil.getScreenWidth(it) / 1.65).toInt()
                 promotionsAdapter = PromotionsAdapter(
-                    promoListener = viewModel, itemWidth = 0, itemHeight = itemHeight
+                    promoListener = viewModel, itemWidth = 0, itemHeight = itemHeight,
+                    defaultOrderTypeCount = CacheUtil.getInstance().application.attributes.getOrderTypes().size,
+                    cacheUtil = CacheUtil.getInstance()
                 )
                 binding.apply {
                     layoutPromotions.rvPromotions.apply {

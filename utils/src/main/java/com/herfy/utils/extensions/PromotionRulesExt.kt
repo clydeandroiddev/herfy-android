@@ -1,4 +1,4 @@
-package com.herfy.ext
+package com.herfy.utils.extensions
 
 import com.skylinedynamics.solosdk.api.models.objects.PromotionRules
 

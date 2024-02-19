@@ -31,6 +31,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import java.util.Arrays
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,8 +46,8 @@ class HomeViewModel @Inject constructor(
     private val _slideList = MutableLiveData<ArrayList<Slide>>()
     val slideList: LiveData<ArrayList<Slide>> = _slideList
 
-    private val _promotionsList = MutableLiveData<ArrayList<Campaign>>()
-    val promotionsList: LiveData<ArrayList<Campaign>> = _promotionsList
+    private val _promotionsList = MutableLiveData<List<Campaign>>()
+    val promotionsList: LiveData<List<Campaign>> = _promotionsList
 
     private val _promotionCategoryList = MutableLiveData<List<PromotionCategory>>()
     val promotionCategoryList: LiveData<List<PromotionCategory>> = _promotionCategoryList
@@ -82,16 +83,22 @@ class HomeViewModel @Inject constructor(
 
 
     private val _tier = MutableLiveData<Tier?>()
-    val tier : MutableLiveData<Tier?> = _tier
+    val tier: MutableLiveData<Tier?> = _tier
 
     private val _totalPointsAccumulated = MutableLiveData<Int>()
-    val totalPointsAccumulated : MutableLiveData<Int> = _totalPointsAccumulated
+    val totalPointsAccumulated: MutableLiveData<Int> = _totalPointsAccumulated
 
-    private val _pointsToNextTier= MutableLiveData<Int>()
-    val pointsToNextTier : MutableLiveData<Int> = _pointsToNextTier
+    private val _pointsToNextTier = MutableLiveData<Int>()
+    val pointsToNextTier: MutableLiveData<Int> = _pointsToNextTier
 
     private val _startPoints = MutableLiveData<Int>()
-    val startPoints : MutableLiveData<Int> = _startPoints
+    val startPoints: MutableLiveData<Int> = _startPoints
+
+    private val _promoFilteredList = MutableLiveData<List<Campaign>?>()
+    val promoFilteredList: LiveData<List<Campaign>?> = _promoFilteredList
+
+
+    private var allPromotionsList: List<Campaign>? = null
 
     fun getSliders() {
         invoke {
@@ -124,11 +131,12 @@ class HomeViewModel @Inject constructor(
 
     fun getPromotions() {
         invoke {
-            homeRepository.getGuestDigitalCoupons(homeRepository.getGetOrderType()) { homeResponse ->
+            homeRepository.getCampaignCancellableAll { homeResponse ->
                 if (homeResponse.success) {
                     homeResponse.data?.let {
                         it.cast<ArrayList<Campaign>> {
                             _promotionsList.value = it
+                            allPromotionsList = it
                         }
                     } ?: run {
                         _promotionsList.value = arrayListOf()
@@ -253,7 +261,8 @@ class HomeViewModel @Inject constructor(
         // Ensures that there will always be a tier when loyalty is shown
         Single.zip<List<Tier>, Loyalty, android.util.Pair<Loyalty, List<Tier>>>(
             getTiersObservable(), getLoyaltyObservable()
-        ) { tiers: List<Tier>, loyalty: Loyalty -> android.util.Pair<Loyalty, List<Tier>>(loyalty, tiers)
+        ) { tiers: List<Tier>, loyalty: Loyalty ->
+            android.util.Pair<Loyalty, List<Tier>>(loyalty, tiers)
         }.subscribe(
             { pair: android.util.Pair<Loyalty, List<Tier>> ->
                 var tiers = pair.second
@@ -319,15 +328,15 @@ class HomeViewModel @Inject constructor(
         return Single.create<List<Tier>?> { source: SingleEmitter<List<Tier>?> ->
 
             invoke {
-                homeRepository.getLoyaltyTiers{homeResponse ->
-                    if(homeResponse.success){
+                homeRepository.getLoyaltyTiers { homeResponse ->
+                    if (homeResponse.success) {
                         homeResponse.data?.let { it ->
                             it.cast<ArrayList<Tier>> {
                                 _tiers.value = it
                                 source.onSuccess(it)
                             }
                         }
-                    }else {
+                    } else {
                         source.onError(
                             Throwable(
                                 CacheUtil.getInstance()
@@ -345,17 +354,18 @@ class HomeViewModel @Inject constructor(
         return Single.create<Loyalty?> { source: SingleEmitter<Loyalty?> ->
             invoke {
                 homeRepository.getCustomerLoyalty(AuthUtil.getInstance().customer.id) { homeResponse ->
-                if (homeResponse.success) {
-                    homeResponse.data?.let { it ->
-                        it.cast<Loyalty> {
-                            _loyalty.value = it
-                        AuthUtil.getInstance().customerLoyalty = it
-                                source.onSuccess(it)}
-                    } ?: run {
+                    if (homeResponse.success) {
+                        homeResponse.data?.let { it ->
+                            it.cast<Loyalty> {
+                                _loyalty.value = it
+                                AuthUtil.getInstance().customerLoyalty = it
+                                source.onSuccess(it)
+                            }
+                        } ?: run {
+                            _loyalty.value = null
+                        }
+                    } else {
                         _loyalty.value = null
-                    }
-                } else {
-                    _loyalty.value = null
                         source.onError(
                             Throwable(
                                 CacheUtil.getInstance()
@@ -369,29 +379,55 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getCampaignBy(category: OrderType) {
-        invokeAtBackground {
-            homeRepository.getCampaignCancellableAll(category) {response ->
-                if (response.success) {
-                    response.data?.cast<List<Campaign>> { digitalCoupons ->
-                        _promotionsList.value = if (digitalCoupons.isNotEmpty()) ArrayList(digitalCoupons) else arrayListOf()
-                    }?: run{
-                        _promotionsList.value = arrayListOf()
-                    }
-                } else {
-                    _promotionsList.value = arrayListOf()
-                }
-            }
-        }
-    }
-
     override fun selectedCategory(category: PromotionCategory) {
         category.isSelected = true
         _updatePromoCategoryList.value = Event(category)
         if (category.orderType == OrderType.NONE) {
-            getPromotions()
+            allPromotionsList?.let {
+                _promoFilteredList.value = it
+            } ?: run {
+                _promoFilteredList.value = null
+            }
         } else {
-            getCampaignBy(category.orderType)
+            getPromotionsWith(category.orderType)
+        }
+    }
+
+    private fun getPromotionsWith(orderType: OrderType) {
+        val category = when (orderType) {
+            OrderType.NONE -> ""
+            OrderType.PICKUP -> "pickup"
+            OrderType.DINE_IN -> "eat-in"
+            OrderType.DELIVERY -> "delivery"
+            OrderType.CURBSIDE -> "curbside"
+        }
+
+
+        allPromotionsList?.let { promos ->
+            val filteredList = arrayListOf<Campaign>()
+            if (promos.isNotEmpty() && category.isNotEmpty()) {
+                promos.filter { promo ->
+                    promo.promotion.attributes.rules.isNotEmpty() &&
+                            promo.promotion.attributes.rules.find { rule ->
+                                rule.ruleKey.equals("order-type",true) &&
+                                        rule.text.split(Pattern.compile(","), 0).contains(category)
+                            } != null
+                }.let {
+                    if(it.isNotEmpty()){
+                        filteredList.addAll(it)
+                    }
+                }
+                promos.forEach{
+                    if(it.promotion.attributes.rules.isEmpty()){
+                        filteredList.add(it)
+                    }else if(it.promotion.attributes.rules.find { rules -> rules.ruleKey.equals("order-type") } == null) {
+                        filteredList.add(it)
+                    }
+                }
+                _promoFilteredList.value = filteredList
+            } else {
+                _promoFilteredList.value = null
+            }
         }
     }
 

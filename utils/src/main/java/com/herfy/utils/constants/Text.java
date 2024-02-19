@@ -855,4 +855,5 @@ public class Text {
     public static final String GET_STARTED_LABEL = "get_started_label";
 
     public static final String ALL_LABEL="all_label";
+    public static final String REDEEM_LABEL = "redeem_label";
 }

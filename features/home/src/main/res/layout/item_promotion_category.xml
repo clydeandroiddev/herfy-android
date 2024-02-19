@@ -20,16 +20,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingVertical="8dp"
-        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="12dp"
         android:textColor="@{category.selected ? @color/white : @color/colorPrimaryDark}"
         android:onClick="@{() -> listener.selectedCategory(category)}"
         style="@style/Styles.Text.Footnote.Medium"
         tools:text="All"
         android:text="@{category.name}"
-        android:layout_marginHorizontal="2dp"
+        android:layout_marginHorizontal="3dp"
         app:isSelected="@{category.selected}"
-        app:selectedBackground="@{@drawable/background_promo_category}"
+        android:gravity="center"
+        android:background="@drawable/background_unselected_promo_category"
+        app:unselectedBackground="@{@drawable/background_unselected_promo_category}"
+        app:selectedBackground="@{@drawable/background_red_gradient}"
          />
 
 

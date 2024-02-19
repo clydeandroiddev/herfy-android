@@ -58,6 +58,7 @@
     <color name="shade_blue">#208DA7</color>
     <color name="colorStrokeBorder">#E4F5F9</color>
     <color name="colorSeparator">#E6E8EB</color>
+    <color name="textColor">#55667B</color>
 </resources>
 
 

@@ -8,21 +8,24 @@
         <variable
             name="promo"
             type="com.skylinedynamics.solosdk.api.models.objects.Campaign" />
+        <variable
+            name="orderType"
+            type="String"/>
+        <variable
+            name="orderTypeIcon"
+            type="int" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background_rate"
-        android:paddingTop="32dp"
-        android:paddingBottom="32dp"
-        android:paddingHorizontal="16dp">
+        android:layout_height="match_parent">
         
         
         <FrameLayout
             android:id="@+id/fm_promo_image"
             android:layout_width="0dp"
-            android:layout_height="151dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent=".3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -33,128 +36,163 @@
                 android:src="@drawable/ic_circle_white_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="close button" />
+                android:contentDescription="close button"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"/>
 
             <ImageView
-                app:imageSrc="@{promo.attributes.imageUri}"
+                app:sliderImageUri="@{promo.attributes.imageUri}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:scaleType="fitXY"
                 android:contentDescription="Promo image"
                  />
 
         </FrameLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cv_promo_category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/colorPromoCategoryBlue"
-            app:cardPreventCornerOverlap="false"
-            app:cardUseCompatPadding="false"
-            android:layout_marginTop="8dp"
-            app:contentPaddingRight="8dp"
-            app:contentPaddingLeft="8dp"
-            app:contentPaddingTop="4dp"
-            app:contentPaddingBottom="4dp"
-            app:cardCornerRadius="4dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fm_promo_image">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_info"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="-15dp"
+            android:background="@drawable/background_rounded_corner_top_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fm_promo_image"
+            android:paddingTop="16dp"
+            android:paddingHorizontal="16dp"
+            >
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
+            <FrameLayout
+                android:id="@+id/fm_promo_category"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/background_blue_gradient"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/colorPromoCategoryBlue"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="false"
+                app:contentPaddingRight="8dp"
+                app:contentPaddingLeft="8dp"
+                app:contentPaddingTop="4dp"
+                app:contentPaddingBottom="4dp"
+                app:cardCornerRadius="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:id="@+id/iv_promo_category"
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:layout_marginEnd="5dp"
-                    android:contentDescription="" />
-
-                <TextView
-                    style="@style/Styles.Text.Caption.Semibold"
-                    android:id="@+id/tv_promo_category"
-                    android:layout_width="wrap_content"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    tools:text="Pick up"/>
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                    <ImageView
+                        android:id="@+id/iv_promo_category"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginEnd="5dp"
+                        app:icon="@{orderTypeIcon}"
+                        android:contentDescription="" />
+
+                    <TextView
+                        style="@style/Styles.Text.Caption"
+                        android:id="@+id/tv_promo_category"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        tools:text="Pick up"
+                        android:text="@{orderType}"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_promo_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@{promo.attributes.name}"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                style="@style/Styles.Text.Headline1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fm_promo_category"
+                tools:text="Promotion Name" />
 
 
+            <TextView
+                android:id="@+id/tv_promo_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@{promo.attributes.description}"
+                android:textSize="16sp"
+                android:textColor="@color/textColor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_promo_name"
+                tools:text="Description of the promotion, which can be multiple lines." />
+
+            <View
+                android:id="@+id/line_sep_description"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="#E6E8EB"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_promo_description"/>
+
+            <TextView
+                android:id="@+id/tv_requirements"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                style="@style/Styles.Text.Headline1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/line_sep_description"
+                tools:text="Requirements" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_requirements"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/btn_claim"
+                app:layout_constraintTop_toBottomOf="@id/tv_requirements"
+                android:layout_marginBottom="24dp"
+
+                tools:itemCount="3" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_claim"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="24dp"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/colorPrimary"
+                app:cornerRadius="30dp"
+                android:layout_marginBottom="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="Redeem" />
 
 
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/tv_promo_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            tools:text="Promotion Name"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:text="@{promo.attributes.name}"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cv_promo_category" />
-
-
-
-        <TextView
-            android:id="@+id/tv_promo_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="16sp"
-            android:text="@{promo.attributes.description}"
-            tools:text="Description of the promotion, which can be multiple lines."
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_promo_name"/>
-
-        <TextView
-            android:id="@+id/tv_requirements"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            tools:text="Requirements"
-            android:textSize="16sp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_promo_description"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_requirements"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_requirements"
-            app:layout_constrainedHeight="true"
-            tools:itemCount="3"/>
-        
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_claim"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:insetRight="0dp"
-            android:insetLeft="0dp"
-            android:layout_marginTop="24dp"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
-            app:backgroundTint="@color/colorPrimary"
-            tools:text="Redeem"
-            app:cornerRadius="4dp"
-            app:layout_constraintTop_toBottomOf="@id/rv_requirements"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
