@@ -1,58 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/choose_method_label"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/inter_bold"
-        android:text="PAYMENT METHOD"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/tv_edit_payment_method"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/inter_semi_bold"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/choose_method_label"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/choose_method_label"
-        tools:text="Edit" />
 
-    <ImageView
-        android:id="@+id/cash_image"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/ic_ellipse_placeholder"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_selected_paymennt"
-        app:layout_constraintStart_toStartOf="@+id/choose_method_label"
-        app:layout_constraintTop_toTopOf="@+id/tv_selected_paymennt" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_selected_paymennt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/inter_semi_bold"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/cash_image"
-        app:layout_constraintTop_toBottomOf="@+id/choose_method_label"
-        tools:text="Visa ****9876" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/loyalty_points_payment_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="14dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="#D9E8F3"
+            app:strokeWidth="1dp"
+            tools:visibility="visible">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_payment_method"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_semi_bold"
+                    android:text="Payment Method"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:textFontWeight="600"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView3"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_edit"
+                    android:layout_marginEnd="2dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_edit_payment_method"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_edit_payment_method"
+                    app:layout_constraintTop_toTopOf="@+id/tv_edit_payment_method" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_edit_payment_method"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="#0064AC"
+                    android:textSize="16sp"
+                    android:textFontWeight="500"
+                    android:lineHeight="19dp"
+                    android:textAllCaps="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_payment_method"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_payment_method"
+                    tools:text="Edit" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_selected_payment"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
+                    android:background="@drawable/unselected_image_bg"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_selected_payment"
+                    app:layout_constraintStart_toStartOf="@+id/tv_payment_method"
+                    app:layout_constraintTop_toTopOf="@+id/tv_selected_payment"
+                    tools:src="@drawable/ic_visa"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_selected_payment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="26dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textFontWeight="400"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/iv_selected_payment"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_payment_method"
+                    tools:text="Visa ****9876" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

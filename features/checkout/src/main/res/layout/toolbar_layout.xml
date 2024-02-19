@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+<!--    <data>-->
+<!--        <variable-->
+<!--            name="title"-->
+<!--            type="String" />-->
+<!--        <variable-->
+<!--            name="backlabel"-->
+<!--            type="String" />-->
+<!--    </data>-->
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#F7F7F7"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_collapseMode="pin"
+        app:layout_scrollFlags="scroll|enterAlways">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="16dp"
+                android:gravity="start|center_vertical"
+                android:padding="0dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:src="@drawable/ic_arrow_back"
+                app:iconTint="#212121"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_semi_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:lines="1"
+                android:maxLines="1"
+                android:paddingStart="90dp"
+                android:paddingEnd="90dp"
+                android:singleLine="true"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="#0C0C0C"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textFontWeight="600"
+                android:lineHeight="21dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+</layout>
+

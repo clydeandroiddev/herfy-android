@@ -602,6 +602,16 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
     }
 
     @Override
+    public void showOrderType(Boolean checkout) {
+
+    }
+
+    @Override
+    public void showSelectedPyament() {
+
+    }
+
+    @Override
     public void setPresenter(PaymentContract.Presenter presenter) {
         paymentPresenter = presenter;
     }

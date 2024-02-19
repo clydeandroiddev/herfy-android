@@ -15,6 +15,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.cart.views.CartPromoDialogFragment;
+import com.herfy.checkout_temp.CheckoutActivity;
 import com.herfy.utils.constants.Text;
 import com.herfy.payment.views.PaymentActivity;
 import com.herfy.utils.constants.Values;
@@ -128,7 +129,8 @@ public class UpsellActivity extends BaseActivity implements UpsellContract.View 
             public void onClick(View v) {
                 if (toSkip) {
                     dismissDialogs();
-                    Intent intent = new Intent(UpsellActivity.this, PaymentActivity.class);
+//                    Intent intent = new Intent(UpsellActivity.this, PaymentActivity.class); todo
+                    Intent intent = new Intent(UpsellActivity.this, CheckoutActivity.class);
                     if (isScheduled) {
                         intent.putExtra("isScheduled", true);
                         intent.putExtra("goodSelectedDate", goodSelectedDateString);

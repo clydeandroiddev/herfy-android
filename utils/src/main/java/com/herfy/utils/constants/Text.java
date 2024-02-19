@@ -853,6 +853,14 @@ public class Text {
     public static final String SOCIAL_MEDIA_LABEL = "social_media_label";
     public static final String FAVOURITES_LABEL ="favourites_label";
     public static final String GET_STARTED_LABEL = "get_started_label";
+    public static final String SAR_AMOUNT = "sar_amount";
+    public static final String DEBIT_CREDIT_CARD = "debit_credit_card";
+    public static final String WITHIN = "within";
+    public static final String PLACE_ORDER = "place_order";
+    public static final String PICKUP_TIME = "pickup_time";
+    public static final String DELIVERY_INSTRUCTION = "delivery_instructions";
+    public static final String LOYALTY_POINTS = "loyalty_points";
+    public static final String PAYMENT_METHODS = "payment_methods";
 
     public static final String ALL_LABEL="all_label";
     public static final String REDEEM_LABEL = "redeem_label";

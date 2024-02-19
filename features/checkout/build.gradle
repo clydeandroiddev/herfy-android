@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -11,6 +12,11 @@ android {
         minSdk 21
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        viewBinding true
+        dataBinding true
     }
 
     buildTypes {

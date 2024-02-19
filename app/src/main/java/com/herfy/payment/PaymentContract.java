@@ -96,6 +96,10 @@ public interface PaymentContract {
         void updateMenuItems();
 
         void showMoyasarSheet(String orderId, double validatedTotal, String menuItems, String apiKey);
+
+        void showOrderType(Boolean checkout);
+
+        void showSelectedPyament();
     }
 
     interface Presenter extends BasePresenter {

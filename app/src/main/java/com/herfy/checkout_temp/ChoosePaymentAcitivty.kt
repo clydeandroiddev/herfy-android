@@ -1,0 +1,429 @@
+package com.herfy.checkout_temp
+
+import android.graphics.Color
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.widget.AppCompatRadioButton
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.material.card.MaterialCardView
+import com.herfy.R
+import com.herfy.base.BaseActivity
+import com.herfy.checkout.databinding.ActivityChoosePaymentMethodBinding
+import com.herfy.payment.PaymentContract
+import com.herfy.payment.PaymentPresenter
+import com.herfy.payment.views.PaymentDialogFragment
+import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.CacheUtil
+import com.moneyhash.sdk.android.ResultType
+import com.moneyhash.sdk.android.payment.PaymentResultContract
+import com.moneyhash.sdk.android.payment.PaymentStatus
+import com.skylinedynamics.solosdk.api.models.objects.CustomerCard
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
+import com.skylinedynamics.solosdk.api.models.objects.PaymentType
+import com.skylinedynamics.solosdk.api.models.objects.PrayerTime
+import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge
+import io.shipbook.shipbooksdk.Log
+import java.util.Calendar
+
+class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
+
+    private lateinit var checkoutPresenter: PaymentContract.Presenter
+    private lateinit var binding: ActivityChoosePaymentMethodBinding
+
+    private var selectedCard: CustomerCard? = null
+    private lateinit var creditCardAdapter : CardsAdapter
+
+    private var isPaymentSet = false
+    private var isCashPaymentAvailable = false
+    private var isCardPaymentAvailable = false
+    private var isCODPaymentAvailable = false
+
+    private lateinit var rbCash: AppCompatRadioButton
+    private lateinit var rbCard: AppCompatRadioButton
+    private lateinit var rbCod: AppCompatRadioButton
+    private lateinit var cashPayment: MaterialCardView
+    private lateinit var cardPayment: MaterialCardView
+    private lateinit var codPayment: MaterialCardView
+    private lateinit var cashContainer: ConstraintLayout
+    private lateinit var cardContainer: ConstraintLayout
+    private lateinit var codContainer: ConstraintLayout
+    private lateinit var cardImage: ImageView
+    private lateinit var codImage: ImageView
+    private lateinit var cashImage: ImageView
+    private lateinit var cashLabel: TextView
+    private lateinit var cardLabel: TextView
+    private lateinit var codLabel: TextView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityChoosePaymentMethodBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        checkoutPresenter  = PaymentPresenter(this)
+        checkoutPresenter.getPaymentTypes()
+        setupViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkoutPresenter.start()
+    }
+
+    override fun setPresenter(presenter: PaymentContract.Presenter) {
+        checkoutPresenter = presenter
+    }
+
+    override fun logEvent(
+        eventName: String?,
+        eventAttributes: HashMap<String, String>?,
+        eventMetricName: String?,
+        eventMetricValue: Double
+    ) {
+
+    }
+
+    override fun setCartExpiry() {
+
+    }
+
+    override fun setupViews() {
+//        val cards = CacheUtil.getInstance().customerCards ?: cards()
+//        val cards = cards()
+       /* val creditCardAdapter = CardsAdapter(cards) { card, position ->
+            selectedCard = card
+            if (isCashPaymentAvailable) {
+                rbCash.isChecked = false
+                cashPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
+                cashPayment.setBackgroundColor(Color.WHITE)
+            }
+
+             if (isCashPaymentAvailable) {
+                 rbCard.isChecked = false
+                 cardPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
+                 cardPayment.setBackgroundColor(Color.WHITE)
+             }
+        }
+
+        binding.rvCards.adapter = creditCardAdapter
+        creditCardAdapter.notifyDataSetChanged()*/
+
+        binding.toolbarContainer.btnBack.setOnClickListener { onBackPressed() }
+
+    }
+
+
+    override fun showValidateOrderError(errors: MutableList<String>?) {
+
+    }
+
+    override fun sendOrder() {
+
+    }
+
+    override fun initializeTap(orderId: String?, total: Double) {
+
+    }
+
+    override fun showCheckoutPaymentForm(orderId: String?) {
+
+    }
+
+    override fun showCardFailed() {
+
+    }
+
+    override fun showMessage(message: String?) {
+
+    }
+
+    override fun showError(error: String?) {
+
+    }
+
+    override fun showCompleted(orderId: String?, orderType: OrderType?) {
+
+    }
+
+    override fun setSchedule() {
+
+    }
+
+    override fun setTax(inclusive: Boolean, taxAmount: CharSequence?) {
+
+    }
+
+    override fun setPriceDetails(
+        subtotalPrice: Double,
+        discount: Double,
+        totalPrice: Double,
+        deliveryCharge: Double,
+        pointsSarValue: Double,
+        pointsEarnable: Int,
+        pointsUsed: Int,
+        charges: java.util.ArrayList<ServiceCharge>?
+    ) {
+
+    }
+
+    override fun setMenuItem(menuItem: MenuItem?) {
+
+    }
+
+    override fun logFirebaseEvent(event: String?, orderTotalPrice: String?) {
+
+    }
+
+    override fun showPrayerTime(prayerTime: PrayerTime?) {
+
+    }
+
+    override fun showErrorPrayerTime() {
+
+    }
+
+    override fun moneyHashContract(): ActivityResultLauncher<Pair<String, ResultType>> {
+        return activityResultLauncher
+    }
+
+    override fun setOrderId(orderId: String?) {
+
+    }
+
+    override fun showCardDialogList(orderId: String?) {
+
+    }
+
+    override fun firebaseECommercePurchaseEvent(
+        orderedItem: MutableList<MenuItem>?,
+        total: Double
+    ) {
+
+    }
+
+    override fun firebaseAddPaymentInfoEvent() {
+
+    }
+
+    override fun firebaseApplyPromotionEvent(
+        promotionId: String?,
+        promotionName: String?,
+        orderedItems: MutableList<MenuItem>?
+    ) {
+
+    }
+
+    override fun updateMenuItems() {
+
+    }
+
+    override fun showMoyasarSheet(
+        orderId: String?,
+        validatedTotal: Double,
+        menuItems: String?,
+        apiKey: String?
+    ) {
+
+    }
+
+    override fun showOrderType(checkout: Boolean?) {
+
+    }
+
+    override fun showSelectedPyament() {
+    }
+
+    override fun setStartName(startName: String?) {
+
+    }
+
+    override fun setStartAddress(startAddress: String?) {
+
+    }
+
+    override fun setEndName(endName: String?) {
+
+    }
+
+    override fun setEndAddress(endAddress: String?) {
+
+    }
+
+    override fun updateMap(
+        orderType: OrderType?,
+        startLocation: LatLng?,
+        endLocation: LatLng?,
+        bounds: LatLngBounds?
+    ) {
+
+    }
+
+    override fun updateTime(calendar: Calendar?) {
+
+    }
+
+    override fun selectPaymentTypeCash() {
+        CacheUtil.getInstance().orderPayment = PaymentType.CASH
+        if (this::creditCardAdapter.isInitialized) creditCardAdapter.setSelectedPosition(-1)
+        selectedView(rbCash, cashImage, cashContainer, cashPayment)
+        if (isCardPaymentAvailable) unselectedView(rbCard, cardImage, cardContainer, cardPayment)
+        if (isCODPaymentAvailable) unselectedView(rbCod, codImage, codContainer, codPayment)
+
+
+        /*if (paymentPresenter.hasMukafaaTransactionId()) {
+            mukafaaPayment.setStrokeColor(Color.parseColor(CacheUtil.getInstance().colorMain))
+        } else {
+            mukafaaPayment.setStrokeColor(Color.TRANSPARENT)
+            mukafaaSelected = false
+            mukafaaNumbers.setVisibility(View.GONE)
+            requestOTP.setVisibility(View.GONE)
+            placeOrder.setVisibility(View.VISIBLE)
+        }*/
+        if (CacheUtil.getInstance().orderType === OrderType.DELIVERY && checkoutPresenter.getValidatedTotal() != 0.0) {
+            val paymentDialogFragment = PaymentDialogFragment.newInstance(
+                checkoutPresenter
+            ) { dialog, cashPresented ->
+                dialog.dismiss()
+                checkoutPresenter.setCashPresented(cashPresented)
+            }
+            paymentDialogFragment.show(
+                supportFragmentManager,
+                PaymentDialogFragment::class.java.simpleName
+            )
+        }
+    }
+
+    private fun cards() : List<CustomerCard> {
+
+        val cc = CustomerCard()
+        cc.id = "123"
+        cc.type = "credit"
+        cc.attributes.brand = "visa"
+        cc.attributes.last4Digits = "8989"
+
+        return listOf<CustomerCard>(cc, cc, cc)
+    }
+
+    override fun setupFonts() {
+
+    }
+
+    override fun setupTranslations() {
+        binding.toolbarContainer.title.text = CacheUtil.getInstance().getTranslations(Text.PAYMENT_METHODS, "Choose Payment Method")
+        binding.chooseMethodLabel.text = CacheUtil.getInstance().getTranslations(Text.DEBIT_CREDIT_CARD, "Debit/Credit Card")
+        if (this::cashLabel.isInitialized) {
+            cashLabel.text = CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
+        }
+        if (this::cardLabel.isInitialized) {
+            cardLabel.text = CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
+        }
+    }
+
+    override fun showPaymentTypes(paymentTypes: MutableSet<PaymentType>) {
+
+    }
+
+    override fun showPaymentTypes(paymentTypes: ArrayList<PaymentType>) {
+        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        paymentTypes.forEach { paymentType ->
+            if (paymentType == PaymentType.CASH) {
+                isCashPaymentAvailable = true
+                val view: View = inflater.inflate(R.layout.item_payment_cash, null)
+                cashPayment = view.findViewById(R.id.cash_layout)
+                cashContainer = view.findViewById(R.id.container_cash)
+                rbCash = view.findViewById(R.id.rb_cash)
+                cashLabel = view.findViewById(R.id.cash_label)
+                cashImage = view.findViewById(R.id.cash_image)
+                rbCash.setOnClickListener { selectPaymentTypeCash() }
+                binding.paymentTypeContainer.addView(view)
+            } else if (paymentType == PaymentType.CARD) {
+                isCardPaymentAvailable = true
+                val view: View = inflater.inflate(R.layout.item_card_payment, null)
+                rbCard = view.findViewById(R.id.rb_card)
+                cardLabel = view.findViewById(R.id.card_label)
+                cardContainer = view.findViewById(R.id.container_card)
+                cardImage = view.findViewById(R.id.card_image)
+                cardPayment = view.findViewById(R.id.cards_layout)
+                binding.paymentTypeContainer.addView(view)
+                rbCard.setOnClickListener {
+                    CacheUtil.getInstance().orderPayment = PaymentType.CARD
+                    if (isCashPaymentAvailable) unselectedView(rbCash, cashImage, cashContainer, cashPayment)
+                    if (isCODPaymentAvailable) unselectedView(rbCod, codImage, codContainer, codPayment)
+                    if (this::creditCardAdapter.isInitialized)  creditCardAdapter.setSelectedPosition(-1)
+                    selectedView(rbCard, cardImage, cardContainer, cardPayment)
+                    checkoutPresenter.cashPresented = 0.0
+                }
+            } else if (paymentType == PaymentType.CARD_ON_DELIVERY || paymentType == PaymentType.CARD_ON_PICKUP) {
+                isCODPaymentAvailable = true
+                val view: View = inflater.inflate(R.layout.item_payment_cod_cop, null)
+                codPayment = view.findViewById(R.id.cod_layout)
+                codContainer = view.findViewById(R.id.container_cod)
+                codLabel = view.findViewById(R.id.cod_label)
+                rbCod = view.findViewById(R.id.rb_cod)
+                codImage = view.findViewById(R.id.cod_image)
+                binding.paymentTypeContainer.addView(view)
+                rbCod.setOnClickListener {
+                    if (this::creditCardAdapter.isInitialized)  creditCardAdapter.setSelectedPosition(-1)
+                    if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
+                        CacheUtil.getInstance().orderPayment = PaymentType.CARD_ON_DELIVERY
+                    } else {
+                        CacheUtil.getInstance().orderPayment = PaymentType.CARD_ON_PICKUP
+                    }
+                    selectedView(rbCod, codImage, codContainer, codPayment)
+
+                    if (isCashPaymentAvailable) unselectedView(rbCash, cashImage, cashContainer, cashPayment)
+                    if (isCardPaymentAvailable) unselectedView(rbCard, cardImage, cardContainer, cardPayment)
+                    checkoutPresenter.cashPresented = 0.0
+
+                   /* if (paymentPresenter.hasMukafaaTransactionId()) {
+                        mukafaaPayment.setStrokeColor(Color.parseColor(CacheUtil.getInstance().colorMain))
+                    } else {
+                        mukafaaPayment.setStrokeColor(Color.TRANSPARENT)
+                        mukafaaNumbers.setVisibility(View.GONE)
+                        mukafaaSelected = false
+                        requestOTP.setVisibility(View.GONE)
+                        placeOrder.setVisibility(View.VISIBLE)
+                    }*/
+
+                }
+
+            }
+        }
+    }
+
+    private fun unselectedView(radioButton: AppCompatRadioButton, imageView: ImageView, constraintLayout: ConstraintLayout, cardView: MaterialCardView) {
+        radioButton.isChecked = false
+        cardView.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
+        constraintLayout.setBackgroundColor(Color.WHITE)
+        imageView.background = resources.getDrawable(R.drawable.unselected_image_bg)
+    }
+    private fun selectedView(radioButton: AppCompatRadioButton, imageView: ImageView, constraintLayout: ConstraintLayout, cardView: MaterialCardView) {
+        radioButton.isChecked = true
+        cardView.strokeColor = Color.parseColor(CacheUtil.getInstance().colorMain)
+        constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.card_selected_bg))
+        imageView.background = resources.getDrawable(R.drawable.selected_image_bg)
+    }
+
+    private val activityResultLauncher = registerForActivityResult(PaymentResultContract()) { result ->
+        if (result == null) return@registerForActivityResult
+        when (result) {
+            is PaymentStatus.Success -> checkoutPresenter.sendUpsells()
+            is PaymentStatus.Redirect -> {
+                if ((result as PaymentStatus.Redirect).result.component2()?.status.equals("SUCCESSFUL", true)) {
+                    checkoutPresenter.sendUpsells()
+                } else {
+                    showCardFailed()
+                }
+            }
+            else -> showCardFailed()
+        }
+    }
+
+}

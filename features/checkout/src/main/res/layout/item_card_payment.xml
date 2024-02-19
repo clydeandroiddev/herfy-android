@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cards_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardUseCompatPadding="true"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:strokeColor="@color/card_stroke_color"
+    app:strokeWidth="1dp">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <ImageView
+            android:id="@+id/card_image"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:padding="16dp"
+            android:background="@drawable/unselected_image_bg"
+            android:src="@drawable/ic_payment_cash"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/card_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+            android:paddingStart="18dp"
+            android:paddingEnd="5dp"
+            android:textSize="16sp"
+            android:textFontWeight="400"
+            app:lineHeight="19dp"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/card_image"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Card" />
+
+        <RadioButton
+            android:id="@+id/rb_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#0064AC"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</com.google.android.material.card.MaterialCardView>
