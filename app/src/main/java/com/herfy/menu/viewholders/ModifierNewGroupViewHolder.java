@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.imageview.ShapeableImageView;
 import com.herfy.R;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.*;
@@ -195,7 +194,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity) {
         Log.d("FAFA","Show shoulld modifier item " + showShowModifierCheckBox);
         String imageUrl = modifierGroup.getAttributes().getImage();
         Log.d("FAFA","Image url test"  + imageUrl);
@@ -313,7 +312,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
 
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            ModifierItemsNewRecyclerViewAdapter modifierItemsNewRecyclerViewAdapter = new ModifierItemsNewRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice);
+            ModifierItemsNewRecyclerViewAdapter modifierItemsNewRecyclerViewAdapter = new ModifierItemsNewRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice,shouldShowQuantity);
             modifierItemsNewRecyclerViewAdapter.setOnAction(onAction);
             recyclerView.setAdapter(modifierItemsNewRecyclerViewAdapter);
         }

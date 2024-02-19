@@ -1,10 +1,8 @@
 package com.herfy.menu.views
 
-import android.animation.AnimatorInflater
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -647,19 +645,39 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             modifierGroupPosition: Int,
                             modifierGroup: ModifierGroup,
                             modifierItemPosition: Int,
-                            modifierItem: ModifierItem
+                            modifierItem: ModifierItem,
+                            isQuantityLayoutShow: Boolean
                         ) {
                             menuPresenter!!.changeModifierItemQuantity(
                                 add,
                                 modifierGroupPosition,
                                 modifierGroup,
                                 modifierItemPosition,
-                                modifierItem
+                                modifierItem,
+                                isQuantityLayoutShow
                             )
                             setSizes(menuItem)
                             shouldReset = false
-                            modifierGroupsAdapter!!.notifyItemChanged(modifierGroupPosition)
+                            modifierGroupsAdapter!!.shouldShowQuantity(isQuantityLayoutShow,modifierItemPosition)
                             //Trigger calorie count
+                        }
+
+                        override fun onQuantityChangedWithoutVisible(
+                            add: Boolean,
+                            modifierGroupPosition: Int,
+                            modifierGroup: ModifierGroup?,
+                            modifierItemPosition: Int,
+                            modifierItem: ModifierItem?
+                        ) {
+                            menuPresenter!!.changeModifierItemQuantity(
+                                add,
+                                modifierGroupPosition,
+                                modifierGroup,
+                                modifierItemPosition,
+                                modifierItem,
+                                true,
+
+                            )
                         }
                     })
                     binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapter
@@ -1181,7 +1199,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         position: Int,
         modifierGroup: ModifierGroup,
         showModifierItemPrice: Boolean,
-        showShowModifierCheckBox: Boolean
+        showShowModifierCheckBox: Boolean,
+        shouldShowQuantity: HashMap<Int, Boolean>
     ) {
     }
 

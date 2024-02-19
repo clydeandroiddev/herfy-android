@@ -3548,18 +3548,33 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void changeModifierItemQuantity(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem) {
+    public void changeModifierItemQuantity(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean isQuantityLayoutShow) {
+        ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
+        ModifierItem eachModifierItem = group.getModifierItems().get(modifierItemPosition);
+//        for (ModifierItem item : group.getModifierItems()) {
+//            Log.d("FAFA","Is quantity already show" + isQuantityLayoutShow + "Item id " + item.getId() + " Modifier id " + modifierItem.getId());
+//            boolean isCheckboxSelected = isQuantityLayoutShow && item.getId().equals(modifierItem.getId());
+//            item.getAttributes().setShouldShowQuantity(isCheckboxSelected);
+//        }
+        if (eachModifierItem.getId().equals(modifierItem.getId()))
+        {
+            Log.d("FAFA","Is should shgow visible bai " + isQuantityLayoutShow);
+            eachModifierItem.getAttributes().setShouldShowQuantity(isQuantityLayoutShow);
+        }
+//        for (ModifierItem item : group.getModifierItems()) {
+//            boolean isShouldShowQuantity = isQuantityLayoutShow && item.getId().equals(modifierItem.getId());
+//            item.getAttributes().setShouldShowQuantity(isShouldShowQuantity);
+//        }
         if (!add) {
-            ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
             //for (ModifierGroup group : menuItem.getModifierGroups()) {
             //if (group.getId().equals(modifierGroup.getId())) {
-            ModifierItem item = group.getModifierItems().get(modifierItemPosition);
             //for (ModifierItem item : group.getModifierItems()) {
             //if (item.getId().equals(modifierItem.getId())) {
             if (modifierItem.getAttributes().getQuantity() == 1) {
-                item.getAttributes().setSelected(false);
+                eachModifierItem.getAttributes().setSelected(false);
             } else {
-                item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() - 1);
+                eachModifierItem.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() - 1);
+
             }
             //break;
             //}
@@ -3569,11 +3584,10 @@ public class MenuPresenter implements MenuContract.Presenter {
             //}
         } else {
             int selectedItems = 0;
-            ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
             //for (ModifierGroup group : menuItem.getModifierGroups()) {
             //if (group.getId().equals(modifierGroup.getId())) {
             for (ModifierItem item : group.getModifierItems()) {
-                if (item.getAttributes().isSelected()) {
+                if (eachModifierItem.getAttributes().isSelected()) {
                     selectedItems += item.getAttributes().getQuantity();
                 }
             }
@@ -3585,10 +3599,9 @@ public class MenuPresenter implements MenuContract.Presenter {
             } else {
                 //for (ModifierGroup group : menuItem.getModifierGroups()) {
                 //if (group.getId().equals(modifierGroup.getId())) {
-                ModifierItem item = group.getModifierItems().get(modifierItemPosition);
                 //for (ModifierItem item : group.getModifierItems()) {
-                if (item.getId().equals(modifierItem.getId())) {
-                    item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() + 1);
+                if (eachModifierItem.getId().equals(modifierItem.getId())) {
+                    eachModifierItem.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() + 1);
                     //break;
                 }
                 //}
@@ -3600,6 +3613,8 @@ public class MenuPresenter implements MenuContract.Presenter {
 
         getMenuItemTotalPrice(menuItem, modifierGroupPosition);
     }
+
+
 
     @Override
     public void onBindSizeViewAtPosition(int position, SizeViewHolder sizeViewHolder) {
@@ -3622,11 +3637,11 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox) {
+    public void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity) {
 
        /* ModifierGroup modifierGroup = menuItemModifierGroups.get(menuItem.getModifierGroups().get(position).getId());
         if(modifierGroup != null) {*/
-        modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice,  showShowModifierCheckBox);
+        modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice,showShowModifierCheckBox,shouldShowQuantity);
         //}
     }
 
@@ -3679,8 +3694,8 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, BaseModifierItemViewHolder modifierItemViewHolder) {
-        modifierItemViewHolder.setModifierItem(modifierGroupPosition, modifierGroup, position, modifierGroup.getModifierItems().get(position), showModifierItemPrice);
+    public void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, BaseModifierItemViewHolder modifierItemViewHolder, HashMap<Integer, Boolean> shouldShowQuantity) {
+        modifierItemViewHolder.setModifierItem(modifierGroupPosition, modifierGroup, position, modifierGroup.getModifierItems().get(position), showModifierItemPrice,shouldShowQuantity);
     }
 
     @Override

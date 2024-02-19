@@ -239,7 +239,7 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity) {
 
     }
 

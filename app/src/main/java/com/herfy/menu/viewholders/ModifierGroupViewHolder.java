@@ -189,7 +189,7 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity) {
         boolean visible = false;
         VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
         if(visibilityConfig != null) {

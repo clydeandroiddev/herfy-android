@@ -239,7 +239,7 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity) {
 
     }
 

@@ -116,7 +116,8 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
         position: Int,
         modifierGroup: ModifierGroup,
         showModifierItemPrice: Boolean,
-        showShowModifierCheckBox: Boolean
+        showShowModifierCheckBox: Boolean,
+        shouldShowQuantity: java.util.HashMap<Int, Boolean>
     ) {
     }
 
