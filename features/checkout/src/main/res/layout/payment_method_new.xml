@@ -104,10 +104,4 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_payment_method"
                     tools:text="Visa ****9876" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>
