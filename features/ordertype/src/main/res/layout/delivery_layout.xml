@@ -52,6 +52,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:textSize="18sp"
+            android:visibility="gone"
+            tools:visibility="visible"
             app:layout_constraintStart_toStartOf="@id/userCurrentLocation"
             app:layout_constraintTop_toBottomOf="@id/userCurrentLocation"
             tools:text="Saved Addresses" />
@@ -70,7 +72,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/savedAddressesLabel"
             tools:itemCount="3"
-            tools:listitem="@layout/item_address_delivery" />
+            tools:listitem="@layout/item_address_delivery_new" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

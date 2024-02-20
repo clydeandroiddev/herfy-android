@@ -25,6 +25,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResult
@@ -75,6 +76,7 @@ import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import io.shipbook.shipbooksdk.Log
 import java.util.*
 
 
@@ -102,6 +104,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     private var isDineInAvailable = false
     private var googleMap: GoogleMap? = null
     private var storesLayoutManager: LinearLayoutManager? = null
+    private lateinit var deliveryAddressAdapter: DeliveryAddressAdapter
     private var dineInStoresRecyclerViewAdapter: StoresRecyclerViewAdapter? = null
     private var pickupCurbsideStoresRecyclerViewAdapter: StoresRecyclerViewAdapter? = null
     private var orderTypeSelected: OrderType? = null
@@ -383,6 +386,19 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         binding.pickupLayout.location.setOnClickListener { initializeLocation() }
 
         activity?.cast<BaseActivity> {
+            deliveryAddressAdapter = DeliveryAddressAdapter(
+                ArrayList(), object : DeliveryAddressAdapter.AddressListener {
+                    override fun onSelectedAddress(address: Address, position: Int) {
+                        CacheUtil.getInstance().orderType = OrderType.DELIVERY
+                        orderPresenter.selectAddress(position, address)
+                    }
+
+                    override fun onEditAddress(address: Address, position: Int) {
+
+                    }
+                }, ""
+            )
+            binding.deliveryLayout.addressList.adapter = deliveryAddressAdapter
             storesLayoutManager = LinearLayoutManager(activity)
             binding.storesRecyclerView.layoutManager = storesLayoutManager
             dineInStoresRecyclerViewAdapter = StoresRecyclerViewAdapter(orderPresenter, true)
@@ -429,8 +445,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         binding.dineInButton.text = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
         binding.deliveryLayout.useCurrentLocationLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.USE_CURRENT_LOCATION, "Use current location")
-        binding.deliveryLayout.savedAddressesLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.SAVED_ADDRESSES, "Saved Addresses")
+        binding.deliveryLayout.savedAddressesLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.SAVED_ADDRESSES, "Saved Addresses")
     }
 
     private fun adjustOrderType(withVisibility: Boolean, orderTypes: MutableSet<OrderType>) {
@@ -733,12 +749,11 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun showAddresses(
         bookmarkedAddresses: ArrayList<Address>, otherAddresses: ArrayList<Address>
     ) {
-        val hasOrderDeliveryAddress = !CacheUtil.getInstance().orderDeliveryAddress.isNullOrEmpty()
-        if (deliveryTabSelected || typeOrder == OrderType.DELIVERY.value) {
-            if (CacheUtil.getInstance().orderAddress != null) {
-            } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
-            } else {
-            }
+        binding.deliveryLayout.savedAddressesLabel.isVisible = bookmarkedAddresses.isNotEmpty()
+        deliveryAddressAdapter.updateDeliveryList(bookmarkedAddresses)
+        val selectedAddress = CacheUtil.getInstance().orderAddress
+        if (selectedAddress != null) {
+            deliveryAddressAdapter.updateSelectedId(selectedAddress.id)
         }
     }
 
@@ -747,7 +762,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         activity?.cast<BaseActivity> {
             it.showLoadingDialog()
         }
-
         if (redownloadMenu) {
             orderPresenter.getDiffMenuCdn(address)
         } else {
@@ -755,12 +769,14 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
     }
 
-    override fun selectAddressWork(position: Int) {}
+    override fun selectAddressWork(position: Int) {
+
+    }
+
     override fun selectAddressOther(address: Address, redownloadMenu: Boolean) {
         activity?.cast<BaseActivity> {
             it.showLoadingDialog()
         }
-
         if (redownloadMenu) {
             orderPresenter.getDiffMenuCdn(address)
         } else {
@@ -1098,14 +1114,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
-        if (CacheUtil.getInstance().orderAddress != null) {
-
-        } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
-
-        } else {
-
-        }
         binding.pickupLayout.location.visibility = View.GONE
         activity?.cast<BaseActivity> {
             it.dismissDialogs()
@@ -1345,10 +1353,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     override fun diffMenuSaved(address: Address?) {
         orderPresenter.removeMukafaaRedemption()
-        if (CacheUtil.getInstance().orderType == OrderType.DELIVERY) {
+        if (CacheUtil.getInstance().orderType == OrderType.DELIVERY || deliveryTabSelected) {
             orderPresenter.getStore(address)
         } else {
-            if (!curbsideTabSelected) {
+            if (dineInTabSelected) {
                 dineInStoresRecyclerViewAdapter?.let { adapter ->
                     orderPresenter.continueStore(
                         true, adapter.selected, null
@@ -1477,8 +1485,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
-            currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {

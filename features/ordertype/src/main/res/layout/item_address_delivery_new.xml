@@ -10,6 +10,7 @@
         android:paddingBottom="@dimen/margin_5dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/deliveryMain"
             android:layout_width="match_parent"
             android:layout_height="61dp"
             android:background="@drawable/bg_deliver"
@@ -17,11 +18,10 @@
             android:paddingEnd="15dp"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/selectedIdentifier"
                 android:layout_width="@dimen/margin_20dp"
                 android:layout_height="@dimen/margin_20dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_circle_unselected"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
