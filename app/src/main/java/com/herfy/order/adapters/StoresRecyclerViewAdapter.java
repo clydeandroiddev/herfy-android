@@ -14,7 +14,7 @@ public class StoresRecyclerViewAdapter extends RecyclerView.Adapter<StoreViewHol
 
     private final OrderContract.Presenter orderPresenter;
 
-    private boolean isDineIn = false;
+    private boolean isDineIn;
     private int selected = -1;
 
     public StoresRecyclerViewAdapter(OrderContract.Presenter orderPresenter, boolean isDineIn) {

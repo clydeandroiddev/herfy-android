@@ -381,6 +381,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
 
         binding.pickupLayout.location.setOnClickListener { initializeLocation() }
+
         activity?.cast<BaseActivity> {
             storesLayoutManager = LinearLayoutManager(activity)
             binding.storesRecyclerView.layoutManager = storesLayoutManager
@@ -388,7 +389,13 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             pickupCurbsideStoresRecyclerViewAdapter =
                 StoresRecyclerViewAdapter(orderPresenter, false)
             binding.continueButton.setOnClickListener { v: View? ->
-                chooseType(it)
+                if (dineInTabSelected) {
+                    continueSelectingType(it, OrderType.DINE_IN)
+                } else if (deliveryTabSelected) {
+                    // TODO go to add address
+                } else {
+                    chooseType(it)
+                }
             }
         }
 
