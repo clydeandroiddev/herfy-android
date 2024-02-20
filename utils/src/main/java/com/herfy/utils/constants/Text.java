@@ -878,4 +878,6 @@ public class Text {
     public static final String YOUR_BAG_LABEL = "your_bag_label";
     public static final String USE_CURRENT_LOCATION = "use_current_location";
     public static final String ADD_NEW_ADDRESS = "add_new_address";
+
+    public static final String KM_AWAY = "km_away";
 }

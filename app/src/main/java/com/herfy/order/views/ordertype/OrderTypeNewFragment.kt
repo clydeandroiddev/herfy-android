@@ -698,8 +698,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     override fun showLocation(isPlace: Boolean, latLng: LatLng, address: String) {
         try {
-//            binding.pickupLayout.locationImage.setImageResource(R.drawable.ic_location_enabled)
-//            binding.pickupLayout.locationImage.setColorFilter(Color.parseColor("#212121"))
             if (locationMarker != null) {
                 locationMarker?.remove()
             }
@@ -975,6 +973,14 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                             val inflater =
                                 activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                             val view = inflater.inflate(R.layout.marker_store_new, null)
+                            val textView =
+                                view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
+                            val distanceValue = StringUtil.getDistance(
+                                store!!.attributes.distance
+                            )
+                            textView.text =
+                                CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                                    .replace("(x)", distanceValue).toLowerCase()
                             view.setOnClickListener {
                                 val directionsBuilder =
                                     Uri.Builder().scheme("https").authority("www.google.com")
@@ -1471,7 +1477,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
+            currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {

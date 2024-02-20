@@ -306,7 +306,7 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
             if (store.getAttributes().getDistance() != -1) {
                 String distanceValue = StringUtil.getDistance(store.getAttributes().getDistance());
                 if (!distanceValue.isEmpty()) {
-                    kmCount.setText(distanceValue);
+                    kmCount.setText(distanceValue.toLowerCase());
                     kmCount.setVisibility(View.VISIBLE);
                 } else {
                     kmCount.setVisibility(View.GONE);
