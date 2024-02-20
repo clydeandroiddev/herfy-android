@@ -30,6 +30,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+
+            <ImageView
+                app:promoImageUri="@{promo.attributes.imageUri}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="Promo image"
+                 />
+
             <ImageButton
                 android:id="@+id/ib_close"
                 android:background="?selectableItemBackground"
@@ -40,13 +48,6 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"/>
 
-            <ImageView
-                app:sliderImageUri="@{promo.attributes.imageUri}"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:contentDescription="Promo image"
-                 />
 
         </FrameLayout>
 

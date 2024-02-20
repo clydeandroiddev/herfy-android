@@ -17,7 +17,6 @@ import com.herfy.home.adapter.PromotionRulesAdapter
 import com.herfy.home.databinding.BottomSheetPromotionDetailBinding
 import com.herfy.utils.base.mvvm.BaseBottomSheetDialogFragment
 import com.herfy.utils.constants.Text
-import com.herfy.utils.extensions.isMet
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.ViewUtil
@@ -114,16 +113,10 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                     if(qty > 0){
                         btnClaim.visibility = View.VISIBLE
                         promoData.promotion?.attributes?.rules?.let {
-                            if (it.isMet()) {
-                                try {
-                                    if (promoData.id.equals(CacheUtil.getInstance().campaign.id, ignoreCase = true)) {
-                                        toRemove = true
-                                        btnClaim.text = CacheUtil.getInstance()
-                                            .getTranslations(Text.REMOVE_PROMO_CAPS, "REMOVE PROMO")
-                                    }
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
+                            if (promoData.id.equals(CacheUtil.getInstance().campaign.id, ignoreCase = true)) {
+                                toRemove = true
+                                btnClaim.text = CacheUtil.getInstance()
+                                    .getTranslations(Text.REMOVE_PROMO_LABEL, "Remove Promo")
                             }
                         }
                     }else {

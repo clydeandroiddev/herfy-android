@@ -12,6 +12,8 @@ import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.PromotionCategory
 import com.herfy.repository.HomeRepository
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
@@ -38,7 +40,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
 ) : BaseViewModel(), PromotionsAdapter.PromotionListener, SliderImageAdapter.SliderListener,
-    PromotionCategoryAdapter.PromotionCategoryListener {
+    PromotionCategoryAdapter.PromotionCategoryListener,
+    PromotionDetailBottomSheet.onAction {
 
     private val _showError = MutableLiveData<ErrorMsgItem>()
     val showError: LiveData<ErrorMsgItem> = _showError
@@ -489,6 +492,12 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun onClickClaimPromo(promo: Campaign) {
+        trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
+        CacheUtil.getInstance().campaign = promo
+        CacheUtil.getInstance().campaignPromotion = promo.getPromotion()
     }
 
 

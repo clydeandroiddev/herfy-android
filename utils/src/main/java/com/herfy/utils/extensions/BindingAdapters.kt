@@ -55,6 +55,45 @@ fun loadSliderImage(imageView: ImageView, sliderImageUri: String?){
 
     }
 }
+
+@BindingAdapter("app:promoImageUri")
+fun loadPromoImage(imageView: ImageView, sliderImageUri: String?){
+    if(!sliderImageUri.isNullOrEmpty()){
+        val imageUrl: String = StringUtil.getCloudflareSliderUrl(
+            Values.SLIDER_IMAGE_WIDTH,
+            Values.SLIDER_IMAGE_HEIGHT,
+            sliderImageUri
+        )
+
+        Glide.with(imageView.context).load(imageUrl)
+            .skipMemoryCache(false)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .listener(object : RequestListener<Drawable>{
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    AppLogger.error(e.toString())
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
+
+            })
+            .into(imageView)
+
+    }
+}
 @BindingAdapter("app:imageSrc")
 fun loadImage(imageView: ImageView, imageSrc: String?){
     val imageURL : String =  if(imageSrc.isNullOrEmpty()) Values.DEFAULT_IMAGE_URL else imageSrc
