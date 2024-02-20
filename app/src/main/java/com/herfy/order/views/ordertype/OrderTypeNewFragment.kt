@@ -1017,7 +1017,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                                     )
                                 )
                             )
-                            storeMarker.setAnchor(0.1f, 1.0f)
+                            storeMarker.setAnchor(0.5f, 0.5f)
                             storeMarker.title = i.toString()
                             googleMap?.animateCamera(
                                 CameraUpdateFactory.newLatLngZoom(
@@ -1427,7 +1427,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     private fun proceedToCurbside() {
-        //TODO Proceed to curbside page
+        showCurbside()
     }
 
     private fun continueSelectingType(it: BaseActivity, otPickupSelected: OrderType) {
@@ -1477,8 +1477,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
-            currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {
