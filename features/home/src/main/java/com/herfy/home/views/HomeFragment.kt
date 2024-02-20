@@ -45,6 +45,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private lateinit var promotionsAdapter: PromotionsAdapter
     private lateinit var promotionCategoryAdapter: PromotionCategoryAdapter
     private var sliderHandler: Handler? = null
+    private lateinit var bottomSliderImageAdapter : SliderImageAdapter
+    private var bottomSliderhandler: Handler? = null
     private var promotionDetailBottomSheet: PromotionDetailBottomSheet? = null
     private val cacheUtilHelper by lazy {
         context?.let {
@@ -60,6 +62,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             setupPromoCategory()
             setupPromotions()
             setupOrderType()
+            setupBottomSlider()
             if(AuthUtil.getInstance().isSignedIn) {
                 setupCustomerLoyalty()
             }else{
@@ -102,6 +105,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         Text.HOW_WILL_YOU_ORDER_TODAY, "How will you order today?"
                     )
                 }
+
+                layoutBottomBanner.tvBannerBottom.text = CacheUtil.getInstance().getTranslations(Text.HERFY_SUPPORT, "Herfy supports the cause")
             }
         }
     }
@@ -395,6 +400,46 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
 
         }
+        viewModel.bottomSlideList.observeNonNull(this) { slides ->
+            binding.apply {
+                layoutBottomBanner.apply {
+                    shimmerBannerBottom.visibility = View.GONE
+                    if (slides.size > 0) {
+                        clBottomBanner.visibility = View.VISIBLE
+                        grpBannerBottom.visibility = View.VISIBLE
+                        bottomSliderImageAdapter.updateImageList(slides)
+                        if (slides.size > 1) {
+                            sdiBannerBottom.visibility = View.VISIBLE
+                            sdiBannerBottom.setViewPager2(vpBannerBottom)
+                        } else {
+                            sdiBannerBottom.visibility = View.GONE
+                        }
+                        bottomSliderhandler?.removeCallbacksAndMessages(null)
+                        bottomSliderhandler = Handler(Looper.getMainLooper())
+                        bottomSliderhandler?.let {
+                            it.apply {
+                                postDelayed(object : Runnable {
+                                    override fun run() {
+                                        var pos = vpBannerBottom.currentItem + 1
+                                        if (pos >= slides.size) {
+                                            pos = 0
+                                            vpBannerBottom.setCurrentItem(pos, false)
+                                        } else {
+                                            vpBannerBottom.currentItem = pos
+                                        }
+                                        bottomSliderhandler?.postDelayed(this, 3000)
+                                    }
+                                }, 3000)
+                            }
+                        }
+                    } else {
+                        clBottomBanner.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+
     }
 
     private fun orderTypeClick(orderType: OrderType) {
@@ -502,6 +547,16 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private fun setupCustomerLoyalty(){
         context?.let { ctx ->
             viewModel.getLoyalty()
+        }
+    }
+
+    private fun setupBottomSlider() {
+        activity?.let {
+            viewModel.getBottomSliders()
+            binding.apply {
+                bottomSliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
+                layoutBottomBanner.vpBannerBottom.adapter = bottomSliderImageAdapter
+            }
         }
     }
 
