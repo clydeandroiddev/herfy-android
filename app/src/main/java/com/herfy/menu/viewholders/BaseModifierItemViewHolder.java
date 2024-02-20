@@ -29,8 +29,7 @@ public abstract class BaseModifierItemViewHolder extends RecyclerView.ViewHolder
     public interface OnAction {
         void onCheckedChanged(boolean isSelected, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem);
 
-        void onQuantityChanged(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean isQuantityLayoutShow);
-        void onQuantityChangedWithoutVisible(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem);
+        void onQuantityChanged(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem);
     }
 
 }

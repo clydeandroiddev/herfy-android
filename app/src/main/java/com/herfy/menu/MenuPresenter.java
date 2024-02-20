@@ -3389,7 +3389,6 @@ public class MenuPresenter implements MenuContract.Presenter {
             for (ModifierItem item : group.getModifierItems()) {
                 boolean isCheckboxSelected = isSelected && item.getId().equals(modifierItem.getId());
                 item.getAttributes().setSelected(isCheckboxSelected);
-                Log.d("FAFA","Modifier name " + item.getName() + " Selected bai " + isCheckboxSelected);
             }
         } else {
             int selectedItems = 0;
@@ -3397,11 +3396,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             if (group != null) {
                 for (ModifierItem item : group.getModifierItems()) {
                     if (item.getAttributes().isSelected()) {
-                        Log.d("FAFA","Name " + item.getName()  + "Selected");
                         selectedItems += item.getAttributes().getQuantity();
-                    }else {
-//                        Log.d("FAFA","Name " + item.getName()  + "Not selected");
-//                        menuView.showShowModifierCheckBox(false,modifierGroupPosition);
                     }
                 }
 
@@ -3415,9 +3410,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                         if (!isSelected) {
                             item.getAttributes().setQuantity(1);
                         }
-                    }else {
-//                        Log.d("FAFA","Gwapo selected bai " + item.getName()  + "Not selected");
-//                        menuView.showShowModifierCheckBox(false,modifierGroupPosition);
                     }
                 }
             }
@@ -3548,7 +3540,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void changeModifierItemQuantity(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean isQuantityLayoutShow) {
+    public void changeModifierItemQuantity(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem) {
         ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
         ModifierItem eachModifierItem = group.getModifierItems().get(modifierItemPosition);
 //        for (ModifierItem item : group.getModifierItems()) {
@@ -3556,11 +3548,7 @@ public class MenuPresenter implements MenuContract.Presenter {
 //            boolean isCheckboxSelected = isQuantityLayoutShow && item.getId().equals(modifierItem.getId());
 //            item.getAttributes().setShouldShowQuantity(isCheckboxSelected);
 //        }
-        if (eachModifierItem.getId().equals(modifierItem.getId()))
-        {
-            Log.d("FAFA","Is should shgow visible bai " + isQuantityLayoutShow);
-            eachModifierItem.getAttributes().setShouldShowQuantity(isQuantityLayoutShow);
-        }
+
 //        for (ModifierItem item : group.getModifierItems()) {
 //            boolean isShouldShowQuantity = isQuantityLayoutShow && item.getId().equals(modifierItem.getId());
 //            item.getAttributes().setShouldShowQuantity(isShouldShowQuantity);

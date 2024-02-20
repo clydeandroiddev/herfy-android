@@ -282,7 +282,7 @@ public interface MenuContract {
 
         void updateModifierVisibility();
 
-        void changeModifierItemQuantity(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem,boolean isQuantityLayoutShow);
+        void changeModifierItemQuantity(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem);
 
         void onBindSizeViewAtPosition(int position, SizeViewHolder sizeViewHolder);
 

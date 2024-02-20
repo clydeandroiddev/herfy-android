@@ -26,7 +26,6 @@ import com.herfy.menu.MenuContract;
 import com.herfy.productpagedetails.ui.viewholder.util.ArabicUtils;
 import com.herfy.util.ModifierProcessor;
 import com.herfy.util.ModifierProcessorCallback;
-import com.herfy.util.StringUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupAttributes;
@@ -54,7 +53,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
     LinearLayout clickableLayout;
     @BindView(R.id.optionCardView)
     MaterialCardView modifierItemCardView;
-
+    private ModifierItem currentSelectedItem;
     @BindView(R.id.quantityUp)
     ImageButton plus;
     @BindView(R.id.image)
@@ -70,6 +69,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
     ConstraintLayout quantityDownLayout;
     @BindView(R.id.quantityDown)
     MaterialCardView minus;
+    private boolean isQuantityLayoutVisible = false;
 
     private HashMap<Integer, Boolean> showShowQuantity = new HashMap<>();
 
@@ -114,31 +114,34 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
       modifierProcessor.processModifier(modifierItem);
         ModifierGroupAttributes modifierGroupAttributes = modifierGroup.getAttributes();
         final Boolean[] isShouldShowQuantityLayout = {false};
-        Log.d("FAFA","Modifier hash " + modifierItem.hashCode());
-        if (Boolean.TRUE.equals(shouldShowQuantity.get(modifierItemPosition))) {
-            Log.d("FAFA","Name " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + " Is seleceted "  + modifierItem.getAttributes().isShouldShowQuantity());
-            expandView(quantityDownLayout,300,150);
-        } else {
-            if (quantityDownLayout.getVisibility() == View.VISIBLE) {
-                Log.d("FAFA","Already visible called");
-                return;
-            }else {
-                Log.d("FAFA","Collapse called");
-                collapseView(quantityDownLayout, 300, 0);
-            }
-        }
+//        if (modifierItem.getAttributes().isShouldShowQuantity()) {
+//            Log.d("FAFA","Already should " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+//            expandView(quantityDownLayout,300,150);
+//        } else {
+//            if (quantityDownLayout.getVisibility() == View.VISIBLE) {
+//                Log.d("FAFA","Already should bai " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+//                return;
+//            }else {
+//                Log.d("FAFA","Collpase " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+//                collapseView(quantityDownLayout, 300, 0);
+//            }
+//        }
         radioButton.setVisibility(modifierGroupAttributes.getMaximum() == 1 && modifierGroupAttributes.getMinimum() == 1 ? View.VISIBLE : View.GONE);
         check.setVisibility(modifierGroup.getAttributes().getMaximum() > 1 ? View.VISIBLE : View.GONE);
         if (modifierItem.getAttributes().isSelected()) {
+            Log.d("FAFA","Is selected bai" );
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state);
             radioButton.setImageResource(R.drawable.modifier_radio_item_selected);
             check.setImageResource(R.drawable.modifier_item_checked_selected);
+
         }else {
+            Log.d("FAFA","Is selected bai" );
+
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_unselected_state);
             radioButton.setImageResource(R.drawable.modifier_item_radio_unselected);
             check.setImageResource(R.drawable.modifier_item_unselected);
         }
-        quantity.setText(StringUtil.localize(String.valueOf(modifierItem.getAttributes().getQuantity())));
+//        quantity.setText(StringUtil.localize(String.valueOf(modifierItem.getAttributes().getQuantity())));
 
 //        plus.setEnabled(modifierGroup.getAttributes().getMaximum() > 1 &&
 //                modifierItem.getAttributes().isSelected() &&
@@ -186,18 +189,52 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             @Override
             public void onClick(View view) {
                 if (action != null) {
-                    if (quantityDownLayout.getVisibility() == View.VISIBLE) {
-                        Log.d("FAFA","Visible naman siya");
-                        action.onQuantityChangedWithoutVisible(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
+                    Log.d("FAFA","Action is not null");
+                    // Update the visibility of the quantityDownLayout
+                    boolean shouldShowQuantityLayout = modifierGroup.getAttributes().getMaximum() > 1 &&
+                            modifierItem.getAttributes().isSelected() &&
+                            modifierItem.getAttributes().getMaximum() == 1;
+                    quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
+                    Log.d("FAFA","Should show quantity" + shouldShowQuantityLayout);
+                    // Update the visibility state of the current quantityDownLayout
+                    isQuantityLayoutVisible = shouldShowQuantityLayout;
+
+                    // Check if the clicked item is the same as the currently selected item
+                    boolean isSameItemClicked = currentSelectedItem == modifierItem;
+
+                    // If it's not the same item, hide the previous quantityDownLayout and update the currentSelectedItem
+                    if (!isSameItemClicked && currentSelectedItem != null) {
+                        // Hide the previous quantityDownLayout
+                        if (currentSelectedItem != null && isQuantityLayoutVisible) {
+                            Log.d("FAFA","Collapse called");
+                            collapseView(quantityDownLayout, 300, 150);
+                            isQuantityLayoutVisible = false;
+                        }
+                        Log.d("FAFA","Collapse called BAI");
+                        // Update the currentSelectedItem
+                        currentSelectedItem = modifierItem;
                     }else {
-                        quantityDownLayout.setVisibility(modifierGroup.getAttributes().getMaximum() > 1 &&
-                                modifierItem.getAttributes().isSelected() &&
-                                modifierItem.getAttributes().getMaximum() == 1 ? View.VISIBLE : View.GONE);
-                        Log.d("FAFA", "Clicked baii " + (quantityDownLayout.getVisibility() == View.VISIBLE));
-//                    if (modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum()) {
-                        action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE);
+                        Log.d("FAFA","False man");
                     }
 
+                    // If it's the same item and the layout is already visible, toggle the visibility
+                    if (isSameItemClicked && isQuantityLayoutVisible) {
+                        isQuantityLayoutVisible = !isQuantityLayoutVisible;
+                    }
+
+                    // If the layout should be visible and it's not the same item, expand it
+                    if (!isSameItemClicked && shouldShowQuantityLayout) {
+                        Log.d("FAFA","Expanse called");
+                        expandView(quantityDownLayout, 300, 150);
+                        // Call the action to update the quantity after the layout is properly handled
+//                        action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
+                        isQuantityLayoutVisible = true;
+                    }else {
+                        Log.d("FAFA","Not triggered");
+                    }
+
+                }else {
+                    Log.d("FAFA","False bai ");
                 }
             }
         });
@@ -206,7 +243,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             @Override
             public void onClick(View view) {
                 if (action != null && (modifierItem.getAttributes().getQuantity() > 1 || modifierItem.getAttributes().getMinimum() != 1)) {
-                    action.onQuantityChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE);
+                    action.onQuantityChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                 }
             }
         });

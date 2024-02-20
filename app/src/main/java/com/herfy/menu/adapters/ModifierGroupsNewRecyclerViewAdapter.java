@@ -23,7 +23,7 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
     private HashMap<Integer, Boolean> showModifierItemPrice = new HashMap<>();
     private HashMap<Integer, Boolean> shouldShowModifierGroupCheckbox = new HashMap<>();
 
-    private HashMap<Integer, Boolean> shouldShowQuantity= new HashMap<>();
+    private HashMap<Integer, Boolean> shouldShowQuantity = new HashMap<>();
     BaseModifierItemViewHolder.OnAction onAction;
 
     public void setOnAction(BaseModifierItemViewHolder.OnAction  onAction) {

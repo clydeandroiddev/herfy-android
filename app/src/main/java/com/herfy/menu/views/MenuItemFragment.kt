@@ -645,8 +645,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             modifierGroupPosition: Int,
                             modifierGroup: ModifierGroup,
                             modifierItemPosition: Int,
-                            modifierItem: ModifierItem,
-                            isQuantityLayoutShow: Boolean
+                            modifierItem: ModifierItem
                         ) {
                             menuPresenter!!.changeModifierItemQuantity(
                                 add,
@@ -654,30 +653,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 modifierGroup,
                                 modifierItemPosition,
                                 modifierItem,
-                                isQuantityLayoutShow
                             )
                             setSizes(menuItem)
                             shouldReset = false
-                            modifierGroupsAdapter!!.shouldShowQuantity(isQuantityLayoutShow,modifierItemPosition)
+
                             //Trigger calorie count
-                        }
-
-                        override fun onQuantityChangedWithoutVisible(
-                            add: Boolean,
-                            modifierGroupPosition: Int,
-                            modifierGroup: ModifierGroup?,
-                            modifierItemPosition: Int,
-                            modifierItem: ModifierItem?
-                        ) {
-                            menuPresenter!!.changeModifierItemQuantity(
-                                add,
-                                modifierGroupPosition,
-                                modifierGroup,
-                                modifierItemPosition,
-                                modifierItem,
-                                true,
-
-                            )
                         }
                     })
                     binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapter
