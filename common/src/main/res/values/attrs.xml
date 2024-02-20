@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <declare-styleable name="MainToolbar">
+        <attr name="logo" format="reference"/>
+        <attr name="leftButton" format="reference"/>
+        <attr name="rightButton" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="TitleToolbar">
+        <attr name="title" format="string"/>
+        <attr name="navButton" format="reference"/>
+        <attr name="rightButtonColor" format="color"/>
+        <attr name="rightButtonLabel" format="string"/>
+    </declare-styleable>
+</resources>
