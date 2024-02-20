@@ -113,6 +113,10 @@
         <item name="lineHeight">@dimen/line_height_caption</item>
     </style>
 
+    <style name="Styles.Text.Caption.Semibold.Normal" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.Caption.Semibold</item>
+    </style>
+
     <style name="Styles.Text.NavigationLabel" parent="Widget.MaterialComponents.TextView">
         <item name="android:textAppearance">@style/TextAppearance.NavigationLabel</item>
         <item name="lineHeight">@dimen/line_height_navigation_label</item>
