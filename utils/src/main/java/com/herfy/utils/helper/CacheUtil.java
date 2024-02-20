@@ -203,9 +203,9 @@ public class CacheUtil {
                     if (text != null) {
                         if (LocaleUtil.getInstance().isEnglish()) {
                             return text.getString("en_US");
-                        } else if(LocaleUtil.getInstance().isFrench()){
+                        } else if (LocaleUtil.getInstance().isFrench()) {
                             return text.getString("fr");
-                        }else {
+                        } else {
                             return text.getString("ar_SA");
                         }
                     }
@@ -233,9 +233,9 @@ public class CacheUtil {
                     if (text != null) {
                         if (LocaleUtil.getInstance().isEnglish()) {
                             return text.getString("en_US");
-                        } else if(LocaleUtil.getInstance().isFrench()){
+                        } else if (LocaleUtil.getInstance().isFrench()) {
                             return text.getString("fr");
-                        }else {
+                        } else {
                             return text.getString("ar_SA");
                         }
                     }
@@ -940,7 +940,7 @@ public class CacheUtil {
             pair.second.add(menuItem);
         }
 
-        if(!menuItem.getAttributes().getNotes().isEmpty() && pair.second.size() == 1) {
+        if (!menuItem.getAttributes().getNotes().isEmpty() && pair.second.size() == 1) {
             pair.second.get(0).getAttributes().setNotes(menuItem.getAttributes().getNotes());
         }
 
@@ -1031,9 +1031,7 @@ public class CacheUtil {
     }
 
     public OrderType getOrderType() {
-
         int orderType = cacheSharedPreferences.getInt(ORDER_TYPE, OrderType.NONE.getValue());
-
         switch (orderType) {
             case 1:
                 return OrderType.PICKUP;
@@ -1043,6 +1041,10 @@ public class CacheUtil {
                 return OrderType.DELIVERY;
             case 4:
                 return OrderType.CURBSIDE;
+            case 5:
+                return OrderType.EAT_IN;
+            case 6:
+                return OrderType.DRIVE_THRU;
             default:
                 return OrderType.NONE;
         }
@@ -1568,10 +1570,10 @@ public class CacheUtil {
 
     public static List<SupportedCountry> getSupportedCountries(String applicationId, Context context) {
         JSONObject jsonObject = JsonAssetUtil.getJsonObjectAsset(context, applicationId.replace(".", "_") + ".json");
-        if(jsonObject == null) {
+        if (jsonObject == null) {
             jsonObject = JsonAssetUtil.getJsonObjectAsset(context, "SupportedCountry.json");
         }
-        if(jsonObject != null) {
+        if (jsonObject != null) {
             SupportedCountryResponse response = GsonUtil.getGson(jsonObject, SupportedCountryResponse.class);
             return response.data;
         }
@@ -1713,8 +1715,9 @@ public class CacheUtil {
         Set<String> supportedCardTypes = new HashSet<>();
         try {
             supportedCardTypes = new Gson().fromJson(
-                cacheSharedPreferences.getString(SUPPORT_CARD_TYPES, "[]"),
-                new TypeToken<Set<String>>() {}.getType()
+                    cacheSharedPreferences.getString(SUPPORT_CARD_TYPES, "[]"),
+                    new TypeToken<Set<String>>() {
+                    }.getType()
             );
         } catch (Exception e) {
             e.printStackTrace();
@@ -1782,20 +1785,22 @@ public class CacheUtil {
     public boolean isSeparatedMenus() {
         return !getApplication().getAttributes().getOrderTypeMenus().isEmpty();
     }
+
     public void setConsumerData(String data) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(CONSUMER_DATA, data);
         editor.apply();
     }
 
-    public ConsumerData getConsumerData(){
+    public ConsumerData getConsumerData() {
         ConsumerData data = new ConsumerData();
         String consumerdata = cacheSharedPreferences.getString(CONSUMER_DATA, null);
-        if(consumerdata != null && !consumerdata.isEmpty()){
+        if (consumerdata != null && !consumerdata.isEmpty()) {
             data = GsonHelper.gsonFinal().fromJson(consumerdata, ConsumerData.class);
         }
         return data;
     }
+
     public void setTotalAccumulatedPoints(int totalAccumulatedPoints) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putInt(TOTAL_ACCUMULATED_POINTS, totalAccumulatedPoints);

@@ -834,7 +834,6 @@ public class Text {
     public static final String HOW_WILL_YOU_ORDER_TODAY = "how_will_you_order_today";
 
     public static final String CHOOSE_PICKUP_METHOD = "choose_pickup_method";
-    public static final String WALK_IN_PICKUP = "walk_in_pickup";
     public static final String PICKUP_DESCRIPTION = "pickup_description";
     public static final String CURBSIDE_PICKUP_LABEL = "curbside_pickup_label";
     public static final String CURBSIDE_DESCRIPTION = "curbside_description";
@@ -880,4 +879,9 @@ public class Text {
     public static final String ADD_NEW_ADDRESS = "add_new_address";
 
     public static final String KM_AWAY = "km_away";
+
+    public static final String WALK_IN_PICKUP = "walk_in_pickup";
+
+    public static final String DRIVE_THRU_PICKUP = "drive_thru_pickup";
+
 }

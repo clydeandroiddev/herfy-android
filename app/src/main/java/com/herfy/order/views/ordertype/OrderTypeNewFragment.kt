@@ -1017,7 +1017,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                                     )
                                 )
                             )
-                            storeMarker.setAnchor(0.5f, 0.5f)
+                            storeMarker.setAnchor(0.5f, 1f)
                             storeMarker.title = i.toString()
                             googleMap?.animateCamera(
                                 CameraUpdateFactory.newLatLngZoom(
@@ -1434,9 +1434,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         it.showLoadingDialog()
         val cachedOrderType = CacheUtil.getInstance().orderType
         if (orderTypeSelected == OrderType.PICKUP) {
-            if (otPickupSelected == OrderType.CURBSIDE && CacheUtil.getInstance().curbsideCar != null) {
-                orderTypeSelected = OrderType.CURBSIDE
-            } else if (otPickupSelected == OrderType.DRIVE_THRU) {
+            if (otPickupSelected == OrderType.DRIVE_THRU) {
                 orderTypeSelected = OrderType.DRIVE_THRU
             } else if (otPickupSelected == OrderType.EAT_IN) {
                 orderTypeSelected = OrderType.EAT_IN
@@ -1477,7 +1475,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
+            currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {
