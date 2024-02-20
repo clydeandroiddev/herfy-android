@@ -886,4 +886,9 @@ public class Text {
 
     public static final String SAVED_ADDRESSES = "saved_addresses";
 
+    public static final String SELECT_AREA = "select_area";
+
+    public static final String MOVE_THE_PIN = "move_the_pin";
+    public static final String CONFIRM_DELIVERY_LOCATION = "confirm_delivery_location";
+
 }

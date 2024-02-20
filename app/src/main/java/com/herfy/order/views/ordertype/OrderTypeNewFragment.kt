@@ -64,6 +64,7 @@ import com.herfy.order.adapters.StoresRecyclerViewAdapter
 import com.herfy.order.views.BookmarkAddressDialogFragment
 import com.herfy.order.views.DineInTableNumberDialogFragment
 import com.herfy.order.views.OrderTypeDialogFragment
+import com.herfy.order.views.ordertype.addaddress.AddNewAddressActivity
 import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
 import com.herfy.util.*
 import com.herfy.util.StringUtil
@@ -339,6 +340,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             navigateUp()
         }
 
+        binding.deliveryLayout.userCurrentLocation.setOnClickListener {
+            goToAddAddress(true)
+        }
+
         val supportMapFragment =
             childFragmentManager.findFragmentById(R.id.order_type_map) as SupportMapFragment?
         supportMapFragment?.getMapAsync { map ->
@@ -409,7 +414,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 if (dineInTabSelected) {
                     continueSelectingType(it, OrderType.DINE_IN)
                 } else if (deliveryTabSelected) {
-                    // TODO go to add address
+                    goToAddAddress(false)
                 } else {
                     chooseType(it)
                 }
@@ -431,6 +436,13 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 }
             }
         }
+    }
+
+    private fun goToAddAddress(location: Boolean) {
+        val intent = Intent(activity, AddNewAddressActivity::class.java)
+        intent.putExtra("goToLocation", location)
+        addressLauncher.launch(intent)
+        requireActivity().overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
     }
 
     override fun setupFonts() {
@@ -1486,8 +1498,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
-            currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {
