@@ -884,4 +884,6 @@ public class Text {
 
     public static final String DRIVE_THRU_PICKUP = "drive_thru_pickup";
 
+    public static final String SAVED_ADDRESSES = "saved_addresses";
+
 }

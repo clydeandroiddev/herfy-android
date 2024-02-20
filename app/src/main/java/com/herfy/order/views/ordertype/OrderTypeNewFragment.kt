@@ -429,6 +429,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         binding.dineInButton.text = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
         binding.deliveryLayout.useCurrentLocationLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.USE_CURRENT_LOCATION, "Use current location")
+        binding.deliveryLayout.savedAddressesLabel.text = CacheUtil.getInstance()
+            .getTranslations(Text.SAVED_ADDRESSES, "Saved Addresses")
     }
 
     private fun adjustOrderType(withVisibility: Boolean, orderTypes: MutableSet<OrderType>) {

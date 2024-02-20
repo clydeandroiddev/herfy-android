@@ -182,39 +182,29 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                         JSONObject object = new JSONObject(o.toString());
                         JSONArray array = object.getJSONArray("data");
                         com.skylinedynamics.solosdk.api.models.objects.Address latestAddress = null;
-                        //homeAddresses = new ArrayList<>();
-                        //workAddresses = new ArrayList<>();
-                        //bookmarkedAddresses = new ArrayList<>();
-                        //otherAddresses = new ArrayList<>();
                         for (int i = 0; i < array.length(); i++) {
                             com.skylinedynamics.solosdk.api.models.objects.Address address = com.skylinedynamics.solosdk.api.models.objects.Address.parseAddress(array.getJSONObject(i));
                             if (i == 0) {
                                 latestAddress = address;
                             }
                             String label = address.getAttributes().getLabel();
-                            /*if(label.equalsIgnoreCase("Home") || label.equalsIgnoreCase("الصفحة الرئيسية")) {
-                                homeAddresses.add(address);
-                            } else if(label.equalsIgnoreCase("Work") || label.equalsIgnoreCase("عمل")) {
-                                workAddresses.add(address);
-                            }*/
-                            if (label != null && !label.equalsIgnoreCase("null") && !label.isEmpty()) {
-                                bookmarkedAddresses.add(address);
-                            } else {
-                                otherAddresses.add(address);
-                            }
+//                            if (label != null && !label.equalsIgnoreCase("null") && !label.isEmpty()) {
+//
+//                            } else {
+//                                otherAddresses.add(address);
+//                            }
+                            bookmarkedAddresses.add(address);
+
                         }
 
                         if (!fromSave) {
-                            //orderView.showAddresses(homeAddresses, workAddresses, otherAddresses);
                             orderView.showAddresses(bookmarkedAddresses, otherAddresses);
                         } else if (latestAddress != null) {
-
                             CacheUtil.getInstance().setOrderType(OrderType.DELIVERY);
                             CacheUtil.getInstance().setOrderAddress(latestAddress);
-
                             orderView.saveAddress(latestAddress);
-
                         }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                         this.onError(e);
@@ -273,11 +263,11 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         }
 
 
-        if (isMenuSeparate  && cachedOrderType != OrderType.DELIVERY) {
-            if(cartItems.size() > 0 ){
+        if (isMenuSeparate && cachedOrderType != OrderType.DELIVERY) {
+            if (cartItems.size() > 0) {
                 orderView.showPromptChangeOrderType(address);
                 return;
-            }else {
+            } else {
                 redownloadMenu = true;
             }
         }
@@ -346,7 +336,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         String applicationId = CacheUtil.getInstance().getApplication().getId();
         AppDatabase appDatabase = AppDatabase.getInstance();
 
-        if(page > 1 || !appDatabase.storeDao().hasByApplication(applicationId)) {
+        if (page > 1 || !appDatabase.storeDao().hasByApplication(applicationId)) {
 
             LocationApiCall.getInstance().getStoreLocationsWithLatLng(String.valueOf(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), "20", new ApiRequestListener() {
                 @Override
@@ -364,7 +354,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                         List<FacilityEntity> facilityEntities = new ArrayList<>();
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject storeObject = array.getJSONObject(i);
-                            if(hasLocation) {
+                            if (hasLocation) {
                                 StoreDb storeDb = new StoreDb();
                                 storeDb.id = storeObject.getString("id");
                                 storeDb.applicationId = applicationId;
@@ -383,7 +373,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
                         if (object.has("included") && !object.isNull("included")) {
                             JSONArray facilitiesArray = object.getJSONArray("included");
-                            if(hasLocation) {
+                            if (hasLocation) {
                                 for (int i = 0; i < facilitiesArray.length(); i++) {
                                     JSONObject facilityObject = facilitiesArray.getJSONObject(i);
                                     FacilityEntity facilityEntity = new FacilityEntity();
@@ -421,13 +411,13 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                             }
                         }
 
-                        if(hasLocation) {
+                        if (hasLocation) {
                             Executor executor = Executors.newSingleThreadExecutor();
                             executor.execute(new Runnable() {
                                 @Override
                                 public void run() {
                                     try {
-                                        if(page == 1) {
+                                        if (page == 1) {
                                             appDatabase.storeDao().deleteByApplication(applicationId);
                                             appDatabase.facilityDao().deleteByApplication(applicationId);
                                         }
@@ -455,7 +445,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                 @Override
                 public void onError(Object o) {
                     AppLogger.printRetrofitError(o);
-                    orderView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED),null ));
+                    orderView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
                 }
             });
 
@@ -483,7 +473,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                         }
                         List<Facility> facilities = new ArrayList<>();
                         List<FacilityEntity> facilityEntities = appDatabase.facilityDao().findAllByApplicationId(applicationId);
-                        for(FacilityEntity facilityEntity : facilityEntities) {
+                        for (FacilityEntity facilityEntity : facilityEntities) {
                             Facility facility = GsonHelper.gsonFinal().fromJson(facilityEntity.data, Facility.class);
                             facilities.add(facility);
                         }
@@ -527,10 +517,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         Collections.sort(dineInStores, new Comparator<Store>() {
             @Override
             public int compare(Store store1, Store store2) {
-                if (store1 != null && store1.getAttributes() != null &&
-                        store1.getAttributes().getDistance() != null &&
-                        store2 != null && store2.getAttributes() != null &&
-                        store2.getAttributes().getDistance() != null) {
+                if (store1 != null && store1.getAttributes() != null && store1.getAttributes().getDistance() != null && store2 != null && store2.getAttributes() != null && store2.getAttributes().getDistance() != null) {
                     return store1.getAttributes().getDistance().compareTo(store2.getAttributes().getDistance());
                 } else {
                     throw new IllegalStateException("One or more required objects or attributes are null.");
@@ -541,10 +528,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         Collections.sort(pickupCurbsideStores, new Comparator<Store>() {
             @Override
             public int compare(Store store1, Store store2) {
-                if (store1 != null && store1.getAttributes() != null &&
-                        store1.getAttributes().getDistance() != null &&
-                        store2 != null && store2.getAttributes() != null &&
-                        store2.getAttributes().getDistance() != null) {
+                if (store1 != null && store1.getAttributes() != null && store1.getAttributes().getDistance() != null && store2 != null && store2.getAttributes() != null && store2.getAttributes().getDistance() != null) {
                     return store1.getAttributes().getDistance().compareTo(store2.getAttributes().getDistance());
                 } else {
                     throw new IllegalStateException("One or more required objects or attributes are null.");
@@ -608,7 +592,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     @Override
     public void onBindStoreViewAtPosition(boolean isDineIn, int position, StoreViewHolder storeViewHolder, boolean selected) {
         if (isDineIn) {
-            if(position < dineInStores.size()) {
+            if (position < dineInStores.size()) {
                 if (pickupCurbsideStores.size() == 1 && orderTypeCount > 1) {
                     storeViewHolder.setStore(dineInStores.get(0), true);
                     orderView.enableConfirmButton(true, dineInStores.get(0).getAttributes().getName());
@@ -657,9 +641,9 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
     @Override
     public void selectStore(boolean isDineIn, int position) {
-        if(position >= 0) {
+        if (position >= 0) {
             if (isDineIn) {
-                if(position < dineInStores.size()) {
+                if (position < dineInStores.size()) {
                     orderView.selectStore(position, dineInStores.get(position), false);
                 }
             } else if (position < pickupCurbsideStores.size()) {
@@ -673,7 +657,9 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
         selectedAddress = null;
 
-        if (position == -1) { position = 0; }
+        if (position == -1) {
+            position = 0;
+        }
 
         if (store != null) {
             this.store = store;
@@ -777,7 +763,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                orderView.showError(ErrorHandler.getErrorMessage(o, "",CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA)));
+                orderView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA)));
             }
         });
 
@@ -890,7 +876,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                orderView.showError(ErrorHandler.getErrorMessage(o, "",CacheUtil.getInstance().getTranslations(Text.STORE_IS_CLOSED)));
+                orderView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.STORE_IS_CLOSED)));
             }
         });
     }
@@ -900,55 +886,37 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     public void checkUnavailableMenuItems() {
         unavailableMenuItems.clear();
         ArrayList<MenuItem> menuItems = CacheUtil.getInstance().getCart();
-        if(!menuItems.isEmpty() && store != null) {
+        if (!menuItems.isEmpty() && store != null) {
             String orderStoreId = store.getId();
-            Observable.fromIterable(menuItems)
-                    .filter(item -> Observable.fromIterable(item.getModifierGroups())
-                            .filter(modifierGroup -> {
-                                // filter only items with a selected modifier
-                                return Observable.fromIterable(modifierGroup.getModifierItems())
-                                        .any(modifierItem -> modifierItem.getAttributes().isSelected())
-                                        .blockingGet();
-                            })
-                            .any(modifierGroup -> {
-                                boolean isModifierGroupDisabledForLocation = Observable.fromIterable(modifierGroup.getAttributes().getExcludedLocations())
-                                        .map(Object::toString)
-                                        .any(modifierGroupExcludedLocation -> modifierGroupExcludedLocation.equals(orderStoreId))
-                                        .blockingGet();
+            Observable.fromIterable(menuItems).filter(item -> Observable.fromIterable(item.getModifierGroups()).filter(modifierGroup -> {
+                // filter only items with a selected modifier
+                return Observable.fromIterable(modifierGroup.getModifierItems()).any(modifierItem -> modifierItem.getAttributes().isSelected()).blockingGet();
+            }).any(modifierGroup -> {
+                boolean isModifierGroupDisabledForLocation = Observable.fromIterable(modifierGroup.getAttributes().getExcludedLocations()).map(Object::toString).any(modifierGroupExcludedLocation -> modifierGroupExcludedLocation.equals(orderStoreId)).blockingGet();
 
-                                boolean modifierGroupContainsModifierItemThatIsDisabledForLocation = Observable.fromIterable(modifierGroup.getModifierItems())
-                                        .filter(modifierItem -> modifierItem.getAttributes().isSelected())
-                                        .any(modifierItem -> Observable.fromIterable(modifierItem.getAttributes().getExcludedLocations())
-                                                .map(Object::toString)
-                                                .any(modifierItemExcludedLocation -> modifierItemExcludedLocation.equals(orderStoreId))
-                                                .blockingGet()
-                                        )
-                                        .blockingGet();
-                                return isModifierGroupDisabledForLocation || modifierGroupContainsModifierItemThatIsDisabledForLocation;
-                            })
-                            .blockingGet()
-                    )
-                    .forEach(menuItem -> {
-                        unavailableMenuItems.put(menuItem.getId(), menuItem);
-                    });
+                boolean modifierGroupContainsModifierItemThatIsDisabledForLocation = Observable.fromIterable(modifierGroup.getModifierItems()).filter(modifierItem -> modifierItem.getAttributes().isSelected()).any(modifierItem -> Observable.fromIterable(modifierItem.getAttributes().getExcludedLocations()).map(Object::toString).any(modifierItemExcludedLocation -> modifierItemExcludedLocation.equals(orderStoreId)).blockingGet()).blockingGet();
+                return isModifierGroupDisabledForLocation || modifierGroupContainsModifierItemThatIsDisabledForLocation;
+            }).blockingGet()).forEach(menuItem -> {
+                unavailableMenuItems.put(menuItem.getId(), menuItem);
+            });
             Executor executor = Executors.newSingleThreadExecutor();
             executor.execute(() -> {
                 String applicationId = CacheUtil.getInstance().getApplication().getId();
                 AppDatabase appDatabase = AppDatabase.getInstance();
-                for(MenuItem item : menuItems) {
-                    if(!item.isPromo()) {
+                for (MenuItem item : menuItems) {
+                    if (!item.isPromo()) {
                         MenuItemEntity menuItemEntity = appDatabase.menuItemEntityDao().findById(applicationId, item.getId());
                         if (menuItemEntity != null) {
                             boolean isUnavailable = false;
                             MenuCategoryEntity menuCategoryEntity = appDatabase.menuCategoryEntityDao().findById(applicationId, menuItemEntity.getMenuCategoryId());
-                            if(menuCategoryEntity != null) {
+                            if (menuCategoryEntity != null) {
                                 MenuCategory menuCategory = MenuCategoryEntity.Companion.toDomain(menuCategoryEntity);
-                                if(menuCategory.getExcludedLocations().contains(orderStoreId)) {
+                                if (menuCategory.getExcludedLocations().contains(orderStoreId)) {
                                     isUnavailable = true;
                                     unavailableMenuItems.put(item.getId(), item);
                                 }
                             }
-                            if(!isUnavailable) {
+                            if (!isUnavailable) {
                                 MenuItem menuItem = MenuItemEntity.Companion.toDomain(menuItemEntity);
                                 boolean disable = false;
                                 if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
@@ -966,7 +934,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                 if (unavailableMenuItems.size() > 0) {
                     orderView.showUnavailableMenuItems();
                 } else {
-                    if(CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
+                    if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
                         checkMinimumDeliveryForArea();
                     } else {
                         setOrderType();
@@ -974,7 +942,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                 }
             });
         } else {
-            if(CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
+            if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
                 checkMinimumDeliveryForArea();
             } else {
                 setOrderType();
@@ -1021,15 +989,10 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
     public void checkMinimumDeliveryForArea() {
         DeliveryArea deliveryArea = store.getAttributes().getDeliveryArea();
-        if(deliveryArea != null) {
+        if (deliveryArea != null) {
             Double minimumOrderAmount = deliveryArea.getMinimumOrderAmount();
-            if(minimumOrderAmount != null && minimumOrderAmount != 0) {
-                orderView.showMinimumDeliveryForAreaMessage(
-                    CacheUtil.getInstance().getTranslations(
-                        Text.MINIMUM_DELIVERY_FOR_AREA,
-                        "Delivery to your area is available for orders over (x)."
-                    ).replace("(x)", StringUtil.getFormattedPrice(minimumOrderAmount))
-                );
+            if (minimumOrderAmount != null && minimumOrderAmount != 0) {
+                orderView.showMinimumDeliveryForAreaMessage(CacheUtil.getInstance().getTranslations(Text.MINIMUM_DELIVERY_FOR_AREA, "Delivery to your area is available for orders over (x).").replace("(x)", StringUtil.getFormattedPrice(minimumOrderAmount)));
             } else {
                 setOrderType();
             }
@@ -1126,13 +1089,9 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
             CreateCustomerAddressBody createCustomerAddressBody = null;
 
             if (address != null) {
-                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "",
-                        "", "", "", address.getAddressLine(0), address.getLatitude(), address.getLongitude(),
-                        phoneNumber, note, "");
+                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "", "", "", "", address.getAddressLine(0), address.getLatitude(), address.getLongitude(), phoneNumber, note, "");
             } else if (place != null) {
-                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "",
-                        "", "", "", place.getName(), place.getLatLng().latitude, place.getLatLng().longitude,
-                        phoneNumber, note, "");
+                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "", "", "", "", place.getName(), place.getLatLng().latitude, place.getLatLng().longitude, phoneNumber, note, "");
             }
 
             if (createCustomerAddressBody != null) {
@@ -1268,10 +1227,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                         orderStatus = order.getOrderStatus();
 
                         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
-                        ablyUtil.subscribeToOrderStatusUpdate(
-                            order.getId(),
-                            OrderPresenter.this::onOrderStatusUpdate
-                        );
+                        ablyUtil.subscribeToOrderStatusUpdate(order.getId(), OrderPresenter.this::onOrderStatusUpdate);
 
                         getOrderStatuses();
                         getOrderFeedbackTopics();
@@ -1348,7 +1304,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                orderView.showError(ErrorHandler.getErrorMessage(o, "",CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA)));
+                orderView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA)));
             }
         });
 
@@ -1375,7 +1331,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     @Override
     public Store getStore(boolean isDineIn, int position) {
         if (isDineIn) {
-            if(position < dineInStores.size()) {
+            if (position < dineInStores.size()) {
                 return dineInStores.get(position);
             } else {
                 return null;
@@ -1579,7 +1535,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                orderView.showError(ErrorHandler.getErrorMessage(o,CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                orderView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
             }
         });
     }
@@ -1608,7 +1564,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                 @Override
                 public void onError(Object o) {
                     AppLogger.printRetrofitError(o);
-                    orderView.showMessage(ErrorHandler.getErrorMessage(o ,CacheUtil.getInstance().getTranslations(Text.CANCEL_ORDER_NOT_ALLOWED), null));
+                    orderView.showMessage(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.CANCEL_ORDER_NOT_ALLOWED), null));
                 }
             });
         }
@@ -1790,13 +1746,13 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                     public void onSuccess(Headers headers, Object o) {
                         try {
                             CacheUtil.getInstance().setReloadDifferentMenu(true);
-                            if(headers.names().contains("last-modified")) {
+                            if (headers.names().contains("last-modified")) {
                                 CacheUtil.getInstance().setMenuCdnLastModified(headers.get("last-modified"));
                             }
                             String objectString = o.toString();
                             JSONObject object = new JSONObject(objectString);
                             cachedCountryMenu(objectString);
-                            parseMenu(object,address);
+                            parseMenu(object, address);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             this.onError("");
@@ -2006,8 +1962,9 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
             CacheUtil.getInstance().setCountryCachedTime(applicationId, System.currentTimeMillis());
         }
     }
+
     @Override
-    public void setSelectedAddress(@NonNull com.skylinedynamics.solosdk.api.models.objects.Address address){
+    public void setSelectedAddress(@NonNull com.skylinedynamics.solosdk.api.models.objects.Address address) {
         this.selectedAddress = address;
     }
 
