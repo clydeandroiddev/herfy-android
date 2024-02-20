@@ -389,6 +389,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             deliveryAddressAdapter = DeliveryAddressAdapter(
                 ArrayList(), object : DeliveryAddressAdapter.AddressListener {
                     override fun onSelectedAddress(address: Address, position: Int) {
+                        deliveryAddressAdapter.updateSelectedId(address.id)
                         CacheUtil.getInstance().orderType = OrderType.DELIVERY
                         orderPresenter.selectAddress(position, address)
                     }
@@ -1485,7 +1486,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
+            currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {

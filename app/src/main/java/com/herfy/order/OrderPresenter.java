@@ -14,9 +14,6 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.BuildConfig;
 import com.herfy.ably.AblyUtil;
-import com.herfy.model.SupportedCountry;
-import com.herfy.utils.analytics.MixpanelUtil;
-import com.herfy.utils.constants.Text;
 import com.herfy.database.AppDatabase;
 import com.herfy.database.entities.AllergenDb;
 import com.herfy.database.entities.FacilityEntity;
@@ -29,13 +26,20 @@ import com.herfy.database.entities.ModifierItemDb;
 import com.herfy.database.entities.StoreDb;
 import com.herfy.database.responses.MenuCategoryItemResponse;
 import com.herfy.location.FusedLocationProvider;
+import com.herfy.model.SupportedCountry;
 import com.herfy.order.viewholders.AddressViewHolder;
 import com.herfy.order.viewholders.StoreViewHolder;
 import com.herfy.order.viewholders.TimeLineViewHolder;
+import com.herfy.util.AppLogger;
+import com.herfy.util.StringUtil;
+import com.herfy.utils.analytics.MixpanelUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.ApiRequestWithHeadersListener;
@@ -63,10 +67,6 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddres
 import com.skylinedynamics.solosdk.api.models.requestbodies.OrderFeedbackBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerAddressBody;
 import com.skylinedynamics.solosdk.util.GsonHelper;
-import com.herfy.util.AppLogger;
-import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.utils.handler.ErrorHandler;
-import com.herfy.util.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -253,7 +253,6 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
     @Override
     public void selectAddress(int position, com.skylinedynamics.solosdk.api.models.objects.Address address) {
-
         OrderType cachedOrderType = CacheUtil.getInstance().getOrderType();
         ArrayList<MenuItem> cartItems = CacheUtil.getInstance().getCart();
         boolean isMenuSeparate = CacheUtil.getInstance().isSeparatedMenus();
@@ -261,8 +260,6 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         if (cachedOrderType != OrderType.NONE) {
             redownloadMenu = false;
         }
-
-
         if (isMenuSeparate && cachedOrderType != OrderType.DELIVERY) {
             if (cartItems.size() > 0) {
                 orderView.showPromptChangeOrderType(address);
@@ -273,28 +270,17 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         }
 
         CacheUtil.getInstance().setOrderType(OrderType.DELIVERY);
-        //CacheUtil.getInstance().setOrderAddress(address);
         selectedAddress = address;
         String label = address.getAttributes().getLabel();
-
-        /*if(label.equalsIgnoreCase("Home") || label.equalsIgnoreCase("الصفحة الرئيسية")) {
-            orderView.selectAddressHome(position);
-        } else if(label.equalsIgnoreCase("Work") || label.equalsIgnoreCase("عمل")) {
-            orderView.selectAddressWork(position);
-        }*/
         if (label != null && !label.equalsIgnoreCase("null") && !label.isEmpty()) {
             orderView.selectAddressHome(address, redownloadMenu);
         } else {
             orderView.selectAddressOther(address, redownloadMenu);
         }
-
     }
 
     @Override
     public com.skylinedynamics.solosdk.api.models.objects.Address getAddressHome(int position) {
-        /*if(position < homeAddresses.size()) {
-            return homeAddresses.get(position);
-        }*/
         if (position < bookmarkedAddresses.size()) {
             return bookmarkedAddresses.get(position);
         }
