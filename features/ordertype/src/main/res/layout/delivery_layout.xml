@@ -9,6 +9,7 @@
         android:background="@color/order_type_bg_color">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/userCurrentLocation"
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_marginStart="16dp"
@@ -43,6 +44,33 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.card.MaterialCardView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/savedAddressesLabel"
+            style="@style/Styles.Text.Title3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@id/userCurrentLocation"
+            app:layout_constraintTop_toBottomOf="@id/userCurrentLocation"
+            tools:text="Saved Addresses" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/addressList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:clipToPadding="false"
+            android:paddingBottom="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/savedAddressesLabel"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_address_delivery" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
