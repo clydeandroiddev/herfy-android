@@ -891,5 +891,5 @@ public class Text {
     public static final String MOVE_THE_PIN = "move_the_pin";
     public static final String CONFIRM_DELIVERY_LOCATION = "confirm_delivery_location";
     public static final String NO_SAVED_ADDRESSES_FOUND = "no_saved_addresses_found";
-
+    public static final String SAVE_AND_CONTINUE = "save_and_continue";
 }

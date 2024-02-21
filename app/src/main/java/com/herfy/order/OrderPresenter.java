@@ -187,12 +187,6 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                             if (i == 0) {
                                 latestAddress = address;
                             }
-                            String label = address.getAttributes().getLabel();
-//                            if (label != null && !label.equalsIgnoreCase("null") && !label.isEmpty()) {
-//
-//                            } else {
-//                                otherAddresses.add(address);
-//                            }
                             bookmarkedAddresses.add(address);
 
                         }
@@ -687,6 +681,11 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
             }
         }
         return "";
+    }
+
+    @Override
+    public Address getCurrentAddress() {
+        return address;
     }
 
     @Override
@@ -1395,9 +1394,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                 if (store != null) {
                     originPosition = new LatLng(store.getAttributes().getLat(), store.getAttributes().getLng());
                 }
-
                 destinationPosition = new LatLng(order.getCustomerLat(), order.getCustomerLng());
-
                 break;
         }
 

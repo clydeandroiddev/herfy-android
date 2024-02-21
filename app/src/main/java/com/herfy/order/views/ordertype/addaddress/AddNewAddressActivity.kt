@@ -44,7 +44,6 @@ import com.herfy.ordertype.databinding.AddressNewActivityBinding
 import com.herfy.util.AppLogger
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
-import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.Address
@@ -64,6 +63,8 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     private lateinit var googleMap: GoogleMap
 
     private lateinit var locationMarker: Marker
+
+    private lateinit var addAddressDialog: AddAddressDialog
 
     private var permissions = false
 
@@ -111,6 +112,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         binding.continueButton.text = CacheUtil.getInstance().getTranslations(
             Text.CONFIRM_DELIVERY_LOCATION, "Confirm delivery location"
         )
+
+        binding.continueButton.setOnClickListener {
+            proceedToAddAddress()
+        }
 
         val supportMapFragment =
             supportFragmentManager.findFragmentById(R.id.address_map) as SupportMapFragment?
@@ -287,6 +292,32 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng!!, 15f))
 
         dismissDialogs()
+    }
+
+    private fun dismissAddressDialog() {
+        try {
+            addAddressDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun proceedToAddAddress() {
+        dismissAddressDialog()
+        addAddressDialog = AddAddressDialog.newInstance(orderPresenter.currentAddress,
+            object : AddAddressDialog.OnSubmit {
+                override fun onSuccess() {
+                    dismissAddressDialog()
+                }
+
+                override fun exit() {
+                    dismissAddressDialog()
+                }
+
+            })
+        addAddressDialog.show(
+            this.supportFragmentManager, AddAddressDialog::class.java.simpleName
+        )
     }
 
     override fun showAddresses(
