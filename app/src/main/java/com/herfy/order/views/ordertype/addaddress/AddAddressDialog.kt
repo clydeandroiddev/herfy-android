@@ -1,21 +1,26 @@
 package com.herfy.order.views.ordertype.addaddress
 
-import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Address
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import android.view.WindowManager
+import androidx.fragment.app.DialogFragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.google.android.gms.maps.model.LatLng
+import com.herfy.common.utils.staticMap
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.DialogAddAddressBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
-import io.shipbook.shipbooksdk.Log
 
-class AddAddressDialog : BottomSheetDialogFragment() {
+class AddAddressDialog : DialogFragment() {
 
     private var onSubmit: OnSubmit? = null
 
@@ -40,9 +45,18 @@ class AddAddressDialog : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return BottomSheetDialog(requireContext(), theme).apply {
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    override fun onStart() {
+        super.onStart()
+        val dialog = dialog
+        if (dialog != null) {
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = ViewGroup.LayoutParams.MATCH_PARENT
+            dialog.window!!.setLayout(width, height)
+            dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+            val typedValue = TypedValue()
+            dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            dialog.window!!.statusBarColor = typedValue.data
         }
     }
 
@@ -61,11 +75,17 @@ class AddAddressDialog : BottomSheetDialogFragment() {
                 onSubmit?.exit()
                 dismiss()
             }
+
             address?.let {
-                Log.e("ADADADADADADAD", "ADADADADAD:" + it.featureName)
-                Log.e("ADADADADADADAD", "ADADADADAD:" + it.getAddressLine(0))
-                Log.e("ADADADADADADAD", "ADADADADAD:" + it.latitude)
-                Log.e("ADADADADADADAD", "ADADADADAD:" + it.longitude)
+                Glide.with(requireActivity()).load(
+                    LatLng(
+                        it.latitude, it.longitude
+                    ).staticMap(requireActivity().resources.getString(com.herfy.R.string.google_maps_api_key))
+                ).apply(RequestOptions.centerInsideTransform())
+                    .placeholder(com.herfy.R.drawable.imagepicker_image_placeholder)
+                    .diskCacheStrategy(
+                        DiskCacheStrategy.ALL
+                    ).into(staticMap)
             }
 
         }
@@ -73,10 +93,10 @@ class AddAddressDialog : BottomSheetDialogFragment() {
 
     companion object {
         fun newInstance(address: Address?, listener: OnSubmit): AddAddressDialog {
-            val choosePickupTypeDialogFragment = AddAddressDialog()
-            choosePickupTypeDialogFragment.onSubmit = listener
-            choosePickupTypeDialogFragment.address = address
-            return choosePickupTypeDialogFragment
+            val addressDialogFragment = AddAddressDialog()
+            addressDialogFragment.onSubmit = listener
+            addressDialogFragment.address = address
+            return addressDialogFragment
         }
     }
 }

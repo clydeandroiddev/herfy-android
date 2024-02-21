@@ -13,6 +13,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -75,6 +76,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         binding = AddressNewActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         orderPresenter = OrderPresenter(this)
+        orderPresenter.setGeocoder(Geocoder(this, LocaleUtil.getInstance().createLocale()))
         orderPresenter.start()
     }
 
@@ -304,7 +306,8 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     private fun proceedToAddAddress() {
         dismissAddressDialog()
-        addAddressDialog = AddAddressDialog.newInstance(orderPresenter.currentAddress,
+        addAddressDialog = AddAddressDialog.newInstance(
+            orderPresenter.currentAddress,
             object : AddAddressDialog.OnSubmit {
                 override fun onSuccess() {
                     dismissAddressDialog()
