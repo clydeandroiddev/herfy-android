@@ -905,4 +905,8 @@ public class Text {
     public static final String NOTE_FOR_THE_DRIVER_HINT = "note_for_the_driver_hint";
 
     public static final String ADD_LABEL = "add_label";
+
+    public static final String CHOOSE_YOUR_CURBSIDE_VEHICLE = "choose_your_curbside_vehicle";
+
+    public static final String ADD_NEW_VEHICLE = "add_new_vehicle";
 }

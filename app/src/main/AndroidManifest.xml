@@ -225,6 +225,10 @@
             android:screenOrientation="portrait"
             android:taskAffinity="" />
         <activity
+            android:name=".curbside.curbsidenew.CurbsideNewActivity"
+            android:screenOrientation="portrait"
+            android:taskAffinity="" />
+        <activity
             android:name="com.herfy.addresses.views.AddressesActivity"
             android:screenOrientation="portrait"
             android:taskAffinity="" />

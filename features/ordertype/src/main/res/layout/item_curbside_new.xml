@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="6dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/chooseCurbside"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_choose"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            app:layout_constraintTop_toTopOf="parent">>
+
+            <ImageView
+                android:id="@+id/curbsideEllipse"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_curbside_item_type"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/curbsideBrand"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_curbside_blank_brand"
+                app:layout_constraintBottom_toBottomOf="@id/curbsideEllipse"
+                app:layout_constraintEnd_toEndOf="@id/curbsideEllipse"
+                app:layout_constraintStart_toStartOf="@id/curbsideEllipse"
+                app:layout_constraintTop_toTopOf="@id/curbsideEllipse" />
+
+            <ImageView
+                android:id="@+id/selectedIdentifier"
+                android:layout_width="@dimen/margin_20dp"
+                android:layout_height="@dimen/margin_20dp"
+                android:src="@drawable/ic_curbside_circle_unselected"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/curbsidePlateNumber"
+                style="@style/Styles.Text.Caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:paddingStart="10dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="4dp"
+                android:textColor="#101010"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@id/selectedIdentifier"
+                app:layout_constraintStart_toEndOf="@id/curbsideEllipse"
+                app:layout_constraintTop_toTopOf="@id/curbsideEllipse"
+                tools:text="KLK 899" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/curbsideAdded"
+                style="@style/Styles.Text.Footnote"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="2dp"
+                android:maxLines="2"
+                android:paddingStart="10dp"
+                android:paddingEnd="4dp"
+                android:paddingBottom="5dp"
+                android:textColor="#101010"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/curbsideEllipse"
+                app:layout_constraintEnd_toStartOf="@id/selectedIdentifier"
+                app:layout_constraintStart_toEndOf="@id/curbsideEllipse"
+                tools:text="Added: Feb 19, 2024" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

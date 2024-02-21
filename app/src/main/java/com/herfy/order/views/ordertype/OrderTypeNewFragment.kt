@@ -53,6 +53,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartDialogFragment
 import com.herfy.cart.views.CartFragment
+import com.herfy.curbside.curbsidenew.CurbsideNewActivity
 import com.herfy.ext.cast
 import com.herfy.font.FontHandler
 import com.herfy.location.FusedLocationProvider
@@ -1150,9 +1151,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun showCurbside() {
         activity?.let {
-            val intent = Intent(it, NavigationActivity::class.java)
-            intent.putExtra("navigation", R.id.nav_curbside)
-            intent.putExtra("curbside", true)
+            val intent = Intent(it, CurbsideNewActivity::class.java)
             curbsideLauncher.launch(intent)
         }
     }
@@ -1497,7 +1496,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
+            currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {
