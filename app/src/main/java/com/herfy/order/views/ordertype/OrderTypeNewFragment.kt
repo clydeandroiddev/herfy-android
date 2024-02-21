@@ -460,6 +460,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             .getTranslations(Text.USE_CURRENT_LOCATION, "Use current location")
         binding.deliveryLayout.savedAddressesLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SAVED_ADDRESSES, "Saved Addresses")
+        binding.deliveryLayout.emptyStateLabel.text =
+            CacheUtil.getInstance()
+                .getTranslations(Text.NO_SAVED_ADDRESSES_FOUND, "No saved addresses found.")
     }
 
     private fun adjustOrderType(withVisibility: Boolean, orderTypes: MutableSet<OrderType>) {
@@ -762,7 +765,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun showAddresses(
         bookmarkedAddresses: ArrayList<Address>, otherAddresses: ArrayList<Address>
     ) {
-        binding.deliveryLayout.savedAddressesLabel.isVisible = bookmarkedAddresses.isNotEmpty()
+        binding.deliveryLayout.emptyState.isVisible = bookmarkedAddresses.isEmpty()
         deliveryAddressAdapter.updateDeliveryList(bookmarkedAddresses)
         val selectedAddress = CacheUtil.getInstance().orderAddress
         if (selectedAddress != null) {

@@ -127,6 +127,7 @@
             android:paddingEnd="20dp"
             android:textColor="@color/white"
             android:textSize="12sp"
+            app:iconSize="10dp"
             app:icon="@drawable/ic_arrow_right"
             app:iconGravity="textEnd"
             app:iconPadding="6dp"

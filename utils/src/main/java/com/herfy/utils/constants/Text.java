@@ -221,7 +221,7 @@ public class Text {
     public static final String OPTIONS = "options";
     public static final String QUANTITY = "quantity";
     public static final String ITEM_QUANTITY = "item_quantity";
-    public static final String REQUIRED ="required";
+    public static final String REQUIRED = "required";
     public static final String RATING_SENT = "rating_sent";
     public static final String INGREDIENTS = "ingredients";
     public static final String SIGN_IN_MESSAGE = "sign_in_message";
@@ -855,7 +855,7 @@ public class Text {
     public static final String ABOUT_US_LABEL = "about_us_label";
     public static final String TERMS_LABEL = "terms_label";
     public static final String SOCIAL_MEDIA_LABEL = "social_media_label";
-    public static final String FAVOURITES_LABEL ="favourites_label";
+    public static final String FAVOURITES_LABEL = "favourites_label";
     public static final String GET_STARTED_LABEL = "get_started_label";
     public static final String SAR_AMOUNT = "sar_amount";
     public static final String DEBIT_CREDIT_CARD = "debit_credit_card";
@@ -890,5 +890,6 @@ public class Text {
 
     public static final String MOVE_THE_PIN = "move_the_pin";
     public static final String CONFIRM_DELIVERY_LOCATION = "confirm_delivery_location";
+    public static final String NO_SAVED_ADDRESSES_FOUND = "no_saved_addresses_found";
 
 }

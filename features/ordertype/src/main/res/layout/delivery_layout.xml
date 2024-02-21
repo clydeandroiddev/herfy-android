@@ -52,11 +52,41 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:textSize="18sp"
-            android:visibility="gone"
-            tools:visibility="visible"
             app:layout_constraintStart_toStartOf="@id/userCurrentLocation"
             app:layout_constraintTop_toBottomOf="@id/userCurrentLocation"
             tools:text="Saved Addresses" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="center"
+            android:id="@+id/emptyState"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/savedAddressesLabel">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_empty_address" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/emptyStateLabel"
+                style="@style/Styles.Text.Footnote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textColor="#1C1C1E"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@id/userCurrentLocation"
+                app:layout_constraintTop_toBottomOf="@id/userCurrentLocation"
+                tools:text="No saved addresses found."
+                tools:visibility="visible" />
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/addressList"
@@ -73,6 +103,7 @@
             app:layout_constraintTop_toBottomOf="@id/savedAddressesLabel"
             tools:itemCount="3"
             tools:listitem="@layout/item_address_delivery_new" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
