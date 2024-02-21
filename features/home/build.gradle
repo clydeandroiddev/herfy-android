@@ -82,6 +82,8 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation project(path: ':data:database')
     implementation project(path: ':data:model')
+    implementation project(path: ':data:repository')
+    implementation project(path: ':commonStyles')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

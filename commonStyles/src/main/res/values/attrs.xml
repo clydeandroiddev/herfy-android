@@ -34,6 +34,7 @@
     <attr name="textSubheadlineMediumStyle" format="reference" />
     <attr name="textFootnoteStyle" format="reference" />
     <attr name="textCaptionStyle" format="reference" />
+    <attr name="textCaptionRegularStyle" format="reference" />
     <attr name="textCaptionSemiboldStyle" format="reference" />
     <attr name="textNavigationLabelStyle" format="reference" />
 </resources>

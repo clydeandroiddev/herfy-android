@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.reflect.TypeToken
 import com.skylinedynamics.solosdk.api.models.objects.Application
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import com.skylinedynamics.solosdk.util.GsonHelper
 import org.json.JSONException
@@ -79,14 +81,50 @@ class CacheUtilHelper(val context : Context) {
         } else null
     }
 
+    fun getOrderType(): OrderType {
+        val orderType: Int? = pref()[ORDER_TYPE, OrderType.NONE.value]
+        return when (orderType) {
+            1 -> OrderType.PICKUP
+            2 -> OrderType.DINE_IN
+            3 -> OrderType.DELIVERY
+            4 -> OrderType.CURBSIDE
+            else -> OrderType.NONE
+        }
+    }
+
+    fun getCartQuantity(result: (Int) -> Unit) {
+        val cartMenuItems: String? = pref()[CART_MENU_ITEMS, null]
+        cartMenuItems?.let {
+            val menuItems: List<MenuItem> = GsonHelper.gsonFinal().fromJson(
+                cartMenuItems,
+                object : TypeToken<ArrayList<MenuItem?>?>() {}.type
+            );
+
+            var quantity = 0
+            for (menuItem in menuItems) {
+                quantity += menuItem.attributes.quantity
+            }
+            if (CacheUtil.getInstance().couponCode != null && CacheUtil.getInstance().couponMenuItem != null) {
+                quantity += CacheUtil.getInstance().couponMenuItem.attributes.quantity
+            }
+            if (CacheUtil.getInstance().campaign != null && CacheUtil.getInstance().campaignPromotion != null && CacheUtil.getInstance().campaignPromotionMenuItem != null) {
+                quantity += CacheUtil.getInstance().campaignPromotionMenuItem.attributes.quantity
+            }
+            result(quantity)
+        } ?: run {
+            result(0)
+        }
+    }
+
     companion object {
 
-        const val CACHE = "Cache"
+        private const val CACHE = "Cache"
         const val SLIDER_ID = "SliderId"
         const val ORDER_TYPE = "OrderType"
         private const val TRANSLATIONS = "Translations"
         private const val APPLICATION = "Application"
         private const val ORDER_STORE = "OrderStore"
+        private const val CART_MENU_ITEMS = "CartMenuItems"
         inline fun SharedPreferences.edit(operation: (SharedPreferences.Editor) -> Unit) {
             val editor = this.edit()
             operation(editor)

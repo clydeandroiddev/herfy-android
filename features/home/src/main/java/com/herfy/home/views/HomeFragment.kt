@@ -12,7 +12,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.herfy.home.R
+import com.herfy.home.adapter.PromotionCategoryAdapter
 import com.herfy.home.adapter.PromotionsAdapter
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.home.databinding.FragmentHomeBinding
@@ -27,8 +29,8 @@ import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.NavigationUtils
-import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.ViewUtil
+import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
@@ -41,6 +43,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     override val layout: Int = R.layout.fragment_home
     private lateinit var sliderImageAdapter: SliderImageAdapter
     private lateinit var promotionsAdapter: PromotionsAdapter
+    private lateinit var promotionCategoryAdapter: PromotionCategoryAdapter
     private var sliderHandler: Handler? = null
     private var promotionDetailBottomSheet: PromotionDetailBottomSheet? = null
     private val cacheUtilHelper by lazy {
@@ -54,6 +57,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.getMenuCategory()
         binding.apply {
             setupSlider()
+            setupPromoCategory()
             setupPromotions()
             setupOrderType()
             if(AuthUtil.getInstance().isSignedIn) {
@@ -70,7 +74,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         binding.apply {
             cacheUtilHelper?.let { cacheHelper ->
                 layoutPromotions.tvPromotions.text =
-                    cacheHelper.getTranslations(Text.PROMOS, "PROMOTIONS")
+                    cacheHelper.getTranslations(Text.PROMOTIONS, "PROMOTIONS")
                 layoutCatering.apply {
 
                     tvCaterTitle.text  = cacheHelper.getTranslations(Text.CATER_WITH_HERFY, "Cater with Herfy"
@@ -168,6 +172,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 layoutPromotions.apply {
                     placeholderPromotions.clPlaceholderPromo.visibility = View.GONE
                     if (promos.size > 0) {
+                        clPromotions.visibility = View.VISIBLE
                         grpPromo.visibility = View.VISIBLE
                         promotionsAdapter.updatePromoList(promos)
                     } else {
@@ -229,8 +234,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.showPromo.observeNonNull(this) {
-            it.getContentIfNotHandled()?.let {
-                promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(it)
+            it.getContentIfNotHandled()?.let {promo ->
+                promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(promo, object : PromotionDetailBottomSheet.onAction{
+                    override fun onClickClaimPromo(promo: Campaign) {
+
+                    }
+
+                })
                 promotionDetailBottomSheet?.show(
                     childFragmentManager, PromotionDetailBottomSheet::class.java.simpleName
                 )
@@ -276,11 +286,16 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.loyalty.observeNonNull(this){ loyalty ->
+        viewModel.loyalty.observe(this){ loyalty ->
+
             binding.layoutLoyalty.apply {
-                clCustomerLoyalty.visibility = View.VISIBLE
-                tvPoints.text = loyalty.attributes.pointsAccumulated.toString()
-                tierName.text = loyalty.attributes.loyaltyTier.name.toString()
+                loyalty?.let {
+                    clCustomerLoyalty.visibility = View.VISIBLE
+                    tvPoints.text = loyalty.attributes.pointsAccumulated.toString()
+                    tierName.text = loyalty.attributes.loyaltyTier?.name.toString()
+                }?: run {
+                    clCustomerLoyalty.visibility = View.GONE
+                }
             }
         }
 
@@ -340,7 +355,46 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
+        viewModel.promotionCategoryList.observeNonNull(this){ promoCategories ->
+            binding.layoutPromotions.apply {
+                if(promoCategories.size > 0){
+                    promotionCategoryAdapter.updateList(promoCategories)
+                }
+            }
+        }
+        viewModel.updatePromoCategoryList.observeNonNull(this){
+            it.getContentIfNotHandled()?.let {selectedCategory ->
+                promotionCategoryAdapter.updateCategoryList(selectedCategory)
+                binding.layoutPromotions.apply {
+                    rvPromotions.visibility = View.GONE
+                    placeholderPromotions.apply {
+                        shimmerPromotionsTitle.visibility = View.INVISIBLE
+                        shimmerPromotionsCategory.visibility = View.INVISIBLE
+                        shimmerPromotionsList.visibility = View.VISIBLE
+                        clPlaceholderPromo.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
 
+        viewModel.promoFilteredList.observe(this){promos ->
+            binding.apply {
+                layoutPromotions.apply {
+                    placeholderPromotions.clPlaceholderPromo.visibility = View.GONE
+                    promos?.let {
+                        if(it.isNotEmpty()){
+                            rvPromotions.visibility = View.VISIBLE
+                            promotionsAdapter.updatePromoList(promos)
+                        }else {
+                            rvPromotions.visibility = View.GONE
+                        }
+                    }?: run {
+                        rvPromotions.visibility = View.GONE
+                    }
+                }
+            }
+
+        }
     }
 
     private fun orderTypeClick(orderType: OrderType) {
@@ -404,9 +458,11 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         context?.let { ctx ->
             viewModel.getPromotions()
             activity?.let {
-                val itemHeight = (ViewUtil.getScreenWidth(it) / 1.5).toInt()
+                val itemHeight = (ViewUtil.getScreenWidth(it) / 1.65).toInt()
                 promotionsAdapter = PromotionsAdapter(
-                    promoListener = viewModel, itemWidth = 0, itemHeight = itemHeight
+                    promoListener = viewModel, itemWidth = 0, itemHeight = itemHeight,
+                    defaultOrderTypeCount = CacheUtil.getInstance().application.attributes.getOrderTypes().size,
+                    cacheUtil = CacheUtil.getInstance()
                 )
                 binding.apply {
                     layoutPromotions.rvPromotions.apply {
@@ -419,7 +475,23 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
-
+    private fun setupPromoCategory() {
+        context?.let { ctx ->
+            viewModel.getPromotionCategoryList()
+            binding.apply {
+                promotionCategoryAdapter = PromotionCategoryAdapter(categoryListener = viewModel)
+                binding.apply {
+                    layoutPromotions.rvPromoCategory.apply {
+                        adapter = promotionCategoryAdapter
+                        layoutManager =
+                            LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false)
+                        setHasFixedSize(true)
+                        isNestedScrollingEnabled = true
+                    }
+                }
+            }
+        }
+    }
 
     private fun setupOrderType() {
         context?.let {

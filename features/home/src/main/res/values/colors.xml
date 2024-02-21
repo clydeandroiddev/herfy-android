@@ -4,7 +4,9 @@
     <color name="white">#FFF</color>
     <color name="placeholder_color">#cccccc</color>
     <color name="colorPrimary">#0064AC</color>
-    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimaryDark">#55667B</color>
     <color name="colorAccent">#D9E8F3</color>
     <color name="mercury">#FAFBFC</color>
+    <color name="colorPromoCategoryBlue">#E6F0F7</color>
+
 </resources>

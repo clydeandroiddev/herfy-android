@@ -21,11 +21,11 @@ import com.bumptech.glide.request.target.Target
 import com.herfy.R
 import com.herfy.base.BaseDialogFragment
 import com.herfy.databinding.FragmentPromotionsDetailDialogBinding
-import com.herfy.ext.isMet
 import com.herfy.promotions.adapters.PromotionRulesAdapter
 import com.herfy.util.ViewUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.isMet
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.PromotionRules

@@ -4,47 +4,44 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.reflect.TypeToken
 import com.herfy.database.entities.MenuItemEntity
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
-import com.herfy.database.repositories.HomeRepository
+import com.herfy.home.adapter.PromotionCategoryAdapter
 import com.herfy.home.adapter.PromotionsAdapter
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.model.ErrorMsgItem
+import com.herfy.model.PromotionCategory
+import com.herfy.repository.HomeRepository
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.Event
-import com.skylinedynamics.solosdk.api.ApiRequestListener
-import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
-import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyAttributes
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTier
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import com.skylinedynamics.solosdk.api.models.objects.Tier
-import com.skylinedynamics.solosdk.util.AppLogger
-import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
-import io.reactivex.disposables.Disposable
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
 import java.util.Arrays
-import java.util.Collections
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
-) : BaseViewModel(), PromotionsAdapter.PromotionListener, SliderImageAdapter.SliderListener {
+) : BaseViewModel(), PromotionsAdapter.PromotionListener, SliderImageAdapter.SliderListener,
+    PromotionCategoryAdapter.PromotionCategoryListener,
+    PromotionDetailBottomSheet.onAction {
 
     private val _showError = MutableLiveData<ErrorMsgItem>()
     val showError: LiveData<ErrorMsgItem> = _showError
@@ -52,8 +49,11 @@ class HomeViewModel @Inject constructor(
     private val _slideList = MutableLiveData<ArrayList<Slide>>()
     val slideList: LiveData<ArrayList<Slide>> = _slideList
 
-    private val _promotionsList = MutableLiveData<ArrayList<Campaign>>()
-    val promotionsList: LiveData<ArrayList<Campaign>> = _promotionsList
+    private val _promotionsList = MutableLiveData<List<Campaign>>()
+    val promotionsList: LiveData<List<Campaign>> = _promotionsList
+
+    private val _promotionCategoryList = MutableLiveData<List<PromotionCategory>>()
+    val promotionCategoryList: LiveData<List<PromotionCategory>> = _promotionCategoryList
 
     private val _showLink = MutableLiveData<Event<Uri>>()
     val showLink: LiveData<Event<Uri>> = _showLink
@@ -71,8 +71,11 @@ class HomeViewModel @Inject constructor(
     var excludedMenu: ArrayList<MenuCategory> = ArrayList()
     private val excludedCategories = HashMap<String, HashSet<MenuCategory>>()
 
-    private val _loyalty = MutableLiveData<Loyalty>()
-    val loyalty: LiveData<Loyalty> = _loyalty
+    private val _loyalty = MutableLiveData<Loyalty?>()
+    val loyalty: LiveData<Loyalty?> = _loyalty
+
+    private val _updatePromoCategoryList = MutableLiveData<Event<PromotionCategory>>()
+    val updatePromoCategoryList: LiveData<Event<PromotionCategory>> = _updatePromoCategoryList
 
     private val _orderTypes = MutableLiveData<Set<OrderType>>()
     val orderTypes: LiveData<Set<OrderType>> = _orderTypes
@@ -83,16 +86,22 @@ class HomeViewModel @Inject constructor(
 
 
     private val _tier = MutableLiveData<Tier?>()
-    val tier : MutableLiveData<Tier?> = _tier
+    val tier: MutableLiveData<Tier?> = _tier
 
     private val _totalPointsAccumulated = MutableLiveData<Int>()
-    val totalPointsAccumulated : MutableLiveData<Int> = _totalPointsAccumulated
+    val totalPointsAccumulated: MutableLiveData<Int> = _totalPointsAccumulated
 
-    private val _pointsToNextTier= MutableLiveData<Int>()
-    val pointsToNextTier : MutableLiveData<Int> = _pointsToNextTier
+    private val _pointsToNextTier = MutableLiveData<Int>()
+    val pointsToNextTier: MutableLiveData<Int> = _pointsToNextTier
 
     private val _startPoints = MutableLiveData<Int>()
-    val startPoints : MutableLiveData<Int> = _startPoints
+    val startPoints: MutableLiveData<Int> = _startPoints
+
+    private val _promoFilteredList = MutableLiveData<List<Campaign>?>()
+    val promoFilteredList: LiveData<List<Campaign>?> = _promoFilteredList
+
+
+    private var allPromotionsList: List<Campaign>? = null
 
     fun getSliders() {
         invoke {
@@ -102,9 +111,11 @@ class HomeViewModel @Inject constructor(
                         it.cast<ArrayList<Slide>> {
                             _slideList.value = it
                         }
+                    } ?: run {
+                        _slideList.value = arrayListOf()
                     }
                 } else {
-                    _showError.value = ErrorMsgItem(true, homeResponse.message)
+                    _slideList.value = arrayListOf()
                 }
             }
         }
@@ -112,20 +123,29 @@ class HomeViewModel @Inject constructor(
 
     fun getOrderTypes() {
         invoke {
-            _orderTypes.value = homeRepository.getGetOrderTypes()
+            homeRepository.getOrderTypes { res ->
+                res.data?.cast<Set<OrderType>> { orderTypes ->
+                    _orderTypes.value = orderTypes
+                }
+
+            }
         }
     }
 
     fun getPromotions() {
         invoke {
-            homeRepository.getGuestDigitalCoupons(homeRepository.getGetOrderType()) { homeResponse ->
+            homeRepository.getCampaignCancellableAll { homeResponse ->
                 if (homeResponse.success) {
                     homeResponse.data?.let {
                         it.cast<ArrayList<Campaign>> {
                             _promotionsList.value = it
+                            allPromotionsList = it
                         }
+                    } ?: run {
+                        _promotionsList.value = arrayListOf()
                     }
                 } else {
+                    _promotionsList.value = arrayListOf()
                     _showError.value = ErrorMsgItem(true, homeResponse.message)
                 }
             }
@@ -244,7 +264,8 @@ class HomeViewModel @Inject constructor(
         // Ensures that there will always be a tier when loyalty is shown
         Single.zip<List<Tier>, Loyalty, android.util.Pair<Loyalty, List<Tier>>>(
             getTiersObservable(), getLoyaltyObservable()
-        ) { tiers: List<Tier>, loyalty: Loyalty -> android.util.Pair<Loyalty, List<Tier>>(loyalty, tiers)
+        ) { tiers: List<Tier>, loyalty: Loyalty ->
+            android.util.Pair<Loyalty, List<Tier>>(loyalty, tiers)
         }.subscribe(
             { pair: android.util.Pair<Loyalty, List<Tier>> ->
                 var tiers = pair.second
@@ -310,15 +331,15 @@ class HomeViewModel @Inject constructor(
         return Single.create<List<Tier>?> { source: SingleEmitter<List<Tier>?> ->
 
             invoke {
-                homeRepository.getLoyaltyTiers(){homeResponse ->
-                    if(homeResponse.success){
+                homeRepository.getLoyaltyTiers { homeResponse ->
+                    if (homeResponse.success) {
                         homeResponse.data?.let { it ->
                             it.cast<ArrayList<Tier>> {
                                 _tiers.value = it
                                 source.onSuccess(it)
                             }
                         }
-                    }else {
+                    } else {
                         source.onError(
                             Throwable(
                                 CacheUtil.getInstance()
@@ -335,16 +356,19 @@ class HomeViewModel @Inject constructor(
     fun getLoyaltyObservable(): Single<Loyalty?>? {
         return Single.create<Loyalty?> { source: SingleEmitter<Loyalty?> ->
             invoke {
-                homeRepository.getCustomerLoyalty(AuthUtil.getInstance().customer.id){homeResponse ->
-                    if(homeResponse.success){
+                homeRepository.getCustomerLoyalty(AuthUtil.getInstance().customer.id) { homeResponse ->
+                    if (homeResponse.success) {
                         homeResponse.data?.let { it ->
                             it.cast<Loyalty> {
                                 _loyalty.value = it
                                 AuthUtil.getInstance().customerLoyalty = it
                                 source.onSuccess(it)
                             }
+                        } ?: run {
+                            _loyalty.value = null
                         }
-                    }else {
+                    } else {
+                        _loyalty.value = null
                         source.onError(
                             Throwable(
                                 CacheUtil.getInstance()
@@ -357,5 +381,124 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    override fun selectedCategory(category: PromotionCategory) {
+        category.isSelected = true
+        _updatePromoCategoryList.value = Event(category)
+        if (category.orderType == OrderType.NONE) {
+            allPromotionsList?.let {
+                _promoFilteredList.value = it
+            } ?: run {
+                _promoFilteredList.value = null
+            }
+        } else {
+            getPromotionsWith(category.orderType)
+        }
+    }
+
+    private fun getPromotionsWith(orderType: OrderType) {
+        val category = when (orderType) {
+            OrderType.NONE -> ""
+            OrderType.PICKUP -> "pickup"
+            OrderType.DINE_IN -> "eat-in"
+            OrderType.DELIVERY -> "delivery"
+            OrderType.CURBSIDE -> "curbside"
+        }
+
+
+        allPromotionsList?.let { promos ->
+            val filteredList = arrayListOf<Campaign>()
+            if (promos.isNotEmpty() && category.isNotEmpty()) {
+                promos.filter { promo ->
+                    promo.promotion.attributes.rules.isNotEmpty() &&
+                            promo.promotion.attributes.rules.find { rule ->
+                                rule.ruleKey.equals("order-type",true) &&
+                                        rule.text.split(Pattern.compile(","), 0).contains(category)
+                            } != null
+                }.let {
+                    if(it.isNotEmpty()){
+                        filteredList.addAll(it)
+                    }
+                }
+                promos.forEach{
+                    if(it.promotion.attributes.rules.isEmpty()){
+                        filteredList.add(it)
+                    }else if(it.promotion.attributes.rules.find { rules -> rules.ruleKey.equals("order-type") } == null) {
+                        filteredList.add(it)
+                    }
+                }
+                _promoFilteredList.value = filteredList
+            } else {
+                _promoFilteredList.value = null
+            }
+        }
+    }
+
+    fun getPromotionCategoryList() {
+        val cacheUtil = CacheUtil.getInstance()
+        invoke {
+            homeRepository.getOrderTypes { res ->
+                res.data?.cast<Set<OrderType>> { orderTypes ->
+                    val promocateglist = mutableListOf<PromotionCategory>()
+                    promocateglist.add(
+                        PromotionCategory(
+                            cacheUtil.getTranslations(
+                                Text.ALL_LABEL,
+                                "All"
+                            ), true, OrderType.NONE
+                        )
+                    )
+                    orderTypes.find { type -> type == OrderType.DELIVERY }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.DELIVERY,
+                                    "Delivery"
+                                ), false, it
+                            )
+                        )
+                    }
+                    orderTypes.find { type -> type == OrderType.PICKUP }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.PICKUP,
+                                    "Pickup"
+                                ), false, it
+                            )
+                        )
+                    }
+                    orderTypes.find { type -> type == OrderType.DINE_IN }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.DINE_IN,
+                                    "Dine In"
+                                ), false, it
+                            )
+                        )
+                    }
+                    orderTypes.find { type -> type == OrderType.CURBSIDE }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.CURBSIDE_PICKUP,
+                                    "Curbside"
+                                ), false, it
+                            )
+                        )
+                    }
+                    _promotionCategoryList.value = promocateglist
+                }
+            }
+        }
+    }
+
+    override fun onClickClaimPromo(promo: Campaign) {
+        trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
+        CacheUtil.getInstance().campaign = promo
+        CacheUtil.getInstance().campaignPromotion = promo.getPromotion()
+    }
+
 
 }

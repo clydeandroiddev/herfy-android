@@ -22,7 +22,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.databinding.FragmentPromotionBinding
 import com.herfy.ext.cast
-import com.herfy.ext.isMet
+import com.herfy.utils.extensions.isMet
 import com.herfy.promotions.adapters.PromotionRulesAdapter
 import com.herfy.util.ViewUtil
 import com.herfy.utils.constants.Text

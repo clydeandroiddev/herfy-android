@@ -15,6 +15,7 @@
         <item name="textSubheadlineMediumStyle">@style/Styles.Text.Subheadline.Medium</item>
         <item name="textFootnoteStyle">@style/Styles.Text.Footnote</item>
         <item name="textCaptionStyle">@style/Styles.Text.Caption</item>
+        <item name="textCaptionRegularStyle">@style/TextAppearance.Caption.Regular</item>
         <item name="textCaptionSemiboldStyle">@style/Styles.Text.Caption.Semibold</item>
         <item name="textNavigationLabelStyle">@style/Styles.Text.NavigationLabel</item>
     </style>
@@ -115,6 +116,11 @@
     </style>
     <style name="TextAppearance.Caption" parent="">
         <item name="fontFamily">@font/inter_semi_bold</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.Caption.Regular" parent="">
+        <item name="fontFamily">@font/inter_regular</item>
         <item name="android:textSize">11sp</item>
         <item name="android:letterSpacing">0</item>
     </style>

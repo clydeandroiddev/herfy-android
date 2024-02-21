@@ -1,8 +1,8 @@
 package com.herfy.di
 
 import com.herfy.database.AppDatabase
-import com.herfy.database.repositories.HomeRepository
-import com.herfy.database.repositories.HomeRepositoryImpl
+import com.herfy.repository.HomeRepository
+import com.herfy.repository.HomeRepositoryImpl
 import com.herfy.utils.helper.CacheUtilHelper
 import dagger.Module
 import dagger.Provides
@@ -20,7 +20,8 @@ object RepositoryModule {
     fun provideHomeRepository(
         appDatabase: AppDatabase,
         cacheUtilHelper: CacheUtilHelper
-    ) : HomeRepository = HomeRepositoryImpl(appDatabase, cacheUtilHelper)
+    ) : HomeRepository =
+       HomeRepositoryImpl(appDatabase, cacheUtilHelper)
 
 
 }
