@@ -99,9 +99,10 @@ class HomeViewModel @Inject constructor(
 
     private val _promoFilteredList = MutableLiveData<List<Campaign>?>()
     val promoFilteredList: LiveData<List<Campaign>?> = _promoFilteredList
-
-
     private var allPromotionsList: List<Campaign>? = null
+
+    private val _bottomSlideList = MutableLiveData<ArrayList<Slide>>()
+    val bottomSlideList: LiveData<ArrayList<Slide>> = _bottomSlideList
 
     fun getSliders() {
         invoke {
@@ -116,6 +117,23 @@ class HomeViewModel @Inject constructor(
                     }
                 } else {
                     _slideList.value = arrayListOf()
+                }
+            }
+        }
+    }
+
+    fun getBottomSliders(){
+        invoke {
+            homeRepository.getBottomSliders { homeResponse ->
+                if (homeResponse.success) {
+                    homeResponse.data?.cast<ArrayList<Slide>> {
+                        _bottomSlideList.value = it
+                    }?: run {
+                        _bottomSlideList.value = arrayListOf()
+                    }
+                } else {
+                    _bottomSlideList.value = arrayListOf()
+                    _showError.value = ErrorMsgItem(true, homeResponse.message)
                 }
             }
         }

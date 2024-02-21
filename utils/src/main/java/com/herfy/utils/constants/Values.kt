@@ -79,4 +79,5 @@ object Values {
     const val MUKAFAA_PROVIDER = "alrajhi"
     const val LOYALTY_PROVIDER = "solo-loyalty"
     const val MIXPANEL_TOKEN = "3a172b606e1bd18abfad3bd6f511bbd5"
+    const val BOTTOM_SLIDER_ID = "3767"
 }

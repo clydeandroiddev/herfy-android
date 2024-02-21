@@ -9,7 +9,7 @@ import com.herfy.home.R
 import com.herfy.home.databinding.ItemBannerHomeBinding
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 
-class SliderImageAdapter(val imageList : ArrayList<Slide> = arrayListOf(), val sliderListener: SliderListener) : RecyclerView.Adapter<SliderImageAdapter.SliderImageViewHolder>(){
+class SliderImageAdapter(var imageList : List<Slide>? = null, val sliderListener: SliderListener) : RecyclerView.Adapter<SliderImageAdapter.SliderImageViewHolder>(){
 
 
     inner class SliderImageViewHolder(val binding : ItemBannerHomeBinding) : RecyclerView.ViewHolder(binding.root)
@@ -24,20 +24,22 @@ class SliderImageAdapter(val imageList : ArrayList<Slide> = arrayListOf(), val s
         return SliderImageViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = imageList.size
+    override fun getItemCount(): Int = imageList?.size?: 0
 
     override fun onBindViewHolder(holder: SliderImageViewHolder, position: Int) {
         holder.binding.apply {
-            slide = imageList[position]
-            listener = sliderListener
-            executePendingBindings()
+            imageList?.let {
+                slide = it[position]
+                listener = sliderListener
+                executePendingBindings()
+            }
+
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateImageList(imageList: ArrayList<Slide>){
-        this.imageList.clear()
-        this.imageList.addAll(imageList)
+        this.imageList = imageList
         notifyDataSetChanged()
     }
 

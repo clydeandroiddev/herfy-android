@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="18dp"
+    android:id="@+id/cl_bottom_banner"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/grp_banner_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="tv_banner_bottom, cv_banner_bottom, sdi_banner_bottom"/>
+
+    <TextView
+        android:id="@+id/tv_banner_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        style="@style/Styles.Text.Title1"
+        tools:text="Herfy supports the cause"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_banner_bottom"
+        android:layout_width="0dp"
+        android:layout_height="152dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="20dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_banner_bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp_banner_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layoutDirection="locale"
+            android:visibility="visible"/>
+
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <com.tbuonomo.viewpagerdotsindicator.StrokeDotsIndicator
+        android:id="@+id/sdi_banner_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        app:dotsColor="#F4DFDD"
+        app:dotsSize="10dp"
+        app:dotsStrokeWidth="1dp"
+        app:dotsStrokeColor="@color/white"
+        app:layout_collapseMode="parallax"
+        app:dotsSpacing="4dp"
+        app:dotsWidthFactor="3.5"
+        android:visibility="visible"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="28dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cv_banner_bottom"
+        app:progressMode="false"
+        app:selectedDotColor="#9F301F"/>
+
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_banner_bottom"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shimmer_duration="1000">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="225dp"
+                android:layout_height="22dp"
+                android:background="@color/placeholder_color"/>
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="152dp"
+                app:cardCornerRadius="20dp">
+                <include layout="@layout/placeholder_banner" />
+
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+
+
+
+
+
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

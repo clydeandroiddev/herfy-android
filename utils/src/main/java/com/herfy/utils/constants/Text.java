@@ -856,6 +856,6 @@ public class Text {
 
     public static final String ALL_LABEL="all_label";
     public static final String REDEEM_LABEL = "redeem_label";
-    @Nullable
     public static final String REMOVE_PROMO_LABEL="remove_promo";
+    public static final String HERFY_SUPPORT = "herfy_support";
 }

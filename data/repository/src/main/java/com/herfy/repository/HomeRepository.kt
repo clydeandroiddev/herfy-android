@@ -7,6 +7,7 @@ import com.herfy.database.AppDatabase
 import com.herfy.database.entities.MenuCategoryEntity.Companion.toDomain
 import com.herfy.database.entities.MenuItemEntity
 import com.herfy.model.HomeResponse
+import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
@@ -55,6 +56,7 @@ interface HomeRepository {
 
     suspend fun getOrderTypes(response: (HomeResponse) -> Unit)
     suspend fun getLoyaltyTiers(response: (HomeResponse) -> Unit)
+    suspend fun getBottomSliders(response: (HomeResponse) -> Unit)
 }
 
 class HomeRepositoryImpl @Inject constructor(
@@ -594,5 +596,28 @@ class HomeRepositoryImpl @Inject constructor(
         })
     }
 
+    override suspend fun getBottomSliders(response: (HomeResponse) -> Unit) {
+        CmsApiCall.getInstance().getSlider(Values.BOTTOM_SLIDER_ID, object : ApiRequestListener {
+            override fun onSuccess(o: Any) {
+                val slides = arrayListOf<Slide>()
+                try {
+                    val `object` = JSONObject(o.toString())
+                    val dataArray = `object`.getJSONArray("data")
+                    for (i in 0 until dataArray.length()) {
+                        val slideObject = dataArray.getJSONObject(i)
+                        val slide = Slide.parse(slideObject)
+                        slides.add(slide)
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+                response(HomeResponse(true, slides, ""))
+            }
+
+            override fun onError(o: Any) {
+                response(HomeResponse(false, null, o.toString()))
+            }
+        })
+    }
 
 }
