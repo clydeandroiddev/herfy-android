@@ -18,6 +18,7 @@ import com.herfy.common.utils.staticMap
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.DialogAddAddressBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 
 class AddAddressDialog : DialogFragment() {
@@ -26,10 +27,15 @@ class AddAddressDialog : DialogFragment() {
 
     private var address: Address? = null
 
+    private var labelValue = ""
+
     private lateinit var binding: DialogAddAddressBinding
 
     interface OnSubmit {
-        fun onSuccess()
+        fun onSuccess(
+            labelValue: String, address: Address?, flatNumber: String, mobile: String, note: String
+        )
+
         fun exit()
     }
 
@@ -68,12 +74,70 @@ class AddAddressDialog : DialogFragment() {
     private fun setupViews() {
         binding.apply {
             saveAddressLabel.text =
-                CacheUtil.getInstance().getTranslations(Text.SAVE_ADDRESS, "Save Address")
+                CacheUtil.getInstance().getTranslations(Text.SAVE_ADDRESS_LABEL, "Save Address")
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.SAVE_AND_CONTINUE, "Save & Continue")
             back.setOnClickListener {
                 onSubmit?.exit()
                 dismiss()
+            }
+            phoneNumberLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_LABEL, "Phone number")
+            flatNumberLabel.text = CacheUtil.getInstance()
+                .getTranslations(Text.FLAT_NUMBER_LABEL, "Flat / Building / Villa number")
+            noteLabel.text = CacheUtil.getInstance()
+                .getTranslations(Text.NOTE_FOR_THE_DRIVER, "Note for the driver")
+            noteForTheDriverEdit.hint = CacheUtil.getInstance().getTranslations(
+                Text.NOTE_FOR_THE_DRIVER_HINT,
+                "e.g. Orange door on left, white coloured building, don’t ring the bell"
+            )
+            addLabel.text = CacheUtil.getInstance().getTranslations(
+                Text.ADD_LABEL, "Add label"
+            )
+            labelHomeText.text = CacheUtil.getInstance().getTranslations(
+                Text.HOME, "Home"
+            )
+            labelWorkText.text = CacheUtil.getInstance().getTranslations(
+                Text.WORK, "Work"
+            )
+            labelOtherText.text = CacheUtil.getInstance().getTranslations(
+                Text.OTHER, "Other"
+            )
+
+            labelWork.setOnClickListener {
+                binding.labelHome.setBackgroundResource(R.drawable.bg_label)
+                binding.labelOther.setBackgroundResource(R.drawable.bg_label)
+                if (labelValue == "Work") {
+                    labelValue = "";
+                    binding.labelWork.setBackgroundResource(R.drawable.bg_label)
+                } else {
+                    binding.labelWork.setBackgroundResource(R.drawable.bg_label_selected)
+                    labelValue = "Work"
+                }
+            }
+
+            labelHomeText.setOnClickListener {
+                binding.labelWork.setBackgroundResource(R.drawable.bg_label)
+                binding.labelOther.setBackgroundResource(R.drawable.bg_label)
+                if (labelValue == "Home") {
+                    labelValue = "";
+                    binding.labelHome.setBackgroundResource(R.drawable.bg_label)
+                } else {
+                    binding.labelHome.setBackgroundResource(R.drawable.bg_label_selected)
+                    labelValue = "Home"
+                }
+            }
+
+            labelOther.setOnClickListener {
+                binding.labelWork.setBackgroundResource(R.drawable.bg_label)
+                binding.labelHome.setBackgroundResource(R.drawable.bg_label)
+                if (labelValue == "Other") {
+                    labelValue = "";
+                    binding.labelOther.setBackgroundResource(R.drawable.bg_label)
+                } else {
+                    binding.labelOther.setBackgroundResource(R.drawable.bg_label_selected)
+                    labelValue = "Other"
+                }
             }
 
             address?.let {
@@ -86,8 +150,29 @@ class AddAddressDialog : DialogFragment() {
                     .diskCacheStrategy(
                         DiskCacheStrategy.ALL
                     ).into(staticMap)
+
+                addressLine.text = it.getAddressLine(0)
+                featureName.text = it.featureName
             }
 
+            editButton.setOnClickListener {
+                back.performClick()
+            }
+
+            if (AuthUtil.getInstance().isSignedIn) {
+                phoneNumberEdit.setText(AuthUtil.getInstance().customer.attributes.mobile.orEmpty())
+            }
+
+            continueButton.setOnClickListener {
+                onSubmit?.onSuccess(
+                    labelValue,
+                    address,
+                    flatNumber.text.toString(),
+                    phoneNumberEdit.text.toString(),
+                    noteForTheDriverEdit.text.toString()
+                )
+                dismiss()
+            }
         }
     }
 

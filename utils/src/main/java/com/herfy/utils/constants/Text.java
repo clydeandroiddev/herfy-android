@@ -868,8 +868,9 @@ public class Text {
     public static final String PAYMENT_METHODS = "payment_methods";
 
     public static final String ALL_LABEL="all_label";
+    public static final String ALL_LABEL = "all_label";
     public static final String REDEEM_LABEL = "redeem_label";
-    public static final String REMOVE_PROMO_LABEL="remove_promo";
+    public static final String REMOVE_PROMO_LABEL = "remove_promo";
     public static final String HERFY_SUPPORT = "herfy_support";
     public static final String MINS = "mins";
     public static final String YOUR_BASKET_LABEL = "your_basket_label";
@@ -892,4 +893,16 @@ public class Text {
     public static final String CONFIRM_DELIVERY_LOCATION = "confirm_delivery_location";
     public static final String NO_SAVED_ADDRESSES_FOUND = "no_saved_addresses_found";
     public static final String SAVE_AND_CONTINUE = "save_and_continue";
+
+    public static final String SAVE_ADDRESS_LABEL = "save_address_label";
+
+    public static final String FLAT_NUMBER_LABEL = "flat_number_label";
+
+    public static final String PHONE_NUMBER_LABEL = "phone_number_label";
+
+    public static final String NOTE_FOR_THE_DRIVER = "note_for_the_driver";
+
+    public static final String NOTE_FOR_THE_DRIVER_HINT = "note_for_the_driver_hint";
+
+    public static final String ADD_LABEL = "add_label";
 }
