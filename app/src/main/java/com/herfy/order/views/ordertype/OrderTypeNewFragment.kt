@@ -77,7 +77,6 @@ import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
-import io.shipbook.shipbooksdk.Log
 import java.util.*
 
 
@@ -442,7 +441,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         val intent = Intent(activity, AddNewAddressActivity::class.java)
         intent.putExtra("goToLocation", location)
         addressLauncher.launch(intent)
-        requireActivity().overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
     }
 
     override fun setupFonts() {
@@ -460,9 +458,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             .getTranslations(Text.USE_CURRENT_LOCATION, "Use current location")
         binding.deliveryLayout.savedAddressesLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SAVED_ADDRESSES, "Saved Addresses")
-        binding.deliveryLayout.emptyStateLabel.text =
-            CacheUtil.getInstance()
-                .getTranslations(Text.NO_SAVED_ADDRESSES_FOUND, "No saved addresses found.")
+        binding.deliveryLayout.emptyStateLabel.text = CacheUtil.getInstance()
+            .getTranslations(Text.NO_SAVED_ADDRESSES_FOUND, "No saved addresses found.")
     }
 
     private fun adjustOrderType(withVisibility: Boolean, orderTypes: MutableSet<OrderType>) {
@@ -1501,7 +1498,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
+            currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {

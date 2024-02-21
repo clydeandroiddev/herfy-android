@@ -57,12 +57,13 @@
             tools:text="Saved Addresses" />
 
         <LinearLayout
+            android:id="@+id/emptyState"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:gravity="center"
-            android:id="@+id/emptyState"
             android:orientation="vertical"
+            tools:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/savedAddressesLabel">
@@ -80,7 +81,6 @@
                 android:layout_marginTop="20dp"
                 android:textColor="#1C1C1E"
                 android:textSize="14sp"
-                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@id/userCurrentLocation"
                 app:layout_constraintTop_toBottomOf="@id/userCurrentLocation"
                 tools:text="No saved addresses found."

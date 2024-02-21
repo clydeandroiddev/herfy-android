@@ -83,7 +83,6 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
         finish()
     }
 
