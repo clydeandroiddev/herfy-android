@@ -31,6 +31,7 @@
 -keep class com.herfy.util.obfuscator.** { *; }
 -keep class com.herfy.promotions.data.** { *; }
 -keep class com.herfy.popup.** { *; }
+-keep class com.herfy.menu.adapter.MenuCategoryAdapter.** { *; }
 
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application

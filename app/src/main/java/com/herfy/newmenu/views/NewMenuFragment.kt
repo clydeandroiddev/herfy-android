@@ -45,7 +45,6 @@ import com.herfy.country.CountriesFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.ext.cast
-import com.herfy.ext.smoothSnapToPosition
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.menu.MenuContract
@@ -64,6 +63,7 @@ import com.herfy.popup.PopupFragment
 import com.herfy.util.CacheHelper
 import com.herfy.utils.helper.NavigationUtils
 import com.herfy.util.StringUtil
+import com.herfy.utils.extensions.smoothSnapToPosition
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
@@ -87,7 +87,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
     private lateinit var binding: FragmentMenuHerfyBinding
 
-    private val args: NewMenuFragmentArgs by navArgs()
+    //private val args: NewMenuFragmentArgs by navArgs()
 
     private lateinit var menuPresenter: MenuContract.Presenter
     private lateinit var sliderPresenter: SliderContract.Presenter
@@ -187,7 +187,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        selectedHomeMenuCategoryId = args.menuCategoryId
+        //selectedHomeMenuCategoryId = args.menuCategoryId
         activity?.cast<MainActivity> {
             listener = it
         }
@@ -285,7 +285,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                             "item", "product" -> showMenuItem(bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: "")
                         }
                     }
-                    NavigationUtils.navigateSafe(findNavController(), NewMenuFragmentDirections.actionMenuToDialogPopup())
+                    //NavigationUtils.navigateSafe(findNavController(), NewMenuFragmentDirections.actionMenuToDialogPopup())
                 }
             }
         }, 300)
@@ -1754,15 +1754,15 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 loadInitial()
             }
         }
-        NavigationUtils.navigateSafe(
+        /*NavigationUtils.navigateSafe(
             findNavController(), NewMenuFragmentDirections.actionMenuToCountries()
-        )
+        )*/
     }
 
     fun showOrder(orderId: String) {
-        NavigationUtils.navigateSafe(
+        /*NavigationUtils.navigateSafe(
             findNavController(), NewMenuFragmentDirections.actionMenuToOrder(orderId)
-        )
+        )*/
     }
 
     override fun setMenuCategoryForAnalytics(

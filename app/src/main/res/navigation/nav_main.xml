@@ -113,9 +113,9 @@
 
     <fragment
         android:id="@+id/nav_menu"
-        android:name="com.herfy.newmenu.views.NewMenuFragment"
+        android:name="com.herfy.menu.view.MenuFragment"
         android:label="menu"
-        tools:layout="@layout/fragment_menu_new">
+        tools:layout="@layout/fragment_menu">
 
         <argument
             android:name="menu_category_id"

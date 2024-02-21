@@ -13,7 +13,6 @@ import com.herfy.digitalcoupons.views.DigitalCouponsFragmentDirections
 import com.herfy.ext.cast
 import com.herfy.favorites.FavoritesFragmentDirections
 import com.herfy.menu.views.MenuItemFragmentDirections
-import com.herfy.newmenu.views.NewMenuFragmentDirections
 import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.newmenu.views.PopularNowFragmentDirections
 import com.herfy.utils.analytics.MixpanelUtil
@@ -194,12 +193,12 @@ class NavigationActivity : BaseActivity(), MainContract.View {
         }
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
         when (currentDestination) {
-            R.id.nav_menu -> NavigationUtils.navigateSafe(
+            /*R.id.nav_menu -> NavigationUtils.navigateSafe(
                 navController,
                 NewMenuFragmentDirections.actionMenuToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
-            )
+            )*/
 
             R.id.nav_home -> NavigationUtils.navigateSafe(
                 navController,

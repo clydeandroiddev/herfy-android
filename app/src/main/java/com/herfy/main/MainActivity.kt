@@ -359,7 +359,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
     override fun showDigitalCoupon(digitalCoupon: Campaign) {
         dismissDialogs()
-        if (isDefaultHomeScreenDesign) {
+        /*if (isDefaultHomeScreenDesign) {
             NavigationUtils.navigateSafe(
                 navController, NewMenuFragmentDirections.actionMenuToDigitalCoupon(
                     Gson().toJson(digitalCoupon)
@@ -371,12 +371,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     Gson().toJson(digitalCoupon)
                 )
             )
-        }
+        }*/
     }
 
     fun upsellEvent(menuItem: MenuItem, menuCategory: MenuCategory) {
         dismissDialogs()
-        if (isDefaultHomeScreenDesign) {
+        /*if (isDefaultHomeScreenDesign) {
             NavigationUtils.navigateSafe(
                 navController, NewMenuFragmentDirections.actionMenuToItem(
                     menuCategory.id, menuItem.id
@@ -388,7 +388,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     menuCategory.id, menuItem.id
                 )
             )
-        }
+        }*/
     }
 
     fun refreshFavoritesPage() {
@@ -524,7 +524,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     }
                 }
             } else if (forceLocation) {
-                if (!isDefaultHomeScreenDesign) {
+                /*if (!isDefaultHomeScreenDesign) {
                     NavigationUtils.navigateSafe(
                         navController,
                         NewMenuHomePageFragmentDirections.actionHomeToOrderType()
@@ -534,7 +534,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                         navController,
                         NewMenuFragmentDirections.actionMenuToOrderType()
                     )
-                }
+                }*/
             }
         }
 
@@ -714,7 +714,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.favorites.setOnClickListener {
             MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_FAVORITE_ITEMS)
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            if (isDefaultHomeScreenDesign) {
+            /*if (isDefaultHomeScreenDesign) {
                 NavigationUtils.navigateSafe(
                     navController,
                     NewMenuFragmentDirections.actionMenuToFavorites()
@@ -724,7 +724,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     navController,
                     NewMenuHomePageFragmentDirections.actionHomeToFavorites()
                 )
-            }
+            }*/
         }
         binding.sidebar.quickOrder.setOnClickListener { v: View? ->
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -777,7 +777,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         binding.sidebar.promotions.setOnClickListener { view: View? ->
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            if (isDefaultHomeScreenDesign) {
+            /*if (isDefaultHomeScreenDesign) {
                 NavigationUtils.navigateSafe(
                     navController,
                     NewMenuFragmentDirections.actionMenuToPromotions()
@@ -787,7 +787,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     navController,
                     NewMenuHomePageFragmentDirections.actionHomeToPromotions()
                 )
-            }
+            }*/
         }
         binding.toolbarMain.apply {
             setSideButtonAction{
@@ -801,7 +801,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
     private fun showNotifications() {
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_NOTIFICATIONS)
-        if (isDefaultHomeScreenDesign || currentDestination == R.id.nav_menu) {
+        /*if (isDefaultHomeScreenDesign || currentDestination == R.id.nav_menu) {
             NavigationUtils.navigateSafe(
                 navController,
                 NewMenuFragmentDirections.actionMenuToNotifications()
@@ -811,7 +811,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 navController,
                 NewMenuHomePageFragmentDirections.actionHomeToNotifications()
             )
-        }
+        }*/
     }
 
     private fun openWhatsApp() {
@@ -1194,12 +1194,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
         when (currentDestination) {
-            R.id.nav_menu -> NavigationUtils.navigateSafe(
+            /*R.id.nav_menu -> NavigationUtils.navigateSafe(
                 navController,
                 NewMenuFragmentDirections.actionMenuToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
-            )
+            )*/
 
             R.id.nav_home -> NavigationUtils.navigateSafe(
                 navController,
@@ -1379,7 +1379,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     fun showHistory() {
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_HISTORY)
         binding.drawerLayout.closeDrawer(GravityCompat.START)
-        if (!isDefaultHomeScreenDesign) {
+        /*if (!isDefaultHomeScreenDesign) {
             NavigationUtils.navigateSafe(
                 navController,
                 NewMenuHomePageFragmentDirections.actionHomeToOrders()
@@ -1389,7 +1389,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 navController,
                 NewMenuFragmentDirections.actionMenuToOrders()
             )
-        }
+        }*/
     }
 
     fun popUpsell() {
