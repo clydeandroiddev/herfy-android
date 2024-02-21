@@ -40,8 +40,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
 ) : BaseViewModel(), PromotionsAdapter.PromotionListener, SliderImageAdapter.SliderListener,
-    PromotionCategoryAdapter.PromotionCategoryListener,
-    PromotionDetailBottomSheet.onAction {
+    PromotionCategoryAdapter.PromotionCategoryListener, PromotionDetailBottomSheet.onAction {
 
     private val _showError = MutableLiveData<ErrorMsgItem>()
     val showError: LiveData<ErrorMsgItem> = _showError
@@ -122,13 +121,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getBottomSliders(){
+    fun getBottomSliders() {
         invoke {
             homeRepository.getBottomSliders { homeResponse ->
                 if (homeResponse.success) {
                     homeResponse.data?.cast<ArrayList<Slide>> {
                         _bottomSlideList.value = it
-                    }?: run {
+                    } ?: run {
                         _bottomSlideList.value = arrayListOf()
                     }
                 } else {
@@ -284,43 +283,39 @@ class HomeViewModel @Inject constructor(
             getTiersObservable(), getLoyaltyObservable()
         ) { tiers: List<Tier>, loyalty: Loyalty ->
             android.util.Pair<Loyalty, List<Tier>>(loyalty, tiers)
-        }.subscribe(
-            { pair: android.util.Pair<Loyalty, List<Tier>> ->
-                var tiers = pair.second
-                val loyalty = pair.first
-                tiers = tiers
-                val totalPointsAccumulated = loyalty.attributes.currentBalance
-                var eligibleTiers =
-                    Observable.fromIterable(tiers)
-                        .filter { tier: Tier -> totalPointsAccumulated <= tier.endPoint }
-                        .toList().blockingGet()
-                var pointsToNextTier = 0
-                _loyalty.value = loyalty
-                var nextTier: Tier? = null
-                if (eligibleTiers.size <= 0 && tiers.size >= 1) {
-                    eligibleTiers = java.util.ArrayList()
-                    eligibleTiers.add(tiers[tiers.size - 1])
-                }
-                if (eligibleTiers.size >= 1) {
-                    nextTier = eligibleTiers[0]
-                }
-                if (eligibleTiers.size > 1) {
-                    nextTier = eligibleTiers[1]
-                    pointsToNextTier =
-                        nextTier.startPoint - loyalty.attributes.currentBalance
-                }
-                var startPoints = 0
-                if (nextTier != null) {
-                    startPoints = nextTier.startPoint
-                }
-
-                _tier.value = nextTier
-                _totalPointsAccumulated.value = totalPointsAccumulated
-                _pointsToNextTier.value = pointsToNextTier
-                _startPoints.value = startPoints
-
+        }.subscribe({ pair: android.util.Pair<Loyalty, List<Tier>> ->
+            var tiers = pair.second
+            val loyalty = pair.first
+            tiers = tiers
+            val totalPointsAccumulated = loyalty.attributes.currentBalance
+            var eligibleTiers = Observable.fromIterable(tiers)
+                .filter { tier: Tier -> totalPointsAccumulated <= tier.endPoint }.toList()
+                .blockingGet()
+            var pointsToNextTier = 0
+            _loyalty.value = loyalty
+            var nextTier: Tier? = null
+            if (eligibleTiers.size <= 0 && tiers.size >= 1) {
+                eligibleTiers = java.util.ArrayList()
+                eligibleTiers.add(tiers[tiers.size - 1])
             }
-        ) { error: Throwable? ->
+            if (eligibleTiers.size >= 1) {
+                nextTier = eligibleTiers[0]
+            }
+            if (eligibleTiers.size > 1) {
+                nextTier = eligibleTiers[1]
+                pointsToNextTier = nextTier.startPoint - loyalty.attributes.currentBalance
+            }
+            var startPoints = 0
+            if (nextTier != null) {
+                startPoints = nextTier.startPoint
+            }
+
+            _tier.value = nextTier
+            _totalPointsAccumulated.value = totalPointsAccumulated
+            _pointsToNextTier.value = pointsToNextTier
+            _startPoints.value = startPoints
+
+        }) { error: Throwable? ->
             val loyalty = Loyalty()
             val loyaltyAttributes = LoyaltyAttributes()
             val loyaltyTier = LoyaltyTier()
@@ -360,8 +355,7 @@ class HomeViewModel @Inject constructor(
                     } else {
                         source.onError(
                             Throwable(
-                                CacheUtil.getInstance()
-                                    .getTranslations(Text.AN_ERROR_OCCURRED)
+                                CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
                             )
                         )
                         _showError.value = ErrorMsgItem(true, homeResponse.message)
@@ -389,8 +383,7 @@ class HomeViewModel @Inject constructor(
                         _loyalty.value = null
                         source.onError(
                             Throwable(
-                                CacheUtil.getInstance()
-                                    .getTranslations(Text.AN_ERROR_OCCURRED)
+                                CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
                             )
                         )
                         _showError.value = ErrorMsgItem(true, homeResponse.message)
@@ -421,6 +414,8 @@ class HomeViewModel @Inject constructor(
             OrderType.DINE_IN -> "eat-in"
             OrderType.DELIVERY -> "delivery"
             OrderType.CURBSIDE -> "curbside"
+            OrderType.DRIVE_THRU -> "drive-thru"
+            OrderType.EAT_IN -> "eat-in"
         }
 
 
@@ -428,20 +423,21 @@ class HomeViewModel @Inject constructor(
             val filteredList = arrayListOf<Campaign>()
             if (promos.isNotEmpty() && category.isNotEmpty()) {
                 promos.filter { promo ->
-                    promo.promotion.attributes.rules.isNotEmpty() &&
-                            promo.promotion.attributes.rules.find { rule ->
-                                rule.ruleKey.equals("order-type",true) &&
-                                        rule.text.split(Pattern.compile(","), 0).contains(category)
-                            } != null
+                    promo.promotion.attributes.rules.isNotEmpty() && promo.promotion.attributes.rules.find { rule ->
+                        rule.ruleKey.equals(
+                            "order-type",
+                            true
+                        ) && rule.text.split(Pattern.compile(","), 0).contains(category)
+                    } != null
                 }.let {
-                    if(it.isNotEmpty()){
+                    if (it.isNotEmpty()) {
                         filteredList.addAll(it)
                     }
                 }
-                promos.forEach{
-                    if(it.promotion.attributes.rules.isEmpty()){
+                promos.forEach {
+                    if (it.promotion.attributes.rules.isEmpty()) {
                         filteredList.add(it)
-                    }else if(it.promotion.attributes.rules.find { rules -> rules.ruleKey.equals("order-type") } == null) {
+                    } else if (it.promotion.attributes.rules.find { rules -> rules.ruleKey.equals("order-type") } == null) {
                         filteredList.add(it)
                     }
                 }
@@ -461,8 +457,7 @@ class HomeViewModel @Inject constructor(
                     promocateglist.add(
                         PromotionCategory(
                             cacheUtil.getTranslations(
-                                Text.ALL_LABEL,
-                                "All"
+                                Text.ALL_LABEL, "All"
                             ), true, OrderType.NONE
                         )
                     )
@@ -470,8 +465,7 @@ class HomeViewModel @Inject constructor(
                         promocateglist.add(
                             PromotionCategory(
                                 cacheUtil.getTranslations(
-                                    Text.DELIVERY,
-                                    "Delivery"
+                                    Text.DELIVERY, "Delivery"
                                 ), false, it
                             )
                         )
@@ -480,8 +474,7 @@ class HomeViewModel @Inject constructor(
                         promocateglist.add(
                             PromotionCategory(
                                 cacheUtil.getTranslations(
-                                    Text.PICKUP,
-                                    "Pickup"
+                                    Text.PICKUP, "Pickup"
                                 ), false, it
                             )
                         )
@@ -490,8 +483,7 @@ class HomeViewModel @Inject constructor(
                         promocateglist.add(
                             PromotionCategory(
                                 cacheUtil.getTranslations(
-                                    Text.DINE_IN,
-                                    "Dine In"
+                                    Text.DINE_IN, "Dine In"
                                 ), false, it
                             )
                         )
@@ -500,8 +492,7 @@ class HomeViewModel @Inject constructor(
                         promocateglist.add(
                             PromotionCategory(
                                 cacheUtil.getTranslations(
-                                    Text.CURBSIDE_PICKUP,
-                                    "Curbside"
+                                    Text.CURBSIDE_PICKUP, "Curbside"
                                 ), false, it
                             )
                         )

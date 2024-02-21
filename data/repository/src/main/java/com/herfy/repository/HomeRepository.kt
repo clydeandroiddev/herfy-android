@@ -45,10 +45,10 @@ interface HomeRepository {
 
     suspend fun getMenuCategories(response: (HomeResponse) -> Unit)
 
-    suspend fun getMenuItemBy(categoryId : String, response: (HomeResponse) -> Unit)
+    suspend fun getMenuItemBy(categoryId: String, response: (HomeResponse) -> Unit)
     fun getOrderStore(): Store?
 
-    suspend fun getMenuItemWith(menuItemId : String, response: (HomeResponse) -> Unit)
+    suspend fun getMenuItemWith(menuItemId: String, response: (HomeResponse) -> Unit)
 
     suspend fun getCustomerLoyalty(id: String, response: (HomeResponse) -> Unit)
 
@@ -60,12 +60,10 @@ interface HomeRepository {
 }
 
 class HomeRepositoryImpl @Inject constructor(
-    val appDatabase: AppDatabase,
-    val cacheUtilHelper: CacheUtilHelper
+    val appDatabase: AppDatabase, val cacheUtilHelper: CacheUtilHelper
 ) : HomeRepository {
     override suspend fun getSliders(response: (HomeResponse) -> Unit) {
-        CmsApiCall.getInstance()
-            .getSlider(getSliderId(), object : ApiRequestListener {
+        CmsApiCall.getInstance().getSlider(getSliderId(), object : ApiRequestListener {
                 override fun onSuccess(o: Any) {
                     val slides = arrayListOf<Slide>()
                     try {
@@ -89,8 +87,7 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getGuestDigitalCoupons(
-        orderType: OrderType,
-        response: (HomeResponse) -> Unit
+        orderType: OrderType, response: (HomeResponse) -> Unit
     ) {
         CouponsApiCall.getInstance().getGuestCampaigns(object : ApiRequestListener {
             override fun onSuccess(o: Any) {
@@ -98,15 +95,14 @@ class HomeRepositoryImpl @Inject constructor(
 
                     val `object` = JSONObject(o.toString())
 
-                    val digitalCoupons : ArrayList<Campaign> = GsonHelper.gsonFinal().fromJson(
+                    val digitalCoupons: ArrayList<Campaign> = GsonHelper.gsonFinal().fromJson(
                         `object`.getJSONArray("data").toString(),
                         object : TypeToken<ArrayList<Campaign>>() {}.type
                     )
                     if (`object`.has("included")) {
                         val promotions = GsonHelper.gsonFinal().fromJson<ArrayList<Promotion>>(
                             `object`.getJSONArray("included").toString(),
-                            object :
-                                TypeToken<ArrayList<Promotion>>() {}.type
+                            object : TypeToken<ArrayList<Promotion>>() {}.type
                         )
                         val promotionsHashMap = HashMap<String, Promotion>()
                         for (promotion in promotions) {
@@ -122,8 +118,7 @@ class HomeRepositoryImpl @Inject constructor(
                                 if (digitalCoupon.promotion != null) {
                                     if (digitalCoupon.promotion.attributes != null) {
                                         if (digitalCoupon.promotion.attributes.type.equals(
-                                                "delivery",
-                                                ignoreCase = true
+                                                "delivery", ignoreCase = true
                                             )
                                         ) {
                                             if (orderType === OrderType.DELIVERY) {
@@ -155,24 +150,24 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCustomerLoyalty(id: String, response: (HomeResponse) -> Unit) {
-        CustomersApiCall.getInstance().getCustomerLoyalty(id,
-            object : ApiRequestListener {
-                override fun onSuccess(o: Any) {
-                    try {
-                        val `object` = JSONObject(o.toString())
-                        val data = `object`.getJSONObject("data")
-                        val loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty::class.java)
-                        response(HomeResponse(true, loyalty, ""))
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                        onError(e)
-                    }
+        CustomersApiCall.getInstance().getCustomerLoyalty(id, object : ApiRequestListener {
+            override fun onSuccess(o: Any) {
+                try {
+                    val `object` = JSONObject(o.toString())
+                    val data = `object`.getJSONObject("data")
+                    val loyalty =
+                        GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty::class.java)
+                    response(HomeResponse(true, loyalty, ""))
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                    onError(e)
                 }
+            }
 
-                override fun onError(o: Any) {
-                    response(HomeResponse(false, null, o.toString()))
-                }
-            })
+            override fun onError(o: Any) {
+                response(HomeResponse(false, null, o.toString()))
+            }
+        })
     }
 
     override suspend fun getSliderId(): String {
@@ -193,7 +188,8 @@ class HomeRepositoryImpl @Inject constructor(
 
     override suspend fun getMenuCategories(response: (HomeResponse) -> Unit) {
         cacheUtilHelper.getApplication()?.let { application ->
-            val menuCategoryDbs = appDatabase.menuCategoryEntityDao().getAllByApplication(application.id)
+            val menuCategoryDbs =
+                appDatabase.menuCategoryEntityDao().getAllByApplication(application.id)
             val menuCategoryList = arrayListOf<MenuCategory>()
             menuCategoryDbs.forEach {
                 menuCategoryList.add(it.toDomain())
@@ -204,7 +200,8 @@ class HomeRepositoryImpl @Inject constructor(
 
     override suspend fun getMenuItemBy(categoryId: String, response: (HomeResponse) -> Unit) {
         cacheUtilHelper.getApplication()?.let { application ->
-            val menuItemDb = appDatabase.menuItemEntityDao().findAllByMenuCategoryId(application.id, categoryId)
+            val menuItemDb =
+                appDatabase.menuItemEntityDao().findAllByMenuCategoryId(application.id, categoryId)
             response(HomeResponse(true, menuItemDb, ""))
         }
     }
@@ -215,7 +212,8 @@ class HomeRepositoryImpl @Inject constructor(
 
     override suspend fun getMenuItemWith(menuItemId: String, response: (HomeResponse) -> Unit) {
         cacheUtilHelper.getApplication()?.let { application ->
-            val menuItemEntity : MenuItemEntity? = appDatabase.menuItemEntityDao().findById(application.id, menuItemId)
+            val menuItemEntity: MenuItemEntity? =
+                appDatabase.menuItemEntityDao().findById(application.id, menuItemId)
             response(HomeResponse(true, menuItemEntity, ""))
         }
     }
@@ -223,46 +221,53 @@ class HomeRepositoryImpl @Inject constructor(
     override suspend fun getCampaignCancellableAll(
         response: (HomeResponse) -> Unit
     ) {
-        createOrderBody(cacheUtilHelper.getOrderType()){params ->
-            CouponsApiCall.getInstance().getCampaignsCancelableAll(params, object : ApiRequestListener{
-                override fun onSuccess(o: Any?) {
-                    val `object` = JSONObject(o.toString())
-                    val digitalCoupons = GsonHelper.gsonFinal().fromJson<List<Campaign>>(
-                        `object`.getJSONArray("data").toString(),
-                        object : TypeToken<List<Campaign?>?>() {}.type)
-                    digitalCoupons?.let {
-                        if (`object`.has("included")) {
-                            val promotions = GsonHelper.gsonFinal()
-                                .fromJson<java.util.ArrayList<Promotion>>(
-                                    `object`.getJSONArray("included").toString(),
-                                    object : TypeToken<java.util.ArrayList<Promotion?>?>() {}.type
-                                )
-                            val promotionsHashMap = java.util.HashMap<String, Promotion>()
-                            for (promotion in promotions) {
-                                promotionsHashMap[promotion.id] = promotion
+        createOrderBody(cacheUtilHelper.getOrderType()) { params ->
+            CouponsApiCall.getInstance()
+                .getCampaignsCancelableAll(params, object : ApiRequestListener {
+                    override fun onSuccess(o: Any?) {
+                        val `object` = JSONObject(o.toString())
+                        val digitalCoupons = GsonHelper.gsonFinal().fromJson<List<Campaign>>(
+                            `object`.getJSONArray("data").toString(),
+                            object : TypeToken<List<Campaign?>?>() {}.type
+                        )
+                        digitalCoupons?.let {
+                            if (`object`.has("included")) {
+                                val promotions =
+                                    GsonHelper.gsonFinal().fromJson<java.util.ArrayList<Promotion>>(
+                                            `object`.getJSONArray("included").toString(),
+                                            object :
+                                                TypeToken<java.util.ArrayList<Promotion?>?>() {}.type
+                                        )
+                                val promotionsHashMap = java.util.HashMap<String, Promotion>()
+                                for (promotion in promotions) {
+                                    promotionsHashMap[promotion.id] = promotion
+                                }
+                                for (digitalCoupon in digitalCoupons) {
+                                    digitalCoupon.promotion =
+                                        promotionsHashMap[digitalCoupon.attributes.promotionId]
+                                }
                             }
-                            for (digitalCoupon in digitalCoupons) {
-                                digitalCoupon.promotion =
-                                    promotionsHashMap[digitalCoupon.attributes.promotionId]
-                            }
+                            response(HomeResponse(true, digitalCoupons))
                         }
-                        response(HomeResponse(true, digitalCoupons))
                     }
-                }
 
-                override fun onError(error: Any?) {
-                    response(HomeResponse(false, error))
-                }
-            })
+                    override fun onError(error: Any?) {
+                        response(HomeResponse(false, error))
+                    }
+                })
         }
 
     }
 
     override suspend fun getOrderTypes(response: (HomeResponse) -> Unit) {
-        response(HomeResponse(true, cacheUtilHelper.getApplication()?.attributes?.getOrderTypes(), ""))
+        response(
+            HomeResponse(
+                true, cacheUtilHelper.getApplication()?.attributes?.getOrderTypes(), ""
+            )
+        )
     }
 
-    private fun createOrderBody(category : OrderType, body : (JsonObject) -> Unit){
+    private fun createOrderBody(category: OrderType, body: (JsonObject) -> Unit) {
         val authUtil = AuthUtil.getInstance()
         val cacheUtil = CacheUtil.getInstance()
 
@@ -291,8 +296,7 @@ class HomeRepositoryImpl @Inject constructor(
         orderBody.addProperty("source", "Android")
         orderBody.addProperty("notes", cacheUtil.cartNotes)
         orderBody.addProperty(
-            "subtotal",
-            String.format(Locale.ENGLISH, "%.2f", subtotal).toDouble()
+            "subtotal", String.format(Locale.ENGLISH, "%.2f", subtotal).toDouble()
         )
 
         var discount = 0.0
@@ -313,23 +317,38 @@ class HomeRepositoryImpl @Inject constructor(
         }
 
         orderBody.addProperty(
-            "discount",
-            String.format(Locale.ENGLISH, "%.2f", discount).toDouble()
+            "discount", String.format(Locale.ENGLISH, "%.2f", discount).toDouble()
         )
         orderBody.addProperty("type", "")
-        when (category){
+        when (category) {
             OrderType.PICKUP -> {
                 orderBody.addProperty("type", "pickup")
                 if (store != null) {
                     orderBody.addProperty("location", store.id)
                 }
             }
+
+            OrderType.DRIVE_THRU -> {
+                orderBody.addProperty("type", "drive-thru")
+                if (store != null) {
+                    orderBody.addProperty("location", store.id)
+                }
+            }
+
+            OrderType.EAT_IN -> {
+                orderBody.addProperty("type", "eat-in")
+                if (store != null) {
+                    orderBody.addProperty("location", store.id)
+                }
+            }
+
             OrderType.DINE_IN -> {
                 orderBody.addProperty("type", "eat-in")
                 if (store != null) {
                     orderBody.addProperty("location", store.id)
                 }
             }
+
             OrderType.DELIVERY -> {
                 deliveryCharge = concept.deliveryCharge
                 orderBody.addProperty("type", "deliver")
@@ -338,6 +357,7 @@ class HomeRepositoryImpl @Inject constructor(
                     orderBody.addProperty("address", address.id)
                 }
             }
+
             OrderType.CURBSIDE -> {
                 if (cacheUtil.orderStore != null) {
                     orderBody.addProperty("location", cacheUtil.orderStore.id)
@@ -347,6 +367,7 @@ class HomeRepositoryImpl @Inject constructor(
                     orderBody.addProperty("car-id", cacheUtil.curbsideCar.id)
                 }
             }
+
             OrderType.NONE -> {}
         }
 
@@ -414,8 +435,7 @@ class HomeRepositoryImpl @Inject constructor(
             for (modifierGroup in menuItem.modifierGroups) {
                 val visibilityConfig = modifierGroup.attributes.visibilityConfig
                 if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                        "hidden",
-                        ignoreCase = true
+                        "hidden", ignoreCase = true
                     )
                 ) {
                     for (modifierItem in modifierGroup.modifierItems) {
@@ -516,8 +536,7 @@ class HomeRepositoryImpl @Inject constructor(
             for (modifierGroup in item.modifierGroups) {
                 val visibilityConfig = modifierGroup.attributes.visibilityConfig
                 if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                        "hidden",
-                        ignoreCase = true
+                        "hidden", ignoreCase = true
                     )
                 ) {
                     var selectedFreeModifier = 0
@@ -577,10 +596,9 @@ class HomeRepositoryImpl @Inject constructor(
                 try {
                     val `object` = JSONObject(o.toString())
                     val tiersArray = `object`.getJSONArray("data")
-                    val type = object :
-                        TypeToken<List<Tier?>?>() {}.type
-                    val tiers = GsonHelper.gsonFinal()
-                        .fromJson<List<Tier>>(tiersArray.toString(), type)
+                    val type = object : TypeToken<List<Tier?>?>() {}.type
+                    val tiers =
+                        GsonHelper.gsonFinal().fromJson<List<Tier>>(tiersArray.toString(), type)
                     // TODO: Should set Tier as Comparable in SDK
                     Collections.sort(tiers,
                         java.util.Comparator { o1: Tier, o2: Tier -> o1.startPoint - o2.startPoint } as java.util.Comparator<Tier>)

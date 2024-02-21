@@ -1,6 +1,7 @@
 package com.herfy.order.views.ordertype.addaddress
 
 import android.Manifest
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -45,6 +46,8 @@ import com.herfy.ordertype.databinding.AddressNewActivityBinding
 import com.herfy.util.AppLogger
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.helper.AnimUtil
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.Address
@@ -70,6 +73,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     private var permissions = false
 
     private var fromShowLocation = false
+
+    private var phoneNumber = ""
+    private var addressLabel = ""
+    private var driverNote = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -309,8 +316,23 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         addAddressDialog = AddAddressDialog.newInstance(
             orderPresenter.currentAddress,
             object : AddAddressDialog.OnSubmit {
-                override fun onSuccess() {
-                    dismissAddressDialog()
+                override fun onSuccess(
+                    labelValue: String,
+                    address: android.location.Address?,
+                    flatNumber: String,
+                    mobile: String,
+                    note: String
+                ) {
+                    phoneNumber = mobile
+                    driverNote = note
+                    addressLabel = labelValue
+                    orderPresenter.address = address
+                    showLoadingDialog()
+                    orderPresenter.updateAddAddress()
+                }
+
+                override fun error(text: String) {
+                    showAlertDialog("", text)
                 }
 
                 override fun exit() {
@@ -346,7 +368,11 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun updateAddAddress(updateAddress: Address?, saveAddress: android.location.Address?) {
-
+        if (AuthUtil.getInstance().isSignedIn) {
+            orderPresenter.addAddress(phoneNumber, addressLabel, driverNote)
+        } else {
+            dismissDialogs()
+        }
     }
 
     override fun showStores(pickupStores: ArrayList<Store>?, curbsideStores: ArrayList<Store>?) {
@@ -394,15 +420,22 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun saveAddress(address: String?) {
-
+        updateAddress(address.orEmpty())
     }
 
     override fun saveAddress(address: Address?) {
-
+        updateAddress(address?.attributes?.line1.orEmpty())
     }
 
     override fun updateAddress(address: String?) {
-
+        dismissAddressDialog()
+        dismissDialogs()
+        val eventAttributes = java.util.HashMap<String, String>()
+        eventAttributes["Delivery"] = address!!
+        logEvent("OrderTypeSelection", eventAttributes, null, 0.0)
+        overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
+        setResult(RESULT_OK)
+        finish()
     }
 
     override fun showUnavailableMenuItems() {
@@ -418,7 +451,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun showError(error: String?) {
-
+        showAlertDialog("", error)
     }
 
     override fun updateMap(
@@ -485,7 +518,14 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun showMinimumDeliveryForAreaMessage(error: String?) {
-
+        runOnUiThread {
+            dismissDialogs()
+            showAlertDialog(
+                "",
+                error,
+                CacheUtil.getInstance().getTranslations(Text.OK)
+            ) { _: DialogInterface?, i: Int -> orderPresenter.setOrderType() }
+        }
     }
 
 }

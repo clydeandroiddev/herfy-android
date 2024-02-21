@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.herfy.common.utils.staticMap
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.DialogAddAddressBinding
+import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
@@ -36,6 +37,7 @@ class AddAddressDialog : DialogFragment() {
             labelValue: String, address: Address?, flatNumber: String, mobile: String, note: String
         )
 
+        fun error(text: String)
         fun exit()
     }
 
@@ -116,7 +118,7 @@ class AddAddressDialog : DialogFragment() {
                 }
             }
 
-            labelHomeText.setOnClickListener {
+            labelHome.setOnClickListener {
                 binding.labelWork.setBackgroundResource(R.drawable.bg_label)
                 binding.labelOther.setBackgroundResource(R.drawable.bg_label)
                 if (labelValue == "Home") {
@@ -164,6 +166,18 @@ class AddAddressDialog : DialogFragment() {
             }
 
             continueButton.setOnClickListener {
+                val phoneNumber = phoneNumberEdit.text.toString()
+                if (phoneNumber.isEmpty()) {
+                    onSubmit?.error(
+                        CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_REQUIRED)
+                    )
+                    return@setOnClickListener
+                } else if (!StringUtil.isValidPhoneNumber(phoneNumber)) {
+                    onSubmit?.error(
+                        CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_INVALID)
+                    )
+                    return@setOnClickListener
+                }
                 onSubmit?.onSuccess(
                     labelValue,
                     address,
@@ -171,7 +185,6 @@ class AddAddressDialog : DialogFragment() {
                     phoneNumberEdit.text.toString(),
                     noteForTheDriverEdit.text.toString()
                 )
-                dismiss()
             }
         }
     }

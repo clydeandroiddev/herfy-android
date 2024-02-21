@@ -34,8 +34,10 @@ class DeliveryAddressAdapter(
         val item = addressList[position]
         holder.binding.apply {
             if (selectedId != item.id) {
+                deliveryMain.setBackgroundResource(com.herfy.ordertype.R.drawable.bg_deliver)
                 selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_circle_unselected)
             } else {
+                deliveryMain.setBackgroundResource(com.herfy.ordertype.R.drawable.bg_deliver_selected)
                 selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_store_selected)
             }
             editDelivery.setOnClickListener {

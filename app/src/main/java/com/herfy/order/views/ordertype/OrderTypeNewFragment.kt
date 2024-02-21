@@ -135,7 +135,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 if (CacheUtil.getInstance().orderAddress != null || CacheUtil.getInstance().orderDeliveryAddress != null) {
                     CacheUtil.getInstance().orderType = OrderType.DELIVERY
                 }
-
                 if (CacheUtil.getInstance().isSeparatedMenus) {
                     val cartItems = CacheUtil.getInstance().cart
                     if (cartItems.size > 0) {
@@ -1498,8 +1497,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
-            currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {
