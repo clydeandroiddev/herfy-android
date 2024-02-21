@@ -73,9 +73,7 @@
                     android:paddingBottom="10dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="3"
-                    tools:listitem="@layout/item_curbside_new">
-
-                </androidx.recyclerview.widget.RecyclerView>
+                    tools:listitem="@layout/item_curbside_new"/>
 
             </LinearLayout>
 

@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/order_type_bg_color">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@id/confirm_container"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/topBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@color/order_type_bg_color"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="20dp"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/arrow_back_new"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/curbsideLabel"
+                        style="@style/Styles.Text.Caption"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginEnd="30dp"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:textColor="#101010"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Add your curbside vehicle" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E6E8EB" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="6dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/chooseCurbsideBrandColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:background="@drawable/bg_choose"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        app:layout_constraintTop_toTopOf="parent">>
+
+                        <ImageView
+                            android:id="@+id/curbsideEllipse"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_curbside_item_type"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/curbsideColor"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_paint"
+                            app:layout_constraintBottom_toBottomOf="@id/curbsideEllipse"
+                            app:layout_constraintEnd_toEndOf="@id/curbsideEllipse"
+                            app:layout_constraintStart_toStartOf="@id/curbsideEllipse"
+                            app:layout_constraintTop_toTopOf="@id/curbsideEllipse" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/selectedIdentifier"
+                            android:layout_width="@dimen/margin_20dp"
+                            android:layout_height="@dimen/margin_20dp"
+                            android:src="@drawable/ic_arrow_right_white"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="#0064AC" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/curbsideColorName"
+                            style="@style/Styles.Text.Caption"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:includeFontPadding="false"
+                            android:paddingStart="10dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="4dp"
+                            android:textColor="#101010"
+                            android:textSize="16sp"
+                            app:layout_constraintEnd_toStartOf="@id/selectedIdentifier"
+                            app:layout_constraintStart_toEndOf="@id/curbsideEllipse"
+                            app:layout_constraintTop_toTopOf="@id/curbsideEllipse"
+                            tools:text="Vehicle Color" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/optionalColor"
+                            style="@style/Styles.Text.Footnote"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="2dp"
+                            android:maxLines="2"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="4dp"
+                            android:paddingBottom="5dp"
+                            android:textColor="#101010"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@id/curbsideEllipse"
+                            app:layout_constraintEnd_toStartOf="@id/selectedIdentifier"
+                            app:layout_constraintStart_toEndOf="@id/curbsideEllipse"
+                            tools:text="(Optional)" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="6dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/chooseCurbsideBrand"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:background="@drawable/bg_choose"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        app:layout_constraintTop_toTopOf="parent">>
+
+                        <ImageView
+                            android:id="@+id/curbsideEllipseTwo"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_curbside_item_type"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/curbsideBrand"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_car_brand_default"
+                            app:layout_constraintBottom_toBottomOf="@id/curbsideEllipseTwo"
+                            app:layout_constraintEnd_toEndOf="@id/curbsideEllipseTwo"
+                            app:layout_constraintStart_toStartOf="@id/curbsideEllipseTwo"
+                            app:layout_constraintTop_toTopOf="@id/curbsideEllipseTwo" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/selectedIdentifierTwo"
+                            android:layout_width="@dimen/margin_20dp"
+                            android:layout_height="@dimen/margin_20dp"
+                            android:src="@drawable/ic_arrow_right_white"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="#0064AC" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/curbsideBrandName"
+                            style="@style/Styles.Text.Caption"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:includeFontPadding="false"
+                            android:paddingStart="10dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="4dp"
+                            android:textColor="#101010"
+                            android:textSize="16sp"
+                            app:layout_constraintEnd_toStartOf="@id/selectedIdentifierTwo"
+                            app:layout_constraintStart_toEndOf="@id/curbsideEllipseTwo"
+                            app:layout_constraintTop_toTopOf="@id/curbsideEllipseTwo"
+                            tools:text="Vehicle Brand" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/optionalBrand"
+                            style="@style/Styles.Text.Footnote"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="2dp"
+                            android:maxLines="2"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="4dp"
+                            android:paddingBottom="5dp"
+                            android:textColor="#101010"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@id/curbsideEllipseTwo"
+                            app:layout_constraintEnd_toStartOf="@id/selectedIdentifierTwo"
+                            app:layout_constraintStart_toEndOf="@id/curbsideEllipseTwo"
+                            tools:text="(Optional)" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/licensePlateNumberLabel"
+                    style="@style/Styles.Text.Footnote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:textColor="#0C0C0C"
+                    android:textSize="14sp"
+                    tools:text="License Plate Number" />
+
+                <EditText
+                    android:id="@+id/plateNumberEdit"
+                    style="@style/Styles.Text.Footnote"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/background_edit_text"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="#0C0C0C"
+                    android:textSize="12sp"
+                    tools:hint="e.g. KLK98898" />
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/confirm_container"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardElevation="6dp"
+                app:cardUseCompatPadding="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:visibility="visible">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/continueButton"
+                        style="@style/Styles.Text.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/background_bg_button_common"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Save and Continue" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
