@@ -101,7 +101,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
             onBackPressed()
         }
 
-        binding.selectAreaButton.text =
+        binding.selectAreaLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SELECT_AREA, "Select Area")
 
         binding.descriptionLocation.text = CacheUtil.getInstance().getTranslations(
