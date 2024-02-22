@@ -8,7 +8,7 @@ fun getDialogCurbsideHeight(context: Context): Int {
     val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     val displayMetrics = DisplayMetrics()
     windowManager.defaultDisplay.getMetrics(displayMetrics)
-    return displayMetrics.heightPixels - dpToPx(context, 160)
+    return displayMetrics.heightPixels - dpToPx(context, 200)
 }
 
 fun dpToPx(context: Context, dp: Int): Int {

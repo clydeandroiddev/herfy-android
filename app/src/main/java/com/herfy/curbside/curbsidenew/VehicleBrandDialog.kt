@@ -114,7 +114,6 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
 
             back.setOnClickListener {
                 onSubmit?.exit()
-                dismiss()
             }
 
             continueButton.alpha = 0.5f
