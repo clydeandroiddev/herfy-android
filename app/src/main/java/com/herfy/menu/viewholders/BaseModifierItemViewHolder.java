@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 
-import java.util.HashMap;
-
 public abstract class BaseModifierItemViewHolder extends RecyclerView.ViewHolder {
     public BaseModifierItemViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -25,7 +23,7 @@ public abstract class BaseModifierItemViewHolder extends RecyclerView.ViewHolder
     public void setAction(OnAction onAction) {
         this.action = onAction;
     }
-    public abstract void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice, HashMap<Integer, Boolean> shouldShowQuantity);
+    public abstract void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice);
     public interface OnAction {
         void onCheckedChanged(boolean isSelected, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem);
 

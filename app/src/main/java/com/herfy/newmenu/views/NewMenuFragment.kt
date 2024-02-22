@@ -1225,8 +1225,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
         position: Int,
         modifierGroup: ModifierGroup,
         showModifierItemPrice: Boolean,
-        showShowModifierCheckBox: Boolean,
-        shouldShowQuantity: java.util.HashMap<Int, Boolean>
+        showShowModifierCheckBox: Boolean
     ) {
     }
 

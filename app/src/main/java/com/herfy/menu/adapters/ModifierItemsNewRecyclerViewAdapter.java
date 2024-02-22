@@ -17,7 +17,6 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<BaseModifierItemViewHolder> {
@@ -38,15 +37,13 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
     private BaseModifierItemViewHolder.OnAction onAction;
     private boolean dataUpdatedFlag = false;
 
-    private  HashMap<Integer, Boolean> shouldShowQuantity;
 
-    public ModifierItemsNewRecyclerViewAdapter(Context context, MenuContract.Presenter menuPresenter, int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, HashMap<Integer, Boolean> shouldShowQuantity) {
+    public ModifierItemsNewRecyclerViewAdapter(Context context, MenuContract.Presenter menuPresenter, int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice) {
         this.mContext = context;
         this.menuPresenter = menuPresenter;
         this.modifierGroupPosition = modifierGroupPosition;
         this.modifierGroup = modifierGroup;
         this.showModifierItemPrice = showModifierItemPrice;
-        this.shouldShowQuantity = shouldShowQuantity;
     }
 
 
@@ -59,7 +56,7 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
     public BaseModifierItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = createViewByType(viewType, parent);
         if (viewType == ITEM_MODIFIER_OPTION_TYPE) {
-            ModifierItemOptionViewHolder modifierTypeOption = new  ModifierItemOptionViewHolder(mContext, menuPresenter, view,shouldShowQuantity);
+            ModifierItemOptionViewHolder modifierTypeOption = new  ModifierItemOptionViewHolder(mContext, menuPresenter, view);
             modifierTypeOption.setAction(onAction);
             return modifierTypeOption;
         } else if (viewType == ITEM_WITHOUT_DESCRIPTION_VIEW_TYPE) {
@@ -72,7 +69,7 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
     }
     @Override
     public void onBindViewHolder(@NonNull BaseModifierItemViewHolder holder, int position) {
-        menuPresenter.onBindModifierItemViewAtPosition(modifierGroupPosition, modifierGroup, showModifierItemPrice, position, holder,shouldShowQuantity);
+        menuPresenter.onBindModifierItemViewAtPosition(modifierGroupPosition, modifierGroup, showModifierItemPrice, position, holder);
     }
 
 

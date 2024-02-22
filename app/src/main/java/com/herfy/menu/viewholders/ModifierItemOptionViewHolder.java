@@ -3,7 +3,6 @@ package com.herfy.menu.viewholders;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -75,7 +74,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
     private HashMap<Integer, Boolean> showShowQuantity = new HashMap<>();
 
 
-    public ModifierItemOptionViewHolder(Context context, MenuContract.Presenter menuPresenter, View itemView, HashMap<Integer, Boolean> shouldShowQuantity) {
+    public ModifierItemOptionViewHolder(Context context, MenuContract.Presenter menuPresenter, View itemView) {
         super(itemView);
         modifierProcessor = new ModifierProcessor(this);
         this.context = context;
@@ -111,7 +110,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
 
     @Override
-    public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice, HashMap<Integer, Boolean> shouldShowQuantity) {
+    public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
       modifierProcessor.processModifier(modifierItem);
         ModifierGroupAttributes modifierGroupAttributes = modifierGroup.getAttributes();
         radioButton.setVisibility(modifierGroupAttributes.getMaximum() == 1 && modifierGroupAttributes.getMinimum() == 1 ? View.VISIBLE : View.GONE);
@@ -199,15 +198,11 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                     if (!isSameItemClicked && currentSelectedItem != null) {
                         // Hide the previous quantityDownLayout
                         if (currentSelectedItem != null && isQuantityLayoutVisible) {
-                            Log.d("FAFA","Collapse called");
                             collapseView(quantityDownLayout, 300, 150);
                             isQuantityLayoutVisible = false;
                         }
-                        Log.d("FAFA","Collapse called BAI");
                         // Update the currentSelectedItem
                         currentSelectedItem = modifierItem;
-                    }else {
-                        Log.d("FAFA","False man");
                     }
 
                     // If it's the same item and the layout is already visible, toggle the visibility
@@ -217,17 +212,12 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
                     // If the layout should be visible and it's not the same item, expand it
                     if (!isSameItemClicked && shouldShowQuantityLayout) {
-                        Log.d("FAFA","Expanse called");
+
                         expandView(quantityDownLayout, 300, 150);
                         // Call the action to update the quantity after the layout is properly handled
 //                        action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                         isQuantityLayoutVisible = true;
-                    }else {
-                        Log.d("FAFA","Not triggered");
                     }
-
-                }else {
-                    Log.d("FAFA","False bai ");
                 }
             }
         });

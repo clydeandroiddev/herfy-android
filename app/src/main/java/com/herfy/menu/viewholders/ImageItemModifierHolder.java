@@ -22,8 +22,6 @@ import com.herfy.util.ModifierProcessorCallback;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 
-import java.util.HashMap;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 public class ImageItemModifierHolder extends BaseModifierItemViewHolder implements ModifierProcessorCallback {
@@ -76,7 +74,7 @@ public class ImageItemModifierHolder extends BaseModifierItemViewHolder implemen
     }
 
     @Override
-    public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice, HashMap<Integer, Boolean> shouldShowQuantity) {
+    public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
         modifierProcessor.processModifier(modifierItem);
         if (modifierItem.getAttributes().isSelected()) {
             check.setImageResource(R.drawable.modifier_radio_item_selected);

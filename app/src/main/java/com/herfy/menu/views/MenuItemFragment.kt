@@ -1179,8 +1179,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         position: Int,
         modifierGroup: ModifierGroup,
         showModifierItemPrice: Boolean,
-        showShowModifierCheckBox: Boolean,
-        shouldShowQuantity: HashMap<Int, Boolean>
+        showShowModifierCheckBox: Boolean
     ) {
     }
 

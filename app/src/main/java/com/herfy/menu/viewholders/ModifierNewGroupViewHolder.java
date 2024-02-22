@@ -1,7 +1,6 @@
 package com.herfy.menu.viewholders;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -200,7 +199,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
         String imageUrl = modifierGroup.getAttributes().getImage();
         boolean visible = false;
         VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
@@ -319,7 +318,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
 
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            ModifierItemsNewRecyclerViewAdapter modifierItemsNewRecyclerViewAdapter = new ModifierItemsNewRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice,shouldShowQuantity);
+            ModifierItemsNewRecyclerViewAdapter modifierItemsNewRecyclerViewAdapter = new ModifierItemsNewRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice);
             modifierItemsNewRecyclerViewAdapter.setOnAction(onAction);
             recyclerView.setAdapter(modifierItemsNewRecyclerViewAdapter);
         }

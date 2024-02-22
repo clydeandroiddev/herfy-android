@@ -98,8 +98,7 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
         position: Int,
         modifierGroup: ModifierGroup,
         showModifierItemPrice: Boolean,
-        showShowModifierCheckBox: Boolean,
-        shouldShowQuantity: java.util.HashMap<Int, Boolean>
+        showShowModifierCheckBox: Boolean
     ) {}
     override fun setMenuItemQuantity(quantity: Int) {}
     override fun setMenuItemTotalPrice(totalPrice: Double) {}

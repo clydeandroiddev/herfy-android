@@ -79,7 +79,7 @@ public interface MenuContract {
 
         void setIngredient(Ingredient ingredient);
 
-        void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox,HashMap<Integer, Boolean> shouldShowQuantity);
+        void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox);
 
         void setMenuItemQuantity(int quantity);
 
@@ -302,7 +302,7 @@ public interface MenuContract {
 
         void onBindModifierItemViewAtPositionNew(ModifierGroup modifierGroup, int position, ModifierItemViewHolderNew modifierItemViewHolderNew);
 
-        void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, BaseModifierItemViewHolder modifierItemViewHolder, HashMap<Integer, Boolean> shouldShowQuantity);
+        void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, BaseModifierItemViewHolder modifierItemViewHolder);
         void onBindModifierItemViewAtPositionOld(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, ModifierItemViewHolder modifierItemViewHolder);
         ModifierGroupType getModifierGroupTypeByPosition(int position, ModifierGroup modifierGroup);
         int getModifierItemsCount(ModifierGroup modifierGroup);

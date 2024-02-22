@@ -1,6 +1,5 @@
 package com.herfy.menu;
 
-import android.util.Log;
 import android.util.Pair;
 import android.widget.ImageView;
 
@@ -3543,16 +3542,6 @@ public class MenuPresenter implements MenuContract.Presenter {
     public void changeModifierItemQuantity(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem) {
         ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
         ModifierItem eachModifierItem = group.getModifierItems().get(modifierItemPosition);
-//        for (ModifierItem item : group.getModifierItems()) {
-//            Log.d("FAFA","Is quantity already show" + isQuantityLayoutShow + "Item id " + item.getId() + " Modifier id " + modifierItem.getId());
-//            boolean isCheckboxSelected = isQuantityLayoutShow && item.getId().equals(modifierItem.getId());
-//            item.getAttributes().setShouldShowQuantity(isCheckboxSelected);
-//        }
-
-//        for (ModifierItem item : group.getModifierItems()) {
-//            boolean isShouldShowQuantity = isQuantityLayoutShow && item.getId().equals(modifierItem.getId());
-//            item.getAttributes().setShouldShowQuantity(isShouldShowQuantity);
-//        }
         if (!add) {
             //for (ModifierGroup group : menuItem.getModifierGroups()) {
             //if (group.getId().equals(modifierGroup.getId())) {
@@ -3629,7 +3618,7 @@ public class MenuPresenter implements MenuContract.Presenter {
 
        /* ModifierGroup modifierGroup = menuItemModifierGroups.get(menuItem.getModifierGroups().get(position).getId());
         if(modifierGroup != null) {*/
-        modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice,showShowModifierCheckBox,shouldShowQuantity);
+        modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice,showShowModifierCheckBox);
         //}
     }
 
@@ -3682,8 +3671,8 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, BaseModifierItemViewHolder modifierItemViewHolder, HashMap<Integer, Boolean> shouldShowQuantity) {
-        modifierItemViewHolder.setModifierItem(modifierGroupPosition, modifierGroup, position, modifierGroup.getModifierItems().get(position), showModifierItemPrice,shouldShowQuantity);
+    public void onBindModifierItemViewAtPosition(int modifierGroupPosition, ModifierGroup modifierGroup, boolean showModifierItemPrice, int position, BaseModifierItemViewHolder modifierItemViewHolder) {
+        modifierItemViewHolder.setModifierItem(modifierGroupPosition, modifierGroup, position, modifierGroup.getModifierItems().get(position), showModifierItemPrice);
     }
 
     @Override
