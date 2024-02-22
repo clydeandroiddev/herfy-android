@@ -121,7 +121,7 @@ class AddCurbsideVehicleDialog : DialogFragment() {
     private fun showVehicleBrand() {
         dismissPickupTypeDialog()
         vehicleBrandDialog = VehicleBrandDialog.newInstance(
-            carMaker ?: null,
+            carMaker,
             object : VehicleBrandDialog.OnSubmit {
                 override fun selectedCar(maker: CarMaker) {
                     carMaker = maker

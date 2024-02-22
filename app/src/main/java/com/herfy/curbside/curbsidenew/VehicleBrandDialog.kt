@@ -1,16 +1,22 @@
 package com.herfy.curbside.curbsidenew
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.fragment.app.DialogFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.herfy.curbside.CurbsideContract
 import com.herfy.curbside.CurbsidePresenter
 import com.herfy.curbside.curbsidenew.adapter.CurbsideBrandAdapter
+import com.herfy.ext.getDialogCurbsideHeight
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.VehicleBrandDialogBinding
 import com.herfy.utils.constants.Text
@@ -18,8 +24,9 @@ import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
+import io.shipbook.shipbooksdk.Log
 
-class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
+class VehicleBrandDialog : DialogFragment(), CurbsideContract.View {
 
     private lateinit var curbsidePresenter: CurbsideContract.Presenter
 
@@ -34,7 +41,7 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
     private var brandList = mutableListOf<CarMaker>()
 
     interface OnSubmit {
-        fun selectedCar(type: CarMaker)
+        fun selectedCar(maker: CarMaker)
         fun exit()
     }
 
@@ -43,6 +50,8 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
         binding = VehicleBrandDialogBinding.inflate(layoutInflater)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
         curbsidePresenter = CurbsidePresenter(this)
+        curbsidePresenter.start()
+        brandList = CacheUtil.getInstance().brands
     }
 
     override fun onCreateView(
@@ -51,23 +60,19 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
         return binding.root
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return BottomSheetDialog(requireContext(), theme).apply {
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        curbsidePresenter.start()
-        brandList = CacheUtil.getInstance().brands
+        binding.frameLayout.layoutParams.height = getDialogCurbsideHeight(requireContext())
+        Log.e("ADADADADADADAD", "ADADADADAD:" + brandList.size)
         if (brandList.isEmpty()) {
             curbsidePresenter.getMakersList(true)
+        } else {
+            showCarMakers(brandList)
         }
     }
 
-    override fun setPresenter(presenter: CurbsideContract.Presenter?) {
-
+    override fun setPresenter(presenter: CurbsideContract.Presenter) {
+        curbsidePresenter = presenter
     }
 
     override fun logEvent(
@@ -96,17 +101,21 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
 
     override fun setupViews() {
         binding.apply {
+
             back.setOnClickListener {
                 onSubmit?.exit()
                 dismiss()
             }
+
             continueButton.alpha = 0.5f
             continueButton.setOnClickListener(null)
+
             var carId = ""
             carMaker?.let {
                 enableButton()
                 carId = it.id
             }
+
             curbsideVehicleAdapter = CurbsideBrandAdapter(
                 ArrayList(), object : CurbsideBrandAdapter.CurbsideListener {
                     override fun onSelectedCar(car: CarMaker, position: Int) {
@@ -119,6 +128,7 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
                 }, carId
             )
             binding.vehicleBrandList.adapter = curbsideVehicleAdapter
+            Log.e("ADADADADADADAD", "ADADADADAD:" + brandList.size)
         }
     }
 
