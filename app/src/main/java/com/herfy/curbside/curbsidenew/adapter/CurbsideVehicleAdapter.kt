@@ -4,10 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.herfy.common.formatDate
 import com.herfy.ordertype.databinding.ItemCurbsideNewBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
+import io.shipbook.shipbooksdk.Log
 
 class CurbsideVehicleAdapter(
     val curbsideList: ArrayList<CustomerCar> = arrayListOf(),
@@ -46,9 +48,10 @@ class CurbsideVehicleAdapter(
             chooseCurbside.setOnClickListener {
                 curbsideListener.onSelectedCar(item, position)
             }
+           
             curbsideAdded.text =
                 CacheUtil.getInstance().getTranslations(Text.ADDED_CURBSIDE, "Added: (x)")
-                    .replace("(x)", item.attributes.createdAt)
+                    .replace("(x)", item.attributes.createdAt.formatDate())
 
             executePendingBindings()
         }
