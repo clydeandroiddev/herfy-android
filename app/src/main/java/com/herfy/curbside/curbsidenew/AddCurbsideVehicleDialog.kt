@@ -19,6 +19,8 @@ class AddCurbsideVehicleDialog : DialogFragment() {
 
     private var onSubmit: OnSubmit? = null
 
+    private var isEmpty = false
+
     private var colorSelected = "";
 
     private var carMaker: CarMaker? = null
@@ -31,7 +33,7 @@ class AddCurbsideVehicleDialog : DialogFragment() {
         )
 
         fun error(text: String)
-        fun exit()
+        fun exit(isEmpty: Boolean)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +72,7 @@ class AddCurbsideVehicleDialog : DialogFragment() {
         binding.apply {
 
             back.setOnClickListener {
-                onSubmit?.exit()
+                onSubmit?.exit(isEmpty)
                 dismiss()
             }
             continueButton.setOnClickListener {
@@ -91,15 +93,16 @@ class AddCurbsideVehicleDialog : DialogFragment() {
                 CacheUtil.getInstance().getTranslations(Text.OPTIONAL_LABEL, "(Optional)")
             licensePlateNumberLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.LICENSE_PLATE_NUMBER, "License Plate Number")
-            plateNumberEdit.hint = CacheUtil.getInstance()
-                .getTranslations(Text.PLATE_NUMBER_HINT, "e.g. KLK98898")
+            plateNumberEdit.hint =
+                CacheUtil.getInstance().getTranslations(Text.PLATE_NUMBER_HINT, "e.g. KLK98898")
         }
     }
 
     companion object {
-        fun newInstance(listener: OnSubmit): AddCurbsideVehicleDialog {
+        fun newInstance(isEmpty: Boolean, listener: OnSubmit): AddCurbsideVehicleDialog {
             val addressDialogFragment = AddCurbsideVehicleDialog()
             addressDialogFragment.onSubmit = listener
+            addressDialogFragment.isEmpty = isEmpty
             return addressDialogFragment
         }
     }

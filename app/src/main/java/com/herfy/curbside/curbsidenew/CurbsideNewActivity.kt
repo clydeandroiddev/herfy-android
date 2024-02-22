@@ -1,6 +1,5 @@
 package com.herfy.curbside.curbsidenew
 
-import android.location.Address
 import android.os.Bundle
 import com.herfy.base.BaseActivity
 import com.herfy.curbside.CurbsideContract
@@ -69,7 +68,7 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.ADD_NEW_VEHICLE, "Add New Vehicle")
             continueButton.setOnClickListener {
-                showAddDialog()
+                showAddDialog(false)
             }
         }
     }
@@ -90,16 +89,16 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
     override fun showCustomerCars(cars: MutableList<CustomerCar>) {
         dismissDialogs()
         if (cars.isEmpty()) {
-            showAddDialog()
+            showAddDialog(true)
         } else {
             //TODO List vehicles
         }
     }
 
-    private fun showAddDialog() {
+    private fun showAddDialog(isEmpty: Boolean) {
         dismissAddressDialog()
-        addCurbsideDialog =
-            AddCurbsideVehicleDialog.newInstance(object : AddCurbsideVehicleDialog.OnSubmit {
+        addCurbsideDialog = AddCurbsideVehicleDialog.newInstance(isEmpty,
+            object : AddCurbsideVehicleDialog.OnSubmit {
                 override fun onSuccess(
                     colorSelected: String, carMaker: CarMaker?
                 ) {
@@ -110,8 +109,11 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
                     showAlertDialog("", text)
                 }
 
-                override fun exit() {
+                override fun exit(isEmpty: Boolean) {
                     dismissAddressDialog()
+                    if (isEmpty) {
+                        finish()
+                    }
                 }
 
             })
