@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.herfy.common.R
 
+
 class MainToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var sideMenuButton : ImageButton? = null
@@ -22,7 +23,7 @@ class MainToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
     }
 
     private fun init(attrs: AttributeSet?) {
-        View.inflate(context, R.layout.toolbar_main, this)
+        View.inflate(context, R.layout.common_toolbar_main, this)
 
 
         sideMenuButton = findViewById(R.id.ib_side_menu)
@@ -33,11 +34,11 @@ class MainToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
 
         val ta = context.obtainStyledAttributes(attrs, R.styleable.MainToolbar)
         try {
-            val drawableSideMenu = ta.getResourceId(R.styleable.MainToolbar_leftButton, R.drawable.ic_side_menu)
+            val drawableSideMenu = ta.getResourceId(R.styleable.MainToolbar_leftButton, R.drawable.ic_toolbar_side_menu)
             sideMenuButton?.setImageResource(drawableSideMenu)
             val drawableLogo = ta.getResourceId(R.styleable.MainToolbar_logo, R.drawable.herfy_logo_arabic)
             logo?.setImageResource(drawableLogo)
-            val drawableCartLogo = ta.getResourceId(R.styleable.MainToolbar_rightButton, R.drawable.ic_cart)
+            val drawableCartLogo = ta.getResourceId(R.styleable.MainToolbar_rightButton, R.drawable.ic_toolbar_cart)
             cartIcon?.setImageResource(drawableCartLogo)
         } finally {
             ta.recycle()

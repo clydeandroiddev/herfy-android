@@ -21,7 +21,7 @@ class TitleToolbar  @JvmOverloads constructor(context: Context, attrs: Attribute
     }
 
     private fun init(attrs: AttributeSet?) {
-        View.inflate(context, R.layout.toolbar_with_title, this)
+        View.inflate(context, R.layout.common_toolbar_with_title, this)
 
 
         navButton = findViewById(R.id.ib_navigation)
