@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -53,6 +54,11 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
     @BindView(R.id.checkBox) ImageView modifierCheckBox;
+    @BindView(R.id.btnMinimum)
+    CardView requiredCardView;
+
+    @BindView(R.id.minimum)
+    TextView txtMinimum;
 
 
     private BaseModifierItemViewHolder.OnAction onAction;
@@ -195,9 +201,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
     @Override
     public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity) {
-        Log.d("FAFA","Show shoulld modifier item " + showShowModifierCheckBox);
         String imageUrl = modifierGroup.getAttributes().getImage();
-        Log.d("FAFA","Image url test"  + imageUrl);
         boolean visible = false;
         VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
         if (visibilityConfig != null) {
@@ -216,7 +220,10 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(modifierImage);
         }
+        requiredCardView.setVisibility(showShowModifierCheckBox ? View.GONE : View.VISIBLE);
         modifierCheckBox.setVisibility(showShowModifierCheckBox ? View.VISIBLE : View.GONE);
+        txtMinimum.setText(CacheUtil.getInstance().getTranslations(Text.REQUIRED,"Required"));
+
         // todo might needed this once designer change the ui
 //        ModifierGroupMinimumType modifierGroupMinimumType = ModifierGroupMinimumUtil.INSTANCE.validateType(modifierGroup.getAttributes().getMinimum());
 

@@ -584,13 +584,12 @@
                     android:id="@+id/plus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:background="?selectableItemBackground"
                     android:textAlignment="viewEnd"
                     app:layout_constraintBottom_toBottomOf="@+id/minus"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/minus"
-                    app:srcCompat="@drawable/ic_plus_button" />
+                    app:srcCompat="@drawable/quantity_up_blue" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/minus"

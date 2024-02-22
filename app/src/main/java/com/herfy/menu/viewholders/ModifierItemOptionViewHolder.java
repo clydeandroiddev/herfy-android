@@ -26,6 +26,7 @@ import com.herfy.menu.MenuContract;
 import com.herfy.productpagedetails.ui.viewholder.util.ArabicUtils;
 import com.herfy.util.ModifierProcessor;
 import com.herfy.util.ModifierProcessorCallback;
+import com.herfy.util.StringUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupAttributes;
@@ -113,39 +114,32 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
     public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice, HashMap<Integer, Boolean> shouldShowQuantity) {
       modifierProcessor.processModifier(modifierItem);
         ModifierGroupAttributes modifierGroupAttributes = modifierGroup.getAttributes();
-        final Boolean[] isShouldShowQuantityLayout = {false};
-//        if (modifierItem.getAttributes().isShouldShowQuantity()) {
-//            Log.d("FAFA","Already should " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
-//            expandView(quantityDownLayout,300,150);
-//        } else {
-//            if (quantityDownLayout.getVisibility() == View.VISIBLE) {
-//                Log.d("FAFA","Already should bai " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
-//                return;
-//            }else {
-//                Log.d("FAFA","Collpase " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
-//                collapseView(quantityDownLayout, 300, 0);
-//            }
-//        }
         radioButton.setVisibility(modifierGroupAttributes.getMaximum() == 1 && modifierGroupAttributes.getMinimum() == 1 ? View.VISIBLE : View.GONE);
         check.setVisibility(modifierGroup.getAttributes().getMaximum() > 1 ? View.VISIBLE : View.GONE);
         if (modifierItem.getAttributes().isSelected()) {
-            Log.d("FAFA","Is selected bai" );
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state);
             radioButton.setImageResource(R.drawable.modifier_radio_item_selected);
             check.setImageResource(R.drawable.modifier_item_checked_selected);
 
         }else {
-            Log.d("FAFA","Is selected bai" );
-
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_unselected_state);
             radioButton.setImageResource(R.drawable.modifier_item_radio_unselected);
             check.setImageResource(R.drawable.modifier_item_unselected);
         }
-//        quantity.setText(StringUtil.localize(String.valueOf(modifierItem.getAttributes().getQuantity())));
+        if (modifierGroup.getAttributes().getMaximum() > 1 &&
+                modifierItem.getAttributes().isSelected() &&
+                modifierItem.getAttributes().getMaximum() > 1) {
+            plus.setEnabled(true);
+            plus.setImageResource(R.drawable.quantity_up_blue);
+        }else {
+            plus.setEnabled(false);
+            plus.setImageResource(R.drawable.quantity_up_blue_gray);
+        }
+        quantity.setText(StringUtil.localize(String.valueOf("0" + modifierItem.getAttributes().getQuantity())));
 
-//        plus.setEnabled(modifierGroup.getAttributes().getMaximum() > 1 &&
-//                modifierItem.getAttributes().isSelected() &&
-//                modifierItem.getAttributes().getMaximum() == 1);
+        plus.setEnabled(modifierGroup.getAttributes().getMaximum() > 1 &&
+                modifierItem.getAttributes().isSelected() &&
+                modifierItem.getAttributes().getMaximum() > 1);
         checkLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,20 +176,19 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         }
 
         // todo commented for now might needed once designer have quantity design
-//        plus.setFocusable(modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum());
-//        plus.setClickable(modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum());
+        plus.setFocusable(modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum());
+        plus.setClickable(modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum());
 
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (action != null) {
-                    Log.d("FAFA","Action is not null");
                     // Update the visibility of the quantityDownLayout
                     boolean shouldShowQuantityLayout = modifierGroup.getAttributes().getMaximum() > 1 &&
                             modifierItem.getAttributes().isSelected() &&
-                            modifierItem.getAttributes().getMaximum() == 1;
+                            modifierItem.getAttributes().getMaximum() > 1;
                     quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
-                    Log.d("FAFA","Should show quantity" + shouldShowQuantityLayout);
+
                     // Update the visibility state of the current quantityDownLayout
                     isQuantityLayoutVisible = shouldShowQuantityLayout;
 
