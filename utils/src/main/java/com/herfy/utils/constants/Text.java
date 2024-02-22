@@ -917,4 +917,5 @@ public class Text {
     public static final String PLATE_NUMBER_HINT = "plate_number_hint";
     public static final String ADD_YOUR_CURBSIDE_VEHICLE = "add_your_curbside_vehicle";
     public static final String ADDED_CURBSIDE = "added_curbside";
+    public static final String CONFIRM_LABEL = "confirm_label";
 }

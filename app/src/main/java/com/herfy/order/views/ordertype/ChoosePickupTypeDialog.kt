@@ -9,11 +9,11 @@ import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.herfy.ext.isVisible
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.DialogOrderTypeSelectionBinding
 import com.herfy.utils.constants.Text
-import com.herfy.utils.helper.*
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Store
 
@@ -87,6 +87,9 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
             back.setOnClickListener {
                 onSubmit?.exit()
             }
+
+            curbsideContainer.isVisible = AuthUtil.getInstance().isSignedIn
+
             store?.let {
                 chooseDriveThruContainer.isVisible = it.attributes.isDriveThruEnabled
                 curbsideContainer.isVisible = it.attributes.curbsideEnabled == 1

@@ -31,6 +31,8 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
         curbsidePresenter.start()
         showLoadingDialog()
         curbsidePresenter.getCustomerCars()
+        curbsidePresenter.getColorsList(false)
+        curbsidePresenter.getMakersList(false)
     }
 
 
@@ -119,7 +121,8 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
 
     private fun showAddDialog(isEmpty: Boolean) {
         dismissAddressDialog()
-        addCurbsideDialog = AddCurbsideVehicleDialog.newInstance(isEmpty,
+        addCurbsideDialog = AddCurbsideVehicleDialog.newInstance(
+            isEmpty,
             object : AddCurbsideVehicleDialog.OnSubmit {
                 override fun onSuccess(
                     colorSelected: String, carMaker: CarMaker?

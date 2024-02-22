@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
+import com.herfy.order.views.ordertype.ChoosePickupTypeDialog
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.AddCurbsideVehicleDialogBinding
 import com.herfy.utils.constants.Text
@@ -16,6 +17,8 @@ import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 
 class AddCurbsideVehicleDialog : DialogFragment() {
+
+    private lateinit var vehicleBrandDialog: VehicleBrandDialog
 
     private var onSubmit: OnSubmit? = null
 
@@ -79,6 +82,14 @@ class AddCurbsideVehicleDialog : DialogFragment() {
                 onSubmit?.onSuccess(colorSelected, carMaker)
             }
 
+            chooseCurbsideBrandColor.setOnClickListener {
+
+            }
+
+            chooseCurbsideBrand.setOnClickListener {
+                showVehicleBrand()
+            }
+
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.SAVE_AND_CONTINUE, "Save & Continue")
             curbsideLabel.text = CacheUtil.getInstance()
@@ -106,4 +117,31 @@ class AddCurbsideVehicleDialog : DialogFragment() {
             return addressDialogFragment
         }
     }
+
+    private fun showVehicleBrand() {
+        dismissPickupTypeDialog()
+        vehicleBrandDialog = VehicleBrandDialog.newInstance(
+            carMaker ?: null,
+            object : VehicleBrandDialog.OnSubmit {
+                override fun selectedCar(maker: CarMaker) {
+                    carMaker = maker
+                }
+
+                override fun exit() {
+                }
+
+            })
+        vehicleBrandDialog.show(
+            requireActivity().supportFragmentManager, ChoosePickupTypeDialog::class.java.simpleName
+        )
+    }
+
+    private fun dismissPickupTypeDialog() {
+        try {
+            vehicleBrandDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
 }

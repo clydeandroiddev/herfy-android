@@ -72,6 +72,7 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
                     String items = object.isNull("data") ? "" : object.optString("data");
                     carMakerList = GsonHelper.gsonFinal().fromJson(items, new TypeToken<List<CarMaker>>() {
                     }.getType());
+                    CacheUtil.getInstance().setBrands(new ArrayList<>(carMakerList));
                     carMakerList.add(new CarMaker());
                     if (showCarMaker) {
                         view.showCarMakers(carMakerList);
@@ -121,23 +122,23 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
 
         int mobileFormatIndex = 0;
         ArrayList<AllowedCountries> allowedCountries = CacheUtil.getInstance().getConcept().getAllowedCountries();
-        for(AllowedCountries allowedCountry : allowedCountries) {
+        for (AllowedCountries allowedCountry : allowedCountries) {
             String dialCode = allowedCountry.getDialCode().replace("+", "");
-            if(phoneNumber.startsWith(dialCode)) {
+            if (phoneNumber.startsWith(dialCode)) {
                 mobileFormatIndex = allowedCountries.indexOf(allowedCountry);
                 break;
             }
         }
 
-        if(phoneNumber.isEmpty()) {
+        if (phoneNumber.isEmpty()) {
             valid = false;
             view.showError(CacheUtil.getInstance().getTranslations(Text.MOBILE_NUMBER_REQUIRED, "Mobile number is required"));
-        } else if(!StringUtil.isValidPhoneNumber(phoneNumber,mobileFormatIndex)) {
+        } else if (!StringUtil.isValidPhoneNumber(phoneNumber, mobileFormatIndex)) {
             valid = false;
             view.showError(CacheUtil.getInstance().getTranslations(Text.MOBILE_NUMBER_INVALID, "Invalid mobile number"));
         }
 
-        if(valid) {
+        if (valid) {
 
             JsonObject addBody = new JsonObject();
             addBody.addProperty("color", carColor);

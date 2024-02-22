@@ -30,6 +30,8 @@ import com.skylinedynamics.solosdk.api.models.objects.Promotion;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
+import com.skylinedynamics.solosdk.api.models.objects.curbside.Colors;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 
@@ -133,6 +135,10 @@ public class CacheUtil {
     private String SUPPORT_CARD_TYPES = "SupportCardTypes";
 
     private String LAST_ORDER_ID = "lastOrderId";
+
+    private static final String VEHICLE_BRANDS = "VehicleBrands";
+
+    private static final String VEHICLE_COLOR = "VehicleColor";
 
     private CacheUtil(Context context) {
 
@@ -604,7 +610,7 @@ public class CacheUtil {
 
     }
 
-    public void setCartQuantity(ArrayList<MenuItem> menuItems){
+    public void setCartQuantity(ArrayList<MenuItem> menuItems) {
         int quantity = 0;
         for (MenuItem menuItem : menuItems) {
             quantity += menuItem.getAttributes().getQuantity();
@@ -627,7 +633,37 @@ public class CacheUtil {
         editor.apply();
     }
 
+    public void setColors(ArrayList<Colors> menuItems) {
+        String cartMenuItems = new Gson().toJson(menuItems);
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(VEHICLE_COLOR, cartMenuItems);
+        editor.apply();
+    }
 
+    public ArrayList<Colors> getColors() {
+        String cartMenuItems = cacheSharedPreferences.getString(VEHICLE_COLOR, null);
+        if (cartMenuItems != null) {
+            return GsonHelper.gsonFinal().fromJson(cartMenuItems, new TypeToken<ArrayList<Colors>>() {
+            }.getType());
+        }
+        return new ArrayList<>();
+    }
+
+    public void setBrands(ArrayList<CarMaker> menuItems) {
+        String cartMenuItems = new Gson().toJson(menuItems);
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(VEHICLE_BRANDS, cartMenuItems);
+        editor.apply();
+    }
+
+    public ArrayList<CarMaker> getBrands() {
+        String cartMenuItems = cacheSharedPreferences.getString(VEHICLE_BRANDS, null);
+        if (cartMenuItems != null) {
+            return GsonHelper.gsonFinal().fromJson(cartMenuItems, new TypeToken<ArrayList<CarMaker>>() {
+            }.getType());
+        }
+        return new ArrayList<>();
+    }
 
     public ArrayList<MenuItem> getCart() {
 
@@ -808,13 +844,10 @@ public class CacheUtil {
                                                     if (menuItem.combo.get(trueIndex).components.get(i).items.size() == cartMenuItem.combo.get(trueIndex).components.get(i).items.size()) {
                                                         int iSize = menuItem.combo.get(trueIndex).components.get(i).items.size();
                                                         for (int a = 0; a < iSize; a++) {
-                                                            if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected
-                                                                    && cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
+                                                            if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected && cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
                                                                 if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).id.equalsIgnoreCase(cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).id)) {
-                                                                    if (!menuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.isEmpty()
-                                                                            && !cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.isEmpty()) {
-                                                                        if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.size() ==
-                                                                                cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.size()) {
+                                                                    if (!menuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.isEmpty() && !cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.isEmpty()) {
+                                                                        if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.size() == cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.size()) {
                                                                             int mGSize = menuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.size();
                                                                             for (int x = 0; x < mGSize; x++) {
                                                                                 Set<String> menuItemSelected = new HashSet<>();
@@ -871,13 +904,11 @@ public class CacheUtil {
                                                                     break;
                                                                 }
                                                             } else {
-                                                                if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected &&
-                                                                        !cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
+                                                                if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected && !cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
                                                                     same = false;
                                                                     break;
                                                                 }
-                                                                if (!menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected &&
-                                                                        cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
+                                                                if (!menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected && cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
                                                                     same = false;
                                                                     break;
                                                                 }
@@ -1520,9 +1551,7 @@ public class CacheUtil {
     }
 
     public void setLoyaltyPointsEarnable(String orderId, int points) {
-        cacheSharedPreferences.edit()
-                .putInt(LOYALTY_POINTS_EARNABLE + "_" + orderId, points)
-                .commit();
+        cacheSharedPreferences.edit().putInt(LOYALTY_POINTS_EARNABLE + "_" + orderId, points).commit();
     }
 
     public int getLoyaltyPointsEarnable(String orderId) {
@@ -1714,11 +1743,8 @@ public class CacheUtil {
     public Set<String> getSupportCardTypes() {
         Set<String> supportedCardTypes = new HashSet<>();
         try {
-            supportedCardTypes = new Gson().fromJson(
-                    cacheSharedPreferences.getString(SUPPORT_CARD_TYPES, "[]"),
-                    new TypeToken<Set<String>>() {
-                    }.getType()
-            );
+            supportedCardTypes = new Gson().fromJson(cacheSharedPreferences.getString(SUPPORT_CARD_TYPES, "[]"), new TypeToken<Set<String>>() {
+            }.getType());
         } catch (Exception e) {
             e.printStackTrace();
         }
