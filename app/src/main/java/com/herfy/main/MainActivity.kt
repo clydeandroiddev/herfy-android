@@ -74,6 +74,7 @@ import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.EnvUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
@@ -147,6 +148,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             }
         }
 
+    private val cacheUtilHelper by lazy {
+        CacheUtilHelper(this)
+    }
+
     override fun onStart() {
         super.onStart()
         mCurrentLocale = resources.configuration.locale
@@ -197,90 +202,26 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         currentDestination = R.id.nav_home
 
         navController.setGraph(graph, intent.extras)
+        mainPresenter = MainPresenter(this@MainActivity)
+        mainPresenter.start()
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             dismissDialogs()
             if (currentDestination == R.id.nav_auth || currentDestination == R.id.nav_guest) {
                 setupSideBar()
             }
+
+
             currentDestination = destination.id
-            /*val layoutParams = binding.appBarLayout.layoutParams as CoordinatorLayout.LayoutParams
-            if (destination.id == R.id.nav_auth || destination.id == R.id.nav_guest) {
-                layoutParams.height = 0
-            } else {
-                layoutParams.height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
-            }
-            binding.appBarLayout.layoutParams = layoutParams
-            showToolbarActionButton(false)
-            showToolbarWhatsappButton(false)
-            showToolbarCustomActionButton(false)
-            when (destination.id) {
-                R.id.nav_home, R.id.nav_subscriptions -> {
-                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-                    binding.mainToolbar.menu.visibility = View.VISIBLE
-                    binding.mainToolbar.back.visibility = View.GONE
-                    showNotifIcon()
-                }
-
-                R.id.nav_menu -> {
-                    binding.drawerLayout.setDrawerLockMode(if (isDefaultHomeScreenDesign) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                    binding.mainToolbar.menu.visibility =
-                        if (isDefaultHomeScreenDesign) View.VISIBLE else View.GONE
-                    binding.mainToolbar.back.visibility =
-                        if (isDefaultHomeScreenDesign) View.GONE else View.VISIBLE
-                    showNotifIcon()
-                }
-
-                R.id.nav_dialog_popup -> binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                else -> {
-                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                    binding.mainToolbar.menu.visibility = View.GONE
-                    if (destination.id != R.id.nav_dialog_order_type) {
-                        if ((destination.id == R.id.nav_order_type && forceLocation) || destination.id == R.id.nav_orders || destination.id == R.id.nav_favorites || destination.id == R.id.nav_fragment_countries) {
-                            binding.mainToolbar.back.visibility = View.GONE
-                        } else {
-                            binding.mainToolbar.back.visibility = View.VISIBLE
-                        }
-                    }
-                    binding.mainToolbar.notif.visibility = View.GONE
+            binding.toolbarMain.apply {
+                if(currentDestination == R.id.nav_herfy_home){
+                    hide(false)
+                    setCart(cacheUtilHelper.getCartQuantity())
+                }else {
+                    hide(true)
                 }
             }
-            binding.mainToolbar.close.visibility =
-                if (destination.id == R.id.nav_orders || destination.id == R.id.nav_favorites || destination.id == R.id.nav_fragment_countries)
-                    View.VISIBLE
-                else View.GONE
-            binding.mainToolbar.title.isAllCaps = destination.id != R.id.nav_notifications
-            if (destination.id != R.id.nav_dialog_popup) {
-                binding.mainToolbar.title.text =
-                    CacheUtil.getInstance().getTranslations(destination.label.toString())
-            }
-            when (destination.id) {
-                R.id.nav_home,
-                R.id.nav_menu,
-                R.id.nav_order_type,
-                R.id.nav_curbside,
-                R.id.nav_cart,
-                R.id.nav_orders,
-                R.id.nav_order,
-                R.id.nav_notifications,
-                R.id.nav_notification,
-                R.id.nav_dialog_popup,
-                R.id.nav_dialog_order_type,
-                R.id.nav_upsell,
-                R.id.nav_promotions,
-                R.id.nav_promotion,
-                R.id.nav_fragment_countries -> binding.mainToolbar.cart.visibility = View.GONE
-
-                else -> {
-                    binding.mainToolbar.cart.visibility = View.VISIBLE
-                    setCartQuantity()
-                }
-            }
-            binding.mainToolbar.schedule.visibility = View.GONE
-            binding.mainToolbar.whatsapp.visibility = View.GONE*/
         }
-        mainPresenter = MainPresenter(this@MainActivity)
-        mainPresenter.start()
 
         if (BuildConfig.MULTI_COUNTRY_ENABLED) {
             binding.sidebar.fmBrands.visibility = View.VISIBLE
@@ -846,6 +787,14 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     navController,
                     NewMenuHomePageFragmentDirections.actionHomeToPromotions()
                 )
+            }
+        }
+        binding.toolbarMain.apply {
+            setSideButtonAction{
+                binding.drawerLayout.openDrawer(GravityCompat.START)
+            }
+            setCartButtonAction{
+                showCart()
             }
         }
     }

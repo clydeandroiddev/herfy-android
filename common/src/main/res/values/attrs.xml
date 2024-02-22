@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="navButton" format="reference"/>
+    <attr name="rightButtonColor" format="color"/>
+
+    <declare-styleable name="MainToolbar">
+        <attr name="logo" format="reference"/>
+        <attr name="leftButton" format="reference"/>
+        <attr name="rightButton" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="TitleToolbar">
+        <attr name="title" format="string"/>
+        <attr name="navButton"/>
+        <attr name="rightButtonColor"/>
+        <attr name="rightButtonLabel" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="OrderTypeToolbar">
+        <attr name="navButton"/>
+        <attr name="rightButtonColor"/>
+        <attr name="rightButtonIcon" format="reference"/>
+        <attr name="rightButtonTextColor" format="color"/>
+    </declare-styleable>
+</resources>

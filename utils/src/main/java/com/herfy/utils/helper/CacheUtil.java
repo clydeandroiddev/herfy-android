@@ -51,6 +51,7 @@ public class CacheUtil {
 
     private SharedPreferences cacheSharedPreferences;
 
+
     private static final String CACHE = "Cache";
 
     private static final String LANGUAGE = "Language";
@@ -127,6 +128,7 @@ public class CacheUtil {
     private static final String POINTS_UNTIL_NEXT_TIER = "pointsUntilNextTier";
     private static final String STARTING_POINTS_OF_NEXT_TIER = "startingPointsOfNextTier";
 
+    private static final String CART_QUANTITY = "CartQuantity";
     private String COUNTRY = "Country";
     private String SUPPORT_CARD_TYPES = "SupportCardTypes";
 
@@ -595,12 +597,37 @@ public class CacheUtil {
     public void setCart(ArrayList<MenuItem> menuItems) {
 
         String cartMenuItems = new Gson().toJson(menuItems);
-
+        setCartQuantity(menuItems);
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(CART_MENU_ITEMS, cartMenuItems);
         editor.apply();
 
     }
+
+    public void setCartQuantity(ArrayList<MenuItem> menuItems){
+        int quantity = 0;
+        for (MenuItem menuItem : menuItems) {
+            quantity += menuItem.getAttributes().getQuantity();
+        }
+        MenuItem couponMenuItem = getCouponMenuItem();
+        Campaign campaign = getCampaign();
+        Promotion promotion = getCampaignPromotion();
+        MenuItem campaignPromotionMenuItem = getCampaignPromotionMenuItem();
+
+        if (getCouponCode() != null && couponMenuItem != null) {
+            quantity += couponMenuItem.getAttributes().getQuantity();
+        }
+
+        if (campaign != null && promotion != null && campaignPromotionMenuItem != null) {
+            quantity += campaignPromotionMenuItem.getAttributes().getQuantity();
+        }
+
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putInt(CART_QUANTITY, quantity);
+        editor.apply();
+    }
+
+
 
     public ArrayList<MenuItem> getCart() {
 
