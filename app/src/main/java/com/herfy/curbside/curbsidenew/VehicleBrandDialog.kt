@@ -1,15 +1,13 @@
 package com.herfy.curbside.curbsidenew
 
 import android.app.Dialog
+import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import android.graphics.PorterDuff
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import androidx.fragment.app.DialogFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -20,13 +18,11 @@ import com.herfy.ext.getDialogCurbsideHeight
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.VehicleBrandDialogBinding
 import com.herfy.utils.constants.Text
-import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
-import io.shipbook.shipbooksdk.Log
 
-class VehicleBrandDialog : DialogFragment(), CurbsideContract.View {
+class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
 
     private lateinit var curbsidePresenter: CurbsideContract.Presenter
 
@@ -43,6 +39,12 @@ class VehicleBrandDialog : DialogFragment(), CurbsideContract.View {
     interface OnSubmit {
         fun selectedCar(maker: CarMaker)
         fun exit()
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return BottomSheetDialog(requireContext(), theme).apply {
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,13 +64,21 @@ class VehicleBrandDialog : DialogFragment(), CurbsideContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupDialog()
         binding.frameLayout.layoutParams.height = getDialogCurbsideHeight(requireContext())
-        Log.e("ADADADADADADAD", "ADADADADAD:" + brandList.size)
         if (brandList.isEmpty()) {
             curbsidePresenter.getMakersList(true)
         } else {
             showCarMakers(brandList)
         }
+    }
+
+    private fun setupDialog() {
+        val bottomSheet = (requireView().parent as View)
+        bottomSheet.backgroundTintMode = PorterDuff.Mode.CLEAR
+        bottomSheet.backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
+        bottomSheet.setBackgroundColor(Color.TRANSPARENT)
+        bottomSheet.elevation = 0f
     }
 
     override fun setPresenter(presenter: CurbsideContract.Presenter) {
@@ -119,16 +129,13 @@ class VehicleBrandDialog : DialogFragment(), CurbsideContract.View {
             curbsideVehicleAdapter = CurbsideBrandAdapter(
                 ArrayList(), object : CurbsideBrandAdapter.CurbsideListener {
                     override fun onSelectedCar(car: CarMaker, position: Int) {
-                        if (!AuthUtil.getInstance().isSignedIn) {
-                            carMaker = car
-                            curbsideVehicleAdapter.updateSelectedId(car.id)
-                            enableButton()
-                        }
+                        carMaker = car
+                        curbsideVehicleAdapter.updateSelectedId(car.id)
+                        enableButton()
                     }
                 }, carId
             )
             binding.vehicleBrandList.adapter = curbsideVehicleAdapter
-            Log.e("ADADADADADADAD", "ADADADADAD:" + brandList.size)
         }
     }
 
@@ -152,7 +159,7 @@ class VehicleBrandDialog : DialogFragment(), CurbsideContract.View {
 
     override fun showCarMakers(makers: MutableList<CarMaker>) {
         brandList.clear()
-        brandList.addAll(makers)
+        brandList = CacheUtil.getInstance().brands
         curbsideVehicleAdapter.updateList(ArrayList(brandList))
     }
 
