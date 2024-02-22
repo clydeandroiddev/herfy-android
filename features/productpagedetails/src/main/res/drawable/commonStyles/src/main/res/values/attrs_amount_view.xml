@@ -1,9 +1,0 @@
-<resources>
-    <declare-styleable name="AmountView">
-        <attr name="amountTextSize" format="dimension" />
-        <attr name="currencyTextSize" format="dimension" />
-        <attr name="amountTextColor" format="color" />
-        <attr name="currencyTextColor" format="color" />
-        <attr name="amountCurrencySpace" format="dimension" />
-    </declare-styleable>
-</resources>
