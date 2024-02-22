@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.herfy.base.BaseActivity
 import com.herfy.curbside.CurbsideContract
 import com.herfy.curbside.CurbsidePresenter
+import com.herfy.curbside.curbsidenew.adapter.CurbsideVehicleAdapter
 import com.herfy.order.views.ordertype.addaddress.AddAddressDialog
 import com.herfy.ordertype.databinding.CurbsideNewActivityBinding
 import com.herfy.utils.constants.Text
@@ -18,6 +19,8 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
     private lateinit var binding: CurbsideNewActivityBinding
 
     private lateinit var addCurbsideDialog: AddCurbsideVehicleDialog
+
+    private lateinit var curbsideVehicleAdapter: CurbsideVehicleAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +57,15 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
                 finish()
             }
         }
+
+        curbsideVehicleAdapter = CurbsideVehicleAdapter(
+            ArrayList(), object : CurbsideVehicleAdapter.CurbsideListener {
+                override fun onSelectedCar(car: CustomerCar, position: Int) {
+
+                }
+            }, ""
+        )
+        binding.curbsideList.adapter = curbsideVehicleAdapter
     }
 
 
@@ -91,7 +103,7 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
         if (cars.isEmpty()) {
             showAddDialog(true)
         } else {
-            //TODO List vehicles
+            curbsideVehicleAdapter.updateList(ArrayList(cars))
         }
     }
 
