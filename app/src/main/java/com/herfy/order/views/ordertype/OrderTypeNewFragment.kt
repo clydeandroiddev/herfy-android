@@ -195,7 +195,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult? ->
         if (result?.resultCode == Activity.RESULT_OK) {
-            selectOrderType(OrderType.CURBSIDE)
+            activity?.cast<BaseActivity> {
+                continueSelectingType(it, OrderType.CURBSIDE)
+            }
         }
     }
 
@@ -1459,6 +1461,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 orderTypeSelected = OrderType.DRIVE_THRU
             } else if (otPickupSelected == OrderType.EAT_IN) {
                 orderTypeSelected = OrderType.EAT_IN
+            } else if (otPickupSelected == OrderType.CURBSIDE) {
+                orderTypeSelected = OrderType.CURBSIDE
             }
         }
 
@@ -1496,8 +1500,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
-            currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {

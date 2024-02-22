@@ -8,6 +8,7 @@ import com.herfy.curbside.curbsidenew.adapter.CurbsideVehicleAdapter
 import com.herfy.order.views.ordertype.addaddress.AddAddressDialog
 import com.herfy.ordertype.databinding.CurbsideNewActivityBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
@@ -52,6 +53,11 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
     }
 
     override fun setupViews() {
+        var carId = ""
+        val car = CacheUtil.getInstance().curbsideCar
+        if (car != null) {
+            carId = car.id.orEmpty()
+        }
         binding.apply {
             back.setOnClickListener {
                 finish()
@@ -61,9 +67,13 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
         curbsideVehicleAdapter = CurbsideVehicleAdapter(
             ArrayList(), object : CurbsideVehicleAdapter.CurbsideListener {
                 override fun onSelectedCar(car: CustomerCar, position: Int) {
-
+                    if (!AuthUtil.getInstance().isSignedIn) {
+                        CacheUtil.getInstance().curbsideCar = car
+                        setResult(RESULT_OK)
+                        finish()
+                    }
                 }
-            }, ""
+            }, carId
         )
         binding.curbsideList.adapter = curbsideVehicleAdapter
     }
