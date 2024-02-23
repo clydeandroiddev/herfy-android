@@ -43,8 +43,6 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
     private var isEmpty = false
 
-    private var colorSelected = "";
-
     private var carMaker: CarMaker? = null
 
     private var carColor: CarColor? = null
@@ -248,7 +246,28 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
     }
 
     private fun setupColor() {
-
+        carColor?.let {
+            binding.apply {
+                curbsideColor.isVisible = false
+                curbsideColorSelected.isVisible = true
+                curbsideColorName.text = it.attributes.name
+                if (it.attributes.label.toLowerCase() != "white") {
+                    curbsideColorSelected.strokeColor =
+                        curbsideColor.context.resources.getColor(android.R.color.transparent)
+                } else {
+                    curbsideColorSelected.strokeColor =
+                        curbsideColor.context.resources.getColor(com.herfy.commonstyles.R.color.color_stroke)
+                }
+                curbsideColorSelected.setCardBackgroundColor(
+                    Color.parseColor(
+                        "#" + it.attributes.color.replace(
+                            "#",
+                            ""
+                        )
+                    )
+                )
+            }
+        }
     }
 
     private fun showVehicleBrand() {
@@ -267,7 +286,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
             })
         vehicleBrandDialog.show(
-            requireActivity().supportFragmentManager, ChoosePickupTypeDialog::class.java.simpleName
+            requireActivity().supportFragmentManager, VehicleBrandDialog::class.java.simpleName
         )
     }
 
@@ -286,8 +305,8 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 }
 
             })
-        vehicleBrandDialog.show(
-            requireActivity().supportFragmentManager, ChoosePickupTypeDialog::class.java.simpleName
+        vehicleColorDialog.show(
+            requireActivity().supportFragmentManager, VehicleColorDialog::class.java.simpleName
         )
     }
 
@@ -301,7 +320,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
     private fun dismissVehicleColorDialog() {
         try {
-            vehicleBrandDialog.dismiss()
+            vehicleColorDialog.dismiss()
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }

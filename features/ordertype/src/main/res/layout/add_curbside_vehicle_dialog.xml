@@ -102,6 +102,20 @@
                             app:layout_constraintStart_toStartOf="@id/curbsideEllipse"
                             app:layout_constraintTop_toTopOf="@id/curbsideEllipse" />
 
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/curbsideColorSelected"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:visibility="gone"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardCornerRadius="6dp"
+                            app:layout_constraintBottom_toBottomOf="@id/curbsideEllipse"
+                            app:layout_constraintEnd_toEndOf="@id/curbsideEllipse"
+                            app:layout_constraintStart_toStartOf="@id/curbsideEllipse"
+                            app:layout_constraintTop_toTopOf="@id/curbsideEllipse"
+                            app:strokeColor="@color/color_stroke"
+                            app:strokeWidth="0.5dp" />
+
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/selectedIdentifier"
                             android:layout_width="@dimen/margin_20dp"

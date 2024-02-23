@@ -5,7 +5,10 @@ import androidx.annotation.Nullable;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.base.BaseView;
+import com.herfy.util.AppLogger;
+import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.Text;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
@@ -15,9 +18,6 @@ import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
 import com.skylinedynamics.solosdk.util.GsonHelper;
-import com.herfy.util.AppLogger;
-import com.herfy.utils.handler.ErrorHandler;
-import com.herfy.util.StringUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +38,7 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
 
     @Override
     public void getColorsList(boolean showCarColor) {
-        CurbsideApiCall.getInstance().getCarColors(new ApiRequestListener() {
+        CurbsideApiCall.getInstance().getCarColorsNew(new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
@@ -46,6 +46,7 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
                     String items = object.isNull("data") ? "" : object.optString("data");
                     colors = GsonHelper.gsonFinal().fromJson(items, new TypeToken<List<CarColor>>() {
                     }.getType());
+                    CacheUtil.getInstance().setColors(new ArrayList<>(colors));
                     if (showCarColor) {
                         view.showCarColors(colors);
                     }

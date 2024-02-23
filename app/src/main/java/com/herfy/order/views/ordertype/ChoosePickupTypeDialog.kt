@@ -1,6 +1,9 @@
 package com.herfy.order.views.ordertype
 
 import android.app.Dialog
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,6 +45,14 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
         return binding.root
     }
 
+    private fun setupDialog() {
+        val bottomSheet = (requireView().parent as View)
+        bottomSheet.backgroundTintMode = PorterDuff.Mode.CLEAR
+        bottomSheet.backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
+        bottomSheet.setBackgroundColor(Color.TRANSPARENT)
+        bottomSheet.elevation = 0f
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext(), theme).apply {
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -50,6 +61,7 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupDialog()
         setupViews()
     }
 

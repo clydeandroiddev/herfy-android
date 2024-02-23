@@ -45,6 +45,7 @@ class VehicleColorDialog : BottomSheetDialogFragment(), CurbsideContract.View {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext(), theme).apply {
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            behavior.isDraggable = false
         }
     }
 

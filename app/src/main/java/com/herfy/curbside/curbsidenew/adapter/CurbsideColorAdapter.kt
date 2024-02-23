@@ -51,7 +51,14 @@ class CurbsideColorAdapter(
                     curbsideColor.context.resources.getColor(R.color.color_stroke)
             }
 
-            curbsideColor.setCardBackgroundColor(Color.parseColor(item.attributes.color))
+            curbsideColor.setCardBackgroundColor(
+                Color.parseColor(
+                    "#" + item.attributes.color.replace(
+                        "#",
+                        ""
+                    )
+                )
+            )
 
             chooseCurbside.setOnClickListener {
                 curbsideListener.onSelectedColor(item, position)

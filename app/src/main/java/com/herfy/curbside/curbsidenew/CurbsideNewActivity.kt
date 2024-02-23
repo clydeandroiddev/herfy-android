@@ -127,7 +127,7 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
             isEmpty,
             object : AddCurbsideVehicleDialog.OnSubmit {
                 override fun onSuccess(
-                    colorSelected: String, carMaker: CarMaker?
+                    carColor: CarColor?, carMaker: CarMaker?
                 ) {
 
                 }
