@@ -71,7 +71,7 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
         curbsideVehicleAdapter = CurbsideVehicleAdapter(
             ArrayList(), object : CurbsideVehicleAdapter.CurbsideListener {
                 override fun onSelectedCar(car: CustomerCar, position: Int) {
-                    if (!AuthUtil.getInstance().isSignedIn) {
+                    if (AuthUtil.getInstance().isSignedIn) {
                         CacheUtil.getInstance().curbsideCar = car
                         setResult(RESULT_OK)
                         finish()
@@ -123,13 +123,12 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
 
     private fun showAddDialog(isEmpty: Boolean) {
         dismissAddressDialog()
-        addCurbsideDialog = AddCurbsideVehicleDialog.newInstance(
-            isEmpty,
+        addCurbsideDialog = AddCurbsideVehicleDialog.newInstance(isEmpty,
             object : AddCurbsideVehicleDialog.OnSubmit {
-                override fun onSuccess(
-                    carColor: CarColor?, carMaker: CarMaker?
-                ) {
-
+                override fun onSuccess() {
+                    dismissAddressDialog()
+                    setResult(RESULT_OK)
+                    finish()
                 }
 
                 override fun error(text: String) {

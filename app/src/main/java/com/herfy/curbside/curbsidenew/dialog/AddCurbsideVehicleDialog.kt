@@ -20,12 +20,14 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.herfy.base.BaseActivity
 import com.herfy.curbside.CurbsideContract
 import com.herfy.curbside.CurbsidePresenter
 import com.herfy.order.views.ordertype.ChoosePickupTypeDialog
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.AddCurbsideVehicleDialogBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
@@ -50,9 +52,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
     private lateinit var binding: AddCurbsideVehicleDialogBinding
 
     interface OnSubmit {
-        fun onSuccess(
-            carColor: CarColor?, carMaker: CarMaker?
-        )
+        fun onSuccess()
 
         fun error(text: String)
         fun exit(isEmpty: Boolean)
@@ -116,7 +116,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 dismiss()
             }
             continueButton.setOnClickListener {
-
+                saveAndContinue()
             }
 
             chooseCurbsideBrandColor.setOnClickListener {
@@ -150,6 +150,36 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
             plateNumberEdit.setText("ABC123")
             binding.continueButton.isVisible = true
+        }
+    }
+
+    private fun saveAndContinue() {
+        if (AuthUtil.getInstance().isSignedIn) {
+            val user = AuthUtil.getInstance().customer
+            activity?.let {
+                val baseActivity = it as BaseActivity
+                BaseActivity.hideKeyboard(baseActivity)
+                baseActivity.showLoadingDialog()
+            }
+            var color = ""
+            carColor?.let {
+                color = it.attributes.color
+            }
+
+            var carMakerId = "0"
+            var carMakerName = ""
+            carMaker?.let {
+                carMakerId = it.id
+                carMakerName = it.attributes.name
+            }
+
+            curbsidePresenter.addNewCar(
+                color,
+                carMakerId.toInt(),
+                carMakerName,
+                binding.plateNumberEdit.text.toString().trim(),
+                user.attributes.mobile.toString().trim().replace("+", "")
+            )
         }
     }
 
@@ -187,7 +217,11 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
     }
 
     override fun showError(error: String?) {
-
+        activity?.let {
+            val baseActivity = it as BaseActivity
+            baseActivity.dismissDialogs()
+            baseActivity.showAlertDialog("", error)
+        }
     }
 
     override fun showCustomerCars(cars: MutableList<CustomerCar>?) {
@@ -195,7 +229,12 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
     }
 
     override fun successAdd(car: CustomerCar?) {
-
+        activity?.let {
+            val baseActivity = it as BaseActivity
+            baseActivity.dismissDialogs()
+        }
+        CacheUtil.getInstance().curbsideCar = car
+        onSubmit?.onSuccess()
     }
 
     override fun successEdit(car: CustomerCar?, position: Int) {
@@ -261,8 +300,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 curbsideColorSelected.setCardBackgroundColor(
                     Color.parseColor(
                         "#" + it.attributes.color.replace(
-                            "#",
-                            ""
+                            "#", ""
                         )
                     )
                 )
