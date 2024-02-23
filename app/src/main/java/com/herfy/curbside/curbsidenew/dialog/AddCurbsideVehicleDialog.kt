@@ -145,7 +145,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
             })
 
             binding.continueButton.setOnClickListener {
-
+                saveAndContinue()
             }
 
             plateNumberEdit.setText("ABC123")
