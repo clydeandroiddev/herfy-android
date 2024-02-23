@@ -13,10 +13,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.herfy.curbside.CurbsideContract
 import com.herfy.curbside.CurbsidePresenter
-import com.herfy.curbside.curbsidenew.adapter.CurbsideBrandAdapter
+import com.herfy.curbside.curbsidenew.adapter.CurbsideColorAdapter
 import com.herfy.ext.getDialogCurbsideHeight
 import com.herfy.ordertype.R
-import com.herfy.ordertype.databinding.VehicleBrandDialogBinding
+import com.herfy.ordertype.databinding.VehicleColorDialogBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor
@@ -27,18 +27,18 @@ class VehicleColorDialog : BottomSheetDialogFragment(), CurbsideContract.View {
 
     private lateinit var curbsidePresenter: CurbsideContract.Presenter
 
-    private lateinit var curbsideVehicleAdapter: CurbsideBrandAdapter
+    private lateinit var curbsideVehicleAdapter: CurbsideColorAdapter
 
     private var onSubmit: OnSubmit? = null
 
-    private var carMaker: CarMaker? = null
+    private var carColor: CarColor? = null
 
-    private lateinit var binding: VehicleBrandDialogBinding
+    private lateinit var binding: VehicleColorDialogBinding
 
-    private var brandList = mutableListOf<CarMaker>()
+    private var brandList = mutableListOf<CarColor>()
 
     interface OnSubmit {
-        fun selectedCar(maker: CarMaker)
+        fun selectedColor(color: CarColor)
         fun exit()
     }
 
@@ -50,11 +50,11 @@ class VehicleColorDialog : BottomSheetDialogFragment(), CurbsideContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = VehicleBrandDialogBinding.inflate(layoutInflater)
+        binding = VehicleColorDialogBinding.inflate(layoutInflater)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
         curbsidePresenter = CurbsidePresenter(this)
         curbsidePresenter.start()
-        brandList = CacheUtil.getInstance().brands
+        brandList = CacheUtil.getInstance().colors
     }
 
     override fun onCreateView(
@@ -68,9 +68,9 @@ class VehicleColorDialog : BottomSheetDialogFragment(), CurbsideContract.View {
         setupDialog()
         binding.frameLayout.layoutParams.height = getDialogCurbsideHeight(requireContext())
         if (brandList.isEmpty()) {
-            curbsidePresenter.getMakersList(true)
+            curbsidePresenter.getColorsList(true)
         } else {
-            showCarMakers(brandList)
+            showCarColors(brandList)
         }
     }
 
@@ -103,8 +103,8 @@ class VehicleColorDialog : BottomSheetDialogFragment(), CurbsideContract.View {
         binding.apply {
             continueButton.alpha = 1f
             continueButton.setOnClickListener {
-                carMaker?.let {
-                    onSubmit?.selectedCar(it)
+                carColor?.let {
+                    onSubmit?.selectedColor(it)
                 }
             }
         }
@@ -121,21 +121,21 @@ class VehicleColorDialog : BottomSheetDialogFragment(), CurbsideContract.View {
             continueButton.setOnClickListener(null)
 
             var carId = ""
-            carMaker?.let {
+            carColor?.let {
                 enableButton()
                 carId = it.id
             }
 
-            curbsideVehicleAdapter = CurbsideBrandAdapter(
-                ArrayList(), object : CurbsideBrandAdapter.CurbsideListener {
-                    override fun onSelectedCar(car: CarMaker, position: Int) {
-                        carMaker = car
-                        curbsideVehicleAdapter.updateSelectedId(car.id)
+            curbsideVehicleAdapter = CurbsideColorAdapter(
+                ArrayList(), object : CurbsideColorAdapter.CurbsideListener {
+                    override fun onSelectedColor(color: CarColor, position: Int) {
+                        carColor = color
+                        curbsideVehicleAdapter.updateSelectedId(color.id)
                         enableButton()
                     }
                 }, carId
             )
-            binding.vehicleBrandList.adapter = curbsideVehicleAdapter
+            binding.vehicleColorList.adapter = curbsideVehicleAdapter
         }
     }
 
@@ -146,7 +146,7 @@ class VehicleColorDialog : BottomSheetDialogFragment(), CurbsideContract.View {
     override fun setupTranslations() {
         binding.apply {
             title.text =
-                CacheUtil.getInstance().getTranslations(Text.VEHICLE_BRAND, "Vehicle Brand")
+                CacheUtil.getInstance().getTranslations(Text.VEHICLE_COLOR, "Vehicle Color")
 
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.CONFIRM_LABEL, "Confirm")
@@ -154,13 +154,13 @@ class VehicleColorDialog : BottomSheetDialogFragment(), CurbsideContract.View {
     }
 
     override fun showCarColors(colors: MutableList<CarColor>?) {
-
+        brandList.clear()
+        brandList = CacheUtil.getInstance().colors
+        curbsideVehicleAdapter.updateList(ArrayList(brandList))
     }
 
-    override fun showCarMakers(makers: MutableList<CarMaker>) {
-        brandList.clear()
-        brandList = CacheUtil.getInstance().brands
-        curbsideVehicleAdapter.updateList(ArrayList(brandList))
+    override fun showCarMakers(makers: MutableList<CarMaker>?) {
+
     }
 
     override fun showError(error: String?) {
@@ -184,10 +184,10 @@ class VehicleColorDialog : BottomSheetDialogFragment(), CurbsideContract.View {
     }
 
     companion object {
-        fun newInstance(carMaker: CarMaker?, listener: OnSubmit): VehicleBrandDialog {
-            val choosePickupTypeDialogFragment = VehicleBrandDialog()
+        fun newInstance(carMaker: CarColor?, listener: OnSubmit): VehicleColorDialog {
+            val choosePickupTypeDialogFragment = VehicleColorDialog()
             choosePickupTypeDialogFragment.onSubmit = listener
-            choosePickupTypeDialogFragment.carMaker = carMaker
+            choosePickupTypeDialogFragment.carColor = carMaker
             return choosePickupTypeDialogFragment
         }
     }

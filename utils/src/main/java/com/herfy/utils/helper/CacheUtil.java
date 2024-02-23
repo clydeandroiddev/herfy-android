@@ -8,9 +8,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.herfy.model.CampaignToAdd;
+import com.herfy.model.CouponToAdd;
+import com.herfy.model.Popup;
 import com.herfy.model.SupportedCountry;
 import com.herfy.model.SupportedCountryResponse;
-import com.herfy.model.*;
+import com.herfy.utils.BuildConfig;
 import com.herfy.utils.analytics.MixpanelUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Application;
@@ -30,8 +33,8 @@ import com.skylinedynamics.solosdk.api.models.objects.Promotion;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
-import com.skylinedynamics.solosdk.api.models.objects.curbside.Colors;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 
@@ -44,8 +47,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.herfy.utils.BuildConfig;
 
 public class CacheUtil {
 
@@ -633,17 +634,17 @@ public class CacheUtil {
         editor.apply();
     }
 
-    public void setColors(ArrayList<Colors> menuItems) {
+    public void setColors(ArrayList<CarColor> menuItems) {
         String cartMenuItems = new Gson().toJson(menuItems);
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(VEHICLE_COLOR, cartMenuItems);
         editor.apply();
     }
 
-    public ArrayList<Colors> getColors() {
+    public ArrayList<CarColor> getColors() {
         String cartMenuItems = cacheSharedPreferences.getString(VEHICLE_COLOR, null);
         if (cartMenuItems != null) {
-            return GsonHelper.gsonFinal().fromJson(cartMenuItems, new TypeToken<ArrayList<Colors>>() {
+            return GsonHelper.gsonFinal().fromJson(cartMenuItems, new TypeToken<ArrayList<CarColor>>() {
             }.getType());
         }
         return new ArrayList<>();

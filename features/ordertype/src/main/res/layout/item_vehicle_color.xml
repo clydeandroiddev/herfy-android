@@ -21,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent">>
 
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/curbsideColor"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
@@ -31,7 +31,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/color_stroke" />
+                app:strokeColor="@color/color_stroke"
+                app:strokeWidth="0.5dp" />
 
             <ImageView
                 android:id="@+id/selectedIdentifier"

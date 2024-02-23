@@ -37,6 +37,8 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
     private lateinit var vehicleBrandDialog: VehicleBrandDialog
 
+    private lateinit var vehicleColorDialog: VehicleColorDialog
+
     private var onSubmit: OnSubmit? = null
 
     private var isEmpty = false
@@ -45,11 +47,13 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
     private var carMaker: CarMaker? = null
 
+    private var carColor: CarColor? = null
+
     private lateinit var binding: AddCurbsideVehicleDialogBinding
 
     interface OnSubmit {
         fun onSuccess(
-            colorSelected: String, carMaker: CarMaker?
+            carColor: CarColor?, carMaker: CarMaker?
         )
 
         fun error(text: String)
@@ -114,11 +118,11 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 dismiss()
             }
             continueButton.setOnClickListener {
-                onSubmit?.onSuccess(colorSelected, carMaker)
+
             }
 
             chooseCurbsideBrandColor.setOnClickListener {
-
+                showVehicleColor()
             }
 
             chooseCurbsideBrand.setOnClickListener {
@@ -248,17 +252,17 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
     }
 
     private fun showVehicleBrand() {
-        dismissPickupTypeDialog()
+        dismissVehicleBrandDialog()
         vehicleBrandDialog =
             VehicleBrandDialog.newInstance(carMaker, object : VehicleBrandDialog.OnSubmit {
                 override fun selectedCar(maker: CarMaker) {
                     carMaker = maker
                     setupBrand()
-                    dismissPickupTypeDialog()
+                    dismissVehicleBrandDialog()
                 }
 
                 override fun exit() {
-                    dismissPickupTypeDialog()
+                    dismissVehicleBrandDialog()
                 }
 
             })
@@ -267,7 +271,35 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
         )
     }
 
-    private fun dismissPickupTypeDialog() {
+    private fun showVehicleColor() {
+        dismissVehicleColorDialog()
+        vehicleColorDialog =
+            VehicleColorDialog.newInstance(carColor, object : VehicleColorDialog.OnSubmit {
+                override fun selectedColor(color: CarColor) {
+                    carColor = color
+                    setupColor()
+                    dismissVehicleColorDialog()
+                }
+
+                override fun exit() {
+                    dismissVehicleColorDialog()
+                }
+
+            })
+        vehicleBrandDialog.show(
+            requireActivity().supportFragmentManager, ChoosePickupTypeDialog::class.java.simpleName
+        )
+    }
+
+    private fun dismissVehicleBrandDialog() {
+        try {
+            vehicleBrandDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun dismissVehicleColorDialog() {
         try {
             vehicleBrandDialog.dismiss()
         } catch (e: java.lang.Exception) {
