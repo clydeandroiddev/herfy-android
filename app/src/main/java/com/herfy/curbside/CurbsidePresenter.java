@@ -11,6 +11,7 @@ import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CurbsideApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries;
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
 import com.skylinedynamics.solosdk.util.GsonHelper;
@@ -27,7 +28,7 @@ import java.util.List;
 public class CurbsidePresenter implements CurbsideContract.Presenter {
 
     private CurbsideContract.View view;
-    private List<String> colors;
+    private List<CarColor> colors;
     private List<CarMaker> carMakerList;
 
     public CurbsidePresenter(BaseView baseView) {
@@ -43,7 +44,7 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     String items = object.isNull("data") ? "" : object.optString("data");
-                    colors = GsonHelper.gsonFinal().fromJson(items, new TypeToken<List<String>>() {
+                    colors = GsonHelper.gsonFinal().fromJson(items, new TypeToken<List<CarColor>>() {
                     }.getType());
                     if (showCarColor) {
                         view.showCarColors(colors);
@@ -218,7 +219,7 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
     }
 
     @Override
-    public List<String> getCarColors() {
+    public List<CarColor> getCarColors() {
         return colors;
     }
 

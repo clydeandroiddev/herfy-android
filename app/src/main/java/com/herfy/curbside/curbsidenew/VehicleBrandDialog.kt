@@ -19,6 +19,7 @@ import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.VehicleBrandDialogBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
 
@@ -152,7 +153,7 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
         }
     }
 
-    override fun showCarColors(colors: MutableList<String>?) {
+    override fun showCarColors(colors: MutableList<CarColor>?) {
 
     }
 

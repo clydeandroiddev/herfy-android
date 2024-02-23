@@ -43,6 +43,7 @@ import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor
 import java.util.Locale
 
 class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListener {
@@ -75,9 +76,7 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentCurbsideBinding.inflate(inflater, container, false)
         return binding.root
@@ -91,7 +90,7 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
         showCars()
     }
 
-    override fun showCarColors(colors: List<String>) {
+    override fun showCarColors(colors: List<CarColor>) {
         activity?.let {
             val baseActivity = it as BaseActivity
             baseActivity.dismissDialogs()
@@ -133,7 +132,7 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
 
     private fun setToolbarActionButton(hasCars: Boolean) {
         activity?.cast<MainActivity> {
-            if(hasCars) {
+            if (hasCars) {
                 it.showToolbarActionButton(true)
                 it.setToolbarActionText(
                     CacheUtil.getInstance().getTranslations(Text.EDIT, "EDIT")
@@ -198,7 +197,7 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
             binding.confirm.isEnabled = false
         }
         customerCars.removeAt(position)
-        if(customerCars.isNotEmpty()) {
+        if (customerCars.isNotEmpty()) {
             binding.empty.visibility = View.GONE
         } else {
             setToolbarActionButton(false)
@@ -213,7 +212,7 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
             sendFragmentResult()
         }
         activity?.cast<NavigationActivity> {
-            if(it.navigation == R.id.nav_curbside) {
+            if (it.navigation == R.id.nav_curbside) {
                 val intent = Intent()
                 it.setResult(Activity.RESULT_OK, intent)
                 it.finish()
@@ -225,8 +224,7 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
 
     private fun sendFragmentResult() {
         setFragmentResult(
-            ARGS_KEY_FRAGMENT_RESULT,
-            bundleOf(
+            ARGS_KEY_FRAGMENT_RESULT, bundleOf(
                 OrderTypeNewFragment.ARGS_KEY_CURBSIDE to args.curbside
             )
         )
@@ -245,7 +243,9 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
     ) {
         activity?.let {
             val baseActivity = it as BaseActivity
-            baseActivity.logEventAttributesMetric(eventName, eventAttributes, eventMetricName, eventMetricValue)
+            baseActivity.logEventAttributesMetric(
+                eventName, eventAttributes, eventMetricName, eventMetricValue
+            )
         }
     }
 
@@ -258,19 +258,19 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
         binding.makerColorConstraint.setOnClickListener { v: View? -> showCarMakerDialog() }
         if (adapter == null) {
             adapter = CustomerCarAdapter(requireContext(), customerCars, this)
-            if(CacheUtil.getInstance().curbsideCar != null) {
+            if (CacheUtil.getInstance().curbsideCar != null) {
                 adapter?.selectedCarId = CacheUtil.getInstance().curbsideCar.id
             } else {
                 adapter?.selectedCarId = ""
             }
         }
         binding.confirm.isEnabled = CacheUtil.getInstance().curbsideCar != null
-        if(AuthUtil.getInstance().isSignedIn) {
+        if (AuthUtil.getInstance().isSignedIn) {
             //For Burgerizzr
             val phone = if (BuildUtil.soloAppKey().equals("SeBwUS2G9SEnkwty", ignoreCase = true)) {
                 CacheUtil.getInstance().concept.dialingCode + AuthUtil.getInstance().customer.attributes.mobile.substring(
-                            1
-                        )
+                    1
+                )
             } else {
                 AuthUtil.getInstance().customer.attributes.mobile
             }
@@ -316,13 +316,13 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
             activity?.cast<MainActivity> {
                 it.setToolbarTitle(
                     CacheUtil.getInstance().getTranslations(Text.CHOOSE_CAR, "CHOOSE CAR")
-                    .uppercase(
-                        Locale.getDefault()
-                    ))
-                it.setToolbarActionText(CacheUtil.getInstance().getTranslations(Text.EDIT_CAPS, "EDIT"))
-            }
-            activity?.cast<NavigationActivity> {
-
+                        .uppercase(
+                            Locale.getDefault()
+                        )
+                )
+                it.setToolbarActionText(
+                    CacheUtil.getInstance().getTranslations(Text.EDIT_CAPS, "EDIT")
+                )
             }
         } else {
             if (customerCars.isEmpty()) {
@@ -335,16 +335,15 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
             binding.carLayout.visibility = View.GONE
             activity?.cast<MainActivity> {
                 it.setToolbarTitle(
-                    CacheUtil.getInstance().getTranslations(Text.EDIT_CARS, "EDIT CARS")
-                    .uppercase(
-                        Locale.getDefault()
-                    ))
+                    CacheUtil.getInstance().getTranslations(Text.EDIT_CARS, "EDIT CARS").uppercase(
+                            Locale.getDefault()
+                        )
+                )
                 it.setToolbarActionText(
                     CacheUtil.getInstance().getTranslations(Text.DONE_CAPS, "DONE").uppercase(
-                    Locale.getDefault()
-                ))
-            }
-            activity?.cast<NavigationActivity> {
+                        Locale.getDefault()
+                    )
+                )
             }
         }
         adapter?.notifyDataSetChanged()
@@ -353,27 +352,20 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
     override fun setupFonts() {}
     override fun setupTranslations() {
         binding.plateNumberText.hint = CacheUtil.getInstance().getTranslations(
-            Text.PLATE_NUMBER,
-            "Plate Number"
+            Text.PLATE_NUMBER, "Plate Number"
         )
         binding.phoneNumberText.hint = CacheUtil.getInstance().getTranslations(
-            Text.MOBILE_NUMBER,
-            "Mobile Number"
+            Text.MOBILE_NUMBER, "Mobile Number"
         )
-        binding.carMakerLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.MAKER, "Maker")
-        binding.carColorLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.COLOR, "Color")
+        binding.carMakerLabel.text = CacheUtil.getInstance().getTranslations(Text.MAKER, "Maker")
+        binding.carColorLabel.text = CacheUtil.getInstance().getTranslations(Text.COLOR, "Color")
         binding.addNewCar.text = CacheUtil.getInstance().getTranslations(
-            Text.ADD_THIS_AS_A_NEW_CAR,
-            "ADD THIS AS A NEW CAR"
+            Text.ADD_THIS_AS_A_NEW_CAR, "ADD THIS AS A NEW CAR"
         ).uppercase(Locale.getDefault())
-        binding.confirm.text = CacheUtil.getInstance()
-            .getTranslations(Text.CONFIRM_CAPS, "CONFIRM")
+        binding.confirm.text = CacheUtil.getInstance().getTranslations(Text.CONFIRM_CAPS, "CONFIRM")
             .uppercase(Locale.getDefault())
         binding.emptyCarText.text = CacheUtil.getInstance().getTranslations(
-            Text.NO_CAR_REGISTERED_YET,
-            "No cars registered yet"
+            Text.NO_CAR_REGISTERED_YET, "No cars registered yet"
         ).uppercase(Locale.getDefault())
         binding.emptyCarTextDesc.text = CacheUtil.getInstance().getTranslations(
             Text.ADD_A_CAR_MESSAGE,
@@ -401,9 +393,8 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
                 }
                 presenter!!.getColorsList(true)
             } else {
-                colorListDialog = ColorListDialog.newInstance(
-                    presenter!!.carColors,
-                    object : ColorListDialog.OnAction {
+                colorListDialog =
+                    ColorListDialog.newInstance(listOf(), object : ColorListDialog.OnAction {
                         override fun onClose() {
                             colorListDialog!!.dismiss()
                         }
@@ -416,8 +407,7 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
                             binding.colorImageSelected.setImageDrawable(
                                 ViewUtil.getColorDrawable(
                                     "#" + color.replace(
-                                        "#",
-                                        ""
+                                        "#", ""
                                     )
                                 )
                             )
@@ -456,8 +446,7 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
                                 binding.makerImage.visibility = View.VISIBLE
                                 binding.makerOtherText.visibility = View.GONE
                                 if (imageUrl == null || imageUrl.equals(
-                                        "null",
-                                        ignoreCase = true
+                                        "null", ignoreCase = true
                                     ) || imageUrl.isEmpty() || imageUrl.lowercase(
                                         Locale.getDefault()
                                     ).contains("default-image.png")
@@ -503,7 +492,9 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
                     })
                 carMakerDialog?.isCancelable = true
                 activity?.let {
-                    carMakerDialog?.show(it.supportFragmentManager, CarMakerDialog::class.java.toString())
+                    carMakerDialog?.show(
+                        it.supportFragmentManager, CarMakerDialog::class.java.toString()
+                    )
                 }
             }
         } catch (e: Exception) {
@@ -532,9 +523,8 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
     }
 
     override fun editCar(maker: CustomerCar, position: Int) {
-        editCarDialog = EditCarDialog.newInstance(
-            maker,
-            presenter!!.carColors,
+        editCarDialog = EditCarDialog.newInstance(maker,
+            listOf(),
             presenter!!.carMakers,
             object : EditCarDialog.OnAction {
                 override fun onClose() {
@@ -552,14 +542,12 @@ class CurbsideFragment : BaseFragment(), CurbsideContract.View, CustomerCarListe
                     editBody.addProperty("color", customerCar.attributes.color)
                     if (customerCar.attributes.carMakerId != null) {
                         editBody.addProperty(
-                            "car-maker-id",
-                            customerCar.attributes.carMakerId.toInt()
+                            "car-maker-id", customerCar.attributes.carMakerId.toInt()
                         )
                     } else {
                         if (customerCar.attributes.carMakerName != null) {
                             editBody.addProperty(
-                                "car-maker-name",
-                                customerCar.attributes.carMakerName
+                                "car-maker-name", customerCar.attributes.carMakerName
                             )
                         }
                     }

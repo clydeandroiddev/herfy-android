@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.JsonObject;
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
 
@@ -14,7 +15,7 @@ public class CurbsideContract {
 
     public interface View extends BaseView<Presenter> {
 
-        void showCarColors(List<String> colors);
+        void showCarColors(List<CarColor> colors);
 
         void showCarMakers(List<CarMaker> makers);
 
@@ -44,7 +45,7 @@ public class CurbsideContract {
 
         void deleteCar(String customerCardId, int position);
 
-        List<String> getCarColors();
+        List<CarColor> getCarColors();
 
         List<CarMaker> getCarMakers();
 

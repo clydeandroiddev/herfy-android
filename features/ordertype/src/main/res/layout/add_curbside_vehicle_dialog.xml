@@ -248,7 +248,7 @@
                     android:textSize="14sp"
                     tools:text="License Plate Number" />
 
-                <EditText
+                <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/plateNumberEdit"
                     style="@style/Styles.Text.Footnote"
                     android:layout_width="match_parent"
