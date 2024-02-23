@@ -266,7 +266,7 @@ public class UpsellPresenter implements UpsellContract.Presenter {
     public double getMenuItemTotalPrice(MenuItem menuItem) {
         double totalPrice = menuItem.getAttributes().getPrice(CacheUtil.getOrderStoreId());
         if (menuItem.getSizes().getModifierItems().size() > 0) {
-            if(!menuItem.isPromo()) {
+            if (!menuItem.isPromo()) {
                 totalPrice = 0.0;
             }
             for (ModifierItem modifierItem : menuItem.getSizes().getModifierItems()) {
@@ -314,7 +314,7 @@ public class UpsellPresenter implements UpsellContract.Presenter {
         if (AuthUtil.getInstance().isSignedIn()) {
 
             boolean validDelivery = CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY && CacheUtil.getInstance().getOrderAddress() != null;
-            boolean validPickup = (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE) && CacheUtil.getInstance().getOrderStore() != null;
+            boolean validPickup = CacheUtil.getInstance().pickupTypes() && CacheUtil.getInstance().getOrderStore() != null;
 
             Customer customer = AuthUtil.getInstance().getCustomer();
             Concept concept = CacheUtil.getInstance().getConcept();
@@ -367,6 +367,14 @@ public class UpsellPresenter implements UpsellContract.Presenter {
                             orderBody.addProperty("location", store.getId());
                         }
                         break;
+                    case DRIVE_THRU:
+                        deliveryCharge = 0.0;
+                        orderBody.addProperty("type", "drive-thru");
+                        if (store != null) {
+                            orderBody.addProperty("location", store.getId());
+                        }
+                        break;
+                    case EAT_IN:
                     case DINE_IN:
                         deliveryCharge = 0.0;
                         orderBody.addProperty("type", "eat-in");
@@ -631,7 +639,7 @@ public class UpsellPresenter implements UpsellContract.Presenter {
         orderBody.addProperty("discount", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", discount)));
 
         boolean validDelivery = CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY && CacheUtil.getInstance().getOrderAddress() != null;
-        boolean validPickup = (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE) && CacheUtil.getInstance().getOrderStore() != null;
+        boolean validPickup = CacheUtil.getInstance().pickupTypes() && CacheUtil.getInstance().getOrderStore() != null;
 
         if (validDelivery || validPickup) {
 
@@ -645,6 +653,12 @@ public class UpsellPresenter implements UpsellContract.Presenter {
                     }
                     orderBody.addProperty("location", store.getId());
                     break;
+                case DRIVE_THRU:
+                    deliveryCharge = 0.0;
+                    orderBody.addProperty("type", "drive-thru");
+                    orderBody.addProperty("location", store.getId());
+                    break;
+                case EAT_IN:
                 case DINE_IN:
                     deliveryCharge = 0.0;
                     orderBody.addProperty("type", "eat-in");

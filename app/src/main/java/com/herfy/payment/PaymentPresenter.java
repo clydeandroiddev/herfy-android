@@ -203,7 +203,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                     Store store = Store.parseStore(jsonObject.getJSONObject("data"));
                     CacheUtil.getInstance().setOrderStore(store);
                     getLocation(geocoder);
-                    validateOrder(false, store, null, loyaltyPointsUsed,false);
+                    validateOrder(false, store, null, loyaltyPointsUsed, false);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     this.onError(e);
@@ -223,7 +223,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
         Store store = CacheUtil.getInstance().getOrderStore();
 
-        if (store != null && StringUtil.hasOrderLatLong() && (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE)) {
+        if (store != null && StringUtil.hasOrderLatLong() && (CacheUtil.getInstance().pickupTypes())) {
             LatLng originPosition = new LatLng(Double.parseDouble(CacheUtil.getInstance().getOrderLatitude()), Double.parseDouble(CacheUtil.getInstance().getOrderLongitude()));
             LatLng destinationPosition = new LatLng(store.getAttributes().getLat(), store.getAttributes().getLng());
             paymentView.setStartName(AuthUtil.getInstance().getCustomer().getAttributes().getFirstName() + " " + AuthUtil.getInstance().getCustomer().getAttributes().getLastName());
@@ -400,11 +400,11 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
         double totalPrice = menuItem.getPrice(orderStoreId);
 
-        if(BuildUtil.isEkfc() && menuItem.getTotal() != 0) {
+        if (BuildUtil.isEkfc() && menuItem.getTotal() != 0) {
             totalPrice = menuItem.getTotal();
         } else {
             if (menuItem.getSizes().getModifierItems().size() > 0) {
-                if(!menuItem.isPromo()) {
+                if (!menuItem.isPromo()) {
                     totalPrice = 0.0;
                 }
                 for (ModifierItem modifierItem : menuItem.getSizes().getModifierItems()) {
@@ -608,9 +608,9 @@ public class PaymentPresenter implements PaymentContract.Presenter {
     public double getValidatedSubtotal() {
         double promoItemPrice = 0.0;
         double subtotalForDisplay = validatedSubtotal - (validatedPromoItemPrice * validatedPromoItemQuantity);
-        if(CacheUtil.getInstance().getCouponMenuItem() != null) {
+        if (CacheUtil.getInstance().getCouponMenuItem() != null) {
             promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCouponMenuItem(), -1);
-        } else if(CacheUtil.getInstance().getCampaignPromotionMenuItem() != null) {
+        } else if (CacheUtil.getInstance().getCampaignPromotionMenuItem() != null) {
             promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCampaignPromotionMenuItem(), -1);
         }
         subtotalForDisplay += promoItemPrice;
@@ -621,9 +621,9 @@ public class PaymentPresenter implements PaymentContract.Presenter {
     public double getValidatedTotal() {
         double promoItemPrice = 0.0;
         double totalForDisplay = validatedTotal - (validatedPromoItemPrice * validatedPromoItemQuantity);
-        if(CacheUtil.getInstance().getCouponMenuItem() != null) {
+        if (CacheUtil.getInstance().getCouponMenuItem() != null) {
             promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCouponMenuItem(), -1);
-        } else if(CacheUtil.getInstance().getCampaignPromotionMenuItem() != null) {
+        } else if (CacheUtil.getInstance().getCampaignPromotionMenuItem() != null) {
             promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCampaignPromotionMenuItem(), -1);
         }
         totalForDisplay += promoItemPrice;
@@ -711,7 +711,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                             } else if (CacheUtil.getInstance().getOrderType() != OrderType.DELIVERY && openStore.getAttributes().getPickupEnabled() == 0) {
                                 paymentView.showError(CacheUtil.getInstance().getTranslations(Text.LOCATION_PICKUP_DISABLED, "Your selected branch is no longer accepting orders. Please select another branch."));
                             } else {
-                                validateOrder(true, CacheUtil.getInstance().getOrderStore(), scheduleOrder ? date : null, loyaltyPointsUsed,false);
+                                validateOrder(true, CacheUtil.getInstance().getOrderStore(), scheduleOrder ? date : null, loyaltyPointsUsed, false);
                                 //sendOrder(CacheUtil.getInstance().getOrderStore(), scheduleOrder ? date : null);
                             }
 
@@ -845,32 +845,32 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
         orderBody.addProperty("discount", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", discount)));
 
-        if(!validate && validatedJsonObject != null) {
-            if(validatedJsonObject.has("loyalty-points-earnable")) {
+        if (!validate && validatedJsonObject != null) {
+            if (validatedJsonObject.has("loyalty-points-earnable")) {
                 orderBody.add("loyalty-points-earnable", validatedJsonObject.get("loyalty-points-earnable"));
             }
-            if(validatedJsonObject.has("location")) {
+            if (validatedJsonObject.has("location")) {
                 orderBody.add("location", validatedJsonObject.get("location"));
             }
-            if(validatedJsonObject.has("delivery-charge")) {
+            if (validatedJsonObject.has("delivery-charge")) {
                 orderBody.add("delivery-charge", validatedJsonObject.get("delivery-charge"));
             }
-            if(validatedJsonObject.has("charges")) {
+            if (validatedJsonObject.has("charges")) {
                 orderBody.add("charges", validatedJsonObject.get("charges"));
             }
-            if(validatedJsonObject.has("taxes")) {
+            if (validatedJsonObject.has("taxes")) {
                 orderBody.add("taxes", validatedJsonObject.get("taxes"));
             }
-            if(validatedJsonObject.has("taxes")) {
+            if (validatedJsonObject.has("taxes")) {
                 orderBody.add("taxes", validatedJsonObject.get("taxes"));
             }
-            if(validatedJsonObject.has("discount-display")) {
+            if (validatedJsonObject.has("discount-display")) {
                 orderBody.add("discount-display", validatedJsonObject.get("discount-display"));
             }
-            if(validatedJsonObject.has("round")) {
+            if (validatedJsonObject.has("round")) {
                 orderBody.add("round", validatedJsonObject.get("round"));
             }
-            if(validatedJsonObject.has("vat-amount")) {
+            if (validatedJsonObject.has("vat-amount")) {
                 orderBody.add("vat-amount", validatedJsonObject.get("vat-amount"));
             }
         }
@@ -883,6 +883,20 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                 } else {
                     orderBody.addProperty("type", "pickup");
                 }
+                if (store != null) {
+                    orderBody.addProperty("location", store.getId());
+                }
+                break;
+            case DRIVE_THRU:
+                deliveryCharge = 0.0;
+                orderBody.addProperty("type", "drive-thru");
+                if (store != null) {
+                    orderBody.addProperty("location", store.getId());
+                }
+                break;
+            case EAT_IN:
+                deliveryCharge = 0.0;
+                orderBody.addProperty("type", "eat-in");
                 if (store != null) {
                     orderBody.addProperty("location", store.getId());
                 }
@@ -1177,7 +1191,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                                 validatedPromoItemQuantity = item.getQuantity();
                             }
                             if (!item.getIsPromotion() && menuItem.getId().equals(item.getId())) {
-                                if(BuildUtil.isEkfc() && (item.getTotal() != item.getPrice() || getMenuItemTotalPrice(false, menuItems.get(menuItems.indexOf(menuItem)), -1) != item.getTotal())) {
+                                if (BuildUtil.isEkfc() && (item.getTotal() != item.getPrice() || getMenuItemTotalPrice(false, menuItems.get(menuItems.indexOf(menuItem)), -1) != item.getTotal())) {
                                     menuItems.get(menuItems.indexOf(menuItem)).setTotal(item.getTotal());
                                 } else {
                                     menuItems.get(menuItems.indexOf(menuItem)).setTotal(0);
@@ -1191,8 +1205,8 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
                     if (hasChanged) {
                         ArrayList<MenuItem> items = new ArrayList<>();
-                        for(MenuItem item : menuItems) {
-                            if(!item.isPromo()) {
+                        for (MenuItem item : menuItems) {
+                            if (!item.isPromo()) {
                                 items.add(item);
                             }
                         }
@@ -1227,7 +1241,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         pointsSarValue = loyaltyPoints;// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
                     }
 
-                    paymentView.setPriceDetails(getValidatedSubtotal(), orderData.getDiscountDisplay(), getValidatedTotal(), validatedDeliveryCharge, pointsSarValue, pointsEarnable, (int)(loyaltyPoints * Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion())), orderData.getCharges());
+                    paymentView.setPriceDetails(getValidatedSubtotal(), orderData.getDiscountDisplay(), getValidatedTotal(), validatedDeliveryCharge, pointsSarValue, pointsEarnable, (int) (loyaltyPoints * Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion())), orderData.getCharges());
 
                     boolean hasPromoItem = CacheUtil.getInstance().getCouponMenuItem() != null ||
                             CacheUtil.getInstance().getCampaignPromotionMenuItem() != null;
@@ -1235,7 +1249,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                     if (jsonObject.has("error") && !jsonObject.isNull("error")) {
                         paymentView.showError(jsonObject.getString("error"));
                     } else if (checkout) {
-                        if(!hasPromoItem) {
+                        if (!hasPromoItem) {
                             sendOrder(store, scheduledTime, o.toString(), loyaltyPoints);
                         } else {
                             validatedBody = getOrderBody(false, store, scheduledTime, false, loyaltyPoints, JsonParser.parseString(jsonObject.toString()).getAsJsonObject()).first;
@@ -1243,12 +1257,12 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         }
                     } else {
                         paymentView.dismissDialogs();
-                        if(isShowCardFailed){
+                        if (isShowCardFailed) {
                             paymentView.showCardFailed();
                         }
 
                     }
-                    if(!hasPromoItem) {
+                    if (!hasPromoItem) {
                         validatedBody = (JsonObject) new JsonParser().parse(o.toString());
                     }
                 } catch (Exception e) {
@@ -1327,10 +1341,10 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
                         paymentView.setOrderId(orderId);
                         MixpanelUtil.Companion.checkout(
-                            orderId,
-                            store,
-                            finalObject.get("type").getAsString(),
-                            paymentType.getValue()
+                                orderId,
+                                store,
+                                finalObject.get("type").getAsString(),
+                                paymentType.getValue()
                         );
                         KochavaTrackerUtil.trackEvent(EventType.PURCHASE);
                         ApiLogUtil.sendOrderLog(ApiLogLevel.INFO, orderId, paymentType.getValue(), "Order Successful");
@@ -1390,15 +1404,15 @@ public class PaymentPresenter implements PaymentContract.Presenter {
             @Override
             public void onResponse(Call<SoloResponse<MoneyHashIntent>> call, Response<SoloResponse<MoneyHashIntent>> response) {
                 if (response.isSuccessful()) {
-                    MoneyHash.INSTANCE.startPaymentFlow(response.body().getData().getId(),  paymentView.moneyHashContract(), ResultType.CALLBACK);
+                    MoneyHash.INSTANCE.startPaymentFlow(response.body().getData().getId(), paymentView.moneyHashContract(), ResultType.CALLBACK);
                 } else {
                     Object message = null;
-                    if(response.body() != null && response.body().getData() != null) {
+                    if (response.body() != null && response.body().getData() != null) {
                         message = response.body().getData();
-                    } else if(response.errorBody() != null) {
+                    } else if (response.errorBody() != null) {
                         message = response.errorBody();
                     }
-                    if(message != null) {
+                    if (message != null) {
                         ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, getPaymentProvider(), "Card Payment Failed (Reason: " + new Gson().toJson(message) + ")");
                     } else {
                         ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, getPaymentProvider(), "Card Payment Failed (Reason: getMoneyHashIntent failed)");
@@ -1655,7 +1669,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
             CustomersApiCall.getInstance().deleteRedemption(Values.MUKAFAA_PROVIDER, transactionId, new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
-                    validateOrder(false, CacheUtil.getInstance().getOrderStore(), null, loyaltyPointsUsed,false);
+                    validateOrder(false, CacheUtil.getInstance().getOrderStore(), null, loyaltyPointsUsed, false);
                 }
 
                 @Override
@@ -1739,21 +1753,21 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         return menuItems;
     }
 
-    public void getMoyasarKey(){
+    public void getMoyasarKey() {
         UtilitiesApiCall.getInstance().getMoyasarKey(new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
-                if(o instanceof JSONObject){
+                if (o instanceof JSONObject) {
                     try {
                         JSONObject obj = (JSONObject) o;
-                        if(obj.has("data")){
+                        if (obj.has("data")) {
                             JSONObject data = obj.getJSONObject("data");
-                            if(data.has("option_value")){
+                            if (data.has("option_value")) {
                                 String apiKey = data.getString("option_value");
-                                paymentView.showMoyasarSheet(orderId, validatedTotal,GsonHelper.gsonFinal().toJson(menuItems), apiKey);
+                                paymentView.showMoyasarSheet(orderId, validatedTotal, GsonHelper.gsonFinal().toJson(menuItems), apiKey);
                             }
                         }
-                    }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                         paymentView.showError(CacheUtil.getInstance().getTranslations(Text.SORRY_ERROR_PAYMENT));
                     }

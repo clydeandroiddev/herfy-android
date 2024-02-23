@@ -1066,7 +1066,8 @@ public class CacheUtil {
         return (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP
                 || CacheUtil.getInstance().getOrderType() == OrderType.EAT_IN
                 || CacheUtil.getInstance().getOrderType() == OrderType.DRIVE_THRU
-                || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN);
+                || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN
+                || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE);
     }
 
     public OrderType getOrderType() {

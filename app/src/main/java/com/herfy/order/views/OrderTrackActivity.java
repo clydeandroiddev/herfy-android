@@ -85,14 +85,20 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
     private String orderId = "";
 
-    @BindView(R.id.sliding_panel) SlidingUpPanelLayout slidingPanel;
+    @BindView(R.id.sliding_panel)
+    SlidingUpPanelLayout slidingPanel;
 
-    @BindView(R.id.back) ImageButton back;
+    @BindView(R.id.back)
+    ImageButton back;
 
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.id_label) TextView idLabel;
-    @BindView(R.id.code) TextView code;
-    @BindView(R.id.tracking_status) TextView trackingStatus;
+    @BindView(R.id.title)
+    TextView title;
+    @BindView(R.id.id_label)
+    TextView idLabel;
+    @BindView(R.id.code)
+    TextView code;
+    @BindView(R.id.tracking_status)
+    TextView trackingStatus;
     /*@BindView(R.id.confirmed_time) TextView confirmedTime;
     @BindView(R.id.preparing_time) TextView preparingTime;
     @BindView(R.id.on_the_way_time) TextView onTheWayTime;
@@ -106,10 +112,12 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
     @BindView(R.id.delivered_view) View deliveredView;*/
 
-    @BindView(R.id.cancel) MaterialButton cancel;
+    @BindView(R.id.cancel)
+    MaterialButton cancel;
     //@BindView(R.id.rate) MaterialButton rate;
 
-    @BindView(R.id.order_statuses_recycler_view) RecyclerView orderStatusesRecyclerView;
+    @BindView(R.id.order_statuses_recycler_view)
+    RecyclerView orderStatusesRecyclerView;
 
     private GoogleMap map;
 
@@ -140,7 +148,7 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
         Bundle bundle = getIntent().getExtras();
 
-        if(bundle != null && bundle.containsKey("order_id")) {
+        if (bundle != null && bundle.containsKey("order_id")) {
 
             showLoadingDialog();
             orderId = bundle.getString("order_id");
@@ -164,7 +172,7 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (requestCode == Values.PERMISSION_LOCATION) {
                 getLocation();
             }
@@ -185,7 +193,7 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
     @Override
     public void onBackPressed() {
-        if(handler != null) {
+        if (handler != null) {
             handler.removeCallbacksAndMessages(null);
         }
         super.onBackPressed();
@@ -215,7 +223,7 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
         });
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        if(supportMapFragment != null) {
+        if (supportMapFragment != null) {
             supportMapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
@@ -225,9 +233,9 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
                     map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
                         @Override
                         public void onCameraIdle() {
-                            if(mapMoved) {
+                            if (mapMoved) {
                                 mapMoved = false;
-                                if(map.getCameraPosition().zoom > 12) {
+                                if (map.getCameraPosition().zoom > 12) {
                                     map.moveCamera(CameraUpdateFactory.zoomTo(12.0f));
                                 }
                             }
@@ -248,11 +256,11 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
                             switch (newState) {
 
                                 case ANCHORED:
-                                    map.setPadding(0, 0,0, ViewUtil.dpToPx(OrderTrackActivity.this, 360));
+                                    map.setPadding(0, 0, 0, ViewUtil.dpToPx(OrderTrackActivity.this, 360));
                                     break;
 
                                 case COLLAPSED:
-                                    map.setPadding(0, 0,0, ViewUtil.dpToPx(OrderTrackActivity.this, 80));
+                                    map.setPadding(0, 0, 0, ViewUtil.dpToPx(OrderTrackActivity.this, 80));
                                     break;
 
                             }
@@ -371,7 +379,7 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
                     e.printStackTrace();
 
-                    if(e.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+                    if (e.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
 
                         try {
 
@@ -384,7 +392,7 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
                         }
 
-                    } else if(e.getStatusCode() == LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE) {
+                    } else if (e.getStatusCode() == LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE) {
                         AppLogger.error("Settings change unavailable");
                     }
 
@@ -396,7 +404,7 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
     @Override
     public void getLocation() {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             orderPresenter.getLocation(new FusedLocationProvider(this));
         } else {
             permissions = true;
@@ -537,17 +545,17 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
     @Override
     public void updateMap(OrderType orderType, LatLng startLocation, LatLng endLocation, LatLngBounds bounds) {
 
-        if(startMarker != null) {
+        if (startMarker != null) {
             startMarker.remove();
         }
 
-        if(endMarker != null) {
+        if (endMarker != null) {
             endMarker.remove();
         }
 
-        if(map != null) {
+        if (map != null) {
 
-            if(startLocation != null) {
+            if (startLocation != null) {
 
                 MarkerOptions startMarkerOptions = new MarkerOptions();
                 startMarkerOptions.position(startLocation);
@@ -555,6 +563,8 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
                 switch (orderType) {
                     case PICKUP:
+                    case DRIVE_THRU:
+                    case EAT_IN:
                     case DINE_IN:
                         startMarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(ViewUtil.vectorDrawableToBitmap(this, R.drawable.address_home), 95, 95, true)));
                         break;
@@ -567,7 +577,7 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
             }
 
-            if(endLocation != null) {
+            if (endLocation != null) {
 
                 MarkerOptions endMarkerOptions = new MarkerOptions();
                 endMarkerOptions.position(endLocation);
@@ -575,6 +585,8 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
                 switch (orderType) {
                     case PICKUP:
+                    case DRIVE_THRU:
+                    case EAT_IN:
                     case DINE_IN:
                         endMarkerOptions.icon(ViewUtil.vectorDrawableToBitmapDescriptor(this, R.drawable.marker_start));
                         break;
@@ -601,11 +613,11 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
         String displayId = order.getDisplayId();
 
-        if(displayId == null || displayId.isEmpty() || displayId.equalsIgnoreCase("null")) {
+        if (displayId == null || displayId.isEmpty() || displayId.equalsIgnoreCase("null")) {
             displayId = order.getCode();
         }
 
-        if(displayId == null || displayId.isEmpty() || displayId.equalsIgnoreCase("null")) {
+        if (displayId == null || displayId.isEmpty() || displayId.equalsIgnoreCase("null")) {
             displayId = order.getId();
         }
 
@@ -622,7 +634,7 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
     @Override
     public void showOrderStatuses(ArrayList<OrderStatus> orderStatuses) {
 
-        if(orderStatuses.size() > 0) {
+        if (orderStatuses.size() > 0) {
             timeLineAdapter.notifyDataSetChanged();
             trackingStatus.setVisibility(View.VISIBLE);
             orderStatusesRecyclerView.setVisibility(View.VISIBLE);
@@ -662,7 +674,7 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
         slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
 
-        map.setPadding(0, 0,0, ViewUtil.dpToPx(OrderTrackActivity.this, 360));
+        map.setPadding(0, 0, 0, ViewUtil.dpToPx(OrderTrackActivity.this, 360));
 
         orderPresenter.getStoreDetails();
 
@@ -795,11 +807,11 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(driverMarker != null) {
+                if (driverMarker != null) {
                     driverMarker.remove();
                 }
 
-                if(map != null) {
+                if (map != null) {
 
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(latLng);
@@ -813,15 +825,15 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
                     builder.include(latLng);
 
-                    if(startMarker != null) {
+                    if (startMarker != null) {
                         builder.include(startMarker.getPosition());
                     }
 
-                    if(endMarker != null) {
+                    if (endMarker != null) {
                         builder.include(endMarker.getPosition());
                     }
 
-                    if(startMarker == null && endMarker == null) {
+                    if (startMarker == null && endMarker == null) {
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
                     } else {
                         map.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
@@ -838,7 +850,7 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(driverMarker != null) {
+                if (driverMarker != null) {
                     LatLngInterpolator interpolator = new LatLngInterpolator.Linear();
                     MarkerAnimation.animateMarker(driverMarker, latLng, interpolator);
                 }

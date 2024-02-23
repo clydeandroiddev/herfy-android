@@ -906,7 +906,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                                 boolean disable = false;
                                 if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
                                     disable = menuItem.getDisableForDelivery() == 1;
-                                } else if (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE) {
+                                } else if (CacheUtil.getInstance().pickupTypes()) {
                                     disable = menuItem.getDisableForPickup() == 1;
                                 }
                                 if ((disable || menuItem.getExcludedLocations().contains(orderStoreId) || menuItem.getOutOfStockLocations().contains(orderStoreId))) {

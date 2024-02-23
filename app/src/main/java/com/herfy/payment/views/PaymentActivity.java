@@ -431,20 +431,20 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         paymentPresenter.getLoyalty();
         paymentPresenter.start();
         paymentPresenter.getPaymentTypes();
-        moyasarActivityResultLauncher = registerForActivityResult( new ActivityResultContracts.StartActivityForResult(),
+        moyasarActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        if(result.getResultCode() == RESULT_OK){
+                        if (result.getResultCode() == RESULT_OK) {
                             Intent intent = result.getData();
-                            if(intent != null){
-                                if(intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID)){
-                                    if(!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase("failed") && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase("canceled")){
+                            if (intent != null) {
+                                if (intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID)) {
+                                    if (!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase("failed") && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase("canceled")) {
                                         paymentPresenter.sendUpsells();
-                                    }else {
+                                    } else {
                                         String errorMessage = intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS);
                                         String orderId = intent.getStringExtra(MoyasarActivity.EXTRA_ORDER_ID);
-                                        if(orderId != null && errorMessage != null && !errorMessage.equals("cancelled")){
+                                        if (orderId != null && errorMessage != null && !errorMessage.equals("cancelled")) {
                                             ShipBookLogger.logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter.getPaymentProvider() + " Card Payment Failed (Reason: Moyasar " + errorMessage + ")");
                                             ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, paymentPresenter.getPaymentProvider(), "Card Payment Failed (Reason: Moyasar " + errorMessage + ")");
                                         }
@@ -452,7 +452,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                                     }
                                 }
                             }
-                        }else {
+                        } else {
                             isShowCardFailed = true;
                         }
                     }
@@ -478,12 +478,12 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
             showLoadingDialog();
         }
 
-        if(isFromCheckout){
+        if (isFromCheckout) {
             isFromCheckout = false;
             return;
         }
 
-        paymentPresenter.validateOrder(false, CacheUtil.getInstance().getOrderStore(), null, 0,isShowCardFailed);
+        paymentPresenter.validateOrder(false, CacheUtil.getInstance().getOrderStore(), null, 0, isShowCardFailed);
         paymentPresenter.fetchCustomerCards();
         isShowCardFailed = false;
     }
@@ -550,15 +550,10 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         orderType = CacheUtil.getInstance().getOrderType();
 
         if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
-            /*showLoadingDialog();
-            Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
-            paymentPresenter.getStore(geocoder);*/
             if (CacheUtil.getInstance().getOrderAddress() != null) {
                 orderTypeLocation.setText(CacheUtil.getInstance().getOrderAddress().getAttributes().getLine1());
             }
         } else {
-            /*Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
-            paymentPresenter.getAddresses(geocoder);*/
             if (CacheUtil.getInstance().getOrderStore() != null) {
                 orderTypeLocation.setText(CacheUtil.getInstance().getOrderStore().getAttributes().getName());
             }
@@ -567,6 +562,12 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         switch (CacheUtil.getInstance().getOrderType()) {
             case PICKUP:
                 orderTypeLabel.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP));
+                break;
+            case EAT_IN:
+                orderTypeLabel.setText(CacheUtil.getInstance().getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup").toUpperCase());
+                break;
+            case DRIVE_THRU:
+                orderTypeLabel.setText(CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup").toUpperCase());
                 break;
             case DINE_IN:
                 orderTypeLabel.setText(CacheUtil.getInstance().getTranslations(Text.DINE_IN));
@@ -636,35 +637,6 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                     simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+0"));
                     paymentPresenter.getPrayerTime();
                     paymentPresenter.getStoreOpen(false, simpleDateFormat.format(new Date()));
-
-//                    String branch;
-//                    LatLng latLng;
-//                    String imageUrl;
-//                    int promisedTime;
-//                    if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
-//                        promisedTime = CacheUtil.getInstance().getOrderStore().getAttributes().getPromisedTimeDelta().getDelivery();
-//                        branch = (CacheUtil.getInstance().getOrderAddress().getAttributes().getLine1());
-//                        latLng = new LatLng(Double.parseDouble(CacheUtil.getInstance().getOrderAddress().getAttributes().getLat()), Double.parseDouble(CacheUtil.getInstance().getOrderAddress().getAttributes().getLongt()));
-//                        imageUrl = null;
-//                    } else {
-//                        promisedTime = CacheUtil.getInstance().getOrderStore().getAttributes().getPromisedTimeDelta().getPickup();
-//                        branch = (CacheUtil.getInstance().getOrderStore().getAttributes().getName());
-//                        latLng = new LatLng(CacheUtil.getInstance().getOrderStore().getAttributes().getLat(), CacheUtil.getInstance().getOrderStore().getAttributes().getLng());
-//                        imageUrl = CacheUtil.getInstance().getOrderStore().getAttributes().getImage();
-//                    }
-//                    paymentOrderTimeDialog = PaymentOrderTimeDialog.newInstance(CacheUtil.getInstance().getOrderType(), promisedTime, branch, imageUrl, latLng, new PaymentOrderTimeDialog.OnAction() {
-//                        @Override
-//                        public void close() {
-//                            paymentOrderTimeDialog.dismiss();
-//                        }
-//
-//                        @Override
-//                        public void confirm() {
-
-//                        }
-//                    });
-//                    paymentOrderTimeDialog.setCancelable(false);
-//                    paymentOrderTimeDialog.show(getSupportFragmentManager(), CarMakerDialog.class.toString());
                 } else {
                     try {
                         showLoadingDialog();
@@ -703,7 +675,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                 paymentPresenter.setLoyaltyPointsUsed(0);
                 etPointsInput.setText("");
                 loyaltypointsInput = 0;
-                paymentPresenter.validateOrder(false, CacheUtil.getInstance().getOrderStore(), null, 0,false);
+                paymentPresenter.validateOrder(false, CacheUtil.getInstance().getOrderStore(), null, 0, false);
             }
         });
 
@@ -787,6 +759,8 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         boolean isFullSignedIn = (isSignedIn && !customer.getAttributes().getAccountType().equalsIgnoreCase("guest"));
 
         switch (CacheUtil.getInstance().getOrderType()) {
+            case EAT_IN:
+            case DRIVE_THRU:
             case PICKUP:
                 type.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP));
                 orderTypeLabel2.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP_AT));
@@ -927,7 +901,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                 String transactionId = data.getStringExtra("transaction_id");
                 String alrajhiAmount = data.getStringExtra("alrajhi_amount");
                 paymentPresenter.setMukafaaTransactionId(transactionId);
-                paymentPresenter.validateOrder(false, CacheUtil.getInstance().getOrderStore(), null, loyaltypointsInput,false);
+                paymentPresenter.validateOrder(false, CacheUtil.getInstance().getOrderStore(), null, loyaltypointsInput, false);
                 mukafaaPayment.setStrokeColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));
                 mukafaaNumbers.setVisibility(View.GONE);
                 requestOTP.setVisibility(View.GONE);
@@ -1054,7 +1028,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         financialLabel.setText(CacheUtil.getInstance().getTranslations(Text.VAT_NO_CAPS, "VAT NO."));
         availableLabel.setText(CacheUtil.getInstance().getTranslations(Text.AVAILABLE_LOYALTY_POINTS, "Available Loyalty Points"));
         btnUseAll.setText(CacheUtil.getInstance().getTranslations(Text.USE_ALL_CAPS, "USE ALL"));
-        howMuchLabel.setText(CacheUtil.getInstance().getTranslations(Text.REDEEM_AMOUNT_IN, "REDEEM AMOUNT IN (X)").replace("(X)",CacheUtil.getInstance().getTranslations(CacheUtil.getInstance().getConcept().getCurrencyCode())));
+        howMuchLabel.setText(CacheUtil.getInstance().getTranslations(Text.REDEEM_AMOUNT_IN, "REDEEM AMOUNT IN (X)").replace("(X)", CacheUtil.getInstance().getTranslations(CacheUtil.getInstance().getConcept().getCurrencyCode())));
         etPointsInput.setHint(CacheUtil.getInstance().getTranslations(Text.LOYALTY_USE_AMOUNT_INPUT_HINT, "Enter amount here"));
         loyaltyPointsAdditionalInfo.setText(CacheUtil.getInstance().getTranslations(Text.LOYALTY_LEAVE_BLANK, "Leave this blank if you don't wanna use your points"));
         useLoyaltyPointsLabel.setText(CacheUtil.getInstance().getTranslations(Text.LOYALTY_USE_POINTS, "USE LOYALTY POINTS"));
@@ -1374,9 +1348,9 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                         JSONObject data = (JSONObject) object;
                         boolean isApproved = data.getBoolean("is-approved");
                         if (isApproved) {
-                            if(dialogCheckout != null){
+                            if (dialogCheckout != null) {
                                 dialogCheckout.handle3ds(data);
-                            }else {
+                            } else {
                                 checkoutForce(data);
                             }
 
@@ -1617,31 +1591,6 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
             discountLayout.setVisibility(View.GONE);
         }
 
-//        if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
-//            if (deliveryCharge != 0) {
-//                deliveryText.setText(StringUtil.getFormattedPrice(deliveryCharge));
-//            } else {
-//                Campaign campaign = CacheUtil.getInstance().getCampaign();
-//                boolean hideDiscount = false;
-//                try {
-//                    if (campaign != null) {
-//                        if (campaign.getPromotion().getAttributes().getType().equals("delivery")) {
-//                            hideDiscount = true;
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                if (hideDiscount) {
-//                    discountLayout.setVisibility(View.GONE);
-//                }
-//                deliveryText.setText(CacheUtil.getInstance().getTranslations(Text.FREE, "Free"));
-//            }
-//            deliveryLayout.setVisibility(View.VISIBLE);
-//        } else {
-//            deliveryLayout.setVisibility(View.GONE);
-//        }
-
         if (charges.size() > 0) {
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this) {
                 @Override
@@ -1654,22 +1603,6 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
             rvServiceCharge.setAdapter(orderServiceChargeRecyclerViewAdapter);
         }
 
-//        if (deliveryCharge != 0) {
-//            deliveryLayout.setVisibility(View.VISIBLE);
-//            deliveryText.setText(StringUtil.getFormattedPrice(deliveryCharge));
-//        } else {
-//            Promotion promotion = CacheUtil.getInstance().getCampaignPromotion();
-//            if (promotion != null) {
-//                if (promotion.getAttributes().getType().equalsIgnoreCase("delivery")) {
-//                    deliveryLayout.setVisibility(View.VISIBLE);
-//                    deliveryText.setText(CacheUtil.getInstance().getTranslations(Text.FREE, "Free"));
-//                } else {
-//                    deliveryLayout.setVisibility(View.GONE);
-//                }
-//            } else {
-//                deliveryLayout.setVisibility(View.GONE);
-//            }
-//        }
         double mukafaaAmount = paymentPresenter.getMukafaaTransactionAmount();
         discount = discount - mukafaaAmount;
         discountText.setText(CurrencyUtils.Companion.updateCurrency(discount, true, hasPromotion, discount > 0));
@@ -1753,9 +1686,8 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         btnUseAll.setOnClickListener(v -> {
 
 
-
             //double points = loyalty.getAttributes().getCurrentBalanceAmount() > (finalTotal - finalDiscount) ? (finalTotal - finalDiscount) * Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion()) : loyalty.getAttributes().getCurrentBalance();
-            double currentBalance = loyalty.getAttributes().getCurrentBalanceAmount() > (finalTotal - finalDiscount) ? (finalTotal - finalDiscount)  : loyalty.getAttributes().getCurrentBalanceAmount();
+            double currentBalance = loyalty.getAttributes().getCurrentBalanceAmount() > (finalTotal - finalDiscount) ? (finalTotal - finalDiscount) : loyalty.getAttributes().getCurrentBalanceAmount();
 
             // If points = 3.4 for example, make it 4 points
          /*   if ((int) points < points) {
@@ -1949,7 +1881,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
     @Override
     public void showMoyasarSheet(String orderId, double validatedTotal, String menuItems, String apiKey) {
         new Handler().post(() -> {
-                    Intent intent = new Intent(PaymentActivity.this,MoyasarActivity.class);
+                    Intent intent = new Intent(PaymentActivity.this, MoyasarActivity.class);
                     intent.putExtra(MoyasarActivity.EXTRA_ORDER_ID, orderId);
                     intent.putExtra(MoyasarActivity.EXTRA_AMOUNT, validatedTotal);
                     intent.putExtra(MoyasarActivity.EXTRA_MENU_ITEMS, menuItems);

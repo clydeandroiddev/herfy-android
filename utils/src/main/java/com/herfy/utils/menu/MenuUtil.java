@@ -44,12 +44,15 @@ public class MenuUtil {
 
         List<OrderTypeMenus> orderTypeMenus = CacheUtil.getInstance().getApplication().getAttributes().getOrderTypeMenus();
 
-        if(CacheUtil.getInstance().isSeparatedMenus()) {
-            boolean isPickup = orderType == OrderType.PICKUP ||
-                    orderType == OrderType.DINE_IN || orderType == OrderType.CURBSIDE;
+        if (CacheUtil.getInstance().isSeparatedMenus()) {
+            boolean isPickup = CacheUtil.getInstance().pickupTypes();
             String differentMenuId = "";
             for (OrderTypeMenus menus : orderTypeMenus) {
-                if (isPickup && Objects.requireNonNull(menus.getType()).equalsIgnoreCase("pickup")) {
+                if (isPickup && (
+                        Objects.requireNonNull(menus.getType()).equalsIgnoreCase("pickup") ||
+                                Objects.requireNonNull(menus.getType()).equalsIgnoreCase("eat-in") ||
+                                Objects.requireNonNull(menus.getType()).equalsIgnoreCase("drive-thru")
+                )) {
                     differentMenuId = menus.getId();
                     url = menus.getMenuUri();
                     break;
@@ -66,7 +69,7 @@ public class MenuUtil {
             CacheUtil.getInstance().setDifferentMenuId(differentMenuId);
         }
 
-        if(url.isEmpty())  {
+        if (url.isEmpty()) {
             url = CacheUtil.getInstance().getApplication().getAttributes().getMenuRef();
         }
 
@@ -81,11 +84,14 @@ public class MenuUtil {
 
         List<OrderTypeMenus> orderTypeMenus = CacheUtil.getInstance().getApplication().getAttributes().getOrderTypeMenus();
 
-        if(CacheUtil.getInstance().isSeparatedMenus()) {
-            boolean isPickup = orderType == OrderType.PICKUP ||
-                    orderType == OrderType.DINE_IN || orderType == OrderType.CURBSIDE;
+        if (CacheUtil.getInstance().isSeparatedMenus()) {
+            boolean isPickup = CacheUtil.getInstance().pickupTypes();
             for (OrderTypeMenus menus : orderTypeMenus) {
-                if (isPickup && Objects.requireNonNull(menus.getType()).equalsIgnoreCase("pickup")) {
+                if (isPickup && (
+                        Objects.requireNonNull(menus.getType()).equalsIgnoreCase("pickup") ||
+                                Objects.requireNonNull(menus.getType()).equalsIgnoreCase("eat-in") ||
+                                Objects.requireNonNull(menus.getType()).equalsIgnoreCase("drive-thru")
+                )) {
                     menuId = menus.getId();
                     break;
                 } else if (orderType == OrderType.DELIVERY && Objects.requireNonNull(menus.getType()).equalsIgnoreCase("deliver")) {
@@ -98,7 +104,7 @@ public class MenuUtil {
             }
         }
 
-        if(menuId.isEmpty()) {
+        if (menuId.isEmpty()) {
             menuId = CacheUtil.getInstance().getMenuId();
         }
         return menuId;
@@ -268,9 +274,9 @@ public class MenuUtil {
                         menuItem.customFieldObjectMap.disablePosAndroid = inner[1];
                     } else if (inner[0].equalsIgnoreCase("kiosk_address_id")) {
                         menuItem.customFieldObjectMap.kioskAddressId = inner[1];
-                    }else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
+                    } else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
                         menuItem.customFieldObjectMap.nutritionInfoImageUrl = inner[1];
-                    }else if (inner[0].equalsIgnoreCase("nutritional-info-story")) {
+                    } else if (inner[0].equalsIgnoreCase("nutritional-info-story")) {
                         menuItem.customFieldObjectMap.nutritionInfoStory = inner[1];
                     }
                 }
@@ -331,9 +337,9 @@ public class MenuUtil {
                         modifierGroupCdn.getAttributes().customFieldObjectMap.disablePosAndroid = inner[1];
                     } else if (inner[0].equalsIgnoreCase("kiosk_address_id")) {
                         modifierGroupCdn.getAttributes().customFieldObjectMap.kioskAddressId = inner[1];
-                    }else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
+                    } else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
                         modifierGroupCdn.getAttributes().customFieldObjectMap.nutritionInfoImageUrl = inner[1];
-                    }else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
+                    } else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
                         modifierGroupCdn.getAttributes().customFieldObjectMap.nutritionInfoStory = inner[1];
                     }
                 }

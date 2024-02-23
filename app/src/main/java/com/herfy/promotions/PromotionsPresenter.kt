@@ -55,7 +55,7 @@ class PromotionsPresenter(view: PromotionsContract.View) : PromotionsContract.Pr
         }
         var totalPrice = item.getPrice(orderStoreId)
         if (item.sizes.modifierItems.size > 0) {
-            if(!item.isPromo) {
+            if (!item.isPromo) {
                 totalPrice = 0.0
             }
             for (modifierItem in item.sizes.modifierItems) {
@@ -139,7 +139,7 @@ class PromotionsPresenter(view: PromotionsContract.View) : PromotionsContract.Pr
         val validDelivery =
             CacheUtil.getInstance().orderType === OrderType.DELIVERY && (CacheUtil.getInstance().orderAddress != null || CacheUtil.getInstance().orderDeliveryAddress != null)
         val validPickup =
-            CacheUtil.getInstance().orderType === OrderType.PICKUP || CacheUtil.getInstance().orderType === OrderType.DINE_IN || CacheUtil.getInstance().orderType === OrderType.CURBSIDE && CacheUtil.getInstance().orderStore != null
+            CacheUtil.getInstance().pickupTypes() && CacheUtil.getInstance().orderStore != null
         val customer = AuthUtil.getInstance().customer
         val concept = CacheUtil.getInstance().concept
         val store = CacheUtil.getInstance().orderStore
