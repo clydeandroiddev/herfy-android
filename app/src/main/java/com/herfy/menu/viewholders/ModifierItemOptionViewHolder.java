@@ -1,11 +1,8 @@
 package com.herfy.menu.viewholders;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.text.Html;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -112,7 +109,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
     @Override
     public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
         final Boolean[] isShouldShowModifierItems = {false};
-      modifierProcessor.processModifier(modifierItem);
+        modifierProcessor.processModifier(modifierItem);
         ModifierGroupAttributes modifierGroupAttributes = modifierGroup.getAttributes();
         boolean isModifierItemSelected = modifierItem.getAttributes().isSelected();
         radioButton.setVisibility(modifierGroupAttributes.getMaximum() == 1 && modifierGroupAttributes.getMinimum() == 1 ? View.VISIBLE : View.GONE);
@@ -122,7 +119,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             radioButton.setImageResource(R.drawable.modifier_radio_item_selected);
             check.setImageResource(R.drawable.modifier_item_checked_selected);
 
-        }else {
+        } else {
             if (!clickCountMap.isEmpty()) {
                 Integer clickCount = clickCountMap.get(modifierItem.getId());
                 if (clickCount != null && clickCount >= 1) {
@@ -133,25 +130,8 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             radioButton.setImageResource(R.drawable.modifier_item_radio_unselected);
             check.setImageResource(R.drawable.modifier_item_unselected);
         }
-        plus.setVisibility(modifierGroupAttributes.getMaximum() > 1  ? View.VISIBLE : View.GONE);
-//        if (modifierGroup.getAttributes().getMaximum() > 1 &&
-//                modifierItem.getAttributes().isSelected() &&
-//                modifierItem.getAttributes().getMaximum() > 1) {
-//            plus.setEnabled(true);
-//            modifierItemCardView.setEnabled(true);
-//            plus.setImageResource(R.drawable.quantity_up_blue);
-//        }else {
-//            Log.d("FAFA","Is modifier plus not selected");
-//            plus.setEnabled(false);
-//            modifierItemCardView.setEnabled(false);
-//            plus.setImageResource(R.drawable.quantity_up_blue_gray);
-//        }
-        if (modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum()) {
-            plus.setEnabled(true);
-            plus.setImageResource(R.drawable.quantity_up_blue);
-        }else {
+        plus.setVisibility(modifierGroupAttributes.getMaximum() > 1 ? View.VISIBLE : View.GONE);
 
-        }
         quantity.setText(StringUtil.localize(String.valueOf("0" + modifierItem.getAttributes().getQuantity())));
         if (clickCountMap.size() >= 1) {
             Integer clickCount = clickCountMap.get(modifierItem.getId());
@@ -161,9 +141,6 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
             }
         }
-        plus.setEnabled(modifierGroup.getAttributes().getMaximum() > 1 &&
-                modifierItem.getAttributes().isSelected() &&
-                modifierItem.getAttributes().getMaximum() > 1);
         checkLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,20 +165,31 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 }
             }
         });
-                String imageUrl = modifierItem.getAttributes().getImage();
+        String imageUrl = modifierItem.getAttributes().getImage();
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(modifierOptionImage);
             modifierOptionImage.setVisibility(View.VISIBLE);
         } else {
             modifierOptionImage.setVisibility(View.GONE);
         }
-        if (modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum()) {
+//
+        if (modifierItem.getAttributes().isQuantityExceedTheMaximum() && modifierItem.getAttributes().getModifierItemInteraction()) {
+            plus.setEnabled(true);
             plus.setImageResource(R.drawable.quantity_up_blue);
+            modifierItemCardView.setEnabled(true);
+        } else {
+
+            if (!modifierItem.getAttributes().getModifierItemInteraction() || modifierItem.getAttributes().isSelected()) {
+                plus.setEnabled(true);
+                plus.setImageResource(R.drawable.quantity_up_blue);
+                modifierItemCardView.setEnabled(true);
+            } else {
+                plus.setEnabled(false);
+                plus.setImageResource(R.drawable.quantity_up_blue_gray);
+                modifierItemCardView.setEnabled(false);
+            }
         }
 
-        // todo commented for now might needed once designer have quantity design
-        plus.setFocusable(modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum());
-        plus.setClickable(modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum());
 
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,9 +198,11 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 if (!clickCountMap.containsKey(modifierItemId)) {
                     clickCountMap.put(modifierItemId, 0);
                     boolean shouldShowQuantityLayout = modifierGroup.getAttributes().getMaximum() > 1 &&
-                            modifierItem.getAttributes().isSelected() &&
-                            modifierItem.getAttributes().getMaximum() > 1;
+                            modifierItem.getAttributes().getMaximum() > 1 && modifierItem.getAttributes().isSelected();
                     quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
+                    if (quantityDownLayout.getVisibility() == View.VISIBLE) {
+                        action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
+                    }
                 }
 
                 Integer clickCount = clickCountMap.get(modifierItemId);
@@ -230,6 +220,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String modifierItemId = modifierItem.getId();
                 if (action != null && (modifierItem.getAttributes().getQuantity() > 1 || modifierItem.getAttributes().getMinimum() != 1)) {
                     action.onQuantityChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                 }

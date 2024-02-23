@@ -647,6 +647,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             modifierItemPosition: Int,
                             modifierItem: ModifierItem
                         ) {
+                            Log.d("OnAction", "onCheckedChanged - Add: " + add +
+                                    ", modifierGroupPosition: " + modifierGroupPosition +
+                                    ", modifierGroup: " + modifierGroup +
+                                    ", modifierItemPosition: " + modifierItemPosition +
+                                    ", modifierItem: " + modifierItem.name +
+                                     "Quantity " + modifierItem.attributes.quantity);
                             menuPresenter!!.changeModifierItemQuantity(
                                 add,
                                 modifierGroupPosition,

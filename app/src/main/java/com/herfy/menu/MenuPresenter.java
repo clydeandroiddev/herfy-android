@@ -2,9 +2,7 @@ package com.herfy.menu;
 
 import android.util.Pair;
 import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -110,6 +108,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Executor;
@@ -158,14 +158,14 @@ public class MenuPresenter implements MenuContract.Presenter {
     private ArrayList<Favorite> favorites = new ArrayList<>();
 
     private ArrayList<OrderHistory> orders = new ArrayList<>();
-
+    Map<String, Integer> selectedItems = new HashMap<>();
     private boolean newestToOldest = true;
 
     private int menuItemComboIndex = 0;
 
     private boolean isFromCartEdit = false;
     private HashMap<String, Integer> selectedComponents = new HashMap();
-
+    private static HashMap<String, Integer> selectedModifierWithQuantity = new HashMap();
     private int downloadMenuRetries = 0;
 
     private boolean isExcluded = false;
@@ -3540,52 +3540,51 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void changeModifierItemQuantity(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem) {
-        ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
-        ModifierItem eachModifierItem = group.getModifierItems().get(modifierItemPosition);
         if (!add) {
-            //for (ModifierGroup group : menuItem.getModifierGroups()) {
-            //if (group.getId().equals(modifierGroup.getId())) {
-            //for (ModifierItem item : group.getModifierItems()) {
-            //if (item.getId().equals(modifierItem.getId())) {
+            int selectedItemMinusTotal = 0;
+            ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
+            ModifierItem item = group.getModifierItems().get(modifierItemPosition);
             if (modifierItem.getAttributes().getQuantity() == 1) {
-                eachModifierItem.getAttributes().setSelected(false);
+                item.getAttributes().setSelected(false);
             } else {
-                eachModifierItem.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() - 1);
+                item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() - 1);
 
-            }
-            //break;
-            //}
-            //}
-            //break;
-            //}
-            //}
+                for (ModifierItem eachItem: group.getModifierItems()) {
+                    if (eachItem.getAttributes().isSelected()) {
+                        selectedItemMinusTotal += eachItem.getAttributes().getQuantity();
+                    }
+                }
+                if (selectedItemMinusTotal <= modifierGroup.getAttributes().getMaximum()) {
+                    for (ModifierItem eachModifierItem : group.getModifierItems()) {
+                        eachModifierItem.getAttributes().setQuantityExceedMaximum(false);
+                        eachModifierItem.getAttributes().setModifierItemInteraction(false);
+                        }
+                    }
+                }
+
         } else {
+
             int selectedItems = 0;
-            //for (ModifierGroup group : menuItem.getModifierGroups()) {
-            //if (group.getId().equals(modifierGroup.getId())) {
+            ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
             for (ModifierItem item : group.getModifierItems()) {
-                if (eachModifierItem.getAttributes().isSelected()) {
+                if (item.getAttributes().isSelected()) {
                     selectedItems += item.getAttributes().getQuantity();
+
                 }
             }
-            //break;
-            //}
-            //}
             if (selectedItems >= modifierGroup.getAttributes().getMaximum()) {
-                menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT));
-            } else {
-                //for (ModifierGroup group : menuItem.getModifierGroups()) {
-                //if (group.getId().equals(modifierGroup.getId())) {
-                //for (ModifierItem item : group.getModifierItems()) {
-                if (eachModifierItem.getId().equals(modifierItem.getId())) {
-                    eachModifierItem.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() + 1);
-                    //break;
+                for (ModifierItem item : group.getModifierItems()) {
+                    item.getAttributes().setModifierItemInteraction(true);
+                    item.getAttributes().setQuantityExceedMaximum(item.getAttributes().isSelected());
                 }
-                //}
-                //break;
-                //}
-                //}
+            } else {
+                ModifierItem item = group.getModifierItems().get(modifierItemPosition);
+                //for (ModifierItem item : group.getModifierItems()) {
+                if (item.getId().equals(modifierItem.getId())) {
+                    item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() + 1);
+                }
             }
+
         }
 
         getMenuItemTotalPrice(menuItem, modifierGroupPosition);
