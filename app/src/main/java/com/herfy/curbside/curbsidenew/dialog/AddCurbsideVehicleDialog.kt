@@ -1,4 +1,4 @@
-package com.herfy.curbside.curbsidenew
+package com.herfy.curbside.curbsidenew.dialog
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable

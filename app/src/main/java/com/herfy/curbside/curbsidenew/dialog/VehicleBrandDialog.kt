@@ -1,4 +1,4 @@
-package com.herfy.curbside.curbsidenew
+package com.herfy.curbside.curbsidenew.dialog
 
 import android.app.Dialog
 import android.content.res.ColorStateList

@@ -5,6 +5,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.curbside.CurbsideContract
 import com.herfy.curbside.CurbsidePresenter
 import com.herfy.curbside.curbsidenew.adapter.CurbsideVehicleAdapter
+import com.herfy.curbside.curbsidenew.dialog.AddCurbsideVehicleDialog
 import com.herfy.order.views.ordertype.addaddress.AddAddressDialog
 import com.herfy.ordertype.databinding.CurbsideNewActivityBinding
 import com.herfy.utils.constants.Text
