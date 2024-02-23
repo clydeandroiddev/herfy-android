@@ -2,21 +2,37 @@ package com.herfy.curbside.curbsidenew
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.herfy.curbside.CurbsideContract
+import com.herfy.curbside.CurbsidePresenter
 import com.herfy.order.views.ordertype.ChoosePickupTypeDialog
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.AddCurbsideVehicleDialogBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
 
-class AddCurbsideVehicleDialog : DialogFragment() {
+class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
+
+    private lateinit var curbsidePresenter: CurbsideContract.Presenter
 
     private lateinit var vehicleBrandDialog: VehicleBrandDialog
 
@@ -43,6 +59,7 @@ class AddCurbsideVehicleDialog : DialogFragment() {
         super.onCreate(savedInstanceState)
         binding = AddCurbsideVehicleDialogBinding.inflate(layoutInflater)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme_White)
+        curbsidePresenter = CurbsidePresenter(this)
     }
 
     override fun onCreateView(
@@ -68,10 +85,27 @@ class AddCurbsideVehicleDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews()
+        curbsidePresenter.start()
     }
 
-    private fun setupViews() {
+    override fun setPresenter(presenter: CurbsideContract.Presenter?) {
+
+    }
+
+    override fun logEvent(
+        eventName: String?,
+        eventAttributes: HashMap<String, String>?,
+        eventMetricName: String?,
+        eventMetricValue: Double
+    ) {
+
+    }
+
+    override fun setCartExpiry() {
+
+    }
+
+    override fun setupViews() {
         binding.apply {
 
             back.setOnClickListener {
@@ -90,6 +124,35 @@ class AddCurbsideVehicleDialog : DialogFragment() {
                 showVehicleBrand()
             }
 
+            binding.plateNumberEdit.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    charSequence: CharSequence?, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(
+                    charSequence: CharSequence?, start: Int, before: Int, count: Int
+                ) {
+                }
+
+                override fun afterTextChanged(editable: Editable?) {
+                    binding.confirmContainer.isVisible =
+                        binding.plateNumberEdit.text.toString().isNotEmpty()
+                }
+            })
+
+            binding.continueButton.setOnClickListener {
+
+            }
+        }
+    }
+
+    override fun setupFonts() {
+
+    }
+
+    override fun setupTranslations() {
+        binding.apply {
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.SAVE_AND_CONTINUE, "Save & Continue")
             curbsideLabel.text = CacheUtil.getInstance()
@@ -109,6 +172,34 @@ class AddCurbsideVehicleDialog : DialogFragment() {
         }
     }
 
+    override fun showCarColors(colors: MutableList<String>?) {
+
+    }
+
+    override fun showCarMakers(makers: MutableList<CarMaker>?) {
+
+    }
+
+    override fun showError(error: String?) {
+
+    }
+
+    override fun showCustomerCars(cars: MutableList<CustomerCar>?) {
+
+    }
+
+    override fun successAdd(car: CustomerCar?) {
+
+    }
+
+    override fun successEdit(car: CustomerCar?, position: Int) {
+
+    }
+
+    override fun successDelete(position: Int) {
+
+    }
+
     companion object {
         fun newInstance(isEmpty: Boolean, listener: OnSubmit): AddCurbsideVehicleDialog {
             val addressDialogFragment = AddCurbsideVehicleDialog()
@@ -120,7 +211,31 @@ class AddCurbsideVehicleDialog : DialogFragment() {
 
     private fun setupBrand() {
         carMaker?.let {
+            binding.curbsideBrandName.text = it.attributes.name
+            Glide.with(binding.curbsideBrand.context).load(it.attributes.imageUri)
+                .apply(RequestOptions().override(80, 80)).skipMemoryCache(false).diskCacheStrategy(
+                    DiskCacheStrategy.ALL
+                ).apply(RequestOptions.centerInsideTransform())
+                .listener(object : RequestListener<Drawable?> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any,
+                        target: Target<Drawable?>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
 
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any,
+                        target: Target<Drawable?>,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
+                }).into(binding.curbsideBrand)
         }
     }
 
@@ -130,9 +245,8 @@ class AddCurbsideVehicleDialog : DialogFragment() {
 
     private fun showVehicleBrand() {
         dismissPickupTypeDialog()
-        vehicleBrandDialog = VehicleBrandDialog.newInstance(
-            carMaker,
-            object : VehicleBrandDialog.OnSubmit {
+        vehicleBrandDialog =
+            VehicleBrandDialog.newInstance(carMaker, object : VehicleBrandDialog.OnSubmit {
                 override fun selectedCar(maker: CarMaker) {
                     carMaker = maker
                     setupBrand()
@@ -156,5 +270,4 @@ class AddCurbsideVehicleDialog : DialogFragment() {
             e.printStackTrace()
         }
     }
-
 }
