@@ -1062,6 +1062,13 @@ public class CacheUtil {
 
     }
 
+    public Boolean pickupTypes() {
+        return (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP
+                || CacheUtil.getInstance().getOrderType() == OrderType.EAT_IN
+                || CacheUtil.getInstance().getOrderType() == OrderType.DRIVE_THRU
+                || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN);
+    }
+
     public OrderType getOrderType() {
         int orderType = cacheSharedPreferences.getInt(ORDER_TYPE, OrderType.NONE.getValue());
         switch (orderType) {

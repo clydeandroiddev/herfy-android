@@ -878,7 +878,6 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         switch (CacheUtil.getInstance().getOrderType()) {
             case PICKUP:
                 deliveryCharge = 0.0;
-//                if (CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().size() == 3 || CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.DINE_IN)) {
                 if (CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.DINE_IN)) {
                     orderBody.addProperty("type", "to-go");
                 } else {

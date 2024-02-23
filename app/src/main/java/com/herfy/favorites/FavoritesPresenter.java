@@ -185,6 +185,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
 
     }
+
     @Override
     public void setToSearch(boolean isFromSearch) {
         fromSearch = isFromSearch;
@@ -254,92 +255,11 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
         favoritesView.showLoadingDialog();
 
         addCartItem(favorite);
-
-        /*MenuApiCall.getInstance().getItemDetails(CacheUtil.getInstance().getMenuId(), favorite.getAttributes().getItemId(), new ApiRequestListener() {
-            @Override
-            public void onSuccess(Object o) {
-                try {
-                    JSONObject object = new JSONObject(o.toString());
-                    JSONArray dataArray = object.getJSONArray("data");
-                    if (dataArray.length() > 0) {
-                        MenuItem menuItem = GsonHelper.gsonFinal().fromJson(dataArray.getJSONObject(0).toString(), MenuItem.class);
-
-                        MenuItem cartMenuItem = GsonHelper.gsonFinal().fromJson(dataArray.getJSONObject(0).toString(), MenuItem.class);
-
-                        boolean disable = false;
-                        if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
-                            disable = menuItem.getAttributes().getDisableForDelivery() == 1;
-                        } else if (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN) {
-                            disable = menuItem.getAttributes().getDisableForPickup() == 1;
-                        }
-
-                        if (disable) {
-                            favoritesView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_NO_LONGER_AVAILABLE));
-                        } else {
-                            getTimedEvent(favorite, menuItem);
-                        }
-                    } else {
-                        favoritesView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_NO_LONGER_AVAILABLE));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    favoritesView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_NO_LONGER_AVAILABLE));
-                }
-            }
-
-            @Override
-            public void onError(Object o) {
-                AppLogger.printRetrofitError(o);
-                if (o instanceof JSONObject) {
-                    try {
-                        JSONObject object = (JSONObject) o;
-                        Object error = object.get("error");
-                        String detail = CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED);
-                        if (error instanceof JSONObject) {
-                            detail = ((JSONObject) error).getString("detail");
-                        } else if (error instanceof JSONArray) {
-                            JSONObject errorObject = ((JSONArray) error).getJSONObject(0);
-                            detail = errorObject.getString("detail");
-                        }
-                        favoritesView.showMessage(detail);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        favoritesView.showMessage(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
-                    }
-                } else {
-                    favoritesView.showMessage(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
-                }
-            }
-        });*/
     }
 
     @Override
     public void getTimedEvent(Favorite favorite, MenuItem menuItem) {
         addCartItem(favorite);
-//        MenuApiCall.getInstance().callTimedEvents(CacheUtil.getInstance().getMenuId(), new ApiRequestListener() {
-//
-//            @Override
-//            public void onSuccess(Object o) {
-//                try {
-//                    JSONObject object = new JSONObject(o.toString());
-//                    JSONArray dataArray = object.getJSONArray("data");
-//                    if (dataArray.length() > 0) {
-//                        getConcept(favorite, TimedEvent.parse(dataArray.getJSONObject(0)));
-//                    } else {
-//                        addCartItem(favorite);
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                    this.onError(e);
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Object o) {
-//                AppLogger.printRetrofitError(o);
-//                addCartItem(favorite);
-//            }
-//        }, menuItem.getId());
     }
 
     @Override
@@ -356,9 +276,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                         JSONArray included = jsonObject.getJSONArray("included");
                         if (included.length() > 0) {
                             // TODO: Inject this
-                            GsonBuilder builder = new GsonBuilder()
-                                    .setPrettyPrinting()
-                                    .registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
+                            GsonBuilder builder = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
                             Gson gson = builder.create();
 //                            Concept concept = GsonHelper.gsonFinal().fromJson(data.toString(), new TypeToken<Concept>() {}.getType());
                             for (int i = 0; i < included.length(); i++) {
@@ -435,27 +353,20 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                             favoritesView.showError(CacheUtil.getInstance().getTranslations(Text.ITEM_NO_LONGER_AVAILABLE));
                         } else if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY && menuItem.getAttributes().getDisableForDelivery() == 1) {
                             favoritesView.showError(CacheUtil.getInstance().getTranslations(Text.ITEM_NOT_AVAILABLE_FOR_DELIVERY, "(x) is not available for Delivery.").replace("(x)", menuItem.getAttributes().getName()));
-                        } else if ((CacheUtil.getInstance().getOrderType() == OrderType.PICKUP || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN) && menuItem.getAttributes().getDisableForPickup() == 1) {
+                        } else if (CacheUtil.getInstance().pickupTypes() && menuItem.getAttributes().getDisableForPickup() == 1) {
                             favoritesView.showError(CacheUtil.getInstance().getTranslations(Text.ITEM_NOT_AVAILABLE_FOR_PICKUP, "(x) is not available for Pickup.").replace("(x)", menuItem.getAttributes().getName()));
                         } else {
-
                             if (object.has("included") && !object.isNull("included")) {
                                 JSONArray included = object.getJSONArray("included");
-
                                 for (int i = 0; i < included.length(); i++) {
                                     Store store = Store.parseStore(included.getJSONObject(i));
                                     menuItem.getDisabledStores().put(store.getId(), store);
                                 }
-
                             }
-
                             if (object.has("included") && !object.isNull("included")) {
                                 JSONArray included = object.getJSONArray("included");
-
                                 for (int i = 0; i < included.length(); i++) {
-
                                     JSONObject includedObject = included.getJSONObject(i);
-
                                     if (includedObject.has("id") && !includedObject.isNull("id") && includedObject.has("type") && !includedObject.isNull("type")) {
                                         String includedId = includedObject.getString("id");
                                         String includedType = includedObject.getString("type");
@@ -1182,7 +1093,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
         String applicationId = CacheUtil.getInstance().getApplication().getId();
         AppDatabase appDatabase = AppDatabase.getInstance();
         MenuItemEntity menuItemEntity = appDatabase.menuItemEntityDao().findById(applicationId, menuItemId);
-        if(menuItemEntity != null) {
+        if (menuItemEntity != null) {
             return menuItemEntity.getMenuCategoryId();
         }
         return "";
