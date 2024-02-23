@@ -173,13 +173,13 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             modifierOptionImage.setVisibility(View.GONE);
         }
 //
-        if (modifierItem.getAttributes().isQuantityExceedTheMaximum() && modifierItem.getAttributes().getModifierItemInteraction()) {
+        if (modifierItem.getAttributes().hasModifierItemExceedMaximum() && modifierItem.getAttributes().hasUserInteractedWithModifierItem()) {
             plus.setEnabled(true);
             plus.setImageResource(R.drawable.quantity_up_blue);
             modifierItemCardView.setEnabled(true);
         } else {
 
-            if (!modifierItem.getAttributes().getModifierItemInteraction() || modifierItem.getAttributes().isSelected()) {
+            if (!modifierItem.getAttributes().hasUserInteractedWithModifierItem()) {
                 plus.setEnabled(true);
                 plus.setImageResource(R.drawable.quantity_up_blue);
                 modifierItemCardView.setEnabled(true);

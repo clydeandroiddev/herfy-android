@@ -109,7 +109,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Executor;
@@ -3556,7 +3555,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 }
                 if (selectedItemMinusTotal <= modifierGroup.getAttributes().getMaximum()) {
                     for (ModifierItem eachModifierItem : group.getModifierItems()) {
-                        eachModifierItem.getAttributes().setQuantityExceedMaximum(false);
+                        eachModifierItem.getAttributes().setModifierItemQuantityExceedsMaximum(false);
                         eachModifierItem.getAttributes().setModifierItemInteraction(false);
                         }
                     }
@@ -3575,7 +3574,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             if (selectedItems >= modifierGroup.getAttributes().getMaximum()) {
                 for (ModifierItem item : group.getModifierItems()) {
                     item.getAttributes().setModifierItemInteraction(true);
-                    item.getAttributes().setQuantityExceedMaximum(item.getAttributes().isSelected());
+                    item.getAttributes().setModifierItemQuantityExceedsMaximum(item.getAttributes().isSelected());
                 }
             } else {
                 ModifierItem item = group.getModifierItems().get(modifierItemPosition);
