@@ -1,38 +1,27 @@
 package com.herfy.cart.views;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.text.Editable;
-import android.text.SpannableString;
-import android.text.SpannedString;
-import android.text.TextWatcher;
-import android.text.style.StrikethroughSpan;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
+import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
 import com.herfy.cart.CartContract;
-import com.herfy.cart.adapters.CartModifierPriceAdapter;
-import com.herfy.history.adapters.OrderModifierPriceAdapter;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
+import com.herfy.utils.extensions.ImageViewExtKt;
+import com.herfy.utils.extensions.ViewExtensionsKt;
+import com.herfy.utils.helper.AnimUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
@@ -76,33 +65,34 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
     @BindView(R.id.minus)
     FrameLayout minus;
 
-      /*
-    @BindView(R.id.modifier_items)
-    AppCompatTextView modifierItems;
-    @BindView(R.id.ingredients)
-    AppCompatTextView ingredients;
+    @BindView(R.id.delete)
+    FrameLayout delete;
 
-
-
-  @BindView(R.id.delete)
-    AppCompatImageButton delete;*/
 
     @BindView(R.id.edit)
     TextView edit;
 
- /*   @BindView(R.id.notes_container)
-    LinearLayout notesContainer;
-    @BindView(R.id.notes)
-    EditText notes;
 
-    @BindView(R.id.old_price_view)
-    AppCompatTextView oldPriceView;
-    @BindView(R.id.old_price)
-    AppCompatTextView oldPrice;*/
+    @BindView(R.id.quantity_layout)
+    MaterialCardView quantityLayout;
 
+    @BindView(R.id.ln_modifiers_dropdown)
+    LinearLayout lnModifiersDropdown;
 
-    @BindView(R.id.modifierRecycleView)
-    RecyclerView modifierItems;
+    @BindView(R.id.txtAddOnTotal)
+    TextView txtAddOnTotal;
+
+    @BindView(R.id.txtAddOn)
+    TextView txtAddOn;
+
+    @BindView(R.id.icModifierItemsDropDown)
+    ImageView icModifierItemsDropDown;
+
+    @BindView(R.id.tv_modifiers)
+    TextView tvModifiers;
+
+    @BindView(R.id.space_modifiers)
+    Space spaceModifiers;
 
     public CartMenuItemViewHolder(Context context, CartContract.Presenter cartPresenter, View itemView) {
 
@@ -150,6 +140,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
 
     @Override
     public void setupTranslations() {
+        txtAddOn.setText(CacheUtil.getInstance().getTranslations(Text.ITEMS).toLowerCase());
         //notes.setHint(CacheUtil.getInstance().getTranslations(Text.ADD_NOTE, "Add note"));
     }
 
@@ -190,12 +181,16 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
 
     @Override
     public void setMenuItem(MenuItem menuItem) {
-        final Boolean[] isShouldShowModifierItems = {false};
+        double menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1);
+        quantityLayout.setVisibility(menuItem.isPromo() || menuItemTotalPrice == 0 ? View.INVISIBLE : View.VISIBLE);
 
-        plus.setVisibility(menuItem.isPromo() ? View.INVISIBLE : View.VISIBLE);
-        minus.setVisibility(menuItem.isPromo() ? View.INVISIBLE : View.VISIBLE);
-
-
+        if (!menuItem.isPromo() && menuItem.getAttributes().getQuantity() > 1) {
+            delete.setVisibility(View.GONE);
+            minus.setVisibility(View.VISIBLE);
+        } else {
+            delete.setVisibility(View.VISIBLE);
+            minus.setVisibility(View.GONE);
+        }
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -203,29 +198,9 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
             }
         });
 
-        int orderModifierItemSize = menuItem.getOrderModifierItems().size();
-        /*if (orderModifierItemSize > 1) {
-            txtAddOn.setText(CacheUtil.getInstance().getTranslations(Text.ADD_ONS_CAPS,context.getString(R.string.add_on)));
-            txtAddOn.setVisibility(View.VISIBLE);
-            txtAddOnTotal.setVisibility(View.VISIBLE);
-            txtAddOnTotal.setText(String.valueOf(orderModifierItemSize));
-            icModifierItemsDropDown.setVisibility(View.VISIBLE);
-            modifierLineSeparator.setVisibility(View.VISIBLE);
-            icModifierItemsDropDown.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    isShouldShowModifierItems[0] = !isShouldShowModifierItems[0];
-                    modifierItems.setVisibility(isShouldShowModifierItems[0] ? View.VISIBLE : View.GONE);
-                    modifierLineSeparator.setVisibility(isShouldShowModifierItems[0] ? View.VISIBLE : View.GONE);
-                    icModifierItemsDropDown.setImageResource(isShouldShowModifierItems[0] ? R.drawable.ic_chevron_up : R.drawable.ic_chevron_down);
-
-                }
-            });*/
-
-        CartModifierPriceAdapter adapter = new CartModifierPriceAdapter(context,menuItem.getModifierItems());
-        modifierItems.setVisibility(isShouldShowModifierItems[0] ? View.VISIBLE : View.GONE);
-        adapter.notifyDataSetChanged();
-        modifierItems.setAdapter(adapter);
+        delete.setOnClickListener(view -> {
+            cartPresenter.deleteCartItem(true, getAdapterPosition());
+        });
 
         minus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -238,30 +213,9 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         if (imageUrl == null || imageUrl.equalsIgnoreCase("null") || imageUrl.isEmpty() || imageUrl.toLowerCase().contains("default-image.png")) {
             imageUrl = Values.DEFAULT_IMAGE_URL;
         }
-
-        Glide.with(context).load(imageUrl).skipMemoryCache(false).diskCacheStrategy(DiskCacheStrategy.ALL).apply(RequestOptions.centerInsideTransform()).listener(new RequestListener<Drawable>() {
-            @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                //image.setVisibility(View.GONE);
-
-                return false;
-            }
-
-            @Override
-            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                image.setVisibility(View.VISIBLE);
-                return false;
-            }
-        }).into(image);
-
+        ImageViewExtKt.loadImageFromUrl(image, imageUrl, false, DiskCacheStrategy.ALL, RequestOptions.centerCropTransform());
         quantity.setText(StringUtil.localize(String.valueOf(menuItem.getAttributes().getQuantity())));
 
-        String orderStoreId = null;
-        if (CacheUtil.getInstance().getOrderStore() != null) {
-            orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
-        }
-
-        double menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1);
         if (!menuItem.isPromo()) {
             totalPrice.setText(StringUtil.getNewFormattedPrice(menuItemTotalPrice * menuItem.getAttributes().getQuantity(), true));
         } else {
@@ -278,17 +232,19 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
 
         StringBuilder stringBuilder = new StringBuilder();
 
+        int modifierItemsCounter = 0;
         int comboIndex = 0;
         int trueIndex = 0;
         for (ModifierItem size : menuItem.getSizes().getModifierItems()) {
             if (size.getAttributes().isSelected()) {
                 if (!first) {
-                    stringBuilder.append(", ");
+                    stringBuilder.append("\n");
                 } else {
                     first = false;
                 }
+                modifierItemsCounter++;
                 trueIndex = comboIndex;
-                stringBuilder.append(size.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + "(" + StringUtil.localize(String.valueOf(size.getAttributes().getQuantity()) + ")"));
+                stringBuilder.append(size.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + " (" + StringUtil.localize(String.valueOf(size.getAttributes().getQuantity()) + ")"));
             }
             comboIndex++;
         }
@@ -296,22 +252,24 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         for (ModifierItem drink : menuItem.getDrinks().getModifierItems()) {
             if (drink.getAttributes().isSelected()) {
                 if (!first) {
-                    stringBuilder.append(", ");
+                    stringBuilder.append("\n");
                 } else {
                     first = false;
                 }
-                stringBuilder.append(drink.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + "(" + StringUtil.localize(String.valueOf(drink.getAttributes().getQuantity()) + ")"));
+                modifierItemsCounter++;
+                stringBuilder.append(drink.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + " (" + StringUtil.localize(String.valueOf(drink.getAttributes().getQuantity()) + ")"));
             }
         }
 
         for (ModifierItem fries : menuItem.getFries().getModifierItems()) {
             if (fries.getAttributes().isSelected()) {
                 if (!first) {
-                    stringBuilder.append(", ");
+                    stringBuilder.append("\n");
                 } else {
                     first = false;
                 }
-                stringBuilder.append(fries.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + "(" + StringUtil.localize(String.valueOf(fries.getAttributes().getQuantity()) + ")"));
+                modifierItemsCounter++;
+                stringBuilder.append(fries.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + " (" + StringUtil.localize(String.valueOf(fries.getAttributes().getQuantity()) + ")"));
             }
         }
 
@@ -321,11 +279,12 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
                 for (ModifierItem modifierItem : modifierGroup.getModifierItems()) {
                     if (modifierItem.getAttributes().isSelected()) {
                         if (!first) {
-                            stringBuilder.append(", ");
+                            stringBuilder.append("\n");
                         } else {
                             first = false;
                         }
-                        stringBuilder.append(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + "(" + StringUtil.localize(String.valueOf(modifierItem.getAttributes().getQuantity()) + ")"));
+                        modifierItemsCounter++;
+                        stringBuilder.append(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + " (" + StringUtil.localize(String.valueOf(modifierItem.getAttributes().getQuantity()) + ")"));
                     }
                 }
 
@@ -336,11 +295,12 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         for (ModifierItem modifierItem : menuItem.getModifierItems()) {
             if (modifierItem.getAttributes().isSelected()) {
                 if (!first) {
-                    stringBuilder.append(", ");
+                    stringBuilder.append("\n");
                 } else {
                     first = false;
                 }
-                stringBuilder.append(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + "(" + StringUtil.localize(String.valueOf(modifierItem.getAttributes().getQuantity())) + ")");
+                modifierItemsCounter++;
+                stringBuilder.append(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + " (" + StringUtil.localize(String.valueOf(modifierItem.getAttributes().getQuantity())) + ")");
             }
         }
 
@@ -351,11 +311,12 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
                         if (item.selected) {
                             if (!menuItem.isSandwichOnly) {
                                 if (!first) {
-                                    stringBuilder.append(", ");
+                                    stringBuilder.append("\n");
                                 } else {
                                     first = false;
                                 }
-                                stringBuilder.append(translated(LocaleUtil.getInstance().getLanguage(), item.name) + "(" + StringUtil.localize(String.valueOf(1)) + ")");
+                                modifierItemsCounter++;
+                                stringBuilder.append(translated(LocaleUtil.getInstance().getLanguage(), item.name) + " (" + StringUtil.localize(String.valueOf(1)) + ")");
                             }
                             if (!item.modifierGroups.isEmpty()) {
 //                                if (components.name.getEnglish().toLowerCase().contains("sandwich") || components.name.getFrench().toLowerCase().contains("sandwich")) {
@@ -391,7 +352,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
                                     for (int i = 0; i < modifierGroup.getModifierItems().size(); i++) {
                                         if (modifierGroup.getModifierItems().get(i).getAttributes().isSelected()) {
                                             if (!first) {
-                                                stringBuilder.append(", ");
+                                                stringBuilder.append("\n");
                                             } else {
                                                 first = false;
                                             }
@@ -408,7 +369,35 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
             e.printStackTrace();
         }
 
-       // modifierItems.setText(stringBuilder.toString());
+
+        if (modifierItemsCounter > 1) {
+            lnModifiersDropdown.setVisibility(View.VISIBLE);
+            tvModifiers.setVisibility(View.VISIBLE);
+            spaceModifiers.setVisibility(View.GONE);
+            tvModifiers.setText(stringBuilder);
+            txtAddOnTotal.setText(String.valueOf(modifierItemsCounter));
+        } else if (modifierItemsCounter > 0) {
+            lnModifiersDropdown.setVisibility(View.GONE);
+            tvModifiers.setVisibility(View.VISIBLE);
+            spaceModifiers.setVisibility(View.GONE);
+            tvModifiers.setText(stringBuilder);
+        } else {
+            lnModifiersDropdown.setVisibility(View.GONE);
+            tvModifiers.setVisibility(View.GONE);
+            spaceModifiers.setVisibility(View.VISIBLE);
+        }
+
+        lnModifiersDropdown.setOnClickListener(view -> {
+            if(tvModifiers.getVisibility() == View.VISIBLE){
+                ViewExtensionsKt.collapse(tvModifiers);
+                icModifierItemsDropDown.setRotation(180f);
+                spaceModifiers.setVisibility(View.VISIBLE);
+            }else {
+                spaceModifiers.setVisibility(View.GONE);
+                ViewExtensionsKt.expand(tvModifiers);
+                icModifierItemsDropDown.setRotation(0f);
+            }
+        });
 
         first = true;
 
@@ -427,34 +416,6 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
                 stringBuilder.append(ingredient.getAttributes().getName());
             }
         }
-
-        /*if (removedIngredients > 0) {
-            ingredients.setText(CacheUtil.getInstance().getTranslations(Text.REMOVE) + " " + stringBuilder.toString());
-            ingredients.setVisibility(View.VISIBLE);
-        } else {
-            ingredients.setVisibility(View.GONE);
-        }
-
-        if (menuItem.getListPrice() > 0.0) {
-            oldPriceView.setVisibility(View.VISIBLE);
-            oldPrice.setVisibility(View.VISIBLE);
-            SpannedString formattedOldPrice = StringUtil.getNewFormattedPrice(menuItem.getListPrice());
-            SpannableString oldPriceSpan = new SpannableString(formattedOldPrice);
-            oldPriceSpan.setSpan(new StrikethroughSpan(), 0, formattedOldPrice.length(), 0);
-            oldPrice.setText(oldPriceSpan);
-        } else {
-            oldPriceView.setVisibility(View.GONE);
-            oldPrice.setVisibility(View.GONE);
-        }
-
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                cartPresenter.deleteCartItem(false, getAdapterPosition());
-            }
-        });*/
-
         edit.setVisibility(menuItem.isPromo() ? View.INVISIBLE : View.VISIBLE);
 
         edit.setOnClickListener(new View.OnClickListener() {
@@ -463,37 +424,6 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
                 cartPresenter.editCartItem(getAdapterPosition());
             }
         });
-
-        /*if (!CacheUtil.getInstance().getConcept().isCartItemsNotesEnabled()) {
-            notesContainer.setVisibility(View.GONE);
-        } else {
-            notesContainer.setVisibility(View.VISIBLE);
-            String itemnote = menuItem.getAttributes().getNotes();
-            if (itemnote.isEmpty()) {
-                notes.setText("");
-            } else {
-                notes.setText(itemnote);
-            }
-
-            notes.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    cartPresenter.addNotes(getAdapterPosition(), s.toString());
-                }
-            });
-        }*/
-
-
     }
 
     public String translated(String language, Translated name) {

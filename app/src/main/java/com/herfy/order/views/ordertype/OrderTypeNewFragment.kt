@@ -24,7 +24,6 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.clearFragmentResultListener
@@ -54,7 +53,6 @@ import com.google.android.gms.maps.model.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.tabs.TabLayout
 import com.herfy.R
-import com.herfy.R2.id.textView
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartDialogFragment
@@ -237,9 +235,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
 
         if (activity is NavigationActivity && isMenuSeparate && CacheUtil.getInstance().orderType == OrderType.NONE) {
-            activity?.cast<NavigationActivity> {
-                it.hideBackButton()
-            }
         }
         orderPresenter.start()
         isCurbsideAvailable = CacheUtil.getInstance().application.attributes.getOrderTypes()
@@ -690,9 +685,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         try {
             if (isSingleOrderType && !title.isNullOrEmpty()) {
                 activity?.cast<MainActivity> {
-                    it.setToolbarTitle(title.uppercase(Locale.getDefault()))
-                }
-                activity?.cast<NavigationActivity> {
                     it.setToolbarTitle(title.uppercase(Locale.getDefault()))
                 }
             }

@@ -35,11 +35,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.refundevent
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.databinding.FragmentOrderBinding
 import com.herfy.ext.cast
 import com.herfy.ext.hasDecimalPart
@@ -52,16 +49,18 @@ import com.herfy.history.adapters.TimeLineAdapter
 import com.herfy.history.views.CancelOrderDialog.Companion.newInstance
 import com.herfy.loyalty.LoyaltyActivity
 import com.herfy.main.MainActivity
-import com.herfy.main.NavigationActivity
-import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
 import com.herfy.util.LatLngInterpolator.Spherical
 import com.herfy.util.extensions.dialPhoneNumber
 import com.herfy.util.extensions.removeSpecialCharacters
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
+import com.skylinedynamics.solosdk.api.models.objects.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -854,10 +853,6 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
                             activity?.cast<MainActivity> { mainActivity ->
                                 mainActivity.showToolbarWhatsappButton(false)
                             }
-                            activity?.cast<NavigationActivity> { menuItemActivity ->
-                                menuItemActivity.showToolbarWhatsappButton(false)
-                            }
-                            // timeLineAdapter.noDriver = true;
                             binding.trackLabel.visibility = View.GONE
                             binding.trackContainer.visibility = View.GONE
                         }
@@ -870,18 +865,12 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
                         activity?.cast<MainActivity> { mainActivity ->
                             mainActivity.showToolbarWhatsappButton(false)
                         }
-                        activity?.cast<NavigationActivity> { menuItemActivity ->
-                            menuItemActivity.showToolbarWhatsappButton(false)
-                        }
                         if (timeLineAdapter != null) timeLineAdapter!!.notifyDataSetChanged()
                     }
                 } else {
                     //timeLineAdapter.noDriver = true;
                     activity?.cast<MainActivity> { mainActivity ->
                         mainActivity.showToolbarWhatsappButton(false)
-                    }
-                    activity?.cast<NavigationActivity> { menuItemActivity ->
-                        menuItemActivity.showToolbarWhatsappButton(false)
                     }
                     if (timeLineAdapter != null) timeLineAdapter!!.notifyDataSetChanged()
                     binding.trackLabel.visibility = View.GONE
@@ -1088,46 +1077,6 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
                 }
             } else {
                 mainActivity.showToolbarWhatsappButton(false)
-            }
-        }
-        activity?.cast<NavigationActivity> { menuItemActivity ->
-            if (mobileNumber != null && mobileNumber.trim { it <= ' ' }
-                    .isNotEmpty() && !mobileNumber.trim { it <= ' ' }
-                    .equals("null", ignoreCase = true)) {
-                menuItemActivity.showToolbarWhatsappButton(true)
-                menuItemActivity.setToolbarWhatsappButton {
-                    val whatsAppPackageName = "com.whatsapp"
-                    try {
-                        val packageManager = menuItemActivity.packageManager
-                        val intent = Intent(Intent.ACTION_VIEW)
-                        val url =
-                            "https://api.whatsapp.com/send?phone=" + mobileNumber.trim { it <= ' ' }
-                        intent.setPackage(whatsAppPackageName)
-                        intent.data = Uri.parse(url)
-                        if (intent.resolveActivity(packageManager) != null) {
-                            startActivity(intent)
-                        } else {
-                            startActivity(
-                                Intent(
-                                    Intent.ACTION_VIEW, Uri.parse(
-                                        "market://details?id=$whatsAppPackageName"
-                                    )
-                                )
-                            )
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW, Uri.parse(
-                                    "market://details?id=$whatsAppPackageName"
-                                )
-                            )
-                        )
-                    }
-                }
-            } else {
-                menuItemActivity.showToolbarWhatsappButton(false)
             }
         }
     }

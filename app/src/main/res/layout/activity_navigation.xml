@@ -6,13 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".main.NavigationActivity">
 
-
-    <include
-        android:id="@+id/main_toolbar"
-        layout="@layout/main_toolbar"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_view"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -20,7 +13,7 @@
         android:layout_height="0dp"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_toolbar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bubble_order_layout"

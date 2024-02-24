@@ -7,8 +7,19 @@
     android:layout_height="match_parent"
     android:background="#F7F7F7">
 
+    <com.herfy.common.toolbar.TitleToolbar
+        android:id="@+id/toolbar_title"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#F7F7F7"
+        app:rightButtonColor="#0064AC"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <androidx.core.widget.NestedScrollView
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_title"
        app:layout_constraintBottom_toTopOf="@+id/footer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

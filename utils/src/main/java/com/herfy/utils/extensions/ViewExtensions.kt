@@ -1,6 +1,9 @@
 package com.herfy.utils.extensions
 
 import android.view.View
+import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.Transformation
 import androidx.databinding.BindingAdapter
 import com.herfy.utils.helper.throttleFirst
 import kotlinx.coroutines.CoroutineScope
@@ -40,4 +43,44 @@ infix fun View.setVisible(isVisible: Boolean?) {
         false -> View.GONE
         else -> View.VISIBLE
     }
+}
+
+fun View.expand() {
+    measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    val targtetHeight = measuredHeight
+    layoutParams.height = 0
+    visibility = View.VISIBLE
+    val a: Animation = object : Animation() {
+        override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
+            layoutParams.height =
+                if (interpolatedTime == 1f) ViewGroup.LayoutParams.WRAP_CONTENT else (targtetHeight * interpolatedTime).toInt()
+            requestLayout()
+        }
+
+        override fun willChangeBounds(): Boolean {
+            return true
+        }
+    }
+    a.duration = (targtetHeight / context.resources.displayMetrics.density).toInt().toLong()
+    startAnimation(a)
+}
+
+fun View.collapse() {
+    val initialHeight = measuredHeight
+    val a: Animation = object : Animation() {
+        override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
+            if (interpolatedTime == 1f) {
+                visibility = View.GONE
+            } else {
+                layoutParams.height = initialHeight - (initialHeight * interpolatedTime).toInt()
+                requestLayout()
+            }
+        }
+
+        override fun willChangeBounds(): Boolean {
+            return true
+        }
+    }
+    a.duration = (initialHeight / context.resources.displayMetrics.density).toInt().toLong()
+    startAnimation(a)
 }

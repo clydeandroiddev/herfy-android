@@ -11,29 +11,29 @@ import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.herfy.notification.NotificationContract
-import com.herfy.notification.adapter.RecyclerTouchListener
-import com.herfy.notification.adapter.NotificationAdapter
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentNotificationsBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
-import com.herfy.main.NavigationActivity
+import com.herfy.notification.NotificationContract
 import com.herfy.notification.NotificationPresenter
-import com.herfy.utils.helper.LocaleUtil
+import com.herfy.notification.adapter.NotificationAdapter
+import com.herfy.notification.adapter.RecyclerTouchListener
 import com.herfy.notification.adapter.RecyclerTouchListener.OnRowClickListener
-import com.skylinedynamics.solosdk.api.models.objects.notification.NotifDeeplink
-import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData
-import com.skylinedynamics.solosdk.api.models.objects.Campaign
-import com.skylinedynamics.solosdk.api.models.objects.notification.Notification
 import com.herfy.utils.analytics.MixpanelUtil
-import java.util.*
-import com.herfy.utils.helper.*
+import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.NavigationUtils
+import com.skylinedynamics.solosdk.api.models.objects.Campaign
+import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData
+import com.skylinedynamics.solosdk.api.models.objects.notification.NotifDeeplink
+import com.skylinedynamics.solosdk.api.models.objects.notification.Notification
+import java.util.LinkedList
 
 class NotificationsFragment : BaseFragment(), NotificationContract.View {
 
@@ -169,26 +169,10 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
                     }
                 }
             }
-            activity?.cast<NavigationActivity> {
-                if(it.currentDestination == R.id.nav_notifications) {
-                    it.showToolbarCustomActionButton(true)
-                    it.setToolbarCustomActionText(
-                        CacheUtil.getInstance().getTranslations(Text.CLEAR_ALL, "Clear All")
-                    )
-                    it.setToolbarCustomActionButton {
-                        if (notificationPresenter?.notificationList?.isNotEmpty() == true) {
-                            showClearAllDialog()
-                        }
-                    }
-                }
-            }
         } else {
             binding.layoutEmpty.visibility = View.VISIBLE
             binding.rvNotif.visibility = View.GONE
             activity?.cast<MainActivity> {
-                it.showToolbarCustomActionButton(false)
-            }
-            activity?.cast<NavigationActivity> {
                 it.showToolbarCustomActionButton(false)
             }
         }

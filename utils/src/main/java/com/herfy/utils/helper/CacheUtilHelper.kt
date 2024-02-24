@@ -122,7 +122,7 @@ class CacheUtilHelper(val context : Context) {
         }
     }
 
-    private suspend fun getCartItems(items: (ArrayList<MenuItem>) -> Unit) {
+    suspend fun getCartItems(items: (ArrayList<MenuItem>) -> Unit) {
         val cartMenuItems: String? = pref()[CART_MENU_ITEMS, null]
 
         cartMenuItems?.let {

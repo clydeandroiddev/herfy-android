@@ -45,6 +45,8 @@
     <color name="strikethrough">#9B9694</color>
     <color name="gray_light">#B9B9B9</color>
     <color name="dodger_blue">#1A68FF</color>
+    <color name="text_color_blue">#0064AC</color>
+    <color name="text_color_cart_modifiers">#55667B</color>
 </resources>
 
 

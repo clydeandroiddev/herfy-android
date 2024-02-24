@@ -4,18 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
-import android.text.Editable
-import android.text.Html
-import android.text.TextWatcher
 import android.view.*
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -26,32 +17,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.CartContract
-import com.herfy.cart.CartPresenter
 import com.herfy.cart.adapters.CartMenuItemsRecyclerViewAdapter
+import com.herfy.cart.databinding.FragmentHerfyCartBinding
 import com.herfy.decorator.BeforeDateDecorator
-import com.herfy.decorator.MySelectorDecorator
 import com.herfy.decorator.OneDayDecorator
 import com.herfy.ext.cast
-import com.herfy.ext.gone
-import com.herfy.ext.visible
-import com.herfy.font.FontHandler
 import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
 import com.herfy.main.MainActivity
-import com.herfy.main.MainActivity.Companion.curbside
 import com.herfy.main.NavigationActivity
 import com.herfy.order.views.ordertype.OrderTypeNewFragment
 import com.herfy.payment.dialog.PaymentOrderTimeDialog
@@ -64,8 +44,6 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
-import com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent
-import com.herfy.cart.databinding.FragmentHerfyCartBinding
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
 import com.herfy.views.DynamicTheme
@@ -73,17 +51,14 @@ import com.kochava.tracker.events.EventType
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
-import com.prolificinteractive.materialcalendarview.format.ArrayWeekDayFormatter
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
-import com.sothree.slidinguppanel.SlidingUpPanelLayout
-import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
-import org.threeten.bp.LocalDate
-import java.text.ParseException
-import java.text.SimpleDateFormat
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     companion object {
@@ -95,7 +70,9 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     private val args: CartFragmentArgs by navArgs()
 
-    private lateinit var cartPresenter: CartContract.Presenter
+    @Inject
+    lateinit var cartPresenter: CartContract.Presenter
+
     private var digitalCouponsDialogFragment: CartPromoDialogFragment? = null
     private var digitalAvailableCouponsDialogFragment: CartAvailablePromoDialogFragment? = null
 
@@ -128,7 +105,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         super.onCreate(savedInstanceState)
         dontShowDigitalCoupons = args.isFromPromotions
         isFromPromotions = args.isFromPromotions
-        cartPresenter = CartPresenter(this)
     }
 
     override fun onCreateView(
@@ -145,8 +121,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             it.showLoadingDialog()
         }
         checkBackground()
-        cartPresenter!!.start()
-        cartPresenter!!.fetchCustomerCards()
+        cartPresenter.start()
+        cartPresenter.fetchCustomerCards()
         update()
     }
 
@@ -159,9 +135,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         activity?.cast<MainActivity> {
             it.setCartQuantity(CacheUtil.getInstance().cartQuantity)
         }
-        activity?.cast<NavigationActivity> {
-            it.setCartQuantity(CacheUtil.getInstance().cartQuantity)
-        }
         val mukafaaAmount = cartPresenter.mukafaaTransactionAmount
         if (mukafaaAmount > 0 || BuildUtil.isEkfc()) {
             if(BuildUtil.isEkfc()) {
@@ -169,12 +142,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             }
             cartPresenter.validateOrder(false, false, null)
         }
-       /* if (CacheUtil.getInstance().orderType === OrderType.DINE_IN && !CacheUtil.getInstance().dineInTableNumber.isEmpty()) {
-            binding.main.tableNumberContainer.visibility = View.VISIBLE
-            binding.main.tableNumber.text = CacheUtil.getInstance().dineInTableNumber
-        } else {
-            binding.main.tableNumberContainer.visibility = View.GONE
-        }*/
         if (cartPresenter.menuItemsCount > 0) {
             binding.placeOrder.isEnabled = true
         }
@@ -477,6 +444,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        binding.toolbarTitle.apply {
+            setNavButtonAction{
+                activity?.cast<BaseActivity> {
+                    it.onBackPressed()
+                }
+            }
+        }
        /* binding.main.removeSched.setOnClickListener { v: View? ->
             removeSchedTotally()
             cartPresenter!!.removeMukafaa()
@@ -705,6 +679,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             cartPresenter.removeMukafaa()
             binding.main.mukafaaLayout.setVisibility(View.GONE)
         }*/
+
+
     }
 
     private fun promoCodeShow() {
@@ -720,75 +696,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     @SuppressLint("SetTextI18n")
     override fun setupTranslations() {
-
+        binding.toolbarTitle.setTitle(CacheUtil.getInstance().getTranslations(Text.YOUR_BAG_LABEL, "Your Bag"))
         binding.paymentSummaryContainer.totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
         binding.paymentSummaryContainer.subtotalLabel.text = CacheUtil.getInstance().getTranslations(Text.SUBTOTAL, "Subtotal")
         binding.paymentSummaryContainer.deliveryChargeLabel.text = CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery charge");
         binding.placeOrder.text = CacheUtil.getInstance().getTranslations(Text.CHECKOUT, "CHECKOUT")
         binding.totalVatLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_INCLUSIVE_VAT, "(Total is inclusive of VAT)");
-
-        /*binding.main.changeVehicle.text =
-            CacheUtil.getInstance().getTranslations(Text.CHANGE_VEHICLE, "CHANGE VEHICLE")
-                .uppercase(Locale.getDefault())
-        binding.main.curbsideDesc.text = CacheUtil.getInstance().getTranslations(
-            Text.YOUR_ORDER_WILL_BE_DELIVERED_TO_THIS_CAR,
-            "Your order will be delivered to this car:"
-        )
-        binding.paymentSlidingPanel.pickADayLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.PICK_A_DAY, "PICK A DAY")
-                .uppercase(Locale.getDefault())
-        binding.paymentSlidingPanel.pickATimeLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.PICK_A_TIME, "PICK A TIME")
-                .uppercase(Locale.getDefault())
-
-        binding.main.discountLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT, "Promo Discount")
-        binding.main.applyCode.text =
-            CacheUtil.getInstance().getTranslations(Text.APPLY_CODE, "APPLY CODE")
-        binding.main.promoCode.hint =
-            CacheUtil.getInstance().getTranslations(Text.ENTER_PROMO_CODE, "Enter Promo Code")
-        binding.main.itemsInYourCartLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.ITEMS_IN_YOU_CART, "ITEMS IN YOUR CART")
-        binding.main.emptyTitle.text =
-            CacheUtil.getInstance().getTranslations(Text.NO_ORDER_FOUND, "No order found")
-        binding.main.emptyMessage.text = CacheUtil.getInstance().getTranslations(
-            Text.YOU_CAN_CHECK_OUT_OUR_DISCOUNTED, "You can check out our discounted"
-        ) + "\n" + CacheUtil.getInstance().getTranslations(
-            Text.ITEMS_BY_PRESSING_ON_THE_BUTTON_BELOW, "items by pressing on the button below"
-        )
-        binding.main.goToMenu.text =
-            CacheUtil.getInstance().getTranslations(Text.GO_TO_MENU, "GO TO MENU")
-        binding.main.totalLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total:")
-        binding.main.totalVatLabel.text = CacheUtil.getInstance().getTranslations(
-            Text.TOTAL_INCLUSIVE_VAT, "(Total is inclusive of VAT)"
-        )
-        binding.main.placeOrder.text =
-            CacheUtil.getInstance().getTranslations(Text.PLACE_ORDER_CAPS, "PLACE ORDER")
-        binding.paymentSlidingPanel.cancelButton.text =
-            CacheUtil.getInstance().getTranslations(Text.CANCEL, "CANCEL")
-                .uppercase(Locale.getDefault())
-        binding.paymentSlidingPanel.slidingTitle.text =
-            CacheUtil.getInstance().getTranslations(Text.SCHEDULER_ORDER)
-                .uppercase(Locale.getDefault())
-        binding.paymentSlidingPanel.confirmButton.text =
-            CacheUtil.getInstance().getTranslations(Text.CONFIRM_CAPS, "CONFIRM")
-                .uppercase(Locale.getDefault())
-        binding.main.campaignLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.SHOW_PROMOS, "Show Promos")
-        binding.main.promoItem.promotionNotes.hint =
-            CacheUtil.getInstance().getTranslations(Text.ADD_NOTE, "Add note")
-        binding.main.orderNotesLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.ORDER_NOTES_CAPS, "ORDER NOTES")
-        binding.main.orderNotes.hint = CacheUtil.getInstance().getTranslations(
-            Text.TYPE_YOUR_NOTES_HERE, "Type your notes here, we’ll try our best to follow it"
-        )
-        binding.main.tableNumberLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.TABLE_NUMBER, "Table Number")
-        binding.main.mukafaaLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
-        binding.main.mukafaaRemove.text =
-            CacheUtil.getInstance().getTranslations(Text.REMOVE_CAPS, "Remove")*/
     }
 
     override fun showProgressDialog() {
@@ -873,6 +786,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         adapter!!.notifyDataSetChanged()
         cartPresenter!!.getTotalPrice(false, false)
         binding.placeOrder.isEnabled = menuItems.size > 0
+        var itemCount = 0
+        for (item in menuItems) {
+            itemCount += item.attributes.quantity
+        }
+        binding.orderDetailsContainer.yourOrderLabel.text = "Your Order (${itemCount})"
         /*
         if (menuItems.isNotEmpty()) {
             binding.main.containerDetails.visibility = View.VISIBLE
@@ -2053,7 +1971,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             }
         }
         activity?.cast<NavigationActivity> {
-            it.showScheduleButton(View.OnClickListener { showSchedule() })
+            //it.showScheduleButton(View.OnClickListener { showSchedule() })
             if (goodDaySelected == null) {
                 it.showScheduleBubble()
             }

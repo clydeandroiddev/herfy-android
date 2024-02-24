@@ -87,5 +87,6 @@ dependencies {
     implementation project(':solosdk')
     implementation project(path: ':utils')
     implementation project(':commonStyles')
+    api project(path: ':common')
 
 }
