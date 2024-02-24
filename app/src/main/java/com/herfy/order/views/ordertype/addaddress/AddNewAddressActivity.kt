@@ -42,6 +42,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.location.FusedLocationProvider
 import com.herfy.order.OrderContract
 import com.herfy.order.OrderPresenter
+import com.herfy.order.views.ordertype.selectarea.SelectCityDialog
 import com.herfy.ordertype.databinding.AddressNewActivityBinding
 import com.herfy.util.AppLogger
 import com.herfy.utils.constants.Text
@@ -56,6 +57,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderStatus
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
+import com.skylinedynamics.solosdk.api.models.objects.area.Area
 import java.util.Locale
 
 class AddNewAddressActivity : BaseActivity(), OrderContract.View {
@@ -69,6 +71,8 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     private lateinit var locationMarker: Marker
 
     private lateinit var addAddressDialog: AddAddressDialog
+
+    private lateinit var selectCityDialog: SelectCityDialog
 
     private var permissions = false
 
@@ -108,6 +112,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     override fun setupViews() {
         binding.closeButton.setOnClickListener {
             onBackPressed()
+        }
+
+        binding.selectArea.setOnClickListener {
+            selectCityDialog()
         }
 
         binding.selectAreaLabel.text =
@@ -313,8 +321,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     private fun proceedToAddAddress() {
         dismissAddressDialog()
-        addAddressDialog = AddAddressDialog.newInstance(
-            orderPresenter.currentAddress,
+        addAddressDialog = AddAddressDialog.newInstance(orderPresenter.currentAddress,
             object : AddAddressDialog.OnSubmit {
                 override fun onSuccess(
                     labelValue: String,
@@ -342,6 +349,32 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
             })
         addAddressDialog.show(
             this.supportFragmentManager, AddAddressDialog::class.java.simpleName
+        )
+    }
+
+    private fun dismissCityDialog() {
+        try {
+            selectCityDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun selectCityDialog() {
+        dismissCityDialog()
+        selectCityDialog = SelectCityDialog.newInstance(object : SelectCityDialog.OnSubmit {
+            override fun onSuccess(
+                area: Area
+            ) {
+
+            }
+
+            override fun exit() {
+                dismissAddressDialog()
+            }
+        })
+        selectCityDialog.show(
+            this.supportFragmentManager, SelectCityDialog::class.java.simpleName
         )
     }
 
@@ -521,9 +554,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         runOnUiThread {
             dismissDialogs()
             showAlertDialog(
-                "",
-                error,
-                CacheUtil.getInstance().getTranslations(Text.OK)
+                "", error, CacheUtil.getInstance().getTranslations(Text.OK)
             ) { _: DialogInterface?, i: Int -> orderPresenter.setOrderType() }
         }
     }

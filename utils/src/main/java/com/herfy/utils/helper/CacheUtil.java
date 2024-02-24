@@ -34,6 +34,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
 import com.skylinedynamics.solosdk.api.models.objects.area.City;
+import com.skylinedynamics.solosdk.api.models.objects.area.CityList;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
@@ -658,13 +659,12 @@ public class CacheUtil {
         editor.apply();
     }
 
-    public ArrayList<City> getAreas() {
+    public CityList getAreas() {
         String cartMenuItems = cacheSharedPreferences.getString(MAP_AREA, null);
         if (cartMenuItems != null) {
-            return GsonHelper.gsonFinal().fromJson(cartMenuItems, new TypeToken<ArrayList<City>>() {
-            }.getType());
+            return GsonHelper.gsonFinal().fromJson(cartMenuItems, CityList.class);
         }
-        return new ArrayList<>();
+        return new CityList();
     }
 
     public void setBrands(ArrayList<CarMaker> menuItems) {
