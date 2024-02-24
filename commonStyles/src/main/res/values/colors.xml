@@ -51,11 +51,12 @@
     <color name="background_side_bar">#F20064AC</color>
 
     <color name="border_color_light">#D9E8F3</color>
-
+    <color name="color_dark_gray">#191919</color>
     <color name="background_color_blue">#0064AC</color>
     <color name="background_color_light_blue">#D9E8F3</color>
     <color name="color_background">#F7F7F7</color>
     <color name="color_gray">#55667B</color>
+    <color name="color_dark_gray_blue">#404D5C</color>
     <color name="shade_blue">#208DA7</color>
     <color name="colorStrokeBorder">#E4F5F9</color>
     <color name="colorSeparator">#E6E8EB</color>
@@ -66,6 +67,8 @@
     <color name="selected_stroke_color">#0064AC</color>
     <color name="card_stroke_color">#D9E8F3</color>
     <color name="card_selected_bg">#E6F0F7</color>
+    <color name="light_red">#DB2211</color>
+
 </resources>
 
 
