@@ -119,6 +119,7 @@ class SelectCityDialog : DialogFragment() {
                 area: Area
             ) {
                 onSubmit?.onSuccess(area)
+                dismissAreaDialog()
             }
 
             override fun exit() {
