@@ -89,7 +89,7 @@
         <item name="fontFamily">@font/inter_medium</item>
     </style>
 
-    <style name="TextAppearance.Footnote.Medium" parent="">
+    <style name="TextAppearance.Footnote.Semi_Bold" parent="">
         <item name="fontFamily">@font/inter_semi_bold</item>
         <item name="android:textSize">14sp</item>
         <item name="android:letterSpacing">0</item>
@@ -107,6 +107,18 @@
         <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">0</item>
         <item name="lineHeight">16sp</item>
+    </style>
+    <style name="TextAppearance.Footnote_Medium" parent="TextAppearance.AppCompat.Small">
+        <item name="fontFamily">@font/inter_medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="lineHeight">16sp</item>
+    </style>
+    <style name="TextAppearance.Footnote_Large" parent="TextAppearance.AppCompat.Small">
+        <item name="fontFamily">@font/inter_regular</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="lineHeight">19sp</item>
     </style>
     <style name="TextAppearance.Footnote_Bold" parent="TextAppearance.AppCompat.Small">
         <item name="fontFamily">@font/inter_bold</item>
@@ -142,18 +154,18 @@
     </style>
 
 
-    <dimen name="line_height_large_title">41dp</dimen>
-    <dimen name="line_height_title1">34dp</dimen>
-    <dimen name="line_height_title2">28dp</dimen>
-    <dimen name="line_height_title3">24dp</dimen>
-    <dimen name="line_height_headline">18dp</dimen>
-    <dimen name="line_height_headline_regular">17dp</dimen>
-    <dimen name="line_height_body">18dp</dimen>
-    <dimen name="line_height_callout">21dp</dimen>
-    <dimen name="line_height_subheadline">14dp</dimen>
-    <dimen name="line_height_footnote">17dp</dimen>
-    <dimen name="line_height_footnote_bold">15dp</dimen>
-    <dimen name="line_height_caption">13dp</dimen>
-    <dimen name="line_height_navigation_label">12dp</dimen>
+    <dimen name="line_height_large_title">@dimen/_41sdp</dimen>
+    <dimen name="line_height_title1">@dimen/_34sdp</dimen>
+    <dimen name="line_height_title2">@dimen/_28sdp</dimen>
+    <dimen name="line_height_title3">@dimen/_24sdp</dimen>
+    <dimen name="line_height_headline">@dimen/_18sdp</dimen>
+    <dimen name="line_height_headline_regular">@dimen/_17sdp</dimen>
+    <dimen name="line_height_body">@dimen/_18sdp</dimen>
+    <dimen name="line_height_callout">@dimen/_21sdp</dimen>
+    <dimen name="line_height_subheadline">@dimen/_14sdp</dimen>
+    <dimen name="line_height_footnote">@dimen/_17sdp</dimen>
+    <dimen name="line_height_footnote_bold">@dimen/_15sdp</dimen>
+    <dimen name="line_height_caption">@dimen/_13sdp</dimen>
+    <dimen name="line_height_navigation_label">@dimen/_12sdp</dimen>
 
 </resources>

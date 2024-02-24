@@ -95,9 +95,8 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
     }
 
     override fun setupViews() {
-//        val cards = CacheUtil.getInstance().customerCards ?: cards()
-//        val cards = cards()
-       /* val creditCardAdapter = CardsAdapter(cards) { card, position ->
+       val cards = CacheUtil.getInstance().customerCards
+       val creditCardAdapter = CardsAdapter(cards) { card, position ->
             selectedCard = card
             if (isCashPaymentAvailable) {
                 rbCash.isChecked = false
@@ -113,7 +112,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
         }
 
         binding.rvCards.adapter = creditCardAdapter
-        creditCardAdapter.notifyDataSetChanged()*/
+        creditCardAdapter.notifyDataSetChanged()
 
         binding.toolbarContainer.btnBack.setOnClickListener { onBackPressed() }
 

@@ -59,7 +59,7 @@
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="#0C0C0C"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:textFontWeight="600"
                 android:lineHeight="21dp"

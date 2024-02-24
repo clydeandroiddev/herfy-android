@@ -19,7 +19,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -910,8 +913,8 @@ public class CheckoutActivity extends BaseActivity implements PaymentContract.Vi
 //        tvChangeOrderType.setText(CacheUtil.getInstance().getTranslations(Text.CHANGE, "Change").toUpperCase());
         binding.layoutLoyalty.tvPointsLabel.setText(CacheUtil.getInstance().getTranslations(Text.POINTS, "Points").toUpperCase());
         binding.layoutLoyalty.tvSarAmountLabel.setText(CacheUtil.getInstance().getTranslations(Text.SAR_AMOUNT, "SAR Amount").toUpperCase());
-
-
+        binding.layoutPaymentSummary.tvDiscountLabel.setText(CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT));
+        binding.layoutLoyalty.tvLoyaltyPointsLabel.setText(CacheUtil.getInstance().getTranslations(Text.LOYALTY_USE_POINTS,"Use Loyalty Points"));
 
 
 
@@ -1108,8 +1111,20 @@ public class CheckoutActivity extends BaseActivity implements PaymentContract.Vi
     public void setPriceDetails(double subtotalPrice, double discount, double totalPrice, double deliveryCharge, double pointsSarValue, int pointsEarnable, int pointsUsed, ArrayList<ServiceCharge> charges) {
 
         boolean hasPromotion = CacheUtil.getInstance().hasPromotion();
+        String originalPrice = String.valueOf(CurrencyUtils.Companion.updateCurrency(subtotalPrice, true, hasPromotion));
+
+// Create a SpannableString to apply underline
+        SpannableString spannableString = new SpannableString(originalPrice);
+
+// Calculate the center position of the text
+        int centerPosition = originalPrice.length() / 2;
+
+// Apply UnderlineSpan to the center of the text
+        spannableString.setSpan(new UnderlineSpan(), centerPosition, centerPosition + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+// Apply the formatted text to the TextView
+        binding.tvOriginalPrice.setText(spannableString);
         binding.layoutPaymentSummary.tvSubtotal.setText(CurrencyUtils.Companion.updateCurrency(subtotalPrice, true, hasPromotion));
-        binding.tvOriginalPrice.setText(CurrencyUtils.Companion.updateCurrency(subtotalPrice, true, hasPromotion));
 
         if (discount != 0) {
             binding.layoutPaymentSummary.grpDiscount.setVisibility(View.VISIBLE);

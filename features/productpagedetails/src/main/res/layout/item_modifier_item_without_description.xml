@@ -52,7 +52,7 @@
             android:layout_marginStart="@dimen/margin_large"
             android:fontFamily="@font/cairo_regular"
             android:gravity="start|center_vertical"
-            style="@style/Styles.Text.Footnote.Medium"
+            style="@style/Styles.Text.Footnote.Semi.Bold"
             android:paddingEnd="4dp"
             android:textAlignment="viewStart"
             android:textColor="#1e1e1e"

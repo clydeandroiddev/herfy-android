@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:visibility="visible"
             app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="14dp"
+            app:cardCornerRadius="@dimen/radius_large"
             app:cardPreventCornerOverlap="true"
             app:cardUseCompatPadding="true"
             app:layout_constraintBottom_toBottomOf="parent"

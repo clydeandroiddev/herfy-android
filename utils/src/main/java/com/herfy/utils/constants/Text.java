@@ -639,6 +639,7 @@ public class Text {
     public static final String LOYALTY_AMOUNT_SPENT = "amount_spent";
     public static final String LOYALTY_LEAVE_BLANK = "no_points_use";
     public static final String LOYALTY_USE_POINTS = "use_loyalty_points_caps";
+    public static final String LOYALTY_USE_POINTS_NOT_CAPS = "use_loyalty_points_not_caps";
     public static final String DELETE_ACCOUNT_ASK = "delete_account_ask";
     public static final String DELETE_ACCOUNT_CANNOT_UNDONE = "delete_account_cannot_undone";
     public static final String DELETE_ACCOUNT_CAPS = "delete_account_caps";

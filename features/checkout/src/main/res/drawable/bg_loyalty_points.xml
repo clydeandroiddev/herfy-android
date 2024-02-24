@@ -10,7 +10,7 @@
         android:topRightRadius="14dp" />
 
     <gradient
-        android:startColor="#D57770"
-        android:endColor="#CA3E2C"
+        android:startColor="#E6F0F7"
+        android:endColor="#E6F0F7"
         android:angle="90" />
 </shape>
