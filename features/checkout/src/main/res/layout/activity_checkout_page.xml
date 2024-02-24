@@ -41,10 +41,10 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
                         android:orientation="horizontal"
-                        android:padding="16dp">
+                        android:padding="@dimen/padding_large">
 
 
                         <com.google.android.material.textview.MaterialTextView
@@ -61,7 +61,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_semi_bold"
-                            android:textColor="#404D5C"
+                            android:textColor="@color/color_dark_gray_blue"
                             style="@style/Styles.Text.Footnote.Semi.Bold"
                             android:layout_marginStart="@dimen/margin_small"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -75,7 +75,7 @@
                             android:id="@+id/tv_within"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="#55667B"
+                            android:textColor="@color/color_gray"
                             style="@style/Styles.Text.Footnote"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -89,8 +89,8 @@
                         android:id="@+id/constraintLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
-                        android:background="#F7F7F7"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:background="@color/light_gray"
                         app:layout_constraintBottom_toTopOf="@+id/layout_payment"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
@@ -102,9 +102,9 @@
                             android:id="@+id/checkout_map"
                             android:name="com.google.android.gms.maps.SupportMapFragment"
                             android:layout_width="match_parent"
-                            android:layout_height="200dp"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginEnd="16dp"
+                            android:layout_height="@dimen/_200sdp"
+                            android:layout_marginStart="@dimen/margin_large"
+                            android:layout_marginEnd="@dimen/margin_large"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -123,7 +123,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:background="#E6F0F7"
+                            android:background="@color/card_selected_bg"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -279,7 +279,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
                                 android:layout_marginTop="@dimen/_12sdp"
-                                android:background="#E6E8EB"
+                                android:background="@color/colorSeparator"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/iv_mobile_number" />
@@ -303,7 +303,7 @@
                                 android:layout_marginStart="12dp"
                                 android:fontFamily="@font/inter_medium"
                                 style="@style/TextAppearance.Footnote.Semi_Bold"
-                                android:textColor="#191919"
+                                android:textColor="@color/color_dark_gray"
                                 android:textAllCaps="false"
                                 app:layout_constraintStart_toEndOf="@+id/iv_delivery_note"
                                 app:layout_constraintTop_toTopOf="@+id/iv_delivery_note"
@@ -315,7 +315,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/_12sdp"
                                 style="@style/Styles.Text.Footnote.Medium"
-                                android:textColor="#55667B"
+                                android:textColor="@color/color_gray"
                                 app:layout_constraintBottom_toBottomOf="@+id/iv_delivery_note"
                                 app:layout_constraintStart_toEndOf="@+id/iv_delivery_note"
                                 app:layout_constraintTop_toBottomOf="@+id/tv_delivery_instruction_label"
@@ -371,7 +371,7 @@
             </androidx.core.widget.NestedScrollView>
 
         </LinearLayout>
-
+         <!-- Todo need to ask the designer if they can provide the background for footer as exportable -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/payment_footer"
             android:layout_width="match_parent"
@@ -381,13 +381,21 @@
             app:layout_constraintStart_toStartOf="parent"
             android:background="#E6F0F7"
             android:padding="@dimen/padding_large">
-
+            <View
+                android:id="@+id/dashed"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_2sdp"
+                android:layout_marginStart="6dp"
+                android:background="@color/light_red"
+                app:layout_constraintBottom_toBottomOf="@id/tv_original_price"
+                app:layout_constraintEnd_toEndOf="@id/tv_original_price"
+                app:layout_constraintTop_toTopOf="@id/tv_original_price" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_original_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#DB2211"
+                android:textColor="@color/light_red"
                 style="@style/Styles.Text.Footnote.Medium_Regular"
                 app:layout_constraintBottom_toTopOf="@+id/tv_discounted_price"
                 app:layout_constraintStart_toStartOf="parent"
@@ -399,8 +407,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_semi_bold"
-                android:textColor="#0064AC"
-                android:textFontWeight="600"
+                android:textColor="@color/selected_stroke_color"
                 style="@style/Styles.Text.Title1"
                 android:textSize="28sp"
                 app:layout_constraintBottom_toTopOf="@+id/total"
@@ -413,9 +420,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_medium"
-                android:textColor="#0064AC"
-                android:textFontWeight="500"
-                android:textSize="11sp"
+                android:textColor="@color/selected_stroke_color"
+                style="@style/TextAppearance.Caption.Regular"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_discounted_price"
@@ -428,16 +434,14 @@
                 android:background="@drawable/bg_place_order_button"
                 android:fontFamily="@font/inter_medium"
                 android:gravity="center"
-                android:paddingStart="30dp"
-                android:paddingTop="12dp"
-                android:paddingEnd="30dp"
-                android:paddingBottom="12dp"
+                android:paddingStart="@dimen/_30sdp"
+                android:paddingTop="@dimen/_12sdp"
+                android:paddingEnd="@dimen/_30sdp"
+                android:paddingBottom="@dimen/_12sdp"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textFontWeight="500"
-                android:lineHeight="19dp"
-                android:textSize="16sp"
-                app:cornerRadius="26dp"
+                android:textSize="@dimen/_16sdp"
+                app:cornerRadius="@dimen/_26sdp"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_discounted_price"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
