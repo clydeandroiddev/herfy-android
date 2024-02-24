@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_denied">Permission denied</string>
+    <string name="permission_denied_msg">This feature requires access to your camera.</string>
+    <string name="permission_read_write_denied_msg">This feature is requires to access your storage.</string>
+    <string name="permission_error">Permission denied: %1$s</string>
+    <string name="permission_granted">Permission granted!</string>
+    <string name="try_again">Try again</string>
+</resources>
