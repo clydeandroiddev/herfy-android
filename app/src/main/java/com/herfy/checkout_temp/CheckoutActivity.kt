@@ -122,6 +122,7 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import io.shipbook.shipbooksdk.Log
 import org.json.JSONException
 import org.json.JSONObject
 import org.threeten.bp.Instant
@@ -190,7 +191,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private var moyasarActivityResultLauncher: ActivityResultLauncher<Intent>? = null
     private var isShowCardFailed = false
 
-    val permissionManager: PermissionManager by permissionProvider()
+   private val permissionManager: PermissionManager by permissionProvider()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCheckoutPageBinding.inflate(layoutInflater)
@@ -465,7 +466,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         if (orderStore != null && orderStore.attributes != null) {
             val branchImage = orderStore.attributes.image
             if (branchImage != null) {
-                isBranchImageAvailable = !branchImage.isEmpty()
+                isBranchImageAvailable = branchImage.isNotEmpty()
             }
         }
         /*if (isScheduled) {
@@ -938,10 +939,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         //        tvChangeOrderType.setText(CacheUtil.getInstance().getTranslations(Text.CHANGE, "Change").toUpperCase());
         binding!!.layoutLoyalty.tvPointsLabel.text =
             CacheUtil.getInstance().getTranslations(Text.POINTS, "Points")
-                .uppercase(Locale.getDefault())
         binding!!.layoutLoyalty.tvSarAmountLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.SAR_AMOUNT, "SAR Amount")
-            .uppercase(Locale.getDefault())
+
         binding!!.layoutPaymentSummary.tvDiscountLabel.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
         binding!!.layoutLoyalty.tvLoyaltyPointsLabel.text = CacheUtil.getInstance()
@@ -960,17 +960,20 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 .getTranslations(Text.PICKUP_TIME, "Pickup Time")
             val minsString =
                 CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString()
+            Log.d("FAFA","Minutes bai  " + minsString);
             val minsValue = minsString.toInt()
             val currentUtcTime = Instant.now()
             val minTime = currentUtcTime.plus(
                 minsValue.toLong(),
                 ChronoUnit.MINUTES
-            ) // Adding minutes to current time
+            )
+
             val maxTime = currentUtcTime.plus(
                 (minsValue + 1).toLong(),
                 ChronoUnit.MINUTES
             ) // Adding one more minute for upper bound of deliveryRangeTime
             val minMinutes = minTime.atZone(ZoneOffset.UTC)[ChronoField.MINUTE_OF_HOUR]
+            Log.d("FAFA","Minutes min time " + minMinutes)
             val maxMinutes = maxTime.atZone(ZoneOffset.UTC)[ChronoField.MINUTE_OF_HOUR]
             val deliveryRangeTime =
                 minMinutes.toString() + " - " + maxMinutes + CacheUtil.getInstance()
@@ -1029,6 +1032,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL)
         binding!!.layoutPaymentSummary.tvDiscount.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
+        binding!!.totalVatDescription.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
         //        tvMukafaaLabel.setText(CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a"));
 //        tvMukafaaRemove.setText(CacheUtil.getInstance().getTranslations(Text.REMOVE_CAPS, "Remove"));
 //        deliveryLabel.setText(CacheUtil.getInstance().getTranslations(Text.DELIVERY));

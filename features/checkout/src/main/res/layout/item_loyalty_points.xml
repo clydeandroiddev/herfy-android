@@ -44,7 +44,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 android:fontFamily="@font/inter_semi_bold"
-                android:text="Use Loyalty Points"
+                tools:text="Use Loyalty Points"
                 android:textColor="@color/black"
                 android:textFontWeight="600"
                 android:textSize="14sp"
