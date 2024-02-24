@@ -12,7 +12,7 @@ fun areaJson(): String {
             "        {\n" +
             "            \"id\": \"1\",\n" +
             "            \"name\": \"City 1\",\n" +
-            "            \"cities\": [\n" +
+            "            \"areas\": [\n" +
             "                {\n" +
             "                    \"id\": \"1\",\n" +
             "                    \"name\": \"City 1 Area 1\",\n" +
@@ -36,7 +36,7 @@ fun areaJson(): String {
             "        {\n" +
             "            \"id\": \"2\",\n" +
             "            \"name\": \"City 2\",\n" +
-            "            \"cities\": [\n" +
+            "            \"areas\": [\n" +
             "                {\n" +
             "                    \"id\": \"1\",\n" +
             "                    \"name\": \"City 2 Area 1\",\n" +
@@ -60,7 +60,7 @@ fun areaJson(): String {
             "        {\n" +
             "            \"id\": \"3\",\n" +
             "            \"name\": \"City 3\",\n" +
-            "            \"cities\": [\n" +
+            "            \"areas\": [\n" +
             "                {\n" +
             "                    \"id\": \"1\",\n" +
             "                    \"name\": \"City 3 Area 1\",\n" +

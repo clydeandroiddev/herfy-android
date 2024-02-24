@@ -366,7 +366,8 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
             override fun onSuccess(
                 area: Area
             ) {
-
+                googleMap.animateCamera(CameraUpdateFactory.newLatLng(LatLng(area.lat, area.long)))
+                dismissCityDialog()
             }
 
             override fun exit() {

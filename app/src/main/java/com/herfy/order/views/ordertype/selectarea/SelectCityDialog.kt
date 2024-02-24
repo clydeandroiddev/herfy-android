@@ -20,11 +20,9 @@ import com.skylinedynamics.solosdk.api.models.objects.area.City
 class SelectCityDialog : DialogFragment() {
 
     private var onSubmit: OnSubmit? = null
-
     private lateinit var binding: SelectCityDialogBinding
-
     private lateinit var adapter: SelectCityAdapter
-
+    private lateinit var selectAreaDialog: SelectAreaDialog
     private var selectedCity: City? = null
 
     interface OnSubmit {
@@ -76,10 +74,10 @@ class SelectCityDialog : DialogFragment() {
     private fun checkButton() {
         binding.continueButton.alpha = 0.5f
         binding.continueButton.setOnClickListener(null)
-        selectedCity?.let {
+        selectedCity?.let { city ->
             binding.continueButton.alpha = 1f
             binding.continueButton.setOnClickListener {
-
+                selectCityDialog(city.areas)
             }
         }
     }
@@ -104,6 +102,32 @@ class SelectCityDialog : DialogFragment() {
             )
             binding.cityList.adapter = adapter
         }
+    }
+
+    private fun dismissAreaDialog() {
+        try {
+            selectAreaDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun selectCityDialog(areas: ArrayList<Area>) {
+        dismissAreaDialog()
+        selectAreaDialog = SelectAreaDialog.newInstance(areas, object : SelectAreaDialog.OnSubmit {
+            override fun onSuccess(
+                area: Area
+            ) {
+                onSubmit?.onSuccess(area)
+            }
+
+            override fun exit() {
+                dismissAreaDialog()
+            }
+        })
+        selectAreaDialog.show(
+            requireActivity().supportFragmentManager, SelectAreaDialog::class.java.simpleName
+        )
     }
 
     companion object {
