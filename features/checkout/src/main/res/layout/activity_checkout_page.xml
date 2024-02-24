@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F7F7F7">
+        android:background="@color/light_gray">
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -122,50 +122,39 @@
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="@dimen/margin_large"
                             android:background="@color/card_selected_bg"
+                            android:padding="@dimen/margin_small"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/checkout_map">
 
-                            <ImageView
+                            <com.google.android.material.imageview.ShapeableImageView
                                 android:id="@+id/iv_order_type"
-                                android:layout_width="@dimen/_50sdp"
-                                android:layout_height="@dimen/_50sdp"
-                                android:layout_marginStart="16dp"
-                                android:background="@drawable/selected_image_bg"
-                                android:padding="14dp"
+                                android:layout_width="@dimen/_55sdp"
+                                android:layout_height="@dimen/_55sdp"
+                                android:layout_marginStart="@dimen/margin_small"
+                                android:background="@color/white"
+                                android:padding="@dimen/padding_small"
+                                android:scaleType="centerInside"
                                 app:layout_constraintBottom_toBottomOf="@+id/tv_branch_name"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="@+id/tv_order_type"
-                                tools:src="@drawable/ic_herfy_pickup" />
-
-                            <!--                        <TextView-->
-                            <!--                            android:id="@+id/tv_order_type"-->
-                            <!--                            android:layout_width="wrap_content"-->
-                            <!--                            android:layout_height="wrap_content"-->
-                            <!--                            android:layout_marginStart="5dp"-->
-                            <!--                            android:fontFamily="@font/inter_semi_bold"-->
-                            <!--                            android:lineHeight="19dp"-->
-                            <!--                            android:textColor="#0C0C0C"-->
-                            <!--                            android:textFontWeight="600"-->
-                            <!--                            android:textSize="16sp"-->
-                            <!--                            app:layout_constraintBottom_toBottomOf="@+id/tv_branch_name"-->
-                            <!--                            app:layout_constraintStart_toEndOf="@+id/tv_branch_name"-->
-                            <!--                            app:layout_constraintTop_toTopOf="@+id/tv_branch_name"-->
-                            <!--                            tools:text="(Pickup)" />-->
+                                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Circle"
+                                app:strokeColor="@color/background_color_light_blue"
+                                app:strokeWidth="@dimen/_2sdp"
+                                tools:src="@tools:sample/avatars" />
 
                             <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/tv_order_type"
+                                style="@style/TextAppearance.Footnote.Semi_Bold"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/_8sdp"
                                 android:layout_marginTop="@dimen/_10sdp"
                                 android:layout_marginEnd="@dimen/_286sdp"
-                                android:fontFamily="@font/inter_semi_bold"
-                                android:textColor="#0C0C0C"
-                                style="@style/TextAppearance.Footnote.Semi_Bold"
+                                android:textColor="@color/black"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.0"
                                 app:layout_constraintStart_toEndOf="@+id/iv_order_type"
@@ -174,14 +163,12 @@
 
                             <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/tv_branch_name"
+                                style="@style/TextAppearance.Footnote.Medium_Regular"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/margin_small"
-                                android:layout_marginBottom="@dimen/margin_small"
                                 android:layout_marginEnd="@dimen/margin_large"
                                 android:textColor="@color/black"
-                                style="@style/TextAppearance.Footnote.Medium_Regular"
-                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.0"
                                 app:layout_constraintStart_toEndOf="@+id/iv_order_type"
@@ -371,7 +358,7 @@
             </androidx.core.widget.NestedScrollView>
 
         </LinearLayout>
-         <!-- Todo need to ask the designer if they can provide the background for footer as exportable -->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/payment_footer"
             android:layout_width="match_parent"
@@ -379,12 +366,12 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="#E6F0F7"
+            android:background="@drawable/background_checkout_footer"
             android:padding="@dimen/padding_large">
             <View
                 android:id="@+id/dashed"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/_2sdp"
+                android:layout_height="@dimen/_1sdp"
                 android:layout_marginStart="6dp"
                 android:background="@color/light_red"
                 app:layout_constraintBottom_toBottomOf="@id/tv_original_price"
@@ -410,13 +397,13 @@
                 android:textColor="@color/selected_stroke_color"
                 style="@style/Styles.Text.Title1"
                 android:textSize="28sp"
-                app:layout_constraintBottom_toTopOf="@+id/total"
+                app:layout_constraintBottom_toTopOf="@+id/totalVatDescription"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_original_price"
                 tools:text="SAR 18.50" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/total"
+                android:id="@+id/totalVatDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_medium"
@@ -435,13 +422,13 @@
                 android:fontFamily="@font/inter_medium"
                 android:gravity="center"
                 android:paddingStart="@dimen/_30sdp"
-                android:paddingTop="@dimen/_12sdp"
+                android:paddingTop="@dimen/padding_small"
                 android:paddingEnd="@dimen/_30sdp"
-                android:paddingBottom="@dimen/_12sdp"
+                android:paddingBottom="@dimen/_8sdp"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_16sdp"
-                app:cornerRadius="@dimen/_26sdp"
+                app:cornerRadius="@dimen/_24sdp"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_discounted_price"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
