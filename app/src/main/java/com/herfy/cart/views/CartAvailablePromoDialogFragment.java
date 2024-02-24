@@ -310,7 +310,7 @@ public class CartAvailablePromoDialogFragment extends DialogFragment implements 
     }
 
     @Override
-    public void showUpsell() {
+    public void showUpsell(ArrayList<MenuItem> upsells) {
 
     }
 

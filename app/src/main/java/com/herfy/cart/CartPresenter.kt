@@ -13,6 +13,7 @@ import com.herfy.database.entities.MenuCategoryEntity.Companion.toDomain
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.model.CampaignToAdd
 import com.herfy.model.CouponToAdd
+import com.herfy.upsell.UpsellViewHolder
 import com.herfy.util.ApiLogLevel
 import com.herfy.util.ApiLogUtil.Companion.sendMessageLog
 import com.herfy.util.AppLogger
@@ -59,6 +60,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderData
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Promotion
 import com.skylinedynamics.solosdk.api.models.objects.Store
+import com.skylinedynamics.solosdk.api.models.objects.Translated
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddressBody
 import com.skylinedynamics.solosdk.util.GsonHelper
 import io.reactivex.Observable
@@ -82,6 +84,7 @@ import java.util.TimeZone
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import javax.inject.Inject
+
 @DelicateCoroutinesApi
 @OptIn(DelicateCoroutinesApi::class)
 class CartPresenter @Inject constructor(
@@ -101,6 +104,7 @@ class CartPresenter @Inject constructor(
     private var validatedPromoItemPrice = 0.0
     private var validatedPromoItemQuantity = 0
     private var validatedOrderData: OrderData? = null
+    private var upsells : MutableList<MenuItem> = ArrayList()
 
     val contextPool = CoroutineContextProvider()
     override fun start() {
@@ -174,27 +178,15 @@ class CartPresenter @Inject constructor(
                             }
                         }
                     }
-                    if (!showUpsell) {
-                        cartView.showPayment()
-                    } else {
-                        cartView.showUpsell()
-                    }
+                    cartView.showPayment()
                 } catch (e: JSONException) {
                     e.printStackTrace()
-                    if (!showUpsell) {
-                        cartView.showPayment()
-                    } else {
-                        cartView.showUpsell()
-                    }
+                    cartView.showPayment()
                 }
             }
 
             override fun onError(o: Any) {
-                if (!showUpsell) {
-                    cartView.showPayment()
-                } else {
-                    cartView.showUpsell()
-                }
+                cartView.showPayment()
             }
         })
     }
@@ -307,490 +299,481 @@ class CartPresenter @Inject constructor(
     ) {
         val customer = AuthUtil.getInstance().customer
         val concept = CacheUtil.getInstance().concept
-        menuItems = CacheUtil.getInstance().cart
-        val subtotal = menuItemsTotalPrice
-        if (!checkout) {
-            cartView.validatingOrder(subtotal)
-        }
-        var deliveryCharge = concept.deliveryCharge
-        try {
-            val minimumOrderAmountFreeDelivery = concept.minimumOrderAmountFreeDelivery
-            if (minimumOrderAmountFreeDelivery != 0.0 && subtotal >= minimumOrderAmountFreeDelivery) {
-                deliveryCharge = concept.specialDeliveryPrice
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        val orderBody = JsonObject()
-        if (AuthUtil.getInstance().isSignedIn) {
-            orderBody.addProperty("customer", customer.id)
-        }
-        if (checkout) {
-            if (scheduledTime != null) {
-                orderBody.addProperty("scheduled-time", scheduledTime)
-            }
-        }
-        val mukafaaTransactionId = CacheUtil.getInstance().mukafaaTransactionId
-        if (mukafaaTransactionId != null && !mukafaaTransactionId.isEmpty()) {
-            val loyalty = JsonObject()
-            loyalty.addProperty("provider", Values.MUKAFAA_PROVIDER)
-            loyalty.addProperty("transaction-id", mukafaaTransactionId)
-            orderBody.add("loyalty", loyalty)
-        }
-
-        /*if (CacheUtil.getOrderStoreId() != null) {
-            orderBody.addProperty("location", CacheUtil.getOrderStoreId());
-        }*/orderBody.addProperty("source", "Android")
-        orderBody.addProperty("notes", CacheUtil.getInstance().cartNotes)
-        orderBody.addProperty(
-            "subtotal",
-            String.format(Locale.ENGLISH, "%.2f", subtotal).toDouble()
-        )
-        var discount = 0.0
-        val promoPrice = 0.0
-        val followDelivery = false
-        val discountZero = false
-        val couponCode = CacheUtil.getInstance().couponCode
-        if (couponCode != null && !couponCode.isEmpty()) {
-            orderBody.addProperty("coupon-code", couponCode)
-        }
-        if (CacheUtil.getInstance().campaign != null && CacheUtil.getInstance().campaignPromotion != null) {
-            orderBody.addProperty("campaign-id", CacheUtil.getInstance().campaign.id)
-        }
-        when (CacheUtil.getInstance().orderType) {
-            OrderType.PICKUP -> {
-                deliveryCharge = 0.0
-                //                if (CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().size() == 3 || CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.DINE_IN)) {
-                if (CacheUtil.getInstance().application.attributes.getOrderTypes()
-                        .contains(OrderType.DINE_IN)
-                ) {
-                    orderBody.addProperty("type", "to-go")
-                } else {
-                    orderBody.addProperty("type", "pickup")
+        GlobalScope.launch(contextPool.IO){
+            cacheUtilHelper.getCartItems {
+                menuItems = it
+                val subtotal = menuItemsTotalPrice
+                if (!checkout) {
+                    cartView.validatingOrder(subtotal)
                 }
-                if (CacheUtil.getInstance().orderStore != null) {
-                    orderBody.addProperty("location", CacheUtil.getInstance().orderStore.id)
-                }
-            }
-
-            OrderType.DINE_IN -> {
-                deliveryCharge = 0.0
-                orderBody.addProperty("type", "eat-in")
-                if (CacheUtil.getInstance().orderStore != null) {
-                    orderBody.addProperty("location", CacheUtil.getInstance().orderStore.id)
-                }
-            }
-
-            OrderType.DELIVERY -> {
-                orderBody.addProperty("type", "deliver")
-                //orderBody.addProperty("delivery-charge", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", deliveryCharge)));
-                val orderStoreId = CacheUtil.getOrderStoreId()
-                val address = CacheUtil.getInstance().orderAddress
-                if (address != null) {
-                    orderBody.addProperty("address", address.id)
-                }
-            }
-
-            OrderType.CURBSIDE -> {
-                deliveryCharge = 0.0
-                if (CacheUtil.getInstance().orderStore != null) {
-                    orderBody.addProperty("location", CacheUtil.getInstance().orderStore.id)
-                }
-                if (CacheUtil.getInstance().curbsideCar != null) {
-                    orderBody.addProperty("type", "curbside")
-                    orderBody.addProperty("car-id", CacheUtil.getInstance().curbsideCar.id)
-                }
-            }
-
-            OrderType.NONE -> deliveryCharge = 0.0
-        }
-        var discountedSubtotal = subtotal - discount
-        if (discountedSubtotal < 0) {
-            discountedSubtotal = 0.0
-            discount = subtotal
-        }
-        if (followDelivery) {
-            deliveryCharge = 0.0
-        }
-        orderBody.addProperty(
-            "discount",
-            String.format(Locale.ENGLISH, "%.2f", discount).toDouble()
-        )
-        val vatAmount = 0.0
-        //        if (concept.getVatType() != null && concept.getVatType().equalsIgnoreCase("exclusive")) {
-//            vatAmount = (discountedSubtotal + deliveryCharge) * (concept.getVatRate() / 100.0);
-//            if (discountZero) {
-//                vatAmount = 0;
-//            }
-//            orderBody.addProperty("vat-amount", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", vatAmount)));
-//        }
-        var total = String.format(
-            Locale.ENGLISH,
-            "%.2f",
-            discountedSubtotal + deliveryCharge + vatAmount + promoPrice
-        ).toDouble()
-        if (total < 0) {
-            total = 0.0
-        }
-        orderBody.addProperty("total", total)
-        val items = JsonArray()
-        val orderStoreId = CacheUtil.getOrderStoreId()
-        for (menuItem in menuItems) {
-            if (!menuItem.isPromo) {
-                val item = JsonObject()
-                val modifiers = JsonArray()
-                val ingredients = JsonArray()
-                item.addProperty("id", menuItem.id)
-                item.addProperty(
-                    "price",
-                    String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId))
-                        .toDouble()
-                )
-                item.addProperty("quantity", menuItem.attributes.quantity)
-                item.addProperty("is-reorder", menuItem.attributes.isReorder)
-                item.addProperty("is-promotion", menuItem.isPromo)
-                item.addProperty("notes", menuItem.attributes.notes)
-                var comboIndex = 0
-                var trueIndex = 0
-                for (size in menuItem.sizes.modifierItems) {
-                    if (size.attributes.isSelected) {
-                        val modifier = JsonObject()
-                        modifier.addProperty("id", size.id)
-                        modifier.addProperty(
-                            "price",
-                            String.format(Locale.ENGLISH, "%.2f", size.attributes.price).toDouble()
-                        )
-                        modifier.addProperty("quantity", size.attributes.quantity)
-                        modifiers.add(modifier)
-                        trueIndex = comboIndex
-                    }
-                    comboIndex++
-                }
-                for (drink in menuItem.drinks.modifierItems) {
-                    if (drink.attributes.isSelected) {
-                        val modifier = JsonObject()
-                        modifier.addProperty("id", drink.id)
-                        modifier.addProperty(
-                            "price",
-                            String.format(Locale.ENGLISH, "%.2f", drink.attributes.price).toDouble()
-                        )
-                        modifier.addProperty("quantity", drink.attributes.quantity)
-                        modifiers.add(modifier)
-                    }
-                }
-                for (fries in menuItem.fries.modifierItems) {
-                    if (fries.attributes.isSelected) {
-                        val modifier = JsonObject()
-                        modifier.addProperty("id", fries.id)
-                        modifier.addProperty(
-                            "price",
-                            String.format(Locale.ENGLISH, "%.2f", fries.attributes.price).toDouble()
-                        )
-                        modifier.addProperty("quantity", fries.attributes.quantity)
-                        modifiers.add(modifier)
-                    }
-                }
-                for (modifierGroup in menuItem.modifierGroups) {
-                    val visibilityConfig = modifierGroup.attributes.visibilityConfig
-                    if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                            "hidden",
-                            ignoreCase = true
-                        )
-                    ) {
-                        var selectedFreeModifier = 0
-                        for (modifierItem in modifierGroup.modifierItems) {
-                            if (modifierItem.attributes.isSelected) {
-                                var freeModifier: JsonObject? = null
-                                var modifier: JsonObject? = null
-                                if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
-                                    val totalSelectedFreeModifier =
-                                        selectedFreeModifier + modifierItem.attributes.quantity
-                                    if (totalSelectedFreeModifier <= modifierGroup.attributes.freeModifiersCount) {
-                                        selectedFreeModifier += modifierItem.attributes.quantity
-                                        freeModifier = JsonObject()
-                                        freeModifier.addProperty("id", modifierItem.id)
-                                        freeModifier.addProperty("price", 0)
-                                        freeModifier.addProperty(
-                                            "quantity",
-                                            modifierItem.attributes.quantity
-                                        )
-                                    } else {
-                                        selectedFreeModifier =
-                                            modifierGroup.attributes.freeModifiersCount
-                                        freeModifier = JsonObject()
-                                        freeModifier.addProperty("id", modifierItem.id)
-                                        freeModifier.addProperty("price", 0)
-                                        freeModifier.addProperty(
-                                            "quantity",
-                                            modifierItem.attributes.quantity - (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
-                                        )
-                                        modifier = JsonObject()
-                                        modifier.addProperty("id", modifierItem.id)
-                                        modifier.addProperty(
-                                            "price",
-                                            String.format(
-                                                Locale.ENGLISH,
-                                                "%.2f",
-                                                modifierItem.attributes.price
-                                            ).toDouble()
-                                        )
-                                        modifier.addProperty(
-                                            "quantity",
-                                            totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount
-                                        )
-                                    }
-                                } else {
-                                    modifier = JsonObject()
-                                    modifier.addProperty("id", modifierItem.id)
-                                    modifier.addProperty(
-                                        "price",
-                                        String.format(
-                                            Locale.ENGLISH,
-                                            "%.2f",
-                                            modifierItem.attributes.price
-                                        ).toDouble()
-                                    )
-                                    modifier.addProperty(
-                                        "quantity",
-                                        modifierItem.attributes.quantity
-                                    )
-                                }
-                                if (freeModifier != null) {
-                                    modifiers.add(freeModifier)
-                                }
-                                if (modifier != null) {
-                                    modifiers.add(modifier)
-                                }
-                            }
-                        }
-                    }
-                }
-                for (modifierItem in menuItem.modifierItems) {
-                    val modifier = JsonObject()
-                    modifier.addProperty("id", modifierItem.id)
-                    modifier.addProperty(
-                        "price",
-                        String.format(Locale.ENGLISH, "%.2f", modifierItem.attributes.price)
-                            .toDouble()
-                    )
-                    modifier.addProperty("quantity", modifierItem.attributes.quantity)
-                    modifiers.add(modifier)
-                }
-                for (ingredient in menuItem.ingredients) {
-                    if (!ingredient.attributes.isSelected) {
-                        val ingredientObject = JsonObject()
-                        ingredientObject.addProperty("id", ingredient.id)
-                        ingredientObject.addProperty(
-                            "price",
-                            String.format(Locale.ENGLISH, "%.2f", ingredient.attributes.price)
-                                .toDouble()
-                        )
-                        ingredientObject.addProperty("quantity", ingredient.attributes.quantity)
-                        ingredients.add(ingredientObject)
-                    }
-                }
+                var deliveryCharge = concept.deliveryCharge
                 try {
-                    if (menuItem.isCombo) {
-                        val comboItems = JsonArray()
-                        for (components in menuItem.combo[trueIndex].components) {
-                            for (compoItem in components.items) {
-                                if (compoItem.selected) {
-                                    val comboItemObject = JsonObject()
-                                    comboItemObject.addProperty("id", compoItem.id)
-                                    comboItemObject.addProperty(
-                                        "price",
-                                        String.format(Locale.ENGLISH, "%.2f", compoItem.price)
-                                            .toDouble()
-                                    )
-                                    comboItemObject.addProperty("quantity", 1)
-                                    comboItemObject.add("ingredients", JsonArray())
-                                    val modifierCombos = JsonArray()
-                                    if (!compoItem.modifierGroups.isEmpty()) {
-                                        for (modifierGroup in compoItem.modifierGroups) {
-                                            for (i in modifierGroup.modifierItems.indices) {
-                                                if (modifierGroup.modifierItems[i].attributes.isSelected) {
-                                                    val comoModItemObject = JsonObject()
-                                                    comoModItemObject.addProperty(
-                                                        "id",
-                                                        modifierGroup.modifierItems[i].id
-                                                    )
-                                                    comoModItemObject.addProperty(
-                                                        "price", String.format(
-                                                            Locale.ENGLISH,
-                                                            "%.2f",
-                                                            modifierGroup.modifierItems[i].attributes.price
-                                                        ).toDouble()
-                                                    )
-                                                    comoModItemObject.addProperty(
-                                                        "quantity",
-                                                        modifierGroup.modifierItems[i].attributes.quantity
-                                                    )
-                                                    modifierCombos.add(comoModItemObject)
-                                                }
-                                            }
-                                        }
-                                    }
-                                    comboItemObject.add("modifiers", modifierCombos)
-                                    comboItems.add(comboItemObject)
-                                }
-                            }
-                        }
-                        item.add("combo-items", comboItems)
+                    val minimumOrderAmountFreeDelivery = concept.minimumOrderAmountFreeDelivery
+                    if (minimumOrderAmountFreeDelivery != 0.0 && subtotal >= minimumOrderAmountFreeDelivery) {
+                        deliveryCharge = concept.specialDeliveryPrice
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                item.add("ingredients", ingredients)
-                item.add("modifiers", modifiers)
-                items.add(item)
-            }
-        }
-        orderBody.add("items", items)
+                val orderBody = JsonObject()
+                if (AuthUtil.getInstance().isSignedIn) {
+                    orderBody.addProperty("customer", customer.id)
+                }
+                if (checkout) {
+                    if (scheduledTime != null) {
+                        orderBody.addProperty("scheduled-time", scheduledTime)
+                    }
+                }
+                val mukafaaTransactionId = CacheUtil.getInstance().mukafaaTransactionId
+                if (mukafaaTransactionId != null && !mukafaaTransactionId.isEmpty()) {
+                    val loyalty = JsonObject()
+                    loyalty.addProperty("provider", Values.MUKAFAA_PROVIDER)
+                    loyalty.addProperty("transaction-id", mukafaaTransactionId)
+                    orderBody.add("loyalty", loyalty)
+                }
 
-        // Cancel older calls
-//        if (digitalCall != null && digitalCall.isExecuted()) digitalCall.cancel();
-        if (validatePromotionDisposable != null) validatePromotionDisposable!!.dispose()
-        val finalOrderStoreId = orderStoreId
-        validatePromotionDisposable =
-            validatePromotionObservable(orderBody, checkout, isCouponValidate)
-                .subscribe({ onNext: Any ->
-                    var isCouponError = false
-                    val isCouponPromoItem = false
-                    try {
-                        val jsonObject = onNext as JSONObject
-                        val itemsArray = jsonObject.getJSONArray("items")
-                        var hasChanged = false
-                        for (i in 0 until itemsArray.length()) {
-                            val itemObject = itemsArray.getJSONObject(i)
-                            val item = GsonHelper.gsonFinal()
-                                .fromJson(itemObject.toString(), MenuItem::class.java)
-                            validatedPromoItemPrice = 0.0
-                            validatedPromoItemQuantity = 0
-                            for (menuItem in menuItems) {
-                                if (item.isPromotion) {
-                                    validatedPromoItemPrice = item.price
-                                    validatedPromoItemQuantity = item.quantity
-                                }
-                                if (!item.isPromotion && menuItem.id == item.id) {
-                                    if (BuildUtil.isEkfc() && (item.total != item.price || getMenuItemTotalPrice(
-                                            menuItems[menuItems.indexOf(menuItem)], -1
-                                        ) != item.total)
-                                    ) {
-                                        menuItems[menuItems.indexOf(menuItem)].total = item.total
-                                    } else {
-                                        menuItem.price = item.getPrice(null)
-                                        menuItem.attributes.price = item.getPrice(null)
-                                    }
-                                    hasChanged = true
-                                }
-                            }
-                        }
-                        if (hasChanged) {
-                            CacheUtil.getInstance().cart = menuItems
-                            cartView.updateMenuItems(menuItems)
-                        }
-                        var mokafaaAmount = 0.0
-                        if (jsonObject.has("loyalty")) {
-                            val loyalty = jsonObject.getJSONObject("loyalty")
-                            if (loyalty.has("amount")) {
-                                mokafaaAmount = loyalty.getDouble("amount")
-                                mukafaaTransactionAmount = loyalty.getDouble("amount")
-                            }
-                        }
-                        var isInclusive = false
-                        if (concept.vatType != null && concept.vatType.equals(
-                                "inclusive",
-                                ignoreCase = true
-                            )
+                orderBody.addProperty("source", "Android")
+                orderBody.addProperty("notes", CacheUtil.getInstance().cartNotes)
+                orderBody.addProperty(
+                    "subtotal",
+                    String.format(Locale.ENGLISH, "%.2f", subtotal).toDouble()
+                )
+                var discount = 0.0
+                val promoPrice = 0.0
+                val followDelivery = false
+                val discountZero = false
+                val couponCode = CacheUtil.getInstance().couponCode
+                if (couponCode != null && !couponCode.isEmpty()) {
+                    orderBody.addProperty("coupon-code", couponCode)
+                }
+                if (CacheUtil.getInstance().campaign != null && CacheUtil.getInstance().campaignPromotion != null) {
+                    orderBody.addProperty("campaign-id", CacheUtil.getInstance().campaign.id)
+                }
+                when (CacheUtil.getInstance().orderType) {
+                    OrderType.PICKUP -> {
+                        deliveryCharge = 0.0
+                        //                if (CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().size() == 3 || CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.DINE_IN)) {
+                        if (CacheUtil.getInstance().application.attributes.getOrderTypes()
+                                .contains(OrderType.DINE_IN)
                         ) {
-                            isInclusive = concept.vatType.equals("inclusive", ignoreCase = true)
-                        }
-                        val hasError = jsonObject.has("error") && !jsonObject.isNull("error")
-                        val hasPromotion = !hasError && CacheUtil.getInstance().hasPromotion()
-                        val orderData = OrderData.parse(jsonObject)
-                        cartView.setTax(
-                            isInclusive,
-                            StringUtil.getFormattedPrice(orderData.vatAmount),
-                            orderData.vatAmount
-                        )
-                        if (orderData.discount > 0) {
-                            cartView.setOriginalPrice(
-                                hasPromotion,
-                                orderData.subtotal + orderData.deliverCharge
-                            )
-                        }
-                        showPrice(hasPromotion, orderData, mokafaaAmount)
-                        if (hasError) {
-                            //if (isCouponValidate) {
-                            isCouponError = true
-                            CacheUtil.getInstance().couponCode = null
-                            CacheUtil.getInstance().couponName = null
-                            CacheUtil.getInstance().couponMenuItem = null
-                            CacheUtil.getInstance().couponToAdd = null
-                            cartView.removeCoupon()
-                            digitalCoupons.clear()
-                            CacheUtil.getInstance().digitalCoupons = ""
-                            CacheUtil.getInstance().campaign = null
-                            CacheUtil.getInstance().campaignPromotion = null
-                            CacheUtil.getInstance().campaignPromotionMenuItem = null
-                            CacheUtil.getInstance().campaignToAdd = null
-                            cartView.showDigitalCoupon(null)
-                            removeMukafaaRedemption()
-                            //}
-                            cartView.showPromoError(jsonObject.getString("error"))
+                            orderBody.addProperty("type", "to-go")
                         } else {
-                            if (CacheUtil.getInstance().couponCode != null && orderData.promotionName != null || orderData.promotionName == null && !orderData.promotionName.isEmpty()) {
-                                if (isCouponValidate) {
-                                    trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
+                            orderBody.addProperty("type", "pickup")
+                        }
+                        if (CacheUtil.getInstance().orderStore != null) {
+                            orderBody.addProperty("location", CacheUtil.getInstance().orderStore.id)
+                        }
+                    }
+
+                    OrderType.DINE_IN -> {
+                        deliveryCharge = 0.0
+                        orderBody.addProperty("type", "eat-in")
+                        if (CacheUtil.getInstance().orderStore != null) {
+                            orderBody.addProperty("location", CacheUtil.getInstance().orderStore.id)
+                        }
+                    }
+
+                    OrderType.DELIVERY -> {
+                        orderBody.addProperty("type", "deliver")
+                        //orderBody.addProperty("delivery-charge", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", deliveryCharge)));
+                        val orderStoreId = CacheUtil.getOrderStoreId()
+                        val address = CacheUtil.getInstance().orderAddress
+                        if (address != null) {
+                            orderBody.addProperty("address", address.id)
+                        }
+                    }
+
+                    OrderType.CURBSIDE -> {
+                        deliveryCharge = 0.0
+                        if (CacheUtil.getInstance().orderStore != null) {
+                            orderBody.addProperty("location", CacheUtil.getInstance().orderStore.id)
+                        }
+                        if (CacheUtil.getInstance().curbsideCar != null) {
+                            orderBody.addProperty("type", "curbside")
+                            orderBody.addProperty("car-id", CacheUtil.getInstance().curbsideCar.id)
+                        }
+                    }
+
+                    OrderType.NONE -> deliveryCharge = 0.0
+                }
+                var discountedSubtotal = subtotal - discount
+                if (discountedSubtotal < 0) {
+                    discountedSubtotal = 0.0
+                    discount = subtotal
+                }
+                if (followDelivery) {
+                    deliveryCharge = 0.0
+                }
+                orderBody.addProperty(
+                    "discount",
+                    String.format(Locale.ENGLISH, "%.2f", discount).toDouble()
+                )
+                val vatAmount = 0.0
+
+                var total = String.format(
+                    Locale.ENGLISH,
+                    "%.2f",
+                    discountedSubtotal + deliveryCharge + vatAmount + promoPrice
+                ).toDouble()
+                if (total < 0) {
+                    total = 0.0
+                }
+                orderBody.addProperty("total", total)
+                val items = JsonArray()
+                val orderStoreId = CacheUtil.getOrderStoreId()
+                for (menuItem in menuItems) {
+                    if (!menuItem.isPromo) {
+                        val item = JsonObject()
+                        val modifiers = JsonArray()
+                        val ingredients = JsonArray()
+                        item.addProperty("id", menuItem.id)
+                        item.addProperty(
+                            "price",
+                            String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId))
+                                .toDouble()
+                        )
+                        item.addProperty("quantity", menuItem.attributes.quantity)
+                        item.addProperty("is-reorder", menuItem.attributes.isReorder)
+                        item.addProperty("is-promotion", menuItem.isPromo)
+                        item.addProperty("notes", menuItem.attributes.notes)
+                        var comboIndex = 0
+                        var trueIndex = 0
+                        for (size in menuItem.sizes.modifierItems) {
+                            if (size.attributes.isSelected) {
+                                val modifier = JsonObject()
+                                modifier.addProperty("id", size.id)
+                                modifier.addProperty(
+                                    "price",
+                                    String.format(Locale.ENGLISH, "%.2f", size.attributes.price).toDouble()
+                                )
+                                modifier.addProperty("quantity", size.attributes.quantity)
+                                modifiers.add(modifier)
+                                trueIndex = comboIndex
+                            }
+                            comboIndex++
+                        }
+                        for (drink in menuItem.drinks.modifierItems) {
+                            if (drink.attributes.isSelected) {
+                                val modifier = JsonObject()
+                                modifier.addProperty("id", drink.id)
+                                modifier.addProperty(
+                                    "price",
+                                    String.format(Locale.ENGLISH, "%.2f", drink.attributes.price).toDouble()
+                                )
+                                modifier.addProperty("quantity", drink.attributes.quantity)
+                                modifiers.add(modifier)
+                            }
+                        }
+                        for (fries in menuItem.fries.modifierItems) {
+                            if (fries.attributes.isSelected) {
+                                val modifier = JsonObject()
+                                modifier.addProperty("id", fries.id)
+                                modifier.addProperty(
+                                    "price",
+                                    String.format(Locale.ENGLISH, "%.2f", fries.attributes.price).toDouble()
+                                )
+                                modifier.addProperty("quantity", fries.attributes.quantity)
+                                modifiers.add(modifier)
+                            }
+                        }
+                        for (modifierGroup in menuItem.modifierGroups) {
+                            val visibilityConfig = modifierGroup.attributes.visibilityConfig
+                            if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
+                                    "hidden",
+                                    ignoreCase = true
+                                )
+                            ) {
+                                var selectedFreeModifier = 0
+                                for (modifierItem in modifierGroup.modifierItems) {
+                                    if (modifierItem.attributes.isSelected) {
+                                        var freeModifier: JsonObject? = null
+                                        var modifier: JsonObject? = null
+                                        if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                            val totalSelectedFreeModifier =
+                                                selectedFreeModifier + modifierItem.attributes.quantity
+                                            if (totalSelectedFreeModifier <= modifierGroup.attributes.freeModifiersCount) {
+                                                selectedFreeModifier += modifierItem.attributes.quantity
+                                                freeModifier = JsonObject()
+                                                freeModifier.addProperty("id", modifierItem.id)
+                                                freeModifier.addProperty("price", 0)
+                                                freeModifier.addProperty(
+                                                    "quantity",
+                                                    modifierItem.attributes.quantity
+                                                )
+                                            } else {
+                                                selectedFreeModifier =
+                                                    modifierGroup.attributes.freeModifiersCount
+                                                freeModifier = JsonObject()
+                                                freeModifier.addProperty("id", modifierItem.id)
+                                                freeModifier.addProperty("price", 0)
+                                                freeModifier.addProperty(
+                                                    "quantity",
+                                                    modifierItem.attributes.quantity - (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
+                                                )
+                                                modifier = JsonObject()
+                                                modifier.addProperty("id", modifierItem.id)
+                                                modifier.addProperty(
+                                                    "price",
+                                                    String.format(
+                                                        Locale.ENGLISH,
+                                                        "%.2f",
+                                                        modifierItem.attributes.price
+                                                    ).toDouble()
+                                                )
+                                                modifier.addProperty(
+                                                    "quantity",
+                                                    totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount
+                                                )
+                                            }
+                                        } else {
+                                            modifier = JsonObject()
+                                            modifier.addProperty("id", modifierItem.id)
+                                            modifier.addProperty(
+                                                "price",
+                                                String.format(
+                                                    Locale.ENGLISH,
+                                                    "%.2f",
+                                                    modifierItem.attributes.price
+                                                ).toDouble()
+                                            )
+                                            modifier.addProperty(
+                                                "quantity",
+                                                modifierItem.attributes.quantity
+                                            )
+                                        }
+                                        if (freeModifier != null) {
+                                            modifiers.add(freeModifier)
+                                        }
+                                        if (modifier != null) {
+                                            modifiers.add(modifier)
+                                        }
+                                    }
                                 }
-                                CacheUtil.getInstance().couponName = orderData.promotionName
-                                var isFreeItem = false
+                            }
+                        }
+                        for (modifierItem in menuItem.modifierItems) {
+                            val modifier = JsonObject()
+                            modifier.addProperty("id", modifierItem.id)
+                            modifier.addProperty(
+                                "price",
+                                String.format(Locale.ENGLISH, "%.2f", modifierItem.attributes.price)
+                                    .toDouble()
+                            )
+                            modifier.addProperty("quantity", modifierItem.attributes.quantity)
+                            modifiers.add(modifier)
+                        }
+                        for (ingredient in menuItem.ingredients) {
+                            if (!ingredient.attributes.isSelected) {
+                                val ingredientObject = JsonObject()
+                                ingredientObject.addProperty("id", ingredient.id)
+                                ingredientObject.addProperty(
+                                    "price",
+                                    String.format(Locale.ENGLISH, "%.2f", ingredient.attributes.price)
+                                        .toDouble()
+                                )
+                                ingredientObject.addProperty("quantity", ingredient.attributes.quantity)
+                                ingredients.add(ingredientObject)
+                            }
+                        }
+                        try {
+                            if (menuItem.isCombo) {
+                                val comboItems = JsonArray()
+                                for (components in menuItem.combo[trueIndex].components) {
+                                    for (compoItem in components.items) {
+                                        if (compoItem.selected) {
+                                            val comboItemObject = JsonObject()
+                                            comboItemObject.addProperty("id", compoItem.id)
+                                            comboItemObject.addProperty(
+                                                "price",
+                                                String.format(Locale.ENGLISH, "%.2f", compoItem.price)
+                                                    .toDouble()
+                                            )
+                                            comboItemObject.addProperty("quantity", 1)
+                                            comboItemObject.add("ingredients", JsonArray())
+                                            val modifierCombos = JsonArray()
+                                            if (!compoItem.modifierGroups.isEmpty()) {
+                                                for (modifierGroup in compoItem.modifierGroups) {
+                                                    for (i in modifierGroup.modifierItems.indices) {
+                                                        if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                                            val comoModItemObject = JsonObject()
+                                                            comoModItemObject.addProperty(
+                                                                "id",
+                                                                modifierGroup.modifierItems[i].id
+                                                            )
+                                                            comoModItemObject.addProperty(
+                                                                "price", String.format(
+                                                                    Locale.ENGLISH,
+                                                                    "%.2f",
+                                                                    modifierGroup.modifierItems[i].attributes.price
+                                                                ).toDouble()
+                                                            )
+                                                            comoModItemObject.addProperty(
+                                                                "quantity",
+                                                                modifierGroup.modifierItems[i].attributes.quantity
+                                                            )
+                                                            modifierCombos.add(comoModItemObject)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            comboItemObject.add("modifiers", modifierCombos)
+                                            comboItems.add(comboItemObject)
+                                        }
+                                    }
+                                }
+                                item.add("combo-items", comboItems)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                        item.add("ingredients", ingredients)
+                        item.add("modifiers", modifiers)
+                        items.add(item)
+                    }
+                }
+                orderBody.add("items", items)
+
+                // Cancel older calls
+//        if (digitalCall != null && digitalCall.isExecuted()) digitalCall.cancel();
+                if (validatePromotionDisposable != null) validatePromotionDisposable!!.dispose()
+                val finalOrderStoreId = orderStoreId
+                validatePromotionDisposable =
+                    validatePromotionObservable(orderBody, checkout, isCouponValidate)
+                        .subscribe({ onNext: Any ->
+                            var isCouponError = false
+                            val isCouponPromoItem = false
+                            try {
+                                val jsonObject = onNext as JSONObject
+                                val itemsArray = jsonObject.getJSONArray("items")
+                                var hasChanged = false
                                 for (i in 0 until itemsArray.length()) {
                                     val itemObject = itemsArray.getJSONObject(i)
                                     val item = GsonHelper.gsonFinal()
                                         .fromJson(itemObject.toString(), MenuItem::class.java)
-                                    if (item.isPromotion) {
-                                        isFreeItem = true
-                                        if (isCouponValidate || CacheUtil.getInstance().couponMenuItem == null) {
-                                            getCouponMenuItem(
-                                                item.id,
-                                                item.quantity,
-                                                item.price,
-                                                null,
-                                                null
-                                            )
-                                        } else {
-                                            val couponName = CacheUtil.getInstance().couponName
-                                            if (couponName != null) {
-                                                cartView.showCoupon(couponCode, couponName)
-                                                cartView.addPromotionItem(CacheUtil.getInstance().couponMenuItem)
-                                            }
+                                    validatedPromoItemPrice = 0.0
+                                    validatedPromoItemQuantity = 0
+                                    for (menuItem in menuItems) {
+                                        if (item.isPromotion) {
+                                            validatedPromoItemPrice = item.price
+                                            validatedPromoItemQuantity = item.quantity
                                         }
-                                        break
+                                        if (!item.isPromotion && menuItem.id == item.id) {
+                                            if (BuildUtil.isEkfc() && (item.total != item.price || getMenuItemTotalPrice(
+                                                    menuItems[menuItems.indexOf(menuItem)], -1
+                                                ) != item.total)
+                                            ) {
+                                                menuItems[menuItems.indexOf(menuItem)].total = item.total
+                                            } else {
+                                                menuItem.price = item.getPrice(null)
+                                                menuItem.attributes.price = item.getPrice(null)
+                                            }
+                                            hasChanged = true
+                                        }
                                     }
                                 }
-                                if (!isFreeItem) {
-                                    showCoupon()
+                                if (hasChanged) {
+                                    CacheUtil.getInstance().cart = menuItems
+                                    cartView.updateMenuItems(menuItems)
                                 }
-                            } else {
-                                CacheUtil.getInstance().couponCode = null
-                                CacheUtil.getInstance().couponName = null
-                            }
-                            if (checkout) {
-                                if (CacheUtil.getInstance().upsell) {
-                                    getUpsells()
+                                var mokafaaAmount = 0.0
+                                if (jsonObject.has("loyalty")) {
+                                    val loyalty = jsonObject.getJSONObject("loyalty")
+                                    if (loyalty.has("amount")) {
+                                        mokafaaAmount = loyalty.getDouble("amount")
+                                        mukafaaTransactionAmount = loyalty.getDouble("amount")
+                                    }
+                                }
+                                var isInclusive = false
+                                if (concept.vatType != null && concept.vatType.equals(
+                                        "inclusive",
+                                        ignoreCase = true
+                                    )
+                                ) {
+                                    isInclusive = concept.vatType.equals("inclusive", ignoreCase = true)
+                                }
+                                val hasError = jsonObject.has("error") && !jsonObject.isNull("error")
+                                val hasPromotion = !hasError && CacheUtil.getInstance().hasPromotion()
+                                val orderData = OrderData.parse(jsonObject)
+                                cartView.setTax(
+                                    isInclusive,
+                                    StringUtil.getFormattedPrice(orderData.vatAmount),
+                                    orderData.vatAmount
+                                )
+                                if (orderData.discount > 0) {
+                                    cartView.setOriginalPrice(
+                                        hasPromotion,
+                                        orderData.subtotal + orderData.deliverCharge
+                                    )
+                                }
+                                showPrice(hasPromotion, orderData, mokafaaAmount)
+                                if (hasError) {
+                                    //if (isCouponValidate) {
+                                    isCouponError = true
+                                    CacheUtil.getInstance().couponCode = null
+                                    CacheUtil.getInstance().couponName = null
+                                    CacheUtil.getInstance().couponMenuItem = null
+                                    CacheUtil.getInstance().couponToAdd = null
+                                    cartView.removeCoupon()
+                                    digitalCoupons.clear()
+                                    CacheUtil.getInstance().digitalCoupons = ""
+                                    CacheUtil.getInstance().campaign = null
+                                    CacheUtil.getInstance().campaignPromotion = null
+                                    CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                    CacheUtil.getInstance().campaignToAdd = null
+                                    cartView.showDigitalCoupon(null)
+                                    removeMukafaaRedemption()
+                                    //}
+                                    cartView.showPromoError(jsonObject.getString("error"))
                                 } else {
-                                    //put cartPresenter.showPayment in this method
-                                    getApplication(false)
+                                    if (CacheUtil.getInstance().couponCode != null && orderData.promotionName != null || orderData.promotionName == null && !orderData.promotionName.isEmpty()) {
+                                        if (isCouponValidate) {
+                                            trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
+                                        }
+                                        CacheUtil.getInstance().couponName = orderData.promotionName
+                                        var isFreeItem = false
+                                        for (i in 0 until itemsArray.length()) {
+                                            val itemObject = itemsArray.getJSONObject(i)
+                                            val item = GsonHelper.gsonFinal()
+                                                .fromJson(itemObject.toString(), MenuItem::class.java)
+                                            if (item.isPromotion) {
+                                                isFreeItem = true
+                                                if (isCouponValidate || CacheUtil.getInstance().couponMenuItem == null) {
+                                                    getCouponMenuItem(
+                                                        item.id,
+                                                        item.quantity,
+                                                        item.price,
+                                                        null,
+                                                        null
+                                                    )
+                                                } else {
+                                                    val couponName = CacheUtil.getInstance().couponName
+                                                    if (couponName != null) {
+                                                        cartView.showCoupon(couponCode, couponName)
+                                                        cartView.addPromotionItem(CacheUtil.getInstance().couponMenuItem)
+                                                    }
+                                                }
+                                                break
+                                            }
+                                        }
+                                        if (!isFreeItem) {
+                                            showCoupon()
+                                        }
+                                    } else {
+                                        CacheUtil.getInstance().couponCode = null
+                                        CacheUtil.getInstance().couponName = null
+                                    }
+                                    if (checkout) {
+                                        cartView.showPayment()
+                                    } else {
+                                        cartView.dismissProgressDialog()
+                                    }
                                 }
-                            } else {
-                                cartView.dismissProgressDialog()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }) { onError: Throwable? -> }
+                        }) { onError: Throwable? -> }
+            }
+        }
     }
 
     private fun showPrice(hasPromotion: Boolean, orderData: OrderData, mokafaaAmount: Double) {
@@ -1887,8 +1870,6 @@ class CartPresenter @Inject constructor(
                     }
                     if (unavailableMenuItems.size > 0) {
                         cartView.showUnavailableMenuItems()
-                    } else if (CacheUtil.getInstance().upsell) {
-                        getUpsells()
                     } else {
                         getApplication(false)
                     }
@@ -1969,12 +1950,7 @@ class CartPresenter @Inject constructor(
                                 if (addresses.size > 0) {
                                     val address = addresses[0]
                                     CacheUtil.getInstance().orderAddress = address
-                                    if (CacheUtil.getInstance().upsell) {
-                                        getUpsells()
-                                    } else {
-                                        //put cartPresenter.showPayment in this method
-                                        getApplication(false)
-                                    }
+                                    cartView.showPayment()
                                 } else {
                                     cartView.showMessage(
                                         CacheUtil.getInstance()
@@ -1991,12 +1967,7 @@ class CartPresenter @Inject constructor(
                                 //unsync call causing duplicate address being save
                                 Handler().postDelayed({
                                     if (CacheUtil.getInstance().orderAddress != null) {
-                                        if (CacheUtil.getInstance().upsell) {
-                                            getUpsells()
-                                        } else {
-                                            //put cartPresenter.showPayment in this method
-                                            getApplication(false)
-                                        }
+                                        cartView.showPayment()
                                     } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
                                         addAddress()
                                     } else {
@@ -2072,22 +2043,90 @@ class CartPresenter @Inject constructor(
             override fun onSuccess(o: Any) {
                 if (o is JSONObject) {
                     try {
-                        val dataArray = o.getJSONArray("data")
-                        val upsells = GsonHelper.gsonFinal().fromJson<ArrayList<MenuItem>>(
-                            dataArray.toString(),
-                            object : TypeToken<ArrayList<MenuItem?>?>() {}.type
-                        )
-                        if (upsells != null && upsells.size > 0) {
-                            for (upsell in upsells) {
-                                upsell.attributes.quantity = 0
+                        val jsonObject = o
+                        val dataArray = jsonObject.getJSONArray("data")
+                        val modGroups = java.util.ArrayList<ModifierGroup>()
+                        val modItems = java.util.ArrayList<ModifierItem>()
+                        if (jsonObject.has("included") && !jsonObject.isNull("included")) {
+                            val includedArray = jsonObject.getJSONArray("included")
+                            for (i in 0 until includedArray.length()) {
+                                val inclObj = includedArray.getJSONObject(i)
+                                if ("modifier" == inclObj.getString("type")) {
+                                    val mod = GsonHelper.gsonFinal().fromJson<ModifierItem>(
+                                        inclObj.toString(),
+                                        object : TypeToken<ModifierItem?>() {}.type
+                                    )
+                                    val name = mod.attributes.name
+                                    val translated = Translated()
+                                    translated.english = name
+                                    translated.arabic = name
+                                    translated.french = name
+                                    mod.attributes.translatedName = translated
+                                    modItems.add(mod)
+                                } else if ("modifier-group" == inclObj.getString("type")) {
+                                    val group = GsonHelper.gsonFinal().fromJson<ModifierGroup>(
+                                        inclObj.toString(),
+                                        object : TypeToken<ModifierGroup?>() {}.type
+                                    )
+                                    modGroups.add(group)
+                                }
                             }
-                            Collections.sort(upsells) { menuItem1, menuItem2 -> menuItem1.attributes.displayOrder - menuItem2.attributes.displayOrder }
-                            //put cartPresenter.showPayment in this method
-                            getApplication(true)
-                        } else {
-                            //put cartPresenter.showPayment in this method
-                            getApplication(false)
                         }
+                        var upsells = GsonHelper.gsonFinal().fromJson<java.util.ArrayList<MenuItem>?>(
+                            dataArray.toString(),
+                            object : TypeToken<java.util.ArrayList<MenuItem>?>() {}.type
+                        )
+                        upsells?.let {
+                            for (upsell in it) {
+                                upsell.attributes.quantity = 0
+                                val upsellGroups = LinkedList<ModifierGroup>()
+                                for (group in upsell.relationships.modifierGroups.modifierGroups) {
+                                    for (inclGroup in modGroups) {
+                                        if (group.id == inclGroup.id) {
+                                            try {
+                                                val inclModItems =
+                                                    inclGroup.relationships.modifiers.modifierItems
+                                                val upsellMods = LinkedList<ModifierItem>()
+                                                for (inclModItem in inclModItems) {
+                                                    for (modItem in modItems) {
+                                                        if (inclModItem.id == modItem.id) {
+                                                            upsellMods.add(modItem)
+                                                        }
+                                                    }
+                                                }
+                                                try {
+                                                    var x = 0
+                                                    while (x < inclGroup.attributes.minimum && upsellMods.size > x) {
+                                                        upsellMods[x].attributes.isSelected = true
+                                                        x++
+                                                    }
+                                                } catch (e: ArrayIndexOutOfBoundsException) {
+                                                }
+                                                inclGroup.modifierItems = upsellMods
+                                            } catch (e: NullPointerException) {
+                                            }
+                                            if ("sizes" == inclGroup.attributes.code) {
+                                                if (!inclGroup.modifierItems.isEmpty()) inclGroup.modifierItems[0].attributes.isSelected =
+                                                    true
+                                                upsell.sizes = inclGroup
+                                            } else {
+                                                upsellGroups.add(inclGroup)
+                                            }
+                                        }
+                                    }
+                                }
+                                upsell.modifierGroups = upsellGroups
+                                upsell.toCdn(CacheUtil.getOrderStoreId())
+                            }
+                            it.sortWith { menuItem1, menuItem2 -> menuItem1.attributes.displayOrder - menuItem2.attributes.displayOrder }
+                        }?: run {
+                            upsells = arrayListOf()
+                        }
+                        this@CartPresenter.upsells.apply {
+                            clear()
+                            addAll(upsells)
+                        }
+                        cartView.showUpsell(upsells)
                     } catch (e: JSONException) {
                         e.printStackTrace()
                         onError(e)
@@ -2099,8 +2138,7 @@ class CartPresenter @Inject constructor(
 
             override fun onError(o: Any) {
                 AppLogger.printRetrofitError(o)
-                //put cartPresenter.showPayment in this method
-                getApplication(false)
+                cartView.showUpsell(arrayListOf())
             }
         })
     }
@@ -3137,5 +3175,13 @@ class CartPresenter @Inject constructor(
 
     override fun sendLog(level: ApiLogLevel, message: String) {
         sendMessageLog(level, message)
+    }
+
+    override fun onBindUpsellViewAtPosition(position: Int, holder: UpsellViewHolder) {
+       holder.setUpsell(upsells[position])
+    }
+
+    override fun getUpsellCount(): Int {
+        return upsells.size
     }
 }

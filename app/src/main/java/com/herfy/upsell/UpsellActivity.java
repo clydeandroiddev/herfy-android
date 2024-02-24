@@ -174,8 +174,8 @@ public class UpsellActivity extends BaseActivity implements UpsellContract.View 
         }
         dismissDialogs();
         if (upsells.size() > 0) {
-            UpsellRecyclerViewAdapter adapter = new UpsellRecyclerViewAdapter(upsellPresenter);
-            recyclerView.setAdapter(adapter);
+            //UpsellRecyclerViewAdapter adapter = new UpsellRecyclerViewAdapter(upsellPresenter);
+            //recyclerView.setAdapter(adapter);
         } else {
             placeOrder.performClick();
         }

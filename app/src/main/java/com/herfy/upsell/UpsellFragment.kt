@@ -168,8 +168,8 @@ class UpsellFragment : BaseFragment(), UpsellContract.View {
         }
         dismissDialogs()
         if (upsells.size > 0) {
-            val adapter = UpsellRecyclerViewAdapter(upsellPresenter)
-            binding.upsellList.adapter = adapter
+            //val adapter = UpsellRecyclerViewAdapter(upsellPresenter)
+            //binding.upsellList.adapter = adapter
         } else {
             binding.placeOrder.performClick()
         }

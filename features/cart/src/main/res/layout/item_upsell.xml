@@ -5,51 +5,79 @@
     android:id="@+id/content_main"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#FAFBFC">
+    >
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_margin="4dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:id="@+id/container"
-        android:layout_width="110dp"
-        android:layout_height="150dp"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
         app:cardBackgroundColor="@color/white"
-        app:strokeColor="@color/dusty_gray"
-        app:cardCornerRadius="8dp"
-        app:strokeWidth="1dp">
+        app:strokeColor="@color/border_color_light"
+        app:cardCornerRadius="20dp"
+        app:strokeWidth="1dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="false"
+        app:cardPreventCornerOverlap="false"
+        android:layout_marginVertical="12dp"
+        android:layout_marginHorizontal="6dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:padding="4dp"
+            android:layout_margin="10dp"
             android:id="@+id/inner_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:tint="#E6F0F7"
-                android:id="@+id/image"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_upsell"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:cardUseCompatPadding="false"
+                app:cardPreventCornerOverlap="true"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/image_placeholder" />
+                app:layout_constraintEnd_toEndOf="parent">
+
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/image_placeholder" />
+
+
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:textAlignment="viewStart"
                 android:textColor="@color/primary_text"
-                android:textSize="14sp"
-                android:textStyle="bold"
+                android:textSize="12sp"
+                android:maxWidth="100dp"
+                style="@style/Styles.Text.SmallTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/image"
-                tools:text="2 Whopper Jr. + Hash Brown + Coca Cola + Hash Brown" />
+                app:layout_constraintTop_toBottomOf="@+id/cv_upsell"
+                tools:text="Green Lemonade Margeritta" />
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/modifier_items"
                 android:layout_width="match_parent"
@@ -57,9 +85,11 @@
                 android:ellipsize="end"
                 android:gravity="start"
                 android:maxLines="1"
+                android:layout_marginTop="4dp"
                 android:textAlignment="viewStart"
-                android:textColor="#55667B"
+                android:textColor="@color/secondaryTextColor"
                 android:textSize="12sp"
+                style="@style/TextAppearance.Caption.Semibold"
                 app:layout_constraintTop_toBottomOf="@+id/name"
                 tools:text="Medium"/>
 
@@ -71,8 +101,10 @@
                 android:maxLines="1"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="#0064AC"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textColor="@color/background_color_blue"
+                android:layout_marginTop="4dp"
+                style="@style/Styles.Text.SmallTitle"
+                app:layout_constraintTop_toBottomOf="@id/modifier_items"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="252.00SR" />
 
@@ -84,7 +116,7 @@
                 android:background="?selectableItemBackground"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/ic_upsell_plus" />
+                app:srcCompat="@drawable/ic_herfy_plus" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

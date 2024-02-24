@@ -13,10 +13,15 @@ import com.herfy.common.R
 
 class TitleToolbar  @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
 
+
     private var navButton: ImageButton? = null
     private var rightButton: MaterialButton? = null
     private var tvTitle: TextView? = null
-
+    var title: String = ""
+        set(value) {
+            field = value
+            tvTitle?.text = value
+        }
     init {
         init(attrs)
     }
@@ -47,9 +52,6 @@ class TitleToolbar  @JvmOverloads constructor(context: Context, attrs: Attribute
         }
     }
 
-    fun setTitle(title: String){
-        this.tvTitle?.text = title
-    }
 
     fun setNavButtonAction(listener: OnClickListener){
         navButton?.setOnClickListener(listener)

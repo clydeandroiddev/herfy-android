@@ -327,7 +327,7 @@ public class CartPromoDialogFragment extends DialogFragment implements CartContr
     }
 
     @Override
-    public void showUpsell() {
+    public void showUpsell(ArrayList<MenuItem> upsells) {
 
     }
 

@@ -106,4 +106,9 @@
         <item name="lineHeight">@dimen/line_height_navigation_label</item>
     </style>
 
+    <style name="Styles.Text.SmallTitle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.Footnote_Bold</item>
+        <item name="lineHeight">@dimen/line_height_subheadline</item>
+    </style>
+
 </resources>

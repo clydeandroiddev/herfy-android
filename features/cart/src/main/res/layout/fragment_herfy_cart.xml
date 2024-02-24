@@ -39,7 +39,6 @@
 
             <include
                 android:id="@+id/order_details_container"
-                android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 layout="@layout/layout_order_details" />
@@ -47,7 +46,6 @@
 
             <include
                 android:id="@+id/upsell_container"
-                android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 layout="@layout/layout_upsell" />

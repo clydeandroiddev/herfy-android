@@ -135,6 +135,12 @@
         <item name="android:letterSpacing">0</item>
     </style>
 
+    <style name="TextAppearance.SmallTitle" parent="">
+        <item name="fontFamily">@font/inter_regular</item>
+        <item name="fontWeight">600</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
 
     <dimen name="line_height_large_title">41dp</dimen>
     <dimen name="line_height_title1">34dp</dimen>
