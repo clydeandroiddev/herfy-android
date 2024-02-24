@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permissions_error_message">Failed to initialize PermissionManager. Note that we can only access this after onCreate</string>
+</resources>
