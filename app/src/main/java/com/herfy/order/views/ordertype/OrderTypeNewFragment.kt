@@ -53,6 +53,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartDialogFragment
 import com.herfy.cart.views.CartFragment
+import com.herfy.common.utils.areaJson
 import com.herfy.curbside.curbsidenew.CurbsideNewActivity
 import com.herfy.ext.cast
 import com.herfy.font.FontHandler
@@ -204,6 +205,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         orderPresenter = OrderPresenter(this)
+        CacheUtil.getInstance().setAreas(areaJson())
     }
 
     override fun onCreateView(

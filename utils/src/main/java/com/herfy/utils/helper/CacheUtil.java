@@ -33,6 +33,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Promotion;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
+import com.skylinedynamics.solosdk.api.models.objects.area.City;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
@@ -139,6 +140,7 @@ public class CacheUtil {
 
     private static final String VEHICLE_BRANDS = "VehicleBrands";
 
+    private static final String MAP_AREA = "MapArea";
     private static final String VEHICLE_COLOR = "VehicleColor";
 
     private CacheUtil(Context context) {
@@ -650,6 +652,21 @@ public class CacheUtil {
         return new ArrayList<>();
     }
 
+    public void setAreas(String items) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(MAP_AREA, items);
+        editor.apply();
+    }
+
+    public ArrayList<City> getAreas() {
+        String cartMenuItems = cacheSharedPreferences.getString(MAP_AREA, null);
+        if (cartMenuItems != null) {
+            return GsonHelper.gsonFinal().fromJson(cartMenuItems, new TypeToken<ArrayList<City>>() {
+            }.getType());
+        }
+        return new ArrayList<>();
+    }
+
     public void setBrands(ArrayList<CarMaker> menuItems) {
         String cartMenuItems = new Gson().toJson(menuItems);
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
@@ -1063,11 +1080,7 @@ public class CacheUtil {
     }
 
     public Boolean pickupTypes() {
-        return (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP
-                || CacheUtil.getInstance().getOrderType() == OrderType.EAT_IN
-                || CacheUtil.getInstance().getOrderType() == OrderType.DRIVE_THRU
-                || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN
-                || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE);
+        return (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP || CacheUtil.getInstance().getOrderType() == OrderType.EAT_IN || CacheUtil.getInstance().getOrderType() == OrderType.DRIVE_THRU || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE);
     }
 
     public OrderType getOrderType() {
