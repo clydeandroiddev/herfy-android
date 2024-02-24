@@ -867,6 +867,7 @@ public class Text {
     public static final String REDEEM_LABEL = "redeem_label";
     public static final String REMOVE_PROMO_LABEL="remove_promo";
     public static final String HERFY_SUPPORT = "herfy_support";
+    public static final String MINS = "mins";
 
     public static final String YOUR_BASKET_LABEL = "your_basket_label";
     public static final String HELP_LABEL = "help_label";
