@@ -1,12 +1,12 @@
 package com.herfy.di
 
 import com.herfy.database.AppDatabase
-import com.herfy.database.repositories.FavoriteRepository
-import com.herfy.database.repositories.FavoriteRepositoryImpl
-import com.herfy.database.repositories.MenuRepository
-import com.herfy.database.repositories.MenuRepositoryImpl
+import com.herfy.repository.FavoriteRepository
+import com.herfy.repository.FavoriteRepositoryImpl
 import com.herfy.repository.HomeRepository
 import com.herfy.repository.HomeRepositoryImpl
+import com.herfy.repository.MenuRepository
+import com.herfy.repository.MenuRepositoryImpl
 import com.herfy.utils.helper.CacheUtilHelper
 import dagger.Module
 import dagger.Provides
@@ -32,16 +32,15 @@ object RepositoryModule {
     fun provideMenuRepository(
         appDatabase: AppDatabase,
         cacheUtilHelper: CacheUtilHelper
-    ) : MenuRepository = MenuRepositoryImpl(appDatabase, cacheUtilHelper)
+    ) : MenuRepository =
+        MenuRepositoryImpl(appDatabase, cacheUtilHelper)
 
     @Provides
     @Singleton
     fun provideFavoriteRepository(
         appDatabase: AppDatabase,
         cacheUtilHelper: CacheUtilHelper
-    ) : FavoriteRepository = FavoriteRepositoryImpl()
-
-
-
+    ) : FavoriteRepository =
+        FavoriteRepositoryImpl()
 
 }

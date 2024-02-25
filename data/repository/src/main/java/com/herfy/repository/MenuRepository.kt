@@ -1,4 +1,4 @@
-package com.herfy.database.repositories
+package com.herfy.repository
 
 import com.herfy.database.AppDatabase
 import com.herfy.utils.helper.CacheUtilHelper

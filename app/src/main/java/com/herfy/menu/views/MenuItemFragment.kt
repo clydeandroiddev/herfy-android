@@ -140,7 +140,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 it.showLoadingDialog()
             }
         }
-        AppLogger.error("arguments?.getString(\"menu_item_id\") ${arguments?.getString("menu_item_id")}")
         if (!args.isPromo) {
             if (args.menuItemId.isNotEmpty()) {
                 menuPresenter.setFromCartEdit(false)

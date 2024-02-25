@@ -1,4 +1,4 @@
-package com.herfy.database.repositories
+package com.herfy.repository
 
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.utils.analytics.MixpanelUtil

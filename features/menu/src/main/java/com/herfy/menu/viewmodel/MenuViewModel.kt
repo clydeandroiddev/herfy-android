@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.herfy.database.entities.MenuItemEntity
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
-import com.herfy.database.repositories.FavoriteRepository
-import com.herfy.database.repositories.HomeRepository
-import com.herfy.database.repositories.MenuRepository
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.menu.adapter.MenuCategoryItemAdapter
+import com.herfy.repository.FavoriteRepository
+import com.herfy.repository.HomeRepository
+import com.herfy.repository.MenuRepository
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast

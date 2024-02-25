@@ -8,6 +8,8 @@ import android.os.Handler
 import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDeepLinkRequest
@@ -92,6 +94,34 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 containerSlider.layoutParams.height = sliderHeight
                 shimmerSlider.root.layoutParams.height = sliderHeight
                 sliderViewPager.adapter = sliderImageAdapter
+
+                etSearch.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                    }
+
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                    }
+
+                    override fun afterTextChanged(p0: Editable?) {
+                        p0?.let {
+                            btnClear.apply {
+                                if(it.isNotEmpty()) {
+                                    visible()
+                                } else {
+                                    gone()
+                                }
+                            }
+
+                        }
+                    }
+
+                })
+
+                btnClear.setOnClickListener {
+                    etSearch.setText("")
+                }
 
                 rvMenuCategories.apply {
                     layoutManager =
@@ -195,6 +225,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                         CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART),
                         Toast.LENGTH_SHORT
                     ).show()
+                    binding.orderTypeToolbar.setCart(CacheUtil.getInstance().cartQuantity)
                 }
             }
         }
