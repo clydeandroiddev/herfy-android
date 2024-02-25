@@ -7,9 +7,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.herfy.menu.R
 import com.herfy.menu.databinding.AdapterMenuCategoryBinding
 import com.herfy.menu.databinding.AdapterMenuItemBinding
 import com.herfy.utils.constants.Values
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
@@ -23,16 +25,14 @@ import java.util.Locale
  */
 class MenuCategoryItemAdapter(
     private val onSelect: (MenuCategory, MenuItem) -> Unit,
+    private val onFavorite: (MenuItem) -> Unit,
     private val onAdd: (MenuCategory, MenuItem) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var itemList: List<MenuAdapterItem> = mutableListOf()
 
     override fun getItemViewType(position: Int): Int {
-        return when (itemList[position]) {
-            is MenuCategoryAdapterItem -> VIEW_TYPE_MENU_CATEGORY
-            is MenuItemAdapterItem -> VIEW_TYPE_MENU_ITEM
-        }
+        return itemList[position].viewType
     }
 
     /**
@@ -84,6 +84,7 @@ class MenuCategoryItemAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         val layoutMenuItem = binding.layoutMenuItem
+        val btnFavorite = binding.btnFavorite
         val btnAdd = binding.btnAdd
 
         fun bind(item: MenuItemAdapterItem) {
@@ -125,6 +126,21 @@ class MenuCategoryItemAdapter(
                 } else {
                     layoutCalories.visibility = View.GONE
                     ""
+                }
+
+                binding.btnFavorite.apply {
+                    visibility = if(AuthUtil.getInstance().isSignedIn) {
+                        setBackgroundResource(
+                            if (CacheUtil.getInstance().favorites.contains(menuItem.id)) {
+                                R.drawable.ic_favorite_filled
+                            } else {
+                                R.drawable.ic_favorite_empty
+                            }
+                        )
+                        View.VISIBLE
+                    } else {
+                        View.GONE
+                    }
                 }
 
                 tvName.text = menuItem.getName(LocaleUtil.getInstance().language)
@@ -179,6 +195,16 @@ class MenuCategoryItemAdapter(
                 menuItemHolder.apply {
                     layoutMenuItem.setOnClickListener {
                         onSelect(item.menuCategory, item.menuItem)
+                    }
+                    btnFavorite.setOnClickListener {
+                        onFavorite(item.menuItem)
+                        btnFavorite.setBackgroundResource(
+                            if (CacheUtil.getInstance().favorites.contains(item.menuItem.id)) {
+                                R.drawable.ic_favorite_empty
+                            } else {
+                                R.drawable.ic_favorite_filled
+                            }
+                        )
                     }
                     btnAdd.setOnClickListener {
                         onAdd(item.menuCategory, item.menuItem)

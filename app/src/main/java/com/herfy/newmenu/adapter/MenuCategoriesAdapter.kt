@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.herfy.utils.constants.Text
 import com.herfy.databinding.ItemEmptyMenuBinding
 import com.herfy.databinding.ItemNewMenuCategoryBinding
-import com.herfy.ext.gone
-import com.herfy.ext.visible
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.visible
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.herfy.utils.helper.LocaleUtil

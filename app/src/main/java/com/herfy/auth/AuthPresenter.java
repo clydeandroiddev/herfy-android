@@ -32,7 +32,7 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.ResendSMSBody;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
 import com.herfy.util.DeviceUtil;
-import com.herfy.util.ErrorHandler;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;

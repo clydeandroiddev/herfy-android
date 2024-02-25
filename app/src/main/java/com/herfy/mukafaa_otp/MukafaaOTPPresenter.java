@@ -13,7 +13,7 @@ import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.ApiLogLevel;
 import com.herfy.util.ApiLogUtil;
 import com.herfy.util.AppLogger;
-import com.herfy.util.ErrorHandler;
+import com.herfy.utils.handler.ErrorHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;

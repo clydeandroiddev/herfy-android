@@ -1,4 +1,4 @@
-package com.herfy.ext
+package com.herfy.utils.extensions
 
 import android.view.View
 

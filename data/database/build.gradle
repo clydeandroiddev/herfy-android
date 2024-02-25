@@ -89,6 +89,7 @@ dependencies {
 
     implementation project(':solosdk')
     implementation project(':utils')
+    implementation project(':analytics:kochava')
 
     def room_version = "2.5.0"
     implementation "androidx.room:room-runtime:$room_version"
@@ -106,4 +107,8 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$dagger_version"
     kapt "com.google.dagger:hilt-android-compiler:$dagger_version"
     kapt('org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0')
+
+    //Kochava
+    def kochava_tracker_version = "5.2.0"
+    implementation("com.kochava.tracker:events:$kochava_tracker_version")
 }

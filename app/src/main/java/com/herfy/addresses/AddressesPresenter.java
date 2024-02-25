@@ -31,7 +31,7 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddres
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerAddressBody;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.analytics.MixpanelUtil;
-import com.herfy.util.ErrorHandler;
+import com.herfy.utils.handler.ErrorHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,10 +1,17 @@
 package com.herfy.menu.view
 
+import android.content.Context
+import android.content.res.Resources
+import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.DisplayMetrics
-import android.view.View
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.herfy.home.adapter.SliderImageAdapter
@@ -14,10 +21,20 @@ import com.herfy.menu.adapter.MenuCategoryItemAdapter
 import com.herfy.menu.databinding.FragmentMenuBinding
 import com.herfy.menu.viewmodel.MenuViewModel
 import com.herfy.menu.widgets.CenterLayoutManager
+import com.herfy.utils.base.mvvm.BaseActivity
 import com.herfy.utils.base.mvvm.BaseFragment
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.cast
+import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.smoothSnapToPosition
+import com.herfy.utils.extensions.visible
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.helper.NavigationUtils
+import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -47,10 +64,17 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     private val menuCategoryItemAdapter: MenuCategoryItemAdapter by lazy {
         MenuCategoryItemAdapter(
             onSelect = { menuCategory, menuItem ->
-
+                navMenuItem(menuCategory, menuItem)
+            },
+            onFavorite = { menuItem ->
+                viewModel.addRemoveFavorite(menuItem)
             },
             onAdd = { menuCategory, menuItem ->
-
+                if (menuItem.isMustBeCustomized || menuItem.isCombo) {
+                    navMenuItem(menuCategory, menuItem)
+                } else {
+                    viewModel.getMenuItem(menuCategory, menuItem)
+                }
             }
         )
     }
@@ -63,10 +87,10 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         activity?.let {
             binding.apply {
                 sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
-                val displayMetrics = DisplayMetrics()
-                it.windowManager.defaultDisplay.getMetrics(displayMetrics)
-                val sliderHeight = (displayMetrics.widthPixels / 2.0).toInt()
+                val sliderHeight =
+                    (Resources.getSystem().displayMetrics.widthPixels / 2.0).toInt()
                 containerSlider.layoutParams.height = sliderHeight
+                shimmerSlider.root.layoutParams.height = sliderHeight
                 sliderViewPager.adapter = sliderImageAdapter
 
                 rvMenuCategories.apply {
@@ -102,48 +126,117 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
             viewModel.getMenuCategories()
             binding.apply {
                 if (slides.size > 0) {
-                    sliderViewPager.visibility = View.VISIBLE
+                    sliderViewPager.visible()
                     sliderImageAdapter.updateImageList(slides)
-                    if (slides.size > 1) {
-                        dotsIndicator.setViewPager2(sliderViewPager)
-                        dotsIndicator.visibility = View.VISIBLE
-                    } else {
-                        dotsIndicator.visibility = View.GONE
+                    dotsIndicator.apply {
+                        if (slides.size > 1) {
+                            setViewPager2(sliderViewPager)
+                            visible()
+                        } else {
+                            gone()
+                        }
                     }
                     sliderHandler?.removeCallbacksAndMessages(null)
                     sliderHandler = Handler(Looper.getMainLooper())
-                    sliderHandler?.let {
-                        it.apply {
-                            postDelayed(object : Runnable {
-                                override fun run() {
-                                    var pos = sliderViewPager.currentItem + 1
-                                    if (pos >= slides.size) {
-                                        pos = 0
-                                        sliderViewPager.setCurrentItem(pos, false)
-                                    } else {
-                                        sliderViewPager.currentItem = pos
-                                    }
-                                    sliderHandler?.postDelayed(this, 3000)
+                    sliderHandler?.apply {
+                        postDelayed(object : Runnable {
+                            override fun run() {
+                                var pos = sliderViewPager.currentItem + 1
+                                if (pos >= slides.size) {
+                                    pos = 0
+                                    sliderViewPager.setCurrentItem(pos, false)
+                                } else {
+                                    sliderViewPager.currentItem = pos
                                 }
-                            }, 3000)
-                        }
+                                postDelayed(this, Values.SLIDER_INTERVAL)
+                            }
+                        }, Values.SLIDER_INTERVAL)
                     }
                 } else {
-                    sliderViewPager.visibility = View.VISIBLE
-                    dotsIndicator.visibility = View.GONE
+                    sliderViewPager.visible()
+                    dotsIndicator.gone()
                 }
+                shimmerSlider.root.gone()
             }
         }
 
         viewModel.showMenuCategories.observeNonNull(this) { menuCategories ->
+            binding.shimmerMenuCategories.root.gone()
             menuCategoryAdapter.addData(menuCategories)
-            binding.layoutSearch.visibility = View.VISIBLE
+            binding.layoutSearch.visible()
         }
 
         viewModel.menuAdapterItems.observeNonNull(this) { menuAdapterItems ->
+            binding.shimmerMenuItems.root.gone()
             menuCategoryItemAdapter.addData(menuAdapterItems)
         }
 
+        viewModel.showMenuItem.observeNonNull(this) {
+            navMenuItem(it.first, it.second)
+        }
+
+        viewModel.showAddToCart.observeNonNull(this) {
+            activity?.cast<BaseActivity<*, *>> {
+                it.runOnUiThread {
+                    val vibrator: Vibrator =
+                        it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(
+                            VibrationEffect.createOneShot(
+                                500,
+                                VibrationEffect.DEFAULT_AMPLITUDE
+                            )
+                        )
+                    } else {
+                        vibrator.vibrate(100)
+                    }
+                    Toast.makeText(
+                        it,
+                        CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+        viewModel.showMessage.observeNonNull(this) { message ->
+            activity?.cast<BaseActivity<*, *>> {
+                it.runOnUiThread {
+                    Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        viewModel.showError.observeNonNull(this) { error ->
+            activity?.cast<BaseActivity<*, *>> {
+                it.runOnUiThread {
+                    it.showAlertDialog("", error)
+                }
+            }
+        }
+
+        viewModel.showLoading.observeNonNull(this) { showLoading ->
+            activity?.cast<BaseActivity<*, *>> {
+                it.runOnUiThread {
+                    if(showLoading) {
+                        it.showProgressDialog(false)
+                    } else {
+                        it.dismissProgressDialog()
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun navMenuItem(menuCategory: MenuCategory, menuItem: MenuItem) {
+        val request =
+            NavDeepLinkRequest.Builder.fromUri(
+                Uri.parse(
+                    "${Values.NAV_DEEP_LINK_BASE_URL}nav_menu_item/${menuCategory.id}/${menuItem.id}"
+                )
+            ).build()
+        NavigationUtils.navigateSafe(findNavController(), request)
     }
 
 }

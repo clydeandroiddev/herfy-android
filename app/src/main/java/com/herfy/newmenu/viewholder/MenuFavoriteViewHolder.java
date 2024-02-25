@@ -39,6 +39,7 @@ import com.herfy.menu.MenuContract;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
@@ -52,7 +53,6 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.herfy.analytics.FacebookAppEventUtil;
 import com.herfy.analytics.FirebaseECommerceEventUtil;
-import com.herfy.util.MenuUtil;
 import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;

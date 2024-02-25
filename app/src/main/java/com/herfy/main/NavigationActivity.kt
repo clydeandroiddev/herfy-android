@@ -140,7 +140,7 @@ class NavigationActivity : BaseActivity(), MainContract.View {
     }
 
     override fun showNewNotifIndicator(count: Int) {
-        TODO("Not yet implemented")
+
     }
 
 

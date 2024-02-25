@@ -36,6 +36,7 @@ import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.ApiRequestWithHeadersListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
@@ -64,8 +65,7 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerAddres
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.util.MenuUtil;
-import com.herfy.util.ErrorHandler;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.util.StringUtil;
 
 import org.json.JSONArray;

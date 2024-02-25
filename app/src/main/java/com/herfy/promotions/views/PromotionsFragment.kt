@@ -13,8 +13,6 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.databinding.FragmentPromotionsBinding
 import com.herfy.ext.cast
-import com.herfy.ext.gone
-import com.herfy.ext.visible
 import com.herfy.model.CampaignToAdd
 import com.herfy.promotions.PromotionsContract
 import com.herfy.promotions.PromotionsPresenter
@@ -22,6 +20,8 @@ import com.herfy.promotions.adapters.PromotionsAdapter
 import com.herfy.util.AppLogger
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.NavigationUtils
 import com.skylinedynamics.solosdk.api.ApiRequestListener

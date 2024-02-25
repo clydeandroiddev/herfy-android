@@ -58,9 +58,6 @@ import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartDialogFragment
 import com.herfy.cart.views.CartFragment
 import com.herfy.ext.cast
-import com.herfy.ext.gone
-import com.herfy.ext.isVisible
-import com.herfy.ext.visible
 import com.herfy.font.FontHandler
 import com.herfy.location.FusedLocationProvider
 import com.herfy.main.MainActivity
@@ -77,8 +74,12 @@ import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
 import com.herfy.util.*
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.*
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.isVisible
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.*
 import com.herfy.utils.helper.ViewUtil
+import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout

@@ -76,6 +76,16 @@
 						app:progressMode="false"
 						app:selectedDotColor="#D12928"/>
 
+					<include
+						android:id="@+id/shimmerSlider"
+						layout="@layout/shimmer_slider"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						app:layout_constraintTop_toTopOf="parent"
+						android:layout_marginTop="12dp"
+						android:layout_marginStart="12dp"
+						android:layout_marginEnd="12dp" />
+
 				</androidx.constraintlayout.widget.ConstraintLayout>
 
 				<androidx.appcompat.widget.Toolbar
@@ -92,6 +102,12 @@
 						android:layout_height="match_parent"
 						android:orientation="vertical">
 
+						<include
+							android:id="@+id/shimmerMenuCategories"
+							layout="@layout/shimmer_menu_categories"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content" />
+
 						<LinearLayout
 							android:id="@+id/layoutSearch"
 							android:layout_width="match_parent"
@@ -105,7 +121,7 @@
 							android:paddingBottom="8dp"
 							android:paddingEnd="12dp"
 							android:background="@drawable/background_search"
-							android:visibility="invisible">
+							android:visibility="gone">
 
 							<androidx.appcompat.widget.AppCompatImageView
 								android:layout_width="wrap_content"
@@ -161,6 +177,15 @@
 			android:paddingStart="8dp"
 			android:paddingEnd="8dp"
 			android:background="@color/color_background" />
+
+		<include
+			android:id="@+id/shimmerMenuItems"
+			layout="@layout/shimmer_menu_items"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_marginTop="300dp"
+			android:layout_marginStart="8dp"
+			android:layout_marginEnd="8dp"/>
 
 	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 

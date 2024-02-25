@@ -50,9 +50,7 @@ import com.herfy.databinding.ActivityMainBinding
 import com.herfy.digitalcoupons.views.DigitalCouponFragmentDirections
 import com.herfy.digitalcoupons.views.DigitalCouponsFragmentDirections
 import com.herfy.ext.cast
-import com.herfy.ext.gone
 import com.herfy.ext.readAssetsFile
-import com.herfy.ext.visible
 import com.herfy.favorites.FavoritesFragmentDirections
 import com.herfy.feedback.FeedbackActivity
 import com.herfy.loyalty.LoyaltyActivity
@@ -70,6 +68,8 @@ import com.herfy.util.obfuscator.reveal
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
