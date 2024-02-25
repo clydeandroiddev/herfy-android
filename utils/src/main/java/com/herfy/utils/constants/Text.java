@@ -862,6 +862,7 @@ public class Text {
     public static final String PLACE_ORDER = "place_order";
     public static final String PICKUP_TIME = "pickup_time";
     public static final String DELIVERY_INSTRUCTION = "delivery_instructions";
+    public static final String DO_NOT_RING_BELL = "do_not_call_ring_me";
     public static final String LOYALTY_POINTS = "loyalty_points";
     public static final String PAYMENT_METHODS = "payment_methods";
 

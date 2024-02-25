@@ -909,6 +909,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
         binding!!.layoutPaymentSummary.tvTotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL)
+        binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance().getTranslations(Text.DELIVERY_INSTRUCTION, "Delivery Instruction")
         binding!!.layoutPaymentSummary.tvSubtotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL)
         binding!!.layoutPaymentSummary.tvDiscount.text =
@@ -917,7 +918,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}
-    override fun showPaymentTypes(paymentTypes: ArrayList<PaymentType>) {}
+    override fun showPaymentTypes(paymentTypes: ArrayList<PaymentType>) {
+        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+//        paymentTypes.forEach { payment
+//
+//        }
+    }
     override fun setStartName(startName: String) {}
     override fun setStartAddress(startAddress: String) {}
     override fun setEndName(endName: String) {}
@@ -1136,17 +1142,16 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 //            if (cardPayment != null) cardPayment.setVisibility(View.VISIBLE);
 //            if (cashPayment != null) cashPayment.setVisibility(View.VISIBLE);
         }
-        binding!!.tvDiscountedPrice.text = updateCurrency(
+
+        val formattedTotal = updateCurrency(
             totalPrice,
             true,
             CacheUtil.getInstance().hasPromotion()
         )
-        binding!!.layoutPaymentSummary.tvTotal.text = updateCurrency(
-            totalPrice,
-            true,
-            CacheUtil.getInstance().hasPromotion()
-        )
+        binding!!.tvDiscountedPrice.text = formattedTotal
+        binding!!.layoutPaymentSummary.tvTotal.text = formattedTotal
         totalValue = totalPrice
+        binding!!.tvOriginalPrice.text = formattedTotal
         val loyalty = AuthUtil.getInstance().customerLoyalty
         /*double finalDiscount = discount;
         double finalTotal;

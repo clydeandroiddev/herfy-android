@@ -294,7 +294,7 @@
                                 android:textAllCaps="false"
                                 app:layout_constraintStart_toEndOf="@+id/iv_delivery_note"
                                 app:layout_constraintTop_toTopOf="@+id/iv_delivery_note"
-                                tools:text="Delivery Instruction" />
+                                android:text="Delivery Instruction" />
 
                             <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/tv_delivery_instruction"
@@ -306,7 +306,7 @@
                                 app:layout_constraintBottom_toBottomOf="@+id/iv_delivery_note"
                                 app:layout_constraintStart_toEndOf="@+id/iv_delivery_note"
                                 app:layout_constraintTop_toBottomOf="@+id/tv_delivery_instruction_label"
-                                tools:text="Delivery Instruction" />
+                                android:text="Delivery Instruction" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
