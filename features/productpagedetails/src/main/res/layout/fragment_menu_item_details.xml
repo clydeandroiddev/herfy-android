@@ -107,72 +107,40 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+                        <!-- Todo revert this once designer change the ui -->
+<!--                        <LinearLayout-->
+<!--                            android:id="@+id/btnDriveThru"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginStart="@dimen/margin_small"-->
+<!--                            android:background="@drawable/bg_rounded_drive_thru"-->
+<!--                            android:gravity="center"-->
+<!--                            android:orientation="horizontal"-->
+<!--                            app:layout_constraintBottom_toTopOf="@+id/name"-->
+<!--                            app:layout_constraintStart_toStartOf="parent"-->
+<!--                            app:layout_constraintTop_toTopOf="parent">-->
 
-                        <LinearLayout
-                            android:id="@+id/btnDriveThru"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/margin_small"
-                            android:background="@drawable/bg_rounded_drive_thru"
-                            android:gravity="center"
-                            android:orientation="horizontal"
-                            app:layout_constraintBottom_toTopOf="@+id/name"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+<!--                            <com.google.android.material.textview.MaterialTextView-->
+<!--                                style="@style/Styles.Text.Caption"-->
+<!--                                android:layout_width="0dp"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:layout_gravity="center"-->
+<!--                                android:layout_weight="1"-->
+<!--                                android:drawableStart="@drawable/ic_car_drive_thru"-->
+<!--                                android:drawablePadding="@dimen/margin_small"-->
+<!--                                android:gravity="center_vertical"-->
+<!--                                android:paddingStart="@dimen/padding_micro"-->
+<!--                                android:paddingEnd="@dimen/padding_micro"-->
+<!--                                android:text="Drive thru"-->
+<!--                                android:textColor="@color/white" />-->
 
-                            <com.google.android.material.textview.MaterialTextView
-                                style="@style/Styles.Text.Caption"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_weight="1"
-                                android:drawableStart="@drawable/ic_car_drive_thru"
-                                android:drawablePadding="@dimen/margin_small"
-                                android:gravity="center_vertical"
-                                android:paddingStart="@dimen/padding_micro"
-                                android:paddingEnd="@dimen/padding_micro"
-                                android:text="Drive thru"
-                                android:textColor="@color/white" />
+<!--                        </LinearLayout>-->
 
-                        </LinearLayout>
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/btnCalories"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/margin_small"
-                            android:backgroundTint="@color/white"
-                            android:gravity="center"
-                            android:orientation="horizontal"
-                            app:cardCornerRadius="12dp"
-                            app:cardPreventCornerOverlap="true"
-                            app:cardUseCompatPadding="false"
-                            app:layout_constraintBottom_toBottomOf="@+id/btnDriveThru"
-                            app:layout_constraintStart_toEndOf="@+id/btnDriveThru"
-                            app:layout_constraintTop_toTopOf="@+id/btnDriveThru"
-                            app:strokeColor="#D9E8F3"
-                            app:strokeWidth="1dp">
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/calories"
-                                style="@style/Styles.Text.Caption"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center_vertical"
-                                android:layout_weight="1"
-                                android:drawableStart="@drawable/ic_fire"
-                                android:drawablePadding="@dimen/margin_small"
-                                android:gravity="center_vertical"
-                                android:paddingStart="@dimen/padding_micro"
-                                android:paddingTop="@dimen/padding_micro"
-                                android:paddingEnd="@dimen/padding_micro"
-                                android:paddingBottom="@dimen/padding_micro"
-                                tools:text="2200 Kcal" />
-                        </androidx.cardview.widget.CardView>
 
                         <TextView
                             android:id="@+id/name"
-                            style="@style/TextAppearance.Headline1"
+                            style="@style/TextAppearance.Headline"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/margin_large"
@@ -185,7 +153,7 @@
                             android:textSize="18sp"
                             android:textStyle="bold"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/btnDriveThru"
+                            app:layout_constraintTop_toTopOf="parent"
                             tools:text="Grill Chicken" />
 
                         <TextView
@@ -197,9 +165,9 @@
                             android:layout_marginBottom="-5dp"
                             android:includeFontPadding="false"
                             android:textColor="@color/shade_blue"
-                            app:layout_constraintBottom_toBottomOf="@+id/btnCalories"
+                            app:layout_constraintBottom_toBottomOf="@+id/name"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/btnCalories"
+                            app:layout_constraintTop_toTopOf="@+id/name"
                             tools:text="SAR 44" />
 
                         <TextView
@@ -224,18 +192,65 @@
                             style="@style/Styles.Text.Footnote.Medium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_large"
                             android:layout_marginEnd="@dimen/margin_large"
                             android:drawableEnd="@drawable/ic_question_mark"
                             android:drawablePadding="@dimen/margin_micro"
                             android:textAlignment="viewStart"
                             android:textColor="@color/shade_blue"
                             android:visibility="gone"
+                            app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/description"
                             app:lineHeight="20sp"
                             tools:text="More Info"
                             tools:visibility="visible" />
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/btnCalories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_small"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:gravity="center"
+                            android:layout_marginTop="@dimen/margin_large"
+                            app:layout_constraintStart_toStartOf="@+id/description"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
+                            app:cardCornerRadius="@dimen/_12sdp"
+                            app:cardPreventCornerOverlap="true"
+                            app:cardUseCompatPadding="false"
+                            app:layout_constraintTop_toBottomOf="@+id/description"
+                            app:strokeColor="#D9E8F3"
+                            app:strokeWidth="1dp">
 
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/calories"
+                                style="@style/Styles.Text.Caption"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_vertical"
+                                android:layout_weight="1"
+                                android:drawableStart="@drawable/ic_fire"
+                                android:drawablePadding="@dimen/margin_small"
+                                android:gravity="center_vertical"
+                                android:paddingStart="@dimen/padding_micro"
+                                android:paddingTop="@dimen/padding_micro"
+                                android:paddingEnd="@dimen/padding_micro"
+                                android:paddingBottom="@dimen/padding_micro"
+                                tools:text="2200 Kcal" />
+                        </androidx.cardview.widget.CardView>
+
+                        <View
+                            android:id="@+id/viewSeparator"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginHorizontal="@dimen/margin_large"
+                            android:layout_marginTop="@dimen/margin_small"
+                            app:layout_constraintTop_toBottomOf="@+id/btnCalories"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:background="@color/colorSeparator" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.appcompat.widget.Toolbar>
@@ -243,7 +258,6 @@
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
         </com.google.android.material.appbar.AppBarLayout>
-
         <androidx.core.widget.NestedScrollView
             android:id="@+id/content_main"
             android:layout_width="match_parent"
@@ -257,12 +271,6 @@
                 android:background="#F7F7F7"
                 android:orientation="vertical">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="@dimen/margin_large"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:background="@color/colorSeparator" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/sizesLayoutTextContainer"
@@ -517,6 +525,7 @@
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
