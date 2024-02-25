@@ -120,6 +120,7 @@
 
 
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/branch_image_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/margin_large"
@@ -153,9 +154,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/_8sdp"
                                 android:layout_marginTop="@dimen/_10sdp"
-                                android:layout_marginEnd="@dimen/_286sdp"
                                 android:textColor="@color/black"
-                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintEnd_toEndOf="@+id/tv_branch_name"
                                 app:layout_constraintHorizontal_bias="0.0"
                                 app:layout_constraintStart_toEndOf="@+id/iv_order_type"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -346,8 +346,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_xlarge"
-                        android:layout_marginBottom="@dimen/margin_xlarge"
                         android:layout_marginEnd="@dimen/margin_small"
+                        android:layout_marginBottom="@dimen/margin_xlarge"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -420,6 +420,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_place_order_button"
                 android:fontFamily="@font/inter_medium"
+                android:textSize="15sp"
                 android:gravity="center"
                 android:paddingStart="@dimen/_30sdp"
                 android:paddingTop="@dimen/padding_small"
@@ -427,7 +428,6 @@
                 android:paddingBottom="@dimen/_8sdp"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_16sdp"
                 app:cornerRadius="@dimen/_24sdp"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_discounted_price"
                 app:layout_constraintEnd_toEndOf="parent"

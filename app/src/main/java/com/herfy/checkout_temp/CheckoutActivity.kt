@@ -36,6 +36,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.foodics.permissionprovider.PermissionManager
 import com.foodics.permissionprovider.PermissionResult
@@ -93,11 +94,14 @@ import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.ninjaTap
+import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.showToast
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
+import com.herfy.utils.helper.GlideUtils
 import com.moneyhash.sdk.android.ResultType
 import com.moneyhash.sdk.android.payment.PaymentResultContract
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -440,6 +444,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         orderType = CacheUtil.getInstance().orderType
         showMap()
         requestPermissionLocation()
+        binding!!.tvEditMobileNumber.ninjaTap(lifecycleScope) {
+            // todo wait for the designer what screen should be called here
+        }
         //        rvOrderSummary.setLayoutManager(new LinearLayoutManager(this));
 //        menuItemsRecyclerViewAdapter = new OrderSummaryItemRecyclerViewAdapter(paymentPresenter);
 //        rvOrderSummary.setAdapter(menuItemsRecyclerViewAdapter);
@@ -538,52 +545,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             else -> {}
         }
 
-//        removeSched.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                isRemove = true;
-//                schedTime.setText("");
-//                if (CacheUtil.getInstance().getTranslations(Text.PLACE_ORDER_NOW, "PLACE ORDER").equalsIgnoreCase("CHOOSE METHOD")) {
-//                    placeOrder.setText("PLACE ORDER");
-//                } else {
-//                    placeOrder.setText(CacheUtil.getInstance().getTranslations(Text.PLACE_ORDER_NOW, "PLACE ORDER NOW"));
-//                }
-//                removeLayout.setVisibility(View.GONE);
-//                removeLabel.setVisibility(View.GONE);
-//                noSchedLayout.setVisibility(View.VISIBLE);
-//                spacingTop.setVisibility(View.GONE);
-//                withSchedLayout.setVisibility(View.GONE);
-//            }
-//        });
-//
-//        cancelButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-//            }
-//        });
 
-//        confirmButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-//                try {
-//                    Calendar originalCalendar = Calendar.getInstance();
-//                    Calendar calendar = Calendar.getInstance();
-//                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd h:mm a", Locale.ENGLISH);
-//                    calendar.setTime(sdf.parse(daySelected + " " + TimeUtil.dateToHourOnly(selectedDate)));
-//                    paymentPresenter.scheduleOrder(originalCalendar, calendar, true);
-//                } catch (ParseException pe) {
-//                    pe.printStackTrace();
-//                    int minSchedule = CacheUtil.getInstance().getConcept().getDefaultScheduleDeliveryTime();
-//                    if (minSchedule == 0) {
-//                        minSchedule = 1;
-//                    }
-//                    showMessage(CacheUtil.getInstance().getTranslations(Text.MINIMUM_SCHEDULED_ORDER, "Unable to process order, scheduled order is allowed minimum of (x) min from current time.").replace("(x)", "" + minSchedule));
-//                    dismissDialogs();
-//                }
-//            }
-//        });
         binding!!.placeOrder.setOnClickListener { view: View? ->
             val canProceedViaFullPoints = paymentPresenter!!.canProceedViaFullPoints()
             if (canProceedViaFullPoints || CacheUtil.getInstance().orderPayment != PaymentType.NONE) {
@@ -750,7 +712,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                 pointsInSarTextWatcher
                             )
                             if (userSetPoints >= currentBalance) {
-//                        btnUseAll.performClick();
                             } else {
                                 binding!!.layoutLoyalty.etPoints.setText(StringUtil.localize(binding!!.layoutLoyalty.etPoints.text.toString()))
                             }
@@ -776,76 +737,33 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 }) { onError: Throwable? -> })
         binding!!.layoutLoyalty.etPoints.addTextChangedListener(pointsInSarTextWatcher)
 
-        /* noSchedLayout.setOnClickListener(view -> {
-            showPanel();
-        });
 
-        withSchedLayout.setOnClickListener(view -> {
-            showPanel();
-        });*/
         val isDelivery = false
         val customer = AuthUtil.getInstance().customer
         val isSignedIn = AuthUtil.getInstance().isSignedIn
         val isFullSignedIn =
             isSignedIn && !customer.attributes.accountType.equals("guest", ignoreCase = true)
 
-        /* switch (CacheUtil.getInstance().getOrderType()) {
-            case PICKUP:
-                type.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP));
-                orderTypeLabel2.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP_AT));
-                break;
-            case DINE_IN:
-                type.setText(CacheUtil.getInstance().getTranslations(Text.DINE_IN));
-                orderTypeLabel2.setText(CacheUtil.getInstance().getTranslations(Text.DINE_IN_AT));
-                break;
-            case DELIVERY:
-                isDelivery = true;
-                type.setText(CacheUtil.getInstance().getTranslations(Text.DELIVERY));
-                orderTypeLabel2.setText(CacheUtil.getInstance().getTranslations(Text.DELIVER_TO));
-                break;
-            case CURBSIDE:
-                type.setText(CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP, "Curbside"));
-                orderTypeLabel2.setText(CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP_FROM_CAPS, "CURBSIDE PICKUP FROM").toUpperCase());
-                break;
-        }*/try {
+        try {
             var paymentTypes: Set<PaymentType?> =
                 CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes()
             if (!isDelivery) {
                 paymentTypes =
                     CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
-                //                tvBranchName.setText(CacheUtil.getInstance().getOrderStore().getAttributes().getName());
-//                tvBranchAddress.setText(CacheUtil.getInstance().getOrderStore().getAttributes().getCountry());
+                binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name;
             } else {
-                //   tvBranchName.setText(CacheUtil.getInstance().getOrderAddress().getAttributes().getLine1());
+                binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name;
 //                tvBranchAddress.setText(CacheUtil.getInstance().getOrderAddress().getAttributes().getLine1());
             }
-
-            //just for testing
-            binding!!.layoutLoyalty.loyaltyPointsPaymentContainer.visibility = View.VISIBLE
-            /* if (isFullSignedIn && paymentTypes.contains(PaymentType.LOYALTY) && passedTotalFromCart > 0) {
-                loyaltyPointsPaymentContainer.setVisibility(View.VISIBLE);
-//                useLoyaltyPointsLabel.setVisibility(View.VISIBLE);
-//                loyaltyPointsAdditionalInfo.setVisibility(View.VISIBLE);
-            }*/
-
-            /* branchImageContainer.setVisibility(View.VISIBLE);
-            branchContainer.setVisibility(View.GONE);
-            orderTypeContainer.setVisibility(View.GONE);
-
-            if (isBranchImageAvailable) {
-                branchImageContainer.setVisibility(View.VISIBLE);
-                branchContainer.setVisibility(View.GONE);
-                orderTypeContainer.setVisibility(View.GONE);
-                Glide.with(this).load(CacheUtil.getInstance().getOrderStore().getAttributes().getImage()).skipMemoryCache(false).diskCacheStrategy(DiskCacheStrategy.ALL).apply(RequestOptions.centerCropTransform()).into(imgBranch);
-            } else {
-                branchImageContainer.setVisibility(View.GONE);
-                branchContainer.setVisibility(View.VISIBLE);
-                orderTypeContainer.setVisibility(View.VISIBLE);
-            }*/
+            val isEligibleForLoyaltyDiscount =
+                isFullSignedIn && paymentTypes.contains(PaymentType.LOYALTY) && passedTotalFromCart > 0
+            binding!!.layoutLoyalty.loyaltyPointsPaymentContainer.setVisible(isEligibleForLoyaltyDiscount)
+            binding!!.ivOrderType.setVisible(isBranchImageAvailable)
+            GlideUtils.loadImageUrl(binding!!.ivOrderType, url = CacheUtil.getInstance().orderStore.attributes.image,
+                this)
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
         //total.setText(StringUtil.getFormattedPrice(paymentPresenter.getTotalPrice()));
 
         /* Concept concept = CacheUtil.getInstance().getConcept();
@@ -960,7 +878,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 .getTranslations(Text.PICKUP_TIME, "Pickup Time")
             val minsString =
                 CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString()
-            Log.d("FAFA","Minutes bai  " + minsString);
+
             val minsValue = minsString.toInt()
             val currentUtcTime = Instant.now()
             val minTime = currentUtcTime.plus(
@@ -973,71 +891,29 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 ChronoUnit.MINUTES
             ) // Adding one more minute for upper bound of deliveryRangeTime
             val minMinutes = minTime.atZone(ZoneOffset.UTC)[ChronoField.MINUTE_OF_HOUR]
-            Log.d("FAFA","Minutes min time " + minMinutes)
             val maxMinutes = maxTime.atZone(ZoneOffset.UTC)[ChronoField.MINUTE_OF_HOUR]
+            // todo temporary code for now ask BE where to get the start minutes range
             val deliveryRangeTime =
-                minMinutes.toString() + " - " + maxMinutes + CacheUtil.getInstance()
+                "$minMinutes - $maxMinutes " +  CacheUtil.getInstance()
                     .getTranslations(
                         Text.MINS, "mins"
                     )
             binding!!.tvWithin.text = CacheUtil.getInstance()
                 .getTranslations(Text.WITHIN, "Within $deliveryRangeTime")
         }
-        //        chooseMethodLabel.setText(CacheUtil.getInstance().getTranslations(Text.CHOOSE_METHOD, "CHOOSE METHOD"));
-//        if (cashLabel != null)
-//            cashLabel.setText(CacheUtil.getInstance().getTranslations(Text.CASH));
-//        pickADayLabel.setText(CacheUtil.getInstance().getTranslations(Text.PICK_A_DAY, "PICK A DAY").toUpperCase());
-//        pickATimeLabel.setText(CacheUtil.getInstance().getTranslations(Text.PICK_A_TIME, "PICK A TIME").toUpperCase());
-//        cancelButton.setText(CacheUtil.getInstance().getTranslations(Text.CANCEL, "CANCEL").toUpperCase());
-//        confirmButton.setText(CacheUtil.getInstance().getTranslations(Text.CONFIRM_CAPS, "CONFIRM").toUpperCase());
         binding!!.placeOrder.text = CacheUtil.getInstance()
             .getTranslations(Text.PLACE_ORDER, "Place Order")
-
-//        schedOrderLabel.setText(CacheUtil.getInstance().getTranslations(Text.SCHEDULER_ORDER));
-//        slidingTitle.setText(CacheUtil.getInstance().getTranslations(Text.SCHEDULER_ORDER).toUpperCase());
-//        removeLabel.setText(CacheUtil.getInstance().getTranslations(Text.YOU_CAN_REMOVE_THE_SCHEDULE, "You can remove the schedule by pressing on the “x” button here"));
-//        itemsLabel.setText(CacheUtil.getInstance().getTranslations(Text.ORDERED_ITEMS_CAPS, "ORDERED ITEMS"));
-//        itemsQuantityLabel.setText(CacheUtil.getInstance().getTranslations(Text.ITEMS_QUANTITY_CAPS, "ITEMS & QUANTITY"));
-//        priceLabel.setText(CacheUtil.getInstance().getTranslations(Text.PRICE_CAPS, "PRICE"));
         binding!!.layoutPaymentSummary.tvSubtotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL)
         binding!!.layoutPaymentSummary.tvDiscount.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
-        //        deliveryLabel.setText(CacheUtil.getInstance().getTranslations(Text.DELIVERY));
-//        taxLabel.setText(CacheUtil.getInstance().getTranslations(Text.TAX));
         binding!!.layoutPaymentSummary.tvTotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL)
-        //        schedLabel.setText(CacheUtil.getInstance().getTranslations(Text.SCHEDULE, "SCHEDULE").toUpperCase());
-//        branchLabel.setText(CacheUtil.getInstance().getTranslations(Text.BRANCH_CAPS, "BRANCH"));
-//        typeLabel.setText(CacheUtil.getInstance().getTranslations(Text.ORDER_TYPE_CAPS, "ORDER TYPE"));
-//        financialLabel.setText(CacheUtil.getInstance().getTranslations(Text.VAT_NO_CAPS, "VAT NO."));
-//        availableLabel.setText(CacheUtil.getInstance().getTranslations(Text.AVAILABLE_LOYALTY_POINTS, "Available Loyalty Points"));
-//        btnUseAll.setText(CacheUtil.getInstance().getTranslations(Text.USE_ALL_CAPS, "USE ALL"));
-//        howMuchLabel.setText(CacheUtil.getInstance().getTranslations(Text.REDEEM_AMOUNT_IN, "REDEEM AMOUNT IN (X)").replace("(X)",CacheUtil.getInstance().getTranslations(CacheUtil.getInstance().getConcept().getCurrencyCode())));
-//        etPointsInput.setHint(CacheUtil.getInstance().getTranslations(Text.LOYALTY_USE_AMOUNT_INPUT_HINT, "Enter amount here"));
-//        loyaltyPointsAdditionalInfo.setText(CacheUtil.getInstance().getTranslations(Text.LOYALTY_LEAVE_BLANK, "Leave this blank if you don't wanna use your points"));
-//        useLoyaltyPointsLabel.setText(CacheUtil.getInstance().getTranslations(Text.LOYALTY_USE_POINTS, "USE LOYALTY POINTS"));
-//        tableNumberLabel.setText(CacheUtil.getInstance().getTranslations(Text.TABLE_NUMBER_CAPS, "TABLE NUMBER"));
-//        requestOTP.setText(CacheUtil.getInstance().getTranslations(Text.REQUEST_OTP, "REQUEST OTP"));
-//        cardTvMukafaaBank.setText(CacheUtil.getInstance().getTranslations(Text.MUKAFAA_BANK, "Al Rajhi Bank"));
-//        cardTvMukafaaRewards.setText(CacheUtil.getInstance().getTranslations(Text.MUKAFAA_REWARDS, "(Mokafa’a Rewards)"));
-//        disclaimer.setText(Html.fromHtml(CacheUtil.getInstance().getTranslations(Text.MUKAFAA_DISCLAIMER, "<b>Disclaimer</b>: The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful.")));
-//        phoneNumberLbl.setText(CacheUtil.getInstance().getTranslations(Text.MOBILE_NUMBER, "Mobile Number"));
-//        or.setText(CacheUtil.getInstance().getTranslations(Text.OR, "OR"));
-//        loyaltyNumberLbl.setText(CacheUtil.getInstance().getTranslations(Text.LOYALTY_CIC_NUMBER, "Loyalty CIC Number"));
-//        itemsLabel.setText(CacheUtil.getInstance().getTranslations(Text.ORDERED_ITEMS_CAPS, "ORDERED ITEMS"));
-//        itemsQuantityLabel.setText(CacheUtil.getInstance().getTranslations(Text.ITEMS_QUANTITY_CAPS, "ITEMS & QUANTITY"));
-//        priceLabel.setText(CacheUtil.getInstance().getTranslations(Text.PRICE_CAPS, "PRICE"));
         binding!!.layoutPaymentSummary.tvSubtotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL)
         binding!!.layoutPaymentSummary.tvDiscount.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
         binding!!.totalVatDescription.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
-        //        tvMukafaaLabel.setText(CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a"));
-//        tvMukafaaRemove.setText(CacheUtil.getInstance().getTranslations(Text.REMOVE_CAPS, "Remove"));
-//        deliveryLabel.setText(CacheUtil.getInstance().getTranslations(Text.DELIVERY));
-//        taxLabel.setText(CacheUtil.getInstance().getTranslations(Text.TAX_RATE, "(x)% VAT").replace("(x)", StringUtil.localize(String.valueOf(CacheUtil.getInstance().getConcept().getVatRate()))));
-//        summaryTotalLabel.setText(CacheUtil.getInstance().getTranslations(Text.TOTAL));
     }
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}
@@ -1126,26 +1002,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         charges: ArrayList<ServiceCharge>
     ) {
         val hasPromotion = CacheUtil.getInstance().hasPromotion()
-        val originalPrice = updateCurrency(subtotalPrice, true, hasPromotion).toString()
+        val total = updateCurrency(subtotalPrice, true, hasPromotion).toString()
 
-// Create a SpannableString to apply underline
-        val spannableString = SpannableString(originalPrice)
-
-// Calculate the center position of the text
-        val centerPosition = originalPrice.length / 2
-
-// Apply UnderlineSpan to the center of the text
-        spannableString.setSpan(
-            UnderlineSpan(),
-            centerPosition,
-            centerPosition + 1,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-// Apply the formatted text to the TextView
-        binding!!.tvOriginalPrice.text = spannableString
         binding!!.layoutPaymentSummary.tvSubtotal.text =
-            updateCurrency(subtotalPrice, true, hasPromotion)
+            total
         if (discount != 0.0) {
             binding!!.layoutPaymentSummary.grpDiscount.visibility = View.VISIBLE
             binding!!.layoutPaymentSummary.tvDiscount.text =
@@ -1296,33 +1156,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             finalTotal = subtotalPrice;
         }*/
 
-        /* btnUseAll.setOnClickListener(v -> {
-
-
-
-            //double points = loyalty.getAttributes().getCurrentBalanceAmount() > (finalTotal - finalDiscount) ? (finalTotal - finalDiscount) * Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion()) : loyalty.getAttributes().getCurrentBalance();
-            double currentBalance = loyalty.getAttributes().getCurrentBalanceAmount() > (finalTotal - finalDiscount) ? (finalTotal - finalDiscount)  : loyalty.getAttributes().getCurrentBalanceAmount();
-
-            // If points = 3.4 for example, make it 4 points
-         */
-        /*   if ((int) points < points) {
-                points += 1;
-            }*/
-        /*
-            loyaltypointsInput = (int) currentBalance;
-            etPointsInput.setText(StringUtil.localize(String.valueOf((int) currentBalance)));
-
-            if (deliveryCharge != 0 && (subtotalPrice - finalDiscount) == 0) {
-                Toast toast = Toast.makeText(PaymentActivity.this, CacheUtil.getInstance().getTranslations(Text.POINTS_NOT_APPLICABLE, "Sorry, loyalty points can only be used to pay on purchased items excluding delivery charge."), Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.BOTTOM, 0, ViewUtil.dpToPx(PaymentActivity.this, 80));
-                toast.show();
-            } else if (currentBalance > (subtotalPrice - finalDiscount)) {
-                Toast toast = Toast.makeText(PaymentActivity.this, CacheUtil.getInstance().getTranslations(Text.POINTS_MAXIMUM_LIMIT, "Sorry, the maximum points allowed to be used for this transaction is (x).").replace("(x)", String.valueOf((int) currentBalance)), Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.BOTTOM, 0, ViewUtil.dpToPx(PaymentActivity.this, 80));
-                toast.show();
-            }
-
-        });*/
     }
 
     override fun setMenuItem(menuItem: MenuItem) {}

@@ -40,14 +40,13 @@
                 android:id="@+id/tv_loyalty_points_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginBottom="@dimen/margin_large"
                 android:fontFamily="@font/inter_semi_bold"
                 tools:text="Use Loyalty Points"
                 android:textColor="@color/black"
-                android:textFontWeight="600"
-                android:textSize="14sp"
+                style="@style/Styles.Text.Footnote.Semi.Bold"
                 app:layout_constraintStart_toEndOf="@+id/image_view"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
@@ -56,10 +55,8 @@
                 android:id="@+id/tv_loyalty_points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/inter_regular"
+                style="@style/Styles.Text.Footnote.Medium_Regular"
                 android:textColor="@color/black"
-                android:textFontWeight="400"
-                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_loyalty_points_label"
                 app:layout_constraintTop_toBottomOf="@+id/tv_loyalty_points_label"
@@ -68,8 +65,8 @@
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/loyalty_switch"
-                android:layout_width="50dp"
-                android:layout_height="80dp"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_80sdp"
                 android:checked="false"
                 android:thumb="@drawable/thumb_selector"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_loyalty_points"
@@ -82,7 +79,7 @@
                 android:id="@+id/layout_loyalty_points"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
+                android:paddingBottom="@dimen/_5sdp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -110,8 +107,8 @@
                     android:id="@+id/points_card"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginBottom="2dp"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:layout_marginBottom="@dimen/_2sdp"
                     app:cardCornerRadius="@dimen/radius_small"
                     android:layout_marginTop="@dimen/margin_small"
                     app:cardPreventCornerOverlap="true"
@@ -121,7 +118,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_points_label"
                     app:layout_constraintVertical_bias="0.0"
                     app:strokeColor="#CAD0D6"
-                    app:strokeWidth="4dp">
+                    app:strokeWidth="@dimen/_4sdp">
 
                     <EditText
                         android:id="@+id/et_points"
@@ -152,22 +149,32 @@
                     android:id="@+id/imageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_double_arrow"
+                    android:src="@drawable/ic_faded_single_arrow"
                     android:layout_marginStart="@dimen/margin_large"
                     app:layout_constraintBottom_toBottomOf="@+id/sar_amount_card"
-                    app:layout_constraintEnd_toStartOf="@+id/sar_amount_card"
+                    app:layout_constraintEnd_toStartOf="@+id/icSecondArrow"
                     app:layout_constraintStart_toEndOf="@+id/points_card"
                     app:layout_constraintTop_toTopOf="@+id/sar_amount_card" />
-
+                <ImageView
+                    android:id="@+id/icSecondArrow"
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/ic_single_arrow"
+                    android:layout_marginEnd="@dimen/margin_large"
+                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintTop_toTopOf="@+id/imageView"
+                    app:layout_constraintEnd_toStartOf="@+id/sar_amount_card"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                    android:layout_height="wrap_content"/>
                 <TextView
                     android:id="@+id/tv_sar_amount_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_large"
+                    android:layout_marginStart="@dimen/margin_large"
                     android:textColor="@color/black"
                     style="@style/TextAppearance.Footnote.Medium_Regular"
                     android:textAllCaps="false"
-                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintStart_toEndOf="@+id/icSecondArrow"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="SAR Amount" />
 
@@ -176,18 +183,18 @@
                     android:id="@+id/sar_amount_card"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/margin_small"
                     app:cardCornerRadius="@dimen/radius_small"
                     app:cardPreventCornerOverlap="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintStart_toEndOf="@+id/icSecondArrow"
                     app:layout_constraintTop_toBottomOf="@+id/tv_sar_amount_label"
                     app:layout_constraintVertical_bias="0.0"
                     app:strokeColor="#CAD0D6"
-                    app:strokeWidth="4dp">
+                    app:strokeWidth="@dimen/_4sdp">
 
                     <EditText
                         android:id="@+id/et_sar_amount"
