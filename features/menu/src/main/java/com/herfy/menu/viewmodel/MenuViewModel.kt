@@ -2,8 +2,6 @@ package com.herfy.menu.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.herfy.database.entities.MenuItemEntity
-import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.menu.adapter.MenuCategoryItemAdapter
 import com.herfy.repository.FavoriteRepository
@@ -13,6 +11,7 @@ import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
@@ -37,6 +36,9 @@ class MenuViewModel @Inject constructor(
     val menuCategoryPositions = HashMap<String, Int>()
     private val _menuAdapterItems = MutableLiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>>()
     val menuAdapterItems: LiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>> = _menuAdapterItems
+
+    private val _searchMenuAdapterItems = MutableLiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>>()
+    val searchMenuAdapterItems: LiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>> = _searchMenuAdapterItems
 
     private val _showMenuItem = MutableLiveData<Pair<MenuCategory, MenuItem>>()
     val showMenuItem: LiveData<Pair<MenuCategory, MenuItem>> = _showMenuItem
@@ -74,57 +76,26 @@ class MenuViewModel @Inject constructor(
     }
 
     fun getMenuCategoriesItems() {
-        invokeAtBackground {
-            val storeId  = CacheUtil.getOrderStoreId()
-            menuCategories.clear()
-            menuCategoryPositions.clear()
-            homeRepository.getMenuCategories { homeResponse ->
-                homeResponse.data?.let { data ->
-                    data.cast<ArrayList<MenuCategory>> {
-                        it.forEach { category ->
-                            if(category.enabled == 1 && (storeId == null || !category.excludedLocations.contains(category.id))) {
-                                invokeAtBackground {
-                                    homeRepository.getMenuItemBy(category.id) { response ->
-                                        response.data?.cast<List<MenuItemEntity>> { menuItemDbs ->
-                                            val filteredMenuItems = mutableListOf<MenuItem>()
-                                            menuItemDbs.toDomain().forEach { menuItem ->
-                                                if(menuItem.enabled == 1 &&
-                                                    (storeId == null || menuItem.excludedLocations?.contains(storeId) == false)) {
-                                                    filteredMenuItems.add(menuItem)
-                                                }
-                                            }
-                                            if(filteredMenuItems.isNotEmpty()) {
-                                                filteredMenuItems.sortBy { menuItem ->  menuItem.displayOrder }
-                                                category.menuItems = filteredMenuItems
-                                                menuCategories.add(category)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+        invoke {
+            val adapterItems = mutableListOf<MenuCategoryItemAdapter.MenuAdapterItem>()
+            menuRepository.getMenuCategoriesItems {
+                menuCategories.clear()
+                menuCategories.addAll(it)
+                var count = 0
+                it.forEach { menuCategory ->
+                    menuCategoryPositions[menuCategory.id] = count
+                    adapterItems.add(MenuCategoryItemAdapter.MenuCategoryAdapterItem(menuCategory))
+                    menuCategory.menuItems.sortBy { menuItem -> menuItem.displayOrder }
+                    menuCategory.menuItems?.forEach { menuItem ->
+                        adapterItems.add(MenuCategoryItemAdapter.MenuItemAdapterItem(menuCategory, menuItem))
+                        count++
                     }
+                    count++
                 }
             }
+            _showMenuCategories.postValue(menuCategories)
+            _menuAdapterItems.postValue(adapterItems)
         }
-    }
-
-    fun getMenuCategories() {
-        menuCategories.sortBy { it.displayOrder }
-        var count = 0
-        val adapterItems = mutableListOf<MenuCategoryItemAdapter.MenuAdapterItem>()
-        menuCategories.forEach { menuCategory ->
-            menuCategoryPositions[menuCategory.id] = count
-            adapterItems.add(MenuCategoryItemAdapter.MenuCategoryAdapterItem(menuCategory))
-            menuCategory.menuItems.sortBy { menuItem -> menuItem.displayOrder }
-            menuCategory.menuItems?.forEach { menuItem ->
-                adapterItems.add(MenuCategoryItemAdapter.MenuItemAdapterItem(menuCategory, menuItem))
-                count++
-            }
-            count++
-        }
-        _showMenuCategories.postValue(menuCategories)
-        _menuAdapterItems.postValue(adapterItems)
     }
 
     fun getMenuItem(menuCategory: MenuCategory, menuItem: MenuItem) {
@@ -268,6 +239,21 @@ class MenuViewModel @Inject constructor(
                     _showMessage.postValue(it)
                 }
             }
+        }
+    }
+
+    fun searchMenuItems(query: String) {
+        invoke {
+            val adapterItems = mutableListOf<MenuCategoryItemAdapter.MenuAdapterItem>()
+            menuCategories.forEach { menuCategory ->
+                menuCategory.menuItems.forEach { menuItem ->
+                    if (menuItem.getName(LocaleUtil.getInstance().language).contains(query, ignoreCase = true)
+                    ) {
+                        adapterItems.add(MenuCategoryItemAdapter.MenuItemAdapterItem(menuCategory, menuItem))
+                    }
+                }
+            }
+            _searchMenuAdapterItems.postValue(adapterItems)
         }
     }
 

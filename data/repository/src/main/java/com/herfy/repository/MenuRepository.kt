@@ -1,6 +1,9 @@
 package com.herfy.repository
 
 import com.herfy.database.AppDatabase
+import com.herfy.database.entities.MenuCategoryEntity.Companion.toDomain
+import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.menu.MenuUtil
@@ -8,6 +11,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Allergen
 import com.skylinedynamics.solosdk.api.models.objects.AllergenCdn
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient
 import com.skylinedynamics.solosdk.api.models.objects.IngredientCdn
+import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupCdn
@@ -21,6 +25,8 @@ import javax.inject.Inject
 
 interface MenuRepository {
 
+    suspend fun getMenuCategoriesItems(result: (List<MenuCategory>) -> Unit)
+
     suspend fun getMenuItem(menuItemId: String, result: (MenuItem) -> Unit)
 
 }
@@ -29,6 +35,33 @@ class MenuRepositoryImpl @Inject constructor(
     private val appDatabase: AppDatabase,
     private val cacheUtilHelper: CacheUtilHelper
 ) : MenuRepository {
+
+    override suspend fun getMenuCategoriesItems(result: (List<MenuCategory>) -> Unit) {
+        cacheUtilHelper.getApplication()?.let { application ->
+            val storeId  = CacheUtil.getOrderStoreId()
+            val menuCategories = mutableListOf<MenuCategory>()
+            val menuCategoryDbs = appDatabase.menuCategoryEntityDao().getAllByApplication(application.id)
+            menuCategoryDbs.toDomain().forEach { menuCategory ->
+                if(menuCategory.enabled == 1 && (storeId == null || !menuCategory.excludedLocations.contains(storeId))) {
+                    val menuItemDbs = appDatabase.menuItemEntityDao().findAllByMenuCategoryId(application.id, menuCategory.id)
+                    val filteredMenuItems = mutableListOf<MenuItem>()
+                    menuItemDbs.toDomain().forEach { menuItem ->
+                        if(menuItem.enabled == 1 &&
+                            (storeId == null || menuItem.excludedLocations?.contains(storeId) == false)) {
+                            filteredMenuItems.add(menuItem)
+                        }
+                    }
+                    if(filteredMenuItems.isNotEmpty()) {
+                        filteredMenuItems.sortBy { it.displayOrder }
+                        menuCategory.menuItems = filteredMenuItems
+                        menuCategories.add(menuCategory)
+                    }
+                }
+            }
+            menuCategories.sortBy { it.displayOrder }
+            result(menuCategories)
+        }
+    }
 
     override suspend fun getMenuItem(menuItemId: String, result: (MenuItem) -> Unit) {
         cacheUtilHelper.getApplication()?.let { application ->

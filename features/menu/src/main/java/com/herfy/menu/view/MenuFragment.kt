@@ -84,10 +84,13 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     override fun initViews() {
         super.initViews()
 
-        viewModel.getMenuCategoriesItems()
-
         activity?.let {
             binding.apply {
+
+                orderTypeToolbar.setNavButton {
+                    activity?.onBackPressedDispatcher?.onBackPressed()
+                }
+
                 sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
                 val sliderHeight =
                     (Resources.getSystem().displayMetrics.widthPixels / 2.0).toInt()
@@ -106,14 +109,23 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
                     override fun afterTextChanged(p0: Editable?) {
                         p0?.let {
-                            btnClear.apply {
-                                if(it.isNotEmpty()) {
-                                    visible()
-                                } else {
-                                    gone()
+                            if(it.isNotEmpty()) {
+                                rvMenuCategories.gone()
+                                viewMenu.gone()
+                                viewSearch.visible()
+                                toolbar.layoutParams.height = resources.getDimensionPixelSize(R.dimen.toolbar_height_search)
+                                viewModel.searchMenuItems(it.toString())
+                                btnClear.visible()
+                            } else {
+                                rvMenuCategories.visible()
+                                viewMenu.visible()
+                                viewSearch.gone()
+                                toolbar.layoutParams.height = resources.getDimensionPixelSize(R.dimen.toolbar_height_menu)
+                                viewModel.menuAdapterItems.value?.let { menuAdapterItems ->
+                                    menuCategoryItemAdapter.addData(menuAdapterItems)
                                 }
+                                btnClear.gone()
                             }
-
                         }
                     }
 
@@ -138,7 +150,10 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
             }
         }
 
-        viewModel.getSlides()
+        viewModel.apply {
+            getSlides()
+            getMenuCategoriesItems()
+        }
     }
 
     override fun initTranslations() {
@@ -153,7 +168,6 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     override fun observe() {
         super.observe()
         viewModel.slides.observeNonNull(this) { slides ->
-            viewModel.getMenuCategories()
             binding.apply {
                 if (slides.size > 0) {
                     sliderViewPager.visible()
@@ -199,6 +213,10 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         viewModel.menuAdapterItems.observeNonNull(this) { menuAdapterItems ->
             binding.shimmerMenuItems.root.gone()
             menuCategoryItemAdapter.addData(menuAdapterItems)
+        }
+
+        viewModel.searchMenuAdapterItems.observeNonNull(this) { searchMenuAdapterItems ->
+            menuCategoryItemAdapter.addData(searchMenuAdapterItems)
         }
 
         viewModel.showMenuItem.observeNonNull(this) {
