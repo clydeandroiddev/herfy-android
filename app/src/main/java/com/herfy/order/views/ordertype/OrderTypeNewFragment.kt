@@ -1091,23 +1091,18 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun showStore(open: Boolean, store: Store, error: String) {
         activity?.runOnUiThread {
             if (open) {
-
-                if (!dineInTabSelected) {
-                    if (CacheUtil.getInstance().curbsideCar != null) {
-                        CacheUtil.getInstance().orderType = OrderType.CURBSIDE
-                    } else {
-                        CacheUtil.getInstance().orderType = OrderType.PICKUP
-                        CacheUtil.getInstance().curbsideCar = null
-                    }
-                } else {
+                if (dineInTabSelected) {
                     CacheUtil.getInstance().curbsideCar = null
                 }
-
                 val eventAttributes = HashMap<String, String>()
                 if (CacheUtil.getInstance().orderType === OrderType.PICKUP) {
                     eventAttributes["Pickup"] = store.attributes.name
                 } else if (CacheUtil.getInstance().orderType === OrderType.DINE_IN) {
                     eventAttributes["DineIn"] = store.attributes.name
+                } else if (CacheUtil.getInstance().orderType === OrderType.EAT_IN) {
+                    eventAttributes["WalkIn"] = store.attributes.name
+                } else if (CacheUtil.getInstance().orderType === OrderType.DRIVE_THRU) {
+                    eventAttributes["DriveThru"] = store.attributes.name
                 }
                 if (eventAttributes.isNotEmpty()) {
                     logEvent("OrderTypeSelection", eventAttributes, "", 0.0)
@@ -1480,7 +1475,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             }
         }
 
-        if (isMenuSeparate && cachedOrderType == OrderType.DELIVERY && orderTypeSelected == OrderType.PICKUP) {
+        if (isMenuSeparate && cachedOrderType == OrderType.DELIVERY && (orderTypeSelected == OrderType.PICKUP || orderTypeSelected == OrderType.DRIVE_THRU || orderTypeSelected == OrderType.EAT_IN)) {
             val itemsInCart = CacheUtil.getInstance().cart
             if (itemsInCart.size > 0) {
                 showPromptChangeOrderTypeDialog(CacheUtil.getInstance().getTranslations(

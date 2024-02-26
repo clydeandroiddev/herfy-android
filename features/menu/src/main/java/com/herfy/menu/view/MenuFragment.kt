@@ -1,6 +1,7 @@
 package com.herfy.menu.view
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
@@ -10,7 +11,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDeepLinkRequest
@@ -26,6 +26,7 @@ import com.herfy.menu.viewmodel.MenuViewModel
 import com.herfy.menu.widgets.CenterLayoutManager
 import com.herfy.utils.base.mvvm.BaseActivity
 import com.herfy.utils.base.mvvm.BaseFragment
+import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.cast
@@ -40,7 +41,6 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -54,6 +54,11 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         context?.let {
             CacheUtilHelper(it)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getOrderType()
     }
 
     private val menuCategoryAdapter: MenuCategoryAdapter by lazy {
@@ -91,7 +96,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 }
 
                 orderTypeToolbar.setOrderTypeAction {
-                    navToOrderTypePage()
+                    orderTypeClick()
                 }
 
                 sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
@@ -154,7 +159,6 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }
 
         viewModel.apply {
-            getOrderType()
             getSlides()
             getMenuCategoriesItems()
         }
@@ -209,11 +213,10 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }
 
         viewModel.orderType.observeNonNull(this) { oType ->
-            var type = CacheUtil.getInstance()
-                .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE")
+            var type =
+                CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE")
             var address = CacheUtil.getInstance().getTranslations(
-                Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
-                "Please tap here to pick an order type"
+                Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE, "Please tap here to pick an order type"
             )
             var icon = resources.getDrawable(com.herfy.ordertype.R.drawable.ic_blank_type)
             when (oType) {
@@ -239,10 +242,8 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
                 OrderType.PICKUP -> {
                     if (CacheUtil.getInstance().orderStore != null) {
-                        icon =
-                            resources.getDrawable(com.herfy.ordertype.R.drawable.ic_pickup_small)
-                        type = CacheUtil.getInstance()
-                            .getTranslations(Text.PICKUP_AT, "Pickup At")
+                        icon = resources.getDrawable(com.herfy.ordertype.R.drawable.ic_pickup_small)
+                        type = CacheUtil.getInstance().getTranslations(Text.PICKUP_AT, "Pickup At")
                         address = CacheUtil.getInstance().orderStore.attributes.name
                     }
                 }
@@ -251,8 +252,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     if (CacheUtil.getInstance().orderStore != null) {
                         icon =
                             resources.getDrawable(com.herfy.ordertype.R.drawable.ic_dine_in_small)
-                        type = CacheUtil.getInstance()
-                            .getTranslations(Text.DINE_IN, "Dine In")
+                        type = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
                         address = CacheUtil.getInstance().orderStore.attributes.name
                     }
                 }
@@ -273,7 +273,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                         icon =
                             resources.getDrawable(com.herfy.ordertype.R.drawable.ic_curbside_pickup_small)
                         type = CacheUtil.getInstance()
-                            .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
+                            .getTranslations(Text.CURBSIDE_PICKUP, "Curbside Pickup")
                         address = CacheUtil.getInstance().orderStore.attributes.name
                     }
                 }
@@ -356,14 +356,38 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     }
 
-    private fun navToOrderTypePage() {
-        val storeId = CacheUtil.getOrderStoreId() ?: ""
-        val request = NavDeepLinkRequest.Builder.fromUri(
-            Uri.parse(
-                "${Values.NAV_DEEP_LINK_BASE_URL}nav_order_type/$storeId"
-            )
-        ).build()
-        NavigationUtils.navigateSafe(findNavController(), request)
+    private fun orderTypeClick() {
+        val type = CacheUtil.getInstance().orderType
+        var orderType = OrderType.DELIVERY
+        when (type) {
+            OrderType.PICKUP, OrderType.EAT_IN, OrderType.DRIVE_THRU, OrderType.CURBSIDE -> {
+                orderType = OrderType.PICKUP
+            }
+
+            OrderType.DELIVERY -> {
+                orderType = OrderType.PICKUP
+            }
+
+            OrderType.DINE_IN -> {
+                orderType = OrderType.DINE_IN
+            }
+
+            else -> {}
+        }
+        activity?.let {
+            it.runOnUiThread {
+                val intent = Intent()
+                val storeId = CacheUtil.getOrderStoreId() ?: ""
+                intent.setClassName(it, Navigation.NAVIGATION_ACTIVITY)
+                intent.putExtra("navigation", "nav_order_type")
+                intent.putExtra("selectedOrderType", orderType.value)
+                intent.putExtra("fromHome", false)
+                intent.putExtra("fromCart", false)
+                intent.putExtra("checkout", false)
+                intent.putExtra("storeId", storeId)
+                it.startActivity(intent)
+            }
+        }
     }
 
     private fun navMenuItem(menuCategory: MenuCategory, menuItem: MenuItem) {
