@@ -69,6 +69,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.OneDayDecorator
+import com.herfy.ext.visible
 import com.herfy.firebase.FirebaseService
 import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
 import com.herfy.main.MainActivity
@@ -1341,7 +1342,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     override fun showSelectedPyament() {
         val selecetedPayment = CacheUtil.getInstance().orderPayment
-        if (selecetedPayment == PaymentType.NONE) {
+        val isUserNotSelectedAnyPaymentMethod = selecetedPayment == PaymentType.NONE
+        binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
+        binding!!.layoutPayment.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found."))
+        if (isUserNotSelectedAnyPaymentMethod) {
             binding!!.layoutPayment.tvSelectedPayment.visibility = View.GONE
             binding!!.layoutPayment.ivSelectedPayment.visibility = View.GONE
         } else {

@@ -36,6 +36,7 @@ class EmptyStateView @JvmOverloads constructor(
         View.inflate(context, R.layout.common_view_empty_state, this)
         imageView = findViewById(R.id.imageEmpty)
         txtTitle = findViewById(R.id.txtEmptyTitle)
+        setImage(image)
     }
 
     fun setTitle(text: String) {
