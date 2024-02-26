@@ -16,20 +16,20 @@ import com.herfy.model.CouponToAdd
 import com.herfy.util.ApiLogLevel
 import com.herfy.util.ApiLogUtil.Companion.sendMessageLog
 import com.herfy.util.AppLogger
-import com.herfy.util.ErrorHandler.getErrorMessage
-import com.herfy.util.MenuUtil
 import com.herfy.util.StringUtil
 import com.herfy.util.TimeUtil
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.handler.ErrorHandler
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.CoroutineContextProvider
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.ApplicationsApiCall
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall
@@ -850,7 +850,7 @@ class CartPresenter @Inject constructor(
                                 val `object` = o
                                 if (`object`.has("error") && !`object`.isNull("error")) {
                                     cartView.showError(
-                                        getErrorMessage(
+                                        ErrorHandler.getErrorMessage(
                                             `object`, CacheUtil.getInstance().getTranslations(
                                                 Text.AN_ERROR_OCCURRED
                                             ), null
@@ -1271,7 +1271,7 @@ class CartPresenter @Inject constructor(
                 AppLogger.printRetrofitError(o)
                 removeCoupon()
                 cartView.showError(
-                    getErrorMessage(
+                    ErrorHandler.getErrorMessage(
                         o, "", CacheUtil.getInstance().getTranslations(
                             Text.COUPON_DEFAULT_ERROR,
                             "Sorry but the coupon code you have entered is invalid. It may have already expired or the coupon is erroneous."
@@ -1803,7 +1803,7 @@ class CartPresenter @Inject constructor(
                 override fun onError(o: Any) {
                     AppLogger.printRetrofitError(o)
                     cartView.showError(
-                        getErrorMessage(
+                        ErrorHandler.getErrorMessage(
                             o, "", CacheUtil.getInstance().getTranslations(
                                 Text.STORE_IS_CLOSED
                             )
@@ -2016,7 +2016,7 @@ class CartPresenter @Inject constructor(
                     override fun onError(o: Any) {
                         AppLogger.printRetrofitError(o)
                         cartView.showMessage(
-                            getErrorMessage(
+                            ErrorHandler.getErrorMessage(
                                 o, CacheUtil.getInstance().getTranslations(
                                     Text.AN_ERROR_OCCURRED
                                 ), null
@@ -2056,7 +2056,7 @@ class CartPresenter @Inject constructor(
                 override fun onError(o: Any) {
                     AppLogger.printRetrofitError(o)
                     cartView.showMessage(
-                        getErrorMessage(
+                        ErrorHandler.getErrorMessage(
                             o,
                             CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED),
                             null
@@ -2992,7 +2992,7 @@ class CartPresenter @Inject constructor(
                                 AppLogger.printRetrofitError(o)
                                 cartView.showDigitalCoupon(null)
                                 cartView.showError(
-                                    getErrorMessage(
+                                    ErrorHandler.getErrorMessage(
                                         o, CacheUtil.getInstance().getTranslations(
                                             Text.AN_ERROR_OCCURRED
                                         ), null
