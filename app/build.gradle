@@ -238,7 +238,7 @@ dependencies {
     implementation project(path: ':data:model')
     implementation project(path: ':analytics:kochava')
     implementation project(path: ':data:repository')
-
+    implementation(project(":features:updatephonenumber"))
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
     implementation 'com.google.android.play:review-ktx:2.0.1'
 

@@ -43,19 +43,30 @@ object StringUtil {
             appName
         }
     }
-
-    @JvmStatic
-    fun localize(number: String): String {
-        return if (LocaleUtil.getInstance().isEnglish || LocaleUtil.getInstance().isFrench) {
+    fun fetchEmojiFlag(countryCode: String): String? {
+        val code = countryCode.uppercase()
+        val flagOffset = 0x1F1E6
+        val asciiOffset = 0x41
+        val firstChar = Character.codePointAt(code, 0) - asciiOffset + flagOffset
+        val secondChar = Character.codePointAt(code, 1) - asciiOffset + flagOffset
+        return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
+    }
+    fun localize(number: String): String? {
+        return if (LocaleUtil.getInstance().isEnglish) {
             number
         } else {
+            number.replace("1", "١").replace("2", "٢").replace("3", "٣").replace("4", "٤")
+                .replace("5", "٥").replace("6", "٦").replace("7", "٧").replace("8", "٨")
+                .replace("9", "٩").replace("0", "٠").replace(".", ",")
+        }
+    }
+    fun toEnglish(number: String): String? {
+        return if (LocaleUtil.getInstance().isEnglish) {
             number
-                .replace("١", "1").replace("٢", "2")
-                .replace("٣", "3").replace("٤", "4")
-                .replace("٥", "5").replace("٦", "6")
-                .replace("٧", "7").replace("٨", "8")
-                .replace("٩", "9").replace("٠", "0")
-                .replace(",", ".").replace("٫", ".")
+        } else {
+            number.replace("١", "1").replace("٢", "2").replace("٣", "3").replace("٤", "4")
+                .replace("٥", "5").replace("٦", "6").replace("٧", "7").replace("٨", "8")
+                .replace("٩", "9").replace("٠", "0").replace(",", ".")
         }
     }
 }

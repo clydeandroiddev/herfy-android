@@ -77,6 +77,7 @@ import com.herfy.payment.savedcards.SavedCardsDialog
 import com.herfy.payment.views.CustomCheckoutDialog
 import com.herfy.payment.views.MoyasarActivity
 import com.herfy.payment.views.OrderDialogFragment
+import com.herfy.phonenumber.EnterNewPhoneNumberFragment
 import com.herfy.ratings.AppRatingBroadcastReceiver
 import com.herfy.util.ApiLogLevel
 import com.herfy.util.ApiLogUtil.Companion.sendOrderLog
@@ -437,7 +438,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         showMap()
         requestPermissionLocation()
         binding!!.tvEditMobileNumber.ninjaTap(lifecycleScope) {
-            // todo wait for the designer what screen should be called here
+           EnterNewPhoneNumberFragment.newInstance()
+               .show(supportFragmentManager, EnterNewPhoneNumberFragment.TAG)
         }
         //        rvOrderSummary.setLayoutManager(new LinearLayoutManager(this));
 //        menuItemsRecyclerViewAdapter = new OrderSummaryItemRecyclerViewAdapter(paymentPresenter);

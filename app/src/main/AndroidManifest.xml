@@ -51,6 +51,7 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:windowSoftInputMode="stateHidden|adjustPan"
         tools:ignore="LockedOrientationActivity">
         <activity
             android:name="com.herfy.payment.views.MoyasarActivity"
