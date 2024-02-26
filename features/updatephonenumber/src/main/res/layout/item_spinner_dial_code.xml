@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="48dp"
+    android:paddingHorizontal="8dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/tv_flag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/txtPrefix"
+        android:layout_alignBottom="@id/txtPrefix"
+        android:gravity="start|center_vertical"
+        android:includeFontPadding="false"
+        android:textAlignment="viewStart"
+        android:textSize="14sp"
+        tools:text="🏳️‍🌈" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtPrefix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginVertical="@dimen/_6sdp"
+        android:layout_marginStart="@dimen/margin_5dp"
+        android:layout_toEndOf="@id/tv_flag"
+        style="@style/Styles.Text.Footnote.Medium_Regular"
+        android:ellipsize="marquee"
+        android:gravity="start|center_vertical"
+        android:includeFontPadding="false"
+        android:layoutDirection="ltr"
+        android:singleLine="true"
+        android:textAlignment="viewStart"
+        android:textColor="#1C1C1E"
+
+        tools:text="+966" />
+</RelativeLayout>
