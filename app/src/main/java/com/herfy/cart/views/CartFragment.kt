@@ -257,6 +257,9 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             "Please tap here to pick an order type"
                         )
                 }
+
+                OrderType.EAT_IN -> {}
+                OrderType.DRIVE_THRU -> {}
             }
         }
         if (adapter != null) {

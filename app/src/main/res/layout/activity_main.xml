@@ -19,7 +19,7 @@
             android:id="@+id/toolbar_main"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@color/black"
+            android:background="@color/toolbar_color"
             android:paddingHorizontal="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

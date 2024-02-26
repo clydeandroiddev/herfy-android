@@ -7,7 +7,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
@@ -26,8 +31,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResultListener
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -43,8 +46,6 @@ import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.country.CountriesFragment
 import com.herfy.databinding.FragmentMenuNewBinding
 import com.herfy.ext.cast
@@ -52,23 +53,39 @@ import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.menu.MenuContract
 import com.herfy.menu.MenuPresenter
-import com.herfy.newmenu.*
+import com.herfy.newmenu.NewMenuFragmentCommonListener
+import com.herfy.newmenu.NewMenuTabListener
+import com.herfy.newmenu.SliderContract
+import com.herfy.newmenu.SliderPresenter
+import com.herfy.newmenu.TabModel
 import com.herfy.newmenu.adapter.MenuCategoriesAdapter
 import com.herfy.newmenu.adapter.SearchMenuRecyclerViewAdapter
 import com.herfy.newmenu.adapter.SliderFragmentStateAdapter
 import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
-import com.skylinedynamics.solosdk.api.models.objects.*
-import com.herfy.util.*
+import com.herfy.util.CacheHelper
+import com.herfy.util.StringUtil
 import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.smoothSnapToPosition
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
-import com.herfy.utils.helper.NavigationUtils
-import java.util.*
-import kotlin.collections.ArrayList
+import com.skylinedynamics.solosdk.api.models.objects.Campaign
+import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
+import com.skylinedynamics.solosdk.api.models.objects.Favorite
+import com.skylinedynamics.solosdk.api.models.objects.Ingredient
+import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
+import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
+import com.skylinedynamics.solosdk.api.models.objects.Slide
+import com.skylinedynamics.solosdk.api.models.objects.Store
+import java.util.Locale
 
 
 class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, NewMenuTabListener {
@@ -534,6 +551,9 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                             Locale.getDefault()
                         )
                 }
+
+                OrderType.EAT_IN -> {}
+                OrderType.DRIVE_THRU -> {}
             }
         }
         if (CacheUtil.getInstance().favoriteMenuCategory != null && CacheUtil.getInstance().favoriteMenuItem != null) {

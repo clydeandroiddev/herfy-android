@@ -34,7 +34,6 @@ import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.herfy.BuildConfig
 import com.herfy.R
@@ -53,6 +52,7 @@ import com.herfy.ext.cast
 import com.herfy.ext.readAssetsFile
 import com.herfy.favorites.FavoritesFragmentDirections
 import com.herfy.feedback.FeedbackActivity
+import com.herfy.home.views.HomeFragmentDirections
 import com.herfy.loyalty.LoyaltyActivity
 import com.herfy.main.adapter.LanguageAdapter
 import com.herfy.main.adapter.SwitchServerAdapter
@@ -1194,41 +1194,36 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
         when (currentDestination) {
-            /*R.id.nav_menu -> NavigationUtils.navigateSafe(
+            R.id.nav_herfy_home -> NavigationUtils.navigateSafe(
                 navController,
-                NewMenuFragmentDirections.actionMenuToCart(
+                HomeFragmentDirections.actionHomeToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
-            )*/
-
+            )
             R.id.nav_home -> NavigationUtils.navigateSafe(
                 navController,
                 NewMenuHomePageFragmentDirections.actionHomeToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
-
             R.id.nav_menu_item -> NavigationUtils.navigateSafe(
                 navController,
                 MenuItemFragmentDirections.actionMenuItemToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
-
             R.id.nav_favorites -> NavigationUtils.navigateSafe(
                 navController,
                 FavoritesFragmentDirections.actionFavoritesToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
-
             R.id.nav_popular_now -> NavigationUtils.navigateSafe(
                 navController,
                 PopularNowFragmentDirections.actionPopularNowToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
-
             R.id.nav_digital_coupons -> NavigationUtils.navigateSafe(
                 navController,
                 DigitalCouponsFragmentDirections.actionDigitalCouponsToCart()

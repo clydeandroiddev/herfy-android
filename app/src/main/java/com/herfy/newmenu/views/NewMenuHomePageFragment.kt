@@ -8,7 +8,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
@@ -32,12 +37,9 @@ import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.browser.BrowserActivity
-import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.country.CountriesFragment
 import com.herfy.databinding.FragmentMenuNewHomePageBinding
 import com.herfy.ext.cast
@@ -50,20 +52,40 @@ import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.newmenu.NewMenuTabListener
 import com.herfy.newmenu.SliderContract
 import com.herfy.newmenu.SliderPresenter
-import com.herfy.newmenu.adapter.*
+import com.herfy.newmenu.adapter.MenuCouponRecyclerViewAdapter
+import com.herfy.newmenu.adapter.MenuFavoritesRecyclerViewAdapter
+import com.herfy.newmenu.adapter.MenuPopularRecyclerViewAdapter
+import com.herfy.newmenu.adapter.MenuRecentOrderRecyclerViewAdapter
+import com.herfy.newmenu.adapter.NewHomeMenuAdapter
 import com.herfy.newmenu.adapter.NewHomeMenuAdapter.NewHomeMenuAdapterListener
+import com.herfy.newmenu.adapter.SearchMenuRecyclerViewAdapter
+import com.herfy.newmenu.adapter.SliderFragmentStateAdapter
 import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
-import com.skylinedynamics.solosdk.api.models.objects.*
-import com.herfy.util.*
+import com.herfy.util.CacheHelper
+import com.herfy.util.StringUtil
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
-import java.util.*
-import kotlin.collections.ArrayList
+import com.skylinedynamics.solosdk.api.models.objects.Campaign
+import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
+import com.skylinedynamics.solosdk.api.models.objects.Favorite
+import com.skylinedynamics.solosdk.api.models.objects.Ingredient
+import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
+import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
+import com.skylinedynamics.solosdk.api.models.objects.Slide
+import com.skylinedynamics.solosdk.api.models.objects.Store
+import java.util.Locale
 
 class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContract.View,
     NewMenuTabListener, NewHomeMenuAdapterListener {
@@ -440,6 +462,9 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                             Locale.getDefault()
                         )
                 }
+
+                OrderType.EAT_IN -> {}
+                OrderType.DRIVE_THRU -> {}
             }
 
             OrderType.NONE -> {

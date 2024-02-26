@@ -15,6 +15,11 @@
             app:destination="@id/nav_menu"
             app:popUpTo="@+id/nav_herfy_home" />
 
+        <action
+            android:id="@+id/action_home_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_herfy_home" />
+
 
     </fragment>
 

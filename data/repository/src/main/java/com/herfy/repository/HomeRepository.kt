@@ -369,6 +369,8 @@ class HomeRepositoryImpl @Inject constructor(
             }
 
             OrderType.NONE -> {}
+            OrderType.EAT_IN -> {}
+            OrderType.DRIVE_THRU -> {}
         }
 
         val vatAmount = 0.0
