@@ -38,7 +38,6 @@ import com.herfy.main.NavigationActivity
 import com.herfy.order.views.ordertype.OrderTypeNewFragment
 import com.herfy.payment.dialog.PaymentOrderTimeDialog
 import com.herfy.payment.views.OrderDialogFragment
-import com.herfy.payment.views.PaymentActivity
 import com.herfy.upsell.UpsellRecyclerViewAdapter
 import com.herfy.util.*
 import com.herfy.utils.analytics.MixpanelUtil
@@ -1279,17 +1278,17 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showUpsell(upsells: ArrayList<MenuItem>) {
         runOnMain {
             binding.upsellContainer.apply {
+                placeholderUpsell.shimmerOrderDetails.visibility = View.GONE
                 if (upsells.size > 0) {
                     rvUpsellItems.OnLayoutLoadingCompleted {
                         Handler(Looper.getMainLooper()).postDelayed({
                             clUpsell.visibility = View.VISIBLE
-                            placeholderUpsell.shimmerOrderDetails.visibility = View.GONE
+
                         }, 500)
                     }
                     upsellRecyclerViewAdapter?.notifyDataSetChanged()
                 } else {
                     clUpsell.visibility = View.GONE
-                    placeholderUpsell.shimmerOrderDetails.visibility = View.GONE
                 }
 
             }

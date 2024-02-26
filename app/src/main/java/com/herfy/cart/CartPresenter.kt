@@ -2087,9 +2087,11 @@ class CartPresenter @Inject constructor(
                     } catch (e: JSONException) {
                         e.printStackTrace()
                         onError(e)
+                        cartView.showUpsell(arrayListOf())
                     }
                 } else {
                     onError("")
+                    cartView.showUpsell(arrayListOf())
                 }
             }
 
