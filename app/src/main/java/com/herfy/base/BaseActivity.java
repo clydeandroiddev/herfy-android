@@ -480,15 +480,12 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
     public void showLoadingDialog() {
 
         try {
-
             dismissDialogs();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setCancelable(false);
-
             builder.setView(getLayoutInflater().inflate(R.layout.loading, null));
 
             loadingDialog = builder.create();
-
             loadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
             loadingDialog.show();

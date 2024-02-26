@@ -219,20 +219,12 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.cast<BaseActivity> {
-            it.showLoadingDialog()
-        }
-
         isMenuSeparate = CacheUtil.getInstance().isSeparatedMenus
-
         activity?.apply {
             if (intent?.extras?.containsKey("selectedOrderType") == true) {
                 typeOrder = intent?.extras?.getInt("selectedOrderType", 0) ?: 0
                 intent?.removeExtra("selectedOrderType")
             }
-        }
-
-        if (activity is NavigationActivity && isMenuSeparate && CacheUtil.getInstance().orderType == OrderType.NONE) {
         }
         orderPresenter.start()
         isCurbsideAvailable = CacheUtil.getInstance().application.attributes.getOrderTypes()
@@ -919,7 +911,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun callStore(store: Store) {}
     override fun selectStore(position: Int, store: Store, initialLoad: Boolean) {
         currentSelectedStore = store
-
         if (!curbsideTabSelected) {
             dineInStoresRecyclerViewAdapter?.selected = position
             if (dineInStoresRecyclerViewAdapter?.selected != -1) {
