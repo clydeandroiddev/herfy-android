@@ -846,14 +846,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             CacheUtil.getInstance().getTranslations(Text.CHECKOUT, "Checkout")
         binding!!.layoutPayment.tvEditPaymentMethod.text =
             CacheUtil.getInstance().getTranslations(Text.EDIT, "Edit")
-                .uppercase(Locale.getDefault())
         binding!!.tvEditMobileNumber.text =
             CacheUtil.getInstance().getTranslations(Text.EDIT, "Edit")
-                .uppercase(Locale.getDefault())
         binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance().getTranslations(
             Text.DELIVERY_INSTRUCTION,
             "Delivery Instruction"
-        ).uppercase(Locale.getDefault())
+        )
+        binding!!.layoutPayment.tvPaymentMethod.text = CacheUtil.getInstance()
+            .getTranslations(Text.PAYMENT_METHOD_NOT_CAPS, "Payment Method")
         //        tvChangeOrderType.setText(CacheUtil.getInstance().getTranslations(Text.CHANGE, "Change").toUpperCase());
         binding!!.layoutLoyalty.tvPointsLabel.text =
             CacheUtil.getInstance().getTranslations(Text.POINTS, "Points")

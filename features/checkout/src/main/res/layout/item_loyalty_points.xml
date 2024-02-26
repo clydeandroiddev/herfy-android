@@ -28,8 +28,8 @@
 
             <ImageView
                 android:id="@+id/image_view"
-                android:layout_width="@dimen/_50sdp"
-                android:layout_height="@dimen/_50sdp"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
                 android:background="@drawable/bg_loyalty_points"
                 android:src="@drawable/ic_loyalty_white"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_loyalty_points"

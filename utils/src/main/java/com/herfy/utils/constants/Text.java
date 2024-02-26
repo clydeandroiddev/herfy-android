@@ -603,6 +603,7 @@ public class Text {
     public static final String DIGITAL_OFFERS_CAPS = "digital_offers_caps";
     public static final String AVAIL_NOW_CAPS = "avail_now_caps";
     public static final String SORRY_ERROR_PAYMENT = "sorry_error_payment";
+    public static final String PAYMENT_METHOD_NOT_CAPS = "payment_method_not_caps";
     public static final String BROWSE_MENU_CAPS = "browse_menu_caps";
     public static final String CATEGORIES_CAPS = "categories_caps";
     public static final String FAVORITES_CAPS = "favorites_caps";

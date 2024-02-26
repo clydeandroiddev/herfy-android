@@ -31,16 +31,14 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp">
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_payment_method"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_semi_bold"
-                    android:text="Payment Method"
-                    android:textAllCaps="false"
+                    tools:text="Payment Method"
                     android:textColor="@color/black"
-                    android:textFontWeight="600"
-                    android:textSize="14sp"
+                    style="@style/Styles.Text.Footnote.Semi.Bold"
                     app:layout_constraintEnd_toStartOf="@+id/imageView3"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -48,23 +46,21 @@
 
                 <ImageView
                     android:id="@+id/imageView3"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
                     android:src="@drawable/ic_edit"
-                    android:layout_marginEnd="2dp"
+                    android:layout_marginEnd="@dimen/_2sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_edit_payment_method"
                     app:layout_constraintEnd_toStartOf="@+id/tv_edit_payment_method"
                     app:layout_constraintTop_toTopOf="@+id/tv_edit_payment_method" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_edit_payment_method"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_medium"
-                    android:textColor="#0064AC"
-                    android:textSize="16sp"
-                    android:textFontWeight="500"
-                    android:lineHeight="19dp"
+                    android:textColor="@color/selected_stroke_color"
+                    style="@style/Styles.Text.Callout"
                     android:textAllCaps="false"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_payment_method"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -73,9 +69,9 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_selected_payment"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:padding="10dp"
+                    android:layout_width="@dimen/_45sdp"
+                    android:layout_height="@dimen/_45sdp"
+                    android:padding="@dimen/_10sdp"
                     android:background="@drawable/unselected_image_bg"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_selected_payment"
                     app:layout_constraintStart_toStartOf="@+id/tv_payment_method"
@@ -86,13 +82,11 @@
                     android:id="@+id/tv_selected_payment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="26dp"
-                    android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/inter_regular"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_26sdp"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    style="@style/Styles.Text.Callout"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textFontWeight="400"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/iv_selected_payment"
                     app:layout_constraintTop_toBottomOf="@+id/tv_payment_method"

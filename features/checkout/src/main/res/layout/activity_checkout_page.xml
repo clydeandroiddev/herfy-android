@@ -207,8 +207,8 @@
 
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/iv_mobile_number"
-                                android:layout_width="@dimen/_50sdp"
-                                android:layout_height="@dimen/_50sdp"
+                                android:layout_width="@dimen/_45sdp"
+                                android:layout_height="@dimen/_45sdp"
                                 android:background="@drawable/unselected_image_bg"
                                 android:padding="@dimen/padding_large"
                                 android:src="@drawable/ic_mobile"
@@ -231,8 +231,8 @@
 
                             <ImageView
                                 android:id="@+id/imageView3"
-                                android:layout_width="@dimen/_16sdp"
-                                android:layout_height="@dimen/_16sdp"
+                                android:layout_width="@dimen/_14sdp"
+                                android:layout_height="@dimen/_14sdp"
                                 android:layout_marginEnd="@dimen/_2sdp"
                                 android:src="@drawable/ic_edit"
                                 app:layout_constraintBottom_toBottomOf="@+id/tv_edit_mobile_number"
@@ -274,8 +274,8 @@
 
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/iv_delivery_note"
-                                android:layout_width="@dimen/_50sdp"
-                                android:layout_height="@dimen/_50sdp"
+                                android:layout_width="@dimen/_45sdp"
+                                android:layout_height="@dimen/_45sdp"
                                 android:layout_marginTop="@dimen/_12sdp"
                                 android:background="@drawable/unselected_image_bg"
                                 android:padding="@dimen/padding_large"
