@@ -607,6 +607,16 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
     }
 
     @Override
+    public void goToItemDetails(int position, MenuItem upsell) {
+
+    }
+
+    @Override
+    public void showCartMenuItemsLoading() {
+
+    }
+
+    @Override
     public void setSchedule(boolean showAlert, String scheduleTime) {
 
     }

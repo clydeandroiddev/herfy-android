@@ -3168,15 +3168,12 @@ class CartPresenter @Inject constructor(
         removeMukafaaRedemption()
         validateOrder(false, false, null)
     }
-
     override fun setMukafaaTransactionAmount(amount: Double) {
         CacheUtil.getInstance().mukafaaTransactionAmount = amount
     }
-
     override fun sendLog(level: ApiLogLevel, message: String) {
         sendMessageLog(level, message)
     }
-
     override fun onBindUpsellViewAtPosition(position: Int, holder: UpsellViewHolder) {
        holder.setUpsell(upsells[position])
     }
@@ -3184,4 +3181,24 @@ class CartPresenter @Inject constructor(
     override fun getUpsellCount(): Int {
         return upsells.size
     }
+
+    override fun goToItemDetails(position: Int, upsell: MenuItem?) {
+        cartView.goToItemDetails(position, upsell)
+    }
+
+    override fun addToCart(upsell: MenuItem) {
+        val store = CacheUtil.getInstance().orderStore
+
+        if (store != null && upsell.getDisabledStores().containsKey(store.id)) {
+            cartView.showError(
+                CacheUtil.getInstance().getTranslations(Text.LOCATION_AVAILABLE)
+                    .replace("(x)", store.attributes.name)
+            )
+        }else {
+            CacheUtil.getInstance().addToCart(upsell)
+            cartView.showCartMenuItemsLoading()
+            getMenuItems()
+        }
+    }
+
 }

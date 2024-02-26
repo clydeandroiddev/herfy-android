@@ -266,13 +266,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             }
         }
     }
-
     fun cartExpired() {
         if (cartPresenter != null) {
             cartPresenter.getMenuItems()
         }
     }
-
     private fun setupCurbside() {
         val customerCar = CacheUtil.getInstance().curbsideCar
         /*if (customerCar != null) {
@@ -339,7 +337,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             )
         }*/
     }
-
     override fun setPresenter(presenter: CartContract.Presenter) {
         cartPresenter = presenter
     }
@@ -685,7 +682,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     @SuppressLint("SetTextI18n")
     override fun setupTranslations() {
         binding.toolbarTitle.title = CacheUtil.getInstance().getTranslations(Text.YOUR_BAG_LABEL, "Your Bag")
-        //binding.toolbarTitle.setTitle(CacheUtil.getInstance().getTranslations(Text.YOUR_BAG_LABEL, "Your Bag"))
         binding.paymentSummaryContainer.totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
         binding.paymentSummaryContainer.subtotalLabel.text = CacheUtil.getInstance().getTranslations(Text.SUBTOTAL, "Subtotal")
         binding.paymentSummaryContainer.deliveryChargeLabel.text = CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery charge");
@@ -782,53 +778,22 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             itemCount += item.attributes.quantity
         }
         binding.orderDetailsContainer.apply {
-            yourOrderLabel.text = "Your Order (${itemCount})"
-            rvCartItems.OnLayoutLoadingCompleted {
-                Handler(Looper.getMainLooper()).postDelayed( {
-                    clOrderDetails.visibility = View.VISIBLE
-                    placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
-                }, 500)
-            }
-
-        }
-        adapter!!.notifyDataSetChanged()
-
-        /*
-        if (menuItems.isNotEmpty()) {
-            binding.main.containerDetails.visibility = View.VISIBLE
-            binding.main.empty.visibility = View.GONE
-            hideOrShowList(View.VISIBLE)
-            if (!Values.NO_PROMOTIONS) {
-                if (CacheUtil.getInstance().orderType !== OrderType.NONE && AuthUtil.getInstance().isSignedIn) {
-                    showDigitalCoupon(CacheUtil.getInstance().campaign)
+            if(itemCount > 0){
+                yourOrderLabel.text = "Your Order (${itemCount})"
+                rvCartItems.OnLayoutLoadingCompleted {
+                    Handler(Looper.getMainLooper()).postDelayed( {
+                        clOrderDetails.visibility = View.VISIBLE
+                        placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
+                    }, 500)
                 }
+                adapter!!.notifyDataSetChanged()
+            }else {
+                clOrderDetails.visibility = View.GONE
+                placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
             }
-            if (!CacheUtil.getInstance().concept.isCartNotesEnabled) {
-                binding.main.orderNotesLabel.visibility = View.GONE
-                binding.main.orderNotesCard.visibility = View.GONE
-            } else {
-                binding.main.orderNotesLabel.visibility = View.VISIBLE
-                binding.main.orderNotesCard.visibility = View.VISIBLE
-            }
-        } else {
-            binding.main.tableNumberContainer.visibility = View.GONE
-            binding.main.orderNotesLabel.visibility = View.GONE
-            binding.main.orderNotesCard.visibility = View.GONE
-            binding.main.promotionalItemLayout.visibility = View.GONE
-            binding.main.containerDetails.visibility = View.GONE
-            binding.main.curbsideSpace.visibility = binding.main.curbsideLayout!!.visibility
-            binding.main.empty!!.visibility = View.VISIBLE
-            hideOrShowList(View.GONE)
-        }*/
+        }
 
-        /*if (!Values.NO_PROMOTIONS) {
-            if (CacheUtil.getInstance().getOrderType() != OrderType.NONE && AuthUtil.getInstance().isSignedIn()) {
-                campaignLayout.setVisibility(View.VISIBLE);
-                showDigitalCoupon(CacheUtil.getInstance().getCampaign());
-            } else {
-                campaignLayout.setVisibility(View.GONE);
-            }
-        }*/if (signIn) {
+        if (signIn) {
             signIn = false
             if (AuthUtil.getInstance().isSignedIn) {
                 cartPresenter!!.proceed(scheduleTime)
@@ -2094,6 +2059,24 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         NavigationUtils.navigateSafe(
             findNavController(), CartFragmentDirections.actionCartToOrder(orderId)
         )
+    }
+
+    override fun goToItemDetails(position: Int, upsell: MenuItem) {
+        NavigationUtils.navigateSafe(
+            findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                upsell.attributes.categoryId.toString(), upsell.id, -1
+            )
+        )
+    }
+
+    override fun showCartMenuItemsLoading(){
+        binding.orderDetailsContainer.apply {
+            clOrderDetails.visibility = View.GONE
+            placeholderOrderDetails.apply {
+                shimmerOrderDetails.visibility = View.VISIBLE
+                shimmerOrderDetails.startShimmer()
+            }
+        }
     }
 
 }

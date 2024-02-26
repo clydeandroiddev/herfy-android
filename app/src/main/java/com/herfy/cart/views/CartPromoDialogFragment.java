@@ -412,6 +412,16 @@ public class CartPromoDialogFragment extends DialogFragment implements CartContr
     }
 
     @Override
+    public void goToItemDetails(int position, MenuItem upsell) {
+
+    }
+
+    @Override
+    public void showCartMenuItemsLoading() {
+
+    }
+
+    @Override
     public void setSchedule(boolean showAlert, String scheduleTime) {
 
     }

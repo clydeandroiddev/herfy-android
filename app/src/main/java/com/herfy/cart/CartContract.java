@@ -105,6 +105,10 @@ public interface CartContract {
 
         void firebaseCheckoutEvent();
 
+        void goToItemDetails(int position, MenuItem upsell);
+
+        void showCartMenuItemsLoading();
+
     }
 
     interface Presenter extends BasePresenter {
@@ -190,28 +194,19 @@ public interface CartContract {
         void validateDigitalCoupon(boolean fromApply, Campaign campaign);
 
         void availDigitalCoupon(int position);
-
         void availDigitalCouponCampaign(Campaign campaign);
-
         void selectPromo(int position);
-
         String getNotes(int position);
-
         void addNotes(int position, String notes);
-
         void removeMukafaaRedemption();
-
         double getMukafaaTransactionAmount();
-
         void removeMukafaa();
-
         void setMukafaaTransactionAmount(double amount);
-
         void sendLog(ApiLogLevel level, String message);
-
-        void onBindUpsellViewAtPosition(int position, @NotNull UpsellViewHolder holder);
-
+        void onBindUpsellViewAtPosition(int position, UpsellViewHolder holder);
         int getUpsellCount();
+        void goToItemDetails(int position, MenuItem upsell);
+        void addToCart(MenuItem upsell);
     }
 
 }

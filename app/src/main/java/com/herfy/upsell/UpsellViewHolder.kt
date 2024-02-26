@@ -19,34 +19,17 @@ class UpsellViewHolder(val binding: ItemUpsellBinding, private val upsellPresent
     fun setUpsell(upsell: MenuItem) {
         binding.apply {
             contentMain.setOnClickListener { v: View? ->
-                /*if (upsell.isMustBeCustomized) {
+                if (upsell.isMustBeCustomized) {
                     upsellPresenter.goToItemDetails(adapterPosition, upsell)
                 } else {
-                    if (upsell.attributes.quantity != 0) {
-                        upsellPresenter.changeToZero(adapterPosition)
-                    } else {
-                        upsellPresenter.changeQuantity(adapterPosition, true)
-                    }
-                }*/
-            }
-           /* if (upsell.isMustBeCustomized) {
-                quantityLayout!!.visibility = View.GONE
-                container!!.strokeColor =
-                    ContextCompat.getColor(itemView.context, android.R.color.transparent)
-            } else {
-                if (upsell.attributes.quantity != 0) {
-                    quantityLayout!!.visibility = View.VISIBLE
-                    container!!.strokeColor = Color.parseColor(CacheUtil.getInstance().colorMain)
-                } else {
-                    quantityLayout!!.visibility = View.GONE
-                    container!!.strokeColor =
-                        ContextCompat.getColor(itemView.context, android.R.color.transparent)
+                    upsell.attributes.quantity = 1
+                    upsellPresenter.addToCart(upsell)
                 }
-            }*/
+            }
+
             plus.setOnClickListener {
-                /*upsellPresenter.changeQuantity(
-                    adapterPosition, true
-                )*/
+                upsell.attributes.quantity = 1
+                upsellPresenter.addToCart(upsell)
             }
             var imageUrl = upsell.attributes.image
             if (imageUrl == null || imageUrl.equals(
