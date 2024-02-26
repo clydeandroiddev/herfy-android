@@ -3,183 +3,220 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:paddingBottom="16dp"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/image_view"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/ic_ellipse_placeholder"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_loyalty_points"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_loyalty_points_label" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_loyalty_points_label"
-        android:layout_width="wrap_content"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/loyalty_points_payment_container"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Use Loyalty Points"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        android:fontFamily="@font/inter_semi_bold"
-        app:layout_constraintStart_toEndOf="@+id/image_view"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="16dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:strokeColor="#D9E8F3"
+        app:strokeWidth="1dp"
+        tools:visibility="visible">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_loyalty_points"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/inter_regular"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tv_loyalty_points_label"
-        app:layout_constraintTop_toBottomOf="@+id/tv_loyalty_points_label"
-        app:layout_constraintVertical_bias="0.0"
-        tools:text="1900 points" />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/loyalty_switch"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:checked="true"
-        android:thumb="@drawable/thumb_selector"
-        app:track="@drawable/track_selector"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_loyalty_points"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintTop_toTopOf="@+id/tv_loyalty_points_label"/>
-
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_loyalty_points"
-        app:layout_constraintVertical_bias="1.0"
-        android:visibility="gone">
-        
-        
-
-        <TextView
-            android:id="@+id/tv_points_label"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/inter_semi_bold"
-            android:textColor="@color/black"
-            android:textSize="11sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Points" />
+            android:padding="16dp">
 
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:background="@drawable/bg_loyalty_points"
+                android:src="@drawable/ic_loyalty_white"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_loyalty_points"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_loyalty_points_label" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/points_card"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginBottom="2dp"
-            app:cardBackgroundColor="@color/gray_600"
-            app:cardCornerRadius="5dp"
-            app:cardPreventCornerOverlap="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/imageView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_points_label"
-            app:layout_constraintVertical_bias="0.0"
-            app:strokeColor="@color/gray_400"
-            app:strokeWidth="2dp">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_loyalty_points_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginBottom="@dimen/margin_large"
+                android:fontFamily="@font/inter_semi_bold"
+                tools:text="Use Loyalty Points"
+                android:textColor="@color/black"
+                style="@style/Styles.Text.Footnote.Semi.Bold"
+                app:layout_constraintStart_toEndOf="@+id/image_view"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
-            <EditText
-                android:id="@+id/et_points"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_loyalty_points"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Styles.Text.Footnote.Medium_Regular"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_loyalty_points_label"
+                app:layout_constraintTop_toBottomOf="@+id/tv_loyalty_points_label"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="1900 points" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/loyalty_switch"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:checked="false"
+                android:thumb="@drawable/thumb_selector"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_loyalty_points"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintTop_toTopOf="@+id/tv_loyalty_points_label"
+                app:track="@drawable/track_selector" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_loyalty_points"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:fontFamily="@font/inter_semi_bold"
-                android:paddingStart="16dp"
-                tools:text="500"
-                android:textSize="18sp" />
-        </androidx.cardview.widget.CardView>
+                android:paddingBottom="@dimen/_5sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/image_view"
+                app:layout_constraintVertical_bias="1.0"
+                tools:visibility="visible">
 
 
+                <TextView
+                    android:id="@+id/tv_points_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_large"
+                    android:textColor="@color/black"
+                    style="@style/TextAppearance.Footnote.Medium_Regular"
+                    android:textAllCaps="false"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Points" />
 
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="20dp"
-            app:layout_constraintGuide_percent=".5" />
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/points_card"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:layout_marginBottom="@dimen/_2sdp"
+                    app:cardCornerRadius="@dimen/radius_small"
+                    android:layout_marginTop="@dimen/margin_small"
+                    app:cardPreventCornerOverlap="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_points_label"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:strokeColor="#CAD0D6"
+                    app:strokeWidth="@dimen/_4sdp">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_double_arrow"
-            app:layout_constraintBottom_toBottomOf="@+id/sar_amount_card"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="@+id/sar_amount_card" />
+                    <EditText
+                        android:id="@+id/et_points"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:digits="0123456789"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="numberDecimal"
+                        android:lines="1"
+                        android:maxLength="12"
+                        android:maxLines="1"
+                        android:padding="14dp"
+                        android:textFontWeight="400"
+                        android:textSize="16sp"
+                        tools:text="500" />
+                </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/tv_sar_amount_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/inter_semi_bold"
-            android:textColor="@color/black"
-            android:textSize="11sp"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="SAR Amount" />
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="20dp"
+                    app:layout_constraintGuide_percent=".5" />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_faded_single_arrow"
+                    android:layout_marginStart="@dimen/margin_large"
+                    app:layout_constraintBottom_toBottomOf="@+id/sar_amount_card"
+                    app:layout_constraintEnd_toStartOf="@+id/icSecondArrow"
+                    app:layout_constraintStart_toEndOf="@+id/points_card"
+                    app:layout_constraintTop_toTopOf="@+id/sar_amount_card" />
+                <ImageView
+                    android:id="@+id/icSecondArrow"
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/ic_single_arrow"
+                    android:layout_marginEnd="@dimen/margin_large"
+                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintTop_toTopOf="@+id/imageView"
+                    app:layout_constraintEnd_toStartOf="@+id/sar_amount_card"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/tv_sar_amount_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_large"
+                    android:layout_marginStart="@dimen/margin_large"
+                    android:textColor="@color/black"
+                    style="@style/TextAppearance.Footnote.Medium_Regular"
+                    android:textAllCaps="false"
+                    app:layout_constraintStart_toEndOf="@+id/icSecondArrow"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="SAR Amount" />
 
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/sar_amount_card"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/gray_600"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            app:cardCornerRadius="5dp"
-            app:cardPreventCornerOverlap="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toBottomOf="@+id/tv_sar_amount_label"
-            app:layout_constraintVertical_bias="0.0"
-            app:strokeColor="@color/gray_600"
-            app:strokeWidth="4dp">
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/sar_amount_card"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:layout_marginTop="@dimen/margin_small"
+                    app:cardCornerRadius="@dimen/radius_small"
+                    app:cardPreventCornerOverlap="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/icSecondArrow"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_sar_amount_label"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:strokeColor="#CAD0D6"
+                    app:strokeWidth="@dimen/_4sdp">
 
-            <EditText
-                android:id="@+id/et_sar_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:fontFamily="@font/inter_semi_bold"
-                android:paddingStart="16dp"
-                android:textSize="18sp"
-                tools:text="5" />
+                    <EditText
+                        android:id="@+id/et_sar_amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:fontFamily="@font/inter_regular"
+                        android:padding="14dp"
+                        android:textFontWeight="400"
+                        android:textSize="16sp"
+                        tools:text="5" />
 
-        </androidx.cardview.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

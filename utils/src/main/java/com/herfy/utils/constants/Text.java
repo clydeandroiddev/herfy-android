@@ -280,6 +280,9 @@ public class Text {
     public static final String FREE = "free";
     public static final String FREE_CAPS = "free_caps";
     public static final String OPTIONAL_KEY = "optional_key";
+
+    public static final String NO_PAYMENT_METHOD_SELECTED = "no_payment_methods";
+    public static final String TOTAL_VAT_DESCRIPTION  = "total_vat_description";
     public static final String REQUIRED_KEY = "required_key";
     public static final String SHOW_FACILITY = "show_facility";
     public static final String HIDE_FACILITY = "hide_facility";
@@ -601,6 +604,7 @@ public class Text {
     public static final String DIGITAL_OFFERS_CAPS = "digital_offers_caps";
     public static final String AVAIL_NOW_CAPS = "avail_now_caps";
     public static final String SORRY_ERROR_PAYMENT = "sorry_error_payment";
+    public static final String PAYMENT_METHOD_NOT_CAPS = "payment_method_not_caps";
     public static final String BROWSE_MENU_CAPS = "browse_menu_caps";
     public static final String CATEGORIES_CAPS = "categories_caps";
     public static final String FAVORITES_CAPS = "favorites_caps";
@@ -639,6 +643,7 @@ public class Text {
     public static final String LOYALTY_AMOUNT_SPENT = "amount_spent";
     public static final String LOYALTY_LEAVE_BLANK = "no_points_use";
     public static final String LOYALTY_USE_POINTS = "use_loyalty_points_caps";
+    public static final String LOYALTY_USE_POINTS_NOT_CAPS = "use_loyalty_points_not_caps";
     public static final String DELETE_ACCOUNT_ASK = "delete_account_ask";
     public static final String DELETE_ACCOUNT_CANNOT_UNDONE = "delete_account_cannot_undone";
     public static final String DELETE_ACCOUNT_CAPS = "delete_account_caps";
@@ -853,11 +858,21 @@ public class Text {
     public static final String SOCIAL_MEDIA_LABEL = "social_media_label";
     public static final String FAVOURITES_LABEL ="favourites_label";
     public static final String GET_STARTED_LABEL = "get_started_label";
+    public static final String SAR_AMOUNT = "sar_amount";
+    public static final String DEBIT_CREDIT_CARD = "debit_credit_card";
+    public static final String WITHIN = "within";
+    public static final String PLACE_ORDER = "place_order";
+    public static final String PICKUP_TIME = "pickup_time";
+    public static final String DELIVERY_INSTRUCTION = "delivery_instructions";
+    public static final String DO_NOT_RING_BELL = "do_not_call_ring_me";
+    public static final String LOYALTY_POINTS = "loyalty_points";
+    public static final String PAYMENT_METHODS = "payment_methods";
 
     public static final String ALL_LABEL="all_label";
     public static final String REDEEM_LABEL = "redeem_label";
     public static final String REMOVE_PROMO_LABEL="remove_promo";
     public static final String HERFY_SUPPORT = "herfy_support";
+    public static final String MINS = "mins";
 
     public static final String YOUR_BASKET_LABEL = "your_basket_label";
     public static final String HELP_LABEL = "help_label";

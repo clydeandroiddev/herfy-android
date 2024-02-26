@@ -1960,6 +1960,16 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
 
     }
 
+    @Override
+    public void showOrderType(Boolean checkout) {
+
+    }
+
+    @Override
+    public void showSelectedPyament() {
+
+    }
+
     private void inputCvvDialog(String orderId, CustomerCard card) {
         cvvDialogAlert = CVVDialogAlert.newInstance(new CVVDialogAlert.OnCVVAction() {
             @Override

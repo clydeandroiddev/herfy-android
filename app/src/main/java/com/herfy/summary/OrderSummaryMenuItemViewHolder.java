@@ -418,6 +418,16 @@ public class OrderSummaryMenuItemViewHolder extends RecyclerView.ViewHolder impl
 
     }
 
+    @Override
+    public void showOrderType(Boolean checkout) {
+
+    }
+
+    @Override
+    public void showSelectedPyament() {
+
+    }
+
     public String translated(String language, Translated name) {
         if (language.equalsIgnoreCase("en-us")) {
             return name.getEnglish();

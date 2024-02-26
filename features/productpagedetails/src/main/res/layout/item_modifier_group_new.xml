@@ -23,7 +23,7 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/name"
-        style="@style/Styles.Text.Footnote.Medium"
+        style="@style/Styles.Text.Footnote.Semi.Bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_large"

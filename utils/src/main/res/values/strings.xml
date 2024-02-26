@@ -42,4 +42,5 @@
     <string-array name="contact_support_phone"></string-array>
     <string name="modifier_name_with_quantity_text">%1$s (%2$s)</string>
     <string name="add_on">Add-ons</string>
+    <string name="permissions_error_message">Failed to initialize PermissionManager. Note that we can only access this after onCreate</string>
 </resources>

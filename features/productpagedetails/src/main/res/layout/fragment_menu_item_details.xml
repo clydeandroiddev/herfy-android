@@ -189,7 +189,7 @@
 
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/txtMoreInfo"
-                            style="@style/Styles.Text.Footnote.Medium"
+                            style="@style/Styles.Text.Footnote.Semi.Bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/margin_large"
@@ -319,7 +319,7 @@
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/sizes_label"
-                        style="@style/Styles.Text.Footnote.Medium"
+                        style="@style/Styles.Text.Footnote.Semi.Bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_large"
@@ -441,7 +441,7 @@
 
                     <TextView
                         android:id="@+id/notes_label"
-                        style="@style/TextAppearance.Footnote.Medium"
+                        style="@style/TextAppearance.Footnote.Semi_Bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_large"
@@ -499,7 +499,7 @@
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/txtFrequntlyBought"
-                        style="@style/Styles.Text.Footnote.Medium"
+                        style="@style/Styles.Text.Footnote.Semi.Bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_large"
@@ -615,7 +615,7 @@
 
         <Button
             android:id="@+id/add"
-            style="@style/TextAppearance.Footnote.Medium"
+            style="@style/TextAppearance.Footnote.Semi_Bold"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_large"

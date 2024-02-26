@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextStyles">
+        <item name="android:includeFontPadding">false</item>
+        <item name="textLargeTitleStyle">@style/Styles.Text.LargeTitle</item>
+        <item name="textTitle1Style">@style/Styles.Text.Title1</item>
+        <item name="textTitle2Style">@style/Styles.Text.Title2</item>
+        <item name="textTitle3Style">@style/Styles.Text.Title3</item>
+        <item name="textHeadlineStyle">@style/Styles.Text.Headline</item>
+        <item name="textBodyStyle">@style/Styles.Text.Body</item>
+        <item name="textBodyMediumStyle">@style/Styles.Text.Body.Medium</item>
+        <item name="textCalloutStyle">@style/Styles.Text.Callout</item>
+        <item name="textSubheadlineStyle">@style/Styles.Text.Subheadline</item>
+        <item name="textSubheadlineMediumStyle">@style/Styles.Text.Subheadline.Medium</item>
+        <item name="textFootnoteStyle">@style/Styles.Text.Footnote</item>
+        <item name="textCaptionStyle">@style/Styles.Text.Caption</item>
+        <item name="textCaptionSemiboldStyle">@style/Styles.Text.Caption.Semibold</item>
+        <item name="textNavigationLabelStyle">@style/Styles.Text.NavigationLabel</item>
+    </style>
+    <!-- TODO: Adjust the font, size, and letter spacing based on the Figma design -->
+    <style name="TextAppearance.LargeTitle" parent="">
+        <item name="fontFamily">@font/cairo_bold</item>
+        <item name="android:textSize">34sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.LargeTitle1" parent="">
+        <item name="fontFamily">@font/cairo_bold</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Title1" parent="">
+        <item name="fontFamily">@font/cairo_bold</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Title2" parent="">
+        <item name="fontFamily">@font/cairo_bold</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Title3" parent="">
+        <item name="fontFamily">@font/cairo_bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Headline" parent="">
+        <item name="fontFamily">@font/cairo_bold</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Headline1" parent="">
+        <item name="fontFamily">@font/cairo_bold</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Body" parent="">
+        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Body.Medium">
+        <item name="fontFamily">@font/poppins_medium</item>
+    </style>
+
+    <style name="TextAppearance.Callout" parent="">
+        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Subheadline" parent="">
+        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Subheadline.Medium">
+        <item name="fontFamily">@font/poppins_medium</item>
+    </style>
+
+    <style name="TextAppearance.Footnote.Semi_Bold" parent="">
+        <item name="fontFamily">@font/poppins_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Footnote" parent="TextAppearance.AppCompat.Small">
+        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="lineHeight">13sp</item>
+    </style>
+
+    <style name="TextAppearance.Caption" parent="">
+        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Caption.Semibold">
+        <item name="fontFamily">@font/poppins_medium</item>
+    </style>
+
+    <style name="TextAppearance.NavigationLabel" parent="">
+        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+
+    <!--  region Line Height  -->
+    <dimen name="line_height_large_title">41dp</dimen>
+    <dimen name="line_height_title1">34dp</dimen>
+    <dimen name="line_height_title2">28dp</dimen>
+    <dimen name="line_height_title3">24dp</dimen>
+    <dimen name="line_height_headline">22dp</dimen>
+    <dimen name="line_height_body">22dp</dimen>
+    <dimen name="line_height_callout">21dp</dimen>
+    <dimen name="line_height_subheadline">20dp</dimen>
+    <dimen name="line_height_footnote">18dp</dimen>
+    <dimen name="line_height_caption">13dp</dimen>
+    <dimen name="line_height_navigation_label">12dp</dimen>
+    <!--  endregion  -->
+</resources>

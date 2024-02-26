@@ -79,7 +79,7 @@
                 android:layout_height="match_parent"
                 android:visibility="gone"
                 tools:itemCount="3"
-                tools:listitem="@layout/item_order"
+                tools:listitem="@layout/item_order_summary"
                 tools:visibility="visible" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

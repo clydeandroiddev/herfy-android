@@ -46,7 +46,7 @@ public class CheckoutActivity extends BaseActivity implements CheckoutContract.V
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_checkout);
+        setContentView(R.layout.activity_checkout_page);
         ButterKnife.bind(this);
         checkoutPresenter = new CheckoutPresenter(this);
     }

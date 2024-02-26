@@ -36,6 +36,7 @@
     <color name="light_blue_400">#FF29B6F6</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="gray_400">#FFBDBDBD</color>
+    <color name="gray_500">#6B7280</color>
     <color name="gray_600">#FF757575</color>
     <color name="red_colors">#DE0019</color>
     <color name="background_gray_color">#E5E5E5</color>
@@ -50,16 +51,24 @@
     <color name="background_side_bar">#F20064AC</color>
 
     <color name="border_color_light">#D9E8F3</color>
-
+    <color name="color_dark_gray">#191919</color>
     <color name="background_color_blue">#0064AC</color>
     <color name="background_color_light_blue">#D9E8F3</color>
     <color name="color_background">#F7F7F7</color>
     <color name="color_gray">#55667B</color>
+    <color name="color_dark_gray_blue">#404D5C</color>
     <color name="shade_blue">#208DA7</color>
     <color name="colorStrokeBorder">#E4F5F9</color>
     <color name="colorSeparator">#E6E8EB</color>
     <color name="primaryTextColor">#0C0C0C</color>
     <color name="secondaryTextColor">#55667B</color>
+    <color name="textColor">#55667B</color>
+    <color name="greyscale">#AEAEB2</color>
+    <color name="selected_stroke_color">#0064AC</color>
+    <color name="card_stroke_color">#D9E8F3</color>
+    <color name="card_selected_bg">#E6F0F7</color>
+    <color name="light_red">#DB2211</color>
+
 </resources>
 
 

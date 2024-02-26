@@ -398,4 +398,14 @@ public class PaymentDialogFragment extends BaseDialogFragment implements Payment
 
     }
 
+    @Override
+    public void showOrderType(Boolean checkout) {
+
+    }
+
+    @Override
+    public void showSelectedPyament() {
+
+    }
+
 }

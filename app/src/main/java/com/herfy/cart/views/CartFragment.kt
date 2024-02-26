@@ -28,6 +28,7 @@ import com.herfy.base.BaseFragment
 import com.herfy.cart.CartContract
 import com.herfy.cart.adapters.CartMenuItemsRecyclerViewAdapter
 import com.herfy.cart.databinding.FragmentHerfyCartBinding
+import com.herfy.checkout_temp.CheckoutActivity
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.OneDayDecorator
 import com.herfy.ext.cast
@@ -1303,7 +1304,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             continueCheckout = false
             activity?.cast<BaseActivity> {
                 it.dismissDialogs()
-                val intent = Intent(it, PaymentActivity::class.java)
+                val intent = Intent(it, CheckoutActivity::class.java)
                 if (!isRemove) {
                     intent.putExtra("isScheduled", true)
                     intent.putExtra("goodSelectedDate", TimeUtil.dateToHourOnly(goodSelectedDate))

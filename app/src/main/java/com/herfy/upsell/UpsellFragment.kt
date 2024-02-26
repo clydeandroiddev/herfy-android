@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
+import com.herfy.checkout_temp.CheckoutActivity
 import com.herfy.databinding.FragmentUpsellBinding
 import com.herfy.payment.views.PaymentActivity
 import com.herfy.util.StringUtil
@@ -105,7 +106,8 @@ class UpsellFragment : BaseFragment(), UpsellContract.View {
         binding.placeOrder.setOnClickListener(View.OnClickListener {
             if (toSkip) {
                 dismissDialogs()
-                val intent = Intent(requireActivity(), PaymentActivity::class.java)
+//                val intent = Intent(requireActivity(), PaymentActivity::class.java) todo
+                val intent = Intent(requireActivity(), CheckoutActivity::class.java)
                 if (isScheduled) {
                     intent.putExtra("isScheduled", true)
                     intent.putExtra("goodSelectedDate", goodSelectedDateString)
