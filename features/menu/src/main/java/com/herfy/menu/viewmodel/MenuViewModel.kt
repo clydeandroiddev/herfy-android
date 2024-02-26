@@ -15,6 +15,7 @@ import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -35,10 +36,13 @@ class MenuViewModel @Inject constructor(
 
     val menuCategoryPositions = HashMap<String, Int>()
     private val _menuAdapterItems = MutableLiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>>()
-    val menuAdapterItems: LiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>> = _menuAdapterItems
+    val menuAdapterItems: LiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>> =
+        _menuAdapterItems
 
-    private val _searchMenuAdapterItems = MutableLiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>>()
-    val searchMenuAdapterItems: LiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>> = _searchMenuAdapterItems
+    private val _searchMenuAdapterItems =
+        MutableLiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>>()
+    val searchMenuAdapterItems: LiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>> =
+        _searchMenuAdapterItems
 
     private val _showMenuItem = MutableLiveData<Pair<MenuCategory, MenuItem>>()
     val showMenuItem: LiveData<Pair<MenuCategory, MenuItem>> = _showMenuItem
@@ -54,6 +58,15 @@ class MenuViewModel @Inject constructor(
 
     private val _showLoading = MutableLiveData<Boolean>()
     val showLoading: LiveData<Boolean> = _showLoading
+
+    private val _orderType = MutableLiveData<OrderType>()
+    val orderType: LiveData<OrderType> = _orderType
+
+    fun getOrderType() {
+        invoke {
+            _orderType.value = CacheUtil.getInstance().orderType
+        }
+    }
 
     fun getSlides() {
         invoke {
@@ -87,7 +100,11 @@ class MenuViewModel @Inject constructor(
                     adapterItems.add(MenuCategoryItemAdapter.MenuCategoryAdapterItem(menuCategory))
                     menuCategory.menuItems.sortBy { menuItem -> menuItem.displayOrder }
                     menuCategory.menuItems?.forEach { menuItem ->
-                        adapterItems.add(MenuCategoryItemAdapter.MenuItemAdapterItem(menuCategory, menuItem))
+                        adapterItems.add(
+                            MenuCategoryItemAdapter.MenuItemAdapterItem(
+                                menuCategory, menuItem
+                            )
+                        )
                         count++
                     }
                     count++
@@ -101,60 +118,59 @@ class MenuViewModel @Inject constructor(
     fun getMenuItem(menuCategory: MenuCategory, menuItem: MenuItem) {
         invoke {
             _showLoading.postValue(true)
-            menuRepository.getMenuItem(
-                menuItemId = menuItem.id,
-                result = {
+            menuRepository.getMenuItem(menuItemId = menuItem.id, result = {
 
-                    var invalid = false
+                var invalid = false
 
-                    val visibleModifierGroups = java.util.ArrayList<ModifierGroup>()
+                val visibleModifierGroups = java.util.ArrayList<ModifierGroup>()
 
-                    for (group in it.modifierGroups) {
-                        val visibilityConfig = group.attributes.visibilityConfig
-                        if (visibilityConfig?.initialValue != null) {
-                            if (!visibilityConfig.initialValue
-                                    .equals("hidden", ignoreCase = true)
-                            ) {
-                                visibleModifierGroups.add(group)
-                            }
-                        } else {
+                for (group in it.modifierGroups) {
+                    val visibilityConfig = group.attributes.visibilityConfig
+                    if (visibilityConfig?.initialValue != null) {
+                        if (!visibilityConfig.initialValue.equals(
+                                    "hidden",
+                                    ignoreCase = true
+                                )
+                        ) {
                             visibleModifierGroups.add(group)
                         }
-                    }
-
-                    for (modifierGroup in visibleModifierGroups) {
-                        var selected = 0
-                        for (modifierItem in modifierGroup.modifierItems) {
-                            if (modifierItem.attributes.isSelected) {
-                                selected += modifierItem.attributes.quantity
-                            }
-                        }
-                        if (selected < modifierGroup.attributes.minimum) {
-                            _showLoading.postValue(false)
-                            _showMessage.postValue(
-                                CacheUtil.getInstance().getTranslations(
-                                    Text.MODIFIER_MINIMUM_LIMIT,
-                                    "Minimum number of extras (x) not reached for (y)"
-                                ).replace("(x)", modifierGroup.attributes.minimum.toString())
-                                    .replace("(y)", modifierGroup.attributes.name)
-                            )
-                            invalid = true
-                            break
-                        }
-                    }
-
-                    if (!invalid) {
-                        invalid = checkComboModifiers(menuItem)
-                    }
-
-                    if (!invalid) {
-                        addToCart(menuItem)
                     } else {
-                        _showLoading.postValue(false)
-                        _showMenuItem.postValue(Pair(menuCategory, menuItem))
+                        visibleModifierGroups.add(group)
                     }
                 }
-            )
+
+                for (modifierGroup in visibleModifierGroups) {
+                    var selected = 0
+                    for (modifierItem in modifierGroup.modifierItems) {
+                        if (modifierItem.attributes.isSelected) {
+                            selected += modifierItem.attributes.quantity
+                        }
+                    }
+                    if (selected < modifierGroup.attributes.minimum) {
+                        _showLoading.postValue(false)
+                        _showMessage.postValue(
+                            CacheUtil.getInstance().getTranslations(
+                                Text.MODIFIER_MINIMUM_LIMIT,
+                                "Minimum number of extras (x) not reached for (y)"
+                            ).replace("(x)", modifierGroup.attributes.minimum.toString())
+                                .replace("(y)", modifierGroup.attributes.name)
+                        )
+                        invalid = true
+                        break
+                    }
+                }
+
+                if (!invalid) {
+                    invalid = checkComboModifiers(menuItem)
+                }
+
+                if (!invalid) {
+                    addToCart(menuItem)
+                } else {
+                    _showLoading.postValue(false)
+                    _showMenuItem.postValue(Pair(menuCategory, menuItem))
+                }
+            })
         }
     }
 
@@ -194,8 +210,7 @@ class MenuViewModel @Inject constructor(
                                                 Text.MODIFIER_MINIMUM_LIMIT,
                                                 "Minimum number of extras (x) not reached for (y)"
                                             ).replace(
-                                                "(x)",
-                                                modifierGroup.attributes.minimum.toString()
+                                                "(x)", modifierGroup.attributes.minimum.toString()
                                             ).replace("(y)", modifierGroup.attributes.name)
                                         )
                                         invalid = true
@@ -247,9 +262,14 @@ class MenuViewModel @Inject constructor(
             val adapterItems = mutableListOf<MenuCategoryItemAdapter.MenuAdapterItem>()
             menuCategories.forEach { menuCategory ->
                 menuCategory.menuItems.forEach { menuItem ->
-                    if (menuItem.getName(LocaleUtil.getInstance().language).contains(query, ignoreCase = true)
+                    if (menuItem.getName(LocaleUtil.getInstance().language)
+                            .contains(query, ignoreCase = true)
                     ) {
-                        adapterItems.add(MenuCategoryItemAdapter.MenuItemAdapterItem(menuCategory, menuItem))
+                        adapterItems.add(
+                            MenuCategoryItemAdapter.MenuItemAdapterItem(
+                                menuCategory, menuItem
+                            )
+                        )
                     }
                 }
             }

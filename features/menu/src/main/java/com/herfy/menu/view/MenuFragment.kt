@@ -10,6 +10,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDeepLinkRequest
@@ -37,7 +38,9 @@ import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.NavigationUtils
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -151,6 +154,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }
 
         viewModel.apply {
+            getOrderType()
             getSlides()
             getMenuCategoriesItems()
         }
@@ -202,6 +206,81 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 }
                 shimmerSlider.root.gone()
             }
+        }
+
+        viewModel.orderType.observeNonNull(this) { oType ->
+            var type = CacheUtil.getInstance()
+                .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE")
+            var address = CacheUtil.getInstance().getTranslations(
+                Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
+                "Please tap here to pick an order type"
+            )
+            var icon = resources.getDrawable(com.herfy.ordertype.R.drawable.ic_blank_type)
+            when (oType) {
+                OrderType.EAT_IN -> {
+                    if (CacheUtil.getInstance().orderStore != null) {
+                        icon =
+                            resources.getDrawable(com.herfy.ordertype.R.drawable.ic_walk_in_pickup_small)
+                        type = CacheUtil.getInstance()
+                            .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
+                        address = CacheUtil.getInstance().orderStore.attributes.name
+                    }
+                }
+
+                OrderType.DRIVE_THRU -> {
+                    if (CacheUtil.getInstance().orderStore != null) {
+                        icon =
+                            resources.getDrawable(com.herfy.ordertype.R.drawable.ic_drive_thru_small)
+                        type = CacheUtil.getInstance()
+                            .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
+                        address = CacheUtil.getInstance().orderStore.attributes.name
+                    }
+                }
+
+                OrderType.PICKUP -> {
+                    if (CacheUtil.getInstance().orderStore != null) {
+                        icon =
+                            resources.getDrawable(com.herfy.ordertype.R.drawable.ic_pickup_small)
+                        type = CacheUtil.getInstance()
+                            .getTranslations(Text.PICKUP_AT, "Pickup At")
+                        address = CacheUtil.getInstance().orderStore.attributes.name
+                    }
+                }
+
+                OrderType.DINE_IN -> {
+                    if (CacheUtil.getInstance().orderStore != null) {
+                        icon =
+                            resources.getDrawable(com.herfy.ordertype.R.drawable.ic_dine_in_small)
+                        type = CacheUtil.getInstance()
+                            .getTranslations(Text.DINE_IN, "Dine In")
+                        address = CacheUtil.getInstance().orderStore.attributes.name
+                    }
+                }
+
+                OrderType.DELIVERY -> {
+                    icon = resources.getDrawable(com.herfy.ordertype.R.drawable.ic_delivery_small)
+                    if (CacheUtil.getInstance().orderAddress != null) {
+                        type = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
+                        address = CacheUtil.getInstance().orderAddress.attributes.line1
+                    } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
+                        type = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
+                        address = CacheUtil.getInstance().orderDeliveryAddress
+                    }
+                }
+
+                OrderType.CURBSIDE -> {
+                    if (CacheUtil.getInstance().orderStore != null) {
+                        icon =
+                            resources.getDrawable(com.herfy.ordertype.R.drawable.ic_curbside_pickup_small)
+                        type = CacheUtil.getInstance()
+                            .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
+                        address = CacheUtil.getInstance().orderStore.attributes.name
+                    }
+                }
+
+                else -> {}
+            }
+            binding.orderTypeToolbar.setOrderType(type, address, icon)
         }
 
         viewModel.showMenuCategories.observeNonNull(this) { menuCategories ->

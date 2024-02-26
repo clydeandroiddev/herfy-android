@@ -81,6 +81,7 @@ dependencies {
     api(project(":commonStyles"))
     api(project(":utils"))
     api(project(":features:home"))
+    api(project(":features:ordertype"))
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
