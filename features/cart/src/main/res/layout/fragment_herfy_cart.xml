@@ -51,14 +51,6 @@
                 layout="@layout/layout_upsell" />
 
 
-            <View
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#C9C9C9" />
-
             <include
                 android:id="@+id/payment_summary_container"
                 android:layout_marginTop="8dp"

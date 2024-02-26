@@ -1250,15 +1250,23 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
     }
 
-    override fun showUpsell(upsells: ArrayList<MenuItem>?) {
-        activity?.runOnUiThread {
+    @SuppressLint("NotifyDataSetChanged")
+    override fun showUpsell(upsells: ArrayList<MenuItem>) {
+        runOnMain {
             binding.upsellContainer.apply {
-                rvUpsellItems.OnLayoutLoadingCompleted {
-                    Handler(Looper.getMainLooper()).postDelayed( {
-                        clUpsell.visibility = View.VISIBLE
-                        placeholderUpsell.shimmerOrderDetails.visibility = View.GONE
-                    }, 500)
+                if(upsells.size > 0){
+                    rvUpsellItems.OnLayoutLoadingCompleted {
+                        Handler(Looper.getMainLooper()).postDelayed( {
+                            clUpsell.visibility = View.VISIBLE
+                            placeholderUpsell.shimmerOrderDetails.visibility = View.GONE
+                        }, 500)
+                    }
+                    upsellRecyclerViewAdapter?.notifyDataSetChanged()
+                }else {
+                    clUpsell.visibility = View.GONE
+                    placeholderUpsell.shimmerOrderDetails.visibility = View.GONE
                 }
+
             }
         }
      /*   MixpanelUtil.trackEvent(MixpanelUtil.EVENT_PLACE_ORDER)
