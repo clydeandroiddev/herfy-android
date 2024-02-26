@@ -282,7 +282,7 @@ public class Text {
     public static final String OPTIONAL_KEY = "optional_key";
 
     public static final String NO_PAYMENT_METHOD_SELECTED = "no_payment_methods";
-    public static final String TOTAL_VAT_DESCRIPTION  = "total_vat_description";
+    public static final String TOTAL_VAT_DESCRIPTION = "total_vat_description";
     public static final String REQUIRED_KEY = "required_key";
     public static final String SHOW_FACILITY = "show_facility";
     public static final String HIDE_FACILITY = "hide_facility";
@@ -867,7 +867,6 @@ public class Text {
     public static final String LOYALTY_POINTS = "loyalty_points";
     public static final String PAYMENT_METHODS = "payment_methods";
 
-    public static final String ALL_LABEL="all_label";
     public static final String ALL_LABEL = "all_label";
     public static final String REDEEM_LABEL = "redeem_label";
     public static final String REMOVE_PROMO_LABEL = "remove_promo";

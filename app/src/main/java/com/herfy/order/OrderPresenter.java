@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -1013,15 +1014,6 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                         }
                     }
 
-                    /*if (updateAddress == null) {
-                        for (com.skylinedynamics.solosdk.api.models.objects.Address workAddress : workAddresses) {
-                            if (workAddress.getAttributes().getLat().equals(String.valueOf(address.getLatitude())) && workAddress.getAttributes().getLongt().equals(String.valueOf(address.getLongitude()))) {
-                                updateAddress = workAddress;
-                                break;
-                            }
-                        }
-                    }*/
-
                     if (updateAddress == null) {
                         for (com.skylinedynamics.solosdk.api.models.objects.Address otherAddress : otherAddresses) {
                             if (address != null && otherAddress.getAttributes().getLat().equals(String.valueOf(address.getLatitude())) && otherAddress.getAttributes().getLongt().equals(String.valueOf(address.getLongitude()))) {
@@ -1035,12 +1027,9 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
                 if (updateAddress != null) {
                     orderView.updateAddAddress(updateAddress, null);
-                    //updateAddress(true, updateAddress);
                 } else {
                     orderView.updateAddAddress(null, address);
-                    //addAddress("", "", "");
                 }
-
             }
 
         } else {

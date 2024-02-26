@@ -64,21 +64,17 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     }
 
     private val menuCategoryItemAdapter: MenuCategoryItemAdapter by lazy {
-        MenuCategoryItemAdapter(
-            onSelect = { menuCategory, menuItem ->
+        MenuCategoryItemAdapter(onSelect = { menuCategory, menuItem ->
+            navMenuItem(menuCategory, menuItem)
+        }, onFavorite = { menuItem ->
+            viewModel.addRemoveFavorite(menuItem)
+        }, onAdd = { menuCategory, menuItem ->
+            if (menuItem.isMustBeCustomized || menuItem.isCombo) {
                 navMenuItem(menuCategory, menuItem)
-            },
-            onFavorite = { menuItem ->
-                viewModel.addRemoveFavorite(menuItem)
-            },
-            onAdd = { menuCategory, menuItem ->
-                if (menuItem.isMustBeCustomized || menuItem.isCombo) {
-                    navMenuItem(menuCategory, menuItem)
-                } else {
-                    viewModel.getMenuItem(menuCategory, menuItem)
-                }
+            } else {
+                viewModel.getMenuItem(menuCategory, menuItem)
             }
-        )
+        })
     }
 
     override fun initViews() {
@@ -91,9 +87,12 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     activity?.onBackPressedDispatcher?.onBackPressed()
                 }
 
+                orderTypeToolbar.setOrderTypeAction {
+                    navToOrderTypePage()
+                }
+
                 sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
-                val sliderHeight =
-                    (Resources.getSystem().displayMetrics.widthPixels / 2.0).toInt()
+                val sliderHeight = (Resources.getSystem().displayMetrics.widthPixels / 2.0).toInt()
                 containerSlider.layoutParams.height = sliderHeight
                 shimmerSlider.root.layoutParams.height = sliderHeight
                 sliderViewPager.adapter = sliderImageAdapter
@@ -109,18 +108,20 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
                     override fun afterTextChanged(p0: Editable?) {
                         p0?.let {
-                            if(it.isNotEmpty()) {
+                            if (it.isNotEmpty()) {
                                 rvMenuCategories.gone()
                                 viewMenu.gone()
                                 viewSearch.visible()
-                                toolbar.layoutParams.height = resources.getDimensionPixelSize(R.dimen.toolbar_height_search)
+                                toolbar.layoutParams.height =
+                                    resources.getDimensionPixelSize(R.dimen.toolbar_height_search)
                                 viewModel.searchMenuItems(it.toString())
                                 btnClear.visible()
                             } else {
                                 rvMenuCategories.visible()
                                 viewMenu.visible()
                                 viewSearch.gone()
-                                toolbar.layoutParams.height = resources.getDimensionPixelSize(R.dimen.toolbar_height_menu)
+                                toolbar.layoutParams.height =
+                                    resources.getDimensionPixelSize(R.dimen.toolbar_height_menu)
                                 viewModel.menuAdapterItems.value?.let { menuAdapterItems ->
                                     menuCategoryItemAdapter.addData(menuAdapterItems)
                                 }
@@ -136,8 +137,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 }
 
                 rvMenuCategories.apply {
-                    layoutManager =
-                        CenterLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
+                    layoutManager = CenterLayoutManager(it, LinearLayoutManager.HORIZONTAL, false)
                     val snapHelper = LinearSnapHelper()
                     snapHelper.attachToRecyclerView(this)
                     adapter = menuCategoryAdapter
@@ -231,8 +231,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         vibrator.vibrate(
                             VibrationEffect.createOneShot(
-                                500,
-                                VibrationEffect.DEFAULT_AMPLITUDE
+                                500, VibrationEffect.DEFAULT_AMPLITUDE
                             )
                         )
                     } else {
@@ -267,7 +266,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         viewModel.showLoading.observeNonNull(this) { showLoading ->
             activity?.cast<BaseActivity<*, *>> {
                 it.runOnUiThread {
-                    if(showLoading) {
+                    if (showLoading) {
                         it.showProgressDialog(false)
                     } else {
                         it.dismissProgressDialog()
@@ -278,13 +277,22 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     }
 
+    private fun navToOrderTypePage() {
+        val storeId = CacheUtil.getOrderStoreId() ?: ""
+        val request = NavDeepLinkRequest.Builder.fromUri(
+            Uri.parse(
+                "${Values.NAV_DEEP_LINK_BASE_URL}nav_order_type/$storeId"
+            )
+        ).build()
+        NavigationUtils.navigateSafe(findNavController(), request)
+    }
+
     private fun navMenuItem(menuCategory: MenuCategory, menuItem: MenuItem) {
-        val request =
-            NavDeepLinkRequest.Builder.fromUri(
-                Uri.parse(
-                    "${Values.NAV_DEEP_LINK_BASE_URL}nav_menu_item/${menuCategory.id}/${menuItem.id}"
-                )
-            ).build()
+        val request = NavDeepLinkRequest.Builder.fromUri(
+            Uri.parse(
+                "${Values.NAV_DEEP_LINK_BASE_URL}nav_menu_item/${menuCategory.id}/${menuItem.id}"
+            )
+        ).build()
         NavigationUtils.navigateSafe(findNavController(), request)
     }
 

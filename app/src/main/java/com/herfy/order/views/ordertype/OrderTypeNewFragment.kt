@@ -60,6 +60,7 @@ import com.herfy.font.FontHandler
 import com.herfy.location.FusedLocationProvider
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
+import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.order.OrderContract
 import com.herfy.order.OrderPresenter
 import com.herfy.order.adapters.StoresRecyclerViewAdapter
@@ -79,6 +80,7 @@ import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import io.shipbook.shipbooksdk.Log
 import java.util.*
 
 
@@ -175,7 +177,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     }
                 } else {
                     fromAddAddressDifferentMenu = false
-                    navigateUp()
+                    navigateUp(true)
                 }
             }
         }
@@ -261,19 +263,29 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     private fun navigateUp() {
-        activity?.runOnUiThread {
-            activity?.cast<MainActivity> {
-                it.forceLocation = false
-                it.forceLocationMenuRefresh = true
-                sendFragmentResult()
-            }
-            activity?.cast<NavigationActivity> {
-                if (args.fromCart && !isMenuRedownloaded) {
-                    sendFragmentResult()
-                } else {
-                    it.finish()
-                }
+        navigateUp(false)
+    }
 
+    private fun navigateUp(proceed: Boolean) {
+        if (proceed && args.fromHome) {
+            NavigationUtils.navigateSafe(
+                findNavController(),
+                OrderTypeNewFragmentDirections.actionOrderTypeFragmentToNavMenu("")
+            )
+        } else {
+            activity?.runOnUiThread {
+                activity?.cast<MainActivity> {
+                    it.forceLocation = false
+                    it.forceLocationMenuRefresh = true
+                    sendFragmentResult()
+                }
+                activity?.cast<NavigationActivity> {
+                    if (args.fromCart && !isMenuRedownloaded) {
+                        sendFragmentResult()
+                    } else {
+                        it.finish()
+                    }
+                }
             }
         }
     }
@@ -1101,7 +1113,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     logEvent("OrderTypeSelection", eventAttributes, "", 0.0)
                 }
                 CacheUtil.getInstance().orderStore = store
-                navigateUp()
+                navigateUp(true)
             } else {
                 activity?.cast<BaseActivity> {
                     it.showAlertDialog(store.attributes.name, error)
@@ -1253,14 +1265,14 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 CacheUtil.getInstance().curbsideCar = null
             }
             if (isMenuSeparate && isMenuRedownloaded) {
-                navigateUp()
+                navigateUp(true)
             } else {
                 activity?.cast<BaseActivity> {
                     it.dismissDialogs()
                     val eventAttributes = HashMap<String, String>()
                     eventAttributes["Delivery"] = StringUtil.trimEventAttribute(address)
                     logEvent("OrderTypeSelection", eventAttributes, "", 0.0)
-                    it.onBackPressed()
+                    navigateUp(true)
                 }
             }
         }
@@ -1502,7 +1514,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
+            currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {

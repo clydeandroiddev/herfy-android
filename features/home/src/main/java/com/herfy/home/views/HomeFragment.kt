@@ -450,6 +450,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 intent.setClassName(it, Navigation.NAVIGATION_ACTIVITY)
                 intent.putExtra("navigation", "nav_order_type")
                 intent.putExtra("selectedOrderType", orderType.value)
+                intent.putExtra("fromHome", true)
                 intent.putExtra("fromCart", false)
                 intent.putExtra("checkout", false)
                 intent.putExtra("storeId", storeId)

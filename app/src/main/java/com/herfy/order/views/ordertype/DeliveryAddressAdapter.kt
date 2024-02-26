@@ -40,9 +40,9 @@ class DeliveryAddressAdapter(
                 deliveryMain.setBackgroundResource(com.herfy.ordertype.R.drawable.bg_deliver_selected)
                 selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_store_selected)
             }
-            editDelivery.setOnClickListener {
-                addressListener.onEditAddress(item, position)
-            }
+//            editDelivery.setOnClickListener {
+//                addressListener.onEditAddress(item, position)
+//            }
 
             deliveryMain.setOnClickListener {
                 addressListener.onSelectedAddress(item, position)
