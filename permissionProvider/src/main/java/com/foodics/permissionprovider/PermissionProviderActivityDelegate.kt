@@ -1,7 +1,6 @@
 package com.foodics.permissionprovider
 
 import android.app.Activity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner

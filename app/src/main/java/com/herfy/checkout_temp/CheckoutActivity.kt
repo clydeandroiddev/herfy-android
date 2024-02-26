@@ -20,10 +20,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
-import android.text.Spannable
-import android.text.SpannableString
 import android.text.TextWatcher
-import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
@@ -38,9 +35,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.foodics.permissionprovider.PermissionManager
-import com.foodics.permissionprovider.PermissionResult
-import com.foodics.permissionprovider.permissionProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -69,7 +63,6 @@ import com.herfy.base.BaseActivity
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.OneDayDecorator
-import com.herfy.ext.visible
 import com.herfy.firebase.FirebaseService
 import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
 import com.herfy.main.MainActivity
@@ -103,6 +96,9 @@ import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.GlideUtils
+import com.herfy.utils.permission.PermissionManager
+import com.herfy.utils.permission.PermissionResult
+import com.herfy.utils.permission.permissionProvider
 import com.moneyhash.sdk.android.ResultType
 import com.moneyhash.sdk.android.payment.PaymentResultContract
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -127,13 +123,8 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import io.shipbook.shipbooksdk.Log
 import org.json.JSONException
 import org.json.JSONObject
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneOffset
-import org.threeten.bp.temporal.ChronoField
-import org.threeten.bp.temporal.ChronoUnit
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
