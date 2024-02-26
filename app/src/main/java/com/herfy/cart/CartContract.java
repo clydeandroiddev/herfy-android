@@ -3,6 +3,7 @@ package com.herfy.cart;
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
 import com.herfy.cart.views.CartMenuItemViewHolder;
+import com.herfy.upsell.UpsellViewHolder;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
@@ -10,6 +11,8 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.herfy.util.ApiLogLevel;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,7 +70,7 @@ public interface CartContract {
 
         void deleteUnavailableItems(int cartQuantity);
 
-        void showUpsell();
+        void showUpsell(ArrayList<MenuItem> upsells);
 
         void showPayment();
 
@@ -101,6 +104,10 @@ public interface CartContract {
         void firebaseViewCartEvent();
 
         void firebaseCheckoutEvent();
+
+        void goToItemDetails(int position, MenuItem upsell);
+
+        void showCartMenuItemsLoading();
 
     }
 
@@ -187,25 +194,19 @@ public interface CartContract {
         void validateDigitalCoupon(boolean fromApply, Campaign campaign);
 
         void availDigitalCoupon(int position);
-
         void availDigitalCouponCampaign(Campaign campaign);
-
         void selectPromo(int position);
-
         String getNotes(int position);
-
         void addNotes(int position, String notes);
-
         void removeMukafaaRedemption();
-
         double getMukafaaTransactionAmount();
-
         void removeMukafaa();
-
         void setMukafaaTransactionAmount(double amount);
-
         void sendLog(ApiLogLevel level, String message);
-
+        void onBindUpsellViewAtPosition(int position, UpsellViewHolder holder);
+        int getUpsellCount();
+        void goToItemDetails(int position, MenuItem upsell);
+        void addToCart(MenuItem upsell);
     }
 
 }

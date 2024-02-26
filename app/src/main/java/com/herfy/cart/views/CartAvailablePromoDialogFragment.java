@@ -310,7 +310,7 @@ public class CartAvailablePromoDialogFragment extends DialogFragment implements 
     }
 
     @Override
-    public void showUpsell() {
+    public void showUpsell(ArrayList<MenuItem> upsells) {
 
     }
 
@@ -392,6 +392,16 @@ public class CartAvailablePromoDialogFragment extends DialogFragment implements 
 
     @Override
     public void firebaseCheckoutEvent() {
+
+    }
+
+    @Override
+    public void goToItemDetails(int position, MenuItem upsell) {
+
+    }
+
+    @Override
+    public void showCartMenuItemsLoading() {
 
     }
 

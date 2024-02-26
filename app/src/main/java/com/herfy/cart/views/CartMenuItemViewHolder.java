@@ -21,7 +21,6 @@ import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.extensions.ImageViewExtKt;
 import com.herfy.utils.extensions.ViewExtensionsKt;
-import com.herfy.utils.helper.AnimUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
@@ -40,6 +39,8 @@ import com.herfy.util.StringUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -520,7 +521,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
     }
 
     @Override
-    public void showUpsell() {
+    public void showUpsell(ArrayList<MenuItem> upsells) {
 
     }
 
@@ -602,6 +603,16 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
 
     @Override
     public void firebaseCheckoutEvent() {
+
+    }
+
+    @Override
+    public void goToItemDetails(int position, MenuItem upsell) {
+
+    }
+
+    @Override
+    public void showCartMenuItemsLoading() {
 
     }
 

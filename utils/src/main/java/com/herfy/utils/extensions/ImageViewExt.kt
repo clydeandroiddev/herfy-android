@@ -6,7 +6,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 
 fun ImageView.loadImageFromUrl(imageUrl:String,
-                               isSkipMemoryCache : Boolean,
+                               isSkipMemoryCache : Boolean = false,
                                strategy: DiskCacheStrategy = DiskCacheStrategy.ALL,
                                requestOptions: RequestOptions = RequestOptions.noTransformation()) {
     Glide.with(this)

@@ -5,15 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F7F7F7">
+
+
+    <include
+        android:id="@+id/placeholder_order_details"
+        layout="@layout/placeholder_order_details"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_order_details"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:background="#F7F7F7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp">
+        android:layout_marginTop="24dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone">
 
         <androidx.appcompat.widget.AppCompatTextView
             app:layout_constraintTop_toTopOf="parent"
@@ -25,10 +35,10 @@
             android:gravity="start"
             android:maxLines="1"
             android:textAlignment="viewStart"
-            android:textColor="#0C0C0C"
+            android:textColor="@color/primaryTextColor"
             android:textSize="15sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            style="@style/Styles.Text.Title1"
             tools:text="YOUR ORDER (3)"/>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -46,19 +56,20 @@
             android:backgroundTint="@color/white"
             android:id="@+id/add_more"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:enabled="false"
+            android:layout_height="40dp"
+            android:insetRight="0dp"
+            android:insetLeft="0dp"
+            android:insetBottom="0dp"
+            android:insetTop="0dp"
             android:gravity="center"
-            android:paddingStart="5dp"
-            android:paddingTop="0dp"
-            android:paddingEnd="5dp"
-            android:paddingBottom="0dp"
             android:textColor="#0064AC"
             android:textSize="14sp"
-            app:cornerRadius="12dp"
+            app:cornerRadius="20dp"
             app:strokeColor="#0064AC"
             app:strokeWidth="1dp"
+            app:elevation="9dp"
             android:textAllCaps="false"
+            android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rv_cart_items"
@@ -80,6 +91,7 @@
             android:textColor="#D12928"
             android:textStyle="bold"
             android:textSize="11sp"
+            android:visibility="gone"
             android:text="Add 2 more items to your order to unlock free delivery!" />
 
 

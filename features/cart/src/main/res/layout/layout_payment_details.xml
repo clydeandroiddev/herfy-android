@@ -5,7 +5,7 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAFBFC">
+    android:background="#F7F7F7">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/payment_summary_container"
@@ -14,7 +14,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingBottom="16dp">
@@ -27,6 +26,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="#C9C9C9" />
+
 
             <com.google.android.material.card.MaterialCardView
                 app:cardBackgroundColor="#E6F0F7"

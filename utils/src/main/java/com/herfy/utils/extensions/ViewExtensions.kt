@@ -1,10 +1,13 @@
 package com.herfy.utils.extensions
 
+import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.animation.Animation
 import android.view.animation.Transformation
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.herfy.utils.helper.throttleFirst
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -83,4 +86,20 @@ fun View.collapse() {
     }
     a.duration = (initialHeight / context.resources.displayMetrics.density).toInt().toLong()
     startAnimation(a)
+}
+
+fun RecyclerView.OnLayoutLoadingCompleted(action: () -> Unit) {
+    val globalLayoutListener = object: ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            action()
+            viewTreeObserver.removeOnGlobalLayoutListener(this)
+        }
+    }
+    viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
+}
+
+fun runOnMain(task : (() -> Unit)){
+    android.os.Handler(Looper.getMainLooper()).post{
+        task.invoke()
+    }
 }

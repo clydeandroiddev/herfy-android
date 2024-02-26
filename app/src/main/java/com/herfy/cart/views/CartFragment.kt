@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -37,10 +38,13 @@ import com.herfy.order.views.ordertype.OrderTypeNewFragment
 import com.herfy.payment.dialog.PaymentOrderTimeDialog
 import com.herfy.payment.views.OrderDialogFragment
 import com.herfy.payment.views.PaymentActivity
+import com.herfy.upsell.UpsellRecyclerViewAdapter
 import com.herfy.util.*
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.OnLayoutLoadingCompleted
+import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
@@ -101,6 +105,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     private var fromInitialLaunch = false
     private var isFromPromotions = false
 
+    private var upsellRecyclerViewAdapter : UpsellRecyclerViewAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dontShowDigitalCoupons = args.isFromPromotions
@@ -240,22 +245,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 }
             }
         }
-        // based on crashlytics report  null object reference
-        /*if (binding.main.mukafaaLayout != null) {
-            if (cartPresenter != null) {
-                val mukafaaAmount = cartPresenter.mukafaaTransactionAmount
-                if (mukafaaAmount > 0) {
-                    var amnt = StringUtil.getFormattedPrice(mukafaaAmount).toString()
-                    if ("0" != amnt && !amnt.contains("-")) amnt = "-$amnt"
-                    binding.main.mukafaaSar.text = amnt
-                    binding.main.mukafaaLayout.visibility = View.VISIBLE
-                } else {
-                    binding.main.mukafaaLayout.visibility = View.GONE
-                }
-            } else {
-                binding.main.mukafaaLayout.visibility = View.GONE
-            }
-        }*/
         if (adapter != null) {
             adapter!!.notifyDataSetChanged()
         }
@@ -268,6 +257,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             cartPresenter.getIntegrations()
             cartPresenter.getConcept()
             cartPresenter.showCoupon()
+            cartPresenter.getUpsells()
             if (CacheUtil.getInstance().campaign != null) {
                 cartPresenter.validateDigitalCoupon(isFromPromotions, CacheUtil.getInstance().campaign)
                 isFromPromotions = false
@@ -275,22 +265,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 cartPresenter.validateOrder(false, false, null)
             }
         }
-        /*if (binding.main.tableNumberContainer != null) {
-            if (CacheUtil.getInstance().orderType === OrderType.DINE_IN && CacheUtil.getInstance().dineInTableNumber.isNotEmpty()) {
-                binding.main.tableNumberContainer.visibility = View.VISIBLE
-                binding.main.tableNumber.text = CacheUtil.getInstance().dineInTableNumber
-            } else {
-                binding.main.tableNumberContainer.visibility = View.GONE
-            }
-        }*/
     }
-
     fun cartExpired() {
         if (cartPresenter != null) {
             cartPresenter.getMenuItems()
         }
     }
-
     private fun setupCurbside() {
         val customerCar = CacheUtil.getInstance().curbsideCar
         /*if (customerCar != null) {
@@ -357,7 +337,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             )
         }*/
     }
-
     override fun setPresenter(presenter: CartContract.Presenter) {
         cartPresenter = presenter
     }
@@ -566,7 +545,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 ) as SimpleItemAnimator).supportsChangeAnimations = false
                 adapter = CartMenuItemsRecyclerViewAdapter(activity, cartPresenter)
                 binding.orderDetailsContainer.rvCartItems.adapter = adapter
-                binding.orderDetailsContainer.yourOrderLabel.text = "Your Order (${adapter?.itemCount})"
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -680,7 +658,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             binding.main.mukafaaLayout.setVisibility(View.GONE)
         }*/
 
-
+        binding.upsellContainer.apply {
+            upsellRecyclerViewAdapter = UpsellRecyclerViewAdapter(cartPresenter)
+            rvUpsellItems.apply {
+                adapter = upsellRecyclerViewAdapter
+                isNestedScrollingEnabled = true
+                setHasFixedSize(true)
+            }
+        }
     }
 
     private fun promoCodeShow() {
@@ -696,12 +681,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     @SuppressLint("SetTextI18n")
     override fun setupTranslations() {
-        binding.toolbarTitle.setTitle(CacheUtil.getInstance().getTranslations(Text.YOUR_BAG_LABEL, "Your Bag"))
+        binding.toolbarTitle.title = CacheUtil.getInstance().getTranslations(Text.YOUR_BAG_LABEL, "Your Bag")
         binding.paymentSummaryContainer.totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
         binding.paymentSummaryContainer.subtotalLabel.text = CacheUtil.getInstance().getTranslations(Text.SUBTOTAL, "Subtotal")
         binding.paymentSummaryContainer.deliveryChargeLabel.text = CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery charge");
         binding.placeOrder.text = CacheUtil.getInstance().getTranslations(Text.CHECKOUT, "CHECKOUT")
         binding.totalVatLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_INCLUSIVE_VAT, "(Total is inclusive of VAT)");
+        binding.upsellContainer.upsellLabel.text = CacheUtil.getInstance().getTranslations(Text.WOULD_YOU_LIKE_TO_ADD_THESE, "Would you like to add these?")
     }
 
     override fun showProgressDialog() {
@@ -711,9 +697,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun dismissProgressDialog() {
-        if (!continueCheckout) {
-            activity?.cast<BaseActivity> {
-                it.dismissDialogs()
+        runOnMain {
+            if (!continueCheckout) {
+                activity?.cast<BaseActivity> {
+                    it.dismissDialogs()
+                }
             }
         }
     }
@@ -783,50 +771,29 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             cartPresenter!!.getDigitalCoupons(true, false)
         }
         dontShowDigitalCoupons = false
-        adapter!!.notifyDataSetChanged()
         cartPresenter!!.getTotalPrice(false, false)
         binding.placeOrder.isEnabled = menuItems.size > 0
         var itemCount = 0
         for (item in menuItems) {
             itemCount += item.attributes.quantity
         }
-        binding.orderDetailsContainer.yourOrderLabel.text = "Your Order (${itemCount})"
-        /*
-        if (menuItems.isNotEmpty()) {
-            binding.main.containerDetails.visibility = View.VISIBLE
-            binding.main.empty.visibility = View.GONE
-            hideOrShowList(View.VISIBLE)
-            if (!Values.NO_PROMOTIONS) {
-                if (CacheUtil.getInstance().orderType !== OrderType.NONE && AuthUtil.getInstance().isSignedIn) {
-                    showDigitalCoupon(CacheUtil.getInstance().campaign)
+        binding.orderDetailsContainer.apply {
+            if(itemCount > 0){
+                yourOrderLabel.text = "Your Order (${itemCount})"
+                rvCartItems.OnLayoutLoadingCompleted {
+                    Handler(Looper.getMainLooper()).postDelayed( {
+                        clOrderDetails.visibility = View.VISIBLE
+                        placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
+                    }, 500)
                 }
+                adapter!!.notifyDataSetChanged()
+            }else {
+                clOrderDetails.visibility = View.GONE
+                placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
             }
-            if (!CacheUtil.getInstance().concept.isCartNotesEnabled) {
-                binding.main.orderNotesLabel.visibility = View.GONE
-                binding.main.orderNotesCard.visibility = View.GONE
-            } else {
-                binding.main.orderNotesLabel.visibility = View.VISIBLE
-                binding.main.orderNotesCard.visibility = View.VISIBLE
-            }
-        } else {
-            binding.main.tableNumberContainer.visibility = View.GONE
-            binding.main.orderNotesLabel.visibility = View.GONE
-            binding.main.orderNotesCard.visibility = View.GONE
-            binding.main.promotionalItemLayout.visibility = View.GONE
-            binding.main.containerDetails.visibility = View.GONE
-            binding.main.curbsideSpace.visibility = binding.main.curbsideLayout!!.visibility
-            binding.main.empty!!.visibility = View.VISIBLE
-            hideOrShowList(View.GONE)
-        }*/
+        }
 
-        /*if (!Values.NO_PROMOTIONS) {
-            if (CacheUtil.getInstance().getOrderType() != OrderType.NONE && AuthUtil.getInstance().isSignedIn()) {
-                campaignLayout.setVisibility(View.VISIBLE);
-                showDigitalCoupon(CacheUtil.getInstance().getCampaign());
-            } else {
-                campaignLayout.setVisibility(View.GONE);
-            }
-        }*/if (signIn) {
+        if (signIn) {
             signIn = false
             if (AuthUtil.getInstance().isSignedIn) {
                 cartPresenter!!.proceed(scheduleTime)
@@ -848,15 +815,17 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun refreshMenuItems(position: Int, fromChangeQuantity: Boolean) {
         if (position != -1) {
-            adapter!!.notifyItemChanged(position)
+            adapter?.notifyItemChanged(position)
         } else {
-            adapter!!.notifyDataSetChanged()
+            adapter?.notifyDataSetChanged()
         }
         if (!fromChangeQuantity) update()
     }
 
     override fun updateMenuItems(menuItems: List<MenuItem>) {
-        adapter!!.notifyDataSetChanged()
+        runOnMain {
+            adapter?.notifyDataSetChanged()
+        }
     }
 
     override fun setMenuItem(menuItem: MenuItem) {}
@@ -993,11 +962,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun setOriginalPrice(hasPromotion: Boolean, originalPrice: Double) {
-        binding.originalPrice.text = CurrencyUtils.updateCurrency(
-            originalPrice, withSpace = true, ignoreDecimalPlaces = hasPromotion
-        )
-        binding.originalPrice.visibility = View.VISIBLE
-        binding.dashed.visibility = View.VISIBLE
+        runOnMain {
+            binding.originalPrice.text = CurrencyUtils.updateCurrency(
+                originalPrice, withSpace = true, ignoreDecimalPlaces = hasPromotion
+            )
+            binding.originalPrice.visibility = View.VISIBLE
+            binding.dashed.visibility = View.VISIBLE
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -1009,42 +980,51 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 //        vatLayout.setVisibility(inclusive ? View.GONE : View.VISIBLE);
 //        vatPrice.setText(taxAmount);
         //vatLabel.setText(CacheUtil.getInstance().getConcept().getVatRate() + "% " + CacheUtil.getInstance().getTranslations(Text.VAT, "VAT"));
-        binding.totalVatLabel.visibility = if (inclusive) View.VISIBLE else View.GONE
+        runOnMain {
+            binding.totalVatLabel.visibility = if (inclusive) View.VISIBLE else View.GONE
+        }
+
     }
 
     override fun deleteCartItem(position: Int) {
-        activity?.cast<BaseActivity> {
-            it.showDeleteAlertDialog(
-                "",
-                CacheUtil.getInstance().getTranslations(Text.PROMPT_REMOVE_ITEM),
-                CacheUtil.getInstance().getTranslations(
-                    Text.YES_CAPS
-                ),
-                { dialogInterface, i ->
-                    dialogInterface.dismiss()
-                    cartPresenter!!.deleteCartItem(true, position)
-                },
-                CacheUtil.getInstance().getTranslations(Text.NO_CAPS),
-                { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
-            )
+        runOnMain {
+            activity?.cast<BaseActivity> {
+                it.showDeleteAlertDialog(
+                    "",
+                    CacheUtil.getInstance().getTranslations(Text.PROMPT_REMOVE_ITEM),
+                    CacheUtil.getInstance().getTranslations(
+                        Text.YES_CAPS
+                    ),
+                    { dialogInterface, i ->
+                        dialogInterface.dismiss()
+                        cartPresenter!!.deleteCartItem(true, position)
+                    },
+                    CacheUtil.getInstance().getTranslations(Text.NO_CAPS),
+                    { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
+                )
+            }
         }
+
     }
 
     override fun editCartItem(position: Int) {
-        dismissDialogFragments()
-        dontShowDigitalCoupons = true
-        NavigationUtils.navigateSafe(
-            findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                menuCategoryId = "",
-                menuItemId = "",
-                cartMenuItemPosition = position,
-                isPromo = false
+        runOnMain {
+            dismissDialogFragments()
+            dontShowDigitalCoupons = true
+            NavigationUtils.navigateSafe(
+                findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                    menuCategoryId = "",
+                    menuItemId = "",
+                    cartMenuItemPosition = position,
+                    isPromo = false
+                )
             )
-        )
+        }
+
     }
 
     override fun showCoupon(couponCode: String, description: String) {
-        activity?.runOnUiThread {
+        runOnMain {
             activity?.cast<BaseActivity> {
                 it.dismissDialogs()
             }
@@ -1061,12 +1041,15 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun removeCoupon() {
-        hideRelatedCouponViews()
-        try {
-            if (cartPresenter != null) cartPresenter!!.removeMukafaaRedemption()
-        } catch (e: Exception) {
-            e.printStackTrace()
+        runOnMain {
+            hideRelatedCouponViews()
+            try {
+                if (cartPresenter != null) cartPresenter!!.removeMukafaaRedemption()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
+
         /*binding.main.discountLayout.visibility = View.GONE
         binding.main.promoCode.setText("")
         binding.main.promoCode.visibility = View.VISIBLE
@@ -1267,8 +1250,26 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
     }
 
-    override fun showUpsell() {
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_PLACE_ORDER)
+    @SuppressLint("NotifyDataSetChanged")
+    override fun showUpsell(upsells: ArrayList<MenuItem>) {
+        runOnMain {
+            binding.upsellContainer.apply {
+                if(upsells.size > 0){
+                    rvUpsellItems.OnLayoutLoadingCompleted {
+                        Handler(Looper.getMainLooper()).postDelayed( {
+                            clUpsell.visibility = View.VISIBLE
+                            placeholderUpsell.shimmerOrderDetails.visibility = View.GONE
+                        }, 500)
+                    }
+                    upsellRecyclerViewAdapter?.notifyDataSetChanged()
+                }else {
+                    clUpsell.visibility = View.GONE
+                    placeholderUpsell.shimmerOrderDetails.visibility = View.GONE
+                }
+
+            }
+        }
+     /*   MixpanelUtil.trackEvent(MixpanelUtil.EVENT_PLACE_ORDER)
         activity?.runOnUiThread {
             activity?.cast<BaseActivity> {
                 it.dismissDialogs()
@@ -1292,13 +1293,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             }
         }
         continueCheckout = false
-        binding.placeOrder.isEnabled = cartPresenter.menuItemsTotalPrice > 0
+        binding.placeOrder.isEnabled = cartPresenter.menuItemsTotalPrice > 0*/
     }
 
     override fun showPayment() {
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_PLACE_ORDER)
         trackEvent(EventType.CHECKOUT_START)
-        activity?.runOnUiThread {
+        runOnMain {
             continueCheckout = false
             activity?.cast<BaseActivity> {
                 it.dismissDialogs()
@@ -1516,7 +1517,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun showDigitalCoupon(campaign: Campaign?) {
-        activity?.runOnUiThread {
+        runOnMain {
             if (!continueCheckout) {
                 dismissProgressDialog()
             }
@@ -1552,7 +1553,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun addPromotionItem(menuItem: MenuItem) {
-        activity?.runOnUiThread {
+        runOnMain {
             if (menuItem != null) {
                 //binding.main.promotionalItemLayout.visibility = View.VISIBLE
                 var imageUrl = menuItem.attributes.image
@@ -1811,7 +1812,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun showPromotionItem() {
-        activity?.runOnUiThread {
+        runOnMain {
             val promoItem: MenuItem? = if(CacheUtil.getInstance().couponToAdd != null) {
                 CacheUtil.getInstance().couponToAdd.menuItem
             } else if(CacheUtil.getInstance().campaignToAdd != null) {
@@ -1900,13 +1901,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun validatingOrder(subtotal: Double) {
-        binding.paymentSummaryContainer.subtotal.text = StringUtil.getFormattedPrice(subtotal)
-        binding.dashed.visibility = View.GONE
-        binding.originalPrice.visibility = View.GONE
-        //      binding.main.discountLoader.visibility = View.VISIBLE
-        //binding.discountPrice.visibility = View.INVISIBLE
-        binding.totalPrice.visibility = View.INVISIBLE
-        //binding.main.totalLoader.visibility = View.VISIBLE
+        runOnMain {
+            binding.paymentSummaryContainer.subtotal.text = StringUtil.getFormattedPrice(subtotal)
+            binding.dashed.visibility = View.GONE
+            binding.originalPrice.visibility = View.GONE
+            binding.totalPrice.visibility = View.INVISIBLE
+        }
     }
 
     override fun removeItemEvent(menuItem: MenuItem?, totalPrice: Double) {
@@ -2067,6 +2067,24 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         NavigationUtils.navigateSafe(
             findNavController(), CartFragmentDirections.actionCartToOrder(orderId)
         )
+    }
+
+    override fun goToItemDetails(position: Int, upsell: MenuItem) {
+        NavigationUtils.navigateSafe(
+            findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                upsell.attributes.categoryId.toString(), upsell.id, -1
+            )
+        )
+    }
+
+    override fun showCartMenuItemsLoading(){
+        binding.orderDetailsContainer.apply {
+            clOrderDetails.visibility = View.GONE
+            placeholderOrderDetails.apply {
+                shimmerOrderDetails.visibility = View.VISIBLE
+                shimmerOrderDetails.startShimmer()
+            }
+        }
     }
 
 }
