@@ -35,6 +35,7 @@ import com.skylinedynamics.solosdk.api.models.objects.TimedEvent;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -291,7 +292,7 @@ public interface MenuContract {
 
         int getIngredientsCount();
 
-        void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox);
+        void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity);
 
         int getModifierGroupsCount();
 

@@ -21,6 +21,7 @@ import com.herfy.util.ModifierProcessor;
 import com.herfy.util.ModifierProcessorCallback;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 public class ImageItemModifierHolder extends BaseModifierItemViewHolder implements ModifierProcessorCallback {

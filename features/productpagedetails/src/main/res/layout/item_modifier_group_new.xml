@@ -55,7 +55,6 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:layout_marginTop="@dimen/margin_large"
         android:descendantFocusability="blocksDescendants"
         android:focusableInTouchMode="false"
@@ -67,28 +66,32 @@
         tools:itemCount="5"
         tools:listitem="@layout/item_modifier_option_type" />
 
-    <!--    <LinearLayout-->
-    <!--        android:id="@+id/btnMinimum"-->
-    <!--        android:layout_width="80dp"-->
-    <!--        android:layout_height="30dp"-->
-    <!--        android:background="@drawable/bg_rounded_25_radius_background"-->
-    <!--        android:gravity="center"-->
-    <!--        android:textAlignment="viewEnd"-->
-    <!--        android:visibility="invisible"-->
-    <!--        app:layout_constraintBottom_toBottomOf="@+id/name"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="@+id/name"-->
-    <!--        tools:visibility="visible">-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btnMinimum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAlignment="viewEnd"
+            android:layout_marginEnd="@dimen/margin_large"
+            app:cardCornerRadius="4dp"
+            android:backgroundTint="#EEF0F2"
+            app:contentPadding="@dimen/padding_micro"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/select"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/name"
+            tools:visibility="visible">
 
-    <!--        <com.google.android.material.textview.MaterialTextView-->
-    <!--            android:id="@+id/minimum"-->
-    <!--            style="@style/Styles.Text.Footnote"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:gravity="center"-->
-    <!--            android:textColor="@color/white"-->
-    <!--            tools:text="Required" />-->
-    <!--    </LinearLayout>-->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/minimum"
+                style="@style/Styles.Text.Footnote"
+                android:textSize="11sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#55667B"
+                tools:text="Required" />
+        </androidx.cardview.widget.CardView>
 
 
     <ImageView

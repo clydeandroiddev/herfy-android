@@ -22,6 +22,8 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
     private final MenuContract.Presenter menuPresenter;
     private HashMap<Integer, Boolean> showModifierItemPrice = new HashMap<>();
     private HashMap<Integer, Boolean> shouldShowModifierGroupCheckbox = new HashMap<>();
+
+    private HashMap<Integer, Boolean> shouldShowQuantity = new HashMap<>();
     BaseModifierItemViewHolder.OnAction onAction;
 
     public void setOnAction(BaseModifierItemViewHolder.OnAction  onAction) {
@@ -47,7 +49,7 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     @Override
     public void onBindViewHolder(@NonNull ModifierNewGroupViewHolder holder, int position) {
-        menuPresenter.onBindModifierGroupViewAtPosition(position, holder, showModifierItemPrice.get(position),shouldShowModifierGroupCheckbox.get(position));
+        menuPresenter.onBindModifierGroupViewAtPosition(position, holder, showModifierItemPrice.get(position),shouldShowModifierGroupCheckbox.get(position),shouldShowQuantity);
     }
 
     @Override
@@ -61,6 +63,10 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
     }
     public void shouldShowCheckBox(boolean show, int position) {
         shouldShowModifierGroupCheckbox.put(position, show);
+        notifyItemChanged(position);
+    }
+    public void shouldShowQuantity(boolean show, int position) {
+        shouldShowQuantity.put(position, show);
         notifyItemChanged(position);
     }
 }

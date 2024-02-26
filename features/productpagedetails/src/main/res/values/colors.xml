@@ -10,6 +10,7 @@
     <color name="color_light_blue_shade">#E6F0F7</color>
     <color name="color_gray">#55667B</color>
     <color name="dark_shade_of_grey">#0C0C0C</color>
+    <color name="color_dark_blue">#0064AC</color>
 </resources>
 
 

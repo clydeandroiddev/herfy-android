@@ -1,7 +1,6 @@
 package com.herfy.menu.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,8 +44,6 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
         this.modifierGroupPosition = modifierGroupPosition;
         this.modifierGroup = modifierGroup;
         this.showModifierItemPrice = showModifierItemPrice;
-
-
     }
 
 

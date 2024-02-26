@@ -1,10 +1,8 @@
 package com.herfy.menu.views
 
-import android.animation.AnimatorInflater
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -649,16 +647,22 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             modifierItemPosition: Int,
                             modifierItem: ModifierItem
                         ) {
+                            Log.d("OnAction", "onCheckedChanged - Add: " + add +
+                                    ", modifierGroupPosition: " + modifierGroupPosition +
+                                    ", modifierGroup: " + modifierGroup +
+                                    ", modifierItemPosition: " + modifierItemPosition +
+                                    ", modifierItem: " + modifierItem.name +
+                                     "Quantity " + modifierItem.attributes.quantity);
                             menuPresenter!!.changeModifierItemQuantity(
                                 add,
                                 modifierGroupPosition,
                                 modifierGroup,
                                 modifierItemPosition,
-                                modifierItem
+                                modifierItem,
                             )
                             setSizes(menuItem)
                             shouldReset = false
-                            modifierGroupsAdapter!!.notifyItemChanged(modifierGroupPosition)
+
                             //Trigger calorie count
                         }
                     })
