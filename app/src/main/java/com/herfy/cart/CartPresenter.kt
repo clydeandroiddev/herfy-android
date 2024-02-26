@@ -3175,7 +3175,7 @@ class CartPresenter @Inject constructor(
         sendMessageLog(level, message)
     }
     override fun onBindUpsellViewAtPosition(position: Int, holder: UpsellViewHolder) {
-       holder.setUpsell(upsells[position])
+        holder.setUpsell(upsells[position])
     }
 
     override fun getUpsellCount(): Int {
