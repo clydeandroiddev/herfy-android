@@ -333,17 +333,17 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             OrderType.PICKUP, OrderType.EAT_IN, OrderType.DRIVE_THRU -> if (activity != null) {
                 menuPresenter.getStore()
                 if (CacheUtil.getInstance().orderStore != null) {
-                    val headerText = CacheUtil.getInstance()
+                    var headerText = CacheUtil.getInstance()
                         .getTranslations(Text.PICK_UP_FROM, "PICK UP FROM").uppercase(
                             Locale.getDefault()
                         ) + ":"
                     if (oT == OrderType.EAT_IN) {
-                        CacheUtil.getInstance()
+                        headerText = CacheUtil.getInstance()
                             .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup").uppercase(
                                 Locale.getDefault()
                             ) + ":"
                     } else if (oT == OrderType.DRIVE_THRU) {
-                        CacheUtil.getInstance()
+                        headerText = CacheUtil.getInstance()
                             .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
                             .uppercase(
                                 Locale.getDefault()
