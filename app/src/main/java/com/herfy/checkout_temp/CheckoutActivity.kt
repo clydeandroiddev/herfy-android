@@ -876,30 +876,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         } else {
             binding!!.tvTimeLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.PICKUP_TIME, "Pickup Time")
-            val minsString =
-                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString()
-
-            val minsValue = minsString.toInt()
-            val currentUtcTime = Instant.now()
-            val minTime = currentUtcTime.plus(
-                minsValue.toLong(),
-                ChronoUnit.MINUTES
-            )
-
-            val maxTime = currentUtcTime.plus(
-                (minsValue + 1).toLong(),
-                ChronoUnit.MINUTES
-            ) // Adding one more minute for upper bound of deliveryRangeTime
-            val minMinutes = minTime.atZone(ZoneOffset.UTC)[ChronoField.MINUTE_OF_HOUR]
-            val maxMinutes = maxTime.atZone(ZoneOffset.UTC)[ChronoField.MINUTE_OF_HOUR]
-            // todo temporary code for now ask BE where to get the start minutes range
-            val deliveryRangeTime =
-                "$minMinutes - $maxMinutes " +  CacheUtil.getInstance()
-                    .getTranslations(
-                        Text.MINS, "mins"
-                    )
+            val mins =
+                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString() + " " + CacheUtil.getInstance()
+                    .getTranslations("mins", "mins")
             binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within $deliveryRangeTime")
+                .getTranslations(Text.WITHIN, "Within $mins")
         }
         binding!!.placeOrder.text = CacheUtil.getInstance()
             .getTranslations(Text.PLACE_ORDER, "Place Order")
@@ -996,6 +977,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 //        tax.setText(taxAmount);
 //        taxLabel.setText(CacheUtil.getInstance().getConcept().getVatRate() + "% " + CacheUtil.getInstance().getTranslations(Text.VAT, "VAT"));
     }
+
 
     override fun setPriceDetails(
         subtotalPrice: Double,
