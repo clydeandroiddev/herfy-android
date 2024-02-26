@@ -59,6 +59,7 @@
     <color name="color_dark_gray_blue">#404D5C</color>
     <color name="shade_blue">#208DA7</color>
     <color name="colorStrokeBorder">#E4F5F9</color>
+    <color name="colorGrayStroke">#D0D0D0</color>
     <color name="colorSeparator">#E6E8EB</color>
     <color name="primaryTextColor">#0C0C0C</color>
     <color name="secondaryTextColor">#55667B</color>
