@@ -15,19 +15,25 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.databinding.FragmentOrdersBinding
 import com.herfy.ext.cast
 import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
 import com.herfy.history.adapters.OrdersRecyclerViewAdapter
 import com.herfy.main.MainActivity
-import com.herfy.main.NavigationActivity
-import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.CacheHelper
 import com.herfy.utils.analytics.MixpanelUtil
-import com.herfy.utils.helper.*
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.NavigationUtils
+import com.skylinedynamics.solosdk.api.models.objects.Address
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
+import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
+import com.skylinedynamics.solosdk.api.models.objects.OrderStatus
+import com.skylinedynamics.solosdk.api.models.objects.Rating
+import com.skylinedynamics.solosdk.api.models.objects.Store
 
 class OrdersFragment : BaseFragment(), OrdersContract.View {
 
@@ -91,12 +97,6 @@ class OrdersFragment : BaseFragment(), OrdersContract.View {
     override fun setupViews() {
 
         activity?.cast<MainActivity> {
-            it.setCloseButton {
-                findNavController().navigateUp()
-            }
-        }
-
-        activity?.cast<NavigationActivity> {
             it.setCloseButton {
                 findNavController().navigateUp()
             }

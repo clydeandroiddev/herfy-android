@@ -571,7 +571,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/add"
             app:layout_constraintStart_toEndOf="@+id/quantity"
             app:layout_constraintTop_toTopOf="@+id/add"
-            app:srcCompat="@drawable/ic_plus" />
+            app:srcCompat="@drawable/ic_herfy_plus" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/add"

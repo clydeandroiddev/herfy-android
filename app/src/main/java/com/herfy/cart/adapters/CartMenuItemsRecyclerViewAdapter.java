@@ -25,7 +25,7 @@ public class CartMenuItemsRecyclerViewAdapter extends RecyclerView.Adapter<CartM
     @NonNull
     @Override
     public CartMenuItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new CartMenuItemViewHolder(mContext, cartPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cart_menu_item_new, parent, false));
+        return new CartMenuItemViewHolder(mContext, cartPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cart, parent, false));
     }
 
     @Override

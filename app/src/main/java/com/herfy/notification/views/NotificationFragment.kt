@@ -12,21 +12,20 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.snackbar.Snackbar
 import com.herfy.base.BaseFragment
-import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentNotificationBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
-import com.herfy.main.NavigationActivity
 import com.herfy.notification.NotificationContract
 import com.herfy.notification.NotificationPresenter
+import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData
 import com.skylinedynamics.solosdk.api.models.objects.notification.Notification
-import com.herfy.utils.helper.LocaleUtil
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
-import com.herfy.utils.helper.*
+import java.util.LinkedList
 
 class NotificationFragment : BaseFragment(), NotificationContract.View {
 
@@ -88,14 +87,6 @@ class NotificationFragment : BaseFragment(), NotificationContract.View {
     override fun showNotificationDetails(notifData: NotifData) {
         dismissDialogs()
         activity?.cast<MainActivity> {
-            it.showToolbarCustomActionButton(true)
-            it.setToolbarCustomActionText(CacheUtil.getInstance().getTranslations(Text.DELETE, "Delete"))
-            it.setToolbarCustomActionButton {
-                showLoadingDialog()
-                notificationPresenter!!.deleteNotif(args.notificationId)
-            }
-        }
-        activity?.cast<NavigationActivity> {
             it.showToolbarCustomActionButton(true)
             it.setToolbarCustomActionText(CacheUtil.getInstance().getTranslations(Text.DELETE, "Delete"))
             it.setToolbarCustomActionButton {

@@ -7,6 +7,396 @@
     android:layout_height="match_parent"
     android:background="#FAFBFC">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/payment_summary_container"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                app:cardBackgroundColor="#E6F0F7"
+                app:cardCornerRadius="12dp"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:visibility="visible"
+                        android:id="@+id/apply_coupon_container"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:paddingLeft="12dp"
+                        android:paddingEnd="12dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <LinearLayout
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/ic_coupon"/>
+                            <TextView
+                                android:layout_marginStart="6dp"
+                                android:id="@+id/apply_coupon_label"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:includeFontPadding="false"
+                                android:textAlignment="viewEnd"
+                                android:textColor="@color/black"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                tools:text="Apply a coupon" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/view_coupon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_gravity="end"
+                            android:layout_weight="1"
+                            android:backgroundTint="#2865A8"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            app:cornerRadius="12dp"
+                            tools:text="View Coupons" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/applied_coupon_container"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/ic_coupon"/>
+                            <TextView
+                                android:layout_marginStart="6dp"
+                                android:id="@+id/applied_coupon_label"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:includeFontPadding="false"
+                                android:textAlignment="viewEnd"
+                                android:textColor="@color/black"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                tools:text="Coupon Applied" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/coupon_icon"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="parent"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:src="@drawable/image_placeholder"/>
+
+                                <androidx.appcompat.widget.LinearLayoutCompat
+                                    app:layout_constraintTop_toTopOf="@+id/coupon_icon"
+                                    app:layout_constraintStart_toEndOf="@+id/coupon_icon"
+                                    app:layout_constraintBottom_toBottomOf="@+id/coupon_icon"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        android:id="@+id/coupon_name"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="8dp"
+                                        android:includeFontPadding="false"
+                                        android:textColor="@color/black"
+                                        android:textStyle="bold"
+                                        android:textSize="15sp"
+                                        tools:text="Coupon Name" />
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        android:layout_marginStart="8dp"
+                                        android:id="@+id/coupon_amount"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:includeFontPadding="false"
+                                        android:ellipsize="end"
+                                        android:gravity="start|bottom"
+                                        android:maxLines="1"
+                                        android:textAlignment="viewStart"
+                                        android:textColor="@color/black"
+                                        android:textSize="15sp"
+                                        android:layout_marginTop="4dp"
+                                        tools:text="Amount"/>
+                                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                            <TextView
+                                android:id="@+id/remove_coupon"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="end|center_vertical"
+                                android:includeFontPadding="false"
+                                android:textAlignment="viewEnd"
+                                android:textAllCaps="true"
+                                android:textColor="#6B7280"
+                                android:textSize="12sp"
+                                tools:text="REMOVE" />
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:id="@+id/payment_summary_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:gravity="start"
+                android:maxLines="1"
+                android:textAlignment="viewStart"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="30dp"
+                android:text="PAYMENT SUMMARY"/>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/subtotal_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:includeFontPadding="false"
+                    android:textAlignment="viewStart"
+                    android:textColor="#55667B"
+                    android:textSize="16sp"
+                    tools:text="Subtotal" />
+
+                <TextView
+                    android:id="@+id/subtotal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:includeFontPadding="false"
+                    android:textAlignment="viewEnd"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="55 SR" />
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="#C9C9C9" />
+
+            <LinearLayout
+                android:id="@+id/discount_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/coupon_discount_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:includeFontPadding="false"
+                        android:textAlignment="viewStart"
+                        android:textColor="#55667B"
+                        android:textSize="16sp"
+                        tools:text="Coupon Discount" />
+
+                    <TextView
+                        android:id="@+id/coupon_discount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:includeFontPadding="false"
+                        android:textAlignment="viewEnd"
+                        android:textAllCaps="true"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="-2 SR" />
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#C9C9C9" />
+
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/delivery_charge_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:includeFontPadding="false"
+                    android:textAlignment="viewStart"
+                    android:textColor="#55667B"
+                    android:textSize="16sp"
+                    tools:text="Delivery Charge" />
+
+                <TextView
+                    android:id="@+id/delivery_charge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:includeFontPadding="false"
+                    android:textAlignment="viewEnd"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="5 SR" />
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="#C9C9C9" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/total_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:includeFontPadding="false"
+                    android:textAlignment="viewStart"
+                    android:textColor="#55667B"
+                    android:textSize="16sp"
+                    tools:text="Total" />
+
+                <TextView
+                    android:id="@+id/total"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:includeFontPadding="false"
+                    android:textAlignment="viewEnd"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="55 SR" />
+
+            </LinearLayout>
+
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,12 +8,10 @@
     <TextView
         android:id="@+id/modifierLabel"
         android:layout_width="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:ellipsize="end"
         android:includeFontPadding="false"
-        android:lineSpacingExtra="-7dp"
         android:maxLines="2"
         android:textAlignment="viewStart"
         android:textColor="@color/dusty_gray"

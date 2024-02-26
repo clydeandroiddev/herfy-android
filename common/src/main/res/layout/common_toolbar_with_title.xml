@@ -35,22 +35,19 @@
         />
 
     <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/btn_right"
+        android:minWidth="60dp"
+        app:layout_constraintWidth_min="60dp"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:insetBottom="0dp"
-        android:insetLeft="0dp"
-        android:insetTop="0dp"
-        android:insetRight="0dp"
         android:layout_marginTop="12dp"
         android:textColor="@color/white"
         android:textSize="12sp"
-        android:paddingHorizontal="8dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:textAppearance="@style/Styles.Text.Caption"
-        app:cornerRadius="12dp"
-        app:backgroundTint="?attr/colorPrimary"
+        android:gravity="center"
+        tools:text="Help"
+        app:cornerRadius="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 

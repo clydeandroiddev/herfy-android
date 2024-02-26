@@ -1,12 +1,13 @@
 package com.herfy.common.toolbar
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import com.google.android.material.button.MaterialButton
 import com.herfy.common.R
 
@@ -33,10 +34,11 @@ class TitleToolbar  @JvmOverloads constructor(context: Context, attrs: Attribute
             val drawableSideMenu =
                 ta.getResourceId(R.styleable.TitleToolbar_navButton, R.drawable.ic_navigate_back)
             navButton?.setImageResource(drawableSideMenu)
-            val colorId = ta.getResourceId(R.styleable.TitleToolbar_rightButtonColor, android.R.attr.colorPrimary)
-            val color = AppCompatResources.getColorStateList(context, colorId)
+            val color = ta.getColor(R.styleable.TitleToolbar_rightButtonColor,0)
             rightButton?.apply {
-                backgroundTintList = color
+                insetBottom = 0
+                insetTop = 0
+                backgroundTintList = ColorStateList.valueOf(color)
                 text = ta.getString(R.styleable.TitleToolbar_rightButtonLabel)
             }
             tvTitle?.text = ta.getString(R.styleable.TitleToolbar_title)
@@ -63,5 +65,9 @@ class TitleToolbar  @JvmOverloads constructor(context: Context, attrs: Attribute
 
     fun hide(toolbar: Boolean) {
         visibility = if (toolbar) View.GONE else View.VISIBLE
+    }
+
+    fun setRightButtonIs(visible : Boolean){
+        rightButton?.isVisible = visible
     }
 }

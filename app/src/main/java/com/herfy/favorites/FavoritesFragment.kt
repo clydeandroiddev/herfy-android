@@ -24,16 +24,16 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.databinding.FragmentFavoritesBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
+import com.herfy.util.CacheHelper
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
+import com.herfy.utils.helper.*
 import com.skylinedynamics.solosdk.api.models.objects.Favorite
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
-import com.herfy.util.CacheHelper
-import com.herfy.utils.helper.*
 
 class FavoritesFragment : BaseFragment(), FavoritesContract.View {
 
@@ -95,9 +95,6 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             }
         }
         activity?.cast<NavigationActivity> {
-            it.setCloseButton {
-                findNavController().navigateUp()
-            }
         }
         adapter = FavoritesRecyclerViewAdapter(favoritesPresenter)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)

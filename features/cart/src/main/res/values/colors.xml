@@ -10,7 +10,7 @@
     <color name="page_background_color">#FAFBFC</color>
     <color name="page_background_white">#FFFFFF</color>
     <color name="home_indicator">#D6D6D6</color>
-    <color name="primary_text">#000000</color>
+    <color name="primary_text">#0C0C0C</color>
     <color name="secondary_text">#9B9B9B</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
@@ -45,6 +45,8 @@
     <color name="strikethrough">#9B9694</color>
     <color name="gray_light">#B9B9B9</color>
     <color name="dodger_blue">#1A68FF</color>
+    <color name="text_color_blue">#0064AC</color>
+    <color name="text_color_cart_modifiers">#55667B</color>
 </resources>
 
 
