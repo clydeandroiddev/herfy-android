@@ -1,20 +1,23 @@
 package com.herfy.newmenu.views
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.os.*
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -38,56 +41,41 @@ import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.country.CountriesFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.country.CountriesFragment
+import com.herfy.databinding.FragmentMenuNewBinding
 import com.herfy.ext.cast
-import com.herfy.ext.smoothSnapToPosition
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.menu.MenuContract
 import com.herfy.menu.MenuPresenter
-import com.herfy.menu.databinding.FragmentMenuHerfyBinding
-import com.herfy.newmenu.NewMenuFragmentCommonListener
-import com.herfy.newmenu.NewMenuTabListener
-import com.herfy.newmenu.SliderContract
-import com.herfy.newmenu.SliderPresenter
-import com.herfy.newmenu.TabModel
+import com.herfy.newmenu.*
 import com.herfy.newmenu.adapter.MenuCategoriesAdapter
 import com.herfy.newmenu.adapter.SearchMenuRecyclerViewAdapter
 import com.herfy.newmenu.adapter.SliderFragmentStateAdapter
 import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
-import com.herfy.util.CacheHelper
-import com.herfy.utils.helper.NavigationUtils
-import com.herfy.util.StringUtil
+import com.skylinedynamics.solosdk.api.models.objects.*
+import com.herfy.util.*
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.extensions.smoothSnapToPosition
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
-import com.skylinedynamics.solosdk.api.models.objects.Campaign
-import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
-import com.skylinedynamics.solosdk.api.models.objects.Favorite
-import com.skylinedynamics.solosdk.api.models.objects.Ingredient
-import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
-import com.skylinedynamics.solosdk.api.models.objects.MenuItem
-import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
-import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
-import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
-import com.skylinedynamics.solosdk.api.models.objects.OrderType
-import com.skylinedynamics.solosdk.api.models.objects.Slide
-import com.skylinedynamics.solosdk.api.models.objects.Store
-import java.util.Locale
+import com.herfy.utils.helper.NavigationUtils
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, NewMenuTabListener {
 
-    private lateinit var binding: FragmentMenuHerfyBinding
+    private lateinit var binding: FragmentMenuNewBinding
 
-    private val args: NewMenuFragmentArgs by navArgs()
+    //private val args: NewMenuFragmentArgs by navArgs()
 
     private lateinit var menuPresenter: MenuContract.Presenter
     private lateinit var sliderPresenter: SliderContract.Presenter
@@ -187,7 +175,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        selectedHomeMenuCategoryId = args.menuCategoryId
+        //selectedHomeMenuCategoryId = args.menuCategoryId
         activity?.cast<MainActivity> {
             listener = it
         }
@@ -212,9 +200,9 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
     private fun checkBackground() {
         binding.appBarLayout.setBackgroundResource(R.color.page_background_color)
-        //binding.menuContent.setBackgroundResource(R.color.page_background_color)
+        binding.menuContent.setBackgroundResource(R.color.page_background_color)
         binding.tabsLayout.setBackgroundResource(R.color.page_background_color)
-        //binding.withSearchLayout.setBackgroundResource(R.color.page_background_color)
+        binding.withSearchLayout.setBackgroundResource(R.color.page_background_color)
     }
 
     override fun onCreateView(
@@ -226,7 +214,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             lastCategoryPosition = savedInstanceState.getInt("lastCategoryPosition")
             tabLastPosition = savedInstanceState.getInt("tabLastPosition")
         }
-        binding = FragmentMenuHerfyBinding.inflate(inflater, container, false)
+        binding = FragmentMenuNewBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -285,7 +273,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                             "item", "product" -> showMenuItem(bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: "")
                         }
                     }
-                    NavigationUtils.navigateSafe(findNavController(), NewMenuFragmentDirections.actionMenuToDialogPopup())
+                    //NavigationUtils.navigateSafe(findNavController(), NewMenuFragmentDirections.actionMenuToDialogPopup())
                 }
             }
         }, 300)
@@ -294,7 +282,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     private fun loadInitial() {
         if (isRemoving || activity == null || activity?.isFinishing == true) return
 
-        //binding.blocker.visibility = View.VISIBLE
+        binding.blocker.visibility = View.VISIBLE
         firstLaunch = false
         if(!isFromOrderType) {
             sliderPresenter.getSlider()
@@ -413,16 +401,16 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
     override fun update() {
         super.update()
-        /*if (binding.orderType != null) {
+        if (binding.orderType != null) {
             menuPresenter.getStoreOpen()
             try {
                 activity?.cast<MainActivity> {
-                    *//*if (isFromShowOrderType && CacheUtil.getInstance().orderStore != null) {
+                    /*if (isFromShowOrderType && CacheUtil.getInstance().orderStore != null) {
                         isFromShowOrderType = false
                         if (lastCategoryPosition < pagerAdapter!!.itemCount) {
                             pagerAdapter!!.updateFragment(lastCategoryPosition)
                         }
-                    }*//*
+                    }*/
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -523,7 +511,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                         )
                 }
             }
-        }*/
+        }
         if (CacheUtil.getInstance().favoriteMenuCategory != null && CacheUtil.getInstance().favoriteMenuItem != null) {
             menuPresenter.menuCategory = CacheUtil.getInstance().favoriteMenuCategory
             menuPresenter.menuItem = CacheUtil.getInstance().favoriteMenuItem
@@ -541,7 +529,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             }
             menuPresenter.addRemoveFavorite(true)
         }
-        /*if (CacheUtil.getInstance().application.attributes.menuOnly || CacheUtil.getInstance().cartQuantity == 0) {
+        if (CacheUtil.getInstance().application.attributes.menuOnly || CacheUtil.getInstance().cartQuantity == 0) {
             binding.cartQuantity.visibility = View.GONE
             binding.totalContainer.visibility = View.GONE
         } else if (binding.cartIcon.visibility == View.VISIBLE) {
@@ -549,7 +537,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 StringUtil.localize(CacheUtil.getInstance().cartQuantity.toString())
             binding.cartQuantity.visibility = View.VISIBLE
             binding.totalContainer.visibility = View.VISIBLE
-        }*/
+        }
         updateFloatingTotalPrice()
     }
 
@@ -562,7 +550,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
         if (isRemoving || activity == null || activity?.isFinishing == true) return
         binding.sliderViewPager.isSaveEnabled = false
         binding.tabsLayout.isSmoothScrollingEnabled = true
-        /*binding.cardOrderType.setOnClickListener {
+        binding.cardOrderType.setOnClickListener {
             isFromOrderType = true
             previousSelectedStoreId = CacheUtil.getOrderStoreId()
             //val selectedPosition = pagerAdapter?.selectedPosition ?: binding.viewPager.currentItem
@@ -573,7 +561,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             if(CacheUtil.getInstance().orderType != OrderType.CURBSIDE) {
                 CacheUtil.getInstance().curbsideCar = null
             }
-            *//*setFragmentResultListener(OrderTypeFragment.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
+            /*setFragmentResultListener(OrderTypeFragment.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
                 clearFragmentResultListener(requestKey = OrderTypeFragment.ARGS_KEY_FRAGMENT_RESULT)
                 if(CacheUtil.getOrderStoreId() != null) {
                     isFromOrderType = true
@@ -585,7 +573,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                     }
                     loadInitial()
                 }
-            }*//*
+            }*/
             val storeId = CacheUtil.getOrderStoreId() ?: ""
             //NavigationUtils.navigateSafe(findNavController(), NewMenuFragmentDirections.actionMenuToOrderType(false, storeId))
             val intent = Intent(activity, NavigationActivity::class.java)
@@ -631,14 +619,14 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 animateCard((binding.cardSearchContainer.parent as View).measuredWidth, true)
                 animateOrderTypeContainer(true)
             }
-        }*/
-        //binding.blocker.setOnClickListener {  }
-        //binding.withSearchLayout.setOnClickListener {  }
+        }
+        binding.blocker.setOnClickListener {  }
+        binding.withSearchLayout.setOnClickListener {  }
         searchAdapter = SearchMenuRecyclerViewAdapter(activity, menuPresenter)
         searchAdapter?.updateMenuList(ArrayList())
         searchLinearLayoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        /*binding.menuItemsSearchList.layoutManager = searchLinearLayoutManager
+        binding.menuItemsSearchList.layoutManager = searchLinearLayoutManager
         try {
             activity?.let {
                 val displayMetrics = DisplayMetrics()
@@ -660,9 +648,9 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        }*/
+        }
         binding.sliderViewPager.layoutParams.height = sliderHeight
-        /*binding.emptySlider.layoutParams.height = sliderHeight
+        binding.emptySlider.layoutParams.height = sliderHeight
         binding.newMenuBannerShimmer.layoutParams.height = sliderHeight
         if (CacheUtil.getInstance().application.attributes.menuOnly) {
             binding.totalContainer.setBackgroundResource(R.drawable.background_oval_disabled)
@@ -676,7 +664,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
         } else {
             binding.totalContainer.setBackgroundResource(R.drawable.background_oval)
             binding.btnViewBag.setTextColor(Color.parseColor(CacheUtil.getInstance().colorMain))
-        }*/
+        }
         /*binding.viewPager.reduceDragSensitivity(2)
         binding.viewPager.offscreenPageLimit = 10
         binding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
@@ -711,7 +699,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 pagerAdapter?.selectedPosition = position
             }
         })*/
-        /*binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout: AppBarLayout, verticalOffset: Int ->
+        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout: AppBarLayout, verticalOffset: Int ->
             try {
                 val totalRange = Math.abs(appBarLayout.totalScrollRange)
                 val positiveVerticalOffset = Math.abs(verticalOffset)
@@ -803,8 +791,8 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                         closeKeyboard(binding.searchText)
                     }
                 }
-            }*/
-        /*binding.totalContainer.setOnClickListener(View.OnClickListener {
+            }
+        binding.totalContainer.setOnClickListener(View.OnClickListener {
             if (CacheUtil.getInstance().application.attributes.menuOnly) {
                 return@OnClickListener
             }
@@ -812,14 +800,14 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             intent.putExtra("navigation", R.id.nav_cart)
             intent.putExtra("isBranchPreselected", menuPresenter.isPreselectedBranch)
             activity?.startActivity(intent)
-        })*/
+        })
         /*if(!isFromCountries && !isFromOrderType) {
             refreshCategory()
         }*/
     }
 
     override fun updateFloatingTotalPrice() {
-        /*activity?.runOnUiThread {
+        activity?.runOnUiThread {
             if (CacheUtil.getInstance().cart.size > 0) {
                 if (LocaleUtil.getInstance().isArabic) {
                     binding.totalPrice.text = CacheUtil.getInstance()
@@ -844,11 +832,11 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                             )
                 }
             }
-        }*/
+        }
     }
 
     fun updateFloatingTotalContainer() {
-        /*if (CacheUtil.getInstance().cartQuantity == 0) {
+        if (CacheUtil.getInstance().cartQuantity == 0) {
             binding.cartQuantity.visibility = View.GONE
             binding.totalContainer.visibility = View.GONE
         } else {
@@ -862,7 +850,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             ) {
                 binding.totalContainer.visibility = View.VISIBLE
             }
-        }*/
+        }
     }
 
     private fun refreshCategory() {
@@ -914,14 +902,14 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
     override fun setupFonts() {}
     override fun setupTranslations() {
-        /*binding.searchEmptyText.text = CacheUtil.getInstance()
+        binding.searchEmptyText.text = CacheUtil.getInstance()
             .getTranslations(Text.NO_ITEM_FOUND, "No item found")
         binding.searchEmptyTextDesc.text = CacheUtil.getInstance().getTranslations(
             Text.NO_ITEM_FOUND_DESC,
             "Sorry, we were unable to find something that matches your search."
         )
         binding.btnViewBag.text = CacheUtil.getInstance()
-            .getTranslations(Text.VIEW_BAG_CAPS, "VIEW BAG")*/
+            .getTranslations(Text.VIEW_BAG_CAPS, "VIEW BAG")
     }
 
     override fun showStore(store: Store) {}
@@ -981,7 +969,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     }
 
     private fun setupSliderHeight() {
-        /*activity?.cast<BaseActivity> {
+        activity?.cast<BaseActivity> {
             it.runOnUiThread {
                 val displayMetrics = DisplayMetrics()
                 it.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
@@ -1000,7 +988,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                         sliderHeight + resources.getDimensionPixelSize(R.dimen.menu_appbar_height_no_slider)
                 }
             }
-        }*/
+        }
     }
 
     private fun setEmptyMenuLayoutMargin() {
@@ -1188,7 +1176,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     }
 
     override fun showSearchedMenuItems(searchedMenuItems: ArrayList<MenuItem>) {
-        /*binding.newMenuItemSearchShimmer.visibility = View.GONE
+        binding.newMenuItemSearchShimmer.visibility = View.GONE
         if (searchedMenuItems.isEmpty()) {
             binding.menuItemsSearchList.visibility = View.GONE
             binding.searchEmptyLayout.visibility = View.VISIBLE
@@ -1199,7 +1187,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 SearchMenuRecyclerViewAdapter(activity, menuPresenter)
             binding.menuItemsSearchList.adapter = searchAdapter
             searchAdapter?.updateMenuList(searchedMenuItems)
-        }*/
+        }
     }
 
     override fun hideSearchedMenuItems(menuCategory: MenuCategory) {}
@@ -1223,15 +1211,16 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     override fun setIngredient(ingredient: Ingredient) {}
     override fun setModifierGroup(
         position: Int,
-        modifierGroup: ModifierGroup,
+        modifierGroup: ModifierGroup?,
         showModifierItemPrice: Boolean,
         showShowModifierCheckBox: Boolean
     ) {
+
     }
 
     override fun setMenuItemQuantity(quantity: Int) {}
     override fun setMenuItemTotalPrice(totalPrice: Double) {
-        //binding.totalPrice.text = "" + totalPrice
+        binding.totalPrice.text = "" + totalPrice
     }
 
     override fun selectSize() {}
@@ -1279,7 +1268,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     }
 
     private fun showShimmers() {
-        /*binding.emptySlider.visibility = View.GONE
+        binding.emptySlider.visibility = View.GONE
         binding.newMenuBannerShimmer.visibility = View.GONE
         binding.sliderViewPager.visibility = View.GONE
         binding.dotsIndicator.visibility = View.GONE
@@ -1303,27 +1292,27 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 e.printStackTrace()
             }
             binding.emptySlider.setBackgroundResource(R.color.page_background_color)
-            //binding.newMenuTabsShimmerText.visibility = View.VISIBLE
-            //binding.newMenuTabsShimmer.visibility = View.GONE
+            binding.newMenuTabsShimmerText.visibility = View.VISIBLE
+            binding.newMenuTabsShimmer.visibility = View.GONE
         } else {
-            //binding.newMenuTabsShimmerText.visibility = View.GONE
-            //binding.newMenuTabsShimmer.visibility = View.VISIBLE
+            binding.newMenuTabsShimmerText.visibility = View.GONE
+            binding.newMenuTabsShimmer.visibility = View.VISIBLE
         }
-        binding.newMenuItemShimmer.visibility = View.VISIBLE*/
+        binding.newMenuItemShimmer.visibility = View.VISIBLE
     }
 
     private fun hideShimmers() {
         Handler(Looper.getMainLooper()).postDelayed({
-            //binding.newMenuItemSearchShimmer.visibility = View.GONE
-            //binding.newMenuTabsShimmer.visibility = View.GONE
-            //binding.newMenuTabsShimmerText.visibility = View.GONE
-            //binding.spaceTwo.visibility = View.GONE
-            //binding.newMenuBannerShimmer.visibility = View.GONE
-            //binding.newMenuItemShimmer.visibility = View.GONE
+            binding.newMenuItemSearchShimmer.visibility = View.GONE
+            binding.newMenuTabsShimmer.visibility = View.GONE
+            binding.newMenuTabsShimmerText.visibility = View.GONE
+            binding.spaceTwo.visibility = View.GONE
+            binding.newMenuBannerShimmer.visibility = View.GONE
+            binding.newMenuItemShimmer.visibility = View.GONE
             binding.tabsLayout.visibility = View.VISIBLE
             //binding.viewPager.visibility = View.VISIBLE
             binding.menuRecyclerView.visibility = View.VISIBLE
-            //binding.blocker.visibility = View.GONE
+            binding.blocker.visibility = View.GONE
             if(isFromOrderType && isAdded) {
                 showSlides(sliderPresenter.sliders)
             }
@@ -1332,7 +1321,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
     override fun updateCartItem() {}
     private fun updateFloatingBag() {
-        /*if (CacheUtil.getInstance().application.attributes.menuOnly || CacheUtil.getInstance().cartQuantity == 0) {
+        if (CacheUtil.getInstance().application.attributes.menuOnly || CacheUtil.getInstance().cartQuantity == 0) {
             binding.cartQuantity.visibility = View.GONE
             binding.totalContainer.visibility = View.GONE
         } else if (binding.cartIcon.visibility == View.VISIBLE) {
@@ -1340,7 +1329,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 StringUtil.localize(CacheUtil.getInstance().cartQuantity.toString())
             binding.cartQuantity.visibility = View.VISIBLE
             binding.totalContainer.visibility = View.VISIBLE
-        }*/
+        }
         updateFloatingTotalPrice()
     }
 
@@ -1414,14 +1403,14 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
     override fun showSlides(slides: ArrayList<Slide>) {
         try {
-            //binding.newMenuBannerShimmer.visibility = View.GONE
-            //binding.emptySlider.setBackgroundResource(R.color.page_background_white)
+            binding.newMenuBannerShimmer.visibility = View.GONE
+            binding.emptySlider.setBackgroundResource(R.color.page_background_white)
             if (slides.size > 0) {
                 activity?.let {
                     val sliderAdapter =
                         SliderFragmentStateAdapter(it, sliderPresenter, slides)
                     binding.sliderViewPager.adapter = sliderAdapter
-                    //binding.emptySlider.visibility = View.GONE
+                    binding.emptySlider.visibility = View.GONE
                     binding.sliderViewPager.visibility = View.VISIBLE
                     if (slides.size > 1) {
                         binding.dotsIndicator.setViewPager2(binding.sliderViewPager)
@@ -1440,22 +1429,60 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                             } else {
                                 binding.sliderViewPager.currentItem = pos
                             }
-                            sliderHandler?.postDelayed(this, 3000)
+                            sliderHandler!!.postDelayed(this, 3000)
                         }
                     }, 3000)
                 }
             } else {
-                //binding.emptySlider.visibility = View.VISIBLE
+                binding.emptySlider.visibility = View.VISIBLE
                 binding.sliderViewPager.visibility = View.VISIBLE
                 binding.dotsIndicator.visibility = View.GONE
+                properSliderHeights()
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
+    private fun properSliderHeights() {
+        try {
+            activity?.let {
+                sliderHeight = it.resources.getDimensionPixelSize(R.dimen.pixel_twenty_five)
+                if (!CacheUtil.getInstance().application.attributes.settings.categoryDisplay.equals(
+                        Values.IMAGE_TEXT,
+                        ignoreCase = true
+                    )
+                ) {
+                    binding.mainToolbar.layoutParams.height =
+                        sliderHeight + (it.resources.getDimensionPixelSize(R.dimen.menu_appbar_height_no_slider) - it.resources.getDimensionPixelSize(
+                            R.dimen.seventy_dp
+                        ))
+                } else {
+                    binding.mainToolbar.layoutParams.height =
+                        sliderHeight + it.resources.getDimensionPixelSize(R.dimen.menu_appbar_height_no_slider)
+                }
+                binding.sliderViewPager.layoutParams.height = sliderHeight
+                binding.emptySlider.layoutParams.height = sliderHeight
+                binding.newMenuBannerShimmer.layoutParams.height = sliderHeight
+                binding.mainToolbar.invalidate()
+                binding.sliderViewPager.invalidate()
+                binding.emptySlider.invalidate()
+                binding.newMenuBannerShimmer.invalidate()
+                binding.mainToolbar.visibility = View.GONE
+                binding.mainToolbar.visibility = View.VISIBLE
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+
+    }
+
     override fun showSlidesError() {
-        //binding.emptySlider.setBackgroundResource(R.color.page_background_white)
+        binding.emptySlider.setBackgroundResource(R.color.page_background_white)
+        if (sliderPresenter.sliders.size <= 0) {
+            properSliderHeights()
+        }
     }
 
     override fun showMidBanner(banners: ArrayList<Slide>) {}
@@ -1518,18 +1545,18 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
         }
         alphaAnim.duration = 600
         alphaAnim.fillAfter = true
-        //binding.cardOrderTypeContainer.startAnimation(alphaAnim)
+        binding.cardOrderTypeContainer.startAnimation(alphaAnim)
     }
 
     private fun animateCard(newWidth: Int, show: Boolean) {
-        /*val widthAnimator = ValueAnimator.ofInt(
+        val widthAnimator = ValueAnimator.ofInt(
             binding.cardSearchContainer.width, newWidth
         )
         widthAnimator.duration = 600
         widthAnimator.interpolator = DecelerateInterpolator()
         widthAnimator.addUpdateListener { animation: ValueAnimator ->
-            //binding.cardSearchContainer.layoutParams.width = animation.getAnimatedValue() as Int
-            //binding.cardSearchContainer.requestLayout()
+            binding.cardSearchContainer.layoutParams.width = animation.getAnimatedValue() as Int
+            binding.cardSearchContainer.requestLayout()
         }
         widthAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
@@ -1540,7 +1567,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 }
             }
         })
-        widthAnimator.start()*/
+        widthAnimator.start()
     }
 
     override fun setTabs(adapter: RecyclerView.Adapter<NewMenuViewHolder>) {
@@ -1553,7 +1580,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
     override fun onMenuCategoryItemsScrolled(show: Boolean, isLastItemVisible: Boolean) {
         if (CacheUtil.getInstance().application.attributes.menuOnly || CacheUtil.getInstance().cartQuantity == 0) {
-            //binding.totalContainer.visibility = View.GONE
+            binding.totalContainer.visibility = View.GONE
             return
         }
         context?.let {
@@ -1569,11 +1596,11 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 }
 
                 override fun onAnimationEnd(animation: Animation) {
-                    /*if(show) {
+                    if(show) {
                         binding.totalContainer.visibility = View.VISIBLE
                     } else {
                         binding.totalContainer.visibility = View.GONE
-                    }*/
+                    }
                     animDone = true
                 }
 
@@ -1582,9 +1609,9 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             /*if (animDone && ((isLastItemVisible && binding.totalContainer.isShown) || (show && !isLastItemVisible && !binding.totalContainer.isShown) || (!show && !isLastItemVisible && binding.totalContainer.isShown))) {
                 binding.totalContainer.startAnimation(anim)
             }*/
-            /*if (animDone && ((show && !binding.totalContainer.isShown) || (!show && binding.totalContainer.isShown))) {
+            if (animDone && ((show && !binding.totalContainer.isShown) || (!show && binding.totalContainer.isShown))) {
                 binding.totalContainer.startAnimation(anim)
-            }*/
+            }
         }
     }
 
@@ -1653,7 +1680,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     }
 
     override fun updateOrderTypeContainer(isPreselected: Boolean) {
-        //binding.cardOrderType.isEnabled = !isPreselected
+        binding.cardOrderType.isEnabled = !isPreselected
         onResume()
     }
 
@@ -1692,7 +1719,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
     override fun onLastItemReach(isScrollable: Boolean, scrollDirection: ScrollDirection) {
         if (CacheUtil.getInstance().cartQuantity == 0) {
-            //binding.totalContainer.visibility = View.GONE
+            binding.totalContainer.visibility = View.GONE
             return
         }
         val anim: Animation
@@ -1710,7 +1737,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             }
 
             override fun onAnimationEnd(animation: Animation) {
-                /*if (isScrollable && scrollDirection == ScrollDirection.Up) {
+                if (isScrollable && scrollDirection == ScrollDirection.Up) {
                     binding.totalContainer.visibility = View.GONE
                 } else if (isScrollable && scrollDirection == ScrollDirection.Down) {
                     if (!CacheUtil.getInstance().application.attributes.menuOnly && CacheUtil.getInstance().cartQuantity > 0) {
@@ -1726,18 +1753,18 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                     } else {
                         binding.totalContainer.visibility = View.GONE
                     }
-                }*/
+                }
                 animDone = true
             }
 
             override fun onAnimationRepeat(animation: Animation) {}
         })
         if (animDone) {
-            /*if (isScrollable && binding.totalContainer.isShown && scrollDirection == ScrollDirection.Up ||
+            if (isScrollable && binding.totalContainer.isShown && scrollDirection == ScrollDirection.Up ||
                 isScrollable && scrollDirection == ScrollDirection.Down && !binding.totalContainer.isShown
             ) {
                 binding.totalContainer.startAnimation(anim)
-            }*/
+            }
         }
     }
 
@@ -1754,15 +1781,15 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 loadInitial()
             }
         }
-        NavigationUtils.navigateSafe(
+        /*NavigationUtils.navigateSafe(
             findNavController(), NewMenuFragmentDirections.actionMenuToCountries()
-        )
+        )*/
     }
 
     fun showOrder(orderId: String) {
-        NavigationUtils.navigateSafe(
+        /*NavigationUtils.navigateSafe(
             findNavController(), NewMenuFragmentDirections.actionMenuToOrder(orderId)
-        )
+        )*/
     }
 
     override fun setMenuCategoryForAnalytics(

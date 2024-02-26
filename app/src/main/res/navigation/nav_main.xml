@@ -113,9 +113,9 @@
 
     <fragment
         android:id="@+id/nav_menu"
-        android:name="com.herfy.newmenu.views.NewMenuFragment"
+        android:name="com.herfy.menu.view.MenuFragment"
         android:label="menu"
-        tools:layout="@layout/fragment_menu_new">
+        tools:layout="@layout/fragment_menu">
 
         <argument
             android:name="menu_category_id"
@@ -269,6 +269,8 @@
         android:name="com.herfy.menu.views.MenuItemFragment"
         android:label="customize_caps"
         tools:layout="@layout/fragment_menu_item">
+
+        <deepLink app:uri="android-app://com.herfy/nav_menu_item/{menu_category_id}/{menu_item_id}"/>
 
         <argument
             android:name="menu_category_id"

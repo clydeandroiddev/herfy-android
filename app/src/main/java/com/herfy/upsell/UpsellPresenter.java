@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
@@ -28,7 +29,6 @@ import com.skylinedynamics.solosdk.api.models.objects.Translated;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
-import com.herfy.util.MenuUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;

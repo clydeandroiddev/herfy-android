@@ -26,7 +26,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Tier;
 import com.skylinedynamics.solosdk.api.models.requestbodies.PosPointsRedemptionBody;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
-import com.herfy.util.ErrorHandler;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.util.TimeUtil;
 
 import org.json.JSONArray;

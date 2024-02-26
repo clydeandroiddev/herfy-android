@@ -3,7 +3,7 @@ package com.herfy.feedback;
 import com.herfy.utils.constants.Text;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.analytics.MixpanelUtil;
-import com.herfy.util.ErrorHandler;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;

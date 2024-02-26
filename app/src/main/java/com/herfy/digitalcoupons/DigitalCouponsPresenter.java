@@ -28,7 +28,7 @@ import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.analytics.MixpanelUtil;
-import com.herfy.util.ErrorHandler;
+import com.herfy.utils.handler.ErrorHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,4 +1,5 @@
 package com.herfy.order.views
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -60,9 +61,6 @@ import com.herfy.cart.views.CartFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.ext.cast
-import com.herfy.ext.gone
-import com.herfy.ext.isVisible
-import com.herfy.ext.visible
 import com.herfy.location.FusedLocationProvider
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
@@ -74,11 +72,15 @@ import com.herfy.order.views.ordertype.OrderTypeNewFragmentArgs
 import com.herfy.order.views.ordertype.OrderTypeNewFragmentDirections
 import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
 import com.herfy.util.*
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.isVisible
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
+import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout

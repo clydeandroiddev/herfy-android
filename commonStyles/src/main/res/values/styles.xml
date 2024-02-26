@@ -121,12 +121,28 @@
     <item name="cornerSize">12dp</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.Image.Corner16dp" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+
+    <style name="ShapeAppearanceOverlay.Image.Corner20dp" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
     <style name="ShapeAppearanceOverlay.MyApp.Image.Circle" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
     <style name="MyApp.CircleImageCardView" parent="">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MyApp.Image.Circle</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.MyApp.Image.Corner16dp" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
     </style>
 
 

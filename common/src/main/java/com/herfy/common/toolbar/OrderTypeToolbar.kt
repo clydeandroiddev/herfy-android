@@ -1,7 +1,6 @@
 package com.herfy.common.toolbar
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
@@ -46,13 +45,6 @@ class OrderTypeToolbar @JvmOverloads constructor(context: Context, attrs: Attrib
             val drawableSideMenu =
                 ta.getResourceId(R.styleable.OrderTypeToolbar_navButton, R.drawable.ic_navigate_back)
             navButton?.setImageResource(drawableSideMenu)
-            val color = ta.getColor(R.styleable.OrderTypeToolbar_rightButtonColor, 0)
-            rightButton?.apply {
-                backgroundTintList = ColorStateList.valueOf(color)
-            }
-            val textColorId = ta.getResourceId(R.styleable.OrderTypeToolbar_rightButtonTextColor, R.color.white)
-            val textColor = AppCompatResources.getColorStateList(context, textColorId)
-            qtyText?.setTextColor(textColor)
         } finally {
             ta.recycle()
         }

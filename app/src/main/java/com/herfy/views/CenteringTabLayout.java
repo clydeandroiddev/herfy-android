@@ -1,4 +1,4 @@
-package com.herfy.menu.widgets;
+package com.herfy.views;
 
 import android.content.Context;
 import android.util.AttributeSet;

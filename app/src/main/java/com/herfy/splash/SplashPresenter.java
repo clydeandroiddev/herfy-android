@@ -32,6 +32,7 @@ import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.EnvUtil;
+import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.ApiRequestWithHeadersListener;
 import com.skylinedynamics.solosdk.api.SoloAuth;
@@ -56,9 +57,8 @@ import com.skylinedynamics.solosdk.api.models.objects.Slider;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
 import com.herfy.util.DeviceUtil;
-import com.herfy.util.ErrorHandler;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.util.MenuUtil;
 import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;
 

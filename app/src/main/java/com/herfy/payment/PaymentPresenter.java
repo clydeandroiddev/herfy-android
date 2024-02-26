@@ -56,7 +56,7 @@ import com.herfy.summary.OrderSummaryMenuItemViewHolder;
 import com.herfy.util.ApiLogLevel;
 import com.herfy.util.ApiLogUtil;
 import com.herfy.util.AppLogger;
-import com.herfy.util.ErrorHandler;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.ShipBookLogger;

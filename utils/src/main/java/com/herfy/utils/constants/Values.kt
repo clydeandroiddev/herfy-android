@@ -80,4 +80,6 @@ object Values {
     const val LOYALTY_PROVIDER = "solo-loyalty"
     const val MIXPANEL_TOKEN = "3a172b606e1bd18abfad3bd6f511bbd5"
     const val BOTTOM_SLIDER_ID = "3767"
+    const val SLIDER_INTERVAL = 8_000L
+    const val NAV_DEEP_LINK_BASE_URL = "android-app://com.herfy/"
 }

@@ -41,9 +41,6 @@ import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
-import com.herfy.ext.gone
-import com.herfy.ext.invisible
-import com.herfy.ext.visible
 import com.herfy.firebase.FirebaseService
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
@@ -59,8 +56,11 @@ import com.herfy.productpagedetails.databinding.FragmentMenuItemDetailsBinding
 import com.herfy.util.*
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.invisible
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil

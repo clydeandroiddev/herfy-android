@@ -1,9 +1,10 @@
-package com.herfy.util;
+package com.herfy.utils.menu;
 
 import com.google.gson.Gson;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
+import com.herfy.utils.helper.StringUtil;
 import com.skylinedynamics.solosdk.api.models.objects.CustomFieldObject;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.FavoriteIngredients;

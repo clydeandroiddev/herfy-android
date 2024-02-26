@@ -1,4 +1,4 @@
-package com.herfy.ext
+package com.herfy.utils.extensions
 
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
