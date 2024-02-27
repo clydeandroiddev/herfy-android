@@ -40,8 +40,6 @@ class SignInFragment : BaseFragment(), AuthContract.View {
     private var _listener: Listener? = null
     private val listener get() = _listener!!
 
-
-
     private var  _binding: FragmentSignInBinding? = null
     val binding: FragmentSignInBinding? get() =  _binding
     private var authPresenter: AuthContract.Presenter? = null
