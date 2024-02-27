@@ -120,6 +120,7 @@ import company.tap.gosellapi.internal.api.models.Token
 import company.tap.gosellapi.open.controllers.SDKSession
 import company.tap.gosellapi.open.delegate.SessionDelegate
 import company.tap.gosellapi.open.models.CardsList
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.BackpressureStrategy
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -136,6 +137,7 @@ import java.util.concurrent.TimeUnit
 
 //import com.herfy.constants.Text;
 //import com.herfy.constants.Values;
+@AndroidEntryPoint
 class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     OnDateSelectedListener {
     private var binding: ActivityCheckoutPageBinding? = null
@@ -325,6 +327,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         logEventAttributesMetric(eventName, eventAttributes, eventMetricName, eventMetricValue)
     }
 
+
     private fun showMap() {
         val storeLat = CacheUtil.getInstance().orderStore.attributes.lat
         val storeLon = CacheUtil.getInstance().orderStore.attributes.lng
@@ -398,6 +401,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
     }
 
+
     private fun showCurveLine(storeLocation: LatLng, currentLocation: LatLng, k: Double) {
         val distanceBetween = SphericalUtil.computeDistanceBetween(storeLocation, currentLocation)
         val heading = SphericalUtil.computeDistanceBetween(storeLocation, currentLocation)
@@ -422,13 +426,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             polygon.add(temp[i])
         }
 
-//        for (int i=0; i < numpoints; i++) {
-//            LatLng pi = SphericalUtil.computeOffset(c, r, h1 + i * step);
-//            options.add(pi);
-//        }
-
-//        mMap.addPolyline(options.width(10).color(Color.BLACK).geodesic(false).pattern(pattern));
-//        mMap.addPolyline(options.width(10).color(Color.BLACK).geodesic(false));
         mMap!!.addPolygon(polygon)
         temp.clear()
     }
@@ -870,11 +867,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         } else {
             binding!!.tvTimeLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.PICKUP_TIME, "Pickup Time")
-            val mins =
-                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString() + " " + CacheUtil.getInstance()
-                    .getTranslations("mins", "mins")
-            binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within $mins")
+//            val mins =
+//                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString() + " " + CacheUtil.getInstance()
+//                    .getTranslations("mins", "mins")
+//            binding!!.tvWithin.text = CacheUtil.getInstance()
+//                .getTranslations(Text.WITHIN, "Within $mins")
         }
         binding!!.placeOrder.text = CacheUtil.getInstance()
             .getTranslations(Text.PLACE_ORDER, "Place Order")
@@ -1615,7 +1612,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             body = getString(R.string.permission_read_write_denied_msg),
             positiveButtonText = getString(R.string.try_again_later),
             negativeButtonText = getString(R.string.cancel),
-            positiveClickListener = { launchUserPermission() }
+            positiveClickListener = { launchUserPermission() },
+            message = getString(R.string.permission_read_write_denied_msg)
         )
+    }
+    fun setUpdatedPhoneNumber(phoneNumber:String) {
+        binding?.tvMobileNumber?.text = phoneNumber
     }
 }
