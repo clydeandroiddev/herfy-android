@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/light_gray"
+    android:layout_height="match_parent">
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/toolbarLayout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_large"
+        android:src="@drawable/ic_navigate_back"
+        app:layout_constraintBottom_toBottomOf="@+id/txtFavourites"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtFavourites" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtFavourites"
+        style="@style/Styles.Text.Headline1"
+        android:layout_width="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/viewSeparator"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Favourites" />
+
+    <View
+        android:id="@+id/viewSeparator"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtFavourites"
+        android:background="@color/colorSeparator"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_height="@dimen/_1sdp"/>
+
+    <com.herfy.common.component.EmptyStateView
+        android:id="@+id/emptyState"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/margin_xlarge"
+        android:visibility="gone"
+        app:emptyStateDrawable="@drawable/ic_favourite_empty"
+        tools:visibility="visible"
+        android:layout_height="wrap_content"/>
+  </androidx.constraintlayout.widget.ConstraintLayout>
+  <!-- Todo Uncoment for now need clarification  -->
+  <!--  <com.google.android.material.textview.MaterialTextView-->
+<!--      android:id="@+id/txtOrderType"-->
+<!--      android:layout_width="wrap_content"-->
+<!--      style="@style/Styles.Text.Footnote"-->
+<!--      android:layout_marginTop="@dimen/margin_xlarge"-->
+<!--      android:fontFamily="@font/inter_medium"-->
+<!--      android:gravity="center"-->
+<!--      tools:text="Pick up"-->
+<!--      android:background="@drawable/bg_favourite_order_type_selected"-->
+<!--      android:layout_height="wrap_content"/>-->
+
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/favouriteRecycleView"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_large"
+      android:orientation="vertical"
+      android:visibility="gone"
+      app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+      tools:itemCount="5"
+      tools:listitem="@layout/item_new_favourite"
+      tools:visibility="visible" />
+
+  <com.facebook.shimmer.ShimmerFrameLayout
+      android:id="@+id/new_menu_item_search_shimmer"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:clipToPadding="false"
+      android:paddingTop="@dimen/padding_large"
+      android:visibility="gone"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/txtOrderType"
+      app:shimmer_duration="1000"
+      tools:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+      <include layout="@layout/item_favourite_place_holder" />
+
+      <include layout="@layout/item_favourite_place_holder" />
+
+      <include layout="@layout/item_favourite_place_holder" />
+
+    </LinearLayout>
+
+  </com.facebook.shimmer.ShimmerFrameLayout>
+
+</LinearLayout>
