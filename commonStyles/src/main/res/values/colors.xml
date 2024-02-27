@@ -71,6 +71,7 @@
     <color name="light_red">#DB2211</color>
     <color name="order_type_bg_color">#f7f7f7</color>
     <color name="color_stroke">#E6E6E6</color>
+    <color name="toolbar_color">#0F2229</color>
 </resources>
 
 

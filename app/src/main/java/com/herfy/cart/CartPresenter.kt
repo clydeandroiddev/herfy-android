@@ -396,6 +396,8 @@ class CartPresenter @Inject constructor(
                     }
 
                     OrderType.NONE -> deliveryCharge = 0.0
+                    OrderType.EAT_IN -> {}
+                    OrderType.DRIVE_THRU -> {}
                 }
                 var discountedSubtotal = subtotal - discount
                 if (discountedSubtotal < 0) {
@@ -2085,9 +2087,11 @@ class CartPresenter @Inject constructor(
                     } catch (e: JSONException) {
                         e.printStackTrace()
                         onError(e)
+                        cartView.showUpsell(arrayListOf())
                     }
                 } else {
                     onError("")
+                    cartView.showUpsell(arrayListOf())
                 }
             }
 
@@ -2198,6 +2202,8 @@ class CartPresenter @Inject constructor(
             }
 
             OrderType.NONE -> deliveryCharge = 0.0
+            OrderType.EAT_IN -> {}
+            OrderType.DRIVE_THRU -> {}
         }
         val vatAmount = 0.0
         var total =
@@ -2590,6 +2596,8 @@ class CartPresenter @Inject constructor(
                     }
 
                     OrderType.NONE -> deliveryCharge = 0.0
+                    OrderType.EAT_IN -> {}
+                    OrderType.DRIVE_THRU -> {}
                 }
             }
             val vatAmount = 0.0
