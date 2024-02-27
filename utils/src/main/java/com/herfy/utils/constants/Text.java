@@ -920,6 +920,7 @@ public class Text {
     public static final String ADDED_CURBSIDE = "added_curbside";
     public static final String CONFIRM_LABEL = "confirm_label";
     public static final String SELECT_CITY = "select_city";
+
     public static final String APPLY_COUPONS_LABEL="apply_coupons_label";
     public static final String ENTER_COUPON_CODE="enter_coupon_code";
     public static final String APPLY_DIGITAL_COUPONS="apply_digital_coupons";
@@ -936,4 +937,13 @@ public class Text {
 
     public static final String ADD_MORE_ITEM_LABEL="add_more_item_label";
     public static final String YOUR_CART_IS_EMPTY_LABEL="your_cart_is_empty";
+
+    public static final String CHOOSE_YOUR_LANG = "choose_your_lang";
+
+    public static final String JOIN_NOW = "join_now";
+    public static final String ENTER_THE_CODE = "enter_the_code";
+    public static final String DID_NOT_GE_CODE = "did_not_get_code";
+    public static final String SEND_AGAIN = "send_again";
+    public static final String CONFIRM_NUMBER = "confirm_number";
+
 }
