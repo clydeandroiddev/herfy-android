@@ -77,6 +77,7 @@ import com.herfy.payment.savedcards.SavedCardsDialog
 import com.herfy.payment.views.CustomCheckoutDialog
 import com.herfy.payment.views.MoyasarActivity
 import com.herfy.payment.views.OrderDialogFragment
+import com.herfy.phonenumber.EnterNewPhoneNumberFragment
 import com.herfy.ratings.AppRatingBroadcastReceiver
 import com.herfy.util.ApiLogLevel
 import com.herfy.util.ApiLogUtil.Companion.sendOrderLog
@@ -119,6 +120,7 @@ import company.tap.gosellapi.internal.api.models.Token
 import company.tap.gosellapi.open.controllers.SDKSession
 import company.tap.gosellapi.open.delegate.SessionDelegate
 import company.tap.gosellapi.open.models.CardsList
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.BackpressureStrategy
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -135,6 +137,7 @@ import java.util.concurrent.TimeUnit
 
 //import com.herfy.constants.Text;
 //import com.herfy.constants.Values;
+@AndroidEntryPoint
 class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     OnDateSelectedListener {
     private var binding: ActivityCheckoutPageBinding? = null
@@ -324,6 +327,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         logEventAttributesMetric(eventName, eventAttributes, eventMetricName, eventMetricValue)
     }
 
+
     private fun showMap() {
         val storeLat = CacheUtil.getInstance().orderStore.attributes.lat
         val storeLon = CacheUtil.getInstance().orderStore.attributes.lng
@@ -397,6 +401,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
     }
 
+
     private fun showCurveLine(storeLocation: LatLng, currentLocation: LatLng, k: Double) {
         val distanceBetween = SphericalUtil.computeDistanceBetween(storeLocation, currentLocation)
         val heading = SphericalUtil.computeDistanceBetween(storeLocation, currentLocation)
@@ -421,13 +426,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             polygon.add(temp[i])
         }
 
-//        for (int i=0; i < numpoints; i++) {
-//            LatLng pi = SphericalUtil.computeOffset(c, r, h1 + i * step);
-//            options.add(pi);
-//        }
-
-//        mMap.addPolyline(options.width(10).color(Color.BLACK).geodesic(false).pattern(pattern));
-//        mMap.addPolyline(options.width(10).color(Color.BLACK).geodesic(false));
         mMap!!.addPolygon(polygon)
         temp.clear()
     }
@@ -437,7 +435,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         showMap()
         requestPermissionLocation()
         binding!!.tvEditMobileNumber.ninjaTap(lifecycleScope) {
-            // todo wait for the designer what screen should be called here
+           EnterNewPhoneNumberFragment.newInstance()
+               .show(supportFragmentManager, EnterNewPhoneNumberFragment.TAG)
         }
         //        rvOrderSummary.setLayoutManager(new LinearLayoutManager(this));
 //        menuItemsRecyclerViewAdapter = new OrderSummaryItemRecyclerViewAdapter(paymentPresenter);
@@ -1613,7 +1612,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             body = getString(R.string.permission_read_write_denied_msg),
             positiveButtonText = getString(R.string.try_again_later),
             negativeButtonText = getString(R.string.cancel),
-            positiveClickListener = { launchUserPermission() }
+            positiveClickListener = { launchUserPermission() },
+            message = getString(R.string.permission_read_write_denied_msg)
         )
+    }
+    fun setUpdatedPhoneNumber(phoneNumber:String) {
+        binding?.tvMobileNumber?.text = phoneNumber
     }
 }

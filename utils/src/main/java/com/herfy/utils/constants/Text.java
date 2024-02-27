@@ -281,6 +281,7 @@ public class Text {
     public static final String FREE_CAPS = "free_caps";
     public static final String OPTIONAL_KEY = "optional_key";
 
+    public static final String ENTER_NEW_PHONE_NUMBER = "enter_new_phone_number";
     public static final String NO_PAYMENT_METHOD_SELECTED = "no_payment_methods";
     public static final String TOTAL_VAT_DESCRIPTION = "total_vat_description";
     public static final String REQUIRED_KEY = "required_key";
@@ -400,6 +401,7 @@ public class Text {
     public static final String VERIFY_PHONE_NUMBER_CAPS = "verify_phone_number_caps";
     public static final String ENTER_CODE_HERE = "enter_code_here";
     public static final String CONFIRM_CAPS = "confirm_caps";
+    public static final String UPDATE_NEW_PHONE_DESCRIPTION = "update_new_phone_description";
     public static final String DIDNT_GET_IT = "didnt_get_it";
     public static final String RESEND_THE_CODE = "resend_the_code";
     public static final String VERIFY_PHONE_NUMBER_MESSAGE = "verify_phone_number_message";
@@ -863,7 +865,6 @@ public class Text {
     public static final String PLACE_ORDER = "place_order";
     public static final String PICKUP_TIME = "pickup_time";
     public static final String DELIVERY_INSTRUCTION = "delivery_instructions";
-    public static final String DO_NOT_RING_BELL = "do_not_call_ring_me";
     public static final String LOYALTY_POINTS = "loyalty_points";
     public static final String PAYMENT_METHODS = "payment_methods";
 
