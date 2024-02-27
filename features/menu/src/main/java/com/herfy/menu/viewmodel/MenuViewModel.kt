@@ -277,4 +277,13 @@ class MenuViewModel @Inject constructor(
         }
     }
 
+    fun getMenuCategoryId(position: Int): String? {
+        for((key, value) in menuCategoryPositions) {
+            if(position == value) {
+                return key
+            }
+        }
+        return null
+    }
+
 }

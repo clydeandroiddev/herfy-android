@@ -17,6 +17,7 @@ import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.menu.R
 import com.herfy.menu.adapter.MenuCategoryAdapter
@@ -31,6 +32,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.isVisible
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.smoothSnapToPosition
 import com.herfy.utils.extensions.visible
@@ -66,7 +68,18 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
             binding.rvMenuCategories.smoothScrollToPosition(position)
             menuCategoryAdapter.select(position)
             viewModel.menuCategoryPositions[menuCategory.id]?.let {
-                binding.rvMenuCategoriesItems.smoothSnapToPosition(it)
+                binding.rvMenuCategoriesItems.apply {
+                    smoothSnapToPosition(it)
+                    removeOnScrollListener(menuOnScrollListener)
+                    clearOnScrollListeners()
+                    activity?.apply {
+                        runOnUiThread {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                addOnScrollListener(menuOnScrollListener)
+                            }, 250)
+                        }
+                    }
+                }
             }
         }
     }
@@ -83,6 +96,37 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 viewModel.getMenuItem(menuCategory, menuItem)
             }
         })
+    }
+
+    private var menuIsScrolled = false
+    private val menuOnScrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            menuIsScrolled = when(newState) {
+                RecyclerView.SCROLL_STATE_IDLE -> false
+                RecyclerView.SCROLL_STATE_DRAGGING -> true
+                else -> true
+            }
+        }
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            if(menuIsScrolled && binding.rvMenuCategories.isVisible()) {
+                val firstVisibleItem =
+                    (binding.rvMenuCategoriesItems.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                if (firstVisibleItem in viewModel.menuCategoryPositions.values) {
+                    viewModel.getMenuCategoryId(firstVisibleItem)?.let { menuCategoryId ->
+                        menuCategoryAdapter.getPosition(menuCategoryId)?.let {
+                            if(it != menuCategoryAdapter.getSelected() &&
+                                it < menuCategoryAdapter.itemCount) {
+                                binding.rvMenuCategories.smoothScrollToPosition(it)
+                                menuCategoryAdapter.select(it)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun initViews() {
@@ -154,6 +198,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 rvMenuCategoriesItems.apply {
                     layoutManager = LinearLayoutManager(it)
                     adapter = menuCategoryItemAdapter
+                    addOnScrollListener(menuOnScrollListener)
                 }
             }
         }
