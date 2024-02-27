@@ -27,22 +27,23 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#C9C9C9" />
 
 
             <com.google.android.material.card.MaterialCardView
                 app:cardBackgroundColor="#E6F0F7"
-                app:cardCornerRadius="12dp"
-                android:layout_marginTop="12dp"
+                app:cardCornerRadius="16dp"
+                android:layout_marginTop="20dp"
+                app:cardElevation="0dp"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginVertical="8dp">
 
                     <LinearLayout
                         android:visibility="visible"
@@ -52,9 +53,6 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:paddingLeft="12dp"
-                        android:paddingEnd="12dp"
                         android:orientation="horizontal"
                         android:weightSum="2">
 
@@ -65,8 +63,8 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
                             <androidx.appcompat.widget.AppCompatImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
                                 android:src="@drawable/ic_coupon"/>
                             <TextView
                                 android:layout_marginStart="6dp"
@@ -75,10 +73,11 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:includeFontPadding="false"
-                                android:textAlignment="viewEnd"
+                                android:gravity="center_vertical"
+                                android:textAlignment="viewStart"
                                 android:textColor="@color/black"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
+                                android:textSize="14sp"
+                                style="@style/Styles.Text.SmallTitle"
                                 tools:text="Apply a coupon" />
 
                         </LinearLayout>
@@ -86,14 +85,18 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/view_coupon"
                             android:layout_width="wrap_content"
-                            android:layout_height="48dp"
+                            android:layout_height="40dp"
                             android:layout_gravity="end"
                             android:layout_weight="1"
-                            android:backgroundTint="#2865A8"
+                            android:backgroundTint="@color/background_color_blue"
                             android:textAllCaps="false"
                             android:textColor="@color/white"
                             android:textSize="12sp"
-                            app:cornerRadius="12dp"
+                            app:cornerRadius="20dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:insetLeft="0dp"
+                            android:insetRight="0dp"
                             tools:text="View Coupons" />
 
                     </LinearLayout>

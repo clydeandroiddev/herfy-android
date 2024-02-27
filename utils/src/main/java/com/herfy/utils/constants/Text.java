@@ -920,4 +920,10 @@ public class Text {
     public static final String ADDED_CURBSIDE = "added_curbside";
     public static final String CONFIRM_LABEL = "confirm_label";
     public static final String SELECT_CITY = "select_city";
+    public static final String APPLY_COUPONS_LABEL="apply_coupons_label";
+    public static final String ENTER_COUPON_CODE="enter_coupon_code";
+    public static final String APPLY_DIGITAL_COUPONS="apply_digital_coupons";
+    public static final String AVAILABLE_TO_REDEEM = "available_to_redeem";
+    public static final String MORE_TO_REDEEM ="more_to_redeem";
+    public static final String EXPIRES_LABEL="expires_label";
 }

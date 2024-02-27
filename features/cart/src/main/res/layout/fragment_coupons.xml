@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#F7F7F7"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+
+    <com.herfy.common.toolbar.TitleToolbar
+        android:id="@+id/toolbar_title"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#F7F7F7"
+        app:rightButtonColor="#0064AC"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="8dp"/>
+
+
+
+    <LinearLayout
+        android:id="@+id/ln_coupons_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp">
+
+        <TextView
+            android:id="@+id/tv_enter_coupon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Styles.Text.Caption.Regular"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="14sp"
+            tools:text="Enter coupon code?"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_coupon"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_48sdp"
+            android:layout_marginTop="8dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            app:hintEnabled="false"
+            app:hintAnimationEnabled="false"
+            app:boxBackgroundColor="@color/white"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeColor="@color/input_border_color">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tie_coupon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="e.g. 100Sale12"
+                android:textSize="12sp"
+                style="@style/Styles.Text.Caption.Regular"
+                android:background="?selectableItemBackground"
+                android:textColor="@color/secondaryTextColor"
+                android:paddingVertical="13dp"
+                android:paddingHorizontal="16dp"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_apply"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_48sdp"
+            android:insetRight="0dp"
+            android:insetLeft="0dp"
+            android:insetBottom="0dp"
+            android:insetTop="0dp"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:textSize="@dimen/_16ssp"
+            android:textAppearance="@style/TextAppearance.Caption"
+            android:layout_marginTop="16dp"
+            app:backgroundTint="@color/background_color_blue"
+            app:cornerRadius="24dp"
+           />
+
+
+        <LinearLayout
+            android:id="@+id/ln_or_sep"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <View
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/colorSeparator"/>
+
+            <TextView
+                android:id="@+id/tv_or"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                tools:text="Or"
+                android:textColor="@color/secondaryTextColor"
+                style="@style/Styles.Text.Caption.Regular"
+                android:layout_gravity="center"
+                android:gravity="center"/>
+
+            <View
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/colorSeparator"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_apply_coupons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textSize="@dimen/_14ssp"
+            style="@style/Styles.Text.SmallTitle"
+            android:textColor="@color/primaryTextColor"
+            tools:text="Apply Digital Coupons"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_digital_coupons"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="vertical"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_coupons"
+            android:visibility="gone"/>
+
+        <include
+            android:id="@+id/placeholder_coupons"
+            layout="@layout/placeholder_coupons" />
+
+
+
+        <com.herfy.common.component.EmptyStateView
+            android:id="@+id/empStayeView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+
+    </LinearLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/progressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/background_loading_transparent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

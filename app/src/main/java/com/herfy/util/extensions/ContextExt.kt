@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import com.herfy.R
+import com.herfy.utils.extensions.isValidEmail
 
 
 fun Context.openChromeTab(url: String?) {
