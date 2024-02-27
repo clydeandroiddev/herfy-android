@@ -12,17 +12,22 @@ import com.herfy.common.utils.autoCleared
 import com.herfy.phonenumber.adapter.PhoneNumberAdapter
 import com.herfy.phonenumber.databinding.FragmentEnterNewPhoneNumberBinding
 import com.herfy.phonenumber.model.CountriesUIModel
+import com.herfy.phonenumber.model.EnterNewPhoneNumberState
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.debounceTextChanges
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.launchWithTimber
 import com.herfy.utils.helper.viewLifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.mapNotNull
-
+@AndroidEntryPoint
 class EnterNewPhoneNumberFragment: BaseBottomSheetDialog<FragmentEnterNewPhoneNumberBinding>() {
+
     private val viewModel: EnterNewPhoneNumberViewModel by viewModels()
     override fun getLayoutId(): Int = R.layout.fragment_enter_new_phone_number
 
@@ -43,7 +48,7 @@ class EnterNewPhoneNumberFragment: BaseBottomSheetDialog<FragmentEnterNewPhoneNu
                 }
         }
 
-        binding.mobileNumber.ninjaTap(viewLifecycleScope) {
+        binding.btnConfirm.ninjaTap(viewLifecycleScope) {
             val phoneNumber = "${StringUtil.toEnglish(
                 (binding.phoneNumberPrefix.selectedItem as CountriesUIModel).dialCode)} + ${binding.mobileNumber.text.toString().trim()}"
             viewModel.updatePhoneNumber(phoneNumber)
@@ -63,19 +68,6 @@ class EnterNewPhoneNumberFragment: BaseBottomSheetDialog<FragmentEnterNewPhoneNu
             }
         binding.setUpTranslations()
         setUpVmObservers()
-        binding.mobileNumber.setOnTouchListener { v, event ->
-            if (v.hasFocus()) {
-                dialog?.window?.setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
-                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-                )
-
-            } else {
-                // Mobile number EditText is not focused
-                // Your code here
-            }
-            false // return false to indicate that the listener has not consumed the event
-        }
     }
 
     private fun FragmentEnterNewPhoneNumberBinding.setUpTranslations() {
@@ -84,11 +76,13 @@ class EnterNewPhoneNumberFragment: BaseBottomSheetDialog<FragmentEnterNewPhoneNu
         txtNewPhone.text = CacheUtil.getInstance().getTranslations(Text.ENTER_NEW_PHONE_NUMBER,"Enter New Phone Number")
         txtMobileNumberTitle.text = CacheUtil.getInstance().getTranslations(Text.MOBILE_NUMBER,"Mobile Number")
     }
+
     private fun setUpVmObservers() {
         viewLifecycleScope.launchWithTimber {
             viewModel
                 .distinctCountriesState
                 .flowWithLifecycle(lifecycle = lifecycle,Lifecycle.State.CREATED)
+                .filterNotNull()
                 .mapNotNull {
                     it.map { countries ->
                         val prefix = countries.dialCode
@@ -111,6 +105,28 @@ class EnterNewPhoneNumberFragment: BaseBottomSheetDialog<FragmentEnterNewPhoneNu
                     }
             }
         }
+        viewLifecycleScope.launchWithTimber {
+            viewModel.state
+                .collectLatest { state->
+                    handleState(state)
+                }
+        }
+    }
+
+    private fun handleState(state: EnterNewPhoneNumberState) {
+        when(state) {
+            is EnterNewPhoneNumberState.Error -> {
+            DialogUtils.showConfirmDialog(requireContext(), message = state.message,)
+            }
+            is EnterNewPhoneNumberState.IsLoading -> {
+                DialogUtils.showProgressDialog(requireContext(), isLoading = state.isLoading)
+            }
+            is EnterNewPhoneNumberState.Success ->  {
+                // The TODO is commented for now. We are waiting for the designer to provide the Snackbar UI for when the user updates a phone number.
+//                SnackBarUtils.showGenericSuccessSnackBar(binding.root,state.phoneNumber)
+                dismiss()
+            }
+        }
     }
 
     private fun FragmentEnterNewPhoneNumberBinding.setUpAdapter(allowedCountries: List<CountriesUIModel>) {
@@ -126,7 +142,6 @@ class EnterNewPhoneNumberFragment: BaseBottomSheetDialog<FragmentEnterNewPhoneNu
 
     companion object {
         const val TAG = "com.herfy.phonenumber.EmployeeContactApplicantDialogFragment"
-
         fun newInstance(): EnterNewPhoneNumberFragment {
             return EnterNewPhoneNumberFragment()
         }
