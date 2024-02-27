@@ -544,7 +544,7 @@
         android:name="com.herfy.favorites.FavoritesFragment"
         android:label="favorites"
         tools:layout="@layout/fragment_favorites">
-
+        <deepLink app:uri="android-app://com.herfy/nav_favorites/" />
         <action
             android:id="@+id/action_favorites_to_cart"
             app:destination="@id/nav_cart"
