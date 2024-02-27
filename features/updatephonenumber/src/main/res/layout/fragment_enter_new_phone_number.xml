@@ -6,6 +6,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@color/color_background"
 >
 
@@ -15,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_large"
         android:src="@drawable/ic_navigate_back"
+        app:layout_constraintBottom_toBottomOf="@+id/txtNewPhone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/txtNewPhone" />
 
@@ -22,25 +24,33 @@
         android:id="@+id/txtNewPhone"
         style="@style/Styles.Text.Headline1"
         android:layout_width="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/viewSeparator"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_10dp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Enter New Phone Number" />
+
+   <View
+     android:id="@+id/viewSeparator"
+    android:layout_width="match_parent"
+    app:layout_constraintTop_toBottomOf="@+id/txtNewPhone"
+    android:background="@color/colorSeparator"
+    android:layout_marginTop="@dimen/margin_large"
+    android:layout_height="@dimen/_1sdp"/>
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txtMobileNumberTitle"
         android:layout_width="match_parent"
         android:layout_marginHorizontal="@dimen/margin_large"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_xlarge"
-        app:layout_constraintTop_toBottomOf="@+id/txtNewPhone"
+        app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
         app:layout_constraintStart_toStartOf="parent"
         android:textColor="#101010"
         tools:text = "Mobile number"
         style="@style/TextAppearance.Footnote"
         />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/phoneNumberLayout"
         android:layout_width="match_parent"
@@ -159,6 +169,7 @@
         android:layout_marginHorizontal="@dimen/margin_large"
         android:gravity="center"
         android:includeFontPadding="false"
+        android:enabled="true"
         tools:text="Confirm"
         android:textAlignment="center"
         android:textColor="@color/white"
