@@ -38,11 +38,11 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
         binding.unbind()
     }
 
-    //    override fun onStart() {
-//        super.onStart()
-//
-//        dialog?.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-//    }
+        override fun onStart() {
+        super.onStart()
+
+        dialog?.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+    }
     @LayoutRes
     abstract fun getLayoutId(): Int
 
@@ -89,7 +89,7 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.BottomSheetDialogStyle)
+//        setStyle(DialogFragment.STYLE_NORMAL, R.style.BottomSheetDialogStyle)
 
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
@@ -97,7 +97,8 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
     @CallSuper
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bottomSheet = EdgeToEdgeBottomSheetDialog(
-            requireContext()
+            requireContext(),
+            R.style.BottomSheetDialogStyle
         )
         val dialogView =
             View.inflate(
@@ -109,9 +110,9 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
             WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
                     WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
         )
-//        dialogView.applyInsetter {
-//            mainContentInset()
-//        }
+        dialogView.applyInsetter {
+            mainContentInset()
+        }
 
         val dataBinding = DataBindingUtil.bind<B>(dialogView)
         this.binding = dataBinding!!
@@ -190,8 +191,8 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
 
     abstract fun setupViews(binding: B)
 
-    inner class EdgeToEdgeBottomSheetDialog(context: Context) :
-        BottomSheetDialog(context, R.style.BottomSheetDialogStyle) {
+    inner class EdgeToEdgeBottomSheetDialog(context: Context,theme:Int) :
+        BottomSheetDialog(context,theme) {
 
         override fun onAttachedToWindow() {
             super.onAttachedToWindow()
@@ -207,12 +208,12 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
 
             val controller = WindowCompat.getInsetsController(window!!, container!!)
 
-//            controller.isAppearanceLightNavigationBars = true
+            controller.isAppearanceLightNavigationBars = true
 
             container.apply {
                 fitsSystemWindows = false
                 applyInsetter {
-//                    containerInsets()
+                    containerInsets()
 //                }
                 }
                 findViewById<View>(com.google.android.material.R.id.coordinator)?.fitsSystemWindows =
