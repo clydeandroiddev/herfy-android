@@ -141,7 +141,7 @@ class EnterNewPhoneNumberFragment: BaseBottomSheetDialog<FragmentEnterNewPhoneNu
     }
 
     companion object {
-        const val TAG = "com.herfy.phonenumber.EmployeeContactApplicantDialogFragment"
+        const val TAG = "com.herfy.phonenumber.EnterNewPhoneNumberFragment"
         fun newInstance(): EnterNewPhoneNumberFragment {
             return EnterNewPhoneNumberFragment()
         }
