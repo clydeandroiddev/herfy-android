@@ -867,11 +867,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         } else {
             binding!!.tvTimeLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.PICKUP_TIME, "Pickup Time")
-//            val mins =
-//                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString() + " " + CacheUtil.getInstance()
-//                    .getTranslations("mins", "mins")
-//            binding!!.tvWithin.text = CacheUtil.getInstance()
-//                .getTranslations(Text.WITHIN, "Within $mins")
+            val mins =
+                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString() + " " + CacheUtil.getInstance()
+                    .getTranslations("mins", "mins")
+            binding!!.tvWithin.text = CacheUtil.getInstance()
+                .getTranslations(Text.WITHIN, "Within $mins")
         }
         binding!!.placeOrder.text = CacheUtil.getInstance()
             .getTranslations(Text.PLACE_ORDER, "Place Order")
