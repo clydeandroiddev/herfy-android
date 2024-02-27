@@ -283,6 +283,7 @@ public class Text {
 
     public static final String ENTER_NEW_PHONE_NUMBER = "enter_new_phone_number";
     public static final String NO_PAYMENT_METHOD_SELECTED = "no_payment_methods";
+    public static final String NO_FAVORITE_FOUND = "No favourites found";
     public static final String TOTAL_VAT_DESCRIPTION = "total_vat_description";
     public static final String REQUIRED_KEY = "required_key";
     public static final String SHOW_FACILITY = "show_facility";
