@@ -88,7 +88,7 @@ class EnterNewPhoneNumberFragment: BaseBottomSheetDialog<FragmentEnterNewPhoneNu
                         val prefix = countries.dialCode
                         CountriesUIModel(
                             StringUtil.fetchEmojiFlag(countries.code).orEmpty(),
-                            StringUtil.localize(if (prefix.contains("+")) prefix else "+$prefix")
+                            StringUtil.localizeNumberForLocale(if (prefix.contains("+")) prefix else "+$prefix")
                                 .orEmpty()
                         )
                     }

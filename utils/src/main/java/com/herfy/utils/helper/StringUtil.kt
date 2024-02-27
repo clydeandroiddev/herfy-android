@@ -51,14 +51,31 @@ object StringUtil {
         val secondChar = Character.codePointAt(code, 1) - asciiOffset + flagOffset
         return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
     }
-    fun localize(number: String): String? {
+    fun localizeNumberForLocale(number: String): String? {
         return if (LocaleUtil.getInstance().isEnglish) {
-            number
+            number // No need for localization if the locale is English
         } else {
-            number.replace("1", "١").replace("2", "٢").replace("3", "٣").replace("4", "٤")
-                .replace("5", "٥").replace("6", "٦").replace("7", "٧").replace("8", "٨")
-                .replace("9", "٩").replace("0", "٠").replace(".", ",")
+            // Replace English digits with their Arabic counterparts
+            number.replaceEnglishDigitsWithArabic()
+                .replaceDecimalPointWithComma()
         }
+    }
+
+    private fun String.replaceEnglishDigitsWithArabic(): String {
+        return this.replace("1", "١")
+            .replace("2", "٢")
+            .replace("3", "٣")
+            .replace("4", "٤")
+            .replace("5", "٥")
+            .replace("6", "٦")
+            .replace("7", "٧")
+            .replace("8", "٨")
+            .replace("9", "٩")
+            .replace("0", "٠")
+    }
+
+    private fun String.replaceDecimalPointWithComma(): String {
+        return this.replace(".", ",")
     }
     fun toEnglish(number: String): String? {
         return if (LocaleUtil.getInstance().isEnglish) {
@@ -69,4 +86,20 @@ object StringUtil {
                 .replace("٩", "9").replace("٠", "0").replace(",", ".")
         }
     }
+
+    @JvmStatic
+    fun localize(number: String): String {
+        return if (LocaleUtil.getInstance().isEnglish || LocaleUtil.getInstance().isFrench) {
+            number
+        } else {
+            number
+                .replace("١", "1").replace("٢", "2")
+                .replace("٣", "3").replace("٤", "4")
+                .replace("٥", "5").replace("٦", "6")
+                .replace("٧", "7").replace("٨", "8")
+                .replace("٩", "9").replace("٠", "0")
+                .replace(",", ".").replace("٫", ".")
+        }
+    }
+
 }
