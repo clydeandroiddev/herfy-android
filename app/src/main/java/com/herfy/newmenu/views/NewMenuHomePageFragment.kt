@@ -3,6 +3,7 @@ package com.herfy.newmenu.views
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -101,7 +102,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     private var isFromOrderType = false
     private var previousSelectedStoreId: String? = null
     private var fromInitialLaunch = false
-    private var selectOrderTypeDialog : SelectOrderTypeDialogFragment? = null
+    private var selectOrderTypeDialog: SelectOrderTypeDialogFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,9 +112,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentMenuNewHomePageBinding.inflate(inflater, container, false)
         return binding.root
@@ -139,15 +138,27 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                 forceLocationMenuRefresh = it.forceLocationMenuRefresh
                 it.forceLocationMenuRefresh = false
             }
-            val fromDeeplink = Values.sDeepLink.isNotEmpty() && (Values.sDeepLink.equals("categories") || Values.sDeepLink.equals("items"))
+            val fromDeeplink =
+                Values.sDeepLink.isNotEmpty() && (Values.sDeepLink.equals("categories") || Values.sDeepLink.equals(
+                    "items"
+                ))
             var reloadDifferentMenu = CacheUtil.getInstance().reloadDifferentMenu
-            if(isMenuSeparate && reloadDifferentMenu){
+            if (isMenuSeparate && reloadDifferentMenu) {
                 binding.newMenuItemSearchShimmer.visibility = View.VISIBLE
                 binding.newMenuItemSearchShimmer.startShimmer()
-                menuPresenter!!.getMenuCategories(forceLocationMenuRefresh, true, fromDeeplink, isFromCountries || isFromOrderType, true, null, null)
+                menuPresenter!!.getMenuCategories(
+                    forceLocationMenuRefresh,
+                    true,
+                    fromDeeplink,
+                    isFromCountries || isFromOrderType,
+                    true,
+                    null,
+                    null
+                )
                 CacheUtil.getInstance().reloadDifferentMenu = false
-            }else {
-                showMenuCategories(false,
+            } else {
+                showMenuCategories(
+                    false,
                     isFromInitialLoad = false,
                     menuCategories = menuPresenter!!.menuCategories
                 )
@@ -165,16 +176,14 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                 sliderPresenter!!.getMidSlider()
             }
         } else {
-            if(isFromOrderType && menuPresenter != null) {
+            if (isFromOrderType && menuPresenter != null) {
                 menuPresenter.updateCart(true)
             }
             isFromCountries = false
             isFromOrderType = false
         }
 
-        if (CacheUtil.getInstance().orderStore == null && CacheUtil.getInstance().application.attributes.forceLocation != 0 ||
-            CacheUtil.getInstance().application.attributes.forceLocation == 0
-        ) {
+        if (CacheUtil.getInstance().orderStore == null && CacheUtil.getInstance().application.attributes.forceLocation != 0 || CacheUtil.getInstance().application.attributes.forceLocation == 0) {
             menuPresenter.setPreselectedBranch()
         } else {
             CacheUtil.getInstance().preselectedBranch = false
@@ -189,14 +198,14 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                         "category" -> showMenuCategory(
                             bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: ""
                         )
+
                         "item", "product" -> showMenuItem(
                             bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: ""
                         )
                     }
                 }
                 NavigationUtils.navigateSafe(
-                    findNavController(),
-                    NewMenuHomePageFragmentDirections.actionHomeToDialogPopup()
+                    findNavController(), NewMenuHomePageFragmentDirections.actionHomeToDialogPopup()
                 )
             }
         }
@@ -209,10 +218,21 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             forceLocationMenuRefresh = it.forceLocationMenuRefresh
             it.forceLocationMenuRefresh = false
         }
-        val fromDeeplink = Values.sDeepLink.isNotEmpty() && (Values.sDeepLink.equals("categories") || Values.sDeepLink.equals("items"))
+        val fromDeeplink =
+            Values.sDeepLink.isNotEmpty() && (Values.sDeepLink.equals("categories") || Values.sDeepLink.equals(
+                "items"
+            ))
 
-        menuPresenter!!.getMenuCategories(forceLocationMenuRefresh, true, fromDeeplink, isFromCountries || isFromOrderType, true, null, null)
-        if(!isFromOrderType) {
+        menuPresenter!!.getMenuCategories(
+            forceLocationMenuRefresh,
+            true,
+            fromDeeplink,
+            isFromCountries || isFromOrderType,
+            true,
+            null,
+            null
+        )
+        if (!isFromOrderType) {
             menuPresenter!!.getBestSeller()
             menuPresenter!!.getGuestDigitalCoupons()
             sliderPresenter!!.getSlider()
@@ -229,7 +249,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         super.onResume()
         checkDiffMenu()
         update()
-        if(!isFromOrderType) {
+        if (!isFromOrderType) {
             if (AuthUtil.getInstance().isSignedIn) {
                 if (firstLaunch) {
                     menuPresenter!!.getFavorites(false, 1)
@@ -258,7 +278,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     loadInitial()
                 }, 300)
             } else {
-                if(CacheUtil.getOrderStoreId() != null && previousSelectedStoreId != CacheUtil.getOrderStoreId()) {
+                if (CacheUtil.getOrderStoreId() != null && previousSelectedStoreId != CacheUtil.getOrderStoreId()) {
                     activity?.runOnUiThread {
                         newHomeMenuAdapter?.updateMenuCategories(menuPresenter.menuCategories)
                     }
@@ -274,15 +294,13 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         if (isMenuSeparate && orderTypeSelected == OrderType.NONE) {
             selectOrderTypeDialog?.dismiss()
             val fragmentManager = childFragmentManager
-            if(!fragmentManager.isDestroyed) {
-                selectOrderTypeDialog = SelectOrderTypeDialogFragment(
-                    onOrderTypeSelected = { orderType ->
+            if (!fragmentManager.isDestroyed) {
+                selectOrderTypeDialog =
+                    SelectOrderTypeDialogFragment(onOrderTypeSelected = { orderType ->
                         handleDiffMenu(orderType)
-                    }
-                )
+                    })
                 selectOrderTypeDialog?.show(
-                    fragmentManager,
-                    SelectOrderTypeDialogFragment::class.java.name
+                    fragmentManager, SelectOrderTypeDialogFragment::class.java.name
                 )
             }
         }
@@ -294,7 +312,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         activity?.cast<MainActivity> { mainActivity ->
             mainActivity.forceLocation = false
         }
-        if(CacheUtil.getInstance().orderType != OrderType.CURBSIDE) {
+        if (CacheUtil.getInstance().orderType != OrderType.CURBSIDE) {
             CacheUtil.getInstance().curbsideCar = null
         }
         val storeId = CacheUtil.getOrderStoreId() ?: ""
@@ -307,106 +325,34 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         activity?.startActivity(intent)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun update() {
         super.update()
-        if (binding.orderType != null) {
-            menuPresenter!!.getStoreOpen()
-            when (CacheUtil.getInstance().orderType) {
-                OrderType.PICKUP -> if (activity != null) {
-                    menuPresenter!!.getStore()
-                    if (CacheUtil.getInstance().orderStore != null) {
-                        binding.orderType.text = CacheUtil.getInstance()
-                            .getTranslations(Text.PICK_UP_FROM, "PICK UP FROM").uppercase(
+        menuPresenter.getStoreOpen()
+        when (val oT = CacheUtil.getInstance().orderType) {
+            OrderType.PICKUP, OrderType.EAT_IN, OrderType.DRIVE_THRU -> if (activity != null) {
+                menuPresenter.getStore()
+                if (CacheUtil.getInstance().orderStore != null) {
+                    var headerText = CacheUtil.getInstance()
+                        .getTranslations(Text.PICK_UP_FROM, "PICK UP FROM").uppercase(
+                            Locale.getDefault()
+                        ) + ":"
+                    if (oT == OrderType.EAT_IN) {
+                        headerText = CacheUtil.getInstance()
+                            .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup").uppercase(
                                 Locale.getDefault()
                             ) + ":"
-                        binding.branchName.text = CacheUtil.getInstance().orderStore.attributes.name
-                        binding.orderType.visibility = View.VISIBLE
-                    } else {
-                        binding.orderType.visibility = View.GONE
-                        binding.branchName.text = CacheUtil.getInstance().getTranslations(
-                            Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
-                            "Please tap here to pick an order type"
-                        )
-                        binding.orderType.text = CacheUtil.getInstance()
-                            .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
-                                Locale.getDefault()
-                            )
-                    }
-                }
-                OrderType.DINE_IN -> if (activity != null) {
-                    menuPresenter!!.getStore()
-                    if (CacheUtil.getInstance().orderStore != null) {
-                        binding.orderType.text =
-                            CacheUtil.getInstance().getTranslations(Text.DINE_IN_AT, "DINE-IN AT")
-                                .uppercase(
-                                    Locale.getDefault()
-                                ) + ":"
-                        binding.branchName.text = CacheUtil.getInstance().orderStore.attributes.name
-                        binding.orderType.visibility = View.VISIBLE
-                    } else {
-                        binding.orderType.visibility = View.GONE
-                        binding.branchName.text = CacheUtil.getInstance().getTranslations(
-                            Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
-                            "Please tap here to pick an order type"
-                        )
-                        binding.orderType.text = CacheUtil.getInstance()
-                            .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
-                                Locale.getDefault()
-                            )
-                    }
-                }
-                OrderType.DELIVERY -> if (activity != null) {
-                    menuPresenter!!.getAddress()
-                    if (CacheUtil.getInstance().orderAddress != null) {
-                        binding.orderType.text = CacheUtil.getInstance()
-                            .getTranslations(Text.DELIVER_TO_CAPS, "DELIVER TO").uppercase(
-                                Locale.getDefault()
-                            ) + ":"
-                        binding.branchName.text =
-                            CacheUtil.getInstance().orderAddress.attributes.line1
-                        binding.orderType.visibility = View.VISIBLE
-                    } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
-                        binding.orderType.text = CacheUtil.getInstance()
-                            .getTranslations(Text.DELIVER_TO_CAPS, "DELIVER TO").uppercase(
-                                Locale.getDefault()
-                            ) + ":"
-                        binding.branchName.text = CacheUtil.getInstance().orderDeliveryAddress
-                        binding.orderType.visibility = View.VISIBLE
-                    } else {
-                        binding.orderType.visibility = View.GONE
-                        binding.branchName.text = CacheUtil.getInstance().getTranslations(
-                            Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
-                            "Please tap here to pick an order type"
-                        )
-                        binding.orderType.text = CacheUtil.getInstance()
-                            .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
-                                Locale.getDefault()
-                            )
-                    }
-                }
-                OrderType.CURBSIDE -> if (activity != null) {
-                    menuPresenter!!.getStore()
-                    if (CacheUtil.getInstance().orderStore != null) {
-                        binding.orderType.text = CacheUtil.getInstance()
-                            .getTranslations(Text.CURBSIDE_PICKUP_FROM_CAPS, "CURBSIDE PICKUP FROM")
+                    } else if (oT == OrderType.DRIVE_THRU) {
+                        headerText = CacheUtil.getInstance()
+                            .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
                             .uppercase(
                                 Locale.getDefault()
                             ) + ":"
-                        binding.branchName.text = CacheUtil.getInstance().orderStore.attributes.name
-                        binding.orderType.visibility = View.VISIBLE
-                    } else {
-                        binding.orderType.visibility = View.GONE
-                        binding.branchName.text = CacheUtil.getInstance().getTranslations(
-                            Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
-                            "Please tap here to pick an order type"
-                        )
-                        binding.orderType.text = CacheUtil.getInstance()
-                            .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
-                                Locale.getDefault()
-                            )
                     }
-                }
-                OrderType.NONE -> {
+                    binding.orderType.text = headerText
+                    binding.branchName.text = CacheUtil.getInstance().orderStore.attributes.name
+                    binding.orderType.visibility = View.VISIBLE
+                } else {
                     binding.orderType.visibility = View.GONE
                     binding.branchName.text = CacheUtil.getInstance().getTranslations(
                         Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
@@ -417,6 +363,95 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                             Locale.getDefault()
                         )
                 }
+
+            }
+
+            OrderType.DINE_IN -> if (activity != null) {
+                menuPresenter.getStore()
+                if (CacheUtil.getInstance().orderStore != null) {
+                    binding.orderType.text =
+                        CacheUtil.getInstance().getTranslations(Text.DINE_IN_AT, "DINE-IN AT")
+                            .uppercase(
+                                Locale.getDefault()
+                            ) + ":"
+                    binding.branchName.text = CacheUtil.getInstance().orderStore.attributes.name
+                    binding.orderType.visibility = View.VISIBLE
+                } else {
+                    binding.orderType.visibility = View.GONE
+                    binding.branchName.text = CacheUtil.getInstance().getTranslations(
+                        Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
+                        "Please tap here to pick an order type"
+                    )
+                    binding.orderType.text = CacheUtil.getInstance()
+                        .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
+                            Locale.getDefault()
+                        )
+                }
+            }
+
+            OrderType.DELIVERY -> if (activity != null) {
+                menuPresenter!!.getAddress()
+                if (CacheUtil.getInstance().orderAddress != null) {
+                    binding.orderType.text = CacheUtil.getInstance()
+                        .getTranslations(Text.DELIVER_TO_CAPS, "DELIVER TO").uppercase(
+                            Locale.getDefault()
+                        ) + ":"
+                    binding.branchName.text =
+                        CacheUtil.getInstance().orderAddress.attributes.line1
+                    binding.orderType.visibility = View.VISIBLE
+                } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
+                    binding.orderType.text = CacheUtil.getInstance()
+                        .getTranslations(Text.DELIVER_TO_CAPS, "DELIVER TO").uppercase(
+                            Locale.getDefault()
+                        ) + ":"
+                    binding.branchName.text = CacheUtil.getInstance().orderDeliveryAddress
+                    binding.orderType.visibility = View.VISIBLE
+                } else {
+                    binding.orderType.visibility = View.GONE
+                    binding.branchName.text = CacheUtil.getInstance().getTranslations(
+                        Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
+                        "Please tap here to pick an order type"
+                    )
+                    binding.orderType.text = CacheUtil.getInstance()
+                        .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
+                            Locale.getDefault()
+                        )
+                }
+            }
+
+            OrderType.CURBSIDE -> if (activity != null) {
+                menuPresenter!!.getStore()
+                if (CacheUtil.getInstance().orderStore != null) {
+                    binding.orderType.text = CacheUtil.getInstance()
+                        .getTranslations(Text.CURBSIDE_PICKUP_FROM_CAPS, "CURBSIDE PICKUP FROM")
+                        .uppercase(
+                            Locale.getDefault()
+                        ) + ":"
+                    binding.branchName.text = CacheUtil.getInstance().orderStore.attributes.name
+                    binding.orderType.visibility = View.VISIBLE
+                } else {
+                    binding.orderType.visibility = View.GONE
+                    binding.branchName.text = CacheUtil.getInstance().getTranslations(
+                        Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
+                        "Please tap here to pick an order type"
+                    )
+                    binding.orderType.text = CacheUtil.getInstance()
+                        .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
+                            Locale.getDefault()
+                        )
+                }
+            }
+
+            OrderType.NONE -> {
+                binding.orderType.visibility = View.GONE
+                binding.branchName.text = CacheUtil.getInstance().getTranslations(
+                    Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
+                    "Please tap here to pick an order type"
+                )
+                binding.orderType.text = CacheUtil.getInstance()
+                    .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE").uppercase(
+                        Locale.getDefault()
+                    )
             }
         }
         if (CacheUtil.getInstance().favoriteMenuCategory != null && CacheUtil.getInstance().favoriteMenuItem != null) {
@@ -437,8 +472,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             menuPresenter!!.addRemoveFavorite(true)
         }
         if (CacheUtil.getInstance().application.attributes.menuOnly || CacheUtil.getInstance().cartQuantity == 0 || CacheUtil.getInstance().application.attributes.homeScreenDesign.equals(
-                "option-4",
-                ignoreCase = true
+                "option-4", ignoreCase = true
             )
         ) {
             binding.cartQuantity.visibility = View.GONE
@@ -504,8 +538,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             }
             if (CacheUtil.getInstance().orderType != OrderType.CURBSIDE) {
                 CacheUtil.getInstance().curbsideCar = null
-            }
-            /*setFragmentResultListener(OrderTypeFragment.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
+            }/*setFragmentResultListener(OrderTypeFragment.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
                 clearFragmentResultListener(requestKey = OrderTypeFragment.ARGS_KEY_FRAGMENT_RESULT)
                 if (CacheUtil.getOrderStoreId() != null) {
                     isFromOrderType = true
@@ -514,8 +547,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     }
                 }
             }*/
-            val storeId = CacheUtil.getOrderStoreId() ?: ""
-            /*NavigationUtils.navigateSafe(
+            val storeId = CacheUtil.getOrderStoreId() ?: ""/*NavigationUtils.navigateSafe(
                 findNavController(),
                 NewMenuHomePageFragmentDirections.actionHomeToOrderType(
                     fromCart = false,
@@ -568,8 +600,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         binding.blocker.setOnClickListener { }
         binding.withSearchLayout.setOnClickListener { }
         if (CacheUtil.getInstance().application.attributes.homeScreenDesign.equals(
-                "option-4",
-                ignoreCase = true
+                "option-4", ignoreCase = true
             )
         ) {
             binding.appBarLayout.visibility = View.GONE
@@ -644,15 +675,13 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             }
         binding.tvViewAllFavorites.setOnClickListener {
             NavigationUtils.navigateSafe(
-                findNavController(),
-                NewMenuHomePageFragmentDirections.actionHomeToFavorites()
+                findNavController(), NewMenuHomePageFragmentDirections.actionHomeToFavorites()
             )
         }
         binding.history.setOnClickListener {
             if (AuthUtil.getInstance().isSignedIn) {
                 NavigationUtils.navigateSafe(
-                    findNavController(),
-                    NewMenuHomePageFragmentDirections.actionHomeToOrders()
+                    findNavController(), NewMenuHomePageFragmentDirections.actionHomeToOrders()
                 )
             } else {
                 setFragmentResultListener(ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
@@ -689,8 +718,11 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     intent.type = "text/plain"
                 } else {
                     intent = Intent(activity, BrowserActivity::class.java)
-                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(
-                        Text.FEEDBACK))
+                    intent.putExtra(
+                        "title", CacheUtil.getInstance().getTranslations(
+                            Text.FEEDBACK
+                        )
+                    )
                     intent.putExtra("url", feedbackUrl)
                 }
             } else {
@@ -710,8 +742,11 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     intent.type = "text/plain"
                 } else {
                     intent = Intent(activity, BrowserActivity::class.java)
-                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(
-                        Text.FEEDBACK))
+                    intent.putExtra(
+                        "title", CacheUtil.getInstance().getTranslations(
+                            Text.FEEDBACK
+                        )
+                    )
                     intent.putExtra("url", feedbackUrl)
                 }
             } else {
@@ -727,8 +762,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         binding.account.setOnClickListener {
             if (AuthUtil.getInstance().isSignedIn) {
                 NavigationUtils.navigateSafe(
-                    findNavController(),
-                    NewMenuHomePageFragmentDirections.actionHomeToAccount()
+                    findNavController(), NewMenuHomePageFragmentDirections.actionHomeToAccount()
                 )
             } else {
                 setFragmentResultListener(ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
@@ -767,21 +801,18 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         binding.homeOption4.checkOutMenu.setOnClickListener {
             MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
             NavigationUtils.navigateSafe(
-                findNavController(),
-                NewMenuHomePageFragmentDirections.actionHomeToMenu("")
+                findNavController(), NewMenuHomePageFragmentDirections.actionHomeToMenu("")
             )
         }
         binding.homeOption4.findBranches.setOnClickListener {
             NavigationUtils.navigateSafe(
-                findNavController(),
-                NewMenuHomePageFragmentDirections.actionHomeToBranches()
+                findNavController(), NewMenuHomePageFragmentDirections.actionHomeToBranches()
             )
         }
         binding.browseMenu.setOnClickListener {
             MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
             NavigationUtils.navigateSafe(
-                findNavController(),
-                NewMenuHomePageFragmentDirections.actionHomeToMenu("")
+                findNavController(), NewMenuHomePageFragmentDirections.actionHomeToMenu("")
             )
         }
         binding.totalContainer.setOnClickListener(View.OnClickListener {
@@ -810,8 +841,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         }
         binding.homeOption4.findPromo.setOnClickListener {
             NavigationUtils.navigateSafe(
-                findNavController(),
-                NewMenuHomePageFragmentDirections.actionHomeToDigitalCoupons()
+                findNavController(), NewMenuHomePageFragmentDirections.actionHomeToDigitalCoupons()
             )
         }
     }
@@ -822,20 +852,17 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             CacheUtil.getInstance().getTranslations(Text.CHECK_OUT_CAPS)
         binding.homeOption4.ourMenu.text =
             CacheUtil.getInstance().getTranslations(Text.OUR_MENU_CAPS)
-        binding.homeOption4.findA.text =
-            CacheUtil.getInstance().getTranslations(Text.FIND_A_CAPS)
-        binding.homeOption4.promo.text =
-            CacheUtil.getInstance().getTranslations(Text.PROMO_CAPS)
+        binding.homeOption4.findA.text = CacheUtil.getInstance().getTranslations(Text.FIND_A_CAPS)
+        binding.homeOption4.promo.text = CacheUtil.getInstance().getTranslations(Text.PROMO_CAPS)
         binding.homeOption4.findOur.text =
             CacheUtil.getInstance().getTranslations(Text.FIND_OUR_CAPS)
-        binding.homeOption4.branches.text =
-            CacheUtil.getInstance().getTranslations(Text.BRANCHES)
+        binding.homeOption4.branches.text = CacheUtil.getInstance().getTranslations(Text.BRANCHES)
         binding.homeOption4.leaveUs.text =
             CacheUtil.getInstance().getTranslations(Text.LEAVE_US_CAPS)
         binding.homeOption4.aReview.text =
             CacheUtil.getInstance().getTranslations(Text.A_REVIEW_CAPS)
-        binding.searchEmptyText.text = CacheUtil.getInstance()
-            .getTranslations(Text.NO_ITEM_FOUND, "No item found")
+        binding.searchEmptyText.text =
+            CacheUtil.getInstance().getTranslations(Text.NO_ITEM_FOUND, "No item found")
         binding.searchEmptyTextDesc.text = CacheUtil.getInstance().getTranslations(
             Text.NO_ITEM_FOUND_DESC,
             "Sorry, we were unable to find something that matches your search."
@@ -844,28 +871,21 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             CacheUtil.getInstance().getTranslations(Text.BROWSE_MENU_CAPS)
         binding.categoriesLabel.text =
             CacheUtil.getInstance().getTranslations(Text.BROWSE_MENU_CAPS)
-        binding.favoritesLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.FAVORITES_CAPS)
+        binding.favoritesLabel.text = CacheUtil.getInstance().getTranslations(Text.FAVORITES_CAPS)
         binding.tvViewAllFavorites.text =
             CacheUtil.getInstance().getTranslations(Text.VIEW_ALL_CAPS)
-        binding.couponLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.COUPONS_CAPS)
-        binding.recentOrderLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.ORDER_AGAIN_CAPS, "ORDER AGAIN")
+        binding.couponLabel.text = CacheUtil.getInstance().getTranslations(Text.COUPONS_CAPS)
+        binding.recentOrderLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.ORDER_AGAIN_CAPS, "ORDER AGAIN")
         binding.recentOrderLabelViewAll.text =
             CacheUtil.getInstance().getTranslations(Text.VIEW_ALL_CAPS)
-        binding.popularNowLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.POPULAR_NOW_CAPS, "POPULAR NOW")
-        binding.popularNowViewAll.text =
-            CacheUtil.getInstance().getTranslations(Text.VIEW_ALL_CAPS)
-        binding.historyLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.HISTORY_CAPS)
-        binding.feedbackLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.FEEDBACK_CAPS)
-        binding.accountLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.ACCOUNT_CAPS)
-        binding.btnViewBag.text =
-            CacheUtil.getInstance().getTranslations(Text.VIEW_BAG_CAPS)
+        binding.popularNowLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.POPULAR_NOW_CAPS, "POPULAR NOW")
+        binding.popularNowViewAll.text = CacheUtil.getInstance().getTranslations(Text.VIEW_ALL_CAPS)
+        binding.historyLabel.text = CacheUtil.getInstance().getTranslations(Text.HISTORY_CAPS)
+        binding.feedbackLabel.text = CacheUtil.getInstance().getTranslations(Text.FEEDBACK_CAPS)
+        binding.accountLabel.text = CacheUtil.getInstance().getTranslations(Text.ACCOUNT_CAPS)
+        binding.btnViewBag.text = CacheUtil.getInstance().getTranslations(Text.VIEW_BAG_CAPS)
     }
 
     override fun showStore(store: Store) {}
@@ -876,9 +896,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     }
 
     override fun showMenuCategories(
-        refresh: Boolean,
-        isFromInitialLoad: Boolean,
-        menuCategories: MutableList<MenuCategory>?
+        refresh: Boolean, isFromInitialLoad: Boolean, menuCategories: MutableList<MenuCategory>?
     ) {
         try {
             activity?.cast<BaseActivity> {
@@ -886,17 +904,15 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     if (menuCategories?.isNotEmpty() == true) {
                         hideShimmers()
                         binding.menuCategoryItems.visibility = View.VISIBLE
-                        if(newHomeMenuAdapter == null) {
+                        if (newHomeMenuAdapter == null) {
                             newHomeMenuAdapter = NewHomeMenuAdapter(
-                                it,
-                                menuCategories,
-                                this@NewMenuHomePageFragment
+                                it, menuCategories, this@NewMenuHomePageFragment
                             )
                             newHomeMenuAdapter!!.selected = position
                             binding.menuCategoryItems.adapter = newHomeMenuAdapter
                             newHomeMenuAdapter!!.notifyDataSetChanged()
-                        } else  {
-                            if(binding.menuCategoryItems.adapter == null){
+                        } else {
+                            if (binding.menuCategoryItems.adapter == null) {
                                 binding.menuCategoryItems.adapter = newHomeMenuAdapter
                             }
                             newHomeMenuAdapter?.updateMenuCategories(menuCategories)
@@ -915,7 +931,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     }
 
     override fun selectMenuItem(menuCategory: MenuCategory?, menuItem: MenuItem?) {
-        if(menuCategory != null && menuItem != null) {
+        if (menuCategory != null && menuItem != null) {
             activity?.let {
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
                 val intent = Intent(it, NavigationActivity::class.java)
@@ -943,8 +959,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         } else {
             binding.menuItemsSearchList.visibility = View.VISIBLE
             binding.searchEmptyLayout.visibility = View.GONE
-            searchAdapter =
-                SearchMenuRecyclerViewAdapter(activity, menuPresenter)
+            searchAdapter = SearchMenuRecyclerViewAdapter(activity, menuPresenter)
             binding.menuItemsSearchList.adapter = searchAdapter
             searchAdapter?.updateMenuList(searchedMenuItems)
         }
@@ -953,9 +968,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     override fun hideSearchedMenuItems(menuCategory: MenuCategory) {}
     override fun setSizes(menuItem: MenuItem) {}
     override fun setModifierItem(
-        modifierGroup: ModifierGroup,
-        modifierItem: ModifierItem,
-        position: Int
+        modifierGroup: ModifierGroup, modifierItem: ModifierItem, position: Int
     ) {
     }
 
@@ -990,8 +1003,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         vibrator.vibrate(
                             VibrationEffect.createOneShot(
-                                500,
-                                VibrationEffect.DEFAULT_AMPLITUDE
+                                500, VibrationEffect.DEFAULT_AMPLITUDE
                             )
                         )
                     } else {
@@ -1032,8 +1044,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                 StringUtil.localize(CacheUtil.getInstance().cartQuantity.toString())
             binding.cartQuantity.visibility = View.VISIBLE
             if (!CacheUtil.getInstance().application.attributes.homeScreenDesign.equals(
-                    "option-4",
-                    ignoreCase = true
+                    "option-4", ignoreCase = true
                 )
             ) {
                 binding.totalContainer.visibility = View.VISIBLE
@@ -1092,8 +1103,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
 
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
     override fun showModifierSelectionIndicator(
-        hasAtleastOneSelectedItem: Boolean,
-        modifierGroupPosition: Int
+        hasAtleastOneSelectedItem: Boolean, modifierGroupPosition: Int
     ) {
         TODO("Not yet implemented")
     }
@@ -1116,9 +1126,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             menuFavoritesRecyclerViewAdapter =
                 MenuFavoritesRecyclerViewAdapter(activity, menuPresenter)
             binding.favoritesItemList.layoutManager = LinearLayoutManager(
-                activity,
-                LinearLayoutManager.HORIZONTAL,
-                false
+                activity, LinearLayoutManager.HORIZONTAL, false
             )
             binding.favoritesItemList.adapter = menuFavoritesRecyclerViewAdapter
             menuFavoritesRecyclerViewAdapter!!.notifyDataSetChanged()
@@ -1171,12 +1179,10 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                 activity?.let {
                     binding.homeOption4.sliderPlaceholder.setBackgroundColor(
                         ContextCompat.getColor(
-                            it,
-                            R.color.transparent
+                            it, R.color.transparent
                         )
                     )
-                    val sliderAdapter =
-                        SliderFragmentStateAdapter(it, sliderPresenter, slides)
+                    val sliderAdapter = SliderFragmentStateAdapter(it, sliderPresenter, slides)
                     binding.sliderViewPager.adapter = sliderAdapter
 
                 }
@@ -1231,8 +1237,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                 hasMidSlides = true
                 try {
                     activity?.let {
-                        val sliderAdapter =
-                            SliderFragmentStateAdapter(it, sliderPresenter, banners)
+                        val sliderAdapter = SliderFragmentStateAdapter(it, sliderPresenter, banners)
                         binding.midSliderViewPager.adapter = sliderAdapter
                         binding.midSliderContainer.visibility = View.VISIBLE
                         binding.midSliderViewPager.visibility = View.VISIBLE
@@ -1366,9 +1371,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             binding.popularNowItemList.visibility = View.VISIBLE
             menuPopularRecyclerViewAdapter = MenuPopularRecyclerViewAdapter(activity, menuPresenter)
             binding.popularNowItemList.layoutManager = LinearLayoutManager(
-                activity,
-                LinearLayoutManager.HORIZONTAL,
-                false
+                activity, LinearLayoutManager.HORIZONTAL, false
             )
             binding.popularNowItemList.adapter = menuPopularRecyclerViewAdapter
             menuPopularRecyclerViewAdapter!!.notifyDataSetChanged()
@@ -1385,9 +1388,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             binding.couponsItemList.visibility = View.VISIBLE
             menuCouponRecyclerViewAdapter = MenuCouponRecyclerViewAdapter(activity, menuPresenter)
             binding.couponsItemList.layoutManager = LinearLayoutManager(
-                activity,
-                LinearLayoutManager.HORIZONTAL,
-                false
+                activity, LinearLayoutManager.HORIZONTAL, false
             )
             binding.couponsItemList.adapter = menuCouponRecyclerViewAdapter
             menuCouponRecyclerViewAdapter!!.notifyDataSetChanged()
@@ -1400,8 +1401,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     override fun showDigitalCoupon(digitalCoupon: Campaign) {
         activity?.runOnUiThread {
             NavigationUtils.navigateSafe(
-                findNavController(),
-                NewMenuHomePageFragmentDirections.actionHomeToDigitalCoupon(
+                findNavController(), NewMenuHomePageFragmentDirections.actionHomeToDigitalCoupon(
                     Gson().toJson(digitalCoupon)
                 )
             )
@@ -1416,9 +1416,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             menuRecentOrderRecyclerViewAdapter =
                 MenuRecentOrderRecyclerViewAdapter(activity, menuPresenter)
             binding.orderAgainItemList.layoutManager = LinearLayoutManager(
-                activity,
-                LinearLayoutManager.HORIZONTAL,
-                false
+                activity, LinearLayoutManager.HORIZONTAL, false
             )
             binding.orderAgainItemList.adapter = menuRecentOrderRecyclerViewAdapter
             menuRecentOrderRecyclerViewAdapter!!.notifyDataSetChanged()
@@ -1481,9 +1479,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     }
 
     override fun updateComponentModifierGroups(
-        componentPosition: Int,
-        componentModifierItems: List<ComponentModifierItem>,
-        selected: Int
+        componentPosition: Int, componentModifierItems: List<ComponentModifierItem>, selected: Int
     ) {
     }
 
@@ -1558,14 +1554,10 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     }
 
     override fun setMenuCategoryForAnalytics(
-        menuItem: MenuItem?,
-        menuCategory: MenuCategory?,
-        price: Double,
-        quantity: Int
+        menuItem: MenuItem?, menuCategory: MenuCategory?, price: Double, quantity: Int
     ) {
         FirebaseECommerceEventUtil.addToCartEvent(
-            context,
-            menuItem!!, menuCategory, price, quantity
+            context, menuItem!!, menuCategory, price, quantity
         )
     }
 
@@ -1580,12 +1572,15 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                 } else {
                     binding.totalPrice.text = StringUtil.getFormattedPrice(
                         menuPresenter.menuItemsTotalPrice
-                    ).toString() + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
+                    ).toString() + " " + CacheUtil.getInstance()
+                        .getTranslations(Text.TOTAL, "TOTAL")
                 }
             } else {
                 if (LocaleUtil.getInstance().isArabic) {
                     binding.totalPrice.text = CacheUtil.getInstance()
-                        .getTranslations(Text.TOTAL, "TOTAL") + " " + StringUtil.getFormattedPrice(0.0)
+                        .getTranslations(Text.TOTAL, "TOTAL") + " " + StringUtil.getFormattedPrice(
+                        0.0
+                    )
                 } else {
                     binding.totalPrice.text =
                         StringUtil.getFormattedPrice(0.0).toString() + " " + CacheUtil.getInstance()

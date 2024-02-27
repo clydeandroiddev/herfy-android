@@ -71,61 +71,6 @@ class SelectOrderTypeDialogFragment(
                         onOrderTypeSelected.invoke(OrderType.fromString(orderTypeMenus.type))
                     }
                 }
-
-
-/*              for dynamic view
-                if (index == 0) {
-                    binding.firstOrderTypeContainer.visibility = View.VISIBLE
-                    binding.firstTypeLabel.text = orderTypeMenus.type?.let { getMenuType(it) }
-                    binding.ivFirstOrderType.setImageDrawable(orderTypeMenus.type?.let { getImage(it) }?.let {
-                        ContextCompat.getDrawable(requireContext(),
-                            it
-                        )
-                    })
-                    binding.firstOrderTypeContainer.setOnClickListener {
-                        dismiss()
-                        onOrderTypeSelected.invoke(OrderType.fromString(orderTypeMenus.type))
-                    }
-                }
-                if (index == 1) {
-                    binding.secondOrderTypeContainer.visibility = View.VISIBLE
-                    binding.secondTypeLabel.text = getMenuType(orderTypeMenus.type)
-                    binding.ivSecondOrderType.setImageDrawable(getImage(orderTypeMenus.type).let {
-                        ContextCompat.getDrawable(requireContext(),
-                            it
-                        )
-                    })
-                    binding.secondOrderTypeContainer.setOnClickListener {
-                        dismiss()
-                        onOrderTypeSelected.invoke(OrderType.fromString(orderTypeMenus.type))
-                    }
-                }
-                if (index == 2) {
-                    binding.thirdOrderTypeContainer.visibility = View.VISIBLE
-                    binding.thirdTypeLabel.text = getMenuType(orderTypeMenus.type)
-                    binding.ivThirdOrderType.setImageDrawable(getImage(orderTypeMenus.type).let {
-                        ContextCompat.getDrawable(requireContext(),
-                            it
-                        )
-                    })
-                    binding.thirdOrderTypeContainer.setOnClickListener {
-                        dismiss()
-                        onOrderTypeSelected.invoke(OrderType.fromString(orderTypeMenus.type))
-                    }
-                }
-                if (index == 3) {
-                    binding.fourthOrderTypeContainer.visibility = View.VISIBLE
-                    binding.fourthTypeLabel.text = getMenuType(orderTypeMenus.type)
-                    binding.ivFourthOrderType.setImageDrawable(getImage(orderTypeMenus.type).let {
-                        ContextCompat.getDrawable(requireContext(),
-                            it
-                        )
-                    })
-                    binding.fourthOrderTypeContainer.setOnClickListener {
-                        dismiss()
-                        onOrderTypeSelected.invoke(OrderType.fromString(orderTypeMenus.type))
-                    }
-                }*/
             }
         }
     }

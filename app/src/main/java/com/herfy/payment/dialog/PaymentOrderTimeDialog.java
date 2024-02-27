@@ -58,7 +58,7 @@ public class PaymentOrderTimeDialog extends DialogFragment {
     @Nullable
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Dialog dialog = getDialog();
-        if(dialog != null) {
+        if (dialog != null) {
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         }
         View view = inflater.inflate(R.layout.fragment_dialog_promised_time, container, false);
@@ -86,12 +86,18 @@ public class PaymentOrderTimeDialog extends DialogFragment {
 
         if (orderType != null && orderType.equals(OrderType.CURBSIDE)) {
             type.setText(CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP_FROM_CAPS, "CURBSIDE PICKUP FROM"));
+        } else if (orderType != null && orderType.equals(OrderType.DRIVE_THRU)) {
+            type.setText(CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup").toUpperCase());
+        } else if (orderType != null && orderType.equals(OrderType.EAT_IN)) {
+            type.setText(CacheUtil.getInstance().getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup").toUpperCase());
         } else {
             type.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP_FROM, "PICKUP FROM"));
         }
 
         switch (orderType) {
             case PICKUP:
+            case EAT_IN:
+            case DRIVE_THRU:
             case CURBSIDE:
                 rectangleIcon.setVisibility(View.VISIBLE);
                 labelReady.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP_READY_LABEL, "Your order will be ready in"));
@@ -135,9 +141,11 @@ public class PaymentOrderTimeDialog extends DialogFragment {
         }
 
         String languageToLoad = "en";
-        if (LocaleUtil.getInstance().getLanguage().equalsIgnoreCase("ar") ) { languageToLoad = "ar"; }
+        if (LocaleUtil.getInstance().getLanguage().equalsIgnoreCase("ar")) {
+            languageToLoad = "ar";
+        }
         String key = new String(Base64.decode(getResources().getString(R.string.google_maps_api_key_encoded), Base64.DEFAULT));
-        String url = "https://maps.googleapis.com/maps/api/staticmap?language="+languageToLoad+"&center=" + latLng.latitude + "," + latLng.longitude + "&zoom=15&size=400x400&key=" + key;
+        String url = "https://maps.googleapis.com/maps/api/staticmap?language=" + languageToLoad + "&center=" + latLng.latitude + "," + latLng.longitude + "&zoom=15&size=400x400&key=" + key;
         Glide.with(requireActivity()).load(url)
                 .skipMemoryCache(false)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

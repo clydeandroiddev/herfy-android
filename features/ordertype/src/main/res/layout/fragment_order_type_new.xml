@@ -26,7 +26,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/Styles.Text.Caption.Semibold"
                 android:id="@+id/soloType"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

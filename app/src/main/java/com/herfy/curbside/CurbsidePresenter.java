@@ -5,18 +5,19 @@ import androidx.annotation.Nullable;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.base.BaseView;
+import com.herfy.util.AppLogger;
+import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.Text;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CurbsideApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries;
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
 import com.skylinedynamics.solosdk.util.GsonHelper;
-import com.herfy.util.AppLogger;
-import com.herfy.utils.handler.ErrorHandler;
-import com.herfy.util.StringUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +28,7 @@ import java.util.List;
 public class CurbsidePresenter implements CurbsideContract.Presenter {
 
     private CurbsideContract.View view;
-    private List<String> colors;
+    private List<CarColor> colors;
     private List<CarMaker> carMakerList;
 
     public CurbsidePresenter(BaseView baseView) {
@@ -37,14 +38,15 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
 
     @Override
     public void getColorsList(boolean showCarColor) {
-        CurbsideApiCall.getInstance().getCarColors(new ApiRequestListener() {
+        CurbsideApiCall.getInstance().getCarColorsNew(new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     String items = object.isNull("data") ? "" : object.optString("data");
-                    colors = GsonHelper.gsonFinal().fromJson(items, new TypeToken<List<String>>() {
+                    colors = GsonHelper.gsonFinal().fromJson(items, new TypeToken<List<CarColor>>() {
                     }.getType());
+                    CacheUtil.getInstance().setColors(new ArrayList<>(colors));
                     if (showCarColor) {
                         view.showCarColors(colors);
                     }
@@ -72,6 +74,7 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
                     String items = object.isNull("data") ? "" : object.optString("data");
                     carMakerList = GsonHelper.gsonFinal().fromJson(items, new TypeToken<List<CarMaker>>() {
                     }.getType());
+                    CacheUtil.getInstance().setBrands(new ArrayList<>(carMakerList));
                     carMakerList.add(new CarMaker());
                     if (showCarMaker) {
                         view.showCarMakers(carMakerList);
@@ -121,23 +124,23 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
 
         int mobileFormatIndex = 0;
         ArrayList<AllowedCountries> allowedCountries = CacheUtil.getInstance().getConcept().getAllowedCountries();
-        for(AllowedCountries allowedCountry : allowedCountries) {
+        for (AllowedCountries allowedCountry : allowedCountries) {
             String dialCode = allowedCountry.getDialCode().replace("+", "");
-            if(phoneNumber.startsWith(dialCode)) {
+            if (phoneNumber.startsWith(dialCode)) {
                 mobileFormatIndex = allowedCountries.indexOf(allowedCountry);
                 break;
             }
         }
 
-        if(phoneNumber.isEmpty()) {
+        if (phoneNumber.isEmpty()) {
             valid = false;
             view.showError(CacheUtil.getInstance().getTranslations(Text.MOBILE_NUMBER_REQUIRED, "Mobile number is required"));
-        } else if(!StringUtil.isValidPhoneNumber(phoneNumber,mobileFormatIndex)) {
+        } else if (!StringUtil.isValidPhoneNumber(phoneNumber, mobileFormatIndex)) {
             valid = false;
             view.showError(CacheUtil.getInstance().getTranslations(Text.MOBILE_NUMBER_INVALID, "Invalid mobile number"));
         }
 
-        if(valid) {
+        if (valid) {
 
             JsonObject addBody = new JsonObject();
             addBody.addProperty("color", carColor);
@@ -217,7 +220,7 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
     }
 
     @Override
-    public List<String> getCarColors() {
+    public List<CarColor> getCarColors() {
         return colors;
     }
 

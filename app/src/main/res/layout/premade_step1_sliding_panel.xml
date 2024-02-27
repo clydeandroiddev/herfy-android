@@ -68,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
                     tools:itemCount="3"
-                    tools:listitem="@layout/item_address_delivery" />
+                    tools:listitem="@layout/item_address_delivery_new" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/add_address_from_delivery"

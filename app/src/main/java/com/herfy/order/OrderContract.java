@@ -179,6 +179,8 @@ public interface OrderContract {
 
         String getAddress(LatLng latLng);
 
+        android.location.Address getCurrentAddress();
+
         void updateAddAddress();
 
         void deleteAddress(Address address);

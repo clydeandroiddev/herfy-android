@@ -198,8 +198,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         isDefaultHomeScreenDesign = false
 
         quickOrderSelected()
-        graph.setStartDestination(R.id.nav_home)
-        currentDestination = R.id.nav_home
+        graph.setStartDestination(R.id.nav_herfy_home)
+        currentDestination = R.id.nav_herfy_home
 
         navController.setGraph(graph, intent.extras)
         mainPresenter = MainPresenter(this@MainActivity)

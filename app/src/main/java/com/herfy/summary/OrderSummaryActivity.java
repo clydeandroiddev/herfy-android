@@ -230,10 +230,10 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
                 } catch (ParseException pe) {
                     pe.printStackTrace();
                     int minSchedule = CacheUtil.getInstance().getConcept().getDefaultScheduleDeliveryTime();
-                    if(minSchedule == 0) {
+                    if (minSchedule == 0) {
                         minSchedule = 15;
                     }
-                    showMessage(CacheUtil.getInstance().getTranslations(Text.MINIMUM_SCHEDULED_ORDER,"Unable to process order, scheduled order is allowed minimum of (x) min from current time.").replace("(x)", ""+minSchedule));
+                    showMessage(CacheUtil.getInstance().getTranslations(Text.MINIMUM_SCHEDULED_ORDER, "Unable to process order, scheduled order is allowed minimum of (x) min from current time.").replace("(x)", "" + minSchedule));
                     dismissDialogs();
                 }
             }
@@ -242,6 +242,8 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
         setPaymentMethodTextLabel();
 
         switch (CacheUtil.getInstance().getOrderType()) {
+            case EAT_IN:
+            case DRIVE_THRU:
             case PICKUP:
                 type.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP));
                 break;
@@ -483,7 +485,7 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
         try {
             dismissDialogs();
             FragmentManager fragmentManager = getSupportFragmentManager();
-            if(!fragmentManager.isDestroyed()) {
+            if (!fragmentManager.isDestroyed()) {
                 OrderDialogFragment fragment = OrderDialogFragment.newInstance(false);
                 fragment.show(fragmentManager, OrderDialogFragment.class.getSimpleName());
             }
@@ -559,7 +561,8 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
 
     @Override
     public ActivityResultLauncher<Pair<String, ResultType>> moneyHashContract() {
-        return registerForActivityResult((ActivityResultContract)(new PaymentResultContract()), (ActivityResultCallback) (result)-> {});
+        return registerForActivityResult((ActivityResultContract) (new PaymentResultContract()), (ActivityResultCallback) (result) -> {
+        });
     }
 
     @Override

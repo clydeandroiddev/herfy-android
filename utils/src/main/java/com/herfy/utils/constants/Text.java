@@ -221,7 +221,7 @@ public class Text {
     public static final String OPTIONS = "options";
     public static final String QUANTITY = "quantity";
     public static final String ITEM_QUANTITY = "item_quantity";
-    public static final String REQUIRED ="required";
+    public static final String REQUIRED = "required";
     public static final String RATING_SENT = "rating_sent";
     public static final String INGREDIENTS = "ingredients";
     public static final String SIGN_IN_MESSAGE = "sign_in_message";
@@ -282,7 +282,7 @@ public class Text {
     public static final String OPTIONAL_KEY = "optional_key";
 
     public static final String NO_PAYMENT_METHOD_SELECTED = "no_payment_methods";
-    public static final String TOTAL_VAT_DESCRIPTION  = "total_vat_description";
+    public static final String TOTAL_VAT_DESCRIPTION = "total_vat_description";
     public static final String REQUIRED_KEY = "required_key";
     public static final String SHOW_FACILITY = "show_facility";
     public static final String HIDE_FACILITY = "hide_facility";
@@ -834,7 +834,6 @@ public class Text {
     public static final String HOW_WILL_YOU_ORDER_TODAY = "how_will_you_order_today";
 
     public static final String CHOOSE_PICKUP_METHOD = "choose_pickup_method";
-    public static final String WALK_IN_PICKUP = "walk_in_pickup";
     public static final String PICKUP_DESCRIPTION = "pickup_description";
     public static final String CURBSIDE_PICKUP_LABEL = "curbside_pickup_label";
     public static final String CURBSIDE_DESCRIPTION = "curbside_description";
@@ -856,7 +855,7 @@ public class Text {
     public static final String ABOUT_US_LABEL = "about_us_label";
     public static final String TERMS_LABEL = "terms_label";
     public static final String SOCIAL_MEDIA_LABEL = "social_media_label";
-    public static final String FAVOURITES_LABEL ="favourites_label";
+    public static final String FAVOURITES_LABEL = "favourites_label";
     public static final String GET_STARTED_LABEL = "get_started_label";
     public static final String SAR_AMOUNT = "sar_amount";
     public static final String DEBIT_CREDIT_CARD = "debit_credit_card";
@@ -868,13 +867,55 @@ public class Text {
     public static final String LOYALTY_POINTS = "loyalty_points";
     public static final String PAYMENT_METHODS = "payment_methods";
 
-    public static final String ALL_LABEL="all_label";
+    public static final String ALL_LABEL = "all_label";
     public static final String REDEEM_LABEL = "redeem_label";
-    public static final String REMOVE_PROMO_LABEL="remove_promo";
+    public static final String REMOVE_PROMO_LABEL = "remove_promo";
     public static final String HERFY_SUPPORT = "herfy_support";
     public static final String MINS = "mins";
-
     public static final String YOUR_BASKET_LABEL = "your_basket_label";
     public static final String HELP_LABEL = "help_label";
     public static final String YOUR_BAG_LABEL = "your_bag_label";
+    public static final String USE_CURRENT_LOCATION = "use_current_location";
+    public static final String ADD_NEW_ADDRESS = "add_new_address";
+
+    public static final String KM_AWAY = "km_away";
+
+    public static final String WALK_IN_PICKUP = "walk_in_pickup";
+
+    public static final String DRIVE_THRU_PICKUP = "drive_thru_pickup";
+
+    public static final String SAVED_ADDRESSES = "saved_addresses";
+
+    public static final String SELECT_AREA = "select_area";
+
+    public static final String MOVE_THE_PIN = "move_the_pin";
+    public static final String CONFIRM_DELIVERY_LOCATION = "confirm_delivery_location";
+    public static final String NO_SAVED_ADDRESSES_FOUND = "no_saved_addresses_found";
+    public static final String SAVE_AND_CONTINUE = "save_and_continue";
+
+    public static final String SAVE_ADDRESS_LABEL = "save_address_label";
+
+    public static final String FLAT_NUMBER_LABEL = "flat_number_label";
+
+    public static final String PHONE_NUMBER_LABEL = "phone_number_label";
+
+    public static final String NOTE_FOR_THE_DRIVER = "note_for_the_driver";
+
+    public static final String NOTE_FOR_THE_DRIVER_HINT = "note_for_the_driver_hint";
+
+    public static final String ADD_LABEL = "add_label";
+
+    public static final String CHOOSE_YOUR_CURBSIDE_VEHICLE = "choose_your_curbside_vehicle";
+
+    public static final String ADD_NEW_VEHICLE = "add_new_vehicle";
+
+    public static final String OPTIONAL_LABEL = "optional_label";
+    public static final String LICENSE_PLATE_NUMBER = "license_plate_number";
+    public static final String VEHICLE_COLOR = "vehicle_color";
+    public static final String VEHICLE_BRAND = "vehicle_brand";
+    public static final String PLATE_NUMBER_HINT = "plate_number_hint";
+    public static final String ADD_YOUR_CURBSIDE_VEHICLE = "add_your_curbside_vehicle";
+    public static final String ADDED_CURBSIDE = "added_curbside";
+    public static final String CONFIRM_LABEL = "confirm_label";
+    public static final String SELECT_CITY = "select_city";
 }

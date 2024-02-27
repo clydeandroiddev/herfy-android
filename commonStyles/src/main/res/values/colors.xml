@@ -68,7 +68,8 @@
     <color name="card_stroke_color">#D9E8F3</color>
     <color name="card_selected_bg">#E6F0F7</color>
     <color name="light_red">#DB2211</color>
-
+    <color name="order_type_bg_color">#f7f7f7</color>
+    <color name="color_stroke">#E6E6E6</color>
 </resources>
 
 

@@ -130,9 +130,9 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
         try {
             JSONObject object = new JSONObject(value);
             digitalCoupon = Campaign.parseCoupon(object);
-            if(object.has("promotion") && !object.isNull("promotion")) {
+            if (object.has("promotion") && !object.isNull("promotion")) {
                 Promotion promotion = GsonHelper.gsonFinal().fromJson(object.getJSONObject("promotion").toString(), Promotion.class);
-                if(promotion != null) {
+                if (promotion != null) {
                     digitalCoupon.setPromotion(promotion);
                 }
             }
@@ -171,7 +171,7 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
         int comboIndex = 0;
         int trueIndex = 0;
         if (trueMenuItem.getSizes().getModifierItems().size() > 0) {
-            if(!trueMenuItem.isPromo()) {
+            if (!trueMenuItem.isPromo()) {
                 totalPrice = 0.0;
             }
             for (ModifierItem modifierItem : trueMenuItem.getSizes().getModifierItems()) {
@@ -216,8 +216,7 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
                 for (MenuItemComponents components : menuItem.combo.get(trueIndex).components) {
                     for (ComponentModifierItem item : components.items) {
                         if (item.selected) {
-                            if (!menuItem.isSandwichOnly)
-                                totalPrice += item.price;
+                            if (!menuItem.isSandwichOnly) totalPrice += item.price;
                             if (!item.modifierGroups.isEmpty()) {
                                 if (components.name.getEnglish().toLowerCase().contains("sandwich") || components.name.getFrench().toLowerCase().contains("sandwich")) {
                                     int getIndex = getYourWayModifier(item.modifierGroups);
@@ -270,7 +269,7 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
     @Override
     public void validateDigitalCoupon() {
 
-        if(digitalCoupon != null && CacheUtil.getInstance().getCartQuantity() > 0) {
+        if (digitalCoupon != null && CacheUtil.getInstance().getCartQuantity() > 0) {
 
             Customer customer = AuthUtil.getInstance().getCustomer();
             Concept concept = CacheUtil.getInstance().getConcept();
@@ -359,8 +358,7 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
                     e.printStackTrace();
                 }
 
-                if (hideDiscount)
-                    deliveryCharge = 0;
+                if (hideDiscount) deliveryCharge = 0;
 
             }
 
@@ -374,7 +372,13 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
             orderBody.addProperty("discount", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", discount)));
 
             boolean validDelivery = CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY && (CacheUtil.getInstance().getOrderAddress() != null || CacheUtil.getInstance().getOrderDeliveryAddress() != null);
-            boolean validPickup = (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE) && CacheUtil.getInstance().getOrderStore() != null;
+            boolean validPickup = (
+                    CacheUtil.getInstance().getOrderType() == OrderType.PICKUP
+                            || CacheUtil.getInstance().getOrderType() == OrderType.EAT_IN
+                            || CacheUtil.getInstance().getOrderType() == OrderType.DRIVE_THRU
+                            || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN
+                            || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE)
+                    && CacheUtil.getInstance().getOrderStore() != null;
 
             //if (validDelivery || validPickup) {
 
@@ -388,6 +392,12 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
                     }
                     orderBody.addProperty("location", store.getId());
                     break;
+                case DRIVE_THRU:
+                    deliveryCharge = 0.0;
+                    orderBody.addProperty("type", "drive-thru");
+                    orderBody.addProperty("location", store.getId());
+                    break;
+                case EAT_IN:
                 case DINE_IN:
                     deliveryCharge = 0.0;
                     orderBody.addProperty("type", "eat-in");
@@ -521,7 +531,7 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
                 public void onSuccess(Object o) {
                     try {
                         JSONObject jsonObject = new JSONObject(o.toString());
-                        if(jsonObject.has("error") && !jsonObject.isNull("error")) {
+                        if (jsonObject.has("error") && !jsonObject.isNull("error")) {
                             digitalCouponsView.showError(jsonObject.getString("error"), false);
                         } else {
                             if (digitalCoupon.getPromotion() != null && digitalCoupon.getPromotion().getAttributes().getType().equalsIgnoreCase("item")) {
@@ -589,11 +599,7 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
 
                             if (menuItem.isMustBeCustomized() || menuItem.isCombo) {
                                 CacheUtil.getInstance().setCampaignPromotionMenuItem(null);
-                                CampaignToAdd campaignToAdd = new CampaignToAdd(
-                                    digitalCoupon,
-                                    digitalCoupon.getPromotion(),
-                                    menuItem
-                                );
+                                CampaignToAdd campaignToAdd = new CampaignToAdd(digitalCoupon, digitalCoupon.getPromotion(), menuItem);
                                 CacheUtil.getInstance().setCampaignToAdd(campaignToAdd);
                             } else {
                                 CacheUtil.getInstance().setCampaignPromotionMenuItem(menuItem);

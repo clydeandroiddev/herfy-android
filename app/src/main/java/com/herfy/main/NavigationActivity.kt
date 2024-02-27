@@ -70,6 +70,7 @@ class NavigationActivity : BaseActivity(), MainContract.View {
                     bundle.putInt("selectedOrderType", it.getInt("selectedOrderType"))
                     bundle.putBoolean("checkout", it.getBoolean("checkout"))
                     bundle.putString("storeId", it.getString("storeId"))
+                    bundle.putBoolean("fromHome", it.getBoolean("fromHome"))
                 }
 
                 R.id.nav_curbside -> {

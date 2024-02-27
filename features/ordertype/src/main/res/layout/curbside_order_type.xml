@@ -134,7 +134,7 @@
             app:layout_constraintTop_toTopOf="@id/maker_color"
             tools:text="Lam" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/plate_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

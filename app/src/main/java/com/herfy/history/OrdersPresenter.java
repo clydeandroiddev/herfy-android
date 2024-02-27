@@ -169,10 +169,10 @@ public class OrdersPresenter implements OrdersContract.Presenter {
 
                     AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
 
-                    for(OrderHistory orderHistory : orders) {
+                    for (OrderHistory orderHistory : orders) {
                         ablyUtil.subscribeToOrderStatusUpdate(
-                            orderHistory.getId(),
-                            OrdersPresenter.this::onOrderHistoryStatusUpdate
+                                orderHistory.getId(),
+                                OrdersPresenter.this::onOrderHistoryStatusUpdate
                         );
                     }
 
@@ -192,13 +192,14 @@ public class OrdersPresenter implements OrdersContract.Presenter {
             }
         });
     }
+
     private Unit onOrderHistoryStatusUpdate(Message message) {
         try {
             JSONObject jsonObject = new JSONObject(message.data.toString());
             OrderData orderData = OrderData.parse(jsonObject.getJSONObject("order"));
 
             String orderId = orderData.getId();
-            if(ordersMap.containsKey(orderId) && ordersMap.get(orderId) != null) {
+            if (ordersMap.containsKey(orderId) && ordersMap.get(orderId) != null) {
                 getOrder(orderId, ordersMap.get(orderId), true, false);
             }
 
@@ -406,7 +407,7 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                             }
                         } else {
                             if (position >= 0) {
-                                if(position < orders.size()) {
+                                if (position < orders.size()) {
                                     OrderStatus orderStatus = order.getOrderStatus();
                                     orders.get(position).setCode(orderStatus.getCode());
                                     orders.get(position).setSequence(orderStatus.getSequence());
@@ -436,7 +437,7 @@ public class OrdersPresenter implements OrdersContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                ordersView.showError(ErrorHandler.getErrorMessage(o,CacheUtil.getInstance().getTranslations(!reorder ? Text.RETRIEVING_ORDER_DETAILS_ERROR : Text.REORDER_ERROR), null));
+                ordersView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(!reorder ? Text.RETRIEVING_ORDER_DETAILS_ERROR : Text.REORDER_ERROR), null));
             }
         });
     }
@@ -929,7 +930,7 @@ public class OrdersPresenter implements OrdersContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o.toString());
-                ordersView.showError(ErrorHandler.getErrorMessage(o, "",CacheUtil.getInstance().getTranslations(Text.REORDER_ERROR, "Some items are no longer available in this order.") ));
+                ordersView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.REORDER_ERROR, "Some items are no longer available in this order.")));
             }
         });
     }
@@ -945,6 +946,8 @@ public class OrdersPresenter implements OrdersContract.Presenter {
         } else if (order.getDeliveryOption().equalsIgnoreCase("deliver") || order.getDeliveryOption().equalsIgnoreCase("ايصال")) {
             CacheUtil.getInstance().setOrderType(OrderType.DELIVERY);
             CacheUtil.getInstance().setOrderAddress(address);
+        } else if (order.getDeliveryOption().equalsIgnoreCase("drive-thru")) {
+            CacheUtil.getInstance().setOrderType(OrderType.DRIVE_THRU);
         }
 
         MenuItem reorderMenuItem = menuItems.get(menuItemsCount);
@@ -1971,11 +1974,11 @@ public class OrdersPresenter implements OrdersContract.Presenter {
     }
 
     private void subscribeToOrderDriverAssign(String orderId) {
-        if(order.getDeliveryOption().equalsIgnoreCase("deliver") ||
+        if (order.getDeliveryOption().equalsIgnoreCase("deliver") ||
                 order.getDeliveryOption().equalsIgnoreCase("ايصال")) {
             AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
             String driverId = order.getDriverId();
-            if(driverId == null || driverId.isEmpty()) {
+            if (driverId == null || driverId.isEmpty()) {
                 ablyUtil.subscribeToOrderDriverAssign(
                         orderId,
                         OrdersPresenter.this::onOrderDriverAssign

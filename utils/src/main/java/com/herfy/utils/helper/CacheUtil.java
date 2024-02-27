@@ -8,9 +8,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.herfy.model.CampaignToAdd;
+import com.herfy.model.CouponToAdd;
+import com.herfy.model.Popup;
 import com.herfy.model.SupportedCountry;
 import com.herfy.model.SupportedCountryResponse;
-import com.herfy.model.*;
+import com.herfy.utils.BuildConfig;
 import com.herfy.utils.analytics.MixpanelUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Application;
@@ -30,6 +33,10 @@ import com.skylinedynamics.solosdk.api.models.objects.Promotion;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
+import com.skylinedynamics.solosdk.api.models.objects.area.City;
+import com.skylinedynamics.solosdk.api.models.objects.area.CityList;
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor;
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 
@@ -42,8 +49,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.herfy.utils.BuildConfig;
 
 public class CacheUtil {
 
@@ -134,6 +139,11 @@ public class CacheUtil {
 
     private String LAST_ORDER_ID = "lastOrderId";
 
+    private static final String VEHICLE_BRANDS = "VehicleBrands";
+
+    private static final String MAP_AREA = "MapArea";
+    private static final String VEHICLE_COLOR = "VehicleColor";
+
     private CacheUtil(Context context) {
 
         cacheSharedPreferences = context.getSharedPreferences(CACHE, Context.MODE_PRIVATE);
@@ -203,9 +213,9 @@ public class CacheUtil {
                     if (text != null) {
                         if (LocaleUtil.getInstance().isEnglish()) {
                             return text.getString("en_US");
-                        } else if(LocaleUtil.getInstance().isFrench()){
+                        } else if (LocaleUtil.getInstance().isFrench()) {
                             return text.getString("fr");
-                        }else {
+                        } else {
                             return text.getString("ar_SA");
                         }
                     }
@@ -233,9 +243,9 @@ public class CacheUtil {
                     if (text != null) {
                         if (LocaleUtil.getInstance().isEnglish()) {
                             return text.getString("en_US");
-                        } else if(LocaleUtil.getInstance().isFrench()){
+                        } else if (LocaleUtil.getInstance().isFrench()) {
                             return text.getString("fr");
-                        }else {
+                        } else {
                             return text.getString("ar_SA");
                         }
                     }
@@ -604,7 +614,7 @@ public class CacheUtil {
 
     }
 
-    public void setCartQuantity(ArrayList<MenuItem> menuItems){
+    public void setCartQuantity(ArrayList<MenuItem> menuItems) {
         int quantity = 0;
         for (MenuItem menuItem : menuItems) {
             quantity += menuItem.getAttributes().getQuantity();
@@ -627,7 +637,51 @@ public class CacheUtil {
         editor.apply();
     }
 
+    public void setColors(ArrayList<CarColor> menuItems) {
+        String cartMenuItems = new Gson().toJson(menuItems);
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(VEHICLE_COLOR, cartMenuItems);
+        editor.apply();
+    }
 
+    public ArrayList<CarColor> getColors() {
+        String cartMenuItems = cacheSharedPreferences.getString(VEHICLE_COLOR, null);
+        if (cartMenuItems != null) {
+            return GsonHelper.gsonFinal().fromJson(cartMenuItems, new TypeToken<ArrayList<CarColor>>() {
+            }.getType());
+        }
+        return new ArrayList<>();
+    }
+
+    public void setAreas(String items) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(MAP_AREA, items);
+        editor.apply();
+    }
+
+    public CityList getAreas() {
+        String cartMenuItems = cacheSharedPreferences.getString(MAP_AREA, null);
+        if (cartMenuItems != null) {
+            return GsonHelper.gsonFinal().fromJson(cartMenuItems, CityList.class);
+        }
+        return new CityList();
+    }
+
+    public void setBrands(ArrayList<CarMaker> menuItems) {
+        String cartMenuItems = new Gson().toJson(menuItems);
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(VEHICLE_BRANDS, cartMenuItems);
+        editor.apply();
+    }
+
+    public ArrayList<CarMaker> getBrands() {
+        String cartMenuItems = cacheSharedPreferences.getString(VEHICLE_BRANDS, null);
+        if (cartMenuItems != null) {
+            return GsonHelper.gsonFinal().fromJson(cartMenuItems, new TypeToken<ArrayList<CarMaker>>() {
+            }.getType());
+        }
+        return new ArrayList<>();
+    }
 
     public ArrayList<MenuItem> getCart() {
 
@@ -808,13 +862,10 @@ public class CacheUtil {
                                                     if (menuItem.combo.get(trueIndex).components.get(i).items.size() == cartMenuItem.combo.get(trueIndex).components.get(i).items.size()) {
                                                         int iSize = menuItem.combo.get(trueIndex).components.get(i).items.size();
                                                         for (int a = 0; a < iSize; a++) {
-                                                            if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected
-                                                                    && cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
+                                                            if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected && cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
                                                                 if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).id.equalsIgnoreCase(cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).id)) {
-                                                                    if (!menuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.isEmpty()
-                                                                            && !cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.isEmpty()) {
-                                                                        if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.size() ==
-                                                                                cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.size()) {
+                                                                    if (!menuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.isEmpty() && !cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.isEmpty()) {
+                                                                        if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.size() == cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.size()) {
                                                                             int mGSize = menuItem.combo.get(trueIndex).components.get(i).items.get(a).modifierGroups.size();
                                                                             for (int x = 0; x < mGSize; x++) {
                                                                                 Set<String> menuItemSelected = new HashSet<>();
@@ -871,13 +922,11 @@ public class CacheUtil {
                                                                     break;
                                                                 }
                                                             } else {
-                                                                if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected &&
-                                                                        !cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
+                                                                if (menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected && !cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
                                                                     same = false;
                                                                     break;
                                                                 }
-                                                                if (!menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected &&
-                                                                        cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
+                                                                if (!menuItem.combo.get(trueIndex).components.get(i).items.get(a).selected && cartMenuItem.combo.get(trueIndex).components.get(i).items.get(a).selected) {
                                                                     same = false;
                                                                     break;
                                                                 }
@@ -940,7 +989,7 @@ public class CacheUtil {
             pair.second.add(menuItem);
         }
 
-        if(!menuItem.getAttributes().getNotes().isEmpty() && pair.second.size() == 1) {
+        if (!menuItem.getAttributes().getNotes().isEmpty() && pair.second.size() == 1) {
             pair.second.get(0).getAttributes().setNotes(menuItem.getAttributes().getNotes());
         }
 
@@ -1030,10 +1079,12 @@ public class CacheUtil {
 
     }
 
+    public Boolean pickupTypes() {
+        return (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP || CacheUtil.getInstance().getOrderType() == OrderType.EAT_IN || CacheUtil.getInstance().getOrderType() == OrderType.DRIVE_THRU || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE);
+    }
+
     public OrderType getOrderType() {
-
         int orderType = cacheSharedPreferences.getInt(ORDER_TYPE, OrderType.NONE.getValue());
-
         switch (orderType) {
             case 1:
                 return OrderType.PICKUP;
@@ -1043,6 +1094,10 @@ public class CacheUtil {
                 return OrderType.DELIVERY;
             case 4:
                 return OrderType.CURBSIDE;
+            case 5:
+                return OrderType.EAT_IN;
+            case 6:
+                return OrderType.DRIVE_THRU;
             default:
                 return OrderType.NONE;
         }
@@ -1518,9 +1573,7 @@ public class CacheUtil {
     }
 
     public void setLoyaltyPointsEarnable(String orderId, int points) {
-        cacheSharedPreferences.edit()
-                .putInt(LOYALTY_POINTS_EARNABLE + "_" + orderId, points)
-                .commit();
+        cacheSharedPreferences.edit().putInt(LOYALTY_POINTS_EARNABLE + "_" + orderId, points).commit();
     }
 
     public int getLoyaltyPointsEarnable(String orderId) {
@@ -1568,10 +1621,10 @@ public class CacheUtil {
 
     public static List<SupportedCountry> getSupportedCountries(String applicationId, Context context) {
         JSONObject jsonObject = JsonAssetUtil.getJsonObjectAsset(context, applicationId.replace(".", "_") + ".json");
-        if(jsonObject == null) {
+        if (jsonObject == null) {
             jsonObject = JsonAssetUtil.getJsonObjectAsset(context, "SupportedCountry.json");
         }
-        if(jsonObject != null) {
+        if (jsonObject != null) {
             SupportedCountryResponse response = GsonUtil.getGson(jsonObject, SupportedCountryResponse.class);
             return response.data;
         }
@@ -1712,10 +1765,8 @@ public class CacheUtil {
     public Set<String> getSupportCardTypes() {
         Set<String> supportedCardTypes = new HashSet<>();
         try {
-            supportedCardTypes = new Gson().fromJson(
-                cacheSharedPreferences.getString(SUPPORT_CARD_TYPES, "[]"),
-                new TypeToken<Set<String>>() {}.getType()
-            );
+            supportedCardTypes = new Gson().fromJson(cacheSharedPreferences.getString(SUPPORT_CARD_TYPES, "[]"), new TypeToken<Set<String>>() {
+            }.getType());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1782,20 +1833,22 @@ public class CacheUtil {
     public boolean isSeparatedMenus() {
         return !getApplication().getAttributes().getOrderTypeMenus().isEmpty();
     }
+
     public void setConsumerData(String data) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(CONSUMER_DATA, data);
         editor.apply();
     }
 
-    public ConsumerData getConsumerData(){
+    public ConsumerData getConsumerData() {
         ConsumerData data = new ConsumerData();
         String consumerdata = cacheSharedPreferences.getString(CONSUMER_DATA, null);
-        if(consumerdata != null && !consumerdata.isEmpty()){
+        if (consumerdata != null && !consumerdata.isEmpty()) {
             data = GsonHelper.gsonFinal().fromJson(consumerdata, ConsumerData.class);
         }
         return data;
     }
+
     public void setTotalAccumulatedPoints(int totalAccumulatedPoints) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putInt(TOTAL_ACCUMULATED_POINTS, totalAccumulatedPoints);

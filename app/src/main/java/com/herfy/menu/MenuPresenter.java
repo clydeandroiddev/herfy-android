@@ -934,9 +934,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                         OrderType orderType = CacheUtil.getInstance().getOrderType();
                         Store openStore = Store.parseStore(data);
                         if ((orderType == OrderType.DELIVERY && openStore.getAttributes().getOpenDeliver()) || openStore.getAttributes().getOpenPickup()) {
-
                             menuView.showStoreOpen(true, StringUtil.getClosingHours(openStore));
-
                         } else {
                             menuView.showStoreOpen(false, CacheUtil.getInstance().getTranslations(Text.CLOSED, "Closed"));
                         }

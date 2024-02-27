@@ -122,8 +122,7 @@
             android:defaultValue=""
             app:argType="string" />
 
-        <deepLink app:uri="android-app://com.herfy/nav_menu/{menu_category_id}"/>
-
+        <deepLink app:uri="android-app://com.herfy/nav_menu/{menu_category_id}" />
 
 
         <action
@@ -215,8 +214,16 @@
         android:name="com.herfy.order.views.ordertype.OrderTypeNewFragment"
         android:label="select_order_type"
         tools:layout="@layout/fragment_order_type_new">
+
+        <deepLink app:uri="android-app://com.herfy/nav_order_type/{storeId}" />
+
         <argument
             android:name="fromCart"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="fromHome"
             android:defaultValue="false"
             app:argType="boolean" />
 
@@ -235,6 +242,12 @@
             android:id="@+id/action_order_type_fragment_to_dialog"
             app:destination="@id/nav_dialog_order_type"
             app:popUpTo="@+id/nav_order_type" />
+
+        <action
+            android:id="@+id/action_order_type_fragment_to_nav_menu"
+            app:destination="@id/nav_menu"
+            app:popUpTo="@+id/nav_order_type"
+            app:popUpToInclusive="true" />
 
         <action
             android:id="@+id/action_order_type_to_auth"
@@ -270,7 +283,7 @@
         android:label="customize_caps"
         tools:layout="@layout/fragment_menu_item">
 
-        <deepLink app:uri="android-app://com.herfy/nav_menu_item/{menu_category_id}/{menu_item_id}"/>
+        <deepLink app:uri="android-app://com.herfy/nav_menu_item/{menu_category_id}/{menu_item_id}" />
 
         <argument
             android:name="menu_category_id"

@@ -1,27 +1,35 @@
 package com.herfy.order.views.ordertype
 
 import android.app.Dialog
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.DialogOrderTypeSelectionBinding
 import com.herfy.utils.constants.Text
-import com.herfy.utils.helper.*
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
+import com.skylinedynamics.solosdk.api.models.objects.Store
 
 class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
 
     private var onSubmit: OnSubmit? = null
 
+    private var store: Store? = null
+
     private lateinit var binding: DialogOrderTypeSelectionBinding
 
     interface OnSubmit {
-        fun isPickup()
-        fun isCurbside()
+        fun orderType(type: OrderType)
         fun exit()
     }
 
@@ -37,6 +45,14 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
         return binding.root
     }
 
+    private fun setupDialog() {
+        val bottomSheet = (requireView().parent as View)
+        bottomSheet.backgroundTintMode = PorterDuff.Mode.CLEAR
+        bottomSheet.backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
+        bottomSheet.setBackgroundColor(Color.TRANSPARENT)
+        bottomSheet.elevation = 0f
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext(), theme).apply {
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -45,49 +61,60 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupDialog()
         setupViews()
     }
 
     private fun setupViews() {
-        binding.soloType.text = CacheUtil.getInstance()
-            .getTranslations(Text.CHOOSE_PICKUP_METHOD, "Choose Pickup Method")
-        binding.storePickup.text =
-            CacheUtil.getInstance().getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
-        binding.descriptionPickup.text = CacheUtil.getInstance()
-            .getTranslations(Text.PICKUP_DESCRIPTION, "Pickup your order inside the restaurant")
-        binding.curbside.text =
-            CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP_LABEL, "Curbside pickup")
-        binding.descriptionCurbside.text = CacheUtil.getInstance().getTranslations(
+        binding.apply {
+            soloType.text = CacheUtil.getInstance()
+                .getTranslations(Text.CHOOSE_PICKUP_METHOD, "Choose Pickup Method")
+            storePickup.text =
+                CacheUtil.getInstance().getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
+            descriptionPickup.text = CacheUtil.getInstance()
+                .getTranslations(Text.PICKUP_DESCRIPTION, "Pickup your order inside the restaurant")
+            curbside.text = CacheUtil.getInstance()
+                .getTranslations(Text.CURBSIDE_PICKUP_LABEL, "Curbside pickup")
+            descriptionCurbside.text = CacheUtil.getInstance().getTranslations(
                 Text.CURBSIDE_DESCRIPTION,
                 "Park at the restaurant and your order will be served in your car"
             )
-        binding.driveThru.text =
-            CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU, "Drive Thru")
-        binding.descriptionDriveThru.text = CacheUtil.getInstance().getTranslations(
+            driveThru.text = CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU, "Drive Thru")
+            descriptionDriveThru.text = CacheUtil.getInstance().getTranslations(
                 Text.DRIVE_THRU_DESCRIPTION, "Pick up your order from the drive thru."
             )
 
-        binding.choosePickup.setOnClickListener {
-            onSubmit?.isPickup()
-        }
+            choosePickup.setOnClickListener {
+                onSubmit?.orderType(OrderType.EAT_IN)
+            }
 
-        binding.chooseDriveThru.setOnClickListener {
-            onSubmit?.isPickup()
-        }
+            chooseDriveThru.setOnClickListener {
+                onSubmit?.orderType(OrderType.DRIVE_THRU)
+            }
 
-        binding.chooseCurbside.setOnClickListener {
-            onSubmit?.isCurbside()
-        }
+            chooseCurbside.setOnClickListener {
+                onSubmit?.orderType(OrderType.CURBSIDE)
+            }
 
-        binding.back.setOnClickListener {
-            onSubmit?.exit()
+            back.setOnClickListener {
+                onSubmit?.exit()
+            }
+
+            curbsideContainer.isVisible = AuthUtil.getInstance().isSignedIn
+
+            store?.let {
+                chooseDriveThruContainer.isVisible = it.attributes.isDriveThruEnabled
+                curbsideContainer.isVisible = it.attributes.curbsideEnabled == 1
+                pickupContainer.isVisible = it.attributes.pickupEnabled == 1
+            }
         }
     }
 
     companion object {
-        fun newInstance(listener: OnSubmit): ChoosePickupTypeDialog {
+        fun newInstance(store: Store?, listener: OnSubmit): ChoosePickupTypeDialog {
             val choosePickupTypeDialogFragment = ChoosePickupTypeDialog()
             choosePickupTypeDialogFragment.onSubmit = listener
+            choosePickupTypeDialogFragment.store = store
             return choosePickupTypeDialogFragment
         }
     }
