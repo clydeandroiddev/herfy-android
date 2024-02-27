@@ -144,6 +144,17 @@ class MenuCategoryAdapter(
         notifyItemChanged(selected)
     }
 
+    fun getSelected() = selected
+
+    fun getPosition(menuCategoryId: String): Int? {
+        for((index, menuCategory) in itemList.withIndex()) {
+            if(menuCategory.id == menuCategoryId) {
+                return index
+            }
+        }
+        return null
+    }
+
     class Diff(private val old: List<MenuCategory>, private val newItem: List<MenuCategory>) :
         DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPos: Int, newPosition: Int): Boolean {
