@@ -224,6 +224,8 @@ dependencies {
 
     // Modules
     implementation project(path: ':features:cart')
+    implementation project(path: ':features:language')
+    implementation project(path: ':features:auth')
     implementation project(path: ':features:home')
     implementation project(path: ':features:loyalty')
     implementation project(path: ':features:menu')
