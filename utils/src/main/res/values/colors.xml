@@ -9,4 +9,6 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#000000</color>
     <color name="mercury">#FAFBFC</color>
+    <color name="colorAlertSuccess">#3BDD5E</color>
+    <color name="colorOnAlertSuccess">#000000</color>
 </resources>
