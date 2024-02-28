@@ -314,7 +314,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             CacheUtil.getInstance().setUpMode(1);
         }
 
-        Intent intent = new Intent(this, LanguageNewActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         proceedMain = true;
         if (!language) {
             proceedMain = false;
