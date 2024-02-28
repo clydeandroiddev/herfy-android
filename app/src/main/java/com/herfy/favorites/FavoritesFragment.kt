@@ -26,18 +26,21 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.databinding.FragmentFavoritesBinding
 import com.herfy.ext.cast
+import com.herfy.favourites.databinding.FragmentNewFavoritesBinding
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.util.CacheHelper
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.ninjaTap
+import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.*
 import com.skylinedynamics.solosdk.api.models.objects.Favorite
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 
 class FavoritesFragment : BaseFragment(), FavoritesContract.View {
 
-    private lateinit var binding: FragmentFavoritesBinding
+    private lateinit var binding: FragmentNewFavoritesBinding
 
     private lateinit var favoritesPresenter: FavoritesContract.Presenter
 
@@ -53,7 +56,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        binding = FragmentNewFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -63,7 +66,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         val eventAttributes = HashMap<String, String>()
         eventAttributes["User ID"] = AuthUtil.getInstance().customer.id
         logEvent("MyFavoritesView", eventAttributes, "", 0.0)
-        binding.blocker.visibility = View.VISIBLE
+//        binding.blocker.visibility = View.VISIBLE
         binding.newMenuItemSearchShimmer.visibility = View.VISIBLE
         favoritesPresenter.getFavorites(1)
     }
@@ -96,45 +99,27 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         }
         activity?.cast<NavigationActivity> {
         }
-        adapter = FavoritesRecyclerViewAdapter(favoritesPresenter)
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        binding.recyclerView.adapter = adapter
-        binding.search.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-            override fun afterTextChanged(editable: Editable) {
-                if (editable.toString().isEmpty()) {
-                    favoritesPresenter!!.setToSearch(false)
-                    showFavorites(favoritesPresenter!!.favorites)
-                } else {
-                    favoritesPresenter!!.searchFavorites(editable.toString())
-                }
-            }
-        })
-        binding.search.setOnEditorActionListener { v: TextView?, actionId: Int, event: KeyEvent? ->
-            activity?.let {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    val inputMethodManager = it.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-                    inputMethodManager.hideSoftInputFromWindow(binding.search.windowToken, 0)
-                    return@setOnEditorActionListener true
-                }
-            }
-            false
+        binding.icBack.ninjaTap(viewLifecycleScope) {
+            findNavController().popBackStack()
         }
+        adapter = FavoritesRecyclerViewAdapter(favoritesPresenter)
+        binding.favouriteRecycleView.layoutManager = LinearLayoutManager(context)
+        binding.favouriteRecycleView.adapter = adapter
     }
 
     override fun setupFonts() {}
     override fun setupTranslations() {
-        binding.searchEmptyText.text = CacheUtil.getInstance()
-            .getTranslations(Text.NO_FAVORITES_AVAILABLE)
-        binding.search.hint = CacheUtil.getInstance().getTranslations(
-            Text.SEARCH_THROUGH_YOUR_FAVORITES,
-            "Search through your favorites"
-        )
-        binding.searchEmptyTextDesc.text = CacheUtil.getInstance().getTranslations(
-            Text.NO_ITEM_FOUND_DESC,
-            "Sorry, we were unable to find something that matches your search."
-        )
+//        binding.searchEmptyText.text = CacheUtil.getInstance()
+//            .getTranslations(Text.NO_FAVORITES_AVAILABLE)
+//        binding.search.hint = CacheUtil.getInstance().getTranslations(
+//            Text.SEARCH_THROUGH_YOUR_FAVORITES,
+//            "Search through your favorites"
+//        )
+//        binding.searchEmptyTextDesc.text = CacheUtil.getInstance().getTranslations(
+//            Text.NO_ITEM_FOUND_DESC,
+//            "Sorry, we were unable to find something that matches your search."
+//        )
+        binding.txtFavourites.text = CacheUtil.getInstance().getTranslations(Text.FAVORITES,"Favourites")
     }
 
     override fun showLoadingDialog() {
@@ -150,16 +135,20 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             baseActivity.dismissDialogs()
         }
         favoritesPresenter!!.setToSearch(false)
-        binding.blocker.visibility = View.GONE
+//        binding.blocker.visibility = View.GONE
         binding.newMenuItemSearchShimmer.visibility = View.GONE
         adapter!!.notifyDataSetChanged()
         if (favorites.size > 0) {
-            binding.searchEmptyLayout.visibility = View.GONE
-            binding.recyclerView.visibility = View.VISIBLE
+//            binding.searchEmptyLayout.visibility = View.GONE
+            binding.favouriteRecycleView.visibility = View.VISIBLE
         } else {
-            binding.searchEmptyLayout.visibility = View.VISIBLE
-            binding.recyclerView.visibility = View.GONE
+//            binding.searchEmptyLayout.visibility = View.VISIBLE
+            binding.favouriteRecycleView.visibility = View.GONE
         }
+        val isFavouritesNotEmpty = favorites.isNotEmpty()
+        binding.favouriteRecycleView.setVisible(isFavouritesNotEmpty)
+        binding.emptyState.setVisible(isFavouritesNotEmpty.not())
+        binding!!.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_FAVORITE_FOUND, "No favourites found."))
     }
 
     override fun setFavorite(favorite: Favorite, outOfStockLocations: ArrayList<String>, discount: Double, specialPrice: Double) {}
@@ -168,10 +157,10 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             val baseActivity = it as BaseActivity
             baseActivity.dismissDialogs()
         }
-        NavigationUtils.navigateSafe(findNavController(), FavoritesFragmentDirections.actionFavoritesToMenuItem(
-            menuCategoryId = categoryId,
-            menuItemId = menuItemId
-        ))
+//        NavigationUtils.navigateSafe(findNavController(), FavoritesFragmentDirections.actionFavoritesToMenuItem(
+//            menuCategoryId = categoryId,
+//            menuItemId = menuItemId
+//        ))
     }
 
     override fun addToCartFavorite(menuItem: MenuItem, view: ImageView) {
@@ -213,7 +202,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             val baseActivity = it as BaseActivity
             baseActivity.runOnUiThread {
                 baseActivity.dismissDialogs()
-                binding.blocker.visibility = View.GONE
+//                binding.blocker.visibility = View.GONE
                 binding.newMenuItemSearchShimmer.visibility = View.GONE
                 Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
             }
@@ -225,7 +214,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             val baseActivity = it as BaseActivity
             baseActivity.runOnUiThread {
                 baseActivity.dismissDialogs()
-                binding.blocker.visibility = View.GONE
+//                binding.blocker.visibility = View.GONE
                 binding.newMenuItemSearchShimmer.visibility = View.GONE
                 baseActivity.showAlertDialog("", error)
             }
@@ -234,14 +223,11 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
 
     override fun showSearchFavorites(favorites: ArrayList<Favorite>) {
         if (favorites.size == 0) {
-            binding.searchEmptyTextDesc.visibility = View.VISIBLE
-            binding.searchEmptyLayout.visibility = View.VISIBLE
-            binding.recyclerView.visibility = View.GONE
+            binding.favouriteRecycleView.visibility = View.GONE
         } else {
             favoritesPresenter!!.setToSearch(true)
             adapter!!.notifyDataSetChanged()
-            binding.searchEmptyLayout.visibility = View.GONE
-            binding.recyclerView.visibility = View.VISIBLE
+            binding.favouriteRecycleView.visibility = View.VISIBLE
         }
     }
 

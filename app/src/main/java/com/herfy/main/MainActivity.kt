@@ -26,7 +26,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -725,6 +727,15 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     NewMenuHomePageFragmentDirections.actionHomeToFavorites()
                 )
             }*/
+            val request = NavDeepLinkRequest.Builder.fromUri(
+                Uri.parse(
+                    "${Values.NAV_DEEP_LINK_BASE_URL}nav_favorites/"
+                )
+            ).build()
+            NavigationUtils.navigateSafe(navController, request)
+
+
+
         }
         binding.sidebar.quickOrder.setOnClickListener { v: View? ->
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -798,7 +809,9 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             }
         }
     }
+    private fun navMenuItem() {
 
+    }
     private fun showNotifications() {
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_NOTIFICATIONS)
         /*if (isDefaultHomeScreenDesign || currentDestination == R.id.nav_menu) {

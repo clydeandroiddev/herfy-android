@@ -10,6 +10,7 @@ import android.text.style.StrikethroughSpan;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.utils.constants.Text;
@@ -33,6 +35,7 @@ import com.herfy.firebase.FirebaseService;
 import com.herfy.font.FontHandler;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.CacheUtil;
+import com.nguyenhoanglam.imagepicker.model.Image;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.FavoriteModifier;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
@@ -52,37 +55,30 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
     private FavoritesContract.Presenter favoritesPresenter;
 
     //@BindView(R.id.card_fav) FloatingActionButton heart;
-    @BindView(R.id.favorite_card)
-    FrameLayout favoriteCard;
-    @BindView(R.id.favorite_container)
-    RelativeLayout favoriteContainer;
+//    @BindView(R.id.favorite_container)
+//    RelativeLayout favoriteContainer;
     @BindView(R.id.favorite_icon)
     ImageView favoriteIcon;
 
     @BindView(R.id.image_item)
     ImageView image;
 
-    @BindView(R.id.progress)
-    ProgressBar progress;
+    @BindView(R.id.txtModifierItemName)
+    MaterialTextView name;
+    @BindView(R.id.txtFavouritePrice)
+    MaterialTextView price;
+    @BindView(R.id.txtFavouriteDescription)
+    MaterialTextView extras;
 
-    @BindView(R.id.item_name)
-    TextView name;
-    @BindView(R.id.item_price)
-    TextView price;
-    @BindView(R.id.item_description)
-    TextView extras;
+    @BindView(R.id.txtCalories)
+    TextView tvCalories;
+    @BindView(R.id.txtKcal)
+    TextView tvKCal;
 
-    @BindView(R.id.add_to_bag)
-    AppCompatButton add;
+    @BindView(R.id.icAdd)
+    ImageView add;
 
-    @BindView(R.id.stvSoldout)
-    SlantedTextView stvSoldout;
 
-    @BindView(R.id.old_price)
-    TextView oldPrice;
-
-    @BindView(R.id.discount_indicator)
-    ImageView discountIndicator;
 
     public FavoriteViewHolder(FavoritesContract.Presenter favoritesPresenter, View itemView) {
         super(itemView);
@@ -120,7 +116,7 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 
     @Override
     public void setupTranslations() {
-        add.setText(CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG, "Add to Bag"));
+//        add.setText(CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG, "Add to Bag"));
     }
 
     @Override
@@ -136,30 +132,45 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
     @Override
     public void setFavorite(Favorite favorite, ArrayList<String> outOfStockLocationList, double discount, double specialPrice) {
 
-        favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
+//        favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
 
-        favoriteContainer.setOnClickListener(view -> {
+        favoriteIcon.setOnClickListener(view -> {
             ((BaseActivity) itemView.getContext()).showLoadingDialog();
-            favoriteIcon.setColorFilter(Color.parseColor("#DEDEDE"));
+//            favoriteIcon.setColorFilter(Color.parseColor("#DEDEDE"));
             favoritesPresenter.deleteFavorite(favorite);
         });
-
+        if (favorite.getFirstItem() != null) {
+            String caloriesValue = favorite.getFirstItem().getCalories();
+            int calorieCount = favorite.getFirstItem().getCalorieCount();
+            if (calorieCount != 0) {
+                tvKCal.setVisibility(View.VISIBLE);
+                tvCalories.setVisibility(View.VISIBLE);
+                tvCalories.setText(String.valueOf(calorieCount));
+            } else if (caloriesValue != null && !caloriesValue.isEmpty() && !caloriesValue.trim().equals("null") && !caloriesValue.trim().equals("0")) {
+                tvKCal.setVisibility(View.VISIBLE);
+                tvCalories.setVisibility(View.VISIBLE);
+                tvCalories.setText(caloriesValue);
+            } else {
+                tvKCal.setVisibility(View.GONE);
+                tvCalories.setVisibility(View.GONE);
+                tvCalories.setText("");
+            }
+        }
         String imageUrl = favorite.getAttributes().getImageUri();
         if (imageUrl == null || imageUrl.equalsIgnoreCase("null") || imageUrl.isEmpty() || imageUrl.toLowerCase().contains("default-image.png")) {
             imageUrl = Values.DEFAULT_IMAGE_URL;
         }
-
         Glide.with(itemView.getContext()).load(imageUrl).skipMemoryCache(false).diskCacheStrategy(DiskCacheStrategy.ALL).apply(RequestOptions.centerCropTransform()).listener(new RequestListener<Drawable>() {
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                progress.setVisibility(View.GONE);
+//                progress.setVisibility(View.GONE);
                 image.setVisibility(View.GONE);
                 return false;
             }
 
             @Override
             public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                progress.setVisibility(View.GONE);
+//                progress.setVisibility(View.GONE);
                 image.setVisibility(View.VISIBLE);
                 return false;
             }
@@ -168,42 +179,6 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
         name.setText(favorite.getAttributes().getName());
 
         price.setText(StringUtil.getFormattedPrice(specialPrice));
-
-        if (LocaleUtil.getInstance().isArabic()) {
-            stvSoldout.setMode(SlantedTextView.MODE_LEFT);
-        } else stvSoldout.setMode(SlantedTextView.MODE_RIGHT);
-
-        if (discount > 0.0) {
-            SpannedString formattedOldPrice = StringUtil.getFormattedPrice(discount);
-            SpannableString oldPriceValue = new SpannableString(formattedOldPrice);
-            oldPriceValue.setSpan(new StrikethroughSpan(),0, formattedOldPrice.length(),0);
-            oldPrice.setText(formattedOldPrice);
-            oldPrice.setVisibility(View.VISIBLE);
-            discountIndicator.setVisibility(View.VISIBLE);
-        } else {
-            oldPrice.setText(null);
-            oldPrice.setVisibility(View.GONE);
-            discountIndicator.setVisibility(View.GONE);
-        }
-
-        if (CacheUtil.getOrderStoreId() != null && outOfStockLocationList.contains(CacheUtil.getOrderStoreId())) {
-            stvSoldout.setText(CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT"));
-            stvSoldout.setVisibility(View.VISIBLE);
-            image.setColorFilter(ContextCompat.getColor(image.getContext(), R.color.soldout));
-            add.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(add.getContext(), R.color.disabled_tint)));
-            add.setEnabled(false);
-        } else {
-            stvSoldout.setVisibility(View.GONE);
-            add.setBackgroundResource(R.drawable.background_add_to_bag);
-            add.setEnabled(true);
-        }
-
-        if (CacheUtil.getInstance().getApplication().getAttributes().getMenuOnly()) {
-            add.setBackgroundResource(R.drawable.background_add_to_bag_disabled);
-        } else {
-            if (CacheUtil.getOrderStoreId() != null && !outOfStockLocationList.contains(CacheUtil.getOrderStoreId()))
-                add.setBackgroundResource(R.drawable.background_add_to_bag);
-        }
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
