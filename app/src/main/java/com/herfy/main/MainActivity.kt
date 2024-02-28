@@ -54,6 +54,7 @@ import com.herfy.ext.cast
 import com.herfy.ext.readAssetsFile
 import com.herfy.favorites.FavoritesFragmentDirections
 import com.herfy.feedback.FeedbackActivity
+import com.herfy.home.views.HomeFragment
 import com.herfy.home.views.HomeFragmentDirections
 import com.herfy.loyalty.LoyaltyActivity
 import com.herfy.main.adapter.LanguageAdapter
@@ -467,6 +468,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
     override fun onResume() {
         super.onResume()
+
         if (fromChangeLanguage) {
             fromChangeLanguage = false
             ActivitySwitcher.animationIn(findViewById(R.id.drawer_layout), windowManager)
@@ -515,6 +517,9 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_DETAILS)
                     val fragment =
                         supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
+                    fragment?.cast<HomeFragment> {
+                        setCartQuantity(CacheUtil.getInstance().cartQuantity)
+                    }
                     fragment?.cast<NewMenuFragment> {
                         it.showOrder(orderId)
                     }
@@ -1049,23 +1054,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
     }
 
-    fun setCartQuantity() {
-        /*try {
-            if (binding.mainToolbar.notif.visibility == View.GONE) {
-                binding.mainToolbar.cart.visibility = View.VISIBLE
-                if (CacheUtil.getInstance().cartQuantity == 0) {
-                    binding.mainToolbar.cartQuantity.visibility = View.GONE
-                } else {
-                    binding.mainToolbar.cartQuantity.visibility = View.VISIBLE
-                    binding.mainToolbar.cartQuantity.text =
-                        StringUtil.localize(CacheUtil.getInstance().cartQuantity.toString())
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }*/
-    }
-
     fun cartExpired() {
         val fragment =
             supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
@@ -1257,17 +1245,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     override fun showFavorites() {}
 
     override fun setCartQuantity(quantity: Int) {
-        /*try {
-            cQuantity = quantity
-            if (quantity == 0) {
-                binding.mainToolbar.cartQuantity.visibility = View.GONE
-            } else if (binding.mainToolbar.cartIcon.visibility == View.VISIBLE) {
-                binding.mainToolbar.cartQuantity.text = StringUtil.localize(quantity.toString())
-                binding.mainToolbar.cartQuantity.visibility = View.VISIBLE
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }*/
+        binding.toolbarMain.setCart(quantity)
     }
 
     override fun showRatings(ratings: List<Rating>) {

@@ -1,7 +1,9 @@
 package com.herfy.menu.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.herfy.database.entities.MenuItemEntity
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.menu.adapter.MenuCategoryItemAdapter
 import com.herfy.repository.FavoriteRepository
@@ -11,6 +13,7 @@ import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.Event
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
@@ -26,6 +29,8 @@ class MenuViewModel @Inject constructor(
     private val menuRepository: MenuRepository,
     private val favoriteRepository: FavoriteRepository
 ) : BaseViewModel(), SliderImageAdapter.SliderListener {
+
+    var initialLoad = true
 
     private val _slides = MutableLiveData<ArrayList<Slide>>()
     val slides: LiveData<ArrayList<Slide>> = _slides
@@ -44,8 +49,8 @@ class MenuViewModel @Inject constructor(
     val searchMenuAdapterItems: LiveData<List<MenuCategoryItemAdapter.MenuAdapterItem>> =
         _searchMenuAdapterItems
 
-    private val _showMenuItem = MutableLiveData<Pair<MenuCategory, MenuItem>>()
-    val showMenuItem: LiveData<Pair<MenuCategory, MenuItem>> = _showMenuItem
+    private val _showMenuItem = MutableLiveData<Pair<String, String>>()
+    val showMenuItem: LiveData<Pair<String, String>> = _showMenuItem
 
     private val _showAddToCart = MutableLiveData<MenuItem>()
     val showAddToCart: LiveData<MenuItem> = _showAddToCart
@@ -61,6 +66,12 @@ class MenuViewModel @Inject constructor(
 
     private val _orderType = MutableLiveData<OrderType>()
     val orderType: LiveData<OrderType> = _orderType
+
+    private val _showLink = MutableLiveData<Event<Uri>>()
+    val showLink: LiveData<Event<Uri>> = _showLink
+
+    private val _showMenuCategory = MutableLiveData<Event<String>>()
+    val showMenuCategory: LiveData<Event<String>> = _showMenuCategory
 
     fun getOrderType() {
         invoke {
@@ -85,7 +96,30 @@ class MenuViewModel @Inject constructor(
     }
 
     override fun onSelectedImage(slide: Slide) {
+        slide.linkValue?.let {
+            if (it.isNotEmpty()) {
+                if (slide.linkType == "url") {
+                    _showLink.value = Event(Uri.parse(slide.linkValue))
+                } else if (slide.linkType == "category") {
+                    _showMenuCategory.value = Event(slide.linkValue)
+                } else if (slide.linkType == "item") {
+                    getMenuItemWith(slide.linkValue)
+                }
+            }
+        }
+    }
 
+    private fun getMenuItemWith(menuItemId: String) {
+        invokeAtBackground {
+            homeRepository.getMenuItemWith(menuItemId) { homeResponse ->
+                homeResponse.data?.cast<MenuItemEntity> { menuItemEntity ->
+                    val categoryId = menuItemEntity.menuCategoryId
+                    if (categoryId.isNotEmpty()) {
+                        _showMenuItem.value = Pair(categoryId, menuItemEntity.id)
+                    }
+                }
+            }
+        }
     }
 
     fun getMenuCategoriesItems() {
@@ -168,7 +202,7 @@ class MenuViewModel @Inject constructor(
                     addToCart(menuItem)
                 } else {
                     _showLoading.postValue(false)
-                    _showMenuItem.postValue(Pair(menuCategory, menuItem))
+                    _showMenuItem.postValue(Pair(menuCategory.id, menuItem.id))
                 }
             })
         }

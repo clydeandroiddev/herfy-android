@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_menu"
+    app:startDestination="@+id/fragment_menu">
+
+    <fragment
+        android:id="@+id/fragment_menu"
+        android:name="com.herfy.menu.view.MenuFragment"
+        android:label="menu"
+        tools:layout="@layout/fragment_menu" >
+
+        <deepLink app:uri="android-app://com.herfy/nav_menu"/>
+
+        <deepLink app:uri="android-app://com.herfy/nav_menu/{menu_category_id}"/>
+
+        <argument
+            android:name="menu_category_id"
+            android:defaultValue=""
+            app:argType="string" />
+
+    </fragment>
+
+</navigation>

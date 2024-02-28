@@ -11,6 +11,9 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.card.MaterialCardView
 import com.herfy.common.R
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.visible
+import com.herfy.utils.helper.CacheUtil
 
 class OrderTypeToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
 
@@ -50,7 +53,7 @@ class OrderTypeToolbar @JvmOverloads constructor(context: Context, attrs: Attrib
         }
     }
 
-    fun setCart(quantity : Int){
+    fun setCart(quantity : Int = CacheUtil.getInstance().cartQuantity) {
         qtyText?.text = quantity.toString()
     }
 
@@ -66,10 +69,17 @@ class OrderTypeToolbar @JvmOverloads constructor(context: Context, attrs: Attrib
         orderTypeButton?.setOnClickListener(listener)
     }
 
-    fun setOrderType(type : String, address : String, icon : Drawable){
+    fun setOrderType(type : String, address : String, icon : Drawable?) {
         tvOrderType?.text = type
         tvOrderTypeAddress?.text = address
-        ivOrderType?.setImageDrawable(icon)
+        ivOrderType?.apply {
+            if (icon != null) {
+                setImageDrawable(icon)
+                visible()
+            } else {
+                gone()
+            }
+        }
     }
 
     fun hide(toolbar : Boolean){

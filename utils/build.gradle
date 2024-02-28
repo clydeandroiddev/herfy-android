@@ -15,8 +15,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        buildConfigField "String", "TAG", "\"Herfy\""
         buildConfigField "String", "SOLO_CONCEPT", "\"\""
-        buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         buildConfigField "String", "SPLASH_COLOR", "\"#FAFBFC\""
         buildConfigField "boolean", "SPLASH_LOGO", "true"
         buildConfigField "boolean", "SPLASH_BACKGROUND", "false"
@@ -62,7 +62,6 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "BASE_URL", "\"https://staging-api.getsolo.io/\""
-            //buildConfigField "String", "BASE_URL", "\"https://staging2.api.solo.skylinedynamics.com/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
             buildConfigField "float", "FEATURE_PHASE", '1.3'

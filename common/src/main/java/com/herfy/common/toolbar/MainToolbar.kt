@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.herfy.common.R
+import com.herfy.utils.helper.CacheUtil
 
 
 class MainToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
@@ -45,7 +46,7 @@ class MainToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
         }
     }
 
-    fun setCart(quantity : Int){
+    fun setCart(quantity : Int = CacheUtil.getInstance().cartQuantity) {
         qtyText?.text = quantity.toString()
     }
 

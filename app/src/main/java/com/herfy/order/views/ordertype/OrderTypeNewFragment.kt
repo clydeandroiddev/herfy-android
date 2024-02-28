@@ -30,6 +30,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -60,7 +61,6 @@ import com.herfy.font.FontHandler
 import com.herfy.location.FusedLocationProvider
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
-import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.order.OrderContract
 import com.herfy.order.OrderPresenter
 import com.herfy.order.adapters.StoresRecyclerViewAdapter
@@ -70,6 +70,7 @@ import com.herfy.order.views.OrderTypeDialogFragment
 import com.herfy.order.views.ordertype.addaddress.AddNewAddressActivity
 import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
 import com.herfy.util.*
+import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.*
 import com.herfy.utils.extensions.gone
@@ -80,7 +81,6 @@ import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
-import io.shipbook.shipbooksdk.Log
 import java.util.*
 
 
@@ -260,10 +260,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun navigateUp(proceed: Boolean) {
         if (proceed && args.fromHome) {
-            NavigationUtils.navigateSafe(
-                findNavController(),
-                OrderTypeNewFragmentDirections.actionOrderTypeFragmentToNavMenu("")
-            )
+            val request =
+                NavDeepLinkRequest.Builder.fromUri(Uri.parse("${Values.NAV_DEEP_LINK_BASE_URL}nav_menu"))
+                    .build()
+            NavigationUtils.navigateSafe(findNavController(), request)
         } else {
             activity?.runOnUiThread {
                 activity?.cast<MainActivity> {

@@ -21,16 +21,16 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/herfy_logo_arabic"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toEndOf="@id/ib_side_menu"
-        app:layout_constraintEnd_toStartOf="@id/ln_cart"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <LinearLayout
         android:id="@+id/ln_cart"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal"

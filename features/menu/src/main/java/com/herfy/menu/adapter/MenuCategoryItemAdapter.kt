@@ -130,7 +130,7 @@ class MenuCategoryItemAdapter(
 
                 binding.btnFavorite.apply {
                     visibility = if(AuthUtil.getInstance().isSignedIn) {
-                        setBackgroundResource(
+                        setImageResource(
                             if (CacheUtil.getInstance().favorites.contains(menuItem.id)) {
                                 R.drawable.ic_favorite_filled
                             } else {
@@ -196,15 +196,17 @@ class MenuCategoryItemAdapter(
                     layoutMenuItem.setOnClickListener {
                         onSelect(item.menuCategory, item.menuItem)
                     }
-                    btnFavorite.setOnClickListener {
-                        onFavorite(item.menuItem)
-                        btnFavorite.setBackgroundResource(
-                            if (CacheUtil.getInstance().favorites.contains(item.menuItem.id)) {
-                                R.drawable.ic_favorite_empty
-                            } else {
-                                R.drawable.ic_favorite_filled
-                            }
-                        )
+                    btnFavorite.apply {
+                        setOnClickListener {
+                            onFavorite(item.menuItem)
+                            setImageResource(
+                                if (CacheUtil.getInstance().favorites.contains(item.menuItem.id)) {
+                                    R.drawable.ic_favorite_empty
+                                } else {
+                                    R.drawable.ic_favorite_filled
+                                }
+                            )
+                        }
                     }
                     btnAdd.setOnClickListener {
                         onAdd(item.menuCategory, item.menuItem)

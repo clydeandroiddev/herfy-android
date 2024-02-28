@@ -35,11 +35,11 @@
         <item>S</item>
     </string-array>
     <string name="checkout_ui_callback_scheme" translatable="false">checkoutui</string>
-    <string name="contact_support_developed_by" translatable="false"></string>
-    <string name="contact_support_email" translatable="false"></string>
-    <string name="contact_support_email_subject"></string>
+    <string name="contact_support_developed_by" translatable="false">Herfy</string>
+    <string name="contact_support_email" translatable="false">support@herfy.com</string>
+    <string name="contact_support_email_subject">Inquiry</string>
     <string name="https">https://</string>
-    <string-array name="contact_support_phone"></string-array>
+    <string-array name="contact_support_phone">+966114509767</string-array>
     <string name="modifier_name_with_quantity_text">%1$s (%2$s)</string>
     <string name="add_on">Add-ons</string>
 </resources>

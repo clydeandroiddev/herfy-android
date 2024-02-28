@@ -12,7 +12,7 @@
 
         <action
             android:id="@+id/action_home_to_menu"
-            app:destination="@id/nav_menu"
+            app:destination="@id/fragment_menu"
             app:popUpTo="@+id/nav_herfy_home" />
 
         <action
@@ -31,7 +31,7 @@
 
         <action
             android:id="@+id/action_home_to_menu"
-            app:destination="@id/nav_menu"
+            app:destination="@id/fragment_menu"
             app:popUpTo="@+id/nav_home" />
 
         <action
@@ -116,81 +116,7 @@
 
     </fragment>
 
-    <fragment
-        android:id="@+id/nav_menu"
-        android:name="com.herfy.menu.view.MenuFragment"
-        android:label="menu"
-        tools:layout="@layout/fragment_menu">
-
-        <argument
-            android:name="menu_category_id"
-            android:defaultValue=""
-            app:argType="string" />
-
-        <deepLink app:uri="android-app://com.herfy/nav_menu/{menu_category_id}" />
-
-
-        <action
-            android:id="@+id/action_menu_to_order_type"
-            app:destination="@id/nav_order_type"
-            app:popUpTo="@+id/nav_menu" />
-
-        <action
-            android:id="@+id/action_menu_to_item"
-            app:destination="@id/nav_menu_item"
-            app:popUpTo="@+id/nav_menu" />
-
-        <action
-            android:id="@+id/action_menu_to_cart"
-            app:destination="@id/nav_cart"
-            app:popUpTo="@+id/nav_menu" />
-
-        <action
-            android:id="@+id/action_menu_to_orders"
-            app:destination="@id/nav_orders"
-            app:popUpTo="@+id/nav_menu" />
-
-        <action
-            android:id="@+id/action_menu_to_order"
-            app:destination="@id/nav_order"
-            app:popUpTo="@+id/nav_menu" />
-
-        <action
-            android:id="@+id/action_menu_to_favorites"
-            app:destination="@id/nav_favorites"
-            app:popUpTo="@+id/nav_menu" />
-
-        <action
-            android:id="@+id/action_menu_to_promotions"
-            app:destination="@id/nav_promotions"
-            app:popUpTo="@+id/nav_menu" />
-
-        <action
-            android:id="@+id/action_menu_to_notifications"
-            app:destination="@id/nav_notifications"
-            app:popUpTo="@+id/nav_menu" />
-
-        <action
-            android:id="@+id/action_menu_to_digital_coupon"
-            app:destination="@id/nav_digital_coupon"
-            app:popUpTo="@+id/nav_menu" />
-
-        <action
-            android:id="@+id/action_menu_to_countries"
-            app:destination="@id/nav_fragment_countries"
-            app:popUpTo="@+id/nav_menu" />
-
-        <action
-            android:id="@+id/action_menu_to_dialog_popup"
-            app:destination="@id/nav_dialog_popup"
-            app:popUpTo="@+id/nav_menu" />
-
-        <action
-            android:id="@+id/action_menu_to_auth"
-            app:destination="@id/nav_auth"
-            app:popUpTo="@+id/nav_menu" />
-
-    </fragment>
+    <include app:graph="@navigation/nav_menu" />
 
     <fragment
         android:id="@+id/nav_popular_now"
@@ -250,7 +176,7 @@
 
         <action
             android:id="@+id/action_order_type_fragment_to_nav_menu"
-            app:destination="@id/nav_menu"
+            app:destination="@id/fragment_menu"
             app:popUpTo="@+id/nav_order_type"
             app:popUpToInclusive="true" />
 
@@ -326,6 +252,8 @@
         android:label="bag"
         tools:layout="@layout/fragment_herfy_cart">
 
+        <deepLink app:uri="android-app://com.herfy/nav_cart" />
+
         <argument
             android:name="isBranchPreselected"
             android:defaultValue="false"
@@ -343,7 +271,7 @@
 
         <action
             android:id="@+id/action_cart_to_menu"
-            app:destination="@id/nav_menu"
+            app:destination="@id/fragment_menu"
             app:popUpTo="@+id/nav_cart" />
 
         <action
@@ -600,7 +528,7 @@
 
         <action
             android:id="@+id/action_notifications_to_menu"
-            app:destination="@id/nav_menu"
+            app:destination="@id/fragment_menu"
             app:popUpTo="@+id/nav_notifications" />
 
         <action
