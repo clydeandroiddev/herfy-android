@@ -462,9 +462,6 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                             Locale.getDefault()
                         )
                 }
-
-                OrderType.EAT_IN -> {}
-                OrderType.DRIVE_THRU -> {}
             }
 
             OrderType.NONE -> {
