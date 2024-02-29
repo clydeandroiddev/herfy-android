@@ -1,10 +1,17 @@
 package com.herfy.language
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import com.herfy.base.BaseActivity
+import com.herfy.changelanguage.R
 import com.herfy.changelanguage.databinding.ActivityChangeLanguageBinding
+import com.herfy.main.MainActivity
 import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
+import com.skylinedynamics.solosdk.api.SoloAuth
 
 class LanguageNewActivity : BaseActivity(), LanguageContract.View {
 
@@ -12,8 +19,12 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
 
     private lateinit var binding: ActivityChangeLanguageBinding
 
-    override fun setPresenter(presenter: LanguageContract.Presenter?) {
+    private var isArabicSelected = false
 
+    private var isLanguageSelected = false
+
+    override fun setPresenter(presenter: LanguageContract.Presenter) {
+        languagePresenter = presenter
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +46,19 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
 
     override fun setupViews() {
         binding.apply {
+            val languages: List<String> = ArrayList(CacheUtil.getInstance().concept.languages)
+            for (lng in languages) {
+                if (lng.equals(LocaleUtil.EN_US, ignoreCase = true)) {
+                    chooseEnglish.visibility = View.VISIBLE
+                } else if (lng.equals(LocaleUtil.AR_SA, ignoreCase = true)) {
+                    isArabicSelected = true
+                    isLanguageSelected = true
+                    chooseArabic.visibility = View.VISIBLE
+                }
+            }
+
+            setupButton()
+
             chooseYourEnglishLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.CHOOSE_LANGUAGE_ENGLISH, "Choose your language to continue")
             chooseYourEnglishLabel.text = CacheUtil.getInstance()
@@ -42,11 +66,43 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue")
             chooseArabic.setOnClickListener {
-
+                selectArabic()
             }
             chooseEnglish.setOnClickListener {
-
+                selectEnglish()
             }
+
+            continueButton.setOnClickListener {
+                if (isLanguageSelected) {
+                    showLoadingDialog()
+                    val eventAttributes = java.util.HashMap<String, String>()
+                    if (isArabicSelected) {
+                        LocaleUtil.getInstance().language = "ar"
+                        SoloAuth.getInstance().setLanguage(LocaleUtil.AR_SA)
+                        eventAttributes["ChangeLanguage"] = "AR"
+                    } else {
+                        LocaleUtil.getInstance().language = "en"
+                        SoloAuth.getInstance().setLanguage(LocaleUtil.EN_US)
+                        eventAttributes["ChangeLanguage"] = "EN"
+                    }
+                    logEvent("ChangeLanguage", eventAttributes, null, 0.0)
+                    languagePresenter.changeLanguage()
+
+                    val intent = Intent(this@LanguageNewActivity, MainActivity::class.java)
+                    intent.putExtra("home", true)
+                    startActivity(intent)
+                    overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
+                    finish()
+                }
+            }
+        }
+    }
+
+    private fun setupButton() {
+        if (isLanguageSelected) {
+            binding.continueButton.alpha = 1f
+        } else {
+            binding.continueButton.alpha = 0.5f
         }
     }
 
@@ -58,12 +114,41 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
 
     }
 
-    override fun selectArabic() {
+    private fun updateLanguageSelection(
+        isArabic: Boolean,
+        chooseArabicDrawable: Int,
+        chooseEnglishDrawable: Int,
+        selectedArabicDrawable: Int,
+        selectedEnglishDrawable: Int
+    ) {
+        isArabicSelected = isArabic
+        isLanguageSelected = true
+        binding.apply {
+            chooseArabic.setBackgroundResource(chooseArabicDrawable)
+            chooseEnglish.setBackgroundResource(chooseEnglishDrawable)
+            selectedArabic.setImageResource(selectedArabicDrawable)
+            selectedEnglish.setImageResource(selectedEnglishDrawable)
+        }
+    }
 
+    override fun selectArabic() {
+        updateLanguageSelection(
+            true,
+            R.drawable.bg_language_selected,
+            R.drawable.bg_language_unselected,
+            R.drawable.ic_language_circle_selected,
+            R.drawable.ic_language_circle_unselected
+        )
     }
 
     override fun selectEnglish() {
-
+        updateLanguageSelection(
+            false,
+            R.drawable.bg_language_unselected,
+            R.drawable.bg_language_selected,
+            R.drawable.ic_language_circle_unselected,
+            R.drawable.ic_language_circle_selected
+        )
     }
 
 }
