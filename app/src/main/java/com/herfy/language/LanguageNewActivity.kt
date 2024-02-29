@@ -61,7 +61,7 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
 
             chooseYourEnglishLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.CHOOSE_LANGUAGE_ENGLISH, "Choose your language to continue")
-            chooseYourEnglishLabel.text = CacheUtil.getInstance()
+            chooseYourArabicLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.CHOOSE_LANGUAGE_ARABIC, "اختر لغتك للمتابعة")
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue")
