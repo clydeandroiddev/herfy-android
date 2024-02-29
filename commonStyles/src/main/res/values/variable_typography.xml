@@ -63,6 +63,12 @@
         <item name="android:letterSpacing">0</item>
     </style>
 
+    <style name="TextAppearance.Headline5" parent="">
+        <item name="fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
     <style name="TextAppearance.Body" parent="">
         <item name="fontFamily">@font/inter_regular</item>
         <item name="android:textSize">17sp</item>
