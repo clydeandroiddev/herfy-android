@@ -189,10 +189,12 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.showError.observeNonNull(this) {
-            showAlertDialog(
-                title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
-                message = it.message
-            )
+            if(it.message.isNotEmpty()){
+                showAlertDialog(
+                    title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
+                    message = it.message
+                )
+            }
         }
 
         viewModel.showLink.observeNonNull(this) {

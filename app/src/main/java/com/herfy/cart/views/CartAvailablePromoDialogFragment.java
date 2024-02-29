@@ -102,7 +102,7 @@ public class CartAvailablePromoDialogFragment extends DialogFragment implements 
         recyclerView = view.findViewById(R.id.recyclerView);
 
         if (adapter == null) {
-            adapter = new CartPromoAdapter(getActivity(), campaigns, this);
+            adapter = new CartPromoAdapter(campaigns, this, 0);
             adapter.selected = selected;
         }
 

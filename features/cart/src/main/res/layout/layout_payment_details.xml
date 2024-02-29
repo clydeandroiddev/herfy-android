@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="16dp"
-                    android:layout_marginVertical="8dp">
+                    android:layout_marginVertical="16dp">
 
                     <LinearLayout
                         android:visibility="visible"
@@ -58,28 +58,58 @@
 
                         <LinearLayout
                             android:layout_gravity="center_vertical"
-                            android:layout_weight="1"
+                            android:layout_weight="2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
                             <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/iv_coupon"
                                 android:layout_width="36dp"
                                 android:layout_height="36dp"
-                                android:src="@drawable/ic_coupon"/>
-                            <TextView
-                                android:layout_marginStart="6dp"
-                                android:id="@+id/apply_coupon_label"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:includeFontPadding="false"
-                                android:gravity="center_vertical"
-                                android:textAlignment="viewStart"
-                                android:textColor="@color/black"
-                                android:textSize="14sp"
-                                style="@style/Styles.Text.SmallTitle"
-                                tools:text="Apply a coupon" />
+                                android:src="@drawable/ic_apply_coupon"
+                                android:layout_gravity="center_vertical"/>
 
+                            <LinearLayout
+                                android:layout_weight="1"
+                                android:layout_width="0dp"
+                                android:layout_marginStart="6dp"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:layout_gravity="center_vertical">
+
+                                <TextView
+                                    android:id="@+id/apply_coupon_label"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:includeFontPadding="false"
+                                    android:layout_gravity="center_vertical"
+                                    android:gravity="center_vertical"
+                                    android:textAlignment="viewStart"
+                                    android:textColor="@color/primaryTextColor"
+                                    android:textSize="14sp"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    style="@style/Styles.Text.SmallTitle"
+                                    tools:text="Apply a coupon" />
+
+                                <TextView
+                                    android:id="@+id/tv_coupon_description"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:includeFontPadding="false"
+                                    android:layout_gravity="center_vertical"
+                                    android:gravity="center_vertical"
+                                    android:textAlignment="viewStart"
+                                    android:textColor="@color/secondaryTextColor"
+                                    android:textSize="11sp"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    android:layout_marginTop="6dp"
+                                    style="@style/Styles.Text.Caption.Regular"
+                                    tools:text="Apply a coupon" />
+
+                            </LinearLayout>
                         </LinearLayout>
 
                         <com.google.android.material.button.MaterialButton
@@ -87,7 +117,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_gravity="end"
-                            android:layout_weight="1"
                             android:backgroundTint="@color/background_color_blue"
                             android:textAllCaps="false"
                             android:textColor="@color/white"

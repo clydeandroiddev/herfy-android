@@ -994,6 +994,7 @@ public class CacheUtil {
         }
 
         String updatedCartMenuItems = new Gson().toJson(pair.second);
+        setCartQuantity(pair.second);
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(CART_MENU_ITEMS, updatedCartMenuItems);
         editor.apply();
@@ -1009,6 +1010,7 @@ public class CacheUtil {
         }
 
         String updatedCartMenuItems = new Gson().toJson(pair.second);
+        setCartQuantity(pair.second);
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(CART_MENU_ITEMS, updatedCartMenuItems);
         editor.apply();

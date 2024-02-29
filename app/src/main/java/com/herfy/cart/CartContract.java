@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import kotlin.Function;
+import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
@@ -213,7 +214,8 @@ public interface CartContract {
         int getUpsellCount();
         void goToItemDetails(int position, MenuItem upsell);
         void addToCart(MenuItem upsell);
-        void getCouponFrom(String code, Function1<Boolean, CouponResult> result);
+        void getCouponFrom(String code, Function1<CouponResult, Unit> result);
+        void validateDigitalCoupon(Campaign campaign, Function1<CouponResult, Unit> result);
     }
 
 }

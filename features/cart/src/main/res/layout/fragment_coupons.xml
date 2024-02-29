@@ -45,17 +45,15 @@
             android:textSize="14sp"
             tools:text="Enter coupon code?"/>
 
-        <com.google.android.material.textfield.TextInputLayout
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/til_coupon"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_48sdp"
+            android:layout_height="48dp"
             android:layout_marginTop="8dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            app:hintEnabled="false"
-            app:hintAnimationEnabled="false"
-            app:boxBackgroundColor="@color/white"
-            app:boxStrokeWidth="1dp"
-            app:boxStrokeColor="@color/input_border_color">
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@color/white"
+            app:strokeWidth=".5dp"
+            app:strokeColor="@color/input_border_color">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tie_coupon"
@@ -69,19 +67,19 @@
                 android:paddingVertical="13dp"
                 android:paddingHorizontal="16dp"/>
 
-        </com.google.android.material.textfield.TextInputLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_apply"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_48sdp"
+            android:layout_height="48dp"
             android:insetRight="0dp"
             android:insetLeft="0dp"
             android:insetBottom="0dp"
             android:insetTop="0dp"
             android:textColor="@color/white"
             android:textAllCaps="false"
-            android:textSize="@dimen/_16ssp"
+            android:textSize="16sp"
             android:textAppearance="@style/TextAppearance.Caption"
             android:layout_marginTop="16dp"
             app:backgroundTint="@color/background_color_blue"

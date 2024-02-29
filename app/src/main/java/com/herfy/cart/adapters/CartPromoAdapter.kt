@@ -1,6 +1,8 @@
 package com.herfy.cart.adapters
 
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -86,10 +88,16 @@ class CartPromoAdapter(private var campaigns: List<Campaign> = arrayListOf(), pr
                 tvCoupon.text = campaign.attributes.name
                 tvCouponDescription.text = campaign.attributes.description
                 tvCouponExpiryDate.text = CacheUtil.getInstance().getTranslations(Text.EXPIRES_LABEL, "Expires: (x)").replace("(x)",campaign.attributes.validUntil.formatDate("MMMM dd, YYYY"))
-
                 if (campaign.attributes.isEligible && campaign.promotion != null && campaign.promotion.attributes.rules.isMet()) {
                     tvFooterCoupon.text = CacheUtil.getInstance()
                         .getTranslations(Text.AVAILABLE_TO_REDEEM, "Available to Redeem")
+                    val tvContext = tvFooterCoupon.context
+                    val textColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        tvContext.resources.getColor(R.color.text_coupon_available, null)
+                    } else {
+                       tvContext.resources.getColor(R.color.text_coupon_available)
+                    }
+                    tvFooterCoupon.setTextColor(ColorStateList.valueOf(textColor))
                     lnFooterCoupon.setBackgroundResource(R.drawable.background_available_to_redeem)
                     ivFooterCoupon.setImageResource(R.drawable.ic_coupon_available)
                     clCoupons.setOnClickListener { v: View? ->
@@ -99,7 +107,14 @@ class CartPromoAdapter(private var campaigns: List<Campaign> = arrayListOf(), pr
                         )
                     }
                 } else {
-
+                    val tvContext = tvFooterCoupon.context
+                    val textColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        tvContext.resources.getColor(R.color.secondaryTextColor, null)
+                    } else {
+                        tvContext.resources.getColor(R.color.secondaryTextColor)
+                    }
+                    tvFooterCoupon.text = ""
+                    tvFooterCoupon.setTextColor(ColorStateList.valueOf(textColor))
                     ivFooterCoupon.setImageResource(R.drawable.ic_coupon_unavailable)
                     lnFooterCoupon.setBackgroundResource(R.drawable.background_lock_redeem)
                 }

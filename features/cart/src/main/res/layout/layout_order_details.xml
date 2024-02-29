@@ -9,7 +9,8 @@
 
     <include
         android:id="@+id/placeholder_order_details"
-        layout="@layout/placeholder_order_details"/>
+        layout="@layout/placeholder_order_details"
+        android:visibility="visible"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_order_details"
@@ -52,6 +53,14 @@
             tools:listitem="@layout/item_cart"
             tools:visibility="visible" />
 
+        <include
+            android:id="@+id/layout_item_coupons"
+            layout="@layout/item_cart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/rv_cart_items"/>
+
         <com.google.android.material.button.MaterialButton
             android:backgroundTint="@color/white"
             android:id="@+id/add_more"
@@ -72,7 +81,7 @@
             android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_cart_items"
+            app:layout_constraintTop_toBottomOf="@+id/layout_item_coupons"
             tools:enabled="true"
             android:text="Add more item" />
 

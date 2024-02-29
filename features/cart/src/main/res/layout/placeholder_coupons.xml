@@ -26,7 +26,7 @@
                 android:background="@drawable/background_coupon">
 
                 <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guide_iv_coupon"
+                    android:id="@+id/guide_iv_coupon_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -37,9 +37,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/guide_iv_coupon"
+                    app:layout_constraintEnd_toEndOf="@id/guide_iv_coupon_1"
                     android:background="@color/placeholder_color"
-                    android:id="@+id/iv_coupon"
+                    android:id="@+id/iv_coupon_1"
                     android:layout_width="0dp"
                     android:layout_height="0dp"/>
 
@@ -54,7 +54,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/guide_iv_coupon">
+                    app:layout_constraintStart_toEndOf="@id/guide_iv_coupon_1">
 
                     <View
                         android:layout_width="135dp"
@@ -137,7 +137,7 @@
                 android:background="@drawable/background_coupon">
 
                 <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guide_iv_coupon"
+                    android:id="@+id/guide_iv_coupon_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -148,9 +148,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/guide_iv_coupon"
+                    app:layout_constraintEnd_toEndOf="@id/guide_iv_coupon_2"
                     android:background="@color/placeholder_color"
-                    android:id="@+id/iv_coupon"
+                    android:id="@+id/iv_coupon_2"
                     android:layout_width="0dp"
                     android:layout_height="0dp"/>
 
@@ -165,7 +165,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/guide_iv_coupon">
+                    app:layout_constraintStart_toEndOf="@id/guide_iv_coupon_2">
 
                     <View
                         android:layout_width="135dp"
@@ -248,7 +248,7 @@
                 android:background="@drawable/background_coupon">
 
                 <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guide_iv_coupon"
+                    android:id="@+id/guide_iv_coupon_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -259,9 +259,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/guide_iv_coupon"
+                    app:layout_constraintEnd_toEndOf="@id/guide_iv_coupon_3"
                     android:background="@color/placeholder_color"
-                    android:id="@+id/iv_coupon"
+                    android:id="@+id/iv_coupon_3"
                     android:layout_width="0dp"
                     android:layout_height="0dp"/>
 
@@ -276,7 +276,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/guide_iv_coupon">
+                    app:layout_constraintStart_toEndOf="@id/guide_iv_coupon_3">
 
                     <View
                         android:layout_width="135dp"

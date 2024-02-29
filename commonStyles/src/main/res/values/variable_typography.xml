@@ -153,6 +153,11 @@
         <item name="android:letterSpacing">0</item>
     </style>
 
+    <style name="TextAppearance.Dialog.Caption.Regular" parent="">
+        <item name="fontFamily">@font/inter_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
 
     <dimen name="line_height_large_title">@dimen/_41sdp</dimen>
     <dimen name="line_height_title1">@dimen/_34sdp</dimen>
@@ -167,5 +172,6 @@
     <dimen name="line_height_footnote_bold">@dimen/_15sdp</dimen>
     <dimen name="line_height_caption">@dimen/_13sdp</dimen>
     <dimen name="line_height_navigation_label">@dimen/_12sdp</dimen>
+    <dimen name="line_height_dialog_content">@dimen/_16sdp</dimen>
 
 </resources>
