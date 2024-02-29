@@ -3,6 +3,8 @@ package com.herfy.language
 import android.os.Bundle
 import com.herfy.base.BaseActivity
 import com.herfy.changelanguage.databinding.ActivityChangeLanguageBinding
+import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.CacheUtil
 
 class LanguageNewActivity : BaseActivity(), LanguageContract.View {
 
@@ -32,7 +34,20 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
     }
 
     override fun setupViews() {
+        binding.apply {
+            chooseYourEnglishLabel.text = CacheUtil.getInstance()
+                .getTranslations(Text.CHOOSE_LANGUAGE_ENGLISH, "Choose your language to continue")
+            chooseYourEnglishLabel.text = CacheUtil.getInstance()
+                .getTranslations(Text.CHOOSE_LANGUAGE_ARABIC, "اختر لغتك للمتابعة")
+            continueButton.text =
+                CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue")
+            chooseArabic.setOnClickListener {
 
+            }
+            chooseEnglish.setOnClickListener {
+
+            }
+        }
     }
 
     override fun setupFonts() {
