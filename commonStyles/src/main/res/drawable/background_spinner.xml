@@ -13,17 +13,11 @@
     </item>
 
     <item
-        android:gravity="right|center_vertical">
-        <bitmap
-
-            android:src="@drawable/ic_chevron_down_img"
-            android:tint="?attr/colorPrimary"/>
-    </item>
+        android:drawable="@drawable/ic_chevron_down_img"
+        android:gravity="right|center_vertical" />
 
     <item
-        android:gravity="left|center_vertical">
-        <bitmap
-            android:src="@drawable/ic_language_img"
-            android:tint="?attr/colorPrimary"/>
-    </item>
+        android:drawable="@drawable/ic_language_img"
+        android:gravity="left|center_vertical" />
+
 </layer-list>

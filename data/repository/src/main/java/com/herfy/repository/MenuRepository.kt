@@ -42,12 +42,22 @@ class MenuRepositoryImpl @Inject constructor(
             val menuCategories = mutableListOf<MenuCategory>()
             val menuCategoryDbs = appDatabase.menuCategoryEntityDao().getAllByApplication(application.id)
             menuCategoryDbs.toDomain().forEach { menuCategory ->
-                if(menuCategory.enabled == 1 && (storeId == null || !menuCategory.excludedLocations.contains(storeId))) {
+                if(menuCategory.enabled == 1 &&
+                    (storeId == null ||
+                        (!menuCategory.excludedApps.contains(application.id) &&
+                            !menuCategory.excludedLocations.contains(storeId))
+                    )
+                ) {
                     val menuItemDbs = appDatabase.menuItemEntityDao().findAllByMenuCategoryId(application.id, menuCategory.id)
                     val filteredMenuItems = mutableListOf<MenuItem>()
                     menuItemDbs.toDomain().forEach { menuItem ->
                         if(menuItem.enabled == 1 &&
-                            (storeId == null || menuItem.excludedLocations?.contains(storeId) == false)) {
+                            (storeId == null ||
+                                (menuItem.excludedApps?.contains(application.id) == false &&
+                                menuItem.excludedLocations?.contains(storeId) == false &&
+                                menuItem.outOfStockLocations?.contains(storeId) == false)
+                            )
+                        ) {
                             filteredMenuItems.add(menuItem)
                         }
                     }

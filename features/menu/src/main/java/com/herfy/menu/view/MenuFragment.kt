@@ -3,6 +3,7 @@ package com.herfy.menu.view
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
@@ -12,9 +13,11 @@ import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +28,7 @@ import com.herfy.menu.adapter.MenuCategoryItemAdapter
 import com.herfy.menu.databinding.FragmentMenuBinding
 import com.herfy.menu.viewmodel.MenuViewModel
 import com.herfy.menu.widgets.CenterLayoutManager
+import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.base.mvvm.BaseActivity
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Navigation
@@ -36,17 +40,18 @@ import com.herfy.utils.extensions.isVisible
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.smoothSnapToPosition
 import com.herfy.utils.extensions.visible
+import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.NavigationUtils
-import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
-import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
+
+    private val args: MenuFragmentArgs by navArgs()
 
     override val viewModel: MenuViewModel by viewModels()
     override val layout: Int = R.layout.fragment_menu
@@ -65,33 +70,18 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     private val menuCategoryAdapter: MenuCategoryAdapter by lazy {
         MenuCategoryAdapter { position, menuCategory ->
-            binding.rvMenuCategories.smoothScrollToPosition(position)
-            menuCategoryAdapter.select(position)
-            viewModel.menuCategoryPositions[menuCategory.id]?.let {
-                binding.rvMenuCategoriesItems.apply {
-                    smoothSnapToPosition(it)
-                    removeOnScrollListener(menuOnScrollListener)
-                    clearOnScrollListeners()
-                    activity?.apply {
-                        runOnUiThread {
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                addOnScrollListener(menuOnScrollListener)
-                            }, 250)
-                        }
-                    }
-                }
-            }
+            selectMenuCategory(position, menuCategory.id)
         }
     }
 
     private val menuCategoryItemAdapter: MenuCategoryItemAdapter by lazy {
         MenuCategoryItemAdapter(onSelect = { menuCategory, menuItem ->
-            navMenuItem(menuCategory, menuItem)
+            navMenuItem(menuCategory.id, menuItem.id)
         }, onFavorite = { menuItem ->
             viewModel.addRemoveFavorite(menuItem)
         }, onAdd = { menuCategory, menuItem ->
             if (menuItem.isMustBeCustomized || menuItem.isCombo) {
-                navMenuItem(menuCategory, menuItem)
+                navMenuItem(menuCategory.id, menuItem.id)
             } else {
                 viewModel.getMenuItem(menuCategory, menuItem)
             }
@@ -135,8 +125,12 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         activity?.let {
             binding.apply {
 
-                orderTypeToolbar.setNavButton {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                orderTypeToolbar.apply {
+                    setNavButton {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
+                    setCart()
+                    setCartButtonAction { navCart() }
                 }
 
                 orderTypeToolbar.setOrderTypeAction {
@@ -258,74 +252,73 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }
 
         viewModel.orderType.observeNonNull(this) { oType ->
-            var type =
-                CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE")
-            var address = CacheUtil.getInstance().getTranslations(
-                Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE, "Please tap here to pick an order type"
-            )
-            var icon = resources.getDrawable(com.herfy.ordertype.R.drawable.ic_blank_type)
-            when (oType) {
-                OrderType.EAT_IN -> {
-                    if (CacheUtil.getInstance().orderStore != null) {
-                        icon =
-                            resources.getDrawable(com.herfy.ordertype.R.drawable.ic_walk_in_pickup_small)
-                        type = CacheUtil.getInstance()
-                            .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
-                        address = CacheUtil.getInstance().orderStore.attributes.name
+            activity?.apply {
+                var type =
+                    CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE")
+                var address = CacheUtil.getInstance().getTranslations(
+                    Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE, "Please tap here to pick an order type"
+                )
+                var icon: Drawable? = null
+                when (oType) {
+                    OrderType.EAT_IN -> {
+                        if (CacheUtil.getInstance().orderStore != null) {
+                            icon = ContextCompat.getDrawable(this, R.drawable.ic_walk_in_pickup_small)
+                            type = CacheUtil.getInstance()
+                                .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
+                            address = CacheUtil.getInstance().orderStore.attributes.name
+                        }
                     }
-                }
 
-                OrderType.DRIVE_THRU -> {
-                    if (CacheUtil.getInstance().orderStore != null) {
-                        icon =
-                            resources.getDrawable(com.herfy.ordertype.R.drawable.ic_drive_thru_small)
-                        type = CacheUtil.getInstance()
-                            .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
-                        address = CacheUtil.getInstance().orderStore.attributes.name
+                    OrderType.DRIVE_THRU -> {
+                        if (CacheUtil.getInstance().orderStore != null) {
+                            icon = ContextCompat.getDrawable(this, R.drawable.ic_drive_thru_small)
+                            type = CacheUtil.getInstance()
+                                .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
+                            address = CacheUtil.getInstance().orderStore.attributes.name
+                        }
                     }
-                }
 
-                OrderType.PICKUP -> {
-                    if (CacheUtil.getInstance().orderStore != null) {
-                        icon = resources.getDrawable(com.herfy.ordertype.R.drawable.ic_pickup_small)
-                        type = CacheUtil.getInstance().getTranslations(Text.PICKUP_AT, "Pickup At")
-                        address = CacheUtil.getInstance().orderStore.attributes.name
+                    OrderType.PICKUP -> {
+                        if (CacheUtil.getInstance().orderStore != null) {
+                            icon = ContextCompat.getDrawable(this, R.drawable.ic_pickup_small)
+                            type = CacheUtil.getInstance().getTranslations(Text.PICKUP_AT, "Pickup At")
+                            address = CacheUtil.getInstance().orderStore.attributes.name
+                        }
                     }
-                }
 
-                OrderType.DINE_IN -> {
-                    if (CacheUtil.getInstance().orderStore != null) {
-                        icon =
-                            resources.getDrawable(com.herfy.ordertype.R.drawable.ic_dine_in_small)
-                        type = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
-                        address = CacheUtil.getInstance().orderStore.attributes.name
+                    OrderType.DINE_IN -> {
+                        if (CacheUtil.getInstance().orderStore != null) {
+                            icon = ContextCompat.getDrawable(this, R.drawable.ic_dine_in_small)
+                            type = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
+                            address = CacheUtil.getInstance().orderStore.attributes.name
+                        }
                     }
-                }
 
-                OrderType.DELIVERY -> {
-                    icon = resources.getDrawable(com.herfy.ordertype.R.drawable.ic_delivery_small)
-                    if (CacheUtil.getInstance().orderAddress != null) {
-                        type = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
-                        address = CacheUtil.getInstance().orderAddress.attributes.line1
-                    } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
-                        type = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
-                        address = CacheUtil.getInstance().orderDeliveryAddress
+                    OrderType.DELIVERY -> {
+                        icon = ContextCompat.getDrawable(this, R.drawable.ic_delivery_small)
+                        if (CacheUtil.getInstance().orderAddress != null) {
+                            type = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
+                            address = CacheUtil.getInstance().orderAddress.attributes.line1
+                        } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
+                            type = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
+                            address = CacheUtil.getInstance().orderDeliveryAddress
+                        }
                     }
-                }
 
-                OrderType.CURBSIDE -> {
-                    if (CacheUtil.getInstance().orderStore != null) {
-                        icon =
-                            resources.getDrawable(com.herfy.ordertype.R.drawable.ic_curbside_pickup_small)
-                        type = CacheUtil.getInstance()
-                            .getTranslations(Text.CURBSIDE_PICKUP, "Curbside Pickup")
-                        address = CacheUtil.getInstance().orderStore.attributes.name
+                    OrderType.CURBSIDE -> {
+                        if (CacheUtil.getInstance().orderStore != null) {
+                            icon = ContextCompat.getDrawable(this, R.drawable.ic_curbside_pickup_small)
+                            type = CacheUtil.getInstance()
+                                .getTranslations(Text.CURBSIDE_PICKUP, "Curbside Pickup")
+                            address = CacheUtil.getInstance().orderStore.attributes.name
+                        }
                     }
-                }
 
-                else -> {}
+                    else -> { }
+                }
+                binding.orderTypeToolbar.setOrderType(type, address, icon)
             }
-            binding.orderTypeToolbar.setOrderType(type, address, icon)
+
         }
 
         viewModel.showMenuCategories.observeNonNull(this) { menuCategories ->
@@ -337,6 +330,12 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         viewModel.menuAdapterItems.observeNonNull(this) { menuAdapterItems ->
             binding.shimmerMenuItems.root.gone()
             menuCategoryItemAdapter.addData(menuAdapterItems)
+            if(viewModel.initialLoad && args.menuCategoryId.isNotEmpty()) {
+                menuCategoryAdapter.getPosition(args.menuCategoryId)?.let { position ->
+                    selectMenuCategory(position, args.menuCategoryId)
+                }
+            }
+            viewModel.initialLoad = false
         }
 
         viewModel.searchMenuAdapterItems.observeNonNull(this) { searchMenuAdapterItems ->
@@ -399,6 +398,32 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
             }
         }
 
+        viewModel.showLink.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { uri ->
+                try {
+                    val activity = activity
+                    if (activity != null) {
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = uri
+                        activity.startActivity(intent)
+                        activity.overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        viewModel.showMenuCategory.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { menuCategoryId ->
+                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
+                val request =
+                    NavDeepLinkRequest.Builder.fromUri(Uri.parse("android-app://com.herfy/nav_menu/$menuCategoryId"))
+                        .build()
+                NavigationUtils.navigateSafe(findNavController(), request)
+            }
+        }
+
     }
 
     private fun orderTypeClick() {
@@ -435,10 +460,38 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }
     }
 
-    private fun navMenuItem(menuCategory: MenuCategory, menuItem: MenuItem) {
+    private fun selectMenuCategory(position: Int, menuCategoryId: String) {
+        binding.rvMenuCategories.smoothScrollToPosition(position)
+        menuCategoryAdapter.select(position)
+        viewModel.menuCategoryPositions[menuCategoryId]?.let {
+            binding.rvMenuCategoriesItems.apply {
+                smoothSnapToPosition(it)
+                removeOnScrollListener(menuOnScrollListener)
+                clearOnScrollListeners()
+                activity?.apply {
+                    runOnUiThread {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            addOnScrollListener(menuOnScrollListener)
+                        }, 250)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun navMenuItem(menuCategoryId: String, menuItemId: String) {
         val request = NavDeepLinkRequest.Builder.fromUri(
             Uri.parse(
-                "${Values.NAV_DEEP_LINK_BASE_URL}nav_menu_item/${menuCategory.id}/${menuItem.id}"
+                "${Values.NAV_DEEP_LINK_BASE_URL}nav_menu_item/$menuCategoryId/${menuItemId}"
+            )
+        ).build()
+        NavigationUtils.navigateSafe(findNavController(), request)
+    }
+
+    private fun navCart() {
+        val request = NavDeepLinkRequest.Builder.fromUri(
+            Uri.parse(
+                "${Values.NAV_DEEP_LINK_BASE_URL}nav_cart"
             )
         ).build()
         NavigationUtils.navigateSafe(findNavController(), request)

@@ -27,6 +27,7 @@ import com.herfy.menu.MenuPresenter
 import com.herfy.newmenu.adapter.PopularMenuItemAdapter
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
+import com.herfy.utils.extensions.cast
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.NavigationUtils
 
@@ -126,10 +127,9 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
     override fun showOrderType() {}
     override fun addCartItem(menuItem: MenuItem) {
         try {
-            activity?.let {
-                val activity = it as MainActivity
-                activity.runOnUiThread {
-                    val vibrator = activity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            activity?.cast<MainActivity> {
+                it.runOnUiThread {
+                    val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                     if (vibrator != null) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             vibrator.vibrate(
@@ -142,16 +142,15 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
                             vibrator.vibrate(100)
                         }
                     }
-                    activity.dismissDialogs()
+                    it.dismissDialogs()
                     Toast.makeText(
-                        activity,
+                        it,
                         CacheUtil.getInstance()
                             .getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
                         Toast.LENGTH_SHORT
                     ).show()
-                    activity.setCartQuantity()
+                    it.setCartQuantity(CacheUtil.getInstance().cartQuantity)
                 }
-
             }
         } catch (e: Exception) {
             e.printStackTrace()

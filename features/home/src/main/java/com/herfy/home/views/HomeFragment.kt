@@ -196,12 +196,12 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.showLink.observeNonNull(this) {
-            it.getContentIfNotHandled()?.let {
+            it.getContentIfNotHandled()?.let { uri ->
                 try {
                     val activity = activity
                     if (activity != null) {
                         val intent = Intent(Intent.ACTION_VIEW)
-                        intent.data = it
+                        intent.data = uri
                         activity.startActivity(intent)
                         activity.overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
                     }
@@ -213,26 +213,24 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
         viewModel.showMenuItem.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { pair ->
-                activity?.let {
-                    it.runOnUiThread {
+                activity?.apply {
+                    runOnUiThread {
                         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
-                        //fromMenuItem = true
-                        val intent = Intent()
-                        intent.setClassName(it, Navigation.NAVIGATION_ACTIVITY)
-                        intent.putExtra("navigation", "nav_menu_item")
-                        intent.putExtra("menu_category_id", pair.first)
-                        intent.putExtra("menu_item_id", pair.second)
-                        intent.putExtra("cart_menu_item_position", -1)
-                        it.startActivity(intent)
+                        val request = NavDeepLinkRequest.Builder.fromUri(
+                            Uri.parse(
+                                "${Values.NAV_DEEP_LINK_BASE_URL}nav_menu_item/${pair.first}/${pair.second}"
+                            )
+                        ).build()
+                        NavigationUtils.navigateSafe(findNavController(), request)
                     }
                 }
             }
         }
         viewModel.showMenuCategory.observeNonNull(this) {
-            it.getContentIfNotHandled()?.let {
+            it.getContentIfNotHandled()?.let { menuCategoryId ->
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
                 val request =
-                    NavDeepLinkRequest.Builder.fromUri(Uri.parse("android-app://com.herfy/nav_menu/${it.second.id}"))
+                    NavDeepLinkRequest.Builder.fromUri(Uri.parse("android-app://com.herfy/nav_menu/$menuCategoryId"))
                         .build()
                 NavigationUtils.navigateSafe(findNavController(), request)
             }

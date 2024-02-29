@@ -57,8 +57,8 @@ class HomeViewModel @Inject constructor(
     private val _showLink = MutableLiveData<Event<Uri>>()
     val showLink: LiveData<Event<Uri>> = _showLink
 
-    private val _showMenuCategory = MutableLiveData<Event<Pair<Int, MenuCategory>>>()
-    val showMenuCategory: LiveData<Event<Pair<Int, MenuCategory>>> = _showMenuCategory
+    private val _showMenuCategory = MutableLiveData<Event<String>>()
+    val showMenuCategory: LiveData<Event<String>> = _showMenuCategory
 
     private val _showMenuItem = MutableLiveData<Event<Pair<String, String>>>()
     val showMenuItem: LiveData<Event<Pair<String, String>>> = _showMenuItem
@@ -169,17 +169,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getMenuCategoryWith(menuCategoryId: String) {
-        invoke {
-            val menu: List<MenuCategory> = excludedMenuCategories(menuCategories)
-            menu.sortedWith { menuCategory1, menuCategory2 -> menuCategory1.displayOrder - menuCategory2.displayOrder }
-            menu.find { menuCategory -> menuCategory.id.equals(menuCategoryId, ignoreCase = true) }
-                ?.let {
-                    _showMenuCategory.value = Event(Pair(menu.indexOf(it), it))
-                }
-        }
-    }
-
     private fun excludedMenuCategories(menuCategories: List<MenuCategory>): List<MenuCategory> {
         excludedMenu.clear()
         val orderStore = homeRepository.getOrderStore()
@@ -220,7 +209,7 @@ class HomeViewModel @Inject constructor(
                 if (slide.linkType == "url") {
                     _showLink.value = Event(Uri.parse(slide.linkValue))
                 } else if (slide.linkType == "category") {
-                    getMenuCategoryWith(slide.linkValue)
+                    _showMenuCategory.value = Event(slide.linkValue)
                 } else if (slide.linkType == "item") {
                     getMenuItemWith(slide.linkValue)
                 }
