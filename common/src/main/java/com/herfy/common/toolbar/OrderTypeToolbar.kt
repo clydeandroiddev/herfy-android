@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.card.MaterialCardView
 import com.herfy.common.R
@@ -54,7 +53,14 @@ class OrderTypeToolbar @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     fun setCart(quantity : Int = CacheUtil.getInstance().cartQuantity) {
-        qtyText?.text = quantity.toString()
+        qtyText?.apply {
+            if(quantity > 0) {
+                text = quantity.toString()
+                visible()
+            } else {
+                gone()
+            }
+        }
     }
 
     fun setNavButton(listener : OnClickListener){

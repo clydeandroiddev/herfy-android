@@ -9,6 +9,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.herfy.common.R
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 
 
@@ -47,7 +49,14 @@ class MainToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
     }
 
     fun setCart(quantity : Int = CacheUtil.getInstance().cartQuantity) {
-        qtyText?.text = quantity.toString()
+        qtyText?.apply {
+            if(quantity > 0) {
+                text = quantity.toString()
+                visible()
+            } else {
+                gone()
+            }
+        }
     }
 
     fun setSideButtonAction(listener : OnClickListener){
