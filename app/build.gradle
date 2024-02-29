@@ -165,7 +165,7 @@ android {
             buildConfigField "String", "SOLO_CONCEPT", "\"\""
             buildConfigField "String", "SPLASH_COLOR", "\"#FAFBFC\""
             buildConfigField "boolean", "SPLASH_LOGO", "true"
-            buildConfigField "boolean", "SPLASH_BACKGROUND", "false"
+            buildConfigField "boolean", "SPLASH_BACKGROUND", "true"
             buildConfigField "boolean", "SPLASH_VIDEO", "false"
             buildConfigField "boolean", "ONBOARDING_ENABLED", "true"
             buildConfigField "String", "SOLO_APP_TYPE", "\"Restaurant\""
@@ -176,7 +176,7 @@ android {
             buildConfigField "String", "TAP_LIVE", "\"\""
             buildConfigField "boolean", "MULTI_COUNTRY_ENABLED", "false"
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "true"
-            buildConfigField "boolean", "DISABLE_SPLASH_ANIMATION", "true"
+            buildConfigField "boolean", "DISABLE_SPLASH_ANIMATION", "false"
        }
     }
 

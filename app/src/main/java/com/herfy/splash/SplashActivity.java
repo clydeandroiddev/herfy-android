@@ -371,12 +371,9 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             image.setVisibility(View.GONE);
         }
 
-        if (BuildUtil.splashBackgroundApp()) {
-            if (BuildConfig.SOLO_CONCEPT != "Adjx12OokD0") {
-                image.setImageResource(android.R.color.transparent);
-            }
-            background.setVisibility(View.VISIBLE);
-        } else if (BuildUtil.splashVideoApp()) {
+        background.setVisibility(View.VISIBLE);
+
+        if (BuildUtil.splashVideoApp()) {
             vvSplash.setVisibility(View.VISIBLE);
             image.setVisibility(View.INVISIBLE);
             background.setVisibility(View.INVISIBLE);
