@@ -1,5 +1,6 @@
 package com.herfy.menu;
 
+import android.util.Log;
 import android.util.Pair;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
@@ -109,6 +110,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Executor;
@@ -355,6 +357,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         boolean shouldShowIndicator = hasSelectedModifierItem || selectedModifierItemCount >= 1;
         menuView.showModifierSelectionIndicator(shouldShowIndicator, modifierGroupPosition);
     }
+
     private int countSelectedModifierItems(int modifierGroupPosition) {
         int selectedModifierItemCount = 0;
         ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
@@ -367,6 +370,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         }
         return selectedModifierItemCount;
     }
+
     @Override
     public MenuItem getMenuItemSingle(String id) {
         AppDatabase appDatabase = AppDatabase.getInstance();
@@ -1037,10 +1041,10 @@ public class MenuPresenter implements MenuContract.Presenter {
                                 try {
                                     String previous = CacheUtil.getInstance().getMenuCdnLastModified();
                                     String lastModified = "";
-                                    if(headers.names().contains("last-modified")) {
+                                    if (headers.names().contains("last-modified")) {
                                         lastModified = headers.get("last-modified");
                                     }
-                                    if(!appDatabase.menuCategoryEntityDao().hasByApplication(applicationId) || !isEkfc || (isEkfc && !previous.equalsIgnoreCase(lastModified))) {
+                                    if (!appDatabase.menuCategoryEntityDao().hasByApplication(applicationId) || !isEkfc || (isEkfc && !previous.equalsIgnoreCase(lastModified))) {
                                         CacheUtil.getInstance().setMenuCdnLastModified(lastModified);
                                         appDatabase.menuCategoryDao().deleteByApplication(applicationId);
                                         appDatabase.menuItemDao().deleteByApplication(applicationId);
@@ -1143,24 +1147,24 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void updateCart(boolean forceUpdate) {
-        if(CacheUtil.getInstance().getCartQuantity() != 0 && (forceUpdate || BuildUtil.isEkfc())) {
+        if (CacheUtil.getInstance().getCartQuantity() != 0 && (forceUpdate || BuildUtil.isEkfc())) {
             Executor executor = Executors.newSingleThreadExecutor();
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
                     ArrayList<MenuItem> items = new ArrayList<>();
-                    for(MenuItem cartItem : CacheUtil.getInstance().getCart()) {
+                    for (MenuItem cartItem : CacheUtil.getInstance().getCart()) {
                         AppDatabase appDatabase = AppDatabase.getInstance();
                         String data = getMenuItemData(appDatabase, cartItem.getId());
                         if (data != null && !data.isEmpty()) {
                             MenuItem item = MenuUtil.processMenuItemCustomObject(GsonHelper.gsonFinal().fromJson(data, MenuItem.class));
                             cartItem.setPrices(item.getPrices());
-                            if(CacheUtil.getInstance().getOrderStore() != null) {
+                            if (CacheUtil.getInstance().getOrderStore() != null) {
                                 cartItem.setPrice(item.getPrice(CacheUtil.getOrderStoreId()));
                             } else {
                                 cartItem.setPrice(item.getPrice());
                             }
-                            if(!item.getModifierGroupIds().isEmpty()) {
+                            if (!item.getModifierGroupIds().isEmpty()) {
                                 String applicationId = CacheUtil.getInstance().getApplication().getId();
                                 HashMap<String, ModifierGroup> modifierGroupIds = new HashMap<>();
                                 for (ModifierGroup modifierGroup : item.getModifierGroupIds()) {
@@ -1175,14 +1179,14 @@ public class MenuPresenter implements MenuContract.Presenter {
                                         modifierItemPrices.put(modItem.getId(), modItem.getPrice());
                                     }
                                 }
-                                for(ModifierItem modItem : cartItem.getSizes().getModifierItems()) {
-                                    if(modifierItemPrices.containsKey(modItem.getId())) {
+                                for (ModifierItem modItem : cartItem.getSizes().getModifierItems()) {
+                                    if (modifierItemPrices.containsKey(modItem.getId())) {
                                         modItem.setPrice(modifierItemPrices.get(modItem.getId()));
                                     }
                                 }
-                                for(ModifierGroup modGroup : cartItem.getModifierGroups()) {
-                                    for(ModifierItem modItem : modGroup.getModifierItems()) {
-                                        if(modifierItemPrices.containsKey(modItem.getId())) {
+                                for (ModifierGroup modGroup : cartItem.getModifierGroups()) {
+                                    for (ModifierItem modItem : modGroup.getModifierItems()) {
+                                        if (modifierItemPrices.containsKey(modItem.getId())) {
                                             modItem.setPrice(modifierItemPrices.get(modItem.getId()));
                                         }
                                     }
@@ -1667,7 +1671,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                     if (CacheUtil.getInstance().getOrderStore() != null) {
                         LinkedList<MenuItem> filteredMenuItems = new LinkedList<>();
                         for (MenuItem menuItem : menuItems) {
-                            if(!menuItem.getExcludedLocations().contains(CacheUtil.getOrderStoreId())) {
+                            if (!menuItem.getExcludedLocations().contains(CacheUtil.getOrderStoreId())) {
                                 filteredMenuItems.add(menuItem);
                             }
                         }
@@ -2413,7 +2417,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 }
             }
 
-            if(!invalid) {
+            if (!invalid) {
                 invalid = checkComboModifiers();
             }
 
@@ -2427,7 +2431,7 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     private boolean checkComboModifiers() {
         boolean invalid = false;
-        if(menuItem.isCombo) {
+        if (menuItem.isCombo) {
             int comboIndex = 0;
             int trueIndex = 0;
             for (ModifierItem size : menuItem.getSizes().getModifierItems()) {
@@ -2438,11 +2442,11 @@ public class MenuPresenter implements MenuContract.Presenter {
             }
             if (menuItem.isCombo) {
                 for (MenuItemComponents components : menuItem.combo.get(trueIndex).components) {
-                    if(invalid) {
+                    if (invalid) {
                         break;
                     }
                     for (ComponentModifierItem item : components.items) {
-                        if(invalid) {
+                        if (invalid) {
                             break;
                         }
                         if (item.selected) {
@@ -2498,14 +2502,14 @@ public class MenuPresenter implements MenuContract.Presenter {
                                             ModifierGroupCdn modifierGroupCdn = MenuUtil.processModifierGroupCustomObject(GsonHelper.gsonFinal().fromJson(modifierGroupDb.data, ModifierGroupCdn.class));
                                             ModifierGroup mapModifierGroup = modifierGroupIds.get(modifierGroupCdn.getId());
                                             HashSet<String> excludeModifiers = new HashSet();
-                                            if(mapModifierGroup != null && mapModifierGroup.getExcludeModifiers() != null && !mapModifierGroup.getExcludeModifiers().isEmpty()) {
+                                            if (mapModifierGroup != null && mapModifierGroup.getExcludeModifiers() != null && !mapModifierGroup.getExcludeModifiers().isEmpty()) {
                                                 for (Integer excludeModifierId : mapModifierGroup.getExcludeModifiers()) {
                                                     excludeModifiers.add(excludeModifierId.toString());
                                                 }
                                             }
                                             LinkedList<ModifierItem> modifierItems = new LinkedList<>();
                                             for (ModifierItemDb modifierItemDb : appDatabase.modifierItemDao().findAllByApplicationAndIds(applicationId, modifierGroupCdn.getAttributes().getModifiers().toArray(new String[modifierGroupCdn.getAttributes().getModifiers().size()]))) {
-                                                if(!excludeModifiers.contains(modifierItemDb.id)) {
+                                                if (!excludeModifiers.contains(modifierItemDb.id)) {
                                                     ModifierItemCdn modifierItemCdn = GsonHelper.gsonFinal().fromJson(modifierItemDb.data, ModifierItemCdn.class);
                                                     ModifierItem modifierItem = ModifierItemCdn.convert(modifierItemCdn, LocaleUtil.getInstance().getLanguage());
                                                     modifierItem.getAttributes().setSelected(modifierItem.getAttributes().getMinimum() == 1);
@@ -3400,8 +3404,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                     menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT));
                 } else {
                     ModifierItem item = group.getModifierItems().get(modifierItemPosition);
-                    if (item.getId().equals(modifierItem.getId()))
-                    {
+                    if (item.getId().equals(modifierItem.getId())) {
                         item.getAttributes().setSelected(isSelected);
                         if (!isSelected) {
                             item.getAttributes().setQuantity(1);
@@ -3542,50 +3545,85 @@ public class MenuPresenter implements MenuContract.Presenter {
             ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
             ModifierItem item = group.getModifierItems().get(modifierItemPosition);
             if (modifierItem.getAttributes().getQuantity() == 1) {
+                item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() - 1);
+                if (item.getAttributes().isShouldShowQuantity() && modifierItem.getAttributes().getQuantity() <= modifierGroup.getAttributes().getMaximum()) {
+                    item.getAttributes().setModifierItemQuantityExceedsMaximum(false);
+                    item.getAttributes().setModifierItemInteraction(false);
+                }
                 item.getAttributes().setSelected(false);
             } else {
                 item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() - 1);
-
-                for (ModifierItem eachItem: group.getModifierItems()) {
-                    if (eachItem.getAttributes().isSelected()) {
+                Log.d("FAFA","Decuted quantity bai " + item.getAttributes().getQuantity());
+                for (ModifierItem eachItem : group.getModifierItems()) {
+                    if (eachItem.getAttributes().isShouldShowQuantity()) {
                         selectedItemMinusTotal += eachItem.getAttributes().getQuantity();
                     }
                 }
+                Log.d("FAFA","Total bai " + selectedItemMinusTotal);
                 if (selectedItemMinusTotal <= modifierGroup.getAttributes().getMaximum()) {
                     for (ModifierItem eachModifierItem : group.getModifierItems()) {
-                        eachModifierItem.getAttributes().setModifierItemQuantityExceedsMaximum(false);
-                        eachModifierItem.getAttributes().setModifierItemInteraction(false);
+                        if (eachModifierItem.getAttributes().hasUserInteractedWithModifierItem()) {
+                            eachModifierItem.getAttributes().setModifierItemQuantityExceedsMaximum(selectedItemMinusTotal == modifierGroup.getAttributes().getMaximum() ? false : true);
+                            eachModifierItem.getAttributes().setModifierItemInteraction(false);
                         }
                     }
                 }
+            }
 
         } else {
 
             int selectedItems = 0;
-            ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
-            for (ModifierItem item : group.getModifierItems()) {
-                if (item.getAttributes().isSelected()) {
-                    selectedItems += item.getAttributes().getQuantity();
 
-                }
-            }
-            if (selectedItems >= modifierGroup.getAttributes().getMaximum()) {
-                for (ModifierItem item : group.getModifierItems()) {
-                    item.getAttributes().setModifierItemInteraction(true);
-                    item.getAttributes().setModifierItemQuantityExceedsMaximum(item.getAttributes().isSelected());
-                }
-            } else {
+            ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
+//            } else {
                 ModifierItem item = group.getModifierItems().get(modifierItemPosition);
                 //for (ModifierItem item : group.getModifierItems()) {
                 if (item.getId().equals(modifierItem.getId())) {
+                    modifierItem.getAttributes().setShouldShowQuantity(true);
                     item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() + 1);
+                    Log.d("FAFA", "New quantity " + item.getAttributes().getQuantity());
+                }
+
+//            ModifierItem newModifieritem = group.getModifierItems().get(modifierItemPosition);
+//            for (ModifierItem modifieritem : group.getModifierItems()) {
+//                if (Objects.equals(newModifieritem.getId(), modifierItem.getId())) {
+//                    Log.d("FAFA","Show");
+//                    modifieritem.getAttributes().setShouldShowQuantity(true);
+//                }
+//
+//            }
+
+            for (ModifierItem eachModifierItem : group.getModifierItems()) {
+                if (eachModifierItem.getAttributes().isShouldShowQuantity()) {
+                    Log.d("FAFA", "Quantity bai " + eachModifierItem.getAttributes().getQuantity());
+                    selectedItems += eachModifierItem.getAttributes().getQuantity();
+                }
+
+            }
+
+
+            Log.d("FAFA", "Selected items  " + selectedItems + " Max " + modifierGroup.getAttributes().getMaximum());
+            if (selectedItems >= modifierGroup.getAttributes().getMaximum()) {
+                for (ModifierItem eachItems : group.getModifierItems()) {
+                    eachItems.getAttributes().setModifierItemInteraction(true);
+                    eachItems.getAttributes().setModifierItemQuantityExceedsMaximum(eachItems.getAttributes().isShouldShowQuantity() || eachItems.getAttributes().isSelected());
                 }
             }
 
-        }
 
+//                Log.d("FAFA","Item quantity "  + modifierItem.getAttributes().getQuantity());
+
+
+        }
         getMenuItemTotalPrice(menuItem, modifierGroupPosition);
+
+//                Log.d("FAFA","Item quantity "  + modifierItem.getAttributes().getQuantity());
+
+
+//            getMenuItemTotalPrice(menuItem, modifierGroupPosition);
+//        }
     }
+
 
 
 
