@@ -14,25 +14,28 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.herfy.R
+import com.herfy.base.BaseActivity
 import com.herfy.cart.CartContract
 import com.herfy.cart.adapters.CartPromoAdapter
 import com.herfy.cart.adapters.CartPromoAdapter.CartPromoListener
 import com.herfy.cart.databinding.FragmentCouponsBinding
 import com.herfy.common.dialog.CommonCustomDialog
+import com.herfy.ext.cast
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 
 class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
 
-    private lateinit var binding : FragmentCouponsBinding
+    private lateinit var binding: FragmentCouponsBinding
     private var onAction: OnAction? = null
     private var cartPromoAdapter: CartPromoAdapter? = null
     private var campaigns: List<Campaign> = arrayListOf()
     private var donTriggerClose = false
     private var selected = 0
     private var loading = false
-    private var cartPresenter : CartContract.Presenter? = null
+    private var cartPresenter: CartContract.Presenter? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -80,20 +83,24 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
     @SuppressLint("NotifyDataSetChanged")
     fun setupViews() {
         binding.apply {
-            toolbarTitle.setNavButtonAction{
+            toolbarTitle.setNavButtonAction {
                 dismissAllowingStateLoss()
             }
-            val currentCartTotal = cartPresenter?.menuItemsTotalPrice?: 0.0
-            cartPromoAdapter = CartPromoAdapter(campaigns = campaigns, listener = this@CartPromoDialogFragment, currentCartAmount =  currentCartTotal )
+            val currentCartTotal = cartPresenter?.menuItemsTotalPrice ?: 0.0
+            cartPromoAdapter = CartPromoAdapter(
+                campaigns = campaigns,
+                listener = this@CartPromoDialogFragment,
+                currentCartAmount = currentCartTotal
+            )
             cartPromoAdapter?.selected = selected
-            rvDigitalCoupons.apply{
+            rvDigitalCoupons.apply {
                 adapter = cartPromoAdapter
             }
             placeholderCoupons.shimmerCouponItems.visibility = View.GONE
-            if(campaigns.isNotEmpty()){
+            if (campaigns.isNotEmpty()) {
                 rvDigitalCoupons.visibility = View.VISIBLE
                 cartPromoAdapter?.notifyDataSetChanged()
-            }else {
+            } else {
                 empStayeView.visibility = View.VISIBLE
                 rvDigitalCoupons.visibility = View.GONE
 
@@ -102,80 +109,111 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
             btnApply.setOnClickListener {
                 showLoading()
                 val couponCode = binding.tieCoupon.text.toString()
-                if(couponCode.isEmpty()){
+                if (couponCode.isEmpty()) {
+                    dismissLoading()
+                    showInvalidCouponDialog(
+                        CacheUtil.getInstance().getTranslations(
+                            Text.PLEASE_INPUT_A_COUPON_CODE_FIRST,
+                            "Coupon code is required"
+                        )
+                    )
                     return@setOnClickListener
                 }
 
-                if(couponCode.isNotEmpty()){
-                    cartPresenter?.getCouponFrom(couponCode){
-                        if(it.isSuccess){
-                            it.promo?.let {promo ->
-                                cartPresenter?.validateDigitalCoupon(promo){valitedResult ->
-                                    dismissLoading()
-                                    if(valitedResult.isSuccess){
-                                        onAction?.onApplied()
-                                    }else {
-                                        showInvalidCouponDialog(valitedResult.message)
-                                    }
-                                }
-                            }
-
-                        }else {
+                if (couponCode.isNotEmpty()) {
+                    cartPresenter?.validateDigitalCoupon(couponCode) { valitedResult ->
+                        runOnMain {
                             dismissLoading()
-                            showInvalidCouponDialog(it.message)
+                            if (valitedResult.isSuccess) {
+                                onAction?.onApplied()
+                            } else {
+                                showInvalidCouponDialog(valitedResult.message)
+                            }
                         }
                     }
+                } else {
+                    runOnMain {
+                        dismissLoading()
+                        showInvalidCouponDialog(
+                            CacheUtil.getInstance().getTranslations(
+                                Text.PLEASE_INPUT_A_COUPON_CODE_FIRST,
+                                "Coupon code is required"
+                            )
+                        )
+                    }
                 }
-
             }
 
         }
     }
 
     private fun showLoading() {
-        activity?.window?.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        dialog?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        )
+        activity?.cast<BaseActivity> {
+            BaseActivity.hideKeyboardFrom(it, binding.root)
+        }
         binding.progressContainer.visibility = View.VISIBLE
     }
 
-    private fun dismissLoading(){
+    private fun dismissLoading() {
         binding.progressContainer.visibility = View.GONE
-        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        dialog?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     fun setupFonts() {}
     fun setupTranslations() {
         binding.apply {
-            toolbarTitle.title = CacheUtil.getInstance().getTranslations(Text.APPLY_COUPONS_LABEL, "Apply Coupons")
-            tvEnterCoupon.text = CacheUtil.getInstance().getTranslations(Text.ENTER_COUPON_CODE, "Enter coupon code?")
+            toolbarTitle.title =
+                CacheUtil.getInstance().getTranslations(Text.APPLY_COUPONS_LABEL, "Apply Coupons")
+            tvEnterCoupon.text = CacheUtil.getInstance()
+                .getTranslations(Text.ENTER_COUPON_CODE, "Enter coupon code?")
             tvOr.text = CacheUtil.getInstance().getTranslations(Text.OR, "Or")
-            tvApplyCoupons.text = CacheUtil.getInstance().getTranslations(Text.APPLY_DIGITAL_COUPONS, "Apply Digital Coupons")
+            tvApplyCoupons.text = CacheUtil.getInstance()
+                .getTranslations(Text.APPLY_DIGITAL_COUPONS, "Apply Digital Coupons")
             btnApply.text = CacheUtil.getInstance().getTranslations(Text.APPLY, "Apply")
         }
     }
+
     override fun select(campaign: Campaign, position: Int) {
-       onAction?.onAvail(true, position )
+        onAction?.onAvail(true, position)
     }
 
-    private fun showInvalidCouponDialog(message : String){
+    private fun showInvalidCouponDialog(message: String) {
         context?.let {
-            val dialog = CommonCustomDialog(it,
-                CacheUtil.getInstance().getTranslations(Text.INVALID_FOR_THIS_ORDER, "Invalid for this Order"),
-                message,
-                R.drawable.ic_dialog_error)
-            dialog.apply {
-                setButtonA(CacheUtil.getInstance().getTranslations(Text.GOT_IT_LABEL, "Got It")){
-                    dismiss()
+            if (message.isNotEmpty()) {
+                val commonCustomDialog = CommonCustomDialog(it,
+                    title = CacheUtil.getInstance()
+                        .getTranslations(Text.INVALID_FOR_THIS_ORDER, "Invalid for this Order"),
+                    message = message,
+                    icon = R.drawable.ic_dialog_error,
+                    buttonALabel = CacheUtil.getInstance()
+                        .getTranslations(Text.GOT_IT_LABEL, "Got it"),
+                    buttonBLabel = CacheUtil.getInstance()
+                        .getTranslations(Text.ADD_MORE_ITEMS_LABEL, "Add more items"),
+                )
+                commonCustomDialog.show()
+                commonCustomDialog.setCancelable(false)
+                commonCustomDialog.setButtonAListener{
+                    commonCustomDialog.dismiss()
                 }
-                setButtonB(CacheUtil.getInstance().getTranslations(Text.ADD_MORE_ITEMS_LABEL,"Add more items")){
+                commonCustomDialog.setButtonBListener{
                     onAction?.goToMenu()
-                    dismiss()
+                    commonCustomDialog.dismiss()
                 }
             }
         }
 
     }
 
-    fun updateCampaigns(loading: Boolean, b: Boolean, selected: Int, digitalCoupons: List<Campaign>) {
+    fun updateCampaigns(
+        loading: Boolean,
+        b: Boolean,
+        selected: Int,
+        digitalCoupons: List<Campaign>
+    ) {
         if (!b) {
             cartPromoAdapter?.updateCampaigns(selected, digitalCoupons)
         }
@@ -195,13 +233,14 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
             selected: Int,
             campaigns: List<Campaign>,
             onAction: OnAction?,
-            cartPresenter : CartContract.Presenter
+            cartPresenter: CartContract.Presenter
         ): CartPromoDialogFragment {
             val fragment = CartPromoDialogFragment()
             fragment.loading = loading
             fragment.campaigns = campaigns
             fragment.onAction = onAction
             fragment.selected = selected
+            fragment.cartPresenter = cartPresenter
             return fragment
         }
     }

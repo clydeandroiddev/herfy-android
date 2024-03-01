@@ -696,10 +696,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
 
         binding.paymentSummaryContainer.viewCoupon.setOnClickListener {
-            val couponLabel = binding.paymentSummaryContainer.applyCouponLabel.text.toString()
-            if(couponLabel.equals(CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon"), ignoreCase = true)){
+            val couponVal = binding.paymentSummaryContainer.applyCouponLabel.text.toString()
+            if(couponVal.equals(CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon"), ignoreCase = true)){
                 showLoadingDialog()
-                cartPresenter.getDigitalCoupons(true, false)
+                cartPresenter.showDigitalCoupons(true)
             }else {
                 showProgressDialog()
                 cartPresenter.removeCoupon()
@@ -831,11 +831,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
         binding.orderDetailsContainer.apply {
             if (itemCount > 0) {
+                placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
                 yourOrderLabel.text = "Your Order (${itemCount})"
                 rvCartItems.OnLayoutLoadingCompleted {
                     Handler(Looper.getMainLooper()).postDelayed({
                         clOrderDetails.visibility = View.VISIBLE
-                        placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
                     }, 500)
                 }
                 adapter!!.notifyDataSetChanged()
@@ -1061,7 +1061,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun editCartItem(position: Int) {
         runOnMain {
             dismissDialogFragments()
-            dontShowDigitalCoupons = true
             NavigationUtils.navigateSafe(
                 findNavController(), CartFragmentDirections.actionCartToMenuItem(
                     menuCategoryId = "",
@@ -1089,20 +1088,22 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun removeCoupon() {
-        runOnMain {
-            hideRelatedCouponViews()
-            try {
-                if (cartPresenter != null) cartPresenter!!.removeMukafaaRedemption()
-            } catch (e: Exception) {
-                e.printStackTrace()
+        if(CacheUtil.getInstance().couponCode.isNullOrBlank() && CacheUtil.getInstance().campaign == null){
+            runOnMain {
+                hideRelatedCouponViews()
+                try {
+                    if (cartPresenter != null) cartPresenter!!.removeMukafaaRedemption()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                binding.paymentSummaryContainer.apply {
+                    applyCouponLabel.text = CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
+                    tvCouponDescription.text = ""
+                    tvCouponDescription.gone()
+                    ivCoupon.setImageResource(R.drawable.ic_apply_coupon)
+                    viewCoupon.text = CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL,"View Coupons")
+                }
             }
-        }
-        binding.paymentSummaryContainer.apply {
-            applyCouponLabel.text = CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL)
-            tvCouponDescription.text = ""
-            tvCouponDescription.gone()
-            ivCoupon.setImageResource(R.drawable.ic_apply_coupon)
-            viewCoupon.text = CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL)
         }
     }
 

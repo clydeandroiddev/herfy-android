@@ -215,7 +215,7 @@ public interface CartContract {
         void goToItemDetails(int position, MenuItem upsell);
         void addToCart(MenuItem upsell);
         void getCouponFrom(String code, Function1<CouponResult, Unit> result);
-        void validateDigitalCoupon(Campaign campaign, Function1<CouponResult, Unit> result);
+        void validateDigitalCoupon(String couponCode, Function1<CouponResult, Unit> result);
     }
 
 }

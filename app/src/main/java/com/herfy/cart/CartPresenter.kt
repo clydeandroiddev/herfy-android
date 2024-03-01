@@ -397,8 +397,6 @@ class CartPresenter @Inject constructor(
                     }
 
                     OrderType.NONE -> deliveryCharge = 0.0
-                    OrderType.EAT_IN -> {}
-                    OrderType.DRIVE_THRU -> {}
                 }
                 var discountedSubtotal = subtotal - discount
                 if (discountedSubtotal < 0) {
@@ -1679,6 +1677,12 @@ class CartPresenter @Inject constructor(
         CacheUtil.getInstance().couponName = null
         CacheUtil.getInstance().couponMenuItem = null
         CacheUtil.getInstance().couponToAdd = null
+        CacheUtil.getInstance().digitalCoupons = ""
+        CacheUtil.getInstance().campaign = null
+        CacheUtil.getInstance().campaignPromotion = null
+        CacheUtil.getInstance().campaignPromotionMenuItem = null
+        CacheUtil.getInstance().campaignToAdd = null
+
         if (validatePromotionDisposable != null) validatePromotionDisposable!!.dispose()
         if (validateDigitalCouponDisposable != null) validateDigitalCouponDisposable!!.dispose()
         if (digitalCall != null && digitalCall!!.isExecuted()) digitalCall!!.cancel();
@@ -3149,224 +3153,223 @@ class CartPresenter @Inject constructor(
 
 
     override fun getCouponFrom(code: String, result: ((CouponResult) -> Unit)) {
-        if (code.isNotEmpty()) {
-            GlobalScope.launch(contextPool.IO) {
-                cacheUtilHelper.getCartItems {
-                    menuItems = it
-                    val orderBody = createOrderBody(menuItems, code)
-                    if (digitalCall != null && digitalCall!!.isExecuted) digitalCall!!.cancel()
-                    digitalCall = CouponsApiCall.getInstance()
-                        .getCampaignsCancelableAll(orderBody, object : ApiRequestListener {
-                            override fun onSuccess(o: Any) {
-                                try {
-                                    val `object` = JSONObject(o.toString())
-                                    val digitalCoupons = GsonHelper.gsonFinal()
-                                        .fromJson<List<Campaign>?>(
-                                            `object`.getJSONArray("data").toString(),
-                                            object : TypeToken<List<Campaign>?>() {}.type
-                                        )
-                                    digitalCoupons?.let {
-                                        if (`object`.has("included")) {
-                                            val promotions =
-                                                GsonHelper.gsonFinal()
-                                                    .fromJson<ArrayList<Promotion>>(
-                                                        `object`.getJSONArray("included")
-                                                            .toString(),
-                                                        object :
-                                                            TypeToken<ArrayList<Promotion>>() {}.type
-                                                    )
-                                            val promotionsHashMap = HashMap<String, Promotion>()
-                                            for (promotion in promotions) {
-                                                promotionsHashMap[promotion.id] = promotion
-                                            }
-                                            for (digitalCoupon in digitalCoupons) {
-                                                digitalCoupon.promotion =
-                                                    promotionsHashMap[digitalCoupon.attributes.promotionId]
-                                            }
-                                        }
-                                        CacheUtil.getInstance().couponCode = code
-                                        result(CouponResult(true, digitalCoupons[0], ""))
-                                    } ?: run {
-                                        result(CouponResult(false, digitalCoupons[0], "Failed"))
-                                    }
-
-                                } catch (ex: JSONException) {
-                                    ex.printStackTrace()
-                                    onError("")
-                                    result(CouponResult(false, null, "ex"))
-                                }
-                            }
-
-                            override fun onError(o: Any) {
-                                AppLogger.printRetrofitError(o)
-                                cartView.showDigitalCoupon(null)
-                                if (o is JSONObject) {
-                                    try {
-                                        val error = o["error"]
-                                        var detail = CacheUtil.getInstance()
-                                            .getTranslations(Text.AN_ERROR_OCCURRED)
-                                        if (error is JSONObject) {
-                                            detail = error.getString("detail")
-                                        } else if (error is JSONArray) {
-                                            val errorObject = error.getJSONObject(0)
-                                            detail = errorObject.getString("detail")
-                                        }
-                                        cartView.showError(detail)
-                                    } catch (e: JSONException) {
-                                        e.printStackTrace()
-                                        result(
-                                            CouponResult(
-                                                false,
-                                                null,
-                                                CacheUtil.getInstance().getTranslations(
-                                                    Text.NO_INTERNET_ERROR,
-                                                    "Sorry we can't process your request at the moment. Please try again later."
+        GlobalScope.launch(contextPool.IO) {
+            cacheUtilHelper.getCartItems {
+                menuItems = it
+                val orderBody = createOrderBody(menuItems, code)
+                if (digitalCall != null && digitalCall!!.isExecuted) digitalCall!!.cancel()
+                digitalCall = CouponsApiCall.getInstance()
+                    .getCampaignsCancelableAll(orderBody, object : ApiRequestListener {
+                        override fun onSuccess(o: Any) {
+                            try {
+                                val `object` = JSONObject(o.toString())
+                                val digitalCoupons = GsonHelper.gsonFinal()
+                                    .fromJson<List<Campaign>?>(
+                                        `object`.getJSONArray("data").toString(),
+                                        object : TypeToken<List<Campaign>?>() {}.type
+                                    )
+                                digitalCoupons?.let {
+                                    if (`object`.has("included")) {
+                                        val promotions =
+                                            GsonHelper.gsonFinal()
+                                                .fromJson<ArrayList<Promotion>>(
+                                                    `object`.getJSONArray("included")
+                                                        .toString(),
+                                                    object :
+                                                        TypeToken<ArrayList<Promotion>>() {}.type
                                                 )
-                                            )
-                                        )
+                                        val promotionsHashMap = HashMap<String, Promotion>()
+                                        for (promotion in promotions) {
+                                            promotionsHashMap[promotion.id] = promotion
+                                        }
+                                        for (digitalCoupon in digitalCoupons) {
+                                            digitalCoupon.promotion =
+                                                promotionsHashMap[digitalCoupon.attributes.promotionId]
+                                        }
                                     }
-                                } else {
+                                    CacheUtil.getInstance().couponCode = code
+                                    result(CouponResult(true, digitalCoupons[0], ""))
+                                } ?: run {
+                                    result(CouponResult(false, digitalCoupons[0], "Failed"))
+                                }
+
+                            } catch (ex: JSONException) {
+                                ex.printStackTrace()
+                                onError("")
+                                result(CouponResult(false, null, "ex"))
+                            }
+                        }
+
+                        override fun onError(o: Any) {
+                            AppLogger.printRetrofitError(o)
+                            cartView.showDigitalCoupon(null)
+                            if (o is JSONObject) {
+                                try {
+                                    val error = o["error"]
+                                    var detail = CacheUtil.getInstance()
+                                        .getTranslations(Text.AN_ERROR_OCCURRED)
+                                    if (error is JSONObject) {
+                                        detail = error.getString("detail")
+                                    } else if (error is JSONArray) {
+                                        val errorObject = error.getJSONObject(0)
+                                        detail = errorObject.getString("detail")
+                                    }
+                                    cartView.showError(detail)
+                                } catch (e: JSONException) {
+                                    e.printStackTrace()
                                     result(
                                         CouponResult(
-                                            false, null, CacheUtil.getInstance().getTranslations(
+                                            false,
+                                            null,
+                                            CacheUtil.getInstance().getTranslations(
                                                 Text.NO_INTERNET_ERROR,
                                                 "Sorry we can't process your request at the moment. Please try again later."
                                             )
                                         )
                                     )
                                 }
-
+                            } else {
+                                result(
+                                    CouponResult(
+                                        false, null, CacheUtil.getInstance().getTranslations(
+                                            Text.NO_INTERNET_ERROR,
+                                            "Sorry we can't process your request at the moment. Please try again later."
+                                        )
+                                    )
+                                )
                             }
-                        })
-                }
+
+                        }
+                    })
             }
-        } else {
-            result(
-                CouponResult(
-                    false,
-                    null,
-                    CacheUtil.getInstance().getTranslations(
-                        Text.PLEASE_INPUT_A_COUPON_CODE_FIRST,
-                        "Coupon code is required"
-                    )
-                )
-            )
         }
     }
 
-    override fun validateDigitalCoupon(campaign: Campaign, result: ((CouponResult) -> Unit)) {
+    override fun validateDigitalCoupon(couponCode: String, result: ((CouponResult) -> Unit)) {
         GlobalScope.launch(contextPool.IO) {
             val concept = CacheUtil.getInstance().concept
             cacheUtilHelper.getCartItems {
                 menuItems = it
-                val orderBody = createValidateCouponBody(it, campaign)
+                val orderBody = createValidateCouponBody(it, couponCode)
                 if (validateDigitalCouponDisposable != null) validateDigitalCouponDisposable!!.dispose()
                 validateDigitalCouponDisposable =
                     validateDigitalCouponObservable(orderBody,result).subscribe { onNext: Any ->
                         try {
-                            val jsonObject = JSONObject(onNext.toString())
-                            if (jsonObject.has("error") && !jsonObject.isNull("error")) {
-                                digitalCoupons.clear()
+                            val jsonObject = onNext as JSONObject
+                            val itemsArray = jsonObject.getJSONArray("items")
+                            var hasChanged = false
+                            for (i in 0 until itemsArray.length()) {
+                                val itemObject = itemsArray.getJSONObject(i)
+                                val item = GsonHelper.gsonFinal()
+                                    .fromJson(itemObject.toString(), MenuItem::class.java)
+                                validatedPromoItemPrice = 0.0
+                                validatedPromoItemQuantity = 0
+                                for (menuItem in menuItems) {
+                                    if (item.isPromotion) {
+                                        validatedPromoItemPrice = item.price
+                                        validatedPromoItemQuantity = item.quantity
+                                    }
+                                    if (!item.isPromotion && menuItem.id == item.id) {
+                                        if (BuildUtil.isEkfc() && (item.total != item.price || getMenuItemTotalPrice(
+                                                menuItems[menuItems.indexOf(menuItem)], -1
+                                            ) != item.total)
+                                        ) {
+                                            menuItems[menuItems.indexOf(menuItem)].total = item.total
+                                        } else {
+                                            menuItem.price = item.getPrice(null)
+                                            menuItem.attributes.price = item.getPrice(null)
+                                        }
+                                        hasChanged = true
+                                    }
+                                }
+                            }
+                            if (hasChanged) {
+                                CacheUtil.getInstance().cart = menuItems
+                                cartView.updateMenuItems(menuItems)
+                            }
+                            var mokafaaAmount = 0.0
+                            if (jsonObject.has("loyalty")) {
+                                val loyalty = jsonObject.getJSONObject("loyalty")
+                                if (loyalty.has("amount")) {
+                                    mokafaaAmount = loyalty.getDouble("amount")
+                                    mukafaaTransactionAmount = loyalty.getDouble("amount")
+                                }
+                            }
+                            var isInclusive = false
+                            if (concept.vatType != null && concept.vatType.equals(
+                                    "inclusive", ignoreCase = true
+                                )
+                            ) {
+                                isInclusive = concept.vatType.equals("inclusive", ignoreCase = true)
+                            }
+                            val hasError = jsonObject.has("error") && !jsonObject.isNull("error")
+                            val hasPromotion = !hasError && CacheUtil.getInstance().hasPromotion()
+                            val orderData = OrderData.parse(jsonObject)
+                            cartView.setTax(
+                                isInclusive,
+                                StringUtil.getFormattedPrice(orderData.vatAmount),
+                                orderData.vatAmount
+                            )
+                            if (orderData.discount > 0) {
+                                cartView.setOriginalPrice(
+                                    hasPromotion, orderData.subtotal + orderData.deliverCharge
+                                )
+                            }
+                            showPrice(hasPromotion, orderData, mokafaaAmount)
+                            if (hasError) {
+                                CacheUtil.getInstance().couponCode = null
+                                CacheUtil.getInstance().couponName = null
+                                CacheUtil.getInstance().couponMenuItem = null
+                                CacheUtil.getInstance().couponToAdd = null
                                 CacheUtil.getInstance().digitalCoupons = ""
                                 CacheUtil.getInstance().campaign = null
                                 CacheUtil.getInstance().campaignPromotion = null
                                 CacheUtil.getInstance().campaignPromotionMenuItem = null
                                 CacheUtil.getInstance().campaignToAdd = null
-                                removeCoupon()
-                                result(
-                                    CouponResult(
-                                        false,
-                                        campaign,
-                                        jsonObject.getString("error"),
-                                        true
-                                    )
-                                )
+                                removeMukafaaRedemption()
+                                result(CouponResult(false, null, jsonObject.getString("error"), true))
                             } else {
-                                trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
-                                CacheUtil.getInstance().campaign = campaign
-                                CacheUtil.getInstance().campaignPromotion = campaign.promotion
-                                CacheUtil.getInstance().campaignPromotionMenuItem = null
-                                CacheUtil.getInstance().campaignToAdd = null
-                                val orderData = OrderData.parse(JSONObject(onNext.toString()))
-                                CacheUtil.getInstance().couponName = orderData.promotionName
-                                if (orderData.total < 0) {
-                                    orderData.total = 0.0
-                                }
-                                var isPromoItem = false
-                                if (cacheUtilHelper.getCartQuantity() > 0) {
-                                    try {
-                                        val cartItems =
-                                            if (jsonObject.isNull("items")) "" else jsonObject.optString(
-                                                "items"
-                                            )
-                                        val itemsList =
-                                            GsonHelper.gsonFinal().fromJson<List<MenuItem>>(
-                                                cartItems,
-                                                object : TypeToken<List<MenuItem?>?>() {}.type
-                                            )
-                                        val size = itemsList.size
-                                        validatedPromoItemPrice = 0.0
-                                        validatedPromoItemQuantity = 0
-                                        for (i in 0 until size) {
-                                            if (itemsList[i].isPromotion) {
-                                                isPromoItem = true
-                                                val mItem = itemsList[i]
-                                                validatedPromoItemPrice = mItem.price
-                                                validatedPromoItemQuantity = mItem.quantity
-                                                val attributes = MenuItemAttributes()
-                                                attributes.price =
-                                                    campaign.promotion.attributes.itemPrice
-                                                if (campaign.promotion != null && campaign.promotion.attributes.itemQuantity > 0) {
-                                                    attributes.quantity =
-                                                        campaign.promotion.attributes.itemQuantity
-                                                } else {
-                                                    attributes.quantity = 1
-                                                }
+                                if (orderData.promotionName != null || orderData.promotionName == null && orderData.promotionName.isNotEmpty()) {
+                                    trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
+                                    CacheUtil.getInstance().couponCode = couponCode
+                                    CacheUtil.getInstance().couponName = orderData.promotionName
+                                    var isFreeItem = false
+                                    for (i in 0 until itemsArray.length()) {
+                                        val itemObject = itemsArray.getJSONObject(i)
+                                        val item = GsonHelper.gsonFinal().fromJson(
+                                            itemObject.toString(), MenuItem::class.java
+                                        )
+                                        if (item.isPromotion) {
+                                            isFreeItem = true
+                                            if (CacheUtil.getInstance().couponMenuItem == null) {
                                                 getCouponMenuItem(
-                                                    mItem.id,
-                                                    attributes.quantity,
-                                                    attributes.price,
-                                                    attributes,
-                                                    campaign
+                                                    item.id, item.quantity, item.price, null, null
                                                 )
+                                            } else {
+                                                val couponName = CacheUtil.getInstance().couponName
+                                                if (couponName != null) {
+                                                    cartView.showCoupon(couponCode, couponName)
+                                                    cartView.addPromotionItem(CacheUtil.getInstance().couponMenuItem)
+                                                }
                                             }
+                                            break
                                         }
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
                                     }
-                                    cartView.setTax(
-                                        concept.vatType.equals("inclusive", ignoreCase = true),
-                                        StringUtil.getFormattedPrice(orderData.vatAmount),
-                                        orderData.vatAmount
-                                    )
-                                    if (orderData.discount > 0) {
-                                        cartView.setOriginalPrice(
-                                            true, orderData.subtotal + orderData.deliverCharge
-                                        )
+                                    if (!isFreeItem) {
+                                        showCoupon()
                                     }
-                                    if (!isPromoItem) {
-                                        cartView.setTotalPrice(
-                                            true,
-                                            orderData.subtotal,
-                                            orderData.discountDisplay,
-                                            orderData.total,
-                                            CacheUtil.getInstance().orderType == OrderType.DELIVERY,
-                                            orderData.deliverCharge,
-                                            orderData.charges,
-                                            0.0
-                                        )
-                                        cartView.showDigitalCoupon(campaign)
-                                    } else {
-                                        validatedOrderData = orderData
-                                    }
-                                    result(CouponResult(true, campaign, ""))
+                                    result(CouponResult(true, null, ""))
                                 } else {
-                                    result(CouponResult(false,null, ""))
+                                    CacheUtil.getInstance().couponCode = null
+                                    CacheUtil.getInstance().couponName = null
+                                    result(CouponResult(false, null, ""))
                                 }
                             }
-                        } catch (ex: JSONException) {
-                            validateDigitalCouponError(ex, result)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            result(CouponResult(false, null, ""))
                         }
+
                     }
             }
         }
@@ -3591,7 +3594,7 @@ class CartPresenter @Inject constructor(
 
     private fun createValidateCouponBody(
         menuItems: ArrayList<MenuItem>,
-        campaign: Campaign
+        code: String
     ): JsonObject {
         val customer = AuthUtil.getInstance().customer
         val concept = CacheUtil.getInstance().concept
@@ -3610,7 +3613,7 @@ class CartPresenter @Inject constructor(
         if (customer != null) {
             orderBody.addProperty("customer", customer.id)
         }
-        orderBody.addProperty("campaign-id", campaign.id)
+        orderBody.addProperty("coupon-code", code)
         orderBody.addProperty("source", "Android")
         orderBody.addProperty("notes", CacheUtil.getInstance().cartNotes)
         orderBody.addProperty(
