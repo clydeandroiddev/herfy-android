@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -1054,7 +1055,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             sizesRadiButton.setImageResource(R.drawable.modifier_item_radio_unselected)
 
                         }
-                        val container = view!!.findViewById<ConstraintLayout>(R.id.container)
+                        val container = view!!.findViewById<LinearLayout>(R.id.container)
                         container.tag = modifierItem.getId()
                         container.setOnClickListener { view1 ->
                             for (i in 0 until binding.sizesContainer.childCount) {
@@ -1111,6 +1112,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         val txtModifierSizes = view.findViewById<MaterialTextView>(R.id.name)
                         val txtModifierPrice =
                             view.findViewById<MaterialTextView>(R.id.txtSizesPrice)
+                        txtModifierPrice.setVisible(modifierItem.attributes.price != 0.0)
                         txtModifierPrice.text =
                             "+${StringUtil.getFormattedPrice(modifierItem.attributes.price)}"
                         txtModifierSizes.text = modifierItem.attributes.name
