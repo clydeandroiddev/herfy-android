@@ -3539,28 +3539,36 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void changeModifierItemQuantity(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem) {
+    public void changeModifierItemQuantity(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean isQuantityVisible) {
         if (!add) {
             int selectedItemMinusTotal = 0;
             ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
             ModifierItem item = group.getModifierItems().get(modifierItemPosition);
             if (modifierItem.getAttributes().getQuantity() == 1) {
-                item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() - 1);
-                if (item.getAttributes().isShouldShowQuantity() && modifierItem.getAttributes().getQuantity() <= modifierGroup.getAttributes().getMaximum()) {
-                    item.getAttributes().setModifierItemQuantityExceedsMaximum(false);
-                    item.getAttributes().setModifierItemInteraction(false);
+                if (Objects.equals(item.getId(), modifierItem.getId())) {
+                    item.getAttributes().setShouldShowQuantity(false);
                 }
-                item.getAttributes().setSelected(false);
+//                Log.d("FAFA", "Selected item mius total " + selectedItemMinusTotal);
+//                item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() - 1);
+//                if (modifierItem.getAttributes().getQuantity() <= modifierGroup.getAttributes().getMaximum()) {
+//                    for (ModifierItem eachItem : group.getModifierItems()) {
+//                        if (Objects.equals(modifierItem.getId(), item.getId())) {
+//                            eachItem.getAttributes().setModifierItemInteraction(false);
+//                            eachItem.getAttributes().setShouldShowQuantity(false);
+//                            eachItem.getAttributes().setModifierItemQuantityExceedsMaximum(false);
+//                        }
+//                    }
+//                }
             } else {
                 item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() - 1);
-                Log.d("FAFA","Decuted quantity bai " + item.getAttributes().getQuantity());
+                Log.d("FAFA", "Decuted quantity bai " + item.getAttributes().getQuantity());
                 for (ModifierItem eachItem : group.getModifierItems()) {
                     if (eachItem.getAttributes().isShouldShowQuantity()) {
                         selectedItemMinusTotal += eachItem.getAttributes().getQuantity();
                     }
                 }
-                Log.d("FAFA","Total bai " + selectedItemMinusTotal);
-                if (selectedItemMinusTotal <= modifierGroup.getAttributes().getMaximum()) {
+                Log.d("FAFA", "Total bai " + selectedItemMinusTotal);
+                if (selectedItemMinusTotal < modifierGroup.getAttributes().getMaximum()) {
                     for (ModifierItem eachModifierItem : group.getModifierItems()) {
                         if (eachModifierItem.getAttributes().hasUserInteractedWithModifierItem()) {
                             eachModifierItem.getAttributes().setModifierItemQuantityExceedsMaximum(selectedItemMinusTotal == modifierGroup.getAttributes().getMaximum() ? false : true);
@@ -3576,11 +3584,12 @@ public class MenuPresenter implements MenuContract.Presenter {
 
             ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
 //            } else {
-                ModifierItem item = group.getModifierItems().get(modifierItemPosition);
-                //for (ModifierItem item : group.getModifierItems()) {
-                if (item.getId().equals(modifierItem.getId())) {
-                    modifierItem.getAttributes().setShouldShowQuantity(true);
-                    item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() + 1);
+            for (ModifierItem item : group.getModifierItems()) {
+//                if (item.getId().equals(modifierItem.getId())) {
+                boolean isShouldCountTheQuantity = isQuantityVisible && item.getId().equals(modifierItem.getId());
+                item.getAttributes().setShouldShowQuantity(isShouldCountTheQuantity);
+//                    modifierItem.getAttributes().setShouldShowQuantity(true);
+//                    item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() + 1);
                     Log.d("FAFA", "New quantity " + item.getAttributes().getQuantity());
                 }
 
@@ -3593,36 +3602,59 @@ public class MenuPresenter implements MenuContract.Presenter {
 //
 //            }
 
-            for (ModifierItem eachModifierItem : group.getModifierItems()) {
-                if (eachModifierItem.getAttributes().isShouldShowQuantity()) {
-                    Log.d("FAFA", "Quantity bai " + eachModifierItem.getAttributes().getQuantity());
-                    selectedItems += eachModifierItem.getAttributes().getQuantity();
+                for (ModifierItem eachModifierItem : group.getModifierItems()) {
+                    if (eachModifierItem.getAttributes().isShouldShowQuantity()) {
+                        selectedItems += eachModifierItem.getAttributes().getQuantity();
+                    }
+
                 }
 
-            }
 
-
-            Log.d("FAFA", "Selected items  " + selectedItems + " Max " + modifierGroup.getAttributes().getMaximum());
-            if (selectedItems >= modifierGroup.getAttributes().getMaximum()) {
-                for (ModifierItem eachItems : group.getModifierItems()) {
-                    eachItems.getAttributes().setModifierItemInteraction(true);
-                    eachItems.getAttributes().setModifierItemQuantityExceedsMaximum(eachItems.getAttributes().isShouldShowQuantity() || eachItems.getAttributes().isSelected());
+                Log.d("FAFA", "Selected items  " + selectedItems + " Max " + modifierGroup.getAttributes().getMaximum());
+                if (selectedItems >= modifierGroup.getAttributes().getMaximum()) {
+                    menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT));
+                    for (ModifierItem eachItems : group.getModifierItems()) {
+                        eachItems.getAttributes().setModifierItemInteraction(true);
+                        eachItems.getAttributes().setModifierItemQuantityExceedsMaximum(eachItems.getAttributes().isShouldShowQuantity() || eachItems.getAttributes().isSelected());
+                    }
+                } else {
+                    //for (ModifierGroup group : menuItem.getModifierGroups()) {
+                    //if (group.getId().equals(modifierGroup.getId())) {
+                    ModifierItem item = group.getModifierItems().get(modifierItemPosition);
+                    //for (ModifierItem item : group.getModifierItems()) {
+                    if (item.getId().equals(modifierItem.getId())) {
+                        boolean isShouldCountTheQuantity = isQuantityVisible && item.getId().equals(modifierItem.getId());
+                        item.getAttributes().setShouldShowQuantity(isShouldCountTheQuantity);
+                        item.getAttributes().setQuantity(modifierItem.getAttributes().getQuantity() + 1);
+                        if (item.getAttributes().isShouldShowQuantity()) {
+                            selectedItems = item.getAttributes().getQuantity();
+                            Log.d("FAFA","Selected item bai " + selectedItems);
+                        }
+                        //break
+                    }
+                    if (selectedItems >= modifierGroup.getAttributes().getMaximum()) {
+                        menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT));
+                        for (ModifierItem eachItems : group.getModifierItems()) {
+                            eachItems.getAttributes().setModifierItemInteraction(true);
+                            eachItems.getAttributes().setModifierItemQuantityExceedsMaximum(eachItems.getAttributes().isShouldShowQuantity() || eachItems.getAttributes().isSelected());
+                        }
+                    }
                 }
-            }
 
 
 //                Log.d("FAFA","Item quantity "  + modifierItem.getAttributes().getQuantity());
 
 
-        }
-        getMenuItemTotalPrice(menuItem, modifierGroupPosition);
+            }
+            getMenuItemTotalPrice(menuItem, modifierGroupPosition);
 
 //                Log.d("FAFA","Item quantity "  + modifierItem.getAttributes().getQuantity());
 
 
 //            getMenuItemTotalPrice(menuItem, modifierGroupPosition);
 //        }
-    }
+        }
+
 
 
 
