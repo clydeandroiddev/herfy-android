@@ -30,7 +30,6 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 
 import java.util.HashMap;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -128,23 +127,23 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             check.setImageResource(R.drawable.modifier_item_unselected);
         }
         plus.setVisibility(modifierGroupAttributes.getMaximum() > 1 ? View.VISIBLE : View.GONE);
-        if (clickCountMap.size() >= 1 && !modifierItem.getAttributes().hasModifierItemExceedMaximum() && !modifierItem.getAttributes().hasUserInteractedWithModifierItem() && modifierItem.getAttributes().getQuantity() == 0) {
-            Integer clickCount = clickCountMap.get(modifierItem.getId());
-            Log.d("FAFA","Click count bai " + clickCount);
-            if ( clickCount != null && clickCount >= 1 ) {
+//        if (clickCountMap.size() >= 1  && modifierItem.getAttributes().getQuantity() == 1) {
+//            Integer clickCount = clickCountMap.get(modifierItem.getId());
+//            if ( clickCount != null && clickCount >= 1 ) {
+//
+//                clickCountMap.remove(modifierItem.getId());
+//                Log.d("FAFA","Remove bai");
+//            }
+//        }
 
-                clickCountMap.remove(modifierItem.getId());
-            }
-        }
-        Log.d("FAFA", "User quantity" + modifierItem.getAttributes().getQuantity());
         quantity.setText(StringUtil.localize(String.valueOf("0" + modifierItem.getAttributes().getQuantity())));
         if (clickCountMap.size() >= 1) {
             Integer clickCount = clickCountMap.get(modifierItem.getId());
+            Log.d("FAFA","Click count bai" + clickCount  + "By " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
             if (clickCount != null) {
-                Log.d("FAFA","Click count size " + clickCount);
                 boolean shouldShowQuantityLayout = modifierGroup.getAttributes().getMaximum() > 1 &&
                         modifierItem.getAttributes().getMaximum() > 1 && clickCount >= 1 && modifierItem.getAttributes().isShouldShowQuantity();
-                Log.d("FAFA","Should show more than two" + shouldShowQuantityLayout);
+                Log.d("FAFA","Should show visible " + shouldShowQuantityLayout + "By name " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
                 quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
             }
         }
@@ -179,8 +178,8 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         } else {
             modifierOptionImage.setVisibility(View.GONE);
         }
-//
-        if (modifierItem.getAttributes().hasModifierItemExceedMaximum() && modifierItem.getAttributes().hasUserInteractedWithModifierItem()) {
+        if (modifierItem.getAttributes().hasModifierItemExceedMaximum() && modifierItem.getAttributes().hasUserInteractedWithModifierItem() ) {
+            Log.d("FAFA","Enable modifier naem " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
             plus.setEnabled(true);
             plus.setImageResource(R.drawable.quantity_up_blue);
             modifierItemCardView.setEnabled(true);
@@ -192,56 +191,27 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 plus.setImageResource(R.drawable.quantity_up_blue);
                 modifierItemCardView.setEnabled(true);
             } else {
+                Log.d("FAFA","Disable name " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
                 plus.setEnabled(false);
                 plus.setImageResource(R.drawable.quantity_up_blue_gray);
                 modifierItemCardView.setEnabled(false);
             }
-//            if (subtractMap.size() >=1 && !modifierItem.getAttributes().hasUserInteractedWithModifierItem()) {
-//                if (subtractMap.containsKey(modifierItem.getId()))  {
-//                  Integer quantity =  subtractMap.get(modifierItem.getId());
-//                  Log.d("FAFA","Quantity " + quantity);
-//                  if (quantity != null && quantity >= 1) {
-//                  plus.setEnabled(true);
-//                  plus.setImageResource(R.drawable.quantity_up_blue);
-//                  modifierItemCardView.setEnabled(true);
-//                  }
-//
-//                } else {
-//                  Log.d("FAFA","Modifier name " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
-//                  if (modifierItem.getAttributes().getQuantity() >= modifierGroup.getAttributes().getMaximum()) {
-//                      plus.setEnabled(false);
-//                      plus.setImageResource(R.drawable.quantity_up_blue_gray);
-//                      modifierItemCardView.setEnabled(false);
-//                  }else {
-//                      plus.setEnabled(true);
-//                      plus.setImageResource(R.drawable.quantity_up_blue);
-//                      modifierItemCardView.setEnabled(true);
-//                  }
-//            }
-//            }else {
-//                plus.setEnabled(false);
-//                plus.setImageResource(R.drawable.quantity_up_blue_gray);
-//                modifierItemCardView.setEnabled(false);
-//            }
         }
 
-
+        plus.setFocusable(modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum());
+        plus.setClickable(modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum());
+        Log.d("FAFA","Modifier name " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()) + "Quantity " + modifierItem.getAttributes().getQuantity() + " Max "  + modifierGroup.getAttributes().getMaximum() + "Is clickable " + plus.isClickable());
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String modifierItemId = modifierItem.getId();
-                if (!clickCountMap.containsKey(modifierItemId)) {
+                if (!clickCountMap.containsKey(modifierItemId) && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum() ) {
                     clickCountMap.put(modifierItemId, 0);
                     boolean shouldShowQuantityLayout = modifierGroup.getAttributes().getMaximum() > 1 &&
                             modifierItem.getAttributes().getMaximum() > 1;
                     Log.d("FAFA","Should show quantity "  + shouldShowQuantityLayout);
-                    action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
 
-//                    if (quantityDownLayout.getVisibility() == View.VISIBLE) {
-//                        action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
-//                    }
-//
                 }
 
                 Integer clickCount = clickCountMap.get(modifierItemId);
@@ -249,35 +219,34 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 clickCount = clickCount == null ? 1 : clickCount + 1;
                 Log.d("FAFA","New click count " + clickCount);
                 clickCountMap.put(modifierItemId, clickCount);
-
-                if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount > 1) {
-                    action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
+                Log.d("FAFA", "User " + (modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()));
+                if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount > 1 && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
+                    Log.d("FAFA","Triggerd bai");
+                    action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE );
                 }
             }
         });
-
+        minus.setFocusable(modifierItem.getAttributes().getQuantity() != 1);
+        minus.setClickable(modifierItem.getAttributes().getQuantity() != 1);
         minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 boolean shouldShowQuantityLayout = modifierGroup.getAttributes().getMaximum() > 1 &&
                         modifierItem.getAttributes().getMaximum() > 1 && modifierItem.getAttributes().getQuantity() > 0;
-                if (action != null && (modifierItem.getAttributes().getQuantity() > 1 || modifierItem.getAttributes().getMinimum() != 1)) {
-                    if (modifierItem.getAttributes().getQuantity() >= 1) {
-                        subtractMap.put(modifierItem.getId(),modifierItem.getAttributes().getQuantity());
-                    }else {
-                        if (subtractMap.containsKey(modifierItem.getId())) {
-                            Integer value = subtractMap.get(modifierItem.getId());
-                            if (value != null && value >= 1) {
-                                Log.d("FAFA","Test baii");
-                            }
-                        }
-                    }
-                    action.onQuantityChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
-                }
+                removeItemFromClickCountMap(modifierItem);
             }
         });
     }
-
+    private void removeItemFromClickCountMap(ModifierItem modifierItem) {
+        if (clickCountMap.size() >= 1 && modifierItem.getAttributes().getQuantity() == 1) {
+            Integer clickCount = clickCountMap.get(modifierItem.getId());
+            if (clickCount != null && clickCount >= 1) {
+                quantityDownLayout.setVisibility(View.GONE);
+                clickCountMap.remove(modifierItem.getId());
+                Log.d("FAFA", "Remove bai");
+            }
+        }
+    }
     public static boolean isProbablyArabic(String s) {
         for (int i = 0; i < s.length(); ) {
             int c = s.codePointAt(i);
