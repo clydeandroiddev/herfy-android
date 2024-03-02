@@ -92,8 +92,14 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
     @BindView(R.id.tv_modifiers)
     TextView tvModifiers;
 
-    @BindView(R.id.space_modifiers)
-    Space spaceModifiers;
+    @BindView(R.id.fl_notes)
+    FrameLayout flNotes;
+
+    @BindView(R.id.tv_notes)
+    TextView tvNotes;
+
+    @BindView(R.id.line_sep_edit)
+    View lineSepEdit;
 
     public CartMenuItemViewHolder(Context context, CartContract.Presenter cartPresenter, View itemView) {
 
@@ -374,31 +380,33 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         if (modifierItemsCounter > 1) {
             lnModifiersDropdown.setVisibility(View.VISIBLE);
             tvModifiers.setVisibility(View.VISIBLE);
-            spaceModifiers.setVisibility(View.GONE);
             tvModifiers.setText(stringBuilder);
             txtAddOnTotal.setText(String.valueOf(modifierItemsCounter));
         } else if (modifierItemsCounter > 0) {
             lnModifiersDropdown.setVisibility(View.GONE);
             tvModifiers.setVisibility(View.VISIBLE);
-            spaceModifiers.setVisibility(View.GONE);
             tvModifiers.setText(stringBuilder);
         } else {
             lnModifiersDropdown.setVisibility(View.GONE);
-            tvModifiers.setVisibility(View.GONE);
-            spaceModifiers.setVisibility(View.VISIBLE);
+            tvModifiers.setVisibility(View.INVISIBLE);
         }
 
         lnModifiersDropdown.setOnClickListener(view -> {
             if(tvModifiers.getVisibility() == View.VISIBLE){
                 ViewExtensionsKt.collapse(tvModifiers);
                 icModifierItemsDropDown.setRotation(180f);
-                spaceModifiers.setVisibility(View.VISIBLE);
             }else {
-                spaceModifiers.setVisibility(View.GONE);
                 ViewExtensionsKt.expand(tvModifiers);
                 icModifierItemsDropDown.setRotation(0f);
             }
         });
+        String menuItemNotes = menuItem.getAttributes().getNotes();
+       if(menuItemNotes != null && !menuItemNotes.isEmpty()){
+           flNotes.setVisibility(View.VISIBLE);
+           tvNotes.setText(menuItemNotes);
+       }else {
+           flNotes.setVisibility(View.GONE);
+       }
 
         first = true;
 
@@ -417,7 +425,16 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
                 stringBuilder.append(ingredient.getAttributes().getName());
             }
         }
-        edit.setVisibility(menuItem.isPromo() ? View.INVISIBLE : View.VISIBLE);
+        if(menuItem.getAttributes().isUpsell()){
+            edit.setVisibility(menuItem.isCustomizable() ? View.VISIBLE : View.INVISIBLE);
+            lineSepEdit.setVisibility(menuItem.isCustomizable() ? View.VISIBLE : View.INVISIBLE);
+        }else if(menuItem.isPromo()){
+            edit.setVisibility(View.INVISIBLE);
+            lineSepEdit.setVisibility(View.INVISIBLE);
+        }else {
+            edit.setVisibility(View.VISIBLE);
+            lineSepEdit.setVisibility(View.VISIBLE);
+        }
 
         edit.setOnClickListener(new View.OnClickListener() {
             @Override

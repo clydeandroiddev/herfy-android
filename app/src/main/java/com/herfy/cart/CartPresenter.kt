@@ -1,6 +1,7 @@
 package com.herfy.cart
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Handler
 import com.google.gson.Gson
 import com.google.gson.JsonArray
@@ -24,6 +25,7 @@ import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.intersect
 import com.herfy.utils.handler.ErrorHandler
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
@@ -105,6 +107,7 @@ class CartPresenter @Inject constructor(
     private var validatedPromoItemQuantity = 0
     private var validatedOrderData: OrderData? = null
     private var upsells: MutableList<MenuItem> = ArrayList()
+    private var currUpsells = arrayListOf<MenuItem>()
 
     val contextPool = CoroutineContextProvider()
     override fun start() {
@@ -1096,6 +1099,11 @@ class CartPresenter @Inject constructor(
                     removeItem,
                     getMenuItemTotalPrice(menuItems[position], -1) * removeItem.attributes.quantity
                 )
+                val deletedItem = menuItems[position]
+                upsells.find { u -> u.id == deletedItem.id && deletedItem.attributes.isUpsell }?.let {
+                    currUpsells.add(it)
+                    cartView.showUpsell(currUpsells)
+                }
                 menuItems.removeAt(position)
                 removeMukafaaRedemption()
                 CacheUtil.getInstance().cart = menuItems
@@ -1692,8 +1700,8 @@ class CartPresenter @Inject constructor(
         removeMukafaa()
     }
 
-    override fun proceed(scheduleTime: String) {
-        var scheduleTime: String? = scheduleTime
+    override fun proceed(scheduleTime: String?) {
+        var _scheduleTime: String? = scheduleTime
         if (CacheUtil.getInstance().cartQuantity > 0) {
             if (AuthUtil.getInstance().isSignedIn) {
                 val orderType = CacheUtil.getInstance().orderType
@@ -1701,9 +1709,9 @@ class CartPresenter @Inject constructor(
                     if (orderType == OrderType.PICKUP || orderType == OrderType.EAT_IN || orderType == OrderType.DRIVE_THRU || orderType == OrderType.DINE_IN || orderType == OrderType.CURBSIDE || orderType == OrderType.DELIVERY && CacheUtil.getInstance().orderAddress != null) {
                         if (CacheUtil.getOrderStoreId() != null) {
                             if (!CacheUtil.getInstance().concept.allowAdvanceOrder) {
-                                scheduleTime = null
+                                _scheduleTime = null
                             }
-                            getStoreOpen(scheduleTime!!)
+                            getStoreOpen(_scheduleTime)
                         } else {
                             validateOrder(false, true, scheduleTime!!)
                         }
@@ -1723,7 +1731,7 @@ class CartPresenter @Inject constructor(
         }
     }
 
-    override fun getStoreOpen(scheduleTime: String) {
+    override fun getStoreOpen(scheduleTime: String?) {
         var newScheduleTime = scheduleTime
         if (scheduleTime == null || scheduleTime.isEmpty()) {
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH)
@@ -2077,6 +2085,7 @@ class CartPresenter @Inject constructor(
                                 }
                                 upsell.modifierGroups = upsellGroups
                                 upsell.toCdn(CacheUtil.getOrderStoreId())
+                                upsell.attributes.isUpsell = true
                             }
                             it.sortWith { menuItem1, menuItem2 -> menuItem1.attributes.displayOrder - menuItem2.attributes.displayOrder }
                         } ?: run {
@@ -2086,7 +2095,18 @@ class CartPresenter @Inject constructor(
                             clear()
                             addAll(upsells)
                         }
-                        cartView.showUpsell(upsells)
+                        currUpsells.clear()
+                        val testUpsell1 = arrayListOf<MenuItem>()
+                        for (upsell in upsells) {
+                            val isFound = menuItems.find { m -> m.id == upsell.id && m.attributes.isUpsell } != null
+
+                            if(!isFound){
+                                currUpsells.add(upsell)
+                            }
+                        }
+
+                        val testUpsell2 = upsells.intersect(menuItems){ upsell, cartItems -> cartItems.attributes.isUpsell  && cartItems.id != upsell.id}
+                        cartView.showUpsell(currUpsells)
                     } catch (e: JSONException) {
                         e.printStackTrace()
                         onError(e)
@@ -3125,11 +3145,11 @@ class CartPresenter @Inject constructor(
     }
 
     override fun onBindUpsellViewAtPosition(position: Int, holder: UpsellViewHolder) {
-        holder.setUpsell(upsells[position])
+        holder.setUpsell(currUpsells[position])
     }
 
     override fun getUpsellCount(): Int {
-        return upsells.size
+        return currUpsells.size
     }
 
     override fun goToItemDetails(position: Int, upsell: MenuItem?) {
@@ -3146,7 +3166,16 @@ class CartPresenter @Inject constructor(
             )
         } else {
             CacheUtil.getInstance().addToCart(upsell)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                currUpsells.removeIf { u -> u.id == upsell.id}
+            }else {
+                val addedUpsellIndex = upsells.indexOfFirst { i -> i.id == upsell.id }
+                if(addedUpsellIndex != -1){
+                    currUpsells.removeAt(addedUpsellIndex)
+                }
+            }
             cartView.showCartMenuItemsLoading()
+            cartView.showUpsell(currUpsells)
             getMenuItems()
         }
     }

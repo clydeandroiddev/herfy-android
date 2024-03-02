@@ -164,7 +164,7 @@ public interface CartContract {
 
         void removeCoupon();
 
-        void proceed(String scheduleTime);
+        void proceed(@Nullable String scheduleTime);
 
         void getStoreOpen(String scheduleTime);
 

@@ -20,7 +20,7 @@
 
     <androidx.core.widget.NestedScrollView
         app:layout_constraintTop_toBottomOf="@id/toolbar_title"
-       app:layout_constraintBottom_toTopOf="@+id/footer"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="match_parent"
@@ -61,108 +61,6 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/footer"
-        android:layout_width="match_parent"
-        android:layout_height="108dp"
-        android:background="#E6F0F7"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="18dp"
-            android:paddingTop="2dp"
-            android:paddingEnd="18dp"
-            android:paddingBottom="9dp">
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.42" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/original_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#0064AC"
-                android:textSize="15sp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/total_price"
-                app:layout_constraintStart_toStartOf="parent"
-                android:includeFontPadding="false"
-                tools:text="SAR 26"
-                tools:visibility="visible" />
-
-            <View
-                android:id="@+id/dashed"
-                android:layout_width="0dp"
-                android:layout_height="1.1dp"
-                android:layout_marginStart="6dp"
-                android:background="@color/home_indicator"
-                app:layout_constraintBottom_toBottomOf="@id/original_price"
-                app:layout_constraintEnd_toEndOf="@id/original_price"
-                app:layout_constraintTop_toTopOf="@id/original_price" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/total_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#0064AC"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:includeFontPadding="false"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                tools:text="SAR 25" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/total_vat_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#0064AC"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/total_price"
-                app:layout_constraintEnd_toStartOf="@+id/center"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                android:includeFontPadding="false"
-                tools:text="Total is inclusive of VAT" />
-
-
-            <com.google.android.material.button.MaterialButton
-                android:backgroundTint="#0064AC"
-                android:id="@+id/place_order"
-                android:layout_width="0dp"
-                android:layout_height="52dp"
-                android:layout_marginStart="16dp"
-                android:enabled="false"
-                android:gravity="center"
-                android:paddingStart="5dp"
-                android:paddingTop="0dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="0dp"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                app:cornerRadius="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/center"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:enabled="true"
-                tools:text="Checkout" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

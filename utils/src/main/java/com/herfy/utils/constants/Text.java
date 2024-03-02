@@ -340,7 +340,7 @@ public class Text {
     public static final String FEEDBACK = "feedback";
     public static final String TRACKING_STATUS = "tracking_status";
     public static final String MODIFIER_MINIMUM_LIMIT = "modifier_minimum_limit";
-    public static final String TOTAL_INCLUSIVE_VAT = "total_inclusive_vat";
+    public static final String TOTAL_INCLUSIVE_VAT = "total_is_inclusive_vat";
     public static final String TAX = "tax";
     public static final String SELECT_ATLEAST = "select_atleast";
     public static final String SELECT_X = "select_x";
@@ -931,4 +931,9 @@ public class Text {
     public static final String INVALID_FOR_THIS_ORDER="invalid_for_this_order";
     public static final String GOT_IT_LABEL="got_it_label";
     public static final String ADD_MORE_ITEMS_LABEL="add_more_items_label";
+    public static final String COUPON_DISCOUNT_LABEL="coupon_discount_label";
+    public static final String CHECKOUT_LABEL="checkout_label";
+
+    public static final String ADD_MORE_ITEM_LABEL="add_more_item_label";
+    public static final String YOUR_CART_IS_EMPTY_LABEL="your_cart_is_empty";
 }
