@@ -874,7 +874,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             var _totalPrice = totalPrice
             validatedTotalPrice = _totalPrice
             binding.paymentSummaryContainer.subtotal.text =
-                CurrencyUtils.updateCurrency(subTotal, true, hasPromotion)
+                CurrencyUtils.updateCurrency(subTotal, true, subTotal <= 0.0)
             if (discountAmount != 0.0) {
                 binding.paymentSummaryContainer.discountLayout.visibility = View.VISIBLE
                 binding.paymentSummaryContainer.couponDiscount.text = CurrencyUtils.updateCurrency(
