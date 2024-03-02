@@ -18,7 +18,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
@@ -646,7 +645,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             modifierGroupPosition: Int,
                             modifierGroup: ModifierGroup,
                             modifierItemPosition: Int,
-                            modifierItem: ModifierItem
+                            modifierItem: ModifierItem,
+                            isQuantityVisible: Boolean
                         ) {
                             Log.d("OnAction", "onCheckedChanged - Add: " + add +
                                     ", modifierGroupPosition: " + modifierGroupPosition +
@@ -660,6 +660,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 modifierGroup,
                                 modifierItemPosition,
                                 modifierItem,
+                                isQuantityVisible
                             )
                             setSizes(menuItem)
                             shouldReset = false
