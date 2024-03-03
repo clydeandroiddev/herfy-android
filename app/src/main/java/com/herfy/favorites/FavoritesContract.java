@@ -70,6 +70,8 @@ public interface FavoritesContract {
 
         void removeMukafaaRedemption();
 
+        void getFavouritesByOrderTypeId(long orderTypeId, String orderTypeName);
+
     }
 
 }
