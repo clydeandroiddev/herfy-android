@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -267,7 +268,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
         totalContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Log.d("FAFA","Total clicked");
                 if (cartMenuItem >= 0) {
                     menuPresenter.updateCartItem(false, cartMenuItem);
                 } else {

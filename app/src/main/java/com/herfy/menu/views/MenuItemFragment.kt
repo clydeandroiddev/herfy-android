@@ -298,7 +298,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             val activity: Activity? = activity
             if (activity != null) {
                 binding.sizesRecyclerView.layoutManager = LinearLayoutManager(activity)
-                binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(activity);
+                binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(activity)
                 binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(activity)
                 (binding.modifierGroupsRecyclerView.itemAnimator as SimpleItemAnimator?)!!.supportsChangeAnimations =
                     false
@@ -646,21 +646,17 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             modifierGroup: ModifierGroup,
                             modifierItemPosition: Int,
                             modifierItem: ModifierItem,
-                            isQuantityVisible: Boolean
+                            isQuantityVisible: Boolean,
+                            clickCount: Int
                         ) {
-                            Log.d("OnAction", "onCheckedChanged - Add: " + add +
-                                    ", modifierGroupPosition: " + modifierGroupPosition +
-                                    ", modifierGroup: " + modifierGroup +
-                                    ", modifierItemPosition: " + modifierItemPosition +
-                                    ", modifierItem: " + modifierItem.name +
-                                     "Quantity " + modifierItem.attributes.quantity);
                             menuPresenter!!.changeModifierItemQuantity(
                                 add,
                                 modifierGroupPosition,
                                 modifierGroup,
                                 modifierItemPosition,
                                 modifierItem,
-                                isQuantityVisible
+                                isQuantityVisible,
+                                clickCount
                             )
                             setSizes(menuItem)
                             shouldReset = false
@@ -1000,7 +996,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 binding.checkBox.setVisible(true)
                 binding.sizesLabel.text = menuItem.sizes.attributes.name
                 if (menuItem.sizes.modifierItems.size <= 3) {
-                    menuItem.getSizes().getModifierItems().forEach { modifierItem ->
+                    menuItem.sizes.modifierItems.forEach { modifierItem ->
                         val view = LayoutInflater.from(activity)
                             .inflate(R.layout.item_new_sizes_fixed, binding.sizesContainer, false)
                         view.tag = modifierItem.id
@@ -1021,7 +1017,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 card.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_blue))
                                 sizesRadiButton.setImageResource(R.drawable.ic_size_drawable_checked)
                                 initialSelectedEncountered =true
-                            }else {
+                            } else {
 //                                card.strokeWidth =
 //                                    ViewUtil.dpToPx(requireActivity(), 1)
 //                                card.strokeColor = ContextCompat.getColor(
