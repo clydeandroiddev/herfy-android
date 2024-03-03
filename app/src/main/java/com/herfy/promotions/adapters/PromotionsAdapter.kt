@@ -1,28 +1,26 @@
 package com.herfy.promotions.adapters
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.herfy.databinding.ItemPromotionsBinding
-import com.herfy.utils.constants.Values
+import com.herfy.home.R
+import com.herfy.home.databinding.ItemPromotionBinding
+import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
-import java.util.Locale
+import java.util.regex.Pattern
 
 /**
  * [PromotionsAdapter] adapter for displaying all the menu categories and items
  */
 class PromotionsAdapter(
-    private var campaigns: Array<Campaign>,
-    private var onSelect: (Campaign) -> Unit
+    val promoList : ArrayList<Campaign> = arrayListOf(),
+    val promoListener : com.herfy.home.adapter.PromotionsAdapter.PromotionListener,
+    val itemHeight : Int, val itemWidth : Int,
+    val defaultOrderTypeCount: Int,
+    val cacheUtil: CacheUtil
 ) : RecyclerView.Adapter<PromotionsAdapter.CampaignViewHolder>() {
 
     /**
@@ -30,70 +28,58 @@ class PromotionsAdapter(
      * @param binding as [ItemPromotionsBinding] the views to be binded
      */
     class CampaignViewHolder(
-        private val binding: ItemPromotionsBinding,
-        private val onSelect: (Campaign) -> Unit
+        private val binding: ItemPromotionBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         /**
          * bind the [Campaign] to display
          */
-        fun bind(campaign: Campaign) {
+        fun bind(campaign: Campaign, cacheUtil: CacheUtil, promoListener: com.herfy.home.adapter.PromotionsAdapter.PromotionListener, defaultOrderTypeCount: Int) {
+            binding.apply {
+                var orderTypeCountVal = 0
+                var orderTypeVal = ""
+                var orderTypeIconVal = -1
 
-            if (CacheUtil.getInstance().campaign != null) {
-                if (campaign.id.equals(CacheUtil.getInstance().campaign.id, ignoreCase = true)) {
-                    binding.card.strokeWidth = 2
-                } else {
-                    binding.card.strokeWidth = 0
+                val promoRules = campaign.promotion.attributes.rules
+                if(promoRules.isNotEmpty() && promoRules.find { rule -> rule.ruleKey.equals("order-type", true) } != null){
+                    promoRules.find { rule -> rule.ruleKey.equals("order-type", true) }?.let {
+                        val orderTypes = it.text.split(Pattern.compile(","))
+                        when(orderTypes[0]){
+                            "pickup" -> {
+                                orderTypeVal = cacheUtil.getTranslations(Text.PICKUP)
+                                orderTypeIconVal = R.drawable.ic_pickup_promo
+                            }
+                            "eat-in"-> {
+                                orderTypeVal = cacheUtil.getTranslations(Text.DINE_IN)
+                            }
+                            "delivery"->{
+                                orderTypeVal = cacheUtil.getTranslations(Text.DELIVERY)
+                                orderTypeIconVal = R.drawable.ic_delivery_promo
+                            }
+                            "curbside"->{
+                                orderTypeVal = cacheUtil.getTranslations(Text.CURBSIDE_PICKUP)
+                                orderTypeIconVal = R.drawable.ic_drive_thru_promo
+                            }
+                            "drive-thru"->{
+                                orderTypeVal = cacheUtil.getTranslations(Text.DRIVE_THRU)
+                                orderTypeIconVal = R.drawable.ic_drive_thru_promo
+                            }
+                        }
+                        orderTypeCountVal = orderTypes.size
+                    }
+                }else if(promoRules.isEmpty() || promoRules.find { rules -> rules.ruleKey.equals("order-type") } == null) {
+                    if(defaultOrderTypeCount > 0){
+                        orderTypeVal = cacheUtil.getTranslations(Text.DELIVERY)
+                        orderTypeIconVal = R.drawable.ic_delivery_promo
+                        orderTypeCountVal = defaultOrderTypeCount
+                    }
                 }
-            } else {
-                binding.card.strokeWidth = 0
+                promo = campaign
+                orderTypeCount = orderTypeCountVal
+                orderType = orderTypeVal
+                orderTypeIcon = orderTypeIconVal
+                listener = promoListener
+                executePendingBindings()
             }
-
-            binding.card.setOnClickListener {
-                onSelect(campaign)
-            }
-
-            binding.digitalName.text = campaign.attributes.name
-
-            binding.digitalDesc.text = campaign.attributes.description
-
-            var imageUrl = campaign.attributes.imageUri
-            if (imageUrl == null || imageUrl.equals(
-                    "null",
-                    ignoreCase = true
-                ) || imageUrl.isEmpty() || imageUrl.lowercase(
-                    Locale.getDefault()
-                ).contains("default-image.png")
-            ) {
-                imageUrl = Values.DEFAULT_IMAGE_URL
-            }
-
-            Glide.with(itemView.context).load(imageUrl).skipMemoryCache(false)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .listener(object : RequestListener<Drawable?> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        binding.digitalImage.visibility = View.INVISIBLE
-                        binding.progressImage.visibility = View.VISIBLE
-                        return false
-                    }
-
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        binding.digitalImage.visibility = View.VISIBLE
-                        binding.progressImage.visibility = View.GONE
-                        return false
-                    }
-                }).into(binding.digitalImage)
-
         }
     }
 
@@ -105,8 +91,10 @@ class PromotionsAdapter(
         /**
          * inflates the current layout with view holder
          */
-        ItemPromotionsBinding.inflate(LayoutInflater.from(parent.context), parent, false).also {
-            return CampaignViewHolder(it, onSelect)
+        ItemPromotionBinding.inflate(LayoutInflater.from(parent.context), parent, false).also {
+            val params = it.root.layoutParams as GridLayoutManager.LayoutParams
+            params.height = itemHeight
+            return CampaignViewHolder(it)
         }
     }
 
@@ -114,16 +102,17 @@ class PromotionsAdapter(
      * Binds the data to the view
      */
     override fun onBindViewHolder(holder: CampaignViewHolder, position: Int) {
-        holder.bind(campaigns[position])
+        holder.bind(promoList[position],cacheUtil, promoListener, defaultOrderTypeCount)
     }
 
     /**
      * Returns the number of menu categories
      */
-    override fun getItemCount(): Int = campaigns.size
+    override fun getItemCount(): Int = promoList.size
 
-    fun updateCampaigns(campaigns: Array<Campaign>) {
-        this.campaigns = campaigns
+    fun updateCampaigns(campaigns: List<Campaign>) {
+        this.promoList.clear()
+        this.promoList.addAll(campaigns)
         notifyDataSetChanged()
     }
 

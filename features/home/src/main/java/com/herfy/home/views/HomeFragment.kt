@@ -24,13 +24,13 @@ import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.observeNonNull
+import com.herfy.utils.extensions.setInteractionDisabled
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.ViewUtil
-import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
@@ -240,12 +240,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.showPromo.observeNonNull(this) {
             it.getContentIfNotHandled()?.let {promo ->
-                promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(promo, object : PromotionDetailBottomSheet.onAction{
-                    override fun onClickClaimPromo(promo: Campaign) {
-
-                    }
-
-                })
+                promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(promo, viewModel)
                 promotionDetailBottomSheet?.show(
                     childFragmentManager, PromotionDetailBottomSheet::class.java.simpleName
                 )
@@ -439,8 +434,32 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
+        viewModel.showCart.observeNonNull(this){
+
+            it.getContentIfNotHandled()?.let { isAvail ->
+                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
+                //TODO 
+               /* NavigationUtils.navigateSafe(
+                    findNavController(),
+                    PromotionsFragmentDirections.actionPromotionsToCart(
+                        isFromPromotions = isAvail
+                    )
+                )*/
+            }
+        }
+
+        viewModel.showProgressBar.observe(this){
+            activity?.window?.setInteractionDisabled(it)
+            if(it){
+                showProgressDialog(true)
+            }else {
+                dismissProgressDialog()
+            }
+        }
+
 
     }
+
 
     private fun orderTypeClick(orderType: OrderType) {
         activity?.let {
