@@ -1,6 +1,5 @@
 package com.herfy.favorites;
 
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
@@ -1126,9 +1125,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void getFavouritesByOrderTypeId(long orderTypeId, String orderTypeName) {
-        Log.d("FAFA","Order type name " + orderTypeName);
        OrderType type =  OrderType.Companion.fromFavouriteType(orderTypeName);
-        Log.d("FAFA","Order type selected " + type.name());
        CacheUtil.getInstance().setOrderType(type);
     }
 }
