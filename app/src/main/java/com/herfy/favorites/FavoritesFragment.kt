@@ -131,7 +131,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
     override fun showFavorites(favorites: ArrayList<Favorite>) {
         val mockOrderTypes = listOf(
             FakeOrderTypeUIModel(id = 1, "Delivery"),
-            FakeOrderTypeUIModel(id = 2, "Pick up"),
+            FakeOrderTypeUIModel(id = 2, "Pickup"),
             FakeOrderTypeUIModel(id = 3, "Dine In")
         )
         activity?.let { activity ->

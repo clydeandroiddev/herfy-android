@@ -81,6 +81,7 @@ import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import io.shipbook.shipbooksdk.Log
 import java.util.*
 
 
@@ -528,7 +529,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             var orderType = CacheUtil.getInstance().orderType
             if (typeOrder != 0) {
                 orderType = OrderType.fromInt(typeOrder)
-            }
+            }else
             when (orderType) {
                 OrderType.DELIVERY -> {
                     binding.typeGroup.check(R.id.deliveryButton)

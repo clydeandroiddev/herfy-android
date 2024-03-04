@@ -69,6 +69,7 @@
       android:id="@+id/orderTypeContainer"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_xlarge"
       android:layout_marginEnd="12dp"
       android:orientation="horizontal"
       android:layout_marginStart="@dimen/margin_large"
