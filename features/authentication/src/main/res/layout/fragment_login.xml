@@ -11,7 +11,7 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:scaleType="centerCrop"
+            android:scaleType="fitXY"
             android:src="@drawable/signup_pic"
             app:layout_constraintBottom_toTopOf="@id/view"
             app:layout_constraintStart_toEndOf="parent"
@@ -36,7 +36,7 @@
             android:paddingTop="@dimen/margin_20dp"
             android:paddingEnd="16dp"
             android:paddingBottom="30dp"
-            app:layout_constraintBottom_toTopOf="@id/confirm_container">
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/titleLabel"
@@ -112,7 +112,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/loginButon"
+                android:id="@+id/loginButton"
                 style="@style/Styles.Text.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -126,41 +126,79 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Continue" />
 
-        </LinearLayout>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/confirm_container"
-            android:layout_width="match_parent"
-            android:layout_height="68dp"
-            app:cardBackgroundColor="#FFFFFF"
-            app:cardElevation="6dp"
-            app:cardUseCompatPadding="false"
-            app:layout_constraintBottom_toBottomOf="parent">
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/continueButton"
-                    style="@style/Styles.Text.Caption"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/background_button_common"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/orLabel"
+                    style="@style/TextAppearance.Footnote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#55667B"
+                    android:textSize="11sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Continue" />
+                    tools:text="Or" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0.5dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="#E6E8EB"
+                    app:layout_constraintBottom_toBottomOf="@id/orLabel"
+                    app:layout_constraintEnd_toStartOf="@id/orLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/orLabel" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="8dp"
+                    android:background="#E6E8EB"
+                    app:layout_constraintBottom_toBottomOf="@id/orLabel"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/orLabel"
+                    app:layout_constraintTop_toTopOf="@id/orLabel" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/loginGoogle"
+                style="@style/Styles.Text.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/background_stroke_gray"
+                android:gravity="center"
+                android:textColor="#101010"
+                android:textSize="16sp"
+                app:icon="@drawable/ic_google"
+                app:iconGravity="textStart"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Continue with Google" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/loginGuest"
+                style="@style/Styles.Text.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/background_stroke_blue"
+                android:gravity="center"
+                android:textColor="#1848A8"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Continue as Guest" />
+        </LinearLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
