@@ -435,16 +435,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.showCart.observeNonNull(this){
-
             it.getContentIfNotHandled()?.let { isAvail ->
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
-                //TODO 
-               /* NavigationUtils.navigateSafe(
-                    findNavController(),
-                    PromotionsFragmentDirections.actionPromotionsToCart(
-                        isFromPromotions = isAvail
+                val request = NavDeepLinkRequest.Builder.fromUri(
+                    Uri.parse(
+                        "${Values.NAV_DEEP_LINK_BASE_URL}nav_cart/${isAvail}"
                     )
-                )*/
+                ).build()
+                NavigationUtils.navigateSafe(findNavController(), request)
             }
         }
 

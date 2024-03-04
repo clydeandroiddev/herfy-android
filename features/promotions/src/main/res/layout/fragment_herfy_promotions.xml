@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="#F7F7F7">
 
 
@@ -13,6 +14,7 @@
         android:background="#F7F7F7"
         android:paddingHorizontal="16dp"
         app:navButton="@drawable/ic_plain_close"
+        android:elevation="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -38,7 +40,6 @@
             android:visibility="gone"
             app:constraint_referenced_ids="rv_promo_category,rv_promotions" />
 
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_promo_category"
             android:layout_width="0dp"
@@ -59,15 +60,90 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rv_promo_category" />
 
-        <com.herfy.common.component.EmptyStateView
-            android:id="@+id/empty_promotions"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_empty_state"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="0dp"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:visibility="gone"/>
+            app:layout_constraintBottom_toBottomOf="parent">
+
+
+            <androidx.constraintlayout.helper.widget.Flow
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:flow_verticalGap="36dp"
+                app:flow_verticalAlign="top"
+                app:flow_horizontalAlign="center"
+                app:flow_wrapMode="aligned"
+                app:constraint_referenced_ids="iv_empty_state,ln_empty_state"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/btn_go_to_menu"/>
+
+
+            <ImageView
+                android:id="@+id/iv_empty_state"
+                android:layout_width="78dp"
+                android:layout_height="74dp"
+                android:src="@drawable/herfy_logo_arabic"/>
+            
+            <LinearLayout
+                android:id="@+id/ln_empty_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingHorizontal="60dp"
+                >
+
+                <TextView
+                    android:id="@+id/tv_empty_state_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    tools:text="Stay Tuned for Culinary Delights!"
+                    android:textColor="@color/primaryTextColor"
+                    style="@style/Styles.Text.SmallTitle"/>
+
+                <TextView
+                    android:id="@+id/tv_empty_state_context"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:layout_marginTop="4dp"
+                    android:textSize="11sp"
+                    style="@style/Styles.Text.Caption.Regular"
+                    android:textColor="@color/secondaryTextColor"
+                    tools:text="Our promotions are on a brief pause, but get ready for a mouthwatering comeback in just a few days."/>
+
+
+
+            </LinearLayout>
+            
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_go_to_menu"
+                android:background="@drawable/common_rounder_corner"
+                android:layout_width="171dp"
+                android:layout_height="48dp"
+                android:layout_marginBottom="35dp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textAppearance="@style/TextAppearance.Footnote.Semi_Bold"
+                tools:text="Go To Menu"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

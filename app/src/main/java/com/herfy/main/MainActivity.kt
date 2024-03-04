@@ -28,7 +28,6 @@ import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -819,17 +818,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         binding.sidebar.promotions.setOnClickListener { view: View? ->
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            /*if (isDefaultHomeScreenDesign) {
-                NavigationUtils.navigateSafe(
-                    navController,
-                    NewMenuFragmentDirections.actionMenuToPromotions()
-                )
-            } else {
-                NavigationUtils.navigateSafe(
-                    navController,
-                    NewMenuHomePageFragmentDirections.actionHomeToPromotions()
-                )
-            }*/
+            NavigationUtils.navigateSafe(
+                navController,
+                HomeFragmentDirections.actionHomeToPromotions()
+            )
         }
         binding.toolbarMain.apply {
             setSideButtonAction {

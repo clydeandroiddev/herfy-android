@@ -962,4 +962,7 @@ public class Text {
 
     public static final String A_FEW_MORE_THINGS = "a_few_more_things";
 
+    public static final String STAY_TUNED_PROMO = "stay_tuned_promo";
+    @Nullable
+    public static final String PROMOTION_EMPTY_CONTENT="promotion_empty_content";
 }

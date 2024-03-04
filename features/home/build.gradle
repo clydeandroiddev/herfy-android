@@ -134,5 +134,8 @@ dependencies {
     //Diagonal Imageview
     implementation 'com.github.santalu:diagonal-imageview:1.1.1'
 
+    //FlexBox
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
 
 }

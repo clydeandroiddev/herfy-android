@@ -87,6 +87,12 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
         binding.toolbarTitle.setNavButtonAction{
             findNavController().navigateUp()
         }
+        binding.btnGoToMenu.setOnClickListener{
+            NavigationUtils.navigateSafe(
+                findNavController(),
+                PromotionsFragmentDirections.actionPromotionsToMenu()
+            )
+        }
         setupPromoCategory()
         setupPromotions()
 
@@ -118,6 +124,7 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
         promotionsPresenter.getPromotionCategoryList()
         context?.let { ctx ->
             binding.apply {
+                placeholderPromotions.shimmerPromotionsTitle.gone()
                 promoCategoryAdapter =
                     PromotionCategoryAdapter(categoryListener = promotionsPresenter)
                 binding.apply {
@@ -141,10 +148,10 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
         binding.apply {
             toolbarTitle.title =
                 CacheUtil.getInstance().getTranslations(Text.PROMOTIONS, "Promotions")
-            emptyPromotions.setTitle(
-                CacheUtil.getInstance()
-                    .getTranslations(Text.NO_PROMOTIONS_FOUND, "No promotions found")
-            )
+            tvEmptyStateTitle.text = CacheUtil.getInstance()
+                    .getTranslations(Text.STAY_TUNED_PROMO, "Stay Tuned for Culinary Delights!")
+            tvEmptyStateContext.text = CacheUtil.getInstance().getTranslations(Text.PROMOTION_EMPTY_CONTENT, "Our promotions are on a brief pause, but get ready for a mouthwatering comeback in just a few days.")
+            btnGoToMenu.text = CacheUtil.getInstance().getTranslations(Text.GO_TO_MENU, "Go To Menu")
         }
     }
 
@@ -152,7 +159,6 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
         runOnMain {
             binding.apply {
                 placeholderPromotions.clPlaceholderPromo.gone()
-                rvPromotions.visible()
             }
             digitalCoupons.clear()
             digitalCoupons.addAll(campaigns)
@@ -175,7 +181,6 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
     override fun showPromotionsCategory(promocateglist: MutableList<PromotionCategory>) {
         runOnMain {
             binding.apply {
-                placeholderPromotions.shimmerPromotionsCategory.gone()
                 if (promocateglist.size > 0) {
                     promoCategoryAdapter.updateList(promocateglist)
                 }
@@ -207,8 +212,12 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
     }
 
     private fun checkCampaigns() {
-        binding.emptyPromotions.isVisible = digitalCoupons.isEmpty()
-        binding.rvPromotions.isVisible = digitalCoupons.isNotEmpty()
+        binding.grpPromo.apply {
+            if(digitalCoupons.isNotEmpty()) visible() else gone()
+        }
+        binding.clEmptyState.apply {
+            if(digitalCoupons.isEmpty()) visible() else gone()
+        }
     }
 
     private fun getCampaignPromotionItem(digitalCoupon: Campaign?) {
