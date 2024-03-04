@@ -1,6 +1,7 @@
-package com.herfy.authentication
+package com.herfy.authentication.views
 
 import androidx.fragment.app.viewModels
+import com.herfy.authentication.R
 import com.herfy.authentication.databinding.FragmentLoginBinding
 import com.herfy.authentication.viewmodel.LoginViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
