@@ -1,5 +1,6 @@
 package com.herfy.favorites;
 
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
@@ -52,6 +53,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class FavoritesPresenter implements FavoritesContract.Presenter {
 
@@ -83,10 +86,12 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void getFavorites(int page) {
+        Executor executor = Executors.newSingleThreadExecutor();
         CustomersApiCall.getInstance().getAllCustomerFavoriteItems(AuthUtil.getInstance().getCustomer().getId(), String.valueOf(page), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
+                    AppDatabase appDatabase = AppDatabase.getInstance();
                     JSONObject object = new JSONObject(o.toString());
 
                     Pagination pagination = Pagination.parse(object);
@@ -99,6 +104,12 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                         JSONObject favorite = data.getJSONObject(i);
                         favorites.add(Favorite.parseFavorites(favorite));
                     }
+//                    executor.execute(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            appDatabase.favouriteDao().insertAll(favorites);
+//                        }
+//                    });
 
                     if (page == pagination.getTotalPages()) {
                         favoritesView.showFavorites(favorites);
@@ -253,7 +264,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     public void addToCartFavorite(Favorite favorite, ImageView view) {
         imageView = view;
         favoritesView.showLoadingDialog();
-
+        Log.d("FAFA","Favourite " + favorite);
         addCartItem(favorite);
     }
 
@@ -334,16 +345,17 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                 try {
                     String categoryId;
                     JSONObject object = new JSONObject(o.toString());
+                    Log.d("FAFA","Response bai " + o.toString());
                     JSONArray dataArray = object.getJSONArray("data");
 
                     if (dataArray.length() > 0) {
-
-                        MenuItem menuItem = GsonHelper.gsonFinal().fromJson(dataArray.getJSONObject(0).toString(), MenuItem.class);
-                        menuItem.toCdn(CacheUtil.getOrderStoreId());
+                            MenuItem menuItem = GsonHelper.gsonFinal().fromJson(dataArray.getJSONObject(0).toString(), MenuItem.class);
+                            menuItem.toCdn(CacheUtil.getOrderStoreId());
 
                         try {
                             menuItem.isCombo = dataArray.getJSONObject(0).getJSONObject("attributes").getBoolean("is-combo");
                         } catch (Exception e) {
+                            Log.d("FAFA","Test exception " + e.getLocalizedMessage());
                             e.printStackTrace();
                         }
 
@@ -762,6 +774,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                         this.onError("");
                     }
                 } catch (JSONException e) {
+                    Log.d("FAFA","Exception bai " + e.getLocalizedMessage());
                     e.printStackTrace();
                     this.onError(e);
                 }
