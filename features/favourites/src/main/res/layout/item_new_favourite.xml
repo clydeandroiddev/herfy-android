@@ -85,29 +85,29 @@
                 app:layout_constraintEnd_toEndOf="parent" />
             <TextView
                 android:id="@+id/txtModifierItemName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@+id/favorite_icon"
                 android:layout_marginTop="@dimen/_4sdp"
                 style="@style/Styles.Text.Caption.Semibold"
                 android:fontFamily="@font/inter_bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtCalories"
-                android:layout_marginStart="@dimen/margin_large"
-
+                android:layout_marginStart="16dp"
                 android:layout_gravity="center_vertical"
                 android:gravity="start|center_vertical"
                 android:paddingStart="@dimen/_10sdp"
                 android:paddingEnd="4dp"
                 android:textAlignment="viewStart"
                 android:textColor="#0C0C0C"
-                tools:text="Marinara dip" />
+                tools:text="Marinara" />
 
             <TextView
                 android:id="@+id/txtFavouriteDescription"
                 style="@style/Styles.Text.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginStart="16dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginTop="@dimen/margin_small"
                 android:ellipsize="end"
