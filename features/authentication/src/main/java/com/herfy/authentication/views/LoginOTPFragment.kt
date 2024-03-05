@@ -27,26 +27,7 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
     override fun initTranslations() {
         super.initTranslations()
         binding.apply {
-            mobileNumberDialCode.text = "+966"
 
-            titleLabel.text = CacheUtil.getInstance().getTranslations(
-                Text.JOIN_NOW, "Join now and start ordering, earning points and much more"
-            )
-            mobileNumberLabel.text = CacheUtil.getInstance().getTranslations(
-                Text.MOBILE_NUMBER, "Mobile Number"
-            )
-            loginButton.text = CacheUtil.getInstance().getTranslations(
-                Text.CONTINUE_LABEL, "Continue"
-            )
-            orLabel.text = CacheUtil.getInstance().getTranslations(
-                Text.OR, "Or"
-            )
-            loginGoogle.text = CacheUtil.getInstance().getTranslations(
-                Text.CONTINUE_WITH_GOOGLE, "Continue with Google"
-            )
-            loginGuest.text = CacheUtil.getInstance().getTranslations(
-                Text.CONTINUE_AS_GUEST, "Continue as Guest"
-            )
         }
     }
 
