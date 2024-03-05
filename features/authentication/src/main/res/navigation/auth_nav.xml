@@ -12,7 +12,7 @@
         <action
             android:id="@+id/action_login_to_otp"
             app:destination="@id/loginOTPFragment"
-            app:popUpTo="@+id/nav_login_fragment"/>
+            app:popUpTo="@+id/nav_login_fragment" />
 
     </fragment>
 
@@ -25,6 +25,48 @@
             android:name="phoneNumber"
             app:argType="string"
             app:nullable="false" />
+
+        <argument
+            android:name="isVerified"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="isGuest"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="customerId"
+            app:argType="string"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/action_otp_to_inputUser"
+            app:destination="@id/inputUserDetailFragment"
+            app:popUpTo="@+id/nav_login_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/inputUserDetailFragment"
+        android:name="com.herfy.authentication.views.InputUserDetailFragment"
+        tools:layout="@layout/fragment_add_new_name">
+
+        <argument
+            android:name="phoneNumber"
+            app:argType="string"
+            app:nullable="false" />
+
+        <argument
+            android:name="isVerified"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="isGuest"
+            android:defaultValue="false"
+            app:argType="boolean" />
 
         <argument
             android:name="customerId"

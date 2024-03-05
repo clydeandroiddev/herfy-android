@@ -9,9 +9,11 @@ import com.herfy.authentication.state.LoginViewState
 import com.herfy.authentication.viewmodel.LoginViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.collectViewModelState
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -86,9 +88,14 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
         viewModel.state.collectViewModelState(viewLifecycleOwner) {
             when (it) {
                 is LoginViewState.UserLogin -> {
+                    val status = it.customer.attributes.status.lowercase(Locale.getDefault())
+                        .trim { it <= ' ' }
                     findNavController().navigate(
                         LoginFragmentDirections.actionLoginToOtp(
-                            phoneNumber = it.customer.attributes.mobile, customerId = it.customer.id
+                            phoneNumber = it.customer.attributes.mobile,
+                            customerId = it.customer.id,
+                            isVerified = status == Values.STATUS_VERIFIED,
+                            isGuest = false
                         )
                     )
                 }

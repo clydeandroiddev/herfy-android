@@ -2,17 +2,25 @@ package com.herfy.authentication.views
 
 import android.annotation.SuppressLint
 import android.os.CountDownTimer
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.herfy.authentication.R
 import com.herfy.authentication.databinding.FragmentOtpPageBinding
+import com.herfy.authentication.state.LoginOTPPageViewState
 import com.herfy.authentication.viewmodel.LoginOTPViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.StringUtil
+import com.herfy.utils.helper.collectViewModelState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,12 +41,109 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
         super.initViews()
         binding.apply {
             continueButton.setOnClickListener {
-
+                val code =
+                    StringUtil.toEnglish(codeOne.text.toString() + codeTwo.text.toString() + codeThree.text.toString() + codeFour.text.toString() + codeFive.text.toString() + codeSix.text.toString())
+                toNextPage()
             }
+
             backButton.setOnClickListener {
                 navigateUp()
             }
 
+            codeOne.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable) {
+                    codeOne.setText(StringUtil.localize(codeOne.text.toString()))
+                    codeOne.setSelection(s.length)
+                    val nextField = codeOne.focusSearch(View.FOCUS_RIGHT) as TextView
+                    nextField.requestFocus()
+                }
+            })
+
+            codeTwo.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable) {
+                    codeTwo.setText(StringUtil.localize(codeTwo.text.toString()))
+                    codeTwo.setSelection(s.length)
+                    val nextField = codeTwo.focusSearch(View.FOCUS_RIGHT) as TextView
+                    nextField.requestFocus()
+                }
+            })
+
+            codeThree.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable) {
+                    codeThree.setText(StringUtil.localize(codeThree.text.toString()))
+                    codeThree.setSelection(s.length)
+                    val nextField = codeThree.focusSearch(View.FOCUS_RIGHT) as TextView
+                    nextField.requestFocus()
+                }
+            })
+
+            codeFour.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable) {
+                    codeFour.setText(StringUtil.localize(codeFour.text.toString()))
+                    codeFour.setSelection(s.length)
+                    val nextField = codeFour.focusSearch(View.FOCUS_RIGHT) as TextView
+                    nextField.requestFocus()
+                }
+            })
+
+            codeFive.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable) {
+                    codeFive.setText(StringUtil.localize(codeFive.text.toString()))
+                    codeFive.setSelection(s.length)
+                    val nextField = codeFive.focusSearch(View.FOCUS_RIGHT) as TextView
+                    nextField.requestFocus()
+                }
+            })
+
+            codeSix.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable) {
+                    codeSix.setText(StringUtil.localize(codeSix.text.toString()))
+                    codeSix.setSelection(s.length)
+                }
+            })
+
+            codeSix.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    continueButton.performClick()
+                    true
+                } else false
+            }
         }
         initTimer()
         initArgs()
@@ -46,7 +151,7 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
     private fun enableResend() {
         binding.sendAgainLayout.setOnClickListener {
-
+            viewModel.resend(args.customerId, args.phoneNumber)
         }
     }
 
@@ -55,9 +160,13 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
         countDownTimer = object : CountDownTimer(countDownTime, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 countDownTime = millisUntilFinished
+                var second = (millisUntilFinished / 1000).toInt()
+                if (second == 0) {
+                    second = 1
+                }
                 binding.resendText.text = (CacheUtil.getInstance()
                     .getTranslations(Text.SEND_AGAIN_LABEL, "Send again ((x)s)").replace(
-                        "(x)", StringUtil.localize((millisUntilFinished / 1000).toString())
+                        "(x)", StringUtil.localize(second.toString())
                     ))
             }
 
@@ -86,6 +195,44 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
     override fun observe() {
         super.observe()
+        viewModel.state.collectViewModelState(viewLifecycleOwner) {
+            when (it) {
+                is LoginOTPPageViewState.UserResend -> {
+                    if (countDownTimer != null) {
+                        countDownTimer!!.cancel()
+                    }
+                    initTimer()
+                }
+
+                is LoginOTPPageViewState.ShowLoading -> {
+                    if (it.loading) {
+                        showProgressDialog(
+                            false, CacheUtil.getInstance().getTranslations(Text.LOADING, "Loading")
+                        )
+                    } else {
+                        dismissProgressDialog()
+                    }
+                }
+
+                is LoginOTPPageViewState.ShowError -> {
+                    showAlertDialog(
+                        title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
+                        message = it.error
+                    )
+                }
+            }
+        }
+    }
+
+    private fun toNextPage() {
+        findNavController().navigate(
+            LoginOTPFragmentDirections.actionOtpToInputUser(
+                phoneNumber = args.phoneNumber,
+                customerId = args.customerId,
+                isVerified = args.isVerified,
+                isGuest = args.isGuest
+            )
+        )
     }
 
     private fun initArgs() {

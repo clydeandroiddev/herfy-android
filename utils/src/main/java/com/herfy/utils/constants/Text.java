@@ -958,4 +958,8 @@ public class Text {
     public static final String NEXT = "next";
     public static final String SEND_AGAIN_LABEL = "send_again_label";
 
+    public static final String SETUP_ACCOUNT = "setup_account";
+
+    public static final String A_FEW_MORE_THINGS = "a_few_more_things";
+
 }

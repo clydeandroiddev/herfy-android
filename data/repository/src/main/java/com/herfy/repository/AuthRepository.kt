@@ -1,7 +1,8 @@
 package com.herfy.repository
 
 import com.google.gson.Gson
-import com.herfy.model.LoginResponse
+import com.herfy.model.auth.LoginResponse
+import com.herfy.model.auth.ResendResponse
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
@@ -22,6 +23,10 @@ import javax.inject.Inject
 interface AuthRepository {
 
     suspend fun login(phoneNumber: String, result: (LoginResponse) -> Unit)
+
+    suspend fun sendVerification(
+        customerId: String, customerNumber: String, result: (ResendResponse) -> Unit
+    )
 
 }
 
@@ -50,7 +55,9 @@ class AuthRepositoryImpl @Inject constructor(
                                         customer.attributes.mobile
                                     )
                                 ) {
-                                    sendVerification(customer)
+                                    verificationSend(
+                                        customer.id, customer.attributes.mobile
+                                    )
                                 }
                                 result(LoginResponse(true, true, customer, ""))
                             }
@@ -124,8 +131,25 @@ class AuthRepositoryImpl @Inject constructor(
         })
     }
 
-    private fun sendVerification(customer: Customer) {
-        val resendSMSBody = ResendSMSBody(customer.id, customer.attributes.mobile)
+    override suspend fun sendVerification(
+        customerId: String, customerNumber: String, result: (ResendResponse) -> Unit
+    ) {
+        val resendSMSBody = ResendSMSBody(customerId, customerNumber)
+        CustomersApiCall.getInstance().resendSMS(resendSMSBody, object : ApiRequestListener {
+            override fun onSuccess(o: Any) {
+                result(ResendResponse(true, ""))
+            }
+
+            override fun onError(o: Any) {
+                result(ResendResponse(true, ""))
+            }
+        })
+    }
+
+    fun verificationSend(
+        customerId: String, customerNumber: String
+    ) {
+        val resendSMSBody = ResendSMSBody(customerId, customerNumber)
         CustomersApiCall.getInstance().resendSMS(resendSMSBody, object : ApiRequestListener {
             override fun onSuccess(o: Any) {}
             override fun onError(o: Any) {

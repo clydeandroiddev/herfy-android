@@ -1,5 +1,9 @@
 package com.herfy.auth.views
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.navigation.fragment.NavHostFragment
 import com.herfy.R
@@ -15,7 +19,7 @@ class AuthActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
-
+        setupBroadcastReceiver()
         CacheUtil.getInstance().signinUsername = ""
 
         val navHostFragment =
@@ -42,6 +46,34 @@ class AuthActivity : BaseActivity() {
 
         navController.setGraph(graph, bundle)
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(actReceiver)
+    }
+
+    private val actReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            showMain()
+        }
+    }
+
+    private fun setupBroadcastReceiver() {
+        registerReceiver(
+            actReceiver,
+            IntentFilter(getString(com.herfy.authentication.R.string.exit_to_home))
+        )
+    }
+
+    fun showMain() {
+        val intent = Intent(this, com.herfy.main.MainActivity::class.java)
+        intent.putExtra("home", true)
+        intent.putExtra("menu", true)
+        intent.putExtra("sign_in", true)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+        finish()
     }
 
     override fun onSupportNavigateUp(): Boolean {

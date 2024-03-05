@@ -1,4 +1,4 @@
-package com.herfy.model
+package com.herfy.model.auth
 
 data class LoginResponse(
     val success: Boolean,
