@@ -1,13 +1,16 @@
 package com.herfy.utils.base.mvvm
 
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
@@ -18,6 +21,7 @@ import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.NavigationCommand
 import com.herfy.utils.helper.ViewUtil
+
 
 abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment() {
     abstract val viewModel: T
@@ -69,6 +73,7 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
 
     fun showProgressDialog(cancelTouchOutside: Boolean? = true, message: String?) {
         if (progressDialog?.isShowing == false) {
+            progressDialog?.setMessage(message)
             progressDialog?.setCanceledOnTouchOutside(cancelTouchOutside ?: true)
             progressDialog?.show()
         }
@@ -86,6 +91,12 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
                 handleNavigation(navigationCommand)
             }
         }
+    }
+
+    fun hideKeyboard(view: View) {
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        imm!!.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun handleNavigation(navCommand: NavigationCommand) {

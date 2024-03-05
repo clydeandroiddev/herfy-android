@@ -46,6 +46,7 @@ public class Text {
     public static final String ENTER_FIRST_NAME = "enter_first_name";
     public static final String ENTER_LAST_NAME = "enter_last_name";
     public static final String ENTER_PHONE_NUMBER = "enter_phone_number";
+    public static final String ENTER_PHONE_NUMBER_LABEL = "enter_phone_number_label";
     public static final String ENTER_PHONE_NUMBER_CAPS = "enter_phone_number_caps";
     public static final String ENTER_EMAIL = "enter_email";
     public static final String ENTER_PASSWORD = "enter_password";
@@ -949,10 +950,10 @@ public class Text {
     public static final String ENTER_SIX_DIGIT = "enter_six_digit";
     public static final String CONFIRM_YOUR_NUMBER = "confirm_your_number";
     public static final String CONTINUE_WITH_GOOGLE = "continue_with_google";
-
+    public static final String SEND_CODE_LABEL = "send_code_label";
     public static final String CONTINUE_AS_GUEST = "continue_as_guest";
     public static final String CHOOSE_LANGUAGE_ENGLISH = "chose_your_language_english";
     public static final String CHOOSE_LANGUAGE_ARABIC = "chose_your_language_arabic";
-
+    public static final String ENTER_NUMBER_DESCRIPTION = "enter_number_description";
     public static final String NEXT = "next";
 }

@@ -17,6 +17,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
+    private lateinit var addNumberDialog: AddNumberDialog
+
     override val viewModel: LoginViewModel by viewModels()
 
     override val layout: Int = R.layout.fragment_login
@@ -25,6 +27,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
         super.initViews()
         binding.apply {
             loginButton.setOnClickListener {
+                hideKeyboard(binding.root)
                 viewModel.login(
                     mobileNumberDialCode.text.toString(), binding.phoneNumberEdit.text.toString()
                 )
@@ -39,7 +42,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
             }
 
             loginGuest.setOnClickListener {
-
+                showAddNumber(true)
             }
 
             phoneNumberEdit.setOnEditorActionListener { v, actionId, event ->
@@ -93,8 +96,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                 is LoginViewState.ShowLoading -> {
                     if (it.loading) {
                         showProgressDialog(
-                            false,
-                            CacheUtil.getInstance().getTranslations(Text.LOADING, "Loading")
+                            false, CacheUtil.getInstance().getTranslations(Text.LOADING, "Loading")
                         )
                     } else {
                         dismissProgressDialog()
@@ -108,6 +110,38 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     )
                 }
             }
+        }
+    }
+
+    private fun showAddNumber(fromGuest: Boolean) {
+        dismissAddNumberDialog()
+        addNumberDialog = AddNumberDialog.newInstance(object : AddNumberDialog.OnSubmit {
+            override fun onSubmit(phoneNumber: String) {
+
+            }
+
+            override fun exit() {
+                dismissAddNumberDialog()
+            }
+
+            override fun onError(error: String) {
+                showAlertDialog(
+                    title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
+                    message = error
+                )
+            }
+
+        })
+        addNumberDialog.show(
+            requireActivity().supportFragmentManager, AddNumberDialog::class.java.simpleName
+        )
+    }
+
+    private fun dismissAddNumberDialog() {
+        try {
+            addNumberDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
         }
     }
 }
