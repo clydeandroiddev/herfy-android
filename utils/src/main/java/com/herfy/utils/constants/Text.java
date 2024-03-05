@@ -956,4 +956,6 @@ public class Text {
     public static final String CHOOSE_LANGUAGE_ARABIC = "chose_your_language_arabic";
     public static final String ENTER_NUMBER_DESCRIPTION = "enter_number_description";
     public static final String NEXT = "next";
+    public static final String SEND_AGAIN_LABEL = "send_again_label";
+
 }
