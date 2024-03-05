@@ -19,8 +19,8 @@ android {
         consumerProguardFiles "consumer-rules.pro"
     }
 
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        viewBinding true
     }
 
     buildTypes {
@@ -35,6 +35,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    buildFeatures {
+        viewBinding true
+        dataBinding true
     }
 }
 

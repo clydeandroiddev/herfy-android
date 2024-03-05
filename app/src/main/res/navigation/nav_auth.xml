@@ -9,12 +9,27 @@
         android:name="com.herfy.authentication.views.LoginFragment"
         tools:layout="@layout/fragment_login">
 
+        <action
+            android:id="@+id/action_login_to_otp"
+            app:destination="@id/loginOTPFragment"
+            app:popUpTo="@+id/nav_login_fragment"/>
+
     </fragment>
 
     <fragment
-        android:id="@+id/nav_login_otp_fragment"
+        android:id="@+id/loginOTPFragment"
         android:name="com.herfy.authentication.views.LoginOTPFragment"
         tools:layout="@layout/fragment_otp_page">
+
+        <argument
+            android:name="phoneNumber"
+            app:argType="string"
+            app:nullable="false" />
+
+        <argument
+            android:name="customerId"
+            app:argType="string"
+            app:nullable="false" />
 
     </fragment>
 

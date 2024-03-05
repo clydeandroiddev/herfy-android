@@ -946,9 +946,13 @@ public class Text {
     public static final String SEND_AGAIN = "send_again";
     public static final String CONFIRM_NUMBER = "confirm_number";
 
+    public static final String ENTER_SIX_DIGIT = "enter_six_digit";
+    public static final String CONFIRM_YOUR_NUMBER = "confirm_your_number";
     public static final String CONTINUE_WITH_GOOGLE = "continue_with_google";
 
     public static final String CONTINUE_AS_GUEST = "continue_as_guest";
     public static final String CHOOSE_LANGUAGE_ENGLISH = "chose_your_language_english";
     public static final String CHOOSE_LANGUAGE_ARABIC = "chose_your_language_arabic";
+
+    public static final String NEXT = "next";
 }

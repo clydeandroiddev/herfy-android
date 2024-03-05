@@ -23,7 +23,7 @@ class AuthActivity : BaseActivity() {
         val navController = navHostFragment.navController
 
         val inflater = navController.navInflater
-        val graph = inflater.inflate(R.navigation.nav_auth)
+        val graph = inflater.inflate(R.navigation.auth_nav)
 
         val bundle = Bundle()
 //        intent.extras?.let {
@@ -35,7 +35,7 @@ class AuthActivity : BaseActivity() {
 //        bundle.putBoolean("checkout", false)
 //
 //        if (!guest) {
-            graph.setStartDestination(R.id.nav_login_fragment)
+        graph.setStartDestination(R.id.nav_login_fragment)
 //        } else {
 //            graph.setStartDestination(R.id.nav_guest)
 //        }

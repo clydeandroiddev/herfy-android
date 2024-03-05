@@ -1,34 +1,35 @@
 package com.herfy.authentication.views
 
-import android.net.Uri
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import com.herfy.authentication.R
 import com.herfy.authentication.databinding.FragmentLoginBinding
+import com.herfy.authentication.state.LoginViewState
 import com.herfy.authentication.viewmodel.LoginViewModel
-import com.herfy.utils.analytics.MixpanelUtil
-import com.herfy.utils.base.mvvm.BaseActivity
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
-import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.helper.CacheUtil
-import com.herfy.utils.helper.NavigationUtils
+import com.herfy.utils.helper.collectViewModelState
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
     override val viewModel: LoginViewModel by viewModels()
+
     override val layout: Int = R.layout.fragment_login
 
     override fun initViews() {
         super.initViews()
         binding.apply {
             loginButton.setOnClickListener {
-                viewModel.login(mobileNumberDialCode.text.toString() + binding.phoneNumberEdit.text.toString())
+                viewModel.login(
+                    mobileNumberDialCode.text.toString(), binding.phoneNumberEdit.text.toString()
+                )
             }
 
             closeButton.setOnClickListener {
@@ -41,6 +42,13 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
             loginGuest.setOnClickListener {
 
+            }
+
+            phoneNumberEdit.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    loginButton.performClick()
+                    true
+                } else false
             }
         }
     }
@@ -81,20 +89,24 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
             )
         }
 
-        viewModel.showLoading.observeNonNull(this) { showLoading ->
-            activity?.cast<BaseActivity<*, *>> {
-                it.runOnUiThread {
-                    if (showLoading) {
-                        it.showProgressDialog(false)
+        viewModel.state.collectViewModelState(viewLifecycleOwner) {
+            when (it) {
+                is LoginViewState.UserLogin -> {
+                    findNavController().navigate(
+                        LoginFragmentDirections.actionLoginToOtp(
+                            phoneNumber = it.customer.attributes.mobile, customerId = it.customer.id
+                        )
+                    )
+                }
+
+                is LoginViewState.ShowLoading -> {
+                    if (it.loading) {
+                        showProgressDialog(false)
                     } else {
-                        it.dismissProgressDialog()
+                        dismissProgressDialog()
                     }
                 }
             }
-        }
-
-        viewModel.customer.observeNonNull(this) {
-
         }
     }
 }
