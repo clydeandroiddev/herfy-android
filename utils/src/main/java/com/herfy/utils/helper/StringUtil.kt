@@ -2,8 +2,10 @@ package com.herfy.utils.helper
 
 
 import android.content.Context
+import android.util.Patterns
 import com.herfy.utils.R
 import com.herfy.utils.constants.Values
+import java.util.regex.Pattern
 
 
 object StringUtil {
@@ -43,6 +45,7 @@ object StringUtil {
             appName
         }
     }
+
     fun fetchEmojiFlag(countryCode: String): String? {
         val code = countryCode.uppercase()
         val flagOffset = 0x1F1E6
@@ -51,6 +54,7 @@ object StringUtil {
         val secondChar = Character.codePointAt(code, 1) - asciiOffset + flagOffset
         return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
     }
+
     fun localizeNumberForLocale(number: String): String? {
         return if (LocaleUtil.getInstance().isEnglish) {
             number // No need for localization if the locale is English
@@ -77,6 +81,24 @@ object StringUtil {
     private fun String.replaceDecimalPointWithComma(): String {
         return this.replace(".", ",")
     }
+
+    fun isValidPhoneNumber(phone: String): Boolean {
+        val valid: Boolean = if (!CacheUtil.getInstance().concept.mobileFormat
+                    .isEmpty()
+            ) {
+                val pattern = Pattern.compile(CacheUtil.getInstance().concept.mobileFormat)
+                pattern.matcher(toEnglish(phone))
+                    .matches()
+            } else if (CacheUtil.getInstance().concept.country.equals("sa", ignoreCase = true)) {
+                val pattern =
+                    Pattern.compile("([0-9\\s\\-]{7,})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$")
+                pattern.matcher(phone).matches()
+            } else {
+                Patterns.PHONE.matcher(phone).matches()
+            }
+        return phone.isNotEmpty() && valid
+    }
+
     fun toEnglish(number: String): String? {
         return if (LocaleUtil.getInstance().isEnglish) {
             number

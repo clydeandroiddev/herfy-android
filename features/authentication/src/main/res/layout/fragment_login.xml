@@ -103,6 +103,7 @@
                 </LinearLayout>
 
                 <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/phoneNumberEdit"
                     style="@style/TextAppearance.Body"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -112,11 +113,11 @@
                     android:inputType="number"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:text="557777777"
                     android:textColor="#1C1C1E"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/dialCodeLayout"
-                    tools:text="551234567">
+                    app:layout_constraintStart_toEndOf="@id/dialCodeLayout">
 
                 </androidx.appcompat.widget.AppCompatEditText>
 

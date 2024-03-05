@@ -45,6 +45,10 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
             loginGuest.text = CacheUtil.getInstance().getTranslations(
                 Text.CONTINUE_AS_GUEST, "Continue as Guest"
             )
+
+            binding.loginButton.setOnClickListener {
+                viewModel.login(mobileNumberDialCode.text.toString() + binding.phoneNumberEdit.text.toString())
+            }
         }
     }
 
