@@ -1,7 +1,7 @@
 package com.herfy.repository
 
-import android.util.Log
 import com.google.gson.Gson
+import com.herfy.model.LoginResponse
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
@@ -11,6 +11,7 @@ import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Customer
 import com.skylinedynamics.solosdk.api.models.requestbodies.LoginSimpleBody
+import com.skylinedynamics.solosdk.api.models.requestbodies.ResendSMSBody
 import com.skylinedynamics.solosdk.util.AppLogger
 import org.json.JSONArray
 import org.json.JSONException
@@ -20,14 +21,14 @@ import javax.inject.Inject
 
 interface AuthRepository {
 
-    suspend fun login(phoneNumber: String, result: (String) -> Unit)
+    suspend fun login(phoneNumber: String, result: (LoginResponse) -> Unit)
 
 }
 
 class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
 
-    override suspend fun login(phoneNumber: String, result: (String) -> Unit) {
+    override suspend fun login(phoneNumber: String, result: (LoginResponse) -> Unit) {
         AuthUtil.getInstance().password = ""
         val loginBody = LoginSimpleBody(StringUtil.toEnglish(phoneNumber.replace("+", "")), "full")
         CustomersApiCall.getInstance().loginCustomer(loginBody, object : ApiRequestListener {
@@ -43,26 +44,45 @@ class AuthRepositoryImpl @Inject constructor(
                                 data.toString(), Customer::class.java
                             )
                             if (status == Values.STATUS_VERIFIED) {
-                                Log.e("==AAASD", "ADADADADShowCode1")
+                                result(LoginResponse(true, true, customer, ""))
                             } else {
                                 if (customer.attributes.mobile != null && StringUtil.isValidPhoneNumber(
                                         customer.attributes.mobile
                                     )
                                 ) {
-                                    Log.e("==AAASD", "ADADADADShowCode2")
-                                } else {
-                                    Log.e("==AAASD", "ADADADADShowCode3")
+                                    sendVerification(customer)
                                 }
+                                result(LoginResponse(true, true, customer, ""))
                             }
                         } else {
-                            Log.e("==AAASD", "ADADADADERror1")
+                            result(
+                                LoginResponse(
+                                    false,
+                                    false,
+                                    null,
+                                    CacheUtil.getInstance().getTranslations(Text.SIGN_IN_ERROR)
+                                )
+                            )
                         }
                     } catch (e: JSONException) {
-                        e.printStackTrace()
-                        Log.e("==AAASD", "ADADADADERror2")
+                        result(
+                            LoginResponse(
+                                false,
+                                false,
+                                null,
+                                CacheUtil.getInstance().getTranslations(Text.SIGN_IN_ERROR)
+                            )
+                        )
                     }
                 } else {
-                    Log.e("==AAASD", "ADADADADERror3")
+                    result(
+                        LoginResponse(
+                            false,
+                            false,
+                            null,
+                            CacheUtil.getInstance().getTranslations(Text.SIGN_IN_ERROR)
+                        )
+                    )
                 }
             }
 
@@ -78,14 +98,38 @@ class AuthRepositoryImpl @Inject constructor(
                             val errorObject = error.getJSONObject(0)
                             detail = errorObject.getString("detail")
                         }
-                        Log.e("==AAASD", "ADADADADERrordetail1" + detail)
+                        result(LoginResponse(false, false, null, detail))
                     } catch (e: JSONException) {
                         e.printStackTrace()
-                        Log.e("==AAASD", "ADADADADERrordetail2")
+                        result(
+                            LoginResponse(
+                                false,
+                                false,
+                                null,
+                                CacheUtil.getInstance().getTranslations(Text.SIGN_IN_ERROR)
+                            )
+                        )
                     }
                 } else {
-                    Log.e("==AAASD", "ADADADADERrordetail3")
+                    result(
+                        LoginResponse(
+                            false,
+                            false,
+                            null,
+                            CacheUtil.getInstance().getTranslations(Text.SIGN_IN_ERROR)
+                        )
+                    )
                 }
+            }
+        })
+    }
+
+    private fun sendVerification(customer: Customer) {
+        val resendSMSBody = ResendSMSBody(customer.id, customer.attributes.mobile)
+        CustomersApiCall.getInstance().resendSMS(resendSMSBody, object : ApiRequestListener {
+            override fun onSuccess(o: Any) {}
+            override fun onError(o: Any) {
+                AppLogger.printRetrofitError(o)
             }
         })
     }

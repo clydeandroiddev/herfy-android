@@ -12,6 +12,13 @@
     </fragment>
 
     <fragment
+        android:id="@+id/nav_login_otp_fragment"
+        android:name="com.herfy.authentication.views.LoginOTPFragment"
+        tools:layout="@layout/fragment_otp_page">
+
+    </fragment>
+
+    <fragment
         android:id="@+id/nav_signin_register"
         android:name="com.herfy.auth.views.AuthFragment"
         tools:layout="@layout/fragment_auth">

@@ -1,13 +1,13 @@
 package com.herfy.authentication.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.herfy.model.ErrorMsgItem
 import com.herfy.repository.AuthRepository
-import com.herfy.repository.FavoriteRepository
-import com.herfy.repository.HomeRepository
-import com.herfy.repository.MenuRepository
 import com.herfy.utils.base.mvvm.BaseViewModel
+import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
-import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.Customer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -16,13 +16,33 @@ class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : BaseViewModel() {
 
+    private val _showError = MutableLiveData<ErrorMsgItem>()
+    val showError: LiveData<ErrorMsgItem> = _showError
+
+    private val _showLoading = MutableLiveData<Boolean>()
+    val showLoading: LiveData<Boolean> = _showLoading
+
+    private val _customer = MutableLiveData<Customer>()
+    val customer: LiveData<Customer> = _customer
+
     fun login(phoneNumber: String) {
         invoke {
-            authRepository.login(phoneNumber) {
-                Log.e("==AAASD", "ADADADADSuccess:")
+            if (phoneNumber.isEmpty()) {
+                _showError.value = ErrorMsgItem(
+                    true, CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_REQUIRED)
+                )
+            } else {
+                _showLoading.postValue(true)
+                authRepository.login(phoneNumber) {
+                    _showLoading.postValue(false)
+                    if (it.success) {
+                        _customer.value = it.data as Customer
+                    } else {
+                        _showError.value = ErrorMsgItem(true, it.message)
+                    }
+                }
             }
         }
     }
-
 }
 
