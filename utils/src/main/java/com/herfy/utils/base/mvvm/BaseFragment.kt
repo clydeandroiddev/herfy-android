@@ -28,7 +28,7 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
 
     private var progressDialog: ProgressDialog? = null
 
-    private var alertDialog : AlertDialog? = null
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +50,7 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
 
     open fun initViews() {
         progressDialog = ProgressDialog(requireContext())
-        //progressDialog?.setMessage(getString(R.string.loading))
+//        progressDialog?.setMessage(getString(R.string.loading))
     }
 
     open fun observe() {
@@ -61,6 +61,13 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
     }
 
     fun showProgressDialog(cancelTouchOutside: Boolean? = true) {
+        if (progressDialog?.isShowing == false) {
+            progressDialog?.setCanceledOnTouchOutside(cancelTouchOutside ?: true)
+            progressDialog?.show()
+        }
+    }
+
+    fun showProgressDialog(cancelTouchOutside: Boolean? = true, message: String?) {
         if (progressDialog?.isShowing == false) {
             progressDialog?.setCanceledOnTouchOutside(cancelTouchOutside ?: true)
             progressDialog?.show()
@@ -88,12 +95,12 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
         }
     }
 
-    open fun initTranslations(){
+    open fun initTranslations() {
 
     }
 
     open fun showAlertDialog(title: String?, message: String?) {
-        if(message?.isNotEmpty() == true) {
+        if (message?.isNotEmpty() == true) {
             activity?.apply {
                 runOnUiThread {
                     context?.let { ctx ->
@@ -146,7 +153,7 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
         neutral: String?,
         neutralOnClickListener: DialogInterface.OnClickListener?
     ) {
-        if(message?.isNotEmpty() == true) {
+        if (message?.isNotEmpty() == true) {
             activity?.apply {
                 runOnUiThread {
                     context?.let { ctx ->
@@ -202,7 +209,7 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
         negative: String,
         negativeOnClickListener: DialogInterface.OnClickListener?
     ) {
-        if(message?.isNotEmpty() == true) {
+        if (message?.isNotEmpty() == true) {
             activity?.apply {
                 runOnUiThread {
                     context?.let { ctx ->

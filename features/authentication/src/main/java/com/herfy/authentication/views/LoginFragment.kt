@@ -1,7 +1,6 @@
 package com.herfy.authentication.views
 
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.herfy.authentication.R
@@ -10,7 +9,6 @@ import com.herfy.authentication.state.LoginViewState
 import com.herfy.authentication.viewmodel.LoginViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
-import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.collectViewModelState
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,13 +80,6 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
     override fun observe() {
         super.observe()
 
-        viewModel.showError.observeNonNull(this) {
-            showAlertDialog(
-                title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
-                message = it.message
-            )
-        }
-
         viewModel.state.collectViewModelState(viewLifecycleOwner) {
             when (it) {
                 is LoginViewState.UserLogin -> {
@@ -101,10 +92,20 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
                 is LoginViewState.ShowLoading -> {
                     if (it.loading) {
-                        showProgressDialog(false)
+                        showProgressDialog(
+                            false,
+                            CacheUtil.getInstance().getTranslations(Text.LOADING, "Loading")
+                        )
                     } else {
                         dismissProgressDialog()
                     }
+                }
+
+                is LoginViewState.ShowError -> {
+                    showAlertDialog(
+                        title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
+                        message = it.error
+                    )
                 }
             }
         }
