@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.google.android.material.textview.MaterialTextView
+    <TextView
         android:id="@+id/txtOrderType"
         android:layout_width="wrap_content"
         style="@style/Styles.Text.Footnote.Medium"
