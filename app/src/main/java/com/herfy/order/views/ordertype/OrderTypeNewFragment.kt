@@ -73,6 +73,7 @@ import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.*
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.setNavigationResult
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.*
@@ -92,6 +93,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         const val ARGS_KEY_FRAGMENT_RESULT = "fragmentResult"
         const val ARGS_KEY_CURBSIDE = "curbside"
         const val ARGS_KEY_IS_SAME_BRANCH = "is_same_branch"
+        const val IS_FROM_ORDER_TYPE = "IS_FROM_ORDER_TYPE"
     }
 
     private lateinit var binding: FragmentOrderTypeBinding
@@ -1534,10 +1536,14 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
-                    if (type == OrderType.CURBSIDE) {
-                        proceedToCurbside()
+                    if (args.isFromFavorites) {
+                       findNavController().navigate(OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true))
                     } else {
-                        continueSelectingType(activity, type)
+                        if (type == OrderType.CURBSIDE) {
+                            proceedToCurbside()
+                        } else {
+                            continueSelectingType(activity, type)
+                        }
                     }
                     dismissPickupTypeDialog()
                 }
@@ -1546,7 +1552,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     dismissPickupTypeDialog()
                 }
 
-            })
+            }
+        )
         choosePickupTypeDialog.show(
             requireActivity().supportFragmentManager, ChoosePickupTypeDialog::class.java.simpleName
         )
