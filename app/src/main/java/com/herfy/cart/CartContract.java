@@ -3,6 +3,7 @@ package com.herfy.cart;
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
 import com.herfy.cart.views.CartMenuItemViewHolder;
+import com.herfy.model.CouponResult;
 import com.herfy.upsell.UpsellViewHolder;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
@@ -19,6 +20,12 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Nullable;
+
+import kotlin.Function;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 
 public interface CartContract {
 
@@ -207,6 +214,8 @@ public interface CartContract {
         int getUpsellCount();
         void goToItemDetails(int position, MenuItem upsell);
         void addToCart(MenuItem upsell);
+        void getCouponFrom(String code, Function1<CouponResult, Unit> result);
+        void validateDigitalCoupon(String couponCode, Function1<CouponResult, Unit> result);
     }
 
 }

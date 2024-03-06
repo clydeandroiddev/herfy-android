@@ -52,7 +52,7 @@ import com.herfy.main.MainActivity
 import com.herfy.util.*
 import com.herfy.util.LatLngInterpolator.Spherical
 import com.herfy.util.extensions.dialPhoneNumber
-import com.herfy.util.extensions.removeSpecialCharacters
+import com.herfy.utils.extensions.removeSpecialCharacters
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values

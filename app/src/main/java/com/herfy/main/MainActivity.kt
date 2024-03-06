@@ -554,7 +554,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 refreshMenu()
             }
         }
-
+        setCartQuantity()
     }
 
     private fun setupSideBar() {
@@ -1052,6 +1052,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         } else {
             finish()
         }
+    }
+
+    fun setCartQuantity() {
+       binding.toolbarMain.setCart(cacheUtilHelper.getCartQuantity())
     }
 
     fun cartExpired() {

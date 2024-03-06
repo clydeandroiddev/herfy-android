@@ -18,6 +18,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
@@ -44,7 +46,12 @@ import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.OnLayoutLoadingCompleted
+import com.herfy.utils.extensions.collapse
+import com.herfy.utils.extensions.expand
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.extensions.runOnMain
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
@@ -402,7 +409,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 var maxDays = CacheUtil.getInstance().concept.maxDaysAllowedInAdvanceOrder
                 if (maxDays == 0) {
                     maxDays = 1
-                }/* binding.paymentSlidingPanel.calendarView.setOnDateChangedListener(this@CartFragment)
+                }
+                /* binding.paymentSlidingPanel.calendarView.setOnDateChangedListener(this@CartFragment)
                  binding.paymentSlidingPanel.calendarView.showOtherDates =
                      MaterialCalendarView.SHOW_ALL
                  val instance = LocalDate.now()
@@ -448,7 +456,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     it.onBackPressed()
                 }
             }
-        }/* binding.main.removeSched.setOnClickListener { v: View? ->
+        }
+        /* binding.main.removeSched.setOnClickListener { v: View? ->
              removeSchedTotally()
              cartPresenter!!.removeMukafaa()
          }
@@ -567,7 +576,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        }/*
+        }
+        /*
         binding.main.promoCode.setOnEditorActionListener { v: TextView?, actionId: Int, event: KeyEvent? ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 binding.main.applyCode.performClick()
@@ -630,7 +640,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 }
                 cartPresenter!!.proceed(scheduleTime)
             }
-        }/*
+        }
+        /*
         binding.main.goToMenu.setOnClickListener { v: View? ->
             dismissDialogFragments()
             NavigationUtils.navigateSafe(
@@ -683,6 +694,18 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 setHasFixedSize(true)
             }
         }
+
+        binding.paymentSummaryContainer.viewCoupon.setOnClickListener {
+            val couponVal = binding.paymentSummaryContainer.applyCouponLabel.text.toString()
+            if(couponVal.equals(CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon"), ignoreCase = true)){
+                showLoadingDialog()
+                cartPresenter.showDigitalCoupons(true)
+            }else {
+                showProgressDialog()
+                cartPresenter.removeCoupon()
+            }
+
+        }
     }
 
     private fun promoCodeShow() {
@@ -710,6 +733,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             .getTranslations(Text.TOTAL_INCLUSIVE_VAT, "(Total is inclusive of VAT)");
         binding.upsellContainer.upsellLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.WOULD_YOU_LIKE_TO_ADD_THESE, "Would you like to add these?")
+        binding.paymentSummaryContainer.applyCouponLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
+        binding.paymentSummaryContainer.viewCoupon.text =
+            CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
     }
 
     override fun showProgressDialog() {
@@ -795,9 +822,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showMenuItems(
         menuItems: List<MenuItem>, fromPromo: Boolean, fromRemoveCoupon: Boolean
     ) {
-        if (!Values.NO_PROMOTIONS && !fromPromo && !dontShowDigitalCoupons) {
-            cartPresenter!!.getDigitalCoupons(true, false)
-        }
         dontShowDigitalCoupons = false
         cartPresenter!!.getTotalPrice(false, false)
         binding.placeOrder.isEnabled = menuItems.size > 0
@@ -807,11 +831,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
         binding.orderDetailsContainer.apply {
             if (itemCount > 0) {
+                placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
                 yourOrderLabel.text = "Your Order (${itemCount})"
                 rvCartItems.OnLayoutLoadingCompleted {
                     Handler(Looper.getMainLooper()).postDelayed({
                         clOrderDetails.visibility = View.VISIBLE
-                        placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
                     }, 500)
                 }
                 adapter!!.notifyDataSetChanged()
@@ -874,7 +898,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             var totalPrice = totalPrice
             validatedTotalPrice = totalPrice
             binding.paymentSummaryContainer.subtotal.text =
-                CurrencyUtils.updateCurrency(subTotal, true, hasPromotion)/*if (alrajhiAmount > 0) {
+                CurrencyUtils.updateCurrency(subTotal, true, hasPromotion)
+            /*if (alrajhiAmount > 0) {
                 var amnt = StringUtil.getFormattedPrice(alrajhiAmount).toString()
                 if ("0" != amnt && !amnt.contains("-")) amnt = "-$amnt"
                 binding.main.mukafaaSar.text = amnt
@@ -1036,7 +1061,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun editCartItem(position: Int) {
         runOnMain {
             dismissDialogFragments()
-            dontShowDigitalCoupons = true
             NavigationUtils.navigateSafe(
                 findNavController(), CartFragmentDirections.actionCartToMenuItem(
                     menuCategoryId = "",
@@ -1053,36 +1077,34 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         runOnMain {
             activity?.cast<BaseActivity> {
                 it.dismissDialogs()
-            }/* binding.main.promoCode.setText(couponCode)
-             binding.main.promoCode.isEnabled = false
-             binding.main.promoCode.visibility = View.GONE
-             binding.main.promoCodeText.visibility = View.VISIBLE
-             binding.main.promoCodeText.text = couponCode
-             binding.main.couponName.text = description
-             binding.main.couponLayout.visibility = View.VISIBLE
-             binding.main.applyCode.text =
-                 CacheUtil.getInstance().getTranslations(Text.COUPON_REMOVE, "Remove")*/
+            }
+            binding.paymentSummaryContainer.apply {
+                applyCouponLabel.text = couponCode
+                tvCouponDescription.visible()
+                tvCouponDescription.text = description
+                viewCoupon.text = CacheUtil.getInstance().getTranslations(Text.REMOVE, "Remove")
+            }
         }
     }
 
     override fun removeCoupon() {
-        runOnMain {
-            hideRelatedCouponViews()
-            try {
-                if (cartPresenter != null) cartPresenter!!.removeMukafaaRedemption()
-            } catch (e: Exception) {
-                e.printStackTrace()
+        if(CacheUtil.getInstance().couponCode.isNullOrBlank() && CacheUtil.getInstance().campaign == null){
+            runOnMain {
+                hideRelatedCouponViews()
+                try {
+                    if (cartPresenter != null) cartPresenter!!.removeMukafaaRedemption()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                binding.paymentSummaryContainer.apply {
+                    applyCouponLabel.text = CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
+                    tvCouponDescription.text = ""
+                    tvCouponDescription.gone()
+                    ivCoupon.setImageResource(R.drawable.ic_apply_coupon)
+                    viewCoupon.text = CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL,"View Coupons")
+                }
             }
         }
-
-        /*binding.main.discountLayout.visibility = View.GONE
-        binding.main.promoCode.setText("")
-        binding.main.promoCode.visibility = View.VISIBLE
-        binding.main.promoCodeText.visibility = View.GONE
-        binding.main.promoCodeText.text = ""
-        binding.main.promoCode.isEnabled = true
-        binding.main.applyCode.text =
-            CacheUtil.getInstance().getTranslations(Text.APPLY_CODE, "APPLY CODE")*/
     }
 
     override fun proceed(signIn: Boolean) {
@@ -1292,31 +1314,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 }
 
             }
-        }/*   MixpanelUtil.trackEvent(MixpanelUtil.EVENT_PLACE_ORDER)
-           activity?.runOnUiThread {
-               activity?.cast<BaseActivity> {
-                   it.dismissDialogs()
-                   if (!isRemove) {
-                       NavigationUtils.navigateSafe(
-                           findNavController(), CartFragmentDirections.actionCartToUpsell(
-                               isScheduled = true,
-                               goodSelectedDate = TimeUtil.dateToHourOnly(goodSelectedDate),
-                               goodDaySelected = goodDaySelected,
-                               totalPrice = validatedTotalPrice.toFloat()
-                           )
-                       )
-                   } else {
-                       NavigationUtils.navigateSafe(
-                           findNavController(), CartFragmentDirections.actionCartToUpsell(
-                               isScheduled = false,
-                               totalPrice = validatedTotalPrice.toFloat()
-                           )
-                       )
-                   }
-               }
-           }
-           continueCheckout = false
-           binding.placeOrder.isEnabled = cartPresenter.menuItemsTotalPrice > 0*/
+        }
     }
 
     override fun showPayment() {
@@ -1340,8 +1338,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     private fun hideRelatedCouponViews() {
         binding.originalPrice.visibility = View.GONE
-        binding.dashed.visibility = View.GONE/*binding.main.couponLayout.visibility = View.GONE
-       binding.main.promotionalItemLayout.visibility = View.GONE*/
+        binding.dashed.visibility = View.GONE
     }
 
     val totalPriceAfterReset: Unit
@@ -1379,14 +1376,15 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showDigitalCoupons(
         loading: Boolean, digitalCoupons: List<Campaign>, selected: Int
     ) {
+        dismissProgressDialog()
         if (Values.NO_PROMOTIONS) {
             return
         }
         try {
             if ((digitalCouponsDialogFragment != null) && (digitalCouponsDialogFragment!!.dialog != null) && digitalCouponsDialogFragment!!.dialog!!.isShowing) {
-                digitalCouponsDialogFragment!!.updateCampaigns(
-                    loading, false, selected, digitalCoupons
-                )
+                 digitalCouponsDialogFragment?.updateCampaigns(
+                     loading, false, selected, digitalCoupons
+                 )
             } else if (!dontShowDigitalCoupons) {
                 digitalCouponsDialogFragment = CartPromoDialogFragment.newInstance(loading,
                     selected,
@@ -1403,7 +1401,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             }
                         }
 
-                        override fun onAvail(removeCoupon: Boolean, position: Int) {
+                        override fun onAvail(removeCoupon: Boolean, selected: Int) {
                             dontShowDigitalCoupons = true
                             try {
                                 digitalCouponsDialogFragment?.dismiss()
@@ -1417,9 +1415,9 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             if (removeCoupon) {
                                 cartPresenter!!.removeCoupon()
                             }
-                            if (position < cartPresenter!!.digitalCouponsList.size) {
+                            if (selected < cartPresenter!!.digitalCouponsList.size) {
                                 Handler().postDelayed(
-                                    { cartPresenter!!.availDigitalCoupon(position) }, 200
+                                    { cartPresenter!!.availDigitalCoupon(selected) }, 200
                                 )
                             }
                         }
@@ -1434,7 +1432,20 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             showDigitalCoupon(null)
                             cartPresenter!!.removeCoupon()
                         }
-                    })
+
+                        override fun goToMenu() {
+                            digitalCouponsDialogFragment?.dismiss()
+                            NavigationUtils.navigateSafe(
+                                findNavController(),
+                                CartFragmentDirections.actionCartToMenu("")
+                            )
+                        }
+
+                        override fun onApplied() {
+                            digitalCouponsDialogFragment?.dismiss()
+                        }
+                    }, cartPresenter
+                )
                 digitalCouponsDialogFragment?.isCancelable = false
                 activity?.let {
                     var currentDestination: Int? = null
@@ -1533,214 +1544,199 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun selectDigitalCoupon(position: Int) {
-        if (digitalCouponsDialogFragment != null) {
+        /*if (digitalCouponsDialogFragment != null) {
             digitalCouponsDialogFragment!!.selectDigitalCoupon(position)
-        }
+        }*/
     }
 
     override fun showDigitalCoupon(campaign: Campaign?) {
         runOnMain {
             if (!continueCheckout) {
                 dismissProgressDialog()
-            }/*if (!Values.NO_PROMOTIONS) {
-                if (campaign != null) {
-                    binding.main.iconCampaign!!.visibility = View.VISIBLE
-                    binding.main.campaignLabel!!.text =
-                        CacheUtil.getInstance().getTranslations(Text.CHANGE_PROMO, "Change promo")
-                    if (campaign.promotion != null && campaign.promotion.attributes.type.equals(
-                            "item", ignoreCase = true
-                        ) && CacheUtil.getInstance().campaignPromotionMenuItem != null
+            }
+            binding.paymentSummaryContainer.apply {
+                campaign?.let {
+                    applyCouponLabel.text = it.attributes.name
+                    tvCouponDescription.visible()
+                    tvCouponDescription.text = it.attributes.description
+                    var imageUrl = campaign.attributes.imageUri
+                    if (imageUrl == null || imageUrl.equals(
+                            "null",
+                            ignoreCase = true
+                        ) || imageUrl.isEmpty() || imageUrl.lowercase(
+                            Locale.getDefault()
+                        ).contains("default-image.png")
                     ) {
-                        addPromotionItem(CacheUtil.getInstance().campaignPromotionMenuItem)
-                    } else {
-                        binding.main.promotionalItemLayout!!.visibility = View.GONE
+                        imageUrl = Values.DEFAULT_IMAGE_URL
                     }
-                    binding.main.campaignLayout!!.visibility = View.VISIBLE
-                    binding.main.campaignName!!.text = campaign.attributes.name
-                } else {
-                    if (CacheUtil.getInstance().couponCode == null) {
-                        binding.main.discountLayout.visibility = View.GONE
-                        if (CacheUtil.getInstance().couponMenuItem == null) {
-                            binding.main.promotionalItemLayout.visibility = View.GONE
-                        }
-                    }
-                    binding.main.campaignLayout.visibility = View.VISIBLE
-                    binding.main.iconCampaign.visibility = View.GONE
-                    binding.main.campaignLabel.text = CacheUtil.getInstance().getTranslations(Text.SHOW_PROMOS, "Show promos")
-                    binding.main.campaignName.text = ""
+                    ivCoupon.loadImageFromUrl(imageUrl, isSkipMemoryCache = false)
+                    viewCoupon.text = CacheUtil.getInstance().getTranslations(Text.REMOVE, "Remove")
+                }?: run {
+                    applyCouponLabel.text = CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
+                    tvCouponDescription.text = ""
+                    tvCouponDescription.gone()
+                    ivCoupon.setImageResource(R.drawable.ic_apply_coupon)
+                    viewCoupon.text = CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL,"View Coupons")
                 }
-            }*/
+            }
         }
     }
 
     override fun addPromotionItem(menuItem: MenuItem) {
         runOnMain {
             if (menuItem != null) {
-                //binding.main.promotionalItemLayout.visibility = View.VISIBLE
-                var imageUrl = menuItem.attributes.image
-                if ((imageUrl == null) || imageUrl.equals(
-                        "null", ignoreCase = true
-                    ) || imageUrl.isEmpty() || imageUrl.lowercase(
-                        Locale.getDefault()
-                    ).contains("default-image.png")
-                ) {
-                    imageUrl = Values.DEFAULT_IMAGE_URL
-                }/*try {
-                    val activity: Activity? = activity
-                    if (activity != null) {
-                        Glide.with(activity).load(imageUrl).skipMemoryCache(false).diskCacheStrategy(
-                            DiskCacheStrategy.ALL
-                        ).apply(RequestOptions.centerInsideTransform())
-                            .listener(object : RequestListener<Drawable?> {
-                                override fun onLoadFailed(
-                                    e: GlideException?,
-                                    model: Any,
-                                    target: Target<Drawable?>,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    binding.main.promoItem.imagePromotion.visibility = View.GONE
-                                    return false
-                                }
+                binding.orderDetailsContainer.layoutItemCoupons.apply {
+                    contentMain.visibility = View.VISIBLE
 
-                                override fun onResourceReady(
-                                    resource: Drawable?,
-                                    model: Any,
-                                    target: Target<Drawable?>,
-                                    dataSource: DataSource,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    binding.main.promoItem.imagePromotion.visibility = View.VISIBLE
-                                    return false
-                                }
-                            }).into(binding.main.promoItem.imagePromotion)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }*/
-                binding.orderDetailsContainer.promotionDescription.text = menuItem.attributes.name
-                var first = true
-                var comboIndex = 0
-                var trueIndex = 0
-                val stringBuilder = StringBuilder()
-                for (size: ModifierItem in menuItem.sizes.modifierItems) {
-                    if (size.attributes.isSelected) {
-                        if (!first) {
-                            stringBuilder.append(", ")
-                        } else {
-                            first = false
-                        }
-                        trueIndex = comboIndex
-                        stringBuilder.append(
-                            size.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + "(" + StringUtil.localize(
-                                size.attributes.quantity.toString()
-                            ) + ")"
-                        )
-                    }
-                    comboIndex++
-                }
-                for (drink: ModifierItem in menuItem.drinks.modifierItems) {
-                    if (drink.attributes.isSelected) {
-                        if (!first) {
-                            stringBuilder.append(", ")
-                        } else {
-                            first = false
-                        }
-                        stringBuilder.append(
-                            drink.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + "(" + StringUtil.localize(
-                                drink.attributes.quantity.toString()
-                            ) + ")"
-                        )
-                    }
-                }
-                for (fries: ModifierItem in menuItem.fries.modifierItems) {
-                    if (fries.attributes.isSelected) {
-                        if (!first) {
-                            stringBuilder.append(", ")
-                        } else {
-                            first = false
-                        }
-                        stringBuilder.append(
-                            fries.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + "(" + StringUtil.localize(
-                                fries.attributes.quantity.toString()
-                            ) + ")"
-                        )
-                    }
-                }
-                val storeSelected = CacheUtil.getInstance().orderStore != null
-                for (modifierGroup: ModifierGroup in menuItem.modifierGroups) {
-                    val visibilityConfig = modifierGroup.attributes.visibilityConfig
-                    if ((!storeSelected || !modifierGroup.locationIds.contains(CacheUtil.getInstance().orderStore.id)) && (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                            "hidden", ignoreCase = true
-                        ))
+                    var imageUrl = menuItem.attributes.image
+                    if ((imageUrl == null) || imageUrl.equals(
+                            "null", ignoreCase = true
+                        ) || imageUrl.isEmpty() || imageUrl.lowercase(
+                            Locale.getDefault()
+                        ).contains("default-image.png")
                     ) {
-                        for (modifierItem: ModifierItem in modifierGroup.modifierItems) {
-                            if ((!storeSelected || !modifierItem.locationIds.contains(
-                                    CacheUtil.getInstance().orderStore.id
-                                )) && modifierItem.attributes.isSelected
-                            ) {
-                                if (!first) {
-                                    stringBuilder.append(", ")
-                                } else {
-                                    first = false
-                                }
-                                stringBuilder.append(
-                                    modifierItem.attributes.translatedName.getValue(
-                                        LocaleUtil.getInstance().language
-                                    ) + "(" + StringUtil.localize(
-                                        modifierItem.attributes.quantity.toString()
-                                    ) + ")"
+                        imageUrl = Values.DEFAULT_IMAGE_URL
+                    }
+
+                    image.loadImageFromUrl(
+                        imageUrl,
+                        isSkipMemoryCache = false,
+                        strategy = DiskCacheStrategy.ALL,
+                        requestOptions = RequestOptions.centerInsideTransform()
+                    )
+                    name.text = menuItem.attributes.name
+
+                    var first = true
+                    val stringBuilder = java.lang.StringBuilder()
+                    var modifierItemsCounter = 0
+                    var comboIndex = 0
+                    var trueIndex = 0
+                    for (size in menuItem.sizes.modifierItems) {
+                        if (size.attributes.isSelected) {
+                            if (!first) {
+                                stringBuilder.append("\n")
+                            } else {
+                                first = false
+                            }
+                            modifierItemsCounter++
+                            trueIndex = comboIndex
+                            stringBuilder.append(
+                                size.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + " (" + StringUtil.localize(
+                                    size.attributes.quantity.toString() + ")"
                                 )
+                            )
+                        }
+                        comboIndex++
+                    }
+                    for (drink in menuItem.drinks.modifierItems) {
+                        if (drink.attributes.isSelected) {
+                            if (!first) {
+                                stringBuilder.append("\n")
+                            } else {
+                                first = false
+                            }
+                            modifierItemsCounter++
+                            stringBuilder.append(
+                                drink.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + " (" + StringUtil.localize(
+                                    drink.attributes.quantity.toString() + ")"
+                                )
+                            )
+                        }
+                    }
+
+                    for (fries in menuItem.fries.modifierItems) {
+                        if (fries.attributes.isSelected) {
+                            if (!first) {
+                                stringBuilder.append("\n")
+                            } else {
+                                first = false
+                            }
+                            modifierItemsCounter++
+                            stringBuilder.append(
+                                fries.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + " (" + StringUtil.localize(
+                                    fries.attributes.quantity.toString() + ")"
+                                )
+                            )
+                        }
+                    }
+
+                    for (modifierGroup in menuItem.modifierGroups) {
+                        val visibilityConfig = modifierGroup.attributes.visibilityConfig
+                        if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
+                                "hidden",
+                                ignoreCase = true
+                            )
+                        ) {
+                            for (modifierItem in modifierGroup.modifierItems) {
+                                if (modifierItem.attributes.isSelected) {
+                                    if (!first) {
+                                        stringBuilder.append("\n")
+                                    } else {
+                                        first = false
+                                    }
+                                    modifierItemsCounter++
+                                    stringBuilder.append(
+                                        modifierItem.attributes.translatedName.getValue(
+                                            LocaleUtil.getInstance().language
+                                        ) + " (" + StringUtil.localize(modifierItem.attributes.quantity.toString() + ")")
+                                    )
+                                }
                             }
                         }
                     }
-                }
-                for (modifierItem: ModifierItem in menuItem.modifierItems) {
-                    if ((!storeSelected || !modifierItem.locationIds.contains(CacheUtil.getInstance().orderStore.id)) && modifierItem.attributes.isSelected) {
-                        if (!first) {
-                            stringBuilder.append(", ")
-                        } else {
-                            first = false
+
+                    for (modifierItem in menuItem.modifierItems) {
+                        if (modifierItem.attributes.isSelected) {
+                            if (!first) {
+                                stringBuilder.append("\n")
+                            } else {
+                                first = false
+                            }
+                            modifierItemsCounter++
+                            stringBuilder.append(
+                                modifierItem.attributes.translatedName.getValue(
+                                    LocaleUtil.getInstance().language
+                                ) + " (" + StringUtil.localize(modifierItem.attributes.quantity.toString()) + ")"
+                            )
                         }
-                        stringBuilder.append(
-                            modifierItem.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + "(" + StringUtil.localize(
-                                modifierItem.attributes.quantity.toString()
-                            ) + ")"
-                        )
                     }
-                }
-                try {
-                    if (menuItem.isCombo) {
-                        for (components: MenuItemComponents in menuItem.combo[trueIndex].components) {
-                            for (item: ComponentModifierItem in components.items) {
-                                if (item.selected) {
-                                    if (!menuItem.isSandwichOnly) {
-                                        if (!first) {
-                                            stringBuilder.append(", ")
-                                        } else {
-                                            first = false
+
+                    try {
+                        if (menuItem.isCombo) {
+                            for (components in menuItem.combo[trueIndex].components) {
+                                for (item in components.items) {
+                                    if (item.selected) {
+                                        if (!menuItem.isSandwichOnly) {
+                                            if (!first) {
+                                                stringBuilder.append("\n")
+                                            } else {
+                                                first = false
+                                            }
+                                            modifierItemsCounter++
+                                            stringBuilder.append(
+                                                translated(
+                                                    LocaleUtil.getInstance().language,
+                                                    item.name
+                                                ) + " (" + StringUtil.localize(1.toString()) + ")"
+                                            )
                                         }
-                                        stringBuilder.append(
-                                            translated(
-                                                LocaleUtil.getInstance().language, item.name
-                                            ) + "(" + StringUtil.localize(1.toString()) + ")"
-                                        )
-                                    }
-                                    if (!item.modifierGroups.isEmpty()) {
-                                        for (modifierGroup: ModifierGroup in item.modifierGroups) {
-                                            for (i in modifierGroup.modifierItems.indices) {
-                                                if (modifierGroup.modifierItems[i].attributes.isSelected) {
-                                                    if (!first) {
-                                                        stringBuilder.append(", ")
-                                                    } else {
-                                                        first = false
+                                        if (item.modifierGroups.isNotEmpty()) {
+                                            for (modifierGroup in item.modifierGroups) {
+                                                for (i in modifierGroup.modifierItems.indices) {
+                                                    if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                                        if (!first) {
+                                                            stringBuilder.append("\n")
+                                                        } else {
+                                                            first = false
+                                                        }
+                                                        stringBuilder.append(
+                                                            modifierGroup.modifierItems[i].attributes.translatedName.getValue(
+                                                                LocaleUtil.getInstance().language
+                                                            ) + "(" + StringUtil.localize(
+                                                                modifierGroup.modifierItems[i].attributes.quantity.toString()
+                                                            ) + ")"
+                                                        )
                                                     }
-                                                    stringBuilder.append(
-                                                        modifierGroup.modifierItems[i].attributes.translatedName.getValue(
-                                                            LocaleUtil.getInstance().language
-                                                        ) + "(" + StringUtil.localize(
-                                                            modifierGroup.modifierItems[i].attributes.quantity.toString()
-                                                        ) + ")"
-                                                    )
                                                 }
                                             }
                                         }
@@ -1748,87 +1744,98 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                 }
                             }
                         }
+                    } catch (e: java.lang.Exception) {
+                        e.printStackTrace()
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }/*if (stringBuilder.toString().isNotEmpty()) {
-                    binding.main.promoItem.modifierItemsPromotion.text = stringBuilder.toString()
-                    binding.main.promoItem.modifierItemsPromotion.visibility = View.VISIBLE
-                } else {
-                    binding.main.promoItem.modifierItemsPromotion.visibility = View.GONE
-                }
-                var orderStoreId: String? = null
-                if (CacheUtil.getInstance().orderStore != null) {
-                    orderStoreId = CacheUtil.getInstance().orderStore.id
-                }
-                val menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1)
-                if (menuItemTotalPrice > 0) {
-                    binding.main.promoItem.totalPricePromotion.text =
-                        StringUtil.getNewFormattedPrice(menuItemTotalPrice * menuItem.attributes.quantity)
-                } else {
-                    binding.main.promoItem.totalPricePromotion.text =
-                        CacheUtil.getInstance().getTranslations(Text.FREE_CAPS)
-                }
-                if(menuItem.isMustBeCustomized || menuItem.isCombo) {
-                    binding.main.promoItem.promotionEdit.apply {
-                        visible()
-                        setOnClickListener {
-                            editPromotionItem()
-                        }
-                    }
-                } else {
-                    binding.main.promoItem.promotionEdit.gone()
-                }
-                binding.main.promoItem.promotionDelete.setOnClickListener(View.OnClickListener {
-                    activity?.cast<BaseActivity> {
-                        it.showDeleteAlertDialog("",
-                            CacheUtil.getInstance().getTranslations(Text.PROMPT_REMOVE_ITEM),
-                            CacheUtil.getInstance().getTranslations(
-                                Text.YES_CAPS
-                            ),
-                            { dialogInterface, i ->
-                                dialogInterface.dismiss()
-                                dontShowDigitalCoupons = true
-                                binding.main.promotionalItemLayout.visibility = View.GONE
-                                showDigitalCoupon(null)
-                                CacheUtil.getInstance().campaign = null
-                                CacheUtil.getInstance().campaignPromotion = null
-                                CacheUtil.getInstance().campaignPromotionMenuItem = null
-                                CacheUtil.getInstance().campaignToAdd = null
-                                cartPresenter!!.removeCoupon()
-                            },
-                            CacheUtil.getInstance().getTranslations(Text.NO_CAPS),
-                            { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() })
-                    }
-                })
-                binding.main.promoItem.promotionQuantity.text =
-                    StringUtil.localize(menuItem.attributes.quantity.toString())
-                if (!CacheUtil.getInstance().concept.isCartItemsNotesEnabled) {
-                    binding.main.promoItem.promotionNotesContainer.visibility = View.GONE
-                } else {
-                    binding.main.promoItem.promotionNotesContainer.visibility = View.VISIBLE
-                    binding.main.promoItem.promotionNotes.setText(menuItem.attributes.notes)
-                    binding.main.promoItem.promotionNotes.addTextChangedListener(object : TextWatcher {
-                        override fun beforeTextChanged(
-                            s: CharSequence, start: Int, count: Int, after: Int
-                        ) {
-                        }
 
-                        override fun onTextChanged(
-                            s: CharSequence, start: Int, before: Int, count: Int
-                        ) {
-                        }
 
-                        override fun afterTextChanged(s: Editable) {
-                            menuItem.attributes.notes = s.toString()
-                            if (CacheUtil.getInstance().couponMenuItem != null) {
-                                CacheUtil.getInstance().couponMenuItem = menuItem
-                            } else if (CacheUtil.getInstance().campaignPromotionMenuItem != null) {
-                                CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
+                    if (modifierItemsCounter > 1) {
+                        lnModifiersDropdown.visibility = View.VISIBLE
+                        tvModifiers.visibility = View.VISIBLE
+                        spaceModifiers.visibility = View.GONE
+                        tvModifiers.text = stringBuilder
+                        txtAddOnTotal.text = modifierItemsCounter.toString()
+                    } else if (modifierItemsCounter > 0) {
+                        lnModifiersDropdown.visibility = View.GONE
+                        tvModifiers.visibility = View.VISIBLE
+                        spaceModifiers.visibility = View.GONE
+                        tvModifiers.text = stringBuilder
+                    } else {
+                        lnModifiersDropdown.visibility = View.GONE
+                        tvModifiers.visibility = View.GONE
+                        spaceModifiers.visibility = View.VISIBLE
+                    }
+
+                    lnModifiersDropdown.setOnClickListener {
+                        if (tvModifiers.visibility == View.VISIBLE) {
+                            tvModifiers.collapse()
+                            icModifierItemsDropDown.rotation = 180f
+                            spaceModifiers.visibility = View.VISIBLE
+                        } else {
+                            spaceModifiers.visibility = View.GONE
+                            tvModifiers.expand()
+                            icModifierItemsDropDown.rotation = 0f
+                        }
+                    }
+
+                    val menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1)
+                    quantityLayout.visibility =
+                        if (menuItem.isPromo || menuItemTotalPrice == 0.0) View.INVISIBLE else View.VISIBLE
+
+                    if (!menuItem.isPromo && menuItem.attributes.quantity > 1) {
+                        delete.visibility = View.GONE
+                        minus.visibility = View.VISIBLE
+                    } else {
+                        delete.visibility = View.VISIBLE
+                        minus.visibility = View.GONE
+                    }
+
+                    quantity.text = StringUtil.localize(menuItem.attributes.quantity.toString())
+
+
+                    if (menuItemTotalPrice > 0) {
+                        totalPrice.text = StringUtil.getNewFormattedPrice(
+                            menuItemTotalPrice * menuItem.attributes.quantity,
+                            true
+                        )
+                    } else {
+                        totalPrice.text =
+                            CacheUtil.getInstance().getTranslations(Text.FREE_CAPS, "FREE")
+                    }
+
+                    if (menuItem.isMustBeCustomized || menuItem.isCombo) {
+                        edit.apply {
+                            visible()
+                            setOnClickListener {
+                                editPromotionItem()
                             }
                         }
+                    } else {
+                       edit.gone()
+                    }
+                    delete.setOnClickListener(View.OnClickListener {
+                        activity?.cast<BaseActivity> {
+                            it.showDeleteAlertDialog("",
+                                CacheUtil.getInstance().getTranslations(Text.PROMPT_REMOVE_ITEM),
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.YES_CAPS
+                                ),
+                                { dialogInterface, i ->
+                                    dialogInterface.dismiss()
+                                    dontShowDigitalCoupons = true
+                                    contentMain.gone()
+                                    showDigitalCoupon(null)
+                                    CacheUtil.getInstance().campaign = null
+                                    CacheUtil.getInstance().campaignPromotion = null
+                                    CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                    CacheUtil.getInstance().campaignToAdd = null
+                                    cartPresenter.removeCoupon()
+                                },
+                                CacheUtil.getInstance().getTranslations(Text.NO_CAPS),
+                                { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() })
+                        }
                     })
-                }*/
+                }
             }
         }
     }

@@ -127,4 +127,9 @@
         <item name="lineHeight">@dimen/line_height_subheadline</item>
     </style>
 
+    <style name="Styles.Text.Dialog.Content" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.Dialog.Caption.Regular</item>
+        <item name="lineHeight">@dimen/line_height_dialog_content</item>
+    </style>
+
 </resources>

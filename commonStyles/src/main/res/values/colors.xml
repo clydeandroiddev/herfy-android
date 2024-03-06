@@ -72,6 +72,10 @@
     <color name="order_type_bg_color">#f7f7f7</color>
     <color name="color_stroke">#E6E6E6</color>
     <color name="toolbar_color">#0F2229</color>
+    <color name="input_border_color">#CAD0D6</color>
+    <color name="border_coupon">#B0CFE5</color>
+    <color name="text_coupon_available">#0A4921</color>
+    <color name="background_loading_transparent">#99000000</color>
 </resources>
 
 
