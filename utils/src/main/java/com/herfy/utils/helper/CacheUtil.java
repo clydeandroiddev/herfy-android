@@ -2,6 +2,7 @@ package com.herfy.utils.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.Pair;
 
 import com.google.gson.Gson;
@@ -48,6 +49,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class CacheUtil {
@@ -699,12 +701,12 @@ public class CacheUtil {
         return new ArrayList<>();
     }
 
+
     private Pair<Boolean, ArrayList<MenuItem>> compareMenuItem(int position, MenuItem menuItem) {
         boolean same = false;
 
         ArrayList<MenuItem> menuItems = new ArrayList<>();
         String cartMenuItems = cacheSharedPreferences.getString(CART_MENU_ITEMS, null);
-
         if (cartMenuItems != null) {
             menuItems = GsonHelper.gsonFinal().fromJson(cartMenuItems, new TypeToken<ArrayList<MenuItem>>() {
             }.getType());
@@ -712,6 +714,9 @@ public class CacheUtil {
 
         for (MenuItem cartMenuItem : menuItems) {
             if (position != menuItems.indexOf(cartMenuItem)) {
+                if (Objects.equals(cartMenuItem.getId(), menuItem.getId()) && menuItem.getAttributes().getFavourites()) {
+                    cartMenuItem.setFavourites(true);
+                }
                 if (menuItem.getId().equals(cartMenuItem.getId())) {
                     int sizeIndex = 0;
                     int trueIndex = 0;
