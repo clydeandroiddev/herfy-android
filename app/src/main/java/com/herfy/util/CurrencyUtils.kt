@@ -107,17 +107,13 @@ class CurrencyUtils {
             return when (concept.currencyFormat) {
                 CurrencyFormat.currencySymbolAmount -> buildSpannedString {
                     append(discount)
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
-                    }
+                    append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
                     append(space)
                     append(StringUtil.localize(formattedDecimal))
                 }
                 CurrencyFormat.currencyCodeAmount -> buildSpannedString {
                     append(discount)
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
-                    }
+                    append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
                     append(space)
                     append(StringUtil.localize(formattedDecimal))
                 }
@@ -125,17 +121,13 @@ class CurrencyUtils {
                     append(discount)
                     append(StringUtil.localize(formattedDecimal))
                     append(space)
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
-                    }
+                    append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
                 }
                 CurrencyFormat.amountCurrencyCode -> buildSpannedString {
                     append(discount)
                     append(StringUtil.localize(formattedDecimal))
                     append(space)
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
-                    }
+                    append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
                 }
             }
         }
@@ -162,28 +154,20 @@ class CurrencyUtils {
                 CurrencyFormat.currencySymbolAmount -> buildSpannedString {
                     append(StringUtil.localize(formattedDecimal))
                     append(space)
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
-                    }
+                    append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
                 }
                 CurrencyFormat.currencyCodeAmount -> buildSpannedString {
                     append(StringUtil.localize(formattedDecimal))
                     append(space)
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
-                    }
+                    append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
                 }
                 CurrencyFormat.amountCurrencySymbol -> buildSpannedString {
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
-                    }
+                    append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
                     append(space)
                     append(StringUtil.localize(formattedDecimal))
                 }
                 CurrencyFormat.amountCurrencyCode -> buildSpannedString {
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
-                    }
+                    append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
                     append(space)
                     append(StringUtil.localize(formattedDecimal))
                 }

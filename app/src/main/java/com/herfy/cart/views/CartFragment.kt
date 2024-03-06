@@ -155,7 +155,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             cartPresenter.validateOrder(false, false, null)
         }
         if (cartPresenter.menuItemsCount > 0) {
-            binding.placeOrder.isEnabled = true
+            binding.paymentSummaryContainer.placeOrder.isEnabled = true
         }
         if (Values.fromAddAddressBool || Values.fromUpsell) {
             Values.fromAddAddressBool = false
@@ -275,7 +275,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             if (!dontShowDigitalCoupons) {
                 cartPresenter.getMenuItems()
             } else {
-                binding.placeOrder.isEnabled = cartPresenter.menuItemsCount > 0
+                binding.paymentSummaryContainer.placeOrder.isEnabled = cartPresenter.menuItemsCount > 0
             }
             cartPresenter.getIntegrations()
             cartPresenter.getConcept()
@@ -630,62 +630,17 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 cartPresenter!!.removeCoupon()
             }
         }*/
-        binding.placeOrder.setOnClickListener { view: View? ->
-            binding.placeOrder.isEnabled = false
+        binding.paymentSummaryContainer.placeOrder.setOnClickListener { view: View? ->
+            binding.paymentSummaryContainer.placeOrder.isEnabled = false
             if ((((CacheUtil.getInstance().orderType == OrderType.PICKUP) || (CacheUtil.getInstance().orderType == OrderType.CURBSIDE) || (CacheUtil.getInstance().orderType == OrderType.EAT_IN) || (CacheUtil.getInstance().orderType == OrderType.DRIVE_THRU))) && CacheUtil.getOrderStoreId() != null && !continueCheckout) {
                 showDynamicPickUpPrompt()
             } else {
                 activity?.cast<BaseActivity> {
                     it.showLoadingDialog()
                 }
-                cartPresenter!!.proceed(scheduleTime)
+                cartPresenter.proceed(scheduleTime)
             }
         }
-        /*
-        binding.main.goToMenu.setOnClickListener { v: View? ->
-            dismissDialogFragments()
-            NavigationUtils.navigateSafe(
-                findNavController(), CartFragmentDirections.actionCartToMenu("")
-            )
-        }
-        if (goodDaySelected != null) {
-            loadSched()
-        }
-        binding.main.campaignLayout.setOnClickListener { v: View? ->
-            dontShowDigitalCoupons = false
-            showDigitalCoupons(true, ArrayList(), -1)
-            cartPresenter!!.showDigitalCoupons(true)
-        }
-        showBubbleOrNot()
-        if (CacheUtil.getInstance().concept.isCartNotesEnabled) {
-            binding.main.orderNotes.setText(CacheUtil.getInstance().cartNotes)
-            binding.main.orderNotes.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence, start: Int, count: Int, after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: Editable) {
-                    CacheUtil.getInstance().cartNotes = s.toString()
-                }
-            })
-            if (CacheUtil.getInstance().cartQuantity > 0) {
-                binding.main.orderNotesLabel.visibility = View.VISIBLE
-                binding.main.orderNotesCard.visibility = View.VISIBLE
-            } else {
-                binding.main.orderNotesLabel.visibility = View.GONE
-                binding.main.orderNotesCard.visibility = View.GONE
-            }
-        } else {
-            binding.main.orderNotesLabel.visibility = View.GONE
-            binding.main.orderNotesCard.visibility = View.GONE
-        }
-        binding.main.mukafaaRemove.setOnClickListener { view: View? ->
-            cartPresenter.removeMukafaa()
-            binding.main.mukafaaLayout.setVisibility(View.GONE)
-        }*/
-
         binding.upsellContainer.apply {
             upsellRecyclerViewAdapter = UpsellRecyclerViewAdapter(cartPresenter)
             rvUpsellItems.apply {
@@ -697,14 +652,26 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
         binding.paymentSummaryContainer.viewCoupon.setOnClickListener {
             val couponVal = binding.paymentSummaryContainer.applyCouponLabel.text.toString()
-            if(couponVal.equals(CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon"), ignoreCase = true)){
+            if (couponVal.equals(
+                    CacheUtil.getInstance()
+                        .getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon"),
+                    ignoreCase = true
+                )
+            ) {
                 showLoadingDialog()
                 cartPresenter.showDigitalCoupons(true)
-            }else {
+            } else {
                 showProgressDialog()
                 cartPresenter.removeCoupon()
             }
 
+        }
+
+        binding.orderDetailsContainer.addMore.setOnClickListener {
+            NavigationUtils.navigateSafe(
+                findNavController(),
+                CartFragmentDirections.actionCartToMenu()
+            )
         }
     }
 
@@ -727,9 +694,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         binding.paymentSummaryContainer.subtotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL, "Subtotal")
         binding.paymentSummaryContainer.deliveryChargeLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery charge");
-        binding.placeOrder.text = CacheUtil.getInstance().getTranslations(Text.CHECKOUT, "CHECKOUT")
-        binding.totalVatLabel.text = CacheUtil.getInstance()
+            CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery charge")
+        binding.paymentSummaryContainer.couponDiscountLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.COUPON_DISCOUNT_LABEL, "Coupon Discount")
+        binding.paymentSummaryContainer.placeOrder.text =
+            CacheUtil.getInstance().getTranslations(Text.CHECKOUT_LABEL, "Checkout")
+        binding.paymentSummaryContainer.totalVatLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.TOTAL_INCLUSIVE_VAT, "(Total is inclusive of VAT)");
         binding.upsellContainer.upsellLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.WOULD_YOU_LIKE_TO_ADD_THESE, "Would you like to add these?")
@@ -737,6 +707,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
         binding.paymentSummaryContainer.viewCoupon.text =
             CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
+        binding.orderDetailsContainer.addMore.text = CacheUtil.getInstance().getTranslations(Text.ADD_MORE_ITEM_LABEL, "Add more item")
+        binding.orderDetailsContainer.emptyCart.setTitle(CacheUtil.getInstance().getTranslations(Text.YOUR_CART_IS_EMPTY_LABEL, "Your cart is empty"))
     }
 
     override fun showProgressDialog() {
@@ -819,12 +791,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
          binding.main.cartsList.visibility = state*/
     }
 
+    @SuppressLint("SetTextI18n")
     override fun showMenuItems(
         menuItems: List<MenuItem>, fromPromo: Boolean, fromRemoveCoupon: Boolean
     ) {
         dontShowDigitalCoupons = false
         cartPresenter!!.getTotalPrice(false, false)
-        binding.placeOrder.isEnabled = menuItems.size > 0
+        binding.paymentSummaryContainer.placeOrder.isEnabled = menuItems.size > 0
         var itemCount = 0
         for (item in menuItems) {
             itemCount += item.attributes.quantity
@@ -840,7 +813,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 }
                 adapter!!.notifyDataSetChanged()
             } else {
-                clOrderDetails.visibility = View.GONE
+                yourOrderLabel.text = "Your Order (0)"
+                emptyCart.visible()
+                rvCartItems.gone()
+                layoutItemCoupons.contentMain.gone()
                 placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
             }
         }
@@ -894,120 +870,79 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         alrajhiAmount: Double
     ) {
         activity?.runOnUiThread {
-            var discountAmount = discountAmount
-            var totalPrice = totalPrice
-            validatedTotalPrice = totalPrice
+            val _discountAmount = discountAmount
+            var _totalPrice = totalPrice
+            validatedTotalPrice = _totalPrice
             binding.paymentSummaryContainer.subtotal.text =
-                CurrencyUtils.updateCurrency(subTotal, true, hasPromotion)
-            /*if (alrajhiAmount > 0) {
-                var amnt = StringUtil.getFormattedPrice(alrajhiAmount).toString()
-                if ("0" != amnt && !amnt.contains("-")) amnt = "-$amnt"
-                binding.main.mukafaaSar.text = amnt
-                binding.main.mukafaaLayout.visibility = View.VISIBLE
-            } else {
-                binding.main.mukafaaLayout.visibility = View.GONE
-            }
-            discountAmount -= alrajhiAmount*/
-            //  binding.main.discountLoader.visibility = View.GONE
-            //binding.main.dotLoader.visibility = View.GONE
+                CurrencyUtils.updateCurrency(subTotal, true, subTotal <= 0.0)
             if (discountAmount != 0.0) {
                 binding.paymentSummaryContainer.discountLayout.visibility = View.VISIBLE
                 binding.paymentSummaryContainer.couponDiscount.text = CurrencyUtils.updateCurrency(
-                    amount = discountAmount,
+                    amount = _discountAmount,
                     withSpace = true,
                     ignoreDecimalPlaces = hasPromotion,
-                    isDiscount = discountAmount > 0
+                    isDiscount = false
                 )
                 binding.paymentSummaryContainer.couponDiscount.visibility = View.VISIBLE
             } else {
                 binding.paymentSummaryContainer.discountLayout.visibility = View.GONE
             }
 
-//        if (isDelivery) {
-//            if (deliveryChargeValue != 0) {
-//                deliveryPrice.setText(StringUtil.getFormattedPrice(deliveryChargeValue));
-//            } else {
-//                Campaign campaign = CacheUtil.getInstance().getCampaign();
-//                boolean hideDiscount = false;
-//                try {
-//                    if (campaign != null) {
-//                        if (campaign.getPromotion().getAttributes().getType().equals("delivery")) {
-//                            hideDiscount = true;
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                if (hideDiscount) {
-//                    discountLayout.setVisibility(View.GONE);
-//                }
-//                deliveryPrice.setText(CacheUtil.getInstance().getTranslations(Text.FREE, "Free"));
-//            }
-//            deliveryLayout.setVisibility(View.VISIBLE);
-//        } else {
-//            deliveryLayout.setVisibility(View.GONE);
-//        }
-
-//        if (isDelivery) {
-//            if (deliveryChargeValue != 0) {
-//                deliveryPrice.setText(StringUtil.getFormattedPrice(deliveryChargeValue));
-//            } else {
-//                Campaign campaign = CacheUtil.getInstance().getCampaign();
-//                boolean hideDiscount = false;
-//                try {
-//                    if (campaign != null) {
-//                        if (campaign.getPromotion().getAttributes().getType().equals("delivery")) {
-//                            hideDiscount = true;
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                if (hideDiscount) {
-//                    discountLayout.setVisibility(View.GONE);
-//                }
-//                deliveryPrice.setText(CacheUtil.getInstance().getTranslations(Text.FREE, "Free"));
-//            }
-//            deliveryLayout.setVisibility(View.VISIBLE);
-//        } else {
-//            deliveryLayout.setVisibility(View.GONE);
-//        }
-            /*if (charges.size > 0) {
-                activity?.let {
-                    val linearLayoutManager: LinearLayoutManager = object : LinearLayoutManager(it) {
-                        override fun canScrollVertically(): Boolean {
-                            return false
+            if (isDelivery) {
+                if (deliveryChargeValue != 0.0) {
+                    binding.paymentSummaryContainer.deliveryCharge.setText(
+                        StringUtil.getFormattedPrice(
+                            deliveryChargeValue
+                        )
+                    );
+                } else {
+                    val campaign = CacheUtil.getInstance().campaign;
+                    var hideDiscount = false;
+                    try {
+                        if (campaign != null) {
+                            if (campaign.promotion.attributes.type.equals("delivery")) {
+                                hideDiscount = true;
+                            }
                         }
+                    } catch (e: Exception) {
+                        e.printStackTrace();
                     }
-                    binding.main.rvServiceCharge.visibility = View.VISIBLE
-                    binding.main.rvServiceCharge.layoutManager = linearLayoutManager
-                    orderServiceChargeRecyclerViewAdapter =
-                        OrderServiceChargeRecyclerViewAdapter(charges)
-                    binding.main.rvServiceCharge.adapter = orderServiceChargeRecyclerViewAdapter
+                    if (hideDiscount) {
+                        binding.paymentSummaryContainer.discountLayout.gone()
+                    }
+                    binding.paymentSummaryContainer.deliveryCharge.text =
+                        CacheUtil.getInstance().getTranslations(Text.FREE, "Free");
                 }
+                binding.paymentSummaryContainer.deliveryLayout.visible()
             } else {
-                binding.main.rvServiceCharge.adapter = null
-                binding.main.rvServiceCharge.visibility = View.GONE
-            }*/
-            if (totalPrice < 0) {
-                totalPrice = 0.0
+                binding.paymentSummaryContainer.deliveryLayout.gone()
             }
-            if (cartPresenter!!.menuItemsCount == 0) {
-//            deliveryLayout.setVisibility(View.GONE);
-                binding.paymentSummaryContainer.discountLayout.visibility = View.GONE
-                //            vatLayout.setVisibility(View.GONE);
-                binding.paymentSummaryContainer.total.text = StringUtil.getFormattedPrice(0.0)
-                binding.totalPrice.text = StringUtil.getFormattedPrice(0.0)
+
+            if (_totalPrice < 0) {
+                _totalPrice = 0.0
+            }
+            if (cartPresenter.menuItemsCount == 0) {
+                binding.paymentSummaryContainer.discountLayout.gone()
+                binding.paymentSummaryContainer.deliveryLayout.gone()
+                binding.paymentSummaryContainer.total.text =  CurrencyUtils.updateCurrency(0.0,
+                    withSpace = true,
+                    ignoreDecimalPlaces = true
+                )
+                binding.paymentSummaryContainer.totalPrice.text = CurrencyUtils.updateCurrency(0.0,
+                    withSpace = true,
+                    ignoreDecimalPlaces = true
+                )
             } else {
                 binding.paymentSummaryContainer.total.text = CurrencyUtils.updateCurrency(
-                    totalPrice, withSpace = true, ignoreDecimalPlaces = hasPromotion
+                    _totalPrice, withSpace = true, ignoreDecimalPlaces = hasPromotion
                 )
-                binding.totalPrice.text = CurrencyUtils.updateCurrency(
-                    totalPrice, withSpace = true, ignoreDecimalPlaces = hasPromotion
+                binding.paymentSummaryContainer.totalPrice.text = CurrencyUtils.updateCurrency(
+                    _totalPrice, withSpace = true, ignoreDecimalPlaces = hasPromotion
                 )
             }
-            binding.paymentSummaryContainer.total.visibility = View.VISIBLE
-            if (!isEventSent && totalPrice > 0) {
+            binding.paymentSummaryContainer.totalPrice.visible()
+            binding.paymentSummaryContainer.total.visible()
+            if (!isEventSent && _totalPrice > 0) {
                 isEventSent = true
                 firebaseViewCartEvent()
             }
@@ -1015,13 +950,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun setOriginalPrice(hasPromotion: Boolean, originalPrice: Double) {
-        runOnMain {
-            binding.originalPrice.text = CurrencyUtils.updateCurrency(
-                originalPrice, withSpace = true, ignoreDecimalPlaces = hasPromotion
-            )
-            binding.originalPrice.visibility = View.VISIBLE
-            binding.dashed.visibility = View.VISIBLE
-        }
+        /* runOnMain {
+             binding.originalPrice.text = CurrencyUtils.updateCurrency(
+                 originalPrice, withSpace = true, ignoreDecimalPlaces = hasPromotion
+             )
+             binding.originalPrice.visibility = View.VISIBLE
+             binding.dashed.visibility = View.VISIBLE
+         }*/
     }
 
     @SuppressLint("SetTextI18n")
@@ -1033,9 +968,9 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 //        vatLayout.setVisibility(inclusive ? View.GONE : View.VISIBLE);
 //        vatPrice.setText(taxAmount);
         //vatLabel.setText(CacheUtil.getInstance().getConcept().getVatRate() + "% " + CacheUtil.getInstance().getTranslations(Text.VAT, "VAT"));
-        runOnMain {
-            binding.totalVatLabel.visibility = if (inclusive) View.VISIBLE else View.GONE
-        }
+        /* runOnMain {
+             binding.totalVatLabel.visibility = if (inclusive) View.VISIBLE else View.GONE
+         }*/
 
     }
 
@@ -1088,7 +1023,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun removeCoupon() {
-        if(CacheUtil.getInstance().couponCode.isNullOrBlank() && CacheUtil.getInstance().campaign == null){
+        if (CacheUtil.getInstance().couponCode.isNullOrBlank() && CacheUtil.getInstance().campaign == null) {
             runOnMain {
                 hideRelatedCouponViews()
                 try {
@@ -1097,11 +1032,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     e.printStackTrace()
                 }
                 binding.paymentSummaryContainer.apply {
-                    applyCouponLabel.text = CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
+                    applyCouponLabel.text = CacheUtil.getInstance()
+                        .getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
                     tvCouponDescription.text = ""
                     tvCouponDescription.gone()
                     ivCoupon.setImageResource(R.drawable.ic_apply_coupon)
-                    viewCoupon.text = CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL,"View Coupons")
+                    viewCoupon.text = CacheUtil.getInstance()
+                        .getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
                 }
             }
         }
@@ -1123,7 +1060,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             }
             if (continueCheckout && CacheUtil.getInstance().cart.isNotEmpty()) {
                 dontShowDigitalCoupons = true
-                binding.placeOrder.performClick()
+                binding.paymentSummaryContainer.placeOrder.performClick()
             } else {
                 continueCheckout = false
             }
@@ -1150,9 +1087,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             if (continueCheckout && CacheUtil.getInstance().cart.isNotEmpty()) {
                 dontShowDigitalCoupons = true
                 if (AuthUtil.getInstance().isSignedIn) {
-                    binding.placeOrder.performClick()
+                    binding.paymentSummaryContainer.placeOrder.performClick()
                 }
             } else {
+                dontShowDigitalCoupons = true
                 continueCheckout = false
             }
         }
@@ -1166,7 +1104,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun showMessage(message: String) {
         activity?.runOnUiThread {
-            binding.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
+            binding.paymentSummaryContainer.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
             activity?.cast<BaseActivity> {
                 it.dismissDialogs()
                 Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
@@ -1177,7 +1115,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showError(error: String) {
         activity?.runOnUiThread {
             continueCheckout = false
-            binding.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
+            binding.paymentSummaryContainer.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
             // binding.main.totalLoader.gone()
             activity?.cast<BaseActivity> {
                 it.dismissDialogs()
@@ -1188,7 +1126,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun showValidateOrderError(errors: List<String>) {
         continueCheckout = false
-        binding.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
+        binding.paymentSummaryContainer.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
         activity?.cast<BaseActivity> {
             it.dismissDialogs()
             val builder = StringBuilder()
@@ -1207,7 +1145,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showUnavailableMenuItems() {
         activity?.runOnUiThread {
             continueCheckout = false
-            binding.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
+            binding.paymentSummaryContainer.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
             activity?.cast<BaseActivity> { baseActivity ->
                 baseActivity.dismissDialogs()
                 val cartDialogFragment = CartDialogFragment.newInstance(cartPresenter)
@@ -1247,7 +1185,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     object : PaymentOrderTimeDialog.OnAction {
                         override fun close() {
                             continueCheckout = false
-                            binding.placeOrder.isEnabled = true
+                            binding.paymentSummaryContainer.placeOrder.isEnabled = true
                         }
 
                         override fun change() {
@@ -1264,7 +1202,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             }
                             continueCheckout = false
                             firebaseCheckoutEvent()
-                            binding.placeOrder.isEnabled = true
+                            binding.paymentSummaryContainer.placeOrder.isEnabled = true
                             cartPresenter!!.proceed(scheduleTime)
                         }
                     })
@@ -1292,7 +1230,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         )
         adapter!!.notifyDataSetChanged()
         if (cartQuantity > 0) {
-            binding.placeOrder.performClick()
+            binding.paymentSummaryContainer.placeOrder.performClick()
         }
     }
 
@@ -1337,8 +1275,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     private fun hideRelatedCouponViews() {
-        binding.originalPrice.visibility = View.GONE
-        binding.dashed.visibility = View.GONE
+        //binding.originalPrice.visibility = View.GONE
+        //binding.dashed.visibility = View.GONE
     }
 
     val totalPriceAfterReset: Unit
@@ -1382,11 +1320,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
         try {
             if ((digitalCouponsDialogFragment != null) && (digitalCouponsDialogFragment!!.dialog != null) && digitalCouponsDialogFragment!!.dialog!!.isShowing) {
-                 digitalCouponsDialogFragment?.updateCampaigns(
-                     loading, false, selected, digitalCoupons
-                 )
+                digitalCouponsDialogFragment?.updateCampaigns(
+                    loading, false, selected, digitalCoupons
+                )
             } else if (!dontShowDigitalCoupons) {
-                digitalCouponsDialogFragment = CartPromoDialogFragment.newInstance(loading,
+                digitalCouponsDialogFragment = CartPromoDialogFragment.newInstance(
+                    loading,
                     selected,
                     digitalCoupons,
                     object : CartPromoDialogFragment.OnAction {
@@ -1437,7 +1376,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             digitalCouponsDialogFragment?.dismiss()
                             NavigationUtils.navigateSafe(
                                 findNavController(),
-                                CartFragmentDirections.actionCartToMenu("")
+                                CartFragmentDirections.actionCartToMenu()
                             )
                         }
 
@@ -1571,12 +1510,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     }
                     ivCoupon.loadImageFromUrl(imageUrl, isSkipMemoryCache = false)
                     viewCoupon.text = CacheUtil.getInstance().getTranslations(Text.REMOVE, "Remove")
-                }?: run {
-                    applyCouponLabel.text = CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
+                } ?: run {
+                    applyCouponLabel.text = CacheUtil.getInstance()
+                        .getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
                     tvCouponDescription.text = ""
                     tvCouponDescription.gone()
                     ivCoupon.setImageResource(R.drawable.ic_apply_coupon)
-                    viewCoupon.text = CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL,"View Coupons")
+                    viewCoupon.text = CacheUtil.getInstance()
+                        .getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
                 }
             }
         }
@@ -1752,30 +1693,33 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     if (modifierItemsCounter > 1) {
                         lnModifiersDropdown.visibility = View.VISIBLE
                         tvModifiers.visibility = View.VISIBLE
-                        spaceModifiers.visibility = View.GONE
                         tvModifiers.text = stringBuilder
                         txtAddOnTotal.text = modifierItemsCounter.toString()
                     } else if (modifierItemsCounter > 0) {
                         lnModifiersDropdown.visibility = View.GONE
                         tvModifiers.visibility = View.VISIBLE
-                        spaceModifiers.visibility = View.GONE
                         tvModifiers.text = stringBuilder
                     } else {
                         lnModifiersDropdown.visibility = View.GONE
-                        tvModifiers.visibility = View.GONE
-                        spaceModifiers.visibility = View.VISIBLE
+                        tvModifiers.visibility = View.INVISIBLE
                     }
 
                     lnModifiersDropdown.setOnClickListener {
                         if (tvModifiers.visibility == View.VISIBLE) {
                             tvModifiers.collapse()
                             icModifierItemsDropDown.rotation = 180f
-                            spaceModifiers.visibility = View.VISIBLE
                         } else {
-                            spaceModifiers.visibility = View.GONE
                             tvModifiers.expand()
                             icModifierItemsDropDown.rotation = 0f
                         }
+                    }
+
+                    val menuItemNotes = menuItem.attributes.notes
+                    if (menuItemNotes != null && !menuItemNotes.isEmpty()) {
+                        flNotes.visibility = View.VISIBLE
+                        tvNotes.text = menuItemNotes
+                    } else {
+                        flNotes.visibility = View.GONE
                     }
 
                     val menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1)
@@ -1811,7 +1755,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             }
                         }
                     } else {
-                       edit.gone()
+                        edit.gone()
                     }
                     delete.setOnClickListener(View.OnClickListener {
                         activity?.cast<BaseActivity> {
@@ -1889,7 +1833,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun showPromoError(error: String) {
         continueCheckout = false
-        binding.placeOrder.isEnabled = cartPresenter.menuItemsCount > 0
+        binding.paymentSummaryContainer.placeOrder.isEnabled = cartPresenter.menuItemsCount > 0
         activity?.cast<BaseActivity> {
             val builder = AlertDialog.Builder(it)
             builder.setCancelable(true)
@@ -1930,9 +1874,9 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun validatingOrder(subtotal: Double) {
         runOnMain {
             binding.paymentSummaryContainer.subtotal.text = StringUtil.getFormattedPrice(subtotal)
-            binding.dashed.visibility = View.GONE
-            binding.originalPrice.visibility = View.GONE
-            binding.totalPrice.visibility = View.INVISIBLE
+            binding.paymentSummaryContainer.dashed.visibility = View.GONE
+            binding.paymentSummaryContainer.originalPrice.visibility = View.GONE
+            binding.paymentSummaryContainer.totalPrice.visibility = View.INVISIBLE
         }
     }
 
