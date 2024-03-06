@@ -6,22 +6,25 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.herfy.authentication.R
 import com.herfy.authentication.databinding.FragmentAddNewNameBinding
+import com.herfy.authentication.state.LoginOTPPageViewState
 import com.herfy.authentication.viewmodel.InputUserDetailViewModel
+import com.herfy.authentication.viewmodel.LoginOTPViewModel
+import com.herfy.authentication.viewmodel.LoginViewModel
 import com.herfy.utils.base.mvvm.BaseActivity
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.collectViewModelState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class InputUserDetailFragment :
-    BaseFragment<InputUserDetailViewModel, FragmentAddNewNameBinding>() {
+class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNameBinding>() {
 
     private val args: InputUserDetailFragmentArgs by navArgs()
 
-    override val viewModel: InputUserDetailViewModel by viewModels()
+    override val viewModel: LoginOTPViewModel by viewModels()
 
     override val layout: Int = R.layout.fragment_add_new_name
 
@@ -29,11 +32,11 @@ class InputUserDetailFragment :
         super.initViews()
         binding.apply {
             backButton.setOnClickListener {
-                navigateUp()
+                skipButton.performClick()
             }
 
             continueButton.setOnClickListener {
-
+                viewModel.updateName(binding.fullName.text.toString(), args.customerId)
             }
 
             skipButton.setOnClickListener {
@@ -69,5 +72,32 @@ class InputUserDetailFragment :
 
     override fun observe() {
         super.observe()
+
+        viewModel.state.collectViewModelState(viewLifecycleOwner) {
+            when (it) {
+                is LoginOTPPageViewState.ShowLoading -> {
+                    if (it.loading) {
+                        showProgressDialog(
+                            false, CacheUtil.getInstance().getTranslations(Text.LOADING, "Loading")
+                        )
+                    } else {
+                        dismissProgressDialog()
+                    }
+                }
+
+                is LoginOTPPageViewState.ShowError -> {
+                    showAlertDialog(
+                        title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
+                        message = it.error
+                    )
+                }
+
+                is LoginOTPPageViewState.SuccessUpdate -> {
+                    binding.skipButton.performClick()
+                }
+
+                else -> {}
+            }
+        }
     }
 }

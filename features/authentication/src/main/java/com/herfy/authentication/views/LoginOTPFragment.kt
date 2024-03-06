@@ -1,6 +1,7 @@
 package com.herfy.authentication.views
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
@@ -43,7 +44,7 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
             continueButton.setOnClickListener {
                 val code =
                     StringUtil.toEnglish(codeOne.text.toString() + codeTwo.text.toString() + codeThree.text.toString() + codeFour.text.toString() + codeFive.text.toString() + codeSix.text.toString())
-                toNextPage()
+                viewModel.verify(code.orEmpty(), args.customerId)
             }
 
             backButton.setOnClickListener {
@@ -220,19 +221,33 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
                         message = it.error
                     )
                 }
+
+                is LoginOTPPageViewState.SuccessVerify -> {
+                    toNextPage()
+                }
+
+                else -> {}
             }
         }
     }
 
     private fun toNextPage() {
-        findNavController().navigate(
-            LoginOTPFragmentDirections.actionOtpToInputUser(
-                phoneNumber = args.phoneNumber,
-                customerId = args.customerId,
-                isVerified = args.isVerified,
-                isGuest = args.isGuest
+        if (args.isVerified) {
+            requireContext().applicationContext.sendBroadcast(
+                Intent(
+                    requireContext().getString(R.string.exit_to_home)
+                )
             )
-        )
+        } else {
+            findNavController().navigate(
+                LoginOTPFragmentDirections.actionOtpToInputUser(
+                    phoneNumber = args.phoneNumber,
+                    customerId = args.customerId,
+                    isVerified = args.isVerified,
+                    isGuest = args.isGuest
+                )
+            )
+        }
     }
 
     private fun initArgs() {

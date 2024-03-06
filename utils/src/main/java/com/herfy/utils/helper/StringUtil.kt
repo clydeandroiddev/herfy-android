@@ -15,6 +15,15 @@ object StringUtil {
             .replace("(h)", height.toString()) + imageUrl
     }
 
+    fun isValidName(name: String): Boolean {
+        val pattern = Pattern.compile("^[a-zA-Z\\u0600-\\u06FF \\\\s]*$")
+        return name.isNotEmpty() && pattern.matcher(
+            toEnglish(
+                name
+            )
+        ).matches()
+    }
+
     fun getCloudflareUrl(width: Int, height: Int, imageUrl: String): String {
         if (imageUrl.contains(Values.CDN_HOST)) {
             val index = imageUrl.lastIndexOf("/")
@@ -84,18 +93,18 @@ object StringUtil {
 
     fun isValidPhoneNumber(phone: String): Boolean {
         val valid: Boolean = if (!CacheUtil.getInstance().concept.mobileFormat
-                    .isEmpty()
-            ) {
-                val pattern = Pattern.compile(CacheUtil.getInstance().concept.mobileFormat)
-                pattern.matcher(toEnglish(phone))
-                    .matches()
-            } else if (CacheUtil.getInstance().concept.country.equals("sa", ignoreCase = true)) {
-                val pattern =
-                    Pattern.compile("([0-9\\s\\-]{7,})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$")
-                pattern.matcher(phone).matches()
-            } else {
-                Patterns.PHONE.matcher(phone).matches()
-            }
+                .isEmpty()
+        ) {
+            val pattern = Pattern.compile(CacheUtil.getInstance().concept.mobileFormat)
+            pattern.matcher(toEnglish(phone))
+                .matches()
+        } else if (CacheUtil.getInstance().concept.country.equals("sa", ignoreCase = true)) {
+            val pattern =
+                Pattern.compile("([0-9\\s\\-]{7,})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$")
+            pattern.matcher(phone).matches()
+        } else {
+            Patterns.PHONE.matcher(phone).matches()
+        }
         return phone.isNotEmpty() && valid
     }
 
