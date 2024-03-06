@@ -116,6 +116,17 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                         message = it.error
                     )
                 }
+
+                is LoginViewState.GuestSuccess -> {
+                    findNavController().navigate(
+                        LoginFragmentDirections.actionLoginToOtp(
+                            phoneNumber = it.phoneNumber,
+                            customerId = it.customerId,
+                            isVerified = false,
+                            isGuest = true
+                        )
+                    )
+                }
             }
         }
     }
@@ -124,7 +135,10 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
         dismissAddNumberDialog()
         addNumberDialog = AddNumberDialog.newInstance(object : AddNumberDialog.OnSubmit {
             override fun onSubmit(phoneNumber: String) {
-
+                dismissAddNumberDialog()
+                viewModel.guestLogin(
+                    phoneNumber
+                )
             }
 
             override fun exit() {

@@ -39,6 +39,38 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun guestLogin(phoneNumber: String) {
+        viewModelScope.launchWithTimber(dispatchers.io) {
+            if (phoneNumber.isEmpty()) {
+                _state.emit(
+                    LoginViewState.ShowError(
+                        CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_REQUIRED)
+                    )
+                )
+            } else {
+                _state.emit(LoginViewState.ShowLoading(true))
+                processGuest(phoneNumber)
+            }
+        }
+    }
+
+    private suspend fun processGuest(mobile: String) {
+        authRepository.guestLogin(mobile) {
+            viewModelScope.launchWithTimber(dispatchers.io) {
+                _state.emit(LoginViewState.ShowLoading(false))
+                if (it.success) {
+                    _state.emit(LoginViewState.GuestSuccess(it.customerId, mobile))
+                } else {
+                    _state.emit(
+                        LoginViewState.ShowError(
+                            it.message
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     private suspend fun processLogin(mobile: String) {
         authRepository.login(mobile) {
             viewModelScope.launchWithTimber(dispatchers.io) {

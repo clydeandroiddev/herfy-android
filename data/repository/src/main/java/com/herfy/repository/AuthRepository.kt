@@ -2,10 +2,12 @@ package com.herfy.repository
 
 import com.google.gson.Gson
 import com.herfy.model.auth.CustomerResponse
+import com.herfy.model.auth.GuestResponse
 import com.herfy.model.auth.LoginResponse
 import com.herfy.model.auth.ResendResponse
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.handler.ErrorHandler.getErrorMessage
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
@@ -19,6 +21,8 @@ import com.skylinedynamics.solosdk.api.models.objects.Customer
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddressBody
 import com.skylinedynamics.solosdk.api.models.requestbodies.CustomerSMSVerificationBody
+import com.skylinedynamics.solosdk.api.models.requestbodies.GuestBody
+import com.skylinedynamics.solosdk.api.models.requestbodies.GuestBodyNew
 import com.skylinedynamics.solosdk.api.models.requestbodies.LoginSimpleBody
 import com.skylinedynamics.solosdk.api.models.requestbodies.ResendSMSBody
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerNameBody
@@ -34,6 +38,8 @@ import javax.inject.Inject
 interface AuthRepository {
 
     suspend fun login(phoneNumber: String, result: (LoginResponse) -> Unit)
+
+    suspend fun guestLogin(phoneNumber: String, result: (GuestResponse) -> Unit)
 
     suspend fun sendVerification(
         customerId: String, customerNumber: String, result: (ResendResponse) -> Unit
@@ -146,6 +152,64 @@ class AuthRepositoryImpl @Inject constructor(
                             false,
                             null,
                             CacheUtil.getInstance().getTranslations(Text.SIGN_IN_ERROR)
+                        )
+                    )
+                }
+            }
+        })
+    }
+
+    override suspend fun guestLogin(phoneNumber: String, result: (GuestResponse) -> Unit) {
+        val guestBody = GuestBodyNew(phoneNumber.replace("+", ""))
+        CustomersApiCall.getInstance().createGuest(guestBody, object : ApiRequestListener {
+            override fun onSuccess(o: Any) {
+                if (o is JSONObject) {
+                    try {
+                        val dataObj = o.getJSONObject("data")
+                        val customerId = dataObj.getString("id")
+                        result(
+                            GuestResponse(
+                                true,
+                                customerId,
+                                ""
+                            )
+                        )
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                        result(
+                            GuestResponse(
+                                false,
+                                "",
+                                CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
+                            )
+                        )
+                    }
+                } else {
+                    result(
+                        GuestResponse(
+                            false,
+                            "",
+                            CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
+                        )
+                    )
+                }
+            }
+
+            override fun onError(o: Any) {
+                if (o is JSONObject) {
+                    result(
+                        GuestResponse(
+                            false,
+                            "",
+                            CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
+                        )
+                    )
+                } else {
+                    result(
+                        GuestResponse(
+                            false,
+                            "",
+                            CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
                         )
                     )
                 }
