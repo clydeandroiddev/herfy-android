@@ -59,8 +59,6 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable) {
-                    codeOne.setText(StringUtil.localize(codeOne.text.toString()))
-                    codeOne.setSelection(s.length)
                     val nextField = codeOne.focusSearch(View.FOCUS_RIGHT) as TextView
                     nextField.requestFocus()
                 }
@@ -74,8 +72,6 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable) {
-                    codeTwo.setText(StringUtil.localize(codeTwo.text.toString()))
-                    codeTwo.setSelection(s.length)
                     val nextField = codeTwo.focusSearch(View.FOCUS_RIGHT) as TextView
                     nextField.requestFocus()
                 }
@@ -89,8 +85,6 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable) {
-                    codeThree.setText(StringUtil.localize(codeThree.text.toString()))
-                    codeThree.setSelection(s.length)
                     val nextField = codeThree.focusSearch(View.FOCUS_RIGHT) as TextView
                     nextField.requestFocus()
                 }
@@ -104,8 +98,6 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable) {
-                    codeFour.setText(StringUtil.localize(codeFour.text.toString()))
-                    codeFour.setSelection(s.length)
                     val nextField = codeFour.focusSearch(View.FOCUS_RIGHT) as TextView
                     nextField.requestFocus()
                 }
@@ -119,8 +111,6 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable) {
-                    codeFive.setText(StringUtil.localize(codeFive.text.toString()))
-                    codeFive.setSelection(s.length)
                     val nextField = codeFive.focusSearch(View.FOCUS_RIGHT) as TextView
                     nextField.requestFocus()
                 }
@@ -134,8 +124,6 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable) {
-                    codeSix.setText(StringUtil.localize(codeSix.text.toString()))
-                    codeSix.setSelection(s.length)
                 }
             })
 

@@ -112,7 +112,7 @@ class LoginOTPViewModel @Inject constructor(
                 viewModelScope.launchWithTimber(dispatchers.io) {
                     _state.emit(LoginOTPPageViewState.ShowLoading(false))
                     if (it.success) {
-                        _state.emit(LoginOTPPageViewState.UserResend)
+                        _state.emit(LoginOTPPageViewState.SuccessVerify)
                     } else {
                         _state.emit(
                             LoginOTPPageViewState.ShowError(

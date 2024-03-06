@@ -347,6 +347,7 @@ class AuthRepositoryImpl @Inject constructor(
                                                     LocaleUtil.getInstance().language,
                                                     object : ApiRequestListener {
                                                         override fun onSuccess(obj: Any) {}
+
                                                         override fun onError(error: Any) {
                                                             AppLogger.printRetrofitError(error)
                                                         }
