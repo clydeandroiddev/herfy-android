@@ -58,7 +58,7 @@ interface AuthRepository {
     )
 
     suspend fun updateName(
-        customerId: String, name: String, result: (CustomerResponse) -> Unit
+        customerId: String, name: String, lastName: String, result: (CustomerResponse) -> Unit
     )
 
     suspend fun updateMobile(
@@ -177,9 +177,7 @@ class AuthRepositoryImpl @Inject constructor(
                         val customerId = dataObj.getString("id")
                         result(
                             GuestResponse(
-                                true,
-                                customerId,
-                                ""
+                                true, customerId, ""
                             )
                         )
                     } catch (e: JSONException) {
@@ -226,9 +224,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun googleLogin(
-        email: String,
-        token: String,
-        result: (GoogleResponse) -> Unit
+        email: String, token: String, result: (GoogleResponse) -> Unit
     ) {
         AuthUtil.getInstance().password = ""
         AuthUtil.getInstance().provider = Values.PROVIDER_GOOGLE
@@ -247,8 +243,7 @@ class AuthRepositoryImpl @Inject constructor(
                                     .trim { it <= ' ' }
                             if (status == Values.STATUS_VERIFIED || status == Values.STATUS_UNVERIFIED) {
                                 val customer = GsonHelper.gsonFinal().fromJson(
-                                    data.toString(),
-                                    Customer::class.java
+                                    data.toString(), Customer::class.java
                                 )
                                 val token = attributes.getString("token")
                                 SoloAuth.getInstance().login(token)
@@ -591,9 +586,9 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateName(
-        customerId: String, name: String, result: (CustomerResponse) -> Unit
+        customerId: String, name: String, lastName: String, result: (CustomerResponse) -> Unit
     ) {
-        val updateCustomerBody = UpdateCustomerNameBody(name)
+        val updateCustomerBody = UpdateCustomerNameBody(name, lastName)
         CustomersApiCall.getInstance()
             .updateCustomerName(updateCustomerBody, customerId, object : ApiRequestListener {
                 override fun onSuccess(o: Any) {
@@ -730,10 +725,9 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun updateMobile(
         customerId: String, mobile: String, result: (CustomerResponse) -> Unit
     ) {
-        val updateCustomerBody =
-            UpdateCustomerMobileBody(
-                mobile
-            )
+        val updateCustomerBody = UpdateCustomerMobileBody(
+            mobile
+        )
         CustomersApiCall.getInstance()
             .updateCustomerMobile(updateCustomerBody, customerId, object : ApiRequestListener {
                 override fun onSuccess(o: Any) {

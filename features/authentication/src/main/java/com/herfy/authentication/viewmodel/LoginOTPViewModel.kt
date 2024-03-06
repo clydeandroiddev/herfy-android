@@ -73,31 +73,53 @@ class LoginOTPViewModel @Inject constructor(
     fun updateName(name: String, customerId: String) {
         viewModelScope.launchWithTimber(dispatchers.io) {
             if (name.isEmpty()) {
-                var error = CacheUtil.getInstance().getTranslations(Text.FIRST_NAME_EMPTY)
-                if (!StringUtil.isValidName(name)) {
-                    error = CacheUtil.getInstance().getTranslations(
-                        Text.NAME_VALIDATION,
-                        "Name fields should not accept numbers and special character."
-                    )
-                }
+                val error = CacheUtil.getInstance().getTranslations(Text.FIRST_NAME_EMPTY)
                 _state.emit(
                     LoginOTPPageViewState.ShowError(
                         error
                     )
                 )
             } else {
-                _state.emit(LoginOTPPageViewState.ShowLoading(true))
-                authRepository.updateName(customerId, name) {
-                    viewModelScope.launchWithTimber(dispatchers.io) {
-                        _state.emit(LoginOTPPageViewState.ShowLoading(false))
-                        if (it.success) {
-                            _state.emit(LoginOTPPageViewState.SuccessUpdate)
-                        } else {
-                            _state.emit(
-                                LoginOTPPageViewState.ShowError(
-                                    it.message
+                val fullname: Array<String> =
+                    name.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                if (!StringUtil.isValidName(name)) {
+                    val error = CacheUtil.getInstance().getTranslations(
+                        Text.NAME_VALIDATION,
+                        "Name fields should not accept numbers and special character."
+                    )
+                    _state.emit(
+                        LoginOTPPageViewState.ShowError(
+                            error
+                        )
+                    )
+                } else if (fullname.size == 1) {
+                    val error = CacheUtil.getInstance()
+                        .getTranslations(Text.LAST_NAME_EMPTY, "Please complete your full name")
+                    _state.emit(
+                        LoginOTPPageViewState.ShowError(
+                            error
+                        )
+                    )
+                } else {
+                    var firstName = ""
+                    var lastName = ""
+                    if (fullname.size >= 2) {
+                        firstName = fullname[0]
+                        lastName = fullname.drop(1).joinToString(" ")
+                    }
+                    _state.emit(LoginOTPPageViewState.ShowLoading(true))
+                    authRepository.updateName(customerId, firstName, lastName) {
+                        viewModelScope.launchWithTimber(dispatchers.io) {
+                            _state.emit(LoginOTPPageViewState.ShowLoading(false))
+                            if (it.success) {
+                                _state.emit(LoginOTPPageViewState.SuccessUpdate)
+                            } else {
+                                _state.emit(
+                                    LoginOTPPageViewState.ShowError(
+                                        it.message
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }
