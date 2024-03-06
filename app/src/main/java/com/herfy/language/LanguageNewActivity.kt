@@ -90,6 +90,7 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
 
                     val intent = Intent(this@LanguageNewActivity, MainActivity::class.java)
                     intent.putExtra("home", true)
+                    intent.putExtra("autoLogin", true)
                     startActivity(intent)
                     overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
                     finish()

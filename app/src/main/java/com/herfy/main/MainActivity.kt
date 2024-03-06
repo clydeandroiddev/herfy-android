@@ -140,7 +140,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private var isFromFavorites = false
     private var fromChangeLanguage = false
     var currentDestination = -1
-    private var languageAdapter : LanguageAdapter? = null
+    private var languageAdapter: LanguageAdapter? = null
 
     private var authLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -217,10 +217,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
             currentDestination = destination.id
             binding.toolbarMain.apply {
-                if(currentDestination == R.id.nav_herfy_home){
+                if (currentDestination == R.id.nav_herfy_home) {
                     hide(false)
                     setCart(cacheUtilHelper.getCartQuantity())
-                }else {
+                } else {
                     hide(true)
                 }
             }
@@ -260,36 +260,56 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 var currentItemIndex = 0
                 val availableLanguages = CacheUtil.getInstance().concept.languages.toList()
                 val languages = arrayListOf<String>()
-                availableLanguages.find { lang -> lang.equals(LocaleUtil.EN_US, ignoreCase = true)}?.let{
-                    languages.add(getString(R.string.eng))
-                }
-                availableLanguages.find { lang -> lang.equals(LocaleUtil.AR_SA, ignoreCase = true)}?.let{
-                    languages.add(getString(R.string.arabic))
-                }
-                availableLanguages.find { lang -> lang.equals(LocaleUtil.FR, ignoreCase = true)}?.let{
-                    languages.add(getString(R.string.fr))
-                }
+                availableLanguages.find { lang -> lang.equals(LocaleUtil.EN_US, ignoreCase = true) }
+                    ?.let {
+                        languages.add(getString(R.string.eng))
+                    }
+                availableLanguages.find { lang -> lang.equals(LocaleUtil.AR_SA, ignoreCase = true) }
+                    ?.let {
+                        languages.add(getString(R.string.arabic))
+                    }
+                availableLanguages.find { lang -> lang.equals(LocaleUtil.FR, ignoreCase = true) }
+                    ?.let {
+                        languages.add(getString(R.string.fr))
+                    }
                 val currentSelectedLanguage = LocaleUtil.getLocale().language
-                for(i in languages.indices){
-                    if(currentSelectedLanguage.equals("en", true) && languages[i].equals(getString(R.string.eng))){
+                for (i in languages.indices) {
+                    if (currentSelectedLanguage.equals("en", true) && languages[i].equals(
+                            getString(
+                                R.string.eng
+                            )
+                        )
+                    ) {
                         currentItemIndex = i
-                    }else if(currentSelectedLanguage.equals("ar", true) && languages[i].equals(getString(R.string.arabic))){
+                    } else if (currentSelectedLanguage.equals("ar", true) && languages[i].equals(
+                            getString(R.string.arabic)
+                        )
+                    ) {
                         currentItemIndex = i
-                    }else if (currentSelectedLanguage.equals("fr", true) && languages[i].equals(getString(R.string.fr))){
+                    } else if (currentSelectedLanguage.equals("fr", true) && languages[i].equals(
+                            getString(R.string.fr)
+                        )
+                    ) {
                         currentItemIndex = i
                     }
                 }
 
-                languageAdapter = LanguageAdapter(this@MainActivity, R.layout.item_language,  languages, currentItemIndex, R.id.text1 )
+                languageAdapter = LanguageAdapter(
+                    this@MainActivity,
+                    R.layout.item_language,
+                    languages,
+                    currentItemIndex,
+                    R.id.text1
+                )
                 spinnerLang.adapter = languageAdapter
                 spinnerLang.setSelection(currentItemIndex)
                 spinnerLang.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                        if(p2 == currentItemIndex){
+                        if (p2 == currentItemIndex) {
                             return
                         }
 
-                        val language : String = when(languages[p2]) {
+                        val language: String = when (languages[p2]) {
                             getString(R.string.eng) -> "en"
                             getString(R.string.arabic) -> "ar"
                             getString(R.string.fr) -> "fr"
@@ -300,7 +320,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                             binding.drawerLayout.closeDrawer(GravityCompat.START)
                             val eventAttributes: HashMap<String, String> = HashMap()
                             LocaleUtil.getInstance().language = language
-                            eventAttributes["ChangeLanguage"] = language.uppercase(Locale.getDefault())
+                            eventAttributes["ChangeLanguage"] =
+                                language.uppercase(Locale.getDefault())
                             logEvent("ChangeLanguage", eventAttributes, null, 0.0)
                             LocaleUtil.getInstance().setLocale(this@MainActivity)
                             val config: Configuration = Configuration()
@@ -310,7 +331,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                                 .setLanguage(LocaleUtil.getInstance().languageSymbol)
                             mainPresenter.changeLanguage()
 
-                            val intent: Intent = Intent(this@MainActivity, SplashActivity::class.java)
+                            val intent: Intent =
+                                Intent(this@MainActivity, SplashActivity::class.java)
                             intent.putExtra("fromChangeLanguage", true)
                             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                             ActivitySwitcher.animationOut(
@@ -576,11 +598,13 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         val customerNameVisibility = if (isSignedIn && !isGuest) View.VISIBLE else View.GONE
         binding.sidebar.lnCustomerName.visibility = customerNameVisibility
         val customerNameLabel = CacheUtil.getInstance().getTranslations(Text.HI_LABEL, "Hi (x) !")
-        binding.sidebar.customerName.text = customerNameLabel.replace("(x)",if (isSignedIn) customer.attributes.firstName else "")
+        binding.sidebar.customerName.text =
+            customerNameLabel.replace("(x)", if (isSignedIn) customer.attributes.firstName else "")
         binding.sidebar.fmAccount.visibility = if (isSignedIn) View.VISIBLE else View.GONE
         binding.sidebar.fmActiveSubscription.visibility =
             if (isSubs && isSignedIn) View.VISIBLE else View.GONE
-        binding.sidebar.fmSignin.visibility = if (isSignedIn && !isGuest) View.GONE else View.VISIBLE
+        binding.sidebar.fmSignin.visibility =
+            if (isSignedIn && !isGuest) View.GONE else View.VISIBLE
         val loggedInRules = if (isSignedIn) (if (isSubs) View.GONE else View.VISIBLE) else View.GONE
         binding.sidebar.fmHistory.visibility = loggedInRules
         val containsLoyalty =
@@ -694,8 +718,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     intent.type = "text/plain"
                 } else {
                     intent = Intent(this@MainActivity, BrowserActivity::class.java)
-                    intent.putExtra("title", CacheUtil.getInstance().getTranslations(
-                        Text.FEEDBACK))
+                    intent.putExtra(
+                        "title", CacheUtil.getInstance().getTranslations(
+                            Text.FEEDBACK
+                        )
+                    )
                     intent.putExtra("url", feedbackUrl)
                 }
             } else {
@@ -738,7 +765,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 )
             ).build()
             NavigationUtils.navigateSafe(navController, request)
-
 
 
         }
@@ -806,17 +832,23 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             }*/
         }
         binding.toolbarMain.apply {
-            setSideButtonAction{
+            setSideButtonAction {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
             }
-            setCartButtonAction{
+            setCartButtonAction {
                 showCart()
             }
         }
+
+        if (intent.getBooleanExtra("autoLogin", false)) {
+            binding.sidebar.signin.performClick()
+        }
     }
+
     private fun navMenuItem() {
 
     }
+
     private fun showNotifications() {
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_NOTIFICATIONS)
         /*if (isDefaultHomeScreenDesign || currentDestination == R.id.nav_menu) {
@@ -901,7 +933,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             val envList = arrayListOf<com.herfy.model.ServerType>()
             envList.addAll(
                 GsonHelper.gsonFinal().fromJson(
-                    serverTypeStr, object : TypeToken<ArrayList<com.herfy.model.ServerType>>() {}.type
+                    serverTypeStr,
+                    object : TypeToken<ArrayList<com.herfy.model.ServerType>>() {}.type
                 )
             )
             val env = envList.find { s ->
@@ -1144,16 +1177,22 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             CacheUtil.getInstance().getTranslations(Text.PROMOTIONS, "Promotions")
         binding.sidebar.liveChat.text = CacheUtil.getInstance()
             .getTranslations(Text.LIVE_CHAT, "Live Chat")
-        binding.sidebar.signin.text = CacheUtil.getInstance().getTranslations(Text.GET_STARTED_LABEL, "Get Started with Herfy")
+        binding.sidebar.signin.text = CacheUtil.getInstance()
+            .getTranslations(Text.GET_STARTED_LABEL, "Get Started with Herfy")
         binding.scheduleOrderLabel.text = CacheUtil.getInstance().getTranslations(
             Text.TAP_HERE_TO_SCHEDULE_YOUR_ORDER,
             "Tap here to schedule your order"
         )
-        binding.sidebar.history.text = CacheUtil.getInstance().getTranslations(Text.YOUR_ORDERS_LABEL, "Your Orders")
-        binding.sidebar.loyalty.text = CacheUtil.getInstance().getTranslations(Text.LOYALTY_REWARDS_LABEL, "Loyalty & Rewards")
-        binding.sidebar.feedback.text = CacheUtil.getInstance().getTranslations(Text.FEEDBACK, "Feedback")
-        binding.sidebar.account.text = CacheUtil.getInstance().getTranslations(Text.MY_PROFILE_LABEL, "My Profile")
-        binding.sidebar.favorites.text = CacheUtil.getInstance().getTranslations(Text.FAVOURITES_LABEL, "Favourites")
+        binding.sidebar.history.text =
+            CacheUtil.getInstance().getTranslations(Text.YOUR_ORDERS_LABEL, "Your Orders")
+        binding.sidebar.loyalty.text =
+            CacheUtil.getInstance().getTranslations(Text.LOYALTY_REWARDS_LABEL, "Loyalty & Rewards")
+        binding.sidebar.feedback.text =
+            CacheUtil.getInstance().getTranslations(Text.FEEDBACK, "Feedback")
+        binding.sidebar.account.text =
+            CacheUtil.getInstance().getTranslations(Text.MY_PROFILE_LABEL, "My Profile")
+        binding.sidebar.favorites.text =
+            CacheUtil.getInstance().getTranslations(Text.FAVOURITES_LABEL, "Favourites")
         binding.sidebar.activeSubscription.text = CacheUtil.getInstance().getTranslations(
             Text.ACTIVE_SUBSCRIPTION,
             "Active Subscription"
@@ -1174,8 +1213,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.support.text = CacheUtil.getInstance()
             .getTranslations(Text.HELP_SUPPORT_LABEL, "Help & Support")
         binding.sidebar.faqs.text = CacheUtil.getInstance().getTranslations(Text.FAQS_LABEL, "FAQs")
-        binding.sidebar.aboutUs.text = CacheUtil.getInstance().getTranslations(Text.ABOUT_US_LABEL, "About Us")
-        binding.sidebar.terms.text = CacheUtil.getInstance().getTranslations(Text.TERMS_LABEL, "Terms & Condition")
+        binding.sidebar.aboutUs.text =
+            CacheUtil.getInstance().getTranslations(Text.ABOUT_US_LABEL, "About Us")
+        binding.sidebar.terms.text =
+            CacheUtil.getInstance().getTranslations(Text.TERMS_LABEL, "Terms & Condition")
     }
 
     override fun setCaloriesPage(caloriesPage: CmsPage) {
@@ -1205,30 +1246,35 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
+
             R.id.nav_home -> NavigationUtils.navigateSafe(
                 navController,
                 NewMenuHomePageFragmentDirections.actionHomeToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
+
             R.id.nav_menu_item -> NavigationUtils.navigateSafe(
                 navController,
                 MenuItemFragmentDirections.actionMenuItemToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
+
             R.id.nav_favorites -> NavigationUtils.navigateSafe(
                 navController,
                 FavoritesFragmentDirections.actionFavoritesToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
+
             R.id.nav_popular_now -> NavigationUtils.navigateSafe(
                 navController,
                 PopularNowFragmentDirections.actionPopularNowToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
+
             R.id.nav_digital_coupons -> NavigationUtils.navigateSafe(
                 navController,
                 DigitalCouponsFragmentDirections.actionDigitalCouponsToCart()

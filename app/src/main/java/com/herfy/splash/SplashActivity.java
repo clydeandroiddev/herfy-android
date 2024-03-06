@@ -318,13 +318,15 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         if (!language) {
             proceedMain = false;
             intent = new Intent(this, LanguageNewActivity.class);
-        } else if (!onboarding && BuildUtil.splashOnboardingApp()) {
-            proceedMain = false;
-            intent = new Intent(this, OnboardingActivity.class);
-        } else if (BuildConfig.SUBSCRIPTION_ENABLED && CacheUtil.getInstance().getMode() == 0) {
-            proceedMain = false;
-            intent = new Intent(this, SelectionActivity.class);
-        } else {
+        }
+//        else if (!onboarding && BuildUtil.splashOnboardingApp()) {
+//            proceedMain = false;
+//            intent = new Intent(this, OnboardingActivity.class);
+//        } else if (BuildConfig.SUBSCRIPTION_ENABLED && CacheUtil.getInstance().getMode() == 0) {
+//            proceedMain = false;
+//            intent = new Intent(this, SelectionActivity.class);
+//        }
+        else {
             intent.putExtra("home", true);
         }
 
