@@ -113,7 +113,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         }
         binding.txtViewBasket.ninjaTap(viewLifecycleScope) {
             DialogClearCurrentBasketFragment.newInstance()
-                .show(s, EnterNewPhoneNumberFragment.TAG)
+                .show(parentFragmentManager, DialogClearCurrentBasketFragment.TAG)
 
         }
         binding.icBack.ninjaTap(viewLifecycleScope) {
