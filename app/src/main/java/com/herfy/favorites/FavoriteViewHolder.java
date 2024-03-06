@@ -7,6 +7,7 @@ import android.text.SpannableString;
 import android.text.SpannedString;
 import android.text.TextUtils;
 import android.text.style.StrikethroughSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,6 +48,7 @@ import com.herfy.views.SlantedTextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -77,8 +80,12 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 
     @BindView(R.id.icAdd)
     ImageView add;
+    @BindView(R.id.favouriteQuantityLayout)
+    ConstraintLayout favouriteQuantityLayout;
 
+    @BindView(R.id.txtQuantity)
 
+    MaterialTextView txtQuantity;
 
     public FavoriteViewHolder(FavoritesContract.Presenter favoritesPresenter, View itemView) {
         super(itemView);
@@ -133,7 +140,10 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
     public void setFavorite(Favorite favorite, ArrayList<String> outOfStockLocationList, double discount, double specialPrice) {
 
 //        favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
-
+        int quantity = getQuantityByFavourites(favorite);
+        favouriteQuantityLayout.setVisibility(quantity >= 1 ? View.VISIBLE : View.GONE);
+        txtQuantity.setText(String.valueOf(quantity));
+        add.setVisibility(quantity == 0 ? View.VISIBLE : View.GONE);
         favoriteIcon.setOnClickListener(view -> {
             ((BaseActivity) itemView.getContext()).showLoadingDialog();
 //            favoriteIcon.setColorFilter(Color.parseColor("#DEDEDE"));
@@ -206,7 +216,19 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
         extras.setText(mods);
 
     }
+    public int getQuantityByFavourites(Favorite favorite) {
 
+        int quantity = 0;
+        ArrayList<MenuItem> cart = CacheUtil.getInstance().getCart();
+
+        for (MenuItem item : cart) {
+            if (Objects.equals(String.valueOf(item.getId()), favorite.getItemId()) && item.getFavourites()) {
+                quantity++;
+            }
+        }
+
+        return quantity;
+    }
     @Override
     public void showMenuItem(String categoryId, String menuItemId) {
 

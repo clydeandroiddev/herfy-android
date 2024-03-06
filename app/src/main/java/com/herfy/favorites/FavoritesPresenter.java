@@ -104,12 +104,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                         JSONObject favorite = data.getJSONObject(i);
                         favorites.add(Favorite.parseFavorites(favorite));
                     }
-//                    executor.execute(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            appDatabase.favouriteDao().insertAll(favorites);
-//                        }
-//                    });
 
                     if (page == pagination.getTotalPages()) {
                         favoritesView.showFavorites(favorites);
@@ -264,7 +258,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     public void addToCartFavorite(Favorite favorite, ImageView view) {
         imageView = view;
         favoritesView.showLoadingDialog();
-        Log.d("FAFA","Favourite " + favorite);
         addCartItem(favorite);
     }
 
@@ -328,7 +321,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     public void addCartItem(Favorite favorite) {
 
         MenuItem favoriteMenuItem = MenuUtil.getFavoriteMenuItem(favorite);
-
         HashMap<String, ModifierItem> favoriteModifiers = new HashMap<>();
         for (ModifierItem modifierItem : favoriteMenuItem.getModifierItems()) {
             favoriteModifiers.put(modifierItem.getId(), modifierItem);
@@ -345,7 +337,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                 try {
                     String categoryId;
                     JSONObject object = new JSONObject(o.toString());
-                    Log.d("FAFA","Response bai " + o.toString());
                     JSONArray dataArray = object.getJSONArray("data");
 
                     if (dataArray.length() > 0) {
@@ -355,7 +346,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                         try {
                             menuItem.isCombo = dataArray.getJSONObject(0).getJSONObject("attributes").getBoolean("is-combo");
                         } catch (Exception e) {
-                            Log.d("FAFA","Test exception " + e.getLocalizedMessage());
                             e.printStackTrace();
                         }
 
@@ -652,7 +642,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                                         }
                                     }
                                 }
-
+                                favoritesView.addToCartFavorite(menuItem, imageView);
                             }
 
                             Store store = CacheUtil.getInstance().getOrderStore();
@@ -758,8 +748,10 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
                                     menuItem.getAttributes().setReorder(true);
 
+
                                     int cartCount = CacheUtil.getInstance().getCartQuantity();
                                     removeMukafaaRedemption();
+                                    menuItem.setFavourites(true);
                                     CacheUtil.getInstance().addToCart(menuItem);
                                     if (cartCount == 0) {
                                         favoritesView.setCartExpiry();
@@ -774,7 +766,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                         this.onError("");
                     }
                 } catch (JSONException e) {
-                    Log.d("FAFA","Exception bai " + e.getLocalizedMessage());
                     e.printStackTrace();
                     this.onError(e);
                 }

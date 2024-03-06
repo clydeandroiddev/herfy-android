@@ -15,7 +15,9 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -80,9 +82,22 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         logEvent("MyFavoritesView", eventAttributes, "", 0.0)
 //        binding.blocker.visibility = View.VISIBLE
         binding.newMenuItemSearchShimmer.visibility = View.VISIBLE
+        setUpNavigationObservers()
         favoritesPresenter.getFavorites(1)
     }
 
+    private fun setUpNavigationObservers() {
+        setFragmentResultListener(DialogClearCurrentBasketFragment.CURRENT_CART_KEY) { result, bundle ->
+            val cartTotal = bundle.getInt(DialogClearCurrentBasketFragment.CART_TOTAL_KEY)
+            if (cartTotal == 0) {
+                CacheUtil.getInstance()
+                    .orderType = OrderType.NONE
+                favoritesPresenter.getFavorites(1)
+
+            }
+            binding.txtCartFavouriteTotal.text = cartTotal.toString()
+        }
+    }
     override fun setPresenter(presenter: FavoritesContract.Presenter) {
         favoritesPresenter = presenter
     }
@@ -116,8 +131,25 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                 .show(parentFragmentManager, DialogClearCurrentBasketFragment.TAG)
 
         }
+        binding.btnAddMoreItems
+            .ninjaTap(viewLifecycleScope) {
+                val request = NavDeepLinkRequest.Builder.fromUri(
+                    Uri.parse("${Values.NAV_DEEP_LINK_BASE_URL}nav_menu")
+                ).build()
+
+                val options = NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .setPopUpTo(0, true)
+                    .build()
+                findNavController().navigate(request, options)
+            }
+
         binding.icBack.ninjaTap(viewLifecycleScope) {
             findNavController().popBackStack()
+        }
+        if (args.isFromOrderType && CacheUtil.getInstance().cart.isNotEmpty()) {
+            binding.txtCartFavouriteTotal.text = CacheUtil.getInstance().cartQuantity.toString()
+            binding.footer.setVisible(args.isFromOrderType)
         }
         adapter = FavoritesRecyclerViewAdapter(favoritesPresenter)
         binding.favouriteRecycleView.layoutManager = LinearLayoutManager(context)
@@ -147,45 +179,102 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             val baseActivity = activity as BaseActivity
             baseActivity.dismissDialogs()
             binding.orderTypeContainer.removeAllViews()
-
-            mockOrderTypes.forEach { orderType ->
-                val view = LayoutInflater.from(activity)
-                    .inflate(R.layout.item_favourite_order_type, binding.orderTypeContainer, false)
-                view.tag = orderType.id
-
-                val txtOrder = view.findViewById<MaterialTextView>(R.id.txtOrderType)
-                val type = CacheUtil.getInstance().orderType
-                    // todo remove this logic once API is ready temporary created this to make the navigation testable by QA
-                if (args.isFromOrderType  && type != OrderType.NONE &&  type.name.lowercase().equals(orderType.name, ignoreCase = true) || orderType.name.lowercase().contains(type.name.lowercase()) ) {
-                    Log.d("FAFA","Type bai" + orderType.name)
-                    txtOrder.isEnabled = true
-                    txtOrder.isClickable = true
-                    txtOrder.setTextColor(Color.WHITE)
-                    txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
-                } else {
-                    txtOrder.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_gray))
-                    txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
-                }
-                val container = view.findViewById<ConstraintLayout>(R.id.favouriteOrderContainer)
-                container.setOnClickListener { clickedView ->
-                    for (i in 0 until binding.orderTypeContainer.childCount) {
-                        val childView = binding.orderTypeContainer.getChildAt(i)
-                        val txtOrderType: TextView = childView.findViewById(R.id.txtOrderType)
-                        if (childView.tag == clickedView.tag) {
-                            txtOrderType.setTextColor(Color.WHITE)
-                            txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
-                        } else {
-                            txtOrderType.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_gray))
-                            txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
+            val type = CacheUtil.getInstance().orderType
+            if (args.isFromOrderType && type != OrderType.NONE) {
+                    mockOrderTypes
+                        .forEach {orderType->
+                            val view = LayoutInflater.from(activity)
+                                .inflate(
+                                    R.layout.item_favourite_order_type,
+                                    binding.orderTypeContainer,
+                                    false
+                                )
+                            view.tag = orderType.id
+                            val txtOrder = view.findViewById<MaterialTextView>(R.id.txtOrderType)
+                            if (type.name.lowercase()
+                                    .equals(orderType.name, ignoreCase = true) || orderType.name.lowercase()
+                                    .contains(type.name.lowercase())
+                            ) {
+                                txtOrder.isEnabled = true
+                                txtOrder.isClickable = true
+                                txtOrder.setTextColor(Color.WHITE)
+                                txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
+                            } else {
+                                txtOrder.isEnabled = false
+                                txtOrder.isClickable = false
+                                txtOrder.setTextColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.color_gray
+                                    )
+                                )
+                                txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
+                            }
+                            val txtOrderType = view.findViewById<MaterialTextView>(R.id.txtOrderType)
+                            txtOrderType.text = orderType.name
+                            binding.orderTypeContainer.addView(view)
                         }
+
+                } else {
+
+                mockOrderTypes.forEach { orderType ->
+                    val view = LayoutInflater.from(activity)
+                        .inflate(
+                            R.layout.item_favourite_order_type,
+                            binding.orderTypeContainer,
+                            false
+                        )
+                    view.tag = orderType.id
+                    val txtOrder = view.findViewById<MaterialTextView>(R.id.txtOrderType)
+                    if (orderType.name.lowercase()
+                            .equals(OrderType.DELIVERY.name, ignoreCase = true)
+                    ) {
+                        txtOrder.setTextColor(Color.WHITE)
+                        txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
+
+                    } else {
+                        txtOrder.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.color_gray
+                            )
+                        )
+                        txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
                     }
-                    val txtOrderType = clickedView.findViewById<MaterialTextView>(R.id.txtOrderType)
-                    // todo ask maam rio what's the endpoint for filtering it
-                    favoritesPresenter?.getFavouritesByOrderTypeId(clickedView.tag as Long, txtOrderType.text.toString())
+                    val container =
+                        view.findViewById<ConstraintLayout>(R.id.favouriteOrderContainer)
+                    container.setOnClickListener { clickedView ->
+                        for (i in 0 until binding.orderTypeContainer.childCount) {
+                            val childView = binding.orderTypeContainer.getChildAt(i)
+                            val txtOrderType: TextView =
+                                childView.findViewById(R.id.txtOrderType)
+                            if (childView.tag == clickedView.tag) {
+                                txtOrderType.setTextColor(Color.WHITE)
+                                txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
+                            } else {
+                                txtOrderType.setTextColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.color_gray
+                                    )
+                                )
+                                txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
+                            }
+                        }
+                        val txtOrderType =
+                            clickedView.findViewById<MaterialTextView>(R.id.txtOrderType)
+                        // todo ask maam rio what's the endpoint for filtering it
+                        favoritesPresenter?.getFavouritesByOrderTypeId(
+                            clickedView.tag as Long,
+                            txtOrderType.text.toString()
+                        )
+                    }
+
+                    val type = view.findViewById<MaterialTextView>(R.id.txtOrderType)
+                    type.text = orderType.name
+                    binding.orderTypeContainer.addView(view)
                 }
-                val txtOrderType = view.findViewById<MaterialTextView>(R.id.txtOrderType)
-                txtOrderType.text = orderType.name
-                binding.orderTypeContainer.addView(view)
+            }
             }
 
             favoritesPresenter?.setToSearch(false)
