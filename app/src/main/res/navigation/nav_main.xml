@@ -514,6 +514,11 @@
             android:id="@+id/action_favorites_to_order_type"
             app:destination="@id/nav_order_type"
             app:popUpTo="@+id/nav_favorites" />
+        <action
+            android:id="@+id/action_favorites_to_menu"
+            app:destination="@id/fragment_menu"
+            app:popUpTo="@+id/nav_favorites"
+            app:popUpToInclusive="true"/>
         <argument
             android:name="isFromOrderType"
             android:defaultValue="false"
