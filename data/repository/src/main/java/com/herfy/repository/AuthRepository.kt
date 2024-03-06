@@ -2,12 +2,12 @@ package com.herfy.repository
 
 import com.google.gson.Gson
 import com.herfy.model.auth.CustomerResponse
+import com.herfy.model.auth.GoogleResponse
 import com.herfy.model.auth.GuestResponse
 import com.herfy.model.auth.LoginResponse
 import com.herfy.model.auth.ResendResponse
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
-import com.herfy.utils.handler.ErrorHandler.getErrorMessage
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
@@ -21,12 +21,14 @@ import com.skylinedynamics.solosdk.api.models.objects.Customer
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddressBody
 import com.skylinedynamics.solosdk.api.models.requestbodies.CustomerSMSVerificationBody
-import com.skylinedynamics.solosdk.api.models.requestbodies.GuestBody
 import com.skylinedynamics.solosdk.api.models.requestbodies.GuestBodyNew
+import com.skylinedynamics.solosdk.api.models.requestbodies.LoginGoogleBody
 import com.skylinedynamics.solosdk.api.models.requestbodies.LoginSimpleBody
 import com.skylinedynamics.solosdk.api.models.requestbodies.ResendSMSBody
+import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerMobileBody
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerNameBody
 import com.skylinedynamics.solosdk.util.AppLogger
+import com.skylinedynamics.solosdk.util.GsonHelper
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -40,6 +42,8 @@ interface AuthRepository {
     suspend fun login(phoneNumber: String, result: (LoginResponse) -> Unit)
 
     suspend fun guestLogin(phoneNumber: String, result: (GuestResponse) -> Unit)
+
+    suspend fun googleLogin(email: String, token: String, result: (GoogleResponse) -> Unit)
 
     suspend fun sendVerification(
         customerId: String, customerNumber: String, result: (ResendResponse) -> Unit
@@ -55,6 +59,10 @@ interface AuthRepository {
 
     suspend fun updateName(
         customerId: String, name: String, result: (CustomerResponse) -> Unit
+    )
+
+    suspend fun updateMobile(
+        customerId: String, mobile: String, result: (CustomerResponse) -> Unit
     )
 }
 
@@ -215,6 +223,96 @@ class AuthRepositoryImpl @Inject constructor(
                 }
             }
         })
+    }
+
+    override suspend fun googleLogin(
+        email: String,
+        token: String,
+        result: (GoogleResponse) -> Unit
+    ) {
+        AuthUtil.getInstance().password = ""
+        AuthUtil.getInstance().provider = Values.PROVIDER_GOOGLE
+        AuthUtil.getInstance().token = token
+        AuthUtil.getInstance().secret = ""
+        val loginGoogleBody = LoginGoogleBody(Values.PROVIDER_GOOGLE, token)
+        CustomersApiCall.getInstance()
+            .loginCustomerThroughGoogle(loginGoogleBody, object : ApiRequestListener {
+                override fun onSuccess(o: Any) {
+                    if (o is JSONObject) {
+                        try {
+                            val data = o.getJSONObject("data")
+                            val attributes = data.getJSONObject("attributes")
+                            val status =
+                                attributes.getString("status").lowercase(Locale.getDefault())
+                                    .trim { it <= ' ' }
+                            if (status == Values.STATUS_VERIFIED || status == Values.STATUS_UNVERIFIED) {
+                                val customer = GsonHelper.gsonFinal().fromJson(
+                                    data.toString(),
+                                    Customer::class.java
+                                )
+                                val token = attributes.getString("token")
+                                SoloAuth.getInstance().login(token)
+                                if (status == Values.STATUS_VERIFIED) {
+                                    result(GoogleResponse(true, true, false, customer, ""))
+                                } else {
+                                    if (customer.attributes.mobile != null && StringUtil.isValidPhoneNumber(
+                                            customer.attributes.mobile
+                                        )
+                                    ) {
+                                        result(GoogleResponse(true, true, false, customer, ""))
+                                    } else {
+                                        result(GoogleResponse(true, false, true, customer, ""))
+                                    }
+                                }
+                            } else {
+                                result(
+                                    GoogleResponse(
+                                        false,
+                                        false,
+                                        false,
+                                        null,
+                                        CacheUtil.getInstance().getTranslations(Text.GOOGLE_ERROR)
+                                    )
+                                )
+                            }
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                            result(
+                                GoogleResponse(
+                                    false,
+                                    false,
+                                    false,
+                                    null,
+                                    CacheUtil.getInstance().getTranslations(Text.GOOGLE_ERROR)
+                                )
+                            )
+                        }
+                    } else {
+                        result(
+                            GoogleResponse(
+                                false,
+                                false,
+                                false,
+                                null,
+                                CacheUtil.getInstance().getTranslations(Text.GOOGLE_ERROR)
+                            )
+                        )
+                    }
+                }
+
+                override fun onError(o: Any) {
+                    AppLogger.printRetrofitError(o)
+                    result(
+                        GoogleResponse(
+                            false,
+                            false,
+                            false,
+                            null,
+                            CacheUtil.getInstance().getTranslations(Text.GOOGLE_ERROR)
+                        )
+                    )
+                }
+            })
     }
 
     override suspend fun sendVerification(
@@ -503,6 +601,145 @@ class AuthRepositoryImpl @Inject constructor(
                         val customer = AuthUtil.getInstance().customer
                         CustomersApiCall.getInstance()
                             .getCustomerById(customer.id.toString(), object : ApiRequestListener {
+                                override fun onSuccess(o: Any) {
+                                    if (o is JSONObject) {
+                                        try {
+                                            val dataObj = o.getJSONObject("data")
+                                            val cust = Gson().fromJson(
+                                                dataObj.toString(), Customer::class.java
+                                            )
+                                            AuthUtil.getInstance().customer = cust
+                                            result(CustomerResponse(true, cust, ""))
+                                        } catch (e: JSONException) {
+                                            e.printStackTrace()
+                                            result(
+                                                CustomerResponse(
+                                                    false,
+                                                    null,
+                                                    CacheUtil.getInstance()
+                                                        .getTranslations(Text.SAVING_PROFILE_ERROR)
+                                                )
+                                            )
+                                        }
+                                    } else {
+                                        result(
+                                            CustomerResponse(
+                                                false,
+                                                null,
+                                                CacheUtil.getInstance()
+                                                    .getTranslations(Text.SAVING_PROFILE_ERROR)
+                                            )
+                                        )
+                                    }
+                                }
+
+                                override fun onError(o: Any) {
+                                    AppLogger.printRetrofitError(o)
+                                    if (o is JSONObject) {
+                                        try {
+                                            val error = o["error"]
+                                            var detail = CacheUtil.getInstance()
+                                                .getTranslations(Text.AN_ERROR_OCCURRED)
+                                            if (error is JSONObject) {
+                                                detail = error.getString("detail")
+                                            } else if (error is JSONArray) {
+                                                val errorObject = error.getJSONObject(0)
+                                                detail = errorObject.getString("detail")
+                                            }
+                                            result(
+                                                CustomerResponse(
+                                                    false, null, detail
+                                                )
+                                            )
+                                        } catch (e: JSONException) {
+                                            e.printStackTrace()
+                                            result(
+                                                CustomerResponse(
+                                                    false,
+                                                    null,
+                                                    CacheUtil.getInstance()
+                                                        .getTranslations(Text.SAVING_PROFILE_ERROR)
+                                                )
+                                            )
+                                        }
+                                    } else {
+                                        result(
+                                            CustomerResponse(
+                                                false,
+                                                null,
+                                                CacheUtil.getInstance()
+                                                    .getTranslations(Text.SAVING_PROFILE_ERROR)
+                                            )
+                                        )
+                                    }
+                                }
+                            })
+                    } else {
+                        result(
+                            CustomerResponse(
+                                false,
+                                null,
+                                CacheUtil.getInstance().getTranslations(Text.SAVING_PROFILE_ERROR)
+                            )
+                        )
+                    }
+                }
+
+                override fun onError(o: Any) {
+                    AppLogger.printRetrofitError(o)
+                    if (o is JSONObject) {
+                        try {
+                            val error = o["error"]
+                            var detail =
+                                CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
+                            if (error is JSONObject) {
+                                detail = error.getString("detail")
+                            } else if (error is JSONArray) {
+                                val errorObject = error.getJSONObject(0)
+                                detail = errorObject.getString("detail")
+                            }
+                            result(
+                                CustomerResponse(
+                                    false, null, detail
+                                )
+                            )
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                            result(
+                                CustomerResponse(
+                                    false,
+                                    null,
+                                    CacheUtil.getInstance()
+                                        .getTranslations(Text.SAVING_PROFILE_ERROR)
+                                )
+                            )
+                        }
+                    } else {
+                        result(
+                            CustomerResponse(
+                                false,
+                                null,
+                                CacheUtil.getInstance().getTranslations(Text.SAVING_PROFILE_ERROR)
+                            )
+                        )
+                    }
+                }
+            })
+    }
+
+    override suspend fun updateMobile(
+        customerId: String, mobile: String, result: (CustomerResponse) -> Unit
+    ) {
+        val updateCustomerBody =
+            UpdateCustomerMobileBody(
+                mobile
+            )
+        CustomersApiCall.getInstance()
+            .updateCustomerMobile(updateCustomerBody, customerId, object : ApiRequestListener {
+                override fun onSuccess(o: Any) {
+                    if (o is JSONObject) {
+                        CustomersApiCall.getInstance()
+                            .getCustomerById(customerId, object : ApiRequestListener {
                                 override fun onSuccess(o: Any) {
                                     if (o is JSONObject) {
                                         try {

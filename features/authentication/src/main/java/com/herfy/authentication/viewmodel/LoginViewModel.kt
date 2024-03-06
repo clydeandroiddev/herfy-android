@@ -1,12 +1,14 @@
 package com.herfy.authentication.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.herfy.authentication.state.LoginOTPPageViewState
 import com.herfy.authentication.state.LoginViewState
 import com.herfy.repository.AuthRepository
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DispatcherProvider
+import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.launchWithTimber
 import com.skylinedynamics.solosdk.api.models.objects.Customer
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +38,62 @@ class LoginViewModel @Inject constructor(
                 val mobile = code + "" + phoneNumber
                 processLogin(mobile)
             }
+        }
+    }
+
+    private suspend fun processGoogle(email: String, token: String) {
+        authRepository.googleLogin(email, token) {
+            viewModelScope.launchWithTimber(dispatchers.io) {
+                _state.emit(LoginViewState.ShowLoading(false))
+                if (it.success) {
+                    val cust = it.data as Customer
+                    if (it.showAdd) {
+                        _state.emit(LoginViewState.ShowAddNumber(cust))
+                    } else {
+                        _state.emit(LoginViewState.GoogleSuccess(cust))
+                    }
+                } else {
+                    _state.emit(
+                        LoginViewState.ShowError(
+                            it.message
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun updateMobile(mobile: String, customer: Customer) {
+        viewModelScope.launchWithTimber(dispatchers.io) {
+            if (mobile.isEmpty()) {
+                _state.emit(
+                    LoginViewState.ShowError(
+                        CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_REQUIRED)
+                    )
+                )
+            } else {
+                _state.emit(LoginViewState.ShowLoading(true))
+                authRepository.updateMobile(customer.id, mobile) {
+                    viewModelScope.launchWithTimber(dispatchers.io) {
+                        _state.emit(LoginViewState.ShowLoading(false))
+                        if (it.success) {
+                            _state.emit(LoginViewState.GoogleSuccessFromAddNumber(it.data as Customer, mobile))
+                        } else {
+                            _state.emit(
+                                LoginViewState.ShowError(
+                                    it.message
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun loginViaGoogle(email: String, token: String) {
+        viewModelScope.launchWithTimber(dispatchers.io) {
+            processGoogle(email, token)
         }
     }
 
