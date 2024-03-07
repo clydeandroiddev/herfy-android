@@ -27,7 +27,7 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.PosPointsRedemptionB
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.handler.ErrorHandler;
-import com.herfy.util.TimeUtil;
+import com.herfy.utils.helper.TimeUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;

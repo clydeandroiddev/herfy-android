@@ -25,6 +25,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.NavHostFragment
@@ -145,7 +146,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 if (AuthUtil.getInstance().isSignedIn) {
-                    refreshMenu()
+                    setupSideBar()
                 }
             }
         }
@@ -219,6 +220,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 if (currentDestination == R.id.nav_herfy_home) {
                     hide(false)
                     setCart(cacheUtilHelper.getCartQuantity())
+                    setupSideBar()
                 } else {
                     hide(true)
                 }
@@ -427,42 +429,51 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
     fun showSocialMediaLinks() {
         hasLinks = false
-        if (CacheUtil.getInstance().concept.facebookLink != null && !CacheUtil.getInstance().concept.facebookLink.isEmpty()) {
+        if (CacheUtil.getInstance().concept.facebookLink != null && CacheUtil.getInstance().concept.facebookLink.isNotEmpty()) {
             binding.sidebar.cvFacebook.visibility = View.VISIBLE
             hasLinks = true
             binding.sidebar.cvFacebook.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.facebookLink) }
         } else {
             binding.sidebar.cvFacebook.visibility = View.GONE
         }
-        if (CacheUtil.getInstance().concept.twitterLink != null && !CacheUtil.getInstance().concept.twitterLink.isEmpty()) {
-            binding.sidebar.cvTwitter.visibility = View.VISIBLE
+        if (CacheUtil.getInstance().concept.twitterLink != null && CacheUtil.getInstance().concept.twitterLink.isNotEmpty()) {
+            binding.sidebar.cvTwitter.visibility = View.GONE
             hasLinks = true
             binding.sidebar.cvTwitter.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.twitterLink) }
         } else {
             binding.sidebar.cvTwitter.visibility = View.GONE
         }
-        if (CacheUtil.getInstance().concept.instagramLink != null && !CacheUtil.getInstance().concept.instagramLink.isEmpty()) {
+        if (CacheUtil.getInstance().concept.instagramLink != null && CacheUtil.getInstance().concept.instagramLink.isNotEmpty()) {
             binding.sidebar.cvIg.visibility = View.VISIBLE
             hasLinks = true
             binding.sidebar.cvIg.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.instagramLink) }
         } else {
             binding.sidebar.cvIg.visibility = View.GONE
         }
-        if (CacheUtil.getInstance().concept.youtubeLink != null && !CacheUtil.getInstance().concept.youtubeLink.isEmpty()) {
+        /*if (CacheUtil.getInstance().concept.youtubeLink != null && CacheUtil.getInstance().concept.youtubeLink.isNotEmpty()) {
             binding.sidebar.cvYoutube.visibility = View.VISIBLE
             hasLinks = true
             binding.sidebar.cvYoutube.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.youtubeLink) }
         } else {
             binding.sidebar.cvYoutube.visibility = View.GONE
-        }
-        if (CacheUtil.getInstance().concept.websiteLink != null && !CacheUtil.getInstance().concept.websiteLink.isEmpty()) {
+        }*/
+        binding.sidebar.cvYoutube.visibility = View.VISIBLE
+        hasLinks = true
+        binding.sidebar.cvYoutube.setOnClickListener { openSocialMediaLink(Values.YOUTUBE_LINK) }
+        if (CacheUtil.getInstance().concept.websiteLink != null && CacheUtil.getInstance().concept.websiteLink.isNotEmpty()) {
             binding.sidebar.cvWeb.visibility = View.VISIBLE
             hasLinks = true
             binding.sidebar.cvWeb.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.websiteLink) }
         } else {
             binding.sidebar.cvWeb.visibility = View.GONE
         }
-        binding.sidebar.cvTiktok.visibility = View.GONE
+        if (CacheUtil.getInstance().concept.tiktokLink != null && CacheUtil.getInstance().concept.tiktokLink.isNotEmpty()) {
+            binding.sidebar.cvTiktok.visibility = View.VISIBLE
+            hasLinks = true
+            binding.sidebar.cvTiktok.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.tiktokLink) }
+        } else {
+            binding.sidebar.cvTiktok.visibility = View.GONE
+        }
         binding.sidebar.cvShare.setOnClickListener {
             try {
                 val shareIntent = Intent(Intent.ACTION_SEND)
@@ -640,6 +651,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         } else {
             binding.sidebar.support.gone()
         }
+        binding.sidebar.fmRefer.isVisible = isSignedIn
+        binding.sidebar.fmStoreLocator.isVisible = isSignedIn
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -1209,6 +1222,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             CacheUtil.getInstance().getTranslations(Text.ABOUT_US_LABEL, "About Us")
         binding.sidebar.terms.text =
             CacheUtil.getInstance().getTranslations(Text.TERMS_LABEL, "Terms & Condition")
+        binding.sidebar.refer.text = CacheUtil.getInstance().getTranslations(Text.REFER_AND_EARN_LABEL, "Refer & Earn")
+        binding.sidebar.storeLocator.text = CacheUtil.getInstance().getTranslations(Text.STORE_LOCATER_LABEL, "Store Locater")
     }
 
     override fun setCaloriesPage(caloriesPage: CmsPage) {

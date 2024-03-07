@@ -7,38 +7,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tv_good_morning_user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:textColor="#212121"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Good morning, Ahmed" />
-
-        <ImageView
-            android:id="@+id/sun"
-            android:layout_width="18dp"
-            android:layout_height="22dp"
-            android:layout_marginStart="5dp"
-            android:src="@drawable/sun"
-            app:layout_constraintBottom_toBottomOf="@id/tv_good_morning_user"
-            app:layout_constraintStart_toEndOf="@id/tv_good_morning_user"
-            app:layout_constraintTop_toTopOf="@id/tv_good_morning_user" />
 
         <TextView
             android:id="@+id/tv_how_will_you_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="0dp"
             android:textColor="#191919"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_good_morning_user"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="How will you order today?" />
 
         <LinearLayout

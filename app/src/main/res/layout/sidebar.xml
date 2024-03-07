@@ -433,6 +433,45 @@
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/fm_store_locator"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_sidebar_store_locater"
+                    />
+
+                <TextView
+                    android:id="@+id/store_locator"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="start|center_vertical"
+                    android:includeFontPadding="false"
+                    android:text="Store Locater"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:layout_marginStart="16dp"
+                    style="@style/Styles.Text.Caption"/>
+                <View
+                    android:alpha=".4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white"
+                    android:layout_marginTop="6dp"
+                    android:layout_gravity="bottom"
+                    />
+            </FrameLayout>
+
+            <FrameLayout
                 android:id="@+id/fm_support"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -919,8 +958,6 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/logo_ig"
-                        android:visibility="gone"
-                        tools:visibility="visible"
                         android:layout_gravity="center"/>
 
 
@@ -956,7 +993,7 @@
                     app:strokeColor="@color/border_color_light"
                     app:strokeWidth="1dp"
                     android:layout_marginEnd="12dp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     tools:visibility="visible">
 
                     <ImageView
@@ -978,7 +1015,7 @@
                     app:strokeColor="@color/border_color_light"
                     app:strokeWidth="1dp"
                     android:layout_marginEnd="12dp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     tools:visibility="visible">
 
                     <ImageView
@@ -986,7 +1023,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/logo_yt"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         tools:visibility="visible"
                         android:layout_gravity="center"/>
 
@@ -1048,7 +1085,7 @@
                     app:strokeColor="@color/border_color_light"
                     app:strokeWidth="1dp"
                     android:layout_marginEnd="12dp"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/iv_share"

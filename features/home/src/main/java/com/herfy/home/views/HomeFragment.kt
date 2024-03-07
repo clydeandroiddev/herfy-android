@@ -1,5 +1,6 @@
 package com.herfy.home.views
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
@@ -23,13 +24,16 @@ import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.setInteractionDisabled
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.NavigationUtils
+import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,7 +49,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private lateinit var promotionsAdapter: PromotionsAdapter
     private lateinit var promotionCategoryAdapter: PromotionCategoryAdapter
     private var sliderHandler: Handler? = null
-    private lateinit var bottomSliderImageAdapter : SliderImageAdapter
+    private lateinit var bottomSliderImageAdapter: SliderImageAdapter
     private var bottomSliderhandler: Handler? = null
     private var promotionDetailBottomSheet: PromotionDetailBottomSheet? = null
     private val cacheUtilHelper by lazy {
@@ -63,12 +67,59 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             setupPromotions()
             setupOrderType()
             setupBottomSlider()
-            if(AuthUtil.getInstance().isSignedIn) {
-                setupCustomerLoyalty()
-            }else{
-              layoutLoyalty.clCustomerLoyalty.visibility = View.GONE
-            }
+            layoutLoyalty.apply {
+                progress.isEnabled = false
+                btnContinue.setOnClickListener {
+                    context?.let{
+                        val intent = Intent()
+                        intent.setClassName(it, Navigation.AUTH_ACTIVITY)
+                        intent.putExtra("sign_in", true)
+                        intent.putExtra("guest", false)
+                        intent.putExtra("curbside", false)
+                        intent.putExtra("checkout", false)
+                        startActivity(intent)
+                    }
 
+                }
+                clSeeRewards.setOnClickListener{
+                    context?.let {
+                        val intent = Intent()
+                        intent.setClassName(it, Navigation.LOYALTY_ACTIVITY)
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateGreetings()
+        updateLoyalty()
+    }
+
+    private fun updateLoyalty() {
+        if (AuthUtil.getInstance().isSignedIn) {
+            setupCustomerLoyalty()
+        } else {
+            binding.layoutLoyalty.apply {
+                rlLoyaltyContent.gone()
+                lnLoyaltyEmptyState.visible()
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateGreetings() {
+        binding.apply {
+            val authUtil = AuthUtil.getInstance()
+            if (authUtil.isSignedIn && authUtil.customer != null) {
+                tvHomeGreetings.visible()
+                tvHomeGreetings.text =
+                    "${TimeUtil.getGreetings()}, ${authUtil.customer.attributes.firstName}!"
+            } else {
+                tvHomeGreetings.gone()
+            }
         }
     }
 
@@ -80,7 +131,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     cacheHelper.getTranslations(Text.PROMOTIONS, "PROMOTIONS")
                 layoutCatering.apply {
 
-                    tvCaterTitle.text  = cacheHelper.getTranslations(Text.CATER_WITH_HERFY, "Cater with Herfy"
+                    tvCaterTitle.text = cacheHelper.getTranslations(
+                        Text.CATER_WITH_HERFY, "Cater with Herfy"
                     )
                     tvCaterDescription.text = cacheHelper.getTranslations(
                         Text.CATER_WITH_HERFY_DESC,
@@ -90,23 +142,29 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         cacheHelper.getTranslations(Text.ORDER_CATERING, "Order Catering")
                 }
                 layoutOrderTypeMain.apply {
-                    if (AuthUtil.getInstance().isSignedIn) {
-                        sun.visibility = View.VISIBLE
-                        tvGoodMorningUser.visibility = View.VISIBLE
-                        val name = AuthUtil.getInstance().customer.attributes.firstName
-                        tvGoodMorningUser.text = cacheHelper.getTranslations(
-                            Text.GOOD_MORNING_LABEL, "Good morning, (x)!"
-                        ).replace("(x)", name)
-                    } else {
-                        sun.visibility = View.GONE
-                        tvGoodMorningUser.visibility = View.GONE
-                    }
                     tvHowWillYouLabel.text = cacheHelper.getTranslations(
                         Text.HOW_WILL_YOU_ORDER_TODAY, "How will you order today?"
                     )
                 }
-
-                layoutBottomBanner.tvBannerBottom.text = CacheUtil.getInstance().getTranslations(Text.HERFY_SUPPORT, "Herfy supports the cause")
+                layoutBottomBanner.tvBannerBottom.text = CacheUtil.getInstance()
+                    .getTranslations(Text.HERFY_SUPPORT, "Herfy supports the cause")
+                layoutLoyalty.apply {
+                    tvLoyaltyLabel.text =
+                        cacheHelper.getTranslations(Text.ASHAB_HERFY, "Ashab Herfy")
+                    tvLabelYourPoints.text =
+                        cacheHelper.getTranslations(Text.TOTAL_POINTS, "Total Points")
+                    tvSeeRewards.text =
+                        cacheHelper.getTranslations(Text.SEE_MY_REWARDS, "See my rewards")
+                    tvTitleEmptyState.text = cacheHelper.getTranslations(
+                        Text.BECOME_ASHAB_HERFY,
+                        "Become an Ashab Herfy"
+                    )
+                    tvDescriptionEmptyState.text = cacheHelper.getTranslations(
+                        Text.BECOME_ASHAB_HERFY_DESCRIPTION,
+                        "By creating an account on signing in to your existing one you get point on every order"
+                    )
+                    btnContinue.text = cacheHelper.getTranslations(Text.CONTINUE_LABEL, "Continue")
+                }
             }
         }
     }
@@ -189,7 +247,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.showError.observeNonNull(this) {
-            if(it.message.isNotEmpty()){
+            if (it.message.isNotEmpty()) {
                 showAlertDialog(
                     title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
                     message = it.message
@@ -239,8 +297,10 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.showPromo.observeNonNull(this) {
-            it.getContentIfNotHandled()?.let {promo ->
-                promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(promo, viewModel)
+            it.getContentIfNotHandled()?.let { promo ->
+                promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(
+                    promo,
+                    viewModel)
                 promotionDetailBottomSheet?.show(
                     childFragmentManager, PromotionDetailBottomSheet::class.java.simpleName
                 )
@@ -286,30 +346,58 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.loyalty.observe(this){ loyalty ->
+        viewModel.loyalty.observe(this) { loyalty ->
 
             binding.layoutLoyalty.apply {
                 loyalty?.let {
                     clCustomerLoyalty.visibility = View.VISIBLE
+                    rlLoyaltyContent.visible()
+                    lnLoyaltyEmptyState.gone()
                     tvPoints.text = loyalty.attributes.pointsAccumulated.toString()
-                    tierName.text = loyalty.attributes.loyaltyTier?.name.toString()
-                }?: run {
-                    clCustomerLoyalty.visibility = View.GONE
+                    val loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
+                    if (loyaltyTier.isNotEmpty()) {
+                        var tierBackground = R.drawable.background_diamond_tier
+                        if (loyaltyTier.equals(
+                                "Bronze",
+                                ignoreCase = true
+                            ) || loyaltyTier.equals("برونزية")
+                        ) {
+                            tierBackground = R.drawable.background_bronze_tier
+                        } else if (loyaltyTier.equals(
+                                "Silver",
+                                ignoreCase = true
+                            ) || loyaltyTier.equals("فضي")
+                        ) {
+                            tierBackground = R.drawable.background_silver_tier
+                        } else if (loyaltyTier.equals(
+                                "Gold",
+                                ignoreCase = true
+                            ) || loyaltyTier.equals("ذهبي")
+                        ) {
+                            tierBackground = R.drawable.background_gold_tier
+                        }
+                        tvLoyaltyTier.text = loyaltyTier
+                        tvLoyaltyTier.setBackgroundResource(tierBackground)
+                    }
+
+                } ?: run {
+                    rlLoyaltyContent.gone()
+                    lnLoyaltyEmptyState.visible()
                 }
             }
         }
 
-        viewModel.pointsToNextTier.observeNonNull(this){pointsToNextTier->
-            if(pointsToNextTier<= 0){
-                viewModel.tier.observeNonNull(this){tier->
-                    if(tier==null){
+        viewModel.pointsToNextTier.observeNonNull(this) { pointsToNextTier ->
+            if (pointsToNextTier <= 0) {
+                viewModel.tier.observeNonNull(this) { tier ->
+                    if (tier == null) {
                         binding.layoutLoyalty.apply {
                             progress.max = 100
                             progress.progress = 0
                             progressLabel.text = "You are now a Tier member"
-                            progressTextIndicator.text = "${progress.progress}/${ progress.max}"
+                            progressTextIndicator.text = "${progress.progress}/${progress.max}"
                         }
-                    }else{
+                    } else {
                         binding.layoutLoyalty.apply {
                             progress.max = 100
                             progress.progress = 100
@@ -317,21 +405,21 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                 Text.TOTAL_POINTS_MAX_OUT,
                                 "You have maxed out on our tier levels"
                             )
-                            progressTextIndicator.text = "${progress.progress}/${ progress.max}"
+                            progressTextIndicator.text = "${progress.progress}/${progress.max}"
                         }
                     }
 
                 }
-            }else{
-                viewModel.startPoints.observeNonNull(this){startPoints->
+            } else {
+                viewModel.startPoints.observeNonNull(this) { startPoints ->
                     binding.layoutLoyalty.apply {
                         progress.max = startPoints
-                  }
+                    }
 
-                    viewModel.totalPointsAccumulated.observeNonNull(this){totalPointsAccumulated->
+                    viewModel.totalPointsAccumulated.observeNonNull(this) { totalPointsAccumulated ->
                         binding.layoutLoyalty.apply {
                             progress.progress = totalPointsAccumulated
-                            progressTextIndicator.text = "${progress.progress}/${ progress.max}"
+                            progressTextIndicator.text = "${progress.progress}/${progress.max}"
                         }
                     }
 
@@ -342,28 +430,30 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 viewModel.tier.observeNonNull(this) { tier ->
                     binding.layoutLoyalty.apply {
                         progressLabel.text = HtmlCompat.fromHtml(
-                                CacheUtil.getInstance().getTranslations(
-                                    Text.LOYALTY_POINTS_UNTIL_TIER,
-                                    "(x) points till you reach (y) Tier").replace("(x)", pointsToNextTier.toString()).replace(
-                                    "(y)", "<b>" + tier!!.name.substring(0, 1).uppercase(
-                                        Locale.getDefault()
-                                    ) + tier.name.substring(1).lowercase(Locale.getDefault())
-                                ) + "</b>", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                            CacheUtil.getInstance().getTranslations(
+                                Text.POINTS_UNTIL_NEXT_TIER,
+                                "(x) points until (y)"
+                            ).replace("(x)", pointsToNextTier.toString()).replace(
+                                "(y)", "<b>" + tier!!.name.substring(0, 1).uppercase(
+                                    Locale.getDefault()
+                                ) + tier.name.substring(1).lowercase(Locale.getDefault())
+                            ) + "</b>", HtmlCompat.FROM_HTML_MODE_LEGACY
+                        )
                     }
                 }
 
             }
         }
 
-        viewModel.promotionCategoryList.observeNonNull(this){ promoCategories ->
+        viewModel.promotionCategoryList.observeNonNull(this) { promoCategories ->
             binding.layoutPromotions.apply {
-                if(promoCategories.size > 0){
+                if (promoCategories.size > 0) {
                     promotionCategoryAdapter.updateList(promoCategories)
                 }
             }
         }
-        viewModel.updatePromoCategoryList.observeNonNull(this){
-            it.getContentIfNotHandled()?.let {selectedCategory ->
+        viewModel.updatePromoCategoryList.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { selectedCategory ->
                 promotionCategoryAdapter.updateCategoryList(selectedCategory)
                 binding.layoutPromotions.apply {
                     rvPromotions.visibility = View.GONE
@@ -373,22 +463,23 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         shimmerPromotionsList.visibility = View.VISIBLE
                         clPlaceholderPromo.visibility = View.VISIBLE
                     }
+
                 }
             }
         }
 
-        viewModel.promoFilteredList.observe(this){promos ->
+        viewModel.promoFilteredList.observe(this) { promos ->
             binding.apply {
                 layoutPromotions.apply {
                     placeholderPromotions.clPlaceholderPromo.visibility = View.GONE
                     promos?.let {
-                        if(it.isNotEmpty()){
+                        if (it.isNotEmpty()) {
                             rvPromotions.visibility = View.VISIBLE
                             promotionsAdapter.updatePromoList(promos)
-                        }else {
+                        } else {
                             rvPromotions.visibility = View.GONE
                         }
-                    }?: run {
+                    } ?: run {
                         rvPromotions.visibility = View.GONE
                     }
                 }
@@ -562,7 +653,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
-    private fun setupCustomerLoyalty(){
+    private fun setupCustomerLoyalty() {
         context?.let { ctx ->
             viewModel.getLoyalty()
         }

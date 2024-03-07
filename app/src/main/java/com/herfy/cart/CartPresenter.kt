@@ -20,7 +20,7 @@ import com.herfy.util.ApiLogLevel
 import com.herfy.util.ApiLogUtil.Companion.sendMessageLog
 import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
-import com.herfy.util.TimeUtil
+import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.constants.Text

@@ -19,6 +19,7 @@ import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
 import com.skylinedynamics.solosdk.api.models.objects.Tier
 import com.herfy.util.*
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.TimeUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit

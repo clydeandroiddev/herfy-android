@@ -1,5 +1,6 @@
-package com.herfy.util;
+package com.herfy.utils.helper;
 
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 
@@ -180,6 +181,20 @@ public class TimeUtil {
         } catch (ParseException pe) {
             return selectedDate;
         }
+    }
+
+    public static String getGreetings(){
+        Calendar c = Calendar.getInstance();
+        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
+        String greetings = "";
+        if(timeOfDay >= 0 && timeOfDay < 12){
+            greetings = CacheUtil.getInstance().getTranslations(Text.GOOD_MORNING, "Good morning");
+        }else if(timeOfDay >= 12 && timeOfDay < 18){
+            greetings = CacheUtil.getInstance().getTranslations(Text.GOOD_AFTERNOON, "Good afternoon");
+        }else if(timeOfDay >= 18){
+            greetings = CacheUtil.getInstance().getTranslations(Text.GOOD_EVENING, "Good evening");
+        }
+        return greetings;
     }
 
 }

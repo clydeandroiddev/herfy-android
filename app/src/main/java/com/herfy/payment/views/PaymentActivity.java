@@ -107,7 +107,7 @@ import com.herfy.analytics.FirebaseECommerceEventUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.ShipBookLogger;
 import com.herfy.util.StringUtil;
-import com.herfy.util.TimeUtil;
+import com.herfy.utils.helper.TimeUtil;
 import com.herfy.util.ViewUtil;
 import com.herfy.views.DynamicTheme;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
