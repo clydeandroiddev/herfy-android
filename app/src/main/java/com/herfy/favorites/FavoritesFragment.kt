@@ -148,7 +148,11 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             findNavController().popBackStack()
         }
         if (args.isFromOrderType && CacheUtil.getInstance().cart.isNotEmpty()) {
-            binding.txtCartFavouriteTotal.text = CacheUtil.getInstance().cartQuantity.toString()
+            binding.txtCartFavouriteTotal.text = CacheUtil.getInstance()
+                .cart
+                .map { it.favourites }
+                .count()
+                .toString()
             binding.footer.setVisible(args.isFromOrderType)
         }
         adapter = FavoritesRecyclerViewAdapter(favoritesPresenter)
@@ -216,7 +220,6 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                         }
 
                 } else {
-
                 mockOrderTypes.forEach { orderType ->
                     val view = LayoutInflater.from(activity)
                         .inflate(
@@ -229,6 +232,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                     if (orderType.name.lowercase()
                             .equals(OrderType.DELIVERY.name, ignoreCase = true)
                     ) {
+                        CacheUtil.getInstance().orderType = type
                         txtOrder.setTextColor(Color.WHITE)
                         txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
 

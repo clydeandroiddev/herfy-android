@@ -642,6 +642,8 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                                         }
                                     }
                                 }
+                                menuItem.setFavourites(true);
+                                CacheUtil.getInstance().addToCart(menuItem);
                                 favoritesView.addToCartFavorite(menuItem, imageView);
                             }
 
