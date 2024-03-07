@@ -219,7 +219,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(modifierImage);
         }
-        requiredCardView.setVisibility(showShowModifierCheckBox ? View.GONE : View.VISIBLE);
+        requiredCardView.setVisibility(showShowModifierCheckBox && modifierGroup.getAttributes().getMinimum() > 1 ? View.GONE : View.VISIBLE);
         modifierCheckBox.setVisibility(showShowModifierCheckBox ? View.VISIBLE : View.GONE);
         txtMinimum.setText(CacheUtil.getInstance().getTranslations(Text.REQUIRED,"Required"));
 

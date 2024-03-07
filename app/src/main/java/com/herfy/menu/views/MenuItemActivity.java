@@ -267,7 +267,6 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
         totalContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (cartMenuItem >= 0) {
                     menuPresenter.updateCartItem(false, cartMenuItem);
                 } else {

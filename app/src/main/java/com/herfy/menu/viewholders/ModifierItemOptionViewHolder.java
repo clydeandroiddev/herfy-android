@@ -70,7 +70,8 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
     private HashMap<Integer, Boolean> showShowQuantity = new HashMap<>();
 
-    private static final HashMap<String, Integer> clickCountMap = new HashMap<>();
+    private static HashMap<String, Integer> clickCountMap = new HashMap<>();
+    private static HashMap<String,Integer> subtractMap = new HashMap<>();
     public ModifierItemOptionViewHolder(Context context, MenuContract.Presenter menuPresenter, View itemView) {
         super(itemView);
         modifierProcessor = new ModifierProcessor(this);
@@ -120,24 +121,25 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             check.setImageResource(R.drawable.modifier_item_checked_selected);
 
         } else {
-            if (!clickCountMap.isEmpty()) {
-                Integer clickCount = clickCountMap.get(modifierItem.getId());
-                if (clickCount != null && clickCount >= 1) {
-                    clickCountMap.remove(modifierItem.getId());
-                }
-            }
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_unselected_state);
             radioButton.setImageResource(R.drawable.modifier_item_radio_unselected);
             check.setImageResource(R.drawable.modifier_item_unselected);
         }
         plus.setVisibility(modifierGroupAttributes.getMaximum() > 1 ? View.VISIBLE : View.GONE);
+        if (clickCountMap.size() >= 1  && modifierItem.getAttributes().getQuantity() == 1 && !modifierItem.getAttributes().isShouldShowQuantity()) {
+            Integer clickCount = clickCountMap.get(modifierItem.getId());
+            if ( clickCount != null && clickCount >= 1 ) {
+
+                clickCountMap.remove(modifierItem.getId());
+            }
+        }
 
         quantity.setText(StringUtil.localize(String.valueOf("0" + modifierItem.getAttributes().getQuantity())));
         if (clickCountMap.size() >= 1) {
             Integer clickCount = clickCountMap.get(modifierItem.getId());
             if (clickCount != null) {
                 boolean shouldShowQuantityLayout = modifierGroup.getAttributes().getMaximum() > 1 &&
-                        modifierItem.getAttributes().getMaximum() > 1 && modifierItem.getAttributes().isSelected() && clickCount >= 1;
+                        modifierItem.getAttributes().getMaximum() > 1 && clickCount >= 1;
                 quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
             }
         }
@@ -172,14 +174,13 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         } else {
             modifierOptionImage.setVisibility(View.GONE);
         }
-//
-        if (modifierItem.getAttributes().hasModifierItemExceedMaximum() && modifierItem.getAttributes().hasUserInteractedWithModifierItem()) {
+        if (modifierItem.getAttributes().hasModifierItemExceedMaximum() && modifierItem.getAttributes().hasUserInteractedWithModifierItem() ) {
             plus.setEnabled(true);
             plus.setImageResource(R.drawable.quantity_up_blue);
             modifierItemCardView.setEnabled(true);
         } else {
 
-            if (!modifierItem.getAttributes().hasUserInteractedWithModifierItem()) {
+            if (!modifierItem.getAttributes().hasUserInteractedWithModifierItem() ) {
                 plus.setEnabled(true);
                 plus.setImageResource(R.drawable.quantity_up_blue);
                 modifierItemCardView.setEnabled(true);
@@ -190,44 +191,44 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             }
         }
 
+        plus.setFocusable(modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum());
+        plus.setClickable(modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum());
 
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String modifierItemId = modifierItem.getId();
-                if (!clickCountMap.containsKey(modifierItemId)) {
+                if (!clickCountMap.containsKey(modifierItemId) && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum() ) {
                     clickCountMap.put(modifierItemId, 0);
                     boolean shouldShowQuantityLayout = modifierGroup.getAttributes().getMaximum() > 1 &&
-                            modifierItem.getAttributes().getMaximum() > 1 && modifierItem.getAttributes().isSelected();
+                            modifierItem.getAttributes().getMaximum() > 1;
+
                     quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
-                    if (quantityDownLayout.getVisibility() == View.VISIBLE) {
-                        action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
-                    }
+
                 }
 
                 Integer clickCount = clickCountMap.get(modifierItemId);
 
                 clickCount = clickCount == null ? 1 : clickCount + 1;
+                if (clickCount == 1) {
+                    action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, clickCount);
+                }
 
                 clickCountMap.put(modifierItemId, clickCount);
+                if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount > 1 && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
 
-                if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount > 1) {
-                    action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                 }
             }
         });
-
+        minus.setFocusable(modifierItem.getAttributes().getQuantity() != 1);
+        minus.setClickable(modifierItem.getAttributes().getQuantity() != 1);
         minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String modifierItemId = modifierItem.getId();
-                if (action != null && (modifierItem.getAttributes().getQuantity() > 1 || modifierItem.getAttributes().getMinimum() != 1)) {
-                    action.onQuantityChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
-                }
+                action.onQuantityChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, 0);
             }
         });
     }
-
     public static boolean isProbablyArabic(String s) {
         for (int i = 0; i < s.length(); ) {
             int c = s.codePointAt(i);

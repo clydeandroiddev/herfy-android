@@ -1,32 +1,32 @@
 package com.herfy.favorites
 
-import android.app.Activity
 import android.content.Context.VIBRATOR_SERVICE
+import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.OnClick
+import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.databinding.FragmentFavoritesBinding
 import com.herfy.ext.cast
 import com.herfy.favourites.databinding.FragmentNewFavoritesBinding
+import com.herfy.favourites.ui.model.FakeOrderTypeUIModel
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.util.CacheHelper
@@ -128,28 +128,56 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             baseActivity.showLoadingDialog()
         }
     }
-
     override fun showFavorites(favorites: ArrayList<Favorite>) {
-        activity?.let {
-            val baseActivity = it as BaseActivity
+        val mockOrderTypes = listOf(
+            FakeOrderTypeUIModel(id = 1, "Delivery"),
+            FakeOrderTypeUIModel(id = 2, "Pickup"),
+            FakeOrderTypeUIModel(id = 3, "Dine In")
+        )
+        activity?.let { activity ->
+            val baseActivity = activity as BaseActivity
             baseActivity.dismissDialogs()
+            binding.orderTypeContainer.removeAllViews()
+
+            mockOrderTypes.forEach { orderType ->
+                val view = LayoutInflater.from(activity)
+                    .inflate(R.layout.item_favourite_order_type, binding.orderTypeContainer, false)
+                view.tag = orderType.id
+
+                val container = view.findViewById<ConstraintLayout>(R.id.favouriteOrderContainer)
+                container.tag = orderType.id
+                container.setOnClickListener { clickedView ->
+                    for (i in 0 until binding.orderTypeContainer.childCount) {
+                        val childView = binding.orderTypeContainer.getChildAt(i)
+                        val txtOrderType: TextView = childView.findViewById(R.id.txtOrderType)
+                        if (childView.tag == clickedView.tag) {
+                            txtOrderType.setTextColor(Color.WHITE)
+                            txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
+                        } else {
+                            txtOrderType.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_gray))
+                            txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
+                        }
+                    }
+                    val txtOrderType = clickedView.findViewById<MaterialTextView>(R.id.txtOrderType)
+                    // todo ask maam rio what's the endpoint for filtering it
+                    favoritesPresenter?.getFavouritesByOrderTypeId(clickedView.tag as Long, txtOrderType.text.toString())
+                }
+                val txtOrderType = view.findViewById<MaterialTextView>(R.id.txtOrderType)
+                txtOrderType.text = orderType.name
+                binding.orderTypeContainer.addView(view)
+            }
+
+            favoritesPresenter?.setToSearch(false)
+            binding.newMenuItemSearchShimmer.visibility = View.GONE
+            adapter?.notifyDataSetChanged()
+
+            val isFavoritesNotEmpty = favorites.isNotEmpty()
+            binding.favouriteRecycleView.setVisible(isFavoritesNotEmpty)
+            binding.emptyState.setVisible(isFavoritesNotEmpty.not())
+            binding.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_FAVORITE_FOUND, "No favourites found."))
         }
-        favoritesPresenter!!.setToSearch(false)
-//        binding.blocker.visibility = View.GONE
-        binding.newMenuItemSearchShimmer.visibility = View.GONE
-        adapter!!.notifyDataSetChanged()
-        if (favorites.size > 0) {
-//            binding.searchEmptyLayout.visibility = View.GONE
-            binding.favouriteRecycleView.visibility = View.VISIBLE
-        } else {
-//            binding.searchEmptyLayout.visibility = View.VISIBLE
-            binding.favouriteRecycleView.visibility = View.GONE
-        }
-        val isFavouritesNotEmpty = favorites.isNotEmpty()
-        binding.favouriteRecycleView.setVisible(isFavouritesNotEmpty)
-        binding.emptyState.setVisible(isFavouritesNotEmpty.not())
-        binding!!.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_FAVORITE_FOUND, "No favourites found."))
     }
+
 
     override fun setFavorite(favorite: Favorite, outOfStockLocations: ArrayList<String>, discount: Double, specialPrice: Double) {}
     override fun showMenuItem(categoryId: String, menuItemId: String) {
@@ -187,6 +215,13 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                         vibrator.vibrate(100)
                     }
                 }
+
+                val request = NavDeepLinkRequest.Builder.fromUri(
+                    Uri.parse(
+                        "${Values.NAV_DEEP_LINK_BASE_URL}nav_order_type/${1}" // todo hardcoded for now ask maam rio where to get the store id
+                    )
+                ).build()
+                NavigationUtils.navigateSafe(findNavController(), request)
                 Toast.makeText(
                     baseActivity,
                     CacheUtil.getInstance().getTranslations(Text.FAVORITE_ADDED_TO_CART),

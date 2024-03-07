@@ -1122,4 +1122,10 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
             });
         }
     }
+
+    @Override
+    public void getFavouritesByOrderTypeId(long orderTypeId, String orderTypeName) {
+       OrderType type =  OrderType.Companion.fromFavouriteType(orderTypeName);
+       CacheUtil.getInstance().setOrderType(type);
+    }
 }

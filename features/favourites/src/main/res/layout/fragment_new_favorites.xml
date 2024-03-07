@@ -54,8 +54,8 @@
         tools:visibility="visible"
         android:layout_height="wrap_content"/>
   </androidx.constraintlayout.widget.ConstraintLayout>
-  <!-- Todo Uncoment for now need clarification  -->
-  <!--  <com.google.android.material.textview.MaterialTextView-->
+
+<!--    <com.google.android.material.textview.MaterialTextView-->
 <!--      android:id="@+id/txtOrderType"-->
 <!--      android:layout_width="wrap_content"-->
 <!--      style="@style/Styles.Text.Footnote"-->
@@ -63,8 +63,17 @@
 <!--      android:fontFamily="@font/inter_medium"-->
 <!--      android:gravity="center"-->
 <!--      tools:text="Pick up"-->
-<!--      android:background="@drawable/bg_favourite_order_type_selected"-->
+<!--      tools:background="@drawable/bg_favourite_order_type_selected"-->
 <!--      android:layout_height="wrap_content"/>-->
+  <LinearLayout
+      android:id="@+id/orderTypeContainer"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/margin_xlarge"
+      android:layout_marginEnd="12dp"
+      android:orientation="horizontal"
+      android:layout_marginStart="@dimen/margin_large"
+      tools:visibility="visible" />
 
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/favouriteRecycleView"
