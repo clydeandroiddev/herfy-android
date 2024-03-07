@@ -341,7 +341,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getTiersObservable(): Single<List<Tier>?>? {
+    private fun getTiersObservable(): Single<List<Tier>?>? {
         return Single.create<List<Tier>?> { source: SingleEmitter<List<Tier>?> ->
 
             invoke {
@@ -359,7 +359,6 @@ class HomeViewModel @Inject constructor(
                                 CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
                             )
                         )
-                        _showError.value = ErrorMsgItem(true, homeResponse.message)
                     }
                 }
             }
