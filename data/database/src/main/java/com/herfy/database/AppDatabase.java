@@ -34,7 +34,7 @@ import dev.matrix.roomigrant.GenerateRoomMigrations;
         StoreDb.class,
         FacilityEntity.class,
         MenuCategoryEntity.class,
-        MenuItemEntity.class,
+        MenuItemEntity.class
 }, version = 1)
 @TypeConverters(value = {
         LocationPriceListConverter.class,
