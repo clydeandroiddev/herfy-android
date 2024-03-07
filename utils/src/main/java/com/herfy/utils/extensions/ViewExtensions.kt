@@ -4,6 +4,8 @@ import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.view.Window
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.Transformation
 import androidx.databinding.BindingAdapter
@@ -101,5 +103,12 @@ fun RecyclerView.OnLayoutLoadingCompleted(action: () -> Unit) {
 fun runOnMain(task : (() -> Unit)){
     android.os.Handler(Looper.getMainLooper()).post{
         task.invoke()
+    }
+}
+fun Window.setInteractionDisabled(disabled : Boolean) {
+    if (disabled) {
+        setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    } else {
+        clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 }

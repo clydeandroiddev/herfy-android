@@ -267,223 +267,222 @@ class HomeRepositoryImpl @Inject constructor(
         )
     }
 
-    private fun createOrderBody(category: OrderType, body: (JsonObject) -> Unit) {
+    private suspend fun createOrderBody(category: OrderType, body: (JsonObject) -> Unit) {
         val authUtil = AuthUtil.getInstance()
         val cacheUtil = CacheUtil.getInstance()
 
         val customer = authUtil.customer
         val concept = cacheUtil.concept
         val store = cacheUtil.orderStore
-        val menuItems = cacheUtil.cart
+        cacheUtilHelper.getCartItems { menuItems ->
 
-        val subtotal: Double = getMenuItemsTotalPrice(menuItems)
-        var deliveryCharge = 0.0
+            val subtotal: Double = getMenuItemsTotalPrice(menuItems)
+            var deliveryCharge = 0.0
 
-        try {
-            val minimumOrderAmountFreeDelivery = concept.minimumOrderAmountFreeDelivery
-            if (minimumOrderAmountFreeDelivery != 0.0 && subtotal >= minimumOrderAmountFreeDelivery) {
-                deliveryCharge = concept.specialDeliveryPrice
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        val orderBody = JsonObject()
-        if (authUtil.isSignedIn) {
-            orderBody.addProperty("customer", customer.id)
-        }
-
-        orderBody.addProperty("source", "Android")
-        orderBody.addProperty("notes", cacheUtil.cartNotes)
-        orderBody.addProperty(
-            "subtotal", String.format(Locale.ENGLISH, "%.2f", subtotal).toDouble()
-        )
-
-        var discount = 0.0
-
-        val couponCode = cacheUtil.couponCode
-        if (couponCode != null && !couponCode.isEmpty()) {
-            orderBody.addProperty("coupon-code", couponCode)
-        }
-
-        if (cacheUtil.campaign != null && cacheUtil.campaignPromotion != null) {
-            orderBody.addProperty("campaign-id", cacheUtil.campaign.id)
-        }
-
-        var discountedSubtotal = subtotal - discount
-        if (discountedSubtotal < 0) {
-            discountedSubtotal = 0.0
-            discount = subtotal
-        }
-
-        orderBody.addProperty(
-            "discount", String.format(Locale.ENGLISH, "%.2f", discount).toDouble()
-        )
-        orderBody.addProperty("type", "")
-        when (category) {
-            OrderType.PICKUP -> {
-                orderBody.addProperty("type", "pickup")
-                if (store != null) {
-                    orderBody.addProperty("location", store.id)
+            try {
+                val minimumOrderAmountFreeDelivery = concept.minimumOrderAmountFreeDelivery
+                if (minimumOrderAmountFreeDelivery != 0.0 && subtotal >= minimumOrderAmountFreeDelivery) {
+                    deliveryCharge = concept.specialDeliveryPrice
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
-            OrderType.DRIVE_THRU -> {
-                orderBody.addProperty("type", "drive-thru")
-                if (store != null) {
-                    orderBody.addProperty("location", store.id)
-                }
+            val orderBody = JsonObject()
+            if (authUtil.isSignedIn) {
+                orderBody.addProperty("customer", customer.id)
             }
 
-            OrderType.EAT_IN -> {
-                orderBody.addProperty("type", "eat-in")
-                if (store != null) {
-                    orderBody.addProperty("location", store.id)
-                }
-            }
-
-            OrderType.DINE_IN -> {
-                orderBody.addProperty("type", "eat-in")
-                if (store != null) {
-                    orderBody.addProperty("location", store.id)
-                }
-            }
-
-            OrderType.DELIVERY -> {
-                deliveryCharge = concept.deliveryCharge
-                orderBody.addProperty("type", "deliver")
-                val address = cacheUtil.orderAddress
-                if (address != null) {
-                    orderBody.addProperty("address", address.id)
-                }
-            }
-
-            OrderType.CURBSIDE -> {
-                if (cacheUtil.orderStore != null) {
-                    orderBody.addProperty("location", cacheUtil.orderStore.id)
-                }
-                if (cacheUtil.curbsideCar != null) {
-                    orderBody.addProperty("type", "curbside")
-                    orderBody.addProperty("car-id", cacheUtil.curbsideCar.id)
-                }
-            }
-
-            OrderType.NONE -> {}
-            OrderType.EAT_IN -> {}
-            OrderType.DRIVE_THRU -> {}
-        }
-
-        val vatAmount = 0.0
-        var total =
-            String.format(Locale.ENGLISH, "%.2f", discountedSubtotal + deliveryCharge + vatAmount)
-                .toDouble()
-        if (total < 0) {
-            total = 0.0
-        }
-
-        orderBody.addProperty("total", total)
-
-        val items = JsonArray()
-        val orderStoreId = CacheUtil.getOrderStoreId()
-        for (menuItem in menuItems) {
-            val item = JsonObject()
-            val modifiers = JsonArray()
-            val ingredients = JsonArray()
-            item.addProperty("id", menuItem.id)
-            item.addProperty(
-                "price",
-                String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId)).toDouble()
+            orderBody.addProperty("source", "Android")
+            orderBody.addProperty("notes", cacheUtil.cartNotes)
+            orderBody.addProperty(
+                "subtotal", String.format(Locale.ENGLISH, "%.2f", subtotal).toDouble()
             )
-            item.addProperty("quantity", menuItem.attributes.quantity)
-            item.addProperty("is-reorder", menuItem.attributes.isReorder)
-            item.addProperty("is-promotion", menuItem.isPromo)
-            item.addProperty("notes", menuItem.attributes.notes)
-            for (size in menuItem.sizes.modifierItems) {
-                if (size.attributes.isSelected) {
-                    val modifier = JsonObject()
-                    modifier.addProperty("id", size.id)
-                    modifier.addProperty(
-                        "price",
-                        String.format(Locale.ENGLISH, "%.2f", size.attributes.price).toDouble()
-                    )
-                    modifier.addProperty("quantity", size.attributes.quantity)
-                    modifiers.add(modifier)
-                }
+
+            var discount = 0.0
+
+            val couponCode = cacheUtil.couponCode
+            if (couponCode != null && !couponCode.isEmpty()) {
+                orderBody.addProperty("coupon-code", couponCode)
             }
-            for (drink in menuItem.drinks.modifierItems) {
-                if (drink.attributes.isSelected) {
-                    val modifier = JsonObject()
-                    modifier.addProperty("id", drink.id)
-                    modifier.addProperty(
-                        "price",
-                        String.format(Locale.ENGLISH, "%.2f", drink.attributes.price).toDouble()
-                    )
-                    modifier.addProperty("quantity", drink.attributes.quantity)
-                    modifiers.add(modifier)
-                }
+
+            if (cacheUtil.campaign != null && cacheUtil.campaignPromotion != null) {
+                orderBody.addProperty("campaign-id", cacheUtil.campaign.id)
             }
-            for (fries in menuItem.fries.modifierItems) {
-                if (fries.attributes.isSelected) {
-                    val modifier = JsonObject()
-                    modifier.addProperty("id", fries.id)
-                    modifier.addProperty(
-                        "price",
-                        String.format(Locale.ENGLISH, "%.2f", fries.attributes.price).toDouble()
-                    )
-                    modifier.addProperty("quantity", fries.attributes.quantity)
-                    modifiers.add(modifier)
-                }
+
+            var discountedSubtotal = subtotal - discount
+            if (discountedSubtotal < 0) {
+                discountedSubtotal = 0.0
+                discount = subtotal
             }
-            for (modifierGroup in menuItem.modifierGroups) {
-                val visibilityConfig = modifierGroup.attributes.visibilityConfig
-                if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                        "hidden", ignoreCase = true
-                    )
-                ) {
-                    for (modifierItem in modifierGroup.modifierItems) {
-                        if (modifierItem.attributes.isSelected) {
-                            val modifier = JsonObject()
-                            modifier.addProperty("id", modifierItem.id)
-                            modifier.addProperty(
-                                "price",
-                                String.format(Locale.ENGLISH, "%.2f", modifierItem.attributes.price)
-                                    .toDouble()
-                            )
-                            modifier.addProperty("quantity", modifierItem.attributes.quantity)
-                            modifiers.add(modifier)
+
+            orderBody.addProperty(
+                "discount", String.format(Locale.ENGLISH, "%.2f", discount).toDouble()
+            )
+            orderBody.addProperty("type", "")
+            when (category) {
+                OrderType.PICKUP -> {
+                    orderBody.addProperty("type", "pickup")
+                    if (store != null) {
+                        orderBody.addProperty("location", store.id)
+                    }
+                }
+
+                OrderType.DRIVE_THRU -> {
+                    orderBody.addProperty("type", "drive-thru")
+                    if (store != null) {
+                        orderBody.addProperty("location", store.id)
+                    }
+                }
+
+                OrderType.EAT_IN -> {
+                    orderBody.addProperty("type", "eat-in")
+                    if (store != null) {
+                        orderBody.addProperty("location", store.id)
+                    }
+                }
+
+                OrderType.DINE_IN -> {
+                    orderBody.addProperty("type", "eat-in")
+                    if (store != null) {
+                        orderBody.addProperty("location", store.id)
+                    }
+                }
+
+                OrderType.DELIVERY -> {
+                    deliveryCharge = concept.deliveryCharge
+                    orderBody.addProperty("type", "deliver")
+                    val address = cacheUtil.orderAddress
+                    if (address != null) {
+                        orderBody.addProperty("address", address.id)
+                    }
+                }
+
+                OrderType.CURBSIDE -> {
+                    if (cacheUtil.orderStore != null) {
+                        orderBody.addProperty("location", cacheUtil.orderStore.id)
+                    }
+                    if (cacheUtil.curbsideCar != null) {
+                        orderBody.addProperty("type", "curbside")
+                        orderBody.addProperty("car-id", cacheUtil.curbsideCar.id)
+                    }
+                }
+
+                OrderType.NONE -> {}
+            }
+
+            val vatAmount = 0.0
+            var total =
+                String.format(Locale.ENGLISH, "%.2f", discountedSubtotal + deliveryCharge + vatAmount)
+                    .toDouble()
+            if (total < 0) {
+                total = 0.0
+            }
+
+            orderBody.addProperty("total", total)
+
+            val items = JsonArray()
+            val orderStoreId = CacheUtil.getOrderStoreId()
+            for (menuItem in menuItems) {
+                val item = JsonObject()
+                val modifiers = JsonArray()
+                val ingredients = JsonArray()
+                item.addProperty("id", menuItem.id)
+                item.addProperty(
+                    "price",
+                    String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId)).toDouble()
+                )
+                item.addProperty("quantity", menuItem.attributes.quantity)
+                item.addProperty("is-reorder", menuItem.attributes.isReorder)
+                item.addProperty("is-promotion", menuItem.isPromo)
+                item.addProperty("notes", menuItem.attributes.notes)
+                for (size in menuItem.sizes.modifierItems) {
+                    if (size.attributes.isSelected) {
+                        val modifier = JsonObject()
+                        modifier.addProperty("id", size.id)
+                        modifier.addProperty(
+                            "price",
+                            String.format(Locale.ENGLISH, "%.2f", size.attributes.price).toDouble()
+                        )
+                        modifier.addProperty("quantity", size.attributes.quantity)
+                        modifiers.add(modifier)
+                    }
+                }
+                for (drink in menuItem.drinks.modifierItems) {
+                    if (drink.attributes.isSelected) {
+                        val modifier = JsonObject()
+                        modifier.addProperty("id", drink.id)
+                        modifier.addProperty(
+                            "price",
+                            String.format(Locale.ENGLISH, "%.2f", drink.attributes.price).toDouble()
+                        )
+                        modifier.addProperty("quantity", drink.attributes.quantity)
+                        modifiers.add(modifier)
+                    }
+                }
+                for (fries in menuItem.fries.modifierItems) {
+                    if (fries.attributes.isSelected) {
+                        val modifier = JsonObject()
+                        modifier.addProperty("id", fries.id)
+                        modifier.addProperty(
+                            "price",
+                            String.format(Locale.ENGLISH, "%.2f", fries.attributes.price).toDouble()
+                        )
+                        modifier.addProperty("quantity", fries.attributes.quantity)
+                        modifiers.add(modifier)
+                    }
+                }
+                for (modifierGroup in menuItem.modifierGroups) {
+                    val visibilityConfig = modifierGroup.attributes.visibilityConfig
+                    if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
+                            "hidden", ignoreCase = true
+                        )
+                    ) {
+                        for (modifierItem in modifierGroup.modifierItems) {
+                            if (modifierItem.attributes.isSelected) {
+                                val modifier = JsonObject()
+                                modifier.addProperty("id", modifierItem.id)
+                                modifier.addProperty(
+                                    "price",
+                                    String.format(Locale.ENGLISH, "%.2f", modifierItem.attributes.price)
+                                        .toDouble()
+                                )
+                                modifier.addProperty("quantity", modifierItem.attributes.quantity)
+                                modifiers.add(modifier)
+                            }
                         }
                     }
                 }
-            }
-            for (modifierItem in menuItem.modifierItems) {
-                val modifier = JsonObject()
-                modifier.addProperty("id", modifierItem.id)
-                modifier.addProperty(
-                    "price",
-                    String.format(Locale.ENGLISH, "%.2f", modifierItem.attributes.price).toDouble()
-                )
-                modifier.addProperty("quantity", modifierItem.attributes.quantity)
-                modifiers.add(modifier)
-            }
-            for (ingredient in menuItem.ingredients) {
-                if (!ingredient.attributes.isSelected) {
-                    val ingredientObject = JsonObject()
-                    ingredientObject.addProperty("id", ingredient.id)
-                    ingredientObject.addProperty(
+                for (modifierItem in menuItem.modifierItems) {
+                    val modifier = JsonObject()
+                    modifier.addProperty("id", modifierItem.id)
+                    modifier.addProperty(
                         "price",
-                        String.format(Locale.ENGLISH, "%.2f", ingredient.attributes.price)
-                            .toDouble()
+                        String.format(Locale.ENGLISH, "%.2f", modifierItem.attributes.price).toDouble()
                     )
-                    ingredientObject.addProperty("quantity", ingredient.attributes.quantity)
-                    ingredients.add(ingredientObject)
+                    modifier.addProperty("quantity", modifierItem.attributes.quantity)
+                    modifiers.add(modifier)
                 }
+                for (ingredient in menuItem.ingredients) {
+                    if (!ingredient.attributes.isSelected) {
+                        val ingredientObject = JsonObject()
+                        ingredientObject.addProperty("id", ingredient.id)
+                        ingredientObject.addProperty(
+                            "price",
+                            String.format(Locale.ENGLISH, "%.2f", ingredient.attributes.price)
+                                .toDouble()
+                        )
+                        ingredientObject.addProperty("quantity", ingredient.attributes.quantity)
+                        ingredients.add(ingredientObject)
+                    }
+                }
+                item.add("ingredients", ingredients)
+                item.add("modifiers", modifiers)
+                items.add(item)
             }
-            item.add("ingredients", ingredients)
-            item.add("modifiers", modifiers)
-            items.add(item)
+            orderBody.add("items", items)
+            body(orderBody)
         }
-        orderBody.add("items", items)
-        body(orderBody)
     }
 
     private fun getMenuItemsTotalPrice(menuItems: ArrayList<MenuItem>?): Double {

@@ -9,6 +9,7 @@ import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.home.adapter.PromotionCategoryAdapter
 import com.herfy.home.adapter.PromotionsAdapter
 import com.herfy.home.adapter.SliderImageAdapter
+import com.herfy.model.CampaignToAdd
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.PromotionCategory
 import com.herfy.repository.HomeRepository
@@ -17,21 +18,29 @@ import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
+import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.Event
+import com.skylinedynamics.solosdk.api.ApiRequestListener
+import com.skylinedynamics.solosdk.api.calls.MenuApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyAttributes
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTier
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import com.skylinedynamics.solosdk.api.models.objects.Tier
+import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.Arrays
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -102,6 +111,9 @@ class HomeViewModel @Inject constructor(
 
     private val _bottomSlideList = MutableLiveData<ArrayList<Slide>>()
     val bottomSlideList: LiveData<ArrayList<Slide>> = _bottomSlideList
+
+    private val _showCart = MutableLiveData<Event<Boolean>>()
+    val showCart : LiveData<Event<Boolean>> = _showCart
 
     fun getSliders() {
         invoke {
@@ -486,6 +498,17 @@ class HomeViewModel @Inject constructor(
                             )
                         )
                     }
+                    orderTypes.find { type -> type == OrderType.DRIVE_THRU }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.DRIVE_THRU, "Drive Thru"
+                                ),
+                                false,
+                                it
+                            )
+                        )
+                    }
                     _promotionCategoryList.value = promocateglist
                 }
             }
@@ -495,7 +518,100 @@ class HomeViewModel @Inject constructor(
     override fun onClickClaimPromo(promo: Campaign) {
         trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
         CacheUtil.getInstance().campaign = promo
-        CacheUtil.getInstance().campaignPromotion = promo.getPromotion()
+        CacheUtil.getInstance().campaignPromotion = promo.promotion
+        if (promo.promotion?.attributes?.type.equals(
+                "item",
+                ignoreCase = true
+            )
+        ) {
+            getCampaignPromotionItem(promo)
+        } else {
+            _showCart.value = Event(true)
+        }
+    }
+
+    private fun getCampaignPromotionItem(digitalCoupon: Campaign?) {
+        invoke {
+            digitalCoupon?.promotion?.let { promotion ->
+                MenuApiCall.getInstance()
+                    .getItemDetails(promotion.attributes.itemId, object : ApiRequestListener {
+                        override fun onSuccess(o: Any) {
+                            try {
+                                val response = JSONObject(o.toString())
+                                val dataArray = response.getJSONArray("data")
+                                if (dataArray.length() > 0) {
+                                    val menuItem = GsonHelper.gsonFinal().fromJson(
+                                        dataArray.getJSONObject(0).toString(), MenuItem::class.java
+                                    )
+                                    menuItem.isPromo = true
+                                    if (promotion.attributes.itemQuantity > 0) {
+                                        menuItem.attributes.quantity = promotion.attributes.itemQuantity
+                                    } else {
+                                        menuItem.attributes.quantity = 1
+                                    }
+                                    var orderStoreId: String? = null
+                                    if (CacheUtil.getInstance().orderStore != null) {
+                                        orderStoreId = CacheUtil.getInstance().orderStore.id
+                                    }
+                                    menuItem.attributes.price = promotion.attributes.itemPrice
+                                    menuItem.toCdn(orderStoreId)
+                                    MixpanelUtil.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
+                                    if (menuItem.isMustBeCustomized || menuItem.isCombo) {
+                                        val campaignToAdd = CampaignToAdd(
+                                            digitalCoupon,
+                                            digitalCoupon.promotion,
+                                            menuItem
+                                        )
+                                        CacheUtil.getInstance().campaignToAdd = campaignToAdd
+                                    } else {
+                                        CacheUtil.getInstance().campaign = digitalCoupon
+                                        CacheUtil.getInstance().campaignPromotion =
+                                            digitalCoupon.promotion
+                                        CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
+                                    }
+                                    _showCart.value = Event(true)
+                                } else {
+                                    onError("")
+                                }
+                            } catch (e: JSONException) {
+                                e.printStackTrace()
+                                onError(e)
+                            }
+                        }
+
+                        override fun onError(o: Any) {
+                            AppLogger.printRetrofitError(o)
+                            if (o is JSONObject) {
+                                try {
+                                    val error = o["error"]
+                                    var detail =
+                                        CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
+                                    if (error is JSONObject) {
+                                        detail = error.getString("detail")
+                                    } else if (error is JSONArray) {
+                                        val errorObject = error.getJSONObject(0)
+                                        detail = errorObject.getString("detail")
+                                    }
+                                    _showError.value = ErrorMsgItem(true, detail)
+                                } catch (e: JSONException) {
+                                    e.printStackTrace()
+                                    _showError.value = ErrorMsgItem(true,CacheUtil.getInstance().getTranslations(
+                                        Text.YOU_ARE_NOT_ELIGIBLE_TO_CLAIM_THE_PROMOTION,
+                                        "You are not eligible to claim the promotion."
+                                    ))
+                                }
+                            } else {
+                                _showError.value = ErrorMsgItem(true,CacheUtil.getInstance().getTranslations(
+                                    Text.YOU_ARE_NOT_ELIGIBLE_TO_CLAIM_THE_PROMOTION,
+                                    "You are not eligible to claim the promotion."
+                                ))
+                            }
+                        }
+                    })
+            }
+        }
+
+
     }
 
 

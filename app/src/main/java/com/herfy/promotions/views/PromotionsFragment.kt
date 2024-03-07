@@ -5,77 +5,69 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.clearFragmentResultListener
-import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
-import com.google.gson.Gson
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.databinding.FragmentPromotionsBinding
 import com.herfy.ext.cast
+import com.herfy.home.adapter.PromotionCategoryAdapter
+import com.herfy.home.views.PromotionDetailBottomSheet
 import com.herfy.model.CampaignToAdd
+import com.herfy.model.PromotionCategory
 import com.herfy.promotions.PromotionsContract
-import com.herfy.promotions.PromotionsPresenter
 import com.herfy.promotions.adapters.PromotionsAdapter
+import com.herfy.promotions.databinding.FragmentHerfyPromotionsBinding
 import com.herfy.util.AppLogger
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.invisible
+import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.NavigationUtils
+import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.util.GsonHelper
+import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import javax.inject.Inject
 
-class PromotionsFragment : BaseFragment(), PromotionsContract.View {
-
-    private lateinit var binding: FragmentPromotionsBinding
-
-    private var promotionsPresenter: PromotionsContract.Presenter? = null
-
-    private val adapter: PromotionsAdapter by lazy {
-        PromotionsAdapter(emptyArray()) { campaign ->
-            selectCampaign(campaign)
-        }
-    }
-
+@AndroidEntryPoint
+class PromotionsFragment : BaseFragment(), PromotionsContract.View,
+    com.herfy.home.adapter.PromotionsAdapter.PromotionListener {
+    @Inject
+    lateinit var promotionsPresenter: PromotionsContract.Presenter
+    private lateinit var binding: FragmentHerfyPromotionsBinding
+    private lateinit var promoCategoryAdapter: PromotionCategoryAdapter
+    private lateinit var promotionsAdapter: PromotionsAdapter
     private val digitalCoupons: ArrayList<Campaign> = ArrayList()
+    private var promotionDetailBottomSheet: PromotionDetailBottomSheet? = null
 
-    override fun setPresenter(presenter: PromotionsContract.Presenter?) {
+    override fun setPresenter(presenter: PromotionsContract.Presenter) {
         promotionsPresenter = presenter
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        promotionsPresenter = PromotionsPresenter(this)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPromotionsBinding.inflate(inflater, container, false)
+        binding = FragmentHerfyPromotionsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initAdapter()
-        promotionsPresenter?.start()
-        if (digitalCoupons.isEmpty()) {
-            binding.blocker.visible()
-            binding.promotionShimmer.visible()
-        }
-        promotionsPresenter?.loadPromotions()
-    }
-
-    private fun initAdapter() {
-        binding.recyclerView.adapter = adapter
+        promotionsPresenter.start()
     }
 
     override fun logEvent(
@@ -92,7 +84,60 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View {
     }
 
     override fun setupViews() {
+        binding.toolbarTitle.setNavButtonAction{
+            findNavController().navigateUp()
+        }
+        binding.btnGoToMenu.setOnClickListener{
+            NavigationUtils.navigateSafe(
+                findNavController(),
+                PromotionsFragmentDirections.actionPromotionsToMenu()
+            )
+        }
+        setupPromoCategory()
+        setupPromotions()
 
+    }
+
+
+    private fun setupPromotions() {
+        promotionsPresenter.loadPromotions()
+        context?.let { ctx ->
+            activity?.let {
+                val itemHeight = (ViewUtil.getScreenWidth(it) / 1.65).toInt()
+                promotionsAdapter = PromotionsAdapter(
+                    promoListener = this@PromotionsFragment, itemWidth = 0, itemHeight = itemHeight,
+                    defaultOrderTypeCount = CacheUtil.getInstance().application.attributes.getOrderTypes().size,
+                    cacheUtil = CacheUtil.getInstance()
+                )
+                binding.apply {
+                    rvPromotions.apply {
+                        adapter = promotionsAdapter
+                        layoutManager = GridLayoutManager(ctx, 2)
+                        setHasFixedSize(false)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupPromoCategory() {
+        promotionsPresenter.getPromotionCategoryList()
+        context?.let { ctx ->
+            binding.apply {
+                placeholderPromotions.shimmerPromotionsTitle.gone()
+                promoCategoryAdapter =
+                    PromotionCategoryAdapter(categoryListener = promotionsPresenter)
+                binding.apply {
+                    rvPromoCategory.apply {
+                        adapter = promoCategoryAdapter
+                        layoutManager =
+                            LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false)
+                        setHasFixedSize(true)
+                        isNestedScrollingEnabled = true
+                    }
+                }
+            }
+        }
     }
 
     override fun setupFonts() {
@@ -100,21 +145,26 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View {
     }
 
     override fun setupTranslations() {
-        binding.emptyText.text =
-            CacheUtil.getInstance().getTranslations(Text.NO_PROMOS_AVAIlABLE, "No Promos Available")
-        binding.emptyTextDesc.text = CacheUtil.getInstance().getTranslations(
-            Text.NO_PROMOS_AVAILABLE_DESC,
-            "Sorry, there is no promo available right now, try checking next time"
-        )
+        binding.apply {
+            toolbarTitle.title =
+                CacheUtil.getInstance().getTranslations(Text.PROMOTIONS, "Promotions")
+            tvEmptyStateTitle.text = CacheUtil.getInstance()
+                    .getTranslations(Text.STAY_TUNED_PROMO, "Stay Tuned for Culinary Delights!")
+            tvEmptyStateContext.text = CacheUtil.getInstance().getTranslations(Text.PROMOTION_EMPTY_CONTENT, "Our promotions are on a brief pause, but get ready for a mouthwatering comeback in just a few days.")
+            btnGoToMenu.text = CacheUtil.getInstance().getTranslations(Text.GO_TO_MENU, "Go To Menu")
+        }
     }
 
     override fun showPromotions(campaigns: ArrayList<Campaign>) {
-        binding.blocker.gone()
-        binding.promotionShimmer.gone()
-        digitalCoupons.clear()
-        digitalCoupons.addAll(campaigns)
-        checkCampaigns()
-        adapter.updateCampaigns(digitalCoupons.toTypedArray())
+        runOnMain {
+            binding.apply {
+                placeholderPromotions.clPlaceholderPromo.gone()
+            }
+            digitalCoupons.clear()
+            digitalCoupons.addAll(campaigns)
+            checkCampaigns()
+            promotionsAdapter.updateCampaigns(digitalCoupons)
+        }
     }
 
     override fun showMessage(message: String?) {
@@ -122,9 +172,34 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View {
     }
 
     override fun showError(error: String?) {
-        binding.blocker.gone()
-        binding.promotionShimmer.gone()
-        checkCampaigns()
+        runOnMain {
+            checkCampaigns()
+        }
+
+    }
+
+    override fun showPromotionsCategory(promocateglist: MutableList<PromotionCategory>) {
+        runOnMain {
+            binding.apply {
+                if (promocateglist.size > 0) {
+                    promoCategoryAdapter.updateList(promocateglist)
+                }
+            }
+        }
+    }
+
+    override fun updatePromoCategoryList(category: PromotionCategory) {
+        promoCategoryAdapter.updateCategoryList(category)
+        binding.apply {
+            rvPromotions.gone()
+            placeholderPromotions.apply {
+                shimmerPromotionsTitle.invisible()
+                shimmerPromotionsCategory.invisible()
+                shimmerPromotionsList.visible()
+                clPlaceholderPromo.visible()
+            }
+
+        }
     }
 
     private fun showErrorAlertDialog(error: String) {
@@ -137,7 +212,12 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View {
     }
 
     private fun checkCampaigns() {
-        binding.emptyLayout.isVisible = digitalCoupons.isEmpty()
+        binding.grpPromo.apply {
+            if(digitalCoupons.isNotEmpty()) visible() else gone()
+        }
+        binding.clEmptyState.apply {
+            if(digitalCoupons.isEmpty()) visible() else gone()
+        }
     }
 
     private fun getCampaignPromotionItem(digitalCoupon: Campaign?) {
@@ -174,7 +254,8 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View {
                                     CacheUtil.getInstance().campaignToAdd = campaignToAdd
                                 } else {
                                     CacheUtil.getInstance().campaign = digitalCoupon
-                                    CacheUtil.getInstance().campaignPromotion = digitalCoupon.promotion
+                                    CacheUtil.getInstance().campaignPromotion =
+                                        digitalCoupon.promotion
                                     CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
                                 }
                                 showCart(isAvail = true)
@@ -234,12 +315,40 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View {
         )
     }
 
-    private fun selectCampaign(campaign: Campaign?) {
-        campaign?.let {
+
+    override fun onSelectedPromo(promo: Campaign) {
+        promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(
+            promo,
+            object : PromotionDetailBottomSheet.onAction{
+                override fun onClickClaimPromo(promo: Campaign) {
+                    MixpanelUtil.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
+                    CacheUtil.getInstance().campaign = promo
+                    CacheUtil.getInstance().campaignPromotion = promo.promotion
+                    if (promo.promotion?.attributes?.type.equals(
+                            "item",
+                            ignoreCase = true
+                        )
+                    ) {
+                        showLoadingDialog()
+                        getCampaignPromotionItem(promo)
+                    } else {
+                        showCart(isAvail = true)
+                    }
+                }
+
+            }
+        )
+
+        promotionDetailBottomSheet?.show(
+            childFragmentManager, PromotionDetailBottomSheet::class.java.simpleName
+        )
+
+
+        /*promo.let {
             setFragmentResultListener(PromotionFragment.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
                 clearFragmentResultListener(requestKey = PromotionFragment.ARGS_KEY_FRAGMENT_RESULT)
                 if (bundle.containsKey(PromotionFragment.ARGS_KEY_ACTION)) {
-                    if(bundle.getString(PromotionFragment.ARGS_KEY_ACTION) == "avail") {
+                    if (bundle.getString(PromotionFragment.ARGS_KEY_ACTION) == "avail") {
                         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
                         CacheUtil.getInstance().campaign = it
                         CacheUtil.getInstance().campaignPromotion = it.promotion
@@ -264,6 +373,8 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View {
                     campaign = Gson().toJson(it)
                 )
             )
-        }
+        }*/
     }
+
+
 }
