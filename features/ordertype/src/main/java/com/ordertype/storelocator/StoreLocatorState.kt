@@ -1,4 +1,6 @@
 package com.ordertype.storelocator
 
-class StoreLocatorState {
+sealed class StoreLocatorState {
+    data class ShowLoading(val loading: Boolean) : StoreLocatorState()
+    data class ShowError(val error: String): StoreLocatorState()
 }
