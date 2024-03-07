@@ -25,6 +25,7 @@ import com.herfy.model.PromotionOrderType
 import com.herfy.utils.base.mvvm.BaseBottomSheetDialogFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.visible
+import com.herfy.utils.extensions.gone
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.ViewUtil
@@ -133,9 +134,44 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                     dismissAllowingStateLoss()
                 }
                 val cacheUtil = CacheUtil.getInstance()
+                var orderTypeVal = cacheUtil.getTranslations(Text.DELIVERY)
+                var orderTypeIconVal = R.drawable.ic_delivery_promo
+                promoData.promotion?.attributes?.rules?.let {
+                    val orderTypeRule = it.find { rule-> rule.ruleKey.equals("order-type", ignoreCase = true) }
+                    if(it.isNotEmpty() && orderTypeRule != null){
+                        val orderTypes = orderTypeRule.text.split(Pattern.compile(","))
+                        when(orderTypes[0]){
+                            "pickup" -> {
+                                orderTypeVal = cacheUtil.getTranslations(Text.PICKUP)
+                                orderTypeIconVal = R.drawable.ic_pickup_promo
+                            }
+                            "eat-in"-> {
+                                orderTypeVal = cacheUtil.getTranslations(Text.DINE_IN)
+                            }
+                            "delivery"->{
+                                orderTypeVal = cacheUtil.getTranslations(Text.DELIVERY)
+                                orderTypeIconVal = R.drawable.ic_delivery_promo
+                            }
+                            "curbside"->{
+                                orderTypeVal = cacheUtil.getTranslations(Text.CURBSIDE_PICKUP)
+                                orderTypeIconVal = R.drawable.ic_drive_thru_promo
+                            }
+                            "drive-thru"->{
+                                orderTypeVal = cacheUtil.getTranslations(Text.DRIVE_THRU)
+                                orderTypeIconVal = R.drawable.ic_drive_thru_promo
+                            }
+                        }
+                    }else {
+                        tvRequirements.gone()
+                        rvRequirements.gone()
+                    }
+                    orderType = orderTypeVal
+                    orderTypeIcon = orderTypeIconVal
+                }?: run {
+                    tvRequirements.gone()
+                    rvRequirements.gone()
+                }
                 val cacheCampaign = cacheUtil.campaign
-
-
                 var toRemove = false
                 cacheUtilHelper?.getCartQuantity { qty ->
                     if (qty > 0) {

@@ -3,11 +3,12 @@
 
     <attr name="navButton" format="reference"/>
     <attr name="rightButtonColor" format="color"/>
+    <attr name="rightButtonIcon" format="reference"/>
 
     <declare-styleable name="MainToolbar">
         <attr name="logo" format="reference"/>
         <attr name="leftButton" format="reference"/>
-        <attr name="rightButton" format="reference"/>
+        <attr name="rightButtonIcon"/>
     </declare-styleable>
 
     <declare-styleable name="TitleToolbar">
@@ -20,7 +21,7 @@
     <declare-styleable name="OrderTypeToolbar">
         <attr name="navButton"/>
         <attr name="rightButtonColor"/>
-        <attr name="rightButtonIcon" format="reference"/>
+        <attr name="rightButtonIcon"/>
         <attr name="rightButtonTextColor" format="color"/>
     </declare-styleable>
     

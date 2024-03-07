@@ -47,7 +47,7 @@ import com.skylinedynamics.solosdk.api.models.objects.PrayerTime;
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
-import com.herfy.util.TimeUtil;
+import com.herfy.utils.helper.TimeUtil;
 import com.herfy.util.ViewUtil;
 
 import java.math.BigDecimal;

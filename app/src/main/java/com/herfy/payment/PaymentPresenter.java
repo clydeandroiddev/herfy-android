@@ -61,7 +61,7 @@ import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.ShipBookLogger;
 import com.herfy.util.StringUtil;
-import com.herfy.util.TimeUtil;
+import com.herfy.utils.helper.TimeUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -17,7 +17,7 @@ import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction;
 import com.skylinedynamics.solosdk.api.models.objects.Tier;
 import com.herfy.util.CurrencyUtils;
 import com.herfy.util.StringUtil;
-import com.herfy.util.TimeUtil;
+import com.herfy.utils.helper.TimeUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

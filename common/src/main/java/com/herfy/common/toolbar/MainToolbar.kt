@@ -41,7 +41,7 @@ class MainToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
             sideMenuButton?.setImageResource(drawableSideMenu)
             val drawableLogo = ta.getResourceId(R.styleable.MainToolbar_logo, R.drawable.herfy_logo_arabic)
             logo?.setImageResource(drawableLogo)
-            val drawableCartLogo = ta.getResourceId(R.styleable.MainToolbar_rightButton, R.drawable.ic_toolbar_cart)
+            val drawableCartLogo = ta.getResourceId(R.styleable.MainToolbar_rightButtonIcon, R.drawable.ic_toolbar_cart)
             cartIcon?.setImageResource(drawableCartLogo)
         } finally {
             ta.recycle()

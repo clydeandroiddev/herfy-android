@@ -4,189 +4,307 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
-    android:id="@+id/cl_customer_loyalty">
+    android:id="@+id/cl_customer_loyalty"
+    >
 
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="0dp"
-        android:layout_height="152dp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:cardBackgroundColor="#0064AC"
-        app:cardCornerRadius="12dp">
-        <RelativeLayout
+        app:cardCornerRadius="20dp"
+        app:cardUseCompatPadding="false"
+        app:cardElevation="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/logo_1"/>
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/background_loyalty_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:id="@+id/rl_loyalty_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:padding="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:id="@+id/loyalty_balance_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:text="Loyalty Balance" />
-
-                    <TextView
-                        app:layout_constraintTop_toBottomOf="@+id/loyalty_balance_label"
-                        app:layout_constraintStart_toStartOf="parent"
-                        android:id="@+id/progress_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:textColor="@color/white"
-                        android:textSize="17sp"
-                        android:textStyle="bold"
-                        tools:text="200 points until gold" />
-
-                    <TextView
-                        android:id="@+id/tv_label_your_points"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        android:text="Total Points"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
-
-                    <TextView
-                        android:id="@+id/tv_points"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:textColor="@color/white"
-                        android:textSize="28sp"
-                        android:textStyle="bold"
-                        tools:text="1900"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_label_your_points"/>
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
 
 
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_gravity="bottom"
-                    android:padding="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/tier_container"
-                        app:cardCornerRadius="4dp"
-                        app:cardBackgroundColor="@color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="33dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent">
-                        <LinearLayout
-                            android:padding="8dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_gravity="center_vertical"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_leaderboard"/>
-
-
-                            <TextView
-                                android:layout_marginStart="4dp"
-                                android:layout_gravity="center_vertical"
-                                android:id="@+id/tier_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="#0064AC"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                tools:text="Blue" />
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="10dp"
-                        app:layout_constraintEnd_toStartOf="@+id/iv_arrow_right"
-                        app:layout_constraintStart_toEndOf="@+id/tier_container"
-                        app:layout_constraintTop_toTopOf="parent">
-
-
-
-                        <ProgressBar
-                            android:id="@+id/progress"
-                            style="?android:attr/progressBarStyleHorizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:progressDrawable="@drawable/loyalty_progress" />
-
-                        <TextView
-                            android:layout_marginStart="2dp"
-                            android:id="@+id/progress_text_indicator"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="400/600"
-                            android:textColor="@color/white"
-                            android:textSize="12sp"/>
-
-                    </LinearLayout>
-
-                    <ImageView
-                        android:id="@+id/iv_arrow_right"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_question"/>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-
-
-                    <ImageView
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentEnd="true"/>
+                        android:layout_marginTop="19dp"
+                        android:layout_marginHorizontal="18dp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:id="@+id/tv_loyalty_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+
+                            style="@style/Styles.Text.Title1"
+                            tools:text="Ashab Herfy" />
+                        
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_loyalty_tier"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="6dp"
+                            android:paddingHorizontal="8dp"
+                            android:textSize="12sp"
+                            android:textColor="@color/white"
+                            android:background="@drawable/background_silver_tier"
+                            android:drawablePadding="4dp"
+                            android:layout_marginTop="8dp"
+                            app:drawableStartCompat="@drawable/ic_loyalty_tier"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/tv_loyalty_label"
+                            style="@style/Styles.Text.SmallTitle"
+                            tools:text="Silver"
+                            />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_marginTop="16dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingHorizontal="18dp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:id="@+id/progress_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:drawablePadding="4dp"
+                            android:gravity="center_vertical"
+                            app:drawableStartCompat="@drawable/ic_loyalty_database"
+                            style="@style/Styles.Text.Footnote.Semi.Bold"
+                            tools:text="200 points until gold" />
 
 
-                </RelativeLayout>
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/constraintLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/progress_label"
+                            app:layout_constraintWidth_percent=".65">
+
+
+                            <SeekBar
+                                android:id="@+id/progress"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:max="100"
+                                android:progress="0"
+                                android:layout_marginTop="3dp"
+                                android:paddingEnd="0dp"
+                                android:paddingStart="0dp"
+                                android:thumbOffset="0dp"
+                                android:progressDrawable="@drawable/loyalty_progress"
+                                android:thumb="@drawable/ic_rewards_thumb"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                android:splitTrack="false"
+                                />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tv_progress_tier"
+                                style="@style/Styles.Text.Footnote.Semi.Bold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:textColor="@color/white"
+                                android:textSize="11sp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/progress"
+                                tools:text="Silver" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/progress_text_indicator"
+                                style="@style/Styles.Text.Footnote.Semi.Bold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:textSize="11sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="@id/tv_progress_tier"
+                                tools:text="400/600" />
+
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <TextView
+                            android:id="@+id/tv_label_your_points"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:textAlignment="viewEnd"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:layout_marginTop="4.5dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            style="@style/Styles.Text.Footnote.Semi.Bold"
+                            tools:text="Total Points"/>
+
+                        <TextView
+                            android:id="@+id/tv_points"
+                            style="@style/Styles.Text.Title1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:textAlignment="viewEnd"
+                            android:textColor="@color/white"
+                            android:textSize="25sp"
+                            app:layout_constraintHorizontal_bias="1.0"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/constraintLayout"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_label_your_points"
+                            tools:text="1900" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_see_rewards"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:paddingVertical="18dp"
+                        android:paddingHorizontal="20dp">
+                        
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_see_rewards"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawablePadding="6dp"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_color_blue"
+                            app:drawableStartCompat="@drawable/ic_loyalty_see_rewards"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            style="@style/Styles.Text.Footnote.Semi.Bold"
+                            tools:text="See my rewards"/>
+
+                        <ImageView
+                            android:id="@+id/iv_see_rewards"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_arrow_blue_right"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+
+
+
+
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/ln_loyalty_empty_state"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_title_empty_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    style="@style/Styles.Text.Title1"
+                    tools:text="Become an Ashab Herfy"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_description_empty_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:layout_marginHorizontal="32dp"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal"
+                    style="@style/Styles.Text.Caption.Regular"
+                    tools:text="By creating an account on signing in to your existing one you get point on every order"/>
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_continue"
+                    android:layout_marginTop="36dp"
+                    android:layout_width="172dp"
+                    android:layout_height="40dp"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    app:cornerRadius="20dp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_color_red"
+                    android:textSize="14sp"
+                    app:backgroundTint="@color/white"
+                    android:textAppearance="@style/Styles.Text.Footnote.Semi.Bold"
+                    android:layout_marginBottom="32dp"
+                    tools:text="Continue"/>
+
             </androidx.appcompat.widget.LinearLayoutCompat>
-        </RelativeLayout>
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
 
