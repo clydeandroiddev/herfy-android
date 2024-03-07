@@ -86,7 +86,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void getFavorites(int page) {
-        Executor executor = Executors.newSingleThreadExecutor();
         CustomersApiCall.getInstance().getAllCustomerFavoriteItems(AuthUtil.getInstance().getCustomer().getId(), String.valueOf(page), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {

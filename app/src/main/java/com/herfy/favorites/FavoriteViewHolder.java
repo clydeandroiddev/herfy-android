@@ -6,8 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.text.SpannableString;
 import android.text.SpannedString;
 import android.text.TextUtils;
-import android.text.style.StrikethroughSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;

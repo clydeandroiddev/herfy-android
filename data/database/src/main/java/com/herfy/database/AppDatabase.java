@@ -13,7 +13,6 @@ import com.herfy.database.converters.TranslatedEntityConverter;
 import com.herfy.database.daos.*;
 import com.herfy.database.entities.AllergenDb;
 import com.herfy.database.entities.FacilityEntity;
-import com.herfy.database.entities.FavouriteEntity;
 import com.herfy.database.entities.IngredientDb;
 import com.herfy.database.entities.MenuCategoryDb;
 import com.herfy.database.entities.MenuCategoryEntity;
