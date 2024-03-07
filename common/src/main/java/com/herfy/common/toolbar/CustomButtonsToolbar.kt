@@ -39,6 +39,8 @@ class CustomButtonsToolbar @JvmOverloads constructor(context: Context, attrs: At
             val drawableRight = ta.getResourceId(R.styleable.CustomButtonsToolbar_rightButtonIcon,0)
             rightButton?.setImageResource(drawableRight)
             tvTitle?.text = ta.getString(R.styleable.CustomButtonsToolbar_title)
+            val titleTextColor =  ta.getColor(R.styleable.TitleToolbar_rightButtonColor,0)
+            tvTitle?.setTextColor(titleTextColor)
         } finally {
             ta.recycle()
         }

@@ -5,6 +5,7 @@
     <attr name="rightButtonColor" format="color"/>
     <attr name="rightButtonIcon" format="reference"/>
     <attr name="title" format="string"/>
+    <attr name="titleTextColor" format="color"/>
 
     <declare-styleable name="MainToolbar">
         <attr name="logo" format="reference"/>
@@ -29,6 +30,7 @@
     <declare-styleable name="CustomButtonsToolbar">
         <attr name="navButton"/>
         <attr name="title"/>
+        <attr name="titleTextColor"/>
         <attr name="rightButtonIcon"/>
     </declare-styleable>
 

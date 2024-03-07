@@ -8,7 +8,10 @@
     android:layout_marginTop="34dp"
     android:layout_marginHorizontal="16dp"
     app:cardPreventCornerOverlap="true"
-    app:cardUseCompatPadding="false">
+    app:cardUseCompatPadding="false"
+    app:cardElevation="24dp"
+    android:layout_marginBottom="24dp"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -35,13 +38,13 @@
             android:padding="16dp">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_customer_name"
+                android:id="@+id/tv_ashab_herfy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textColor="@color/white"
-                style="@style/Styles.Text.Title1"
-                tools:text="Customer Name"
+                style="@style/Styles.Text.Headline1"
+                tools:text="Ashab Herfy"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
@@ -60,9 +63,9 @@
                 tools:drawableStartCompat="@drawable/ic_loyalty_tier"
                 tools:background="@drawable/background_silver_tier"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_customer_name"
-                style="@style/Styles.Text.SmallTitle"
-                tools:text="Silver"
+                app:layout_constraintTop_toBottomOf="@id/tv_ashab_herfy"
+                style="@style/Styles.Text.Footnote.Semi.Bold"
+                tools:text="Diamond"
                 />
             
             <androidx.appcompat.widget.AppCompatTextView
@@ -74,31 +77,79 @@
                 android:drawablePadding="4dp"
                 android:gravity="center_vertical"
                 android:layout_marginTop="16dp"
-                style="@style/Styles.Text.Footnote.Semi.Bold"
+                style="@style/Styles.Text.Footnote.Medium"
                 tools:text="200 points until Gold"
                 app:drawableStartCompat="@drawable/ic_loyalty_database"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_tier"/>
-            
-            <!--<LinearLayout
-                android:id="@+id/fm_tier"
+
+            <TextView
+                android:id="@+id/tv_total_points_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="6dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_customer_name">
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:gravity="end"
+                android:textAlignment="viewEnd"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/Styles.Text.Footnote.Medium"
+                tools:text="Total Points"/>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/tv_total_points"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:gravity="end"
+                android:textAlignment="viewEnd"
+                app:layout_constraintWidth_max="200dp"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@id/tv_tier"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_total_points_label"
+                style="@style/Styles.Text.LargeTitle"
+                tools:text="1900"/>
+            
+            <ImageView
+                android:id="@+id/iv_points_equivalent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_loyalty_equivalent"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_total_points"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
+            <TextView
+                android:id="@+id/tv_sar_value_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:gravity="end"
+                android:textAlignment="viewEnd"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_points_equivalent"
+                style="@style/Styles.Text.Footnote.Medium"
+                tools:text="SAR VALUE"/>
 
-
-
-            </LinearLayout>-->
+            <TextView
+                android:id="@+id/tv_sar_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:gravity="end"
+                android:textAlignment="viewEnd"
+                app:layout_constraintWidth_max="200dp"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_sar_value_label"
+                style="@style/Styles.Text.LargeTitle"
+                tools:text="1900"/>
 
 
 

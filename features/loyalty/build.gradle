@@ -80,4 +80,5 @@ dependencies {
 
     //Modules
     api project (path: ':common')
+    api project (path: ':commonStyles')
 }
