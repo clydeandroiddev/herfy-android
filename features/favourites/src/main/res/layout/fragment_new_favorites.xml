@@ -45,29 +45,9 @@
         android:layout_marginTop="@dimen/margin_large"
         android:layout_height="@dimen/_1sdp"/>
 
-    <com.herfy.common.component.EmptyStateView
-        android:id="@+id/emptyState"
-        android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/margin_xlarge"
-        android:visibility="gone"
-        app:emptyStateDrawable="@drawable/ic_favourite_empty"
-        tools:visibility="visible"
-        android:layout_height="wrap_content"/>
+
   </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--    <com.google.android.material.textview.MaterialTextView-->
-<!--      android:id="@+id/txtOrderType"-->
-<!--      android:layout_width="wrap_content"-->
-<!--      style="@style/Styles.Text.Footnote"-->
-<!--      android:layout_marginTop="@dimen/margin_xlarge"-->
-<!--      android:fontFamily="@font/inter_medium"-->
-<!--      android:gravity="center"-->
-<!--      tools:text="Pick up"-->
-<!--      tools:background="@drawable/bg_favourite_order_type_selected"-->
-<!--      android:layout_height="wrap_content"/>-->
   <LinearLayout
       android:id="@+id/orderTypeContainer"
       android:layout_width="wrap_content"
@@ -79,11 +59,21 @@
       android:orientation="horizontal"
       android:layout_marginStart="@dimen/margin_large"
       tools:visibility="visible" />
-
+  <com.herfy.common.component.EmptyStateView
+      android:id="@+id/emptyState"
+      android:layout_width="match_parent"
+      app:layout_constraintTop_toBottomOf="@+id/orderTypeContainer"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      android:layout_marginTop="@dimen/margin_xlarge"
+      android:visibility="gone"
+      app:emptyStateDrawable="@drawable/ic_favourite_empty"
+      tools:visibility="visible"
+      android:layout_height="wrap_content"/>
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/favouriteRecycleView"
       android:layout_width="match_parent"
-      app:layout_constraintTop_toBottomOf="@+id/orderTypeContainer"
+      app:layout_constraintTop_toBottomOf="@+id/emptyState"
       android:layout_height="0dp"
       android:layout_marginTop="@dimen/margin_large"
       android:orientation="vertical"
