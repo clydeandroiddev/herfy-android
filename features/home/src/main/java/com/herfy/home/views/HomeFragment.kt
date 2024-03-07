@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -68,6 +69,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             setupOrderType()
             setupBottomSlider()
             layoutLoyalty.apply {
+                progress.isEnabled = false
                 btnContinue.setOnClickListener {
                     context?.let{
                         val intent = Intent()

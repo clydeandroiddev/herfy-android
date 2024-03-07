@@ -137,7 +137,7 @@
                                 android:paddingEnd="0dp"
                                 android:paddingStart="0dp"
                                 android:thumbOffset="0dp"
-                                android:progressDrawable="@drawable/loyalty_progress"
+                                android:progressDrawable="@drawable/background_loyalty_progress"
                                 android:thumb="@drawable/ic_rewards_thumb"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
