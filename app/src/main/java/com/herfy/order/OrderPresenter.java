@@ -45,15 +45,22 @@ import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.ApiRequestWithHeadersListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
+import com.skylinedynamics.solosdk.api.calls.MenuApiCall;
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall;
 import com.skylinedynamics.solosdk.api.calls.UtilitiesApiCall;
 import com.skylinedynamics.solosdk.api.models.Pagination;
+import com.skylinedynamics.solosdk.api.models.objects.Allergen;
+import com.skylinedynamics.solosdk.api.models.objects.AllergenAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.Customer;
 import com.skylinedynamics.solosdk.api.models.objects.Employee;
 import com.skylinedynamics.solosdk.api.models.objects.Facility;
+import com.skylinedynamics.solosdk.api.models.objects.Favorite;
+import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType;
+import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderData;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
 import com.skylinedynamics.solosdk.api.models.objects.OrderFeedback;
@@ -62,6 +69,9 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.Rating;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
+import com.skylinedynamics.solosdk.api.models.objects.Translated;
+import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
+import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfigRule;
 import com.skylinedynamics.solosdk.api.models.objects.store.DeliveryArea;
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddressBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.OrderFeedbackBody;
@@ -80,6 +90,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -491,6 +502,11 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
     }
 
+    @Override
+    public void addToCartFavorite(Favorite favorite) {
+        addCartItem(favorite);
+    }
+
     private void sortStoresByDistance() {
 
         Collections.sort(dineInStores, new Comparator<Store>() {
@@ -663,6 +679,471 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     @Override
     public Address getAddress() {
         return address;
+    }
+
+    @Override
+    public void addCartItem(Favorite favorite) {
+        MenuItem favoriteMenuItem = MenuUtil.getFavoriteMenuItem(favorite);
+        HashMap<String, ModifierItem> favoriteModifiers = new HashMap<>();
+        for (ModifierItem modifierItem : favoriteMenuItem.getModifierItems()) {
+            favoriteModifiers.put(modifierItem.getId(), modifierItem);
+        }
+
+        HashMap<String, Ingredient> favoriteIngredients = new HashMap<>();
+        for (Ingredient ingredient : favoriteMenuItem.getIngredients()) {
+            favoriteIngredients.put(ingredient.getId(), ingredient);
+        }
+
+        MenuApiCall.getInstance().getAllItemDetails(CacheUtil.getInstance().getMenuId(), String.valueOf(favoriteMenuItem.getId()), new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                try {
+                    String categoryId;
+                    JSONObject object = new JSONObject(o.toString());
+                    JSONArray dataArray = object.getJSONArray("data");
+
+                    if (dataArray.length() > 0) {
+                        MenuItem menuItem = GsonHelper.gsonFinal().fromJson(dataArray.getJSONObject(0).toString(), MenuItem.class);
+                        menuItem.toCdn(CacheUtil.getOrderStoreId());
+
+                        try {
+                            menuItem.isCombo = dataArray.getJSONObject(0).getJSONObject("attributes").getBoolean("is-combo");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        categoryId = getMenuCategory(menuItem.getId());
+
+                        if (menuItem.getAttributes().getEnabled() == 0) {
+                            orderView.showError(CacheUtil.getInstance().getTranslations(Text.ITEM_NO_LONGER_AVAILABLE));
+                        } else if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY && menuItem.getAttributes().getDisableForDelivery() == 1) {
+                            orderView.showError(CacheUtil.getInstance().getTranslations(Text.ITEM_NOT_AVAILABLE_FOR_DELIVERY, "(x) is not available for Delivery.").replace("(x)", menuItem.getAttributes().getName()));
+                        } else if (CacheUtil.getInstance().pickupTypes() && menuItem.getAttributes().getDisableForPickup() == 1) {
+                            orderView.showError(CacheUtil.getInstance().getTranslations(Text.ITEM_NOT_AVAILABLE_FOR_PICKUP, "(x) is not available for Pickup.").replace("(x)", menuItem.getAttributes().getName()));
+                        } else {
+                            if (object.has("included") && !object.isNull("included")) {
+                                JSONArray included = object.getJSONArray("included");
+                                for (int i = 0; i < included.length(); i++) {
+                                    Store store = Store.parseStore(included.getJSONObject(i));
+                                    menuItem.getDisabledStores().put(store.getId(), store);
+                                }
+                            }
+                            if (object.has("included") && !object.isNull("included")) {
+                                JSONArray included = object.getJSONArray("included");
+                                for (int i = 0; i < included.length(); i++) {
+                                    JSONObject includedObject = included.getJSONObject(i);
+                                    if (includedObject.has("id") && !includedObject.isNull("id") && includedObject.has("type") && !includedObject.isNull("type")) {
+                                        String includedId = includedObject.getString("id");
+                                        String includedType = includedObject.getString("type");
+
+                                        if (includedType.equalsIgnoreCase("modifier-group")) {
+
+                                            if (menuItem.getModifierGroupsIds().contains(includedId)) {
+
+                                                ModifierGroup modifierGroup = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<ModifierGroup>() {
+                                                }.getType());
+
+                                                if (modifierGroup.getAttributes().getEnabled() == 1) {
+                                                    String code = "";
+                                                    if (modifierGroup.getAttributes().getCode() != null) {
+                                                        code = modifierGroup.getAttributes().getCode().trim().toLowerCase();
+                                                    }
+                                                    String type = "";
+                                                    if (modifierGroup.getAttributes().getType() != null) {
+                                                        type = modifierGroup.getAttributes().getType().trim().toLowerCase();
+                                                    }
+                                                    String label = "";
+                                                    if (modifierGroup.getAttributes().getLabel() != null) {
+                                                        label = modifierGroup.getAttributes().getLabel().trim().toLowerCase();
+                                                    }
+
+                                                    if (code.equals("sizes") || type.equals("sizes") || label.equals("sizes")) {
+                                                        modifierGroup.setType(ModifierGroupType.SIZES);
+                                                        menuItem.setSizes(modifierGroup);
+                                                    } else {
+                                                        modifierGroup.setType(ModifierGroupType.OPTIONS);
+                                                        List<ModifierGroup> items = new ArrayList<>(menuItem.getModifierGroups());
+                                                        items.add(modifierGroup);
+                                                        menuItem.setModifierGroups(items);
+                                                    }
+
+                                                }
+
+                                            }
+
+                                        } else if (includedType.equalsIgnoreCase("ingredient")) {
+                                            if (menuItem.getIngredientsIds().contains(includedId)) {
+                                                Ingredient ingredient = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<Ingredient>() {
+                                                }.getType());
+                                                if (favoriteIngredients.containsKey(ingredient.getId())) {
+                                                    ingredient.getAttributes().setSelected(false);
+                                                }
+                                                if (ingredient.getAttributes().getEnabled() == 1) {
+                                                    List<Ingredient> items = new ArrayList<>(menuItem.getIngredients());
+                                                    items.add(ingredient);
+                                                    menuItem.setIngredients(items);
+                                                }
+                                            }
+                                        } else if (includedType.equalsIgnoreCase("allergen")) {
+                                            if (menuItem.getAllergenIds().contains(includedId)) {
+                                                Allergen allergen = Allergen.parse(includedObject);
+                                                if (allergen.getEnabled() == 1) {
+                                                    List<Allergen> items = new ArrayList<>(menuItem.getAllergens());
+                                                    AllergenAttributes attributes = new AllergenAttributes();
+                                                    Translated name = new Translated();
+                                                    name.setArabic(allergen.getName());
+                                                    name.setEnglish(allergen.getName());
+                                                    name.setFrench(allergen.getName());
+                                                    attributes.setName(name);
+                                                    Translated icon = new Translated();
+                                                    icon.setArabic(allergen.getIcon());
+                                                    icon.setEnglish(allergen.getIcon());
+                                                    icon.setFrench(allergen.getIcon());
+                                                    attributes.setIcon(icon);
+                                                    attributes.setEnabled(allergen.getEnabled());
+                                                    allergen.setAttributes(attributes);
+                                                    items.add(allergen);
+                                                    menuItem.setAllergens(items);
+                                                }
+                                            }
+                                        } else if (includedType.equalsIgnoreCase("location")) {
+                                            if (menuItem.getLocationIds().contains(includedId)) {
+                                                Store store = Store.parseStore(included.getJSONObject(i));
+                                                menuItem.getDisabledStores().put(store.getId(), store);
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                                for (int i = 0; i < included.length(); i++) {
+
+                                    JSONObject includedObject = included.getJSONObject(i);
+
+                                    if (includedObject.has("id") && !includedObject.isNull("id") && includedObject.has("type") && !includedObject.isNull("type")) {
+                                        String includedId = includedObject.getString("id");
+                                        String includedType = includedObject.getString("type");
+
+                                        if (includedType.equalsIgnoreCase("modifier")) {
+
+                                            ModifierItem modifierItem = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<ModifierItem>() {
+                                            }.getType());
+
+                                            String name = modifierItem.getAttributes().getName();
+                                            Translated translated = new Translated();
+                                            translated.setEnglish(name);
+                                            translated.setArabic(name);
+                                            translated.setFrench(name);
+                                            modifierItem.getAttributes().setTranslatedName(translated);
+
+                                            if (favoriteModifiers.containsKey(modifierItem.getId())) {
+                                                modifierItem.getAttributes().setSelected(true);
+                                                modifierItem.getAttributes().setQuantity(favoriteModifiers.get(modifierItem.getId()).getAttributes().getQuantity());
+                                            }
+
+                                            if (modifierItem.getAttributes().getEnabled() == 1) {
+                                                if (menuItem.getSizes().getModifierItemsIds().contains(includedId)) {
+                                                    List<ModifierItem> items = new ArrayList<>(menuItem.getSizes().getModifierItems());
+                                                    items.add(modifierItem);
+                                                    menuItem.getSizes().setModifierItems(items);
+                                                } else {
+                                                    for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
+                                                        if (modifierGroup.getModifierItemsIds().contains(includedId)) {
+                                                            List<ModifierItem> items = new ArrayList<>(modifierGroup.getModifierItems());
+                                                            items.add(modifierItem);
+                                                            modifierGroup.setModifierItems(items);
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                LinkedList<ModifierGroup> filteredModifierGroups = new LinkedList<>();
+
+                                for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
+                                    if (modifierGroup.getModifierItems().size() > 0) {
+                                        filteredModifierGroups.add(modifierGroup);
+                                    }
+                                }
+
+                                Collections.sort(filteredModifierGroups, new Comparator<ModifierGroup>() {
+                                    @Override
+                                    public int compare(ModifierGroup modifierGroup1, ModifierGroup modifierGroup2) {
+                                        return modifierGroup1.getAttributes().getDisplayOrder() - modifierGroup2.getAttributes().getDisplayOrder();
+                                    }
+                                });
+
+                                menuItem.setModifierGroups(filteredModifierGroups);
+
+                                if (menuItem.getSizes().getModifierItems().size() > 0) {
+                                    menuItem.getSizes().getModifierItems().get(0).getAttributes().setSelected(true);
+                                }
+
+                                for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
+                                    if (modifierGroup.getAttributes().getMinimum() == 1 && modifierGroup.getModifierItems().size() > 0) {
+                                        modifierGroup.getModifierItems().get(0).getAttributes().setSelected(true);
+                                    }
+                                }
+                                VisibilityConfig visibilityConfig = menuItem.getSizes().getAttributes().getVisibilityConfig();
+                                if (visibilityConfig != null) {
+                                    List<VisibilityConfigRule> rules = visibilityConfig.getRules();
+                                    if (rules != null && rules.size() > 0) {
+                                        VisibilityConfigRule rule = rules.get(0);
+                                        if (rule.getTargetType() != null) {
+                                            if (rule.getTargetType().equalsIgnoreCase("modifier-group")) {
+                                                for (ModifierGroup modGroup : menuItem.getModifierGroups()) {
+                                                    if (!menuItem.getSizes().getAttributes().getId().equals(modGroup.getAttributes().getId()) && rule.getTargetId().equals(modGroup.getAttributes().getId())) {
+                                                        if (rule.getTargetIs() != null && rule.getTargetIs().equalsIgnoreCase("selected")) {
+                                                            int selected = 0;
+                                                            for (ModifierItem modItem : modGroup.getModifierItems()) {
+                                                                if (modItem.getAttributes().isSelected()) {
+                                                                    selected += 1;
+                                                                }
+                                                            }
+                                                            if (selected > 0) {
+                                                                menuItem.getSizes().getAttributes().getVisibilityConfig().setInitialValue("");
+                                                            } else {
+                                                                menuItem.getSizes().getAttributes().getVisibilityConfig().setInitialValue("hidden");
+                                                            }
+                                                        }
+                                                        break;
+                                                    }
+
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                                for (ModifierGroup group : menuItem.getModifierGroups()) {
+                                    visibilityConfig = group.getAttributes().getVisibilityConfig();
+                                    if (visibilityConfig != null) {
+                                        List<VisibilityConfigRule> rules = visibilityConfig.getRules();
+                                        if (rules != null && rules.size() > 0) {
+                                            VisibilityConfigRule rule = rules.get(0);
+                                            if (rule.getTargetType() != null) {
+
+                                                if (rule.getTargetType().equalsIgnoreCase("modifier-group")) {
+                                                    if (!group.getAttributes().getId().equals(menuItem.getSizes().getAttributes().getId()) && rule.getTargetId().equals(menuItem.getSizes().getAttributes().getId())) {
+                                                        if (rule.getTargetIs() != null && rule.getTargetIs().equalsIgnoreCase("selected")) {
+                                                            int selected = 0;
+                                                            for (ModifierItem modItem : menuItem.getSizes().getModifierItems()) {
+                                                                if (modItem.getAttributes().isSelected()) {
+                                                                    selected += 1;
+                                                                }
+                                                            }
+                                                            if (selected > 0) {
+                                                                group.getAttributes().getVisibilityConfig().setInitialValue("");
+                                                            } else {
+                                                                group.getAttributes().getVisibilityConfig().setInitialValue("hidden");
+                                                            }
+                                                        }
+                                                        break;
+                                                    }
+
+                                                    for (ModifierGroup modGroup : menuItem.getModifierGroups()) {
+                                                        if (!group.getAttributes().getId().equals(modGroup.getAttributes().getId()) && rule.getTargetId().equals(modGroup.getAttributes().getId())) {
+                                                            if (rule.getTargetIs() != null && rule.getTargetIs().equalsIgnoreCase("selected")) {
+                                                                int selected = 0;
+                                                                for (ModifierItem modItem : modGroup.getModifierItems()) {
+                                                                    if (modItem.getAttributes().isSelected()) {
+                                                                        selected += 1;
+                                                                    }
+                                                                }
+                                                                if (selected > 0) {
+                                                                    group.getAttributes().getVisibilityConfig().setInitialValue("");
+                                                                } else {
+                                                                    group.getAttributes().getVisibilityConfig().setInitialValue("hidden");
+                                                                }
+                                                            }
+                                                            break;
+                                                        }
+
+                                                    }
+
+                                                } else if (rule.getTargetType().equalsIgnoreCase("modifier")) {
+                                                    Set<String> selectedModifiers = new HashSet<>();
+                                                    for (ModifierItem modItem : menuItem.getSizes().getModifierItems()) {
+                                                        if (modItem.getAttributes().isSelected()) {
+                                                            selectedModifiers.add(modItem.getId());
+                                                            break;
+                                                        }
+                                                    }
+
+                                                    for (ModifierGroup modGroup : menuItem.getModifierGroups()) {
+                                                        if (!group.getId().equals(modGroup.getId())) {
+                                                            for (ModifierItem modItem : modGroup.getModifierItems()) {
+                                                                if (modItem.getAttributes().isSelected()) {
+                                                                    selectedModifiers.add(modItem.getId());
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    //for (ModifierGroup modGroup : menuItem.getModifierGroups()) {
+                                                    //if (!group.getId().equals(modGroup.getId())) {
+                                                    if (rule.getTargetId() != null && selectedModifiers.contains(rule.getTargetId())) {
+                                                        if (rule.getTargetIs() != null && rule.getTargetIs().equalsIgnoreCase("selected")) {
+                                                            group.getAttributes().getVisibilityConfig().setInitialValue("");
+                                                        } else {
+                                                            group.getAttributes().getVisibilityConfig().setInitialValue("hidden");
+                                                        }
+                                                    } else if (!rule.getTargetId().isEmpty()) {
+                                                        group.getAttributes().getVisibilityConfig().setInitialValue("hidden");
+                                                    }
+                                                    //}
+                                                    //}
+
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+                                menuItem.setFavourites(true);
+                                CacheUtil.getInstance().addToCart(menuItem);
+                                Log.d("FAFA","Added to cart bai");
+                                orderView.addToCartFavorite(menuItem);
+                            }
+
+                            Store store = CacheUtil.getInstance().getOrderStore();
+                            if (store != null && menuItem.getDisabledStores().containsKey(store.getId())) {
+                                orderView.showMessage(CacheUtil.getInstance().getTranslations(Text.LOCATION_AVAILABLE).replace("(x)", store.getAttributes().getName()));
+                            } else if (menuItem.getAttributes().isMustBeCustomized()) {
+                                orderView.showMenuItem(categoryId, menuItem.getId());
+                            } else if (menuItem.isCombo) {
+                                orderView.showMenuItem(categoryId, menuItem.getId());
+                            } else {
+                                boolean invalid = false;
+                                ArrayList<ModifierGroup> visibleModifierGroups = new ArrayList<>();
+
+                                for (ModifierGroup group : menuItem.getModifierGroups()) {
+                                    VisibilityConfig visibilityConfig = group.getAttributes().getVisibilityConfig();
+                                    if (visibilityConfig != null && visibilityConfig.getInitialValue() != null) {
+                                        if (!visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
+                                            visibleModifierGroups.add(group);
+                                        }
+                                    } else {
+                                        visibleModifierGroups.add(group);
+                                    }
+                                }
+
+                                for (ModifierGroup modifierGroup : visibleModifierGroups) {
+                                    int selected = 0;
+                                    for (ModifierItem modifierItem : modifierGroup.getModifierItems()) {
+                                        if (modifierItem.getAttributes().isSelected()) {
+                                            selected += modifierItem.getAttributes().getQuantity();
+                                        }
+                                    }
+                                    if (selected < modifierGroup.getAttributes().getMinimum()) {
+                                        invalid = true;
+                                        break;
+                                    }
+                                }
+
+                                if (invalid) {
+                                    orderView.showMenuItem(categoryId, menuItem.getId());
+                                } else {
+
+                                    HashMap<String, String> eventAttributes = new HashMap<>();
+                                    eventAttributes.put("Item Name", menuItem.getAttributes().getName());
+                                    eventAttributes.put("Item Quantity", String.valueOf(menuItem.getAttributes().getQuantity()));
+
+                                    double totalPrice = menuItem.getAttributes().getPrice(CacheUtil.getOrderStoreId());
+
+                                    for (ModifierItem modifierItem : menuItem.getSizes().getModifierItems()) {
+                                        if (modifierItem.getAttributes().isSelected()) {
+                                            eventAttributes.put("Modifier Name", modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+                                            eventAttributes.put("Modifier Quantity", String.valueOf(modifierItem.getAttributes().getQuantity()));
+                                            totalPrice += modifierItem.getAttributes().getPrice();
+                                        }
+                                    }
+
+                                    for (ModifierItem modifierItem : menuItem.getDrinks().getModifierItems()) {
+                                        if (modifierItem.getAttributes().isSelected()) {
+                                            eventAttributes.put("Modifier Name", modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+                                            eventAttributes.put("Modifier Quantity", String.valueOf(modifierItem.getAttributes().getQuantity()));
+                                            totalPrice += modifierItem.getAttributes().getPrice();
+                                        }
+                                    }
+
+                                    for (ModifierItem modifierItem : menuItem.getFries().getModifierItems()) {
+                                        if (modifierItem.getAttributes().isSelected()) {
+                                            eventAttributes.put("Modifier Name", modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+                                            eventAttributes.put("Modifier Quantity", String.valueOf(modifierItem.getAttributes().getQuantity()));
+                                            totalPrice += modifierItem.getAttributes().getPrice();
+                                        }
+                                    }
+
+                                    for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
+                                        VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
+                                        if (visibilityConfig == null || visibilityConfig.getInitialValue() == null || !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
+                                            for (ModifierItem modifierItem : modifierGroup.getModifierItems()) {
+                                                if (modifierItem.getAttributes().isSelected()) {
+                                                    eventAttributes.put("Modifier Name", modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+                                                    eventAttributes.put("Modifier Quantity", String.valueOf(modifierItem.getAttributes().getQuantity()));
+                                                    totalPrice += modifierItem.getAttributes().getPrice() * modifierItem.getAttributes().getQuantity();
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    for (ModifierItem modifierItem : menuItem.getModifierItems()) {
+                                        eventAttributes.put("Modifier Name", modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+                                        eventAttributes.put("Modifier Quantity", String.valueOf(modifierItem.getAttributes().getQuantity()));
+                                        totalPrice += modifierItem.getAttributes().getPrice();
+                                    }
+
+                                    for (Ingredient ingredient : menuItem.getIngredients()) {
+                                        if (!ingredient.getAttributes().isSelected()) {
+                                            eventAttributes.put("Ingredient Name", ingredient.getAttributes().getName());
+                                            eventAttributes.put("Ingredient Quantity", String.valueOf(ingredient.getAttributes().getQuantity()));
+                                            totalPrice += ingredient.getAttributes().getPrice();
+                                        }
+                                    }
+
+                                    totalPrice += menuItem.getAttributes().getQuantity();
+
+                                    orderView.logEvent("AddToCartFromFavorites", eventAttributes, "Price", totalPrice);
+                                    orderView.logFirebaseEvent("add_to_cart_event");
+
+                                    menuItem.getAttributes().setReorder(true);
+
+
+                                    int cartCount = CacheUtil.getInstance().getCartQuantity();
+                                    removeMukafaaRedemption();
+                                    menuItem.setFavourites(true);
+                                    CacheUtil.getInstance().addToCart(menuItem);
+                                    if (cartCount == 0) {
+                                        orderView.setCartExpiry();
+                                    }
+                                    Log.d("FAFA","Item to cart");
+                                    orderView.addToCartFavorite(menuItem);
+                                }
+
+                            }
+                        }
+
+                    } else {
+                        this.onError("");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    this.onError(e);
+                }
+            }
+
+            @Override
+            public void onError(Object o) {
+                AppLogger.printRetrofitError(o);
+                orderView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.ITEM_NO_LONGER_AVAILABLE)));
+            }
+        });
     }
 
     @Override
@@ -1728,6 +2209,17 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                 });
             }
         });
+    }
+
+    @Override
+    public String getMenuCategory(String menuItemId) {
+        String applicationId = CacheUtil.getInstance().getApplication().getId();
+        AppDatabase appDatabase = AppDatabase.getInstance();
+        MenuItemEntity menuItemEntity = appDatabase.menuItemEntityDao().findById(applicationId, menuItemId);
+        if (menuItemEntity != null) {
+            return menuItemEntity.getMenuCategoryId();
+        }
+        return "";
     }
 
     @Override

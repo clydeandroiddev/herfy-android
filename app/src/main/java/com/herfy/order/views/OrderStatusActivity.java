@@ -29,6 +29,7 @@ import com.herfy.order.OrderContract;
 import com.herfy.order.OrderPresenter;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType;
@@ -394,6 +395,11 @@ public class OrderStatusActivity extends BaseActivity implements OrderContract.V
     }
 
     @Override
+    public void logFirebaseEvent(String event) {
+
+    }
+
+    @Override
     public void showUnavailableMenuItems() {
 
     }
@@ -618,6 +624,11 @@ public class OrderStatusActivity extends BaseActivity implements OrderContract.V
     }
 
     @Override
+    public void showMenuItem(String categoryId, String menuItemId) {
+
+    }
+
+    @Override
     public void enableConfirmButton(boolean enable, String storeName) {
 
     }
@@ -647,4 +658,9 @@ public class OrderStatusActivity extends BaseActivity implements OrderContract.V
 
     }
 
+
+    @Override
+    public void addToCartFavorite(MenuItem menuItem) {
+
+    }
 }
