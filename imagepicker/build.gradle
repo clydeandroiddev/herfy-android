@@ -47,6 +47,11 @@ android {
             minifyEnabled false
             shrinkResources false
         }
+        kiosk {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
         marketing {
             debuggable true
             minifyEnabled false

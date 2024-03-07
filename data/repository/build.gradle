@@ -6,10 +6,10 @@ plugins {
 
 android {
     namespace 'com.herfy.repository'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
-        minSdk 21
+        minSdk 24
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -41,6 +41,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         consumer {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        kiosk {
             debuggable true
             minifyEnabled false
             shrinkResources false
