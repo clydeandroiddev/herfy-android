@@ -1,6 +1,5 @@
 package com.herfy.favorites;
 
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
@@ -53,8 +52,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class FavoritesPresenter implements FavoritesContract.Presenter {
 
@@ -86,11 +83,10 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void getFavorites(int page) {
-        CustomersApiCall.getInstance().getAllCustomerFavoriteItems(AuthUtil.getInstance().getCustomer().getId(), String.valueOf(page), new ApiRequestListener() {
+        CustomersApiCall.getInstance().getAllCustomerFavoriteItems(AuthUtil.getInstance().getCustomer().getId(),String.valueOf(page), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
-                    AppDatabase appDatabase = AppDatabase.getInstance();
                     JSONObject object = new JSONObject(o.toString());
 
                     Pagination pagination = Pagination.parse(object);
@@ -256,8 +252,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     @Override
     public void addToCartFavorite(Favorite favorite, ImageView view) {
         imageView = view;
-        favoritesView.showLoadingDialog();
-        addCartItem(favorite);
     }
 
     @Override
@@ -1129,9 +1123,8 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     @Override
-    public void getFavouritesByOrderTypeId(long orderTypeId, String orderTypeName) {
-        //TODO - Uncomment when favorite changes have been merged
-        //OrderType type = OrderType.Companion.fromFavouriteType(orderTypeName);
-        //CacheUtil.getInstance().setOrderType(type);
+    public void getFavouritesByOrderTypeId(String orderTypeId, String orderTypeName) {
+       OrderType type =  OrderType.Companion.fromFavouriteType(orderTypeName);
+       CacheUtil.getInstance().setOrderType(type);
     }
 }
