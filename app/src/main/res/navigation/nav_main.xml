@@ -473,6 +473,15 @@
     </fragment>
 
     <fragment
+        android:id="@+id/storeLocatorFragment"
+        android:name="com.ordertype.storelocator.StoreLocatorFragment"
+        tools:layout="@layout/store_locator">
+
+        <deepLink app:uri="android-app://com.herfy/store_locator_nav/" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/nav_favorites"
         android:name="com.herfy.favorites.FavoritesFragment"
         android:label="favorites"
