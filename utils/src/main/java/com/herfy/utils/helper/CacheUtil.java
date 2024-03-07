@@ -2,7 +2,6 @@ package com.herfy.utils.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.util.Pair;
 
 import com.google.gson.Gson;
@@ -22,6 +21,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
 import com.skylinedynamics.solosdk.api.models.objects.ConsumerData;
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard;
+import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
 import com.skylinedynamics.solosdk.api.models.objects.Integration;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
@@ -34,7 +34,6 @@ import com.skylinedynamics.solosdk.api.models.objects.Promotion;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
-import com.skylinedynamics.solosdk.api.models.objects.area.City;
 import com.skylinedynamics.solosdk.api.models.objects.area.CityList;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
@@ -145,6 +144,8 @@ public class CacheUtil {
 
     private static final String MAP_AREA = "MapArea";
     private static final String VEHICLE_COLOR = "VehicleColor";
+
+    private static final String FAVOURITE = "FAVOURITE";
 
     private CacheUtil(Context context) {
 
@@ -1316,6 +1317,23 @@ public class CacheUtil {
         editor.putString(FAVORITES, favoritesValue);
         editor.commit();
 
+    }
+
+    public void saveFavoriteToAddToCart(Favorite favorite) {
+        String favoriteJson = new Gson().toJson(favorite);
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(FAVOURITE, favoriteJson);
+        editor.apply(); // Don't forget to apply changes
+    }
+
+    public Favorite retrieveFavoriteToAddToCart() {
+        String favoriteJson = cacheSharedPreferences.getString(FAVOURITE, null);
+
+        if (favoriteJson != null) {
+            return GsonHelper.gsonFinal().fromJson(favoriteJson, new TypeToken<Favorite>() {}.getType());
+        }
+
+        return null;
     }
 
     public Set<String> getFavorites() {
