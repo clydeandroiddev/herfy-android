@@ -52,6 +52,7 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.Address
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -194,6 +195,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     override fun showOrderTypes(orderTypes: MutableSet<OrderType>?) {
 
+    }
+
+    override fun addToCartFavorite(menuItem: MenuItem?) {
+        TODO("Not yet implemented")
     }
 
     override fun createOrderType(orderType: OrderType?) {
@@ -476,6 +481,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         finish()
     }
 
+    override fun logFirebaseEvent(event: String?) {
+        TODO("Not yet implemented")
+    }
+
     override fun showUnavailableMenuItems() {
 
     }
@@ -533,6 +542,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     override fun showOrders() {
 
+    }
+
+    override fun showMenuItem(categoryId: String?, menuItemId: String?) {
+        TODO("Not yet implemented")
     }
 
     override fun enableConfirmButton(enable: Boolean, storeName: String?) {

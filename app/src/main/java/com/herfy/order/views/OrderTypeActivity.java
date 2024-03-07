@@ -78,6 +78,7 @@ import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.views.NestedScrollableViewHelper;
 import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
@@ -853,6 +854,11 @@ public class OrderTypeActivity extends BaseActivity implements OrderContract.Vie
 
     @Override
     public void showOrderTypes(Set<OrderType> orderTypes) {
+
+    }
+
+    @Override
+    public void addToCartFavorite(MenuItem menuItem) {
 
     }
 
@@ -1725,6 +1731,11 @@ public class OrderTypeActivity extends BaseActivity implements OrderContract.Vie
     }
 
     @Override
+    public void logFirebaseEvent(String event) {
+
+    }
+
+    @Override
     public void showUnavailableMenuItems() {
         dismissDialogs();
         CartDialogFragment cartDialogFragment = CartDialogFragment.newInstance(orderPresenter);
@@ -1796,6 +1807,11 @@ public class OrderTypeActivity extends BaseActivity implements OrderContract.Vie
 
     @Override
     public void showOrders() {
+
+    }
+
+    @Override
+    public void showMenuItem(String categoryId, String menuItemId) {
 
     }
 

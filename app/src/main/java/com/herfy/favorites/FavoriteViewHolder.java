@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.text.SpannableString;
 import android.text.SpannedString;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -85,10 +86,13 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 
     MaterialTextView txtQuantity;
 
-    public FavoriteViewHolder(FavoritesContract.Presenter favoritesPresenter, View itemView) {
+    private FavoritesAction action;
+
+    public FavoriteViewHolder(FavoritesContract.Presenter favoritesPresenter, View itemView,FavoritesAction action) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         this.favoritesPresenter = favoritesPresenter;
+        this.action = action;
         setupViews();
         setupFonts();
         setupTranslations();
@@ -195,7 +199,8 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
                     FirebaseService.newNotification(CacheUtil.getInstance().getTranslations(Text.MENU_ONLY_MESSAGE, "Sorry, ordering is not available at the moment"), add.getContext());
                     return;
                 }
-                favoritesPresenter.addToCartFavorite(favorite, image);
+                Log.d("FAFA","Click bai");
+                action.onFavouriteAddToCart(favorite);
             }
         });
 
