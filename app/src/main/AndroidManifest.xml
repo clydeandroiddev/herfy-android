@@ -195,6 +195,10 @@
             android:screenOrientation="portrait"
             android:taskAffinity="" />
         <activity
+            android:name="com.herfy.language.LanguageNewActivity"
+            android:screenOrientation="portrait"
+            android:taskAffinity="" />
+        <activity
             android:name="com.herfy.onboarding.views.OnboardingActivity"
             android:screenOrientation="portrait"
             android:taskAffinity="" />

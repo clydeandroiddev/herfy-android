@@ -1,6 +1,8 @@
 package com.herfy.di
 
 import com.herfy.database.AppDatabase
+import com.herfy.repository.AuthRepository
+import com.herfy.repository.AuthRepositoryImpl
 import com.herfy.repository.FavoriteRepository
 import com.herfy.repository.FavoriteRepositoryImpl
 import com.herfy.repository.HomeRepository
@@ -42,5 +44,13 @@ object RepositoryModule {
         cacheUtilHelper: CacheUtilHelper
     ) : FavoriteRepository =
         FavoriteRepositoryImpl()
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        appDatabase: AppDatabase,
+        cacheUtilHelper: CacheUtilHelper
+    ) : AuthRepository =
+        AuthRepositoryImpl()
 
 }

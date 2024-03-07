@@ -41,24 +41,24 @@ import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.animation.ActivitySwitcher;
 import com.herfy.base.BaseActivity;
-import com.herfy.utils.constants.Text;
 import com.herfy.country.CountriesActivity;
-import com.herfy.language.LanguageActivity;
+import com.herfy.language.LanguageNewActivity;
 import com.herfy.main.MainActivity;
 import com.herfy.onboarding.views.OnboardingActivity;
 import com.herfy.selection.SelectionActivity;
+import com.herfy.util.CacheHelper;
+import com.herfy.util.DeepLinkUtil;
+import com.herfy.util.JsonUtil;
+import com.herfy.util.StringUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.SoloApi;
 import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
-import com.herfy.util.CacheHelper;
-import com.herfy.util.DeepLinkUtil;
-import com.herfy.util.JsonUtil;
-import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.util.StringUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -107,7 +107,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         splashPresenter = new SplashPresenter(this);
         proceesDeeplink();
         isAuthCredentialMigrated();
-      }
+    }
 
     @Override
     protected void onResume() {
@@ -188,15 +188,15 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
 
     @Override
     public void checkIfRooted() {
-        if(CommonUtils.isRooted(this)) {
+        if (CommonUtils.isRooted(this)) {
             showAlertDialog(
-                "",
-                CacheUtil.getInstance().getTranslations(
-                        Text.ROOTED_DEVICE_MESSAGE,
-                        "This device appears to be rooted. This application is not supported on rooted devices."
-                ),
-                CacheUtil.getInstance().getTranslations(Text.OK),
-                (dialogInterface, i) -> checkIfRooted()
+                    "",
+                    CacheUtil.getInstance().getTranslations(
+                            Text.ROOTED_DEVICE_MESSAGE,
+                            "This device appears to be rooted. This application is not supported on rooted devices."
+                    ),
+                    CacheUtil.getInstance().getTranslations(Text.OK),
+                    (dialogInterface, i) -> checkIfRooted()
             );
         } else {
             splashPresenter.sendLanguage();
@@ -215,7 +215,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
 
     public void proceesDeeplink() {
         Bundle bundle = getIntent().getExtras();
-        if(Values.sDeepLinkId.isEmpty() && bundle != null && bundle.containsKey("deep-link")) {
+        if (Values.sDeepLinkId.isEmpty() && bundle != null && bundle.containsKey("deep-link")) {
             String deepLink = bundle.getString("deep-link");
             if (deepLink != null && !deepLink.isEmpty()) {
                 String[] values = deepLink.split("/");
@@ -309,7 +309,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             Values.sDeepLinkUtm = null;
         }
 
-        if(!BuildConfig.SUBSCRIPTION_ENABLED) {
+        if (!BuildConfig.SUBSCRIPTION_ENABLED) {
             CacheUtil.getInstance().setUpMode(1);
         }
 
@@ -317,14 +317,16 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         proceedMain = true;
         if (!language) {
             proceedMain = false;
-            intent = new Intent(this, LanguageActivity.class);
-        } else if (!onboarding && BuildUtil.splashOnboardingApp()) {
-            proceedMain = false;
-            intent = new Intent(this, OnboardingActivity.class);
-        } else if(BuildConfig.SUBSCRIPTION_ENABLED && CacheUtil.getInstance().getMode() == 0) {
-            proceedMain = false;
-            intent = new Intent(this, SelectionActivity.class);
-        } else {
+            intent = new Intent(this, LanguageNewActivity.class);
+        }
+//        else if (!onboarding && BuildUtil.splashOnboardingApp()) {
+//            proceedMain = false;
+//            intent = new Intent(this, OnboardingActivity.class);
+//        } else if (BuildConfig.SUBSCRIPTION_ENABLED && CacheUtil.getInstance().getMode() == 0) {
+//            proceedMain = false;
+//            intent = new Intent(this, SelectionActivity.class);
+//        }
+        else {
             intent.putExtra("home", true);
         }
 
@@ -337,7 +339,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             startActivity(intent, bundle);
             finish();
         } else {
-            if(BuildConfig.DISABLE_SPLASH_ANIMATION) {
+            if (BuildConfig.DISABLE_SPLASH_ANIMATION) {
                 proceedNext(false, finalIntent);
             } else {
                 animateLogo(false, finalIntent);
@@ -481,7 +483,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(!isDestroyed() && !isFinishing()) {
+                if (!isDestroyed() && !isFinishing()) {
                     Glide.with(SplashActivity.this)
                             .downloadOnly()
                             .load(imageUrl)
@@ -503,7 +505,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
     }
 
     public void cacheSlide(boolean mid, Slide slide) {
-        if(!isDestroyed() && !isFinishing()) {
+        if (!isDestroyed() && !isFinishing()) {
             String imageUrl = StringUtil.getCloudflareSliderUrl(Values.SLIDER_IMAGE_WIDTH, Values.SLIDER_IMAGE_HEIGHT, slide.getImageUri());
             Glide.with(SplashActivity.this)
                     .downloadOnly()
@@ -549,20 +551,20 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
     private void checkAlarmPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            if(!alarmManager.canScheduleExactAlarms()) {
+            if (!alarmManager.canScheduleExactAlarms()) {
                 showAlertDialog(
-                    CacheUtil.getInstance().getTranslations(Text.ENABLE_CART_NOTIFICATIONS_TITLE, "Enable Cart Notifications"),
-                    CacheUtil.getInstance().getTranslations(Text.ENABLE_CART_NOTIFICATIONS_MESSAGE, "Please enable alarms and reminders for the app to receive cart notifications"),
-                    CacheUtil.getInstance().getTranslations(Text.OK),
-                    (dialogInterface, i) -> {
-                        dialogInterface.dismiss();
-                        Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-                        intent.setData(Uri.parse("package:" + getPackageName()));
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    },
-                    CacheUtil.getInstance().getTranslations(Text.CANCEL),
-                    (dialogInterface, i) -> dialogInterface.dismiss()
+                        CacheUtil.getInstance().getTranslations(Text.ENABLE_CART_NOTIFICATIONS_TITLE, "Enable Cart Notifications"),
+                        CacheUtil.getInstance().getTranslations(Text.ENABLE_CART_NOTIFICATIONS_MESSAGE, "Please enable alarms and reminders for the app to receive cart notifications"),
+                        CacheUtil.getInstance().getTranslations(Text.OK),
+                        (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                            intent.setData(Uri.parse("package:" + getPackageName()));
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        },
+                        CacheUtil.getInstance().getTranslations(Text.CANCEL),
+                        (dialogInterface, i) -> dialogInterface.dismiss()
                 );
 
             }

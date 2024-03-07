@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_auth">
+
+    <fragment
+        android:id="@+id/nav_login_fragment"
+        android:name="com.herfy.authentication.views.LoginFragment"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_login_to_otp"
+            app:destination="@id/loginOTPFragment"
+            app:popUpTo="@+id/nav_login_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginOTPFragment"
+        android:name="com.herfy.authentication.views.LoginOTPFragment"
+        tools:layout="@layout/fragment_otp_page">
+
+        <argument
+            android:name="phoneNumber"
+            app:argType="string"
+            app:nullable="false" />
+
+        <argument
+            android:name="isVerified"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="isGuest"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="customerId"
+            app:argType="string"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/action_otp_to_inputUser"
+            app:destination="@id/inputUserDetailFragment"
+            app:popUpTo="@+id/nav_login_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/inputUserDetailFragment"
+        android:name="com.herfy.authentication.views.InputUserDetailFragment"
+        tools:layout="@layout/fragment_add_new_name">
+
+        <argument
+            android:name="phoneNumber"
+            app:argType="string"
+            app:nullable="false" />
+
+        <argument
+            android:name="isVerified"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="isGuest"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="customerId"
+            app:argType="string"
+            app:nullable="false" />
+
+    </fragment>
+
+</navigation>

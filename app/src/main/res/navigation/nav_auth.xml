@@ -2,42 +2,71 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_auth" >
+    android:id="@+id/nav_auth">
+
+    <fragment
+        android:id="@+id/nav_login_fragment"
+        android:name="com.herfy.authentication.views.LoginFragment"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_login_to_otp"
+            app:destination="@id/loginOTPFragment"
+            app:popUpTo="@+id/nav_login_fragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginOTPFragment"
+        android:name="com.herfy.authentication.views.LoginOTPFragment"
+        tools:layout="@layout/fragment_otp_page">
+
+        <argument
+            android:name="phoneNumber"
+            app:argType="string"
+            app:nullable="false" />
+
+        <argument
+            android:name="customerId"
+            app:argType="string"
+            app:nullable="false" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/nav_signin_register"
         android:name="com.herfy.auth.views.AuthFragment"
-        tools:layout="@layout/fragment_auth" >
+        tools:layout="@layout/fragment_auth">
 
         <argument
             android:name="sign_in"
-            app:argType="boolean"
-            android:defaultValue="true" />
+            android:defaultValue="true"
+            app:argType="boolean" />
 
         <argument
             android:name="guest"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:argType="boolean" />
 
         <argument
             android:name="history"
-            app:argType="boolean"
-            android:defaultValue="false"/>
+            android:defaultValue="false"
+            app:argType="boolean" />
 
         <argument
             android:name="account"
-            app:argType="boolean"
-            android:defaultValue="false"/>
+            android:defaultValue="false"
+            app:argType="boolean" />
 
         <argument
             android:name="curbside"
-            app:argType="boolean"
-            android:defaultValue="false"/>
+            android:defaultValue="false"
+            app:argType="boolean" />
 
         <argument
             android:name="checkout"
-            app:argType="boolean"
-            android:defaultValue="false"/>
+            android:defaultValue="false"
+            app:argType="boolean" />
 
         <action
             android:id="@+id/action_auth_to_guest"
@@ -49,12 +78,12 @@
     <fragment
         android:id="@+id/nav_guest"
         android:name="com.herfy.auth.views.GuestFragment"
-        tools:layout="@layout/fragment_guest" >
+        tools:layout="@layout/fragment_guest">
 
         <argument
             android:name="checkout"
-            app:argType="boolean"
-            android:defaultValue="false"/>
+            android:defaultValue="false"
+            app:argType="boolean" />
 
     </fragment>
 

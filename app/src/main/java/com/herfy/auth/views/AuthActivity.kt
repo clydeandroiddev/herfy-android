@@ -1,11 +1,17 @@
 package com.herfy.auth.views
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.navigation.fragment.NavHostFragment
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.utils.helper.CacheUtil
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AuthActivity : BaseActivity() {
 
     var guest = false
@@ -13,32 +19,61 @@ class AuthActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
-
+        setupBroadcastReceiver()
         CacheUtil.getInstance().signinUsername = ""
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
         val navController = navHostFragment.navController
 
         val inflater = navController.navInflater
-        val graph = inflater.inflate(R.navigation.nav_auth)
+        val graph = inflater.inflate(R.navigation.auth_nav)
 
         val bundle = Bundle()
-        intent.extras?.let {
-            bundle.putBoolean("sign_in", it.getBoolean("sign_in"))
-            bundle.putBoolean("guest", it.getBoolean("guest"))
-            guest = it.getBoolean("guest")
-        }
-        bundle.putBoolean("curbside", false)
-        bundle.putBoolean("checkout", false)
-
-        if(!guest) {
-            graph.setStartDestination(R.id.nav_signin_register)
-        } else {
-            graph.setStartDestination(R.id.nav_guest)
-        }
+//        intent.extras?.let {
+//            bundle.putBoolean("sign_in", it.getBoolean("sign_in"))
+//            bundle.putBoolean("guest", it.getBoolean("guest"))
+//            guest = it.getBoolean("guest")
+//        }
+//        bundle.putBoolean("curbside", false)
+//        bundle.putBoolean("checkout", false)
+//
+//        if (!guest) {
+        graph.setStartDestination(R.id.nav_login_fragment)
+//        } else {
+//            graph.setStartDestination(R.id.nav_guest)
+//        }
 
         navController.setGraph(graph, bundle)
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(actReceiver)
+    }
+
+    private val actReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            showMain()
+        }
+    }
+
+    private fun setupBroadcastReceiver() {
+        registerReceiver(
+            actReceiver,
+            IntentFilter(getString(com.herfy.authentication.R.string.exit_to_home))
+        )
+    }
+
+    fun showMain() {
+        val intent = Intent(this, com.herfy.main.MainActivity::class.java)
+        intent.putExtra("home", true)
+        intent.putExtra("menu", true)
+        intent.putExtra("sign_in", true)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+        finish()
     }
 
     override fun onSupportNavigateUp(): Boolean {
