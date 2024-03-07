@@ -26,8 +26,8 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.observeNonNull
-import com.herfy.utils.extensions.visible
 import com.herfy.utils.extensions.setInteractionDisabled
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
@@ -463,6 +463,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         shimmerPromotionsList.visibility = View.VISIBLE
                         clPlaceholderPromo.visibility = View.VISIBLE
                     }
+
                 }
             }
         }
