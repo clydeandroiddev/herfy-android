@@ -57,6 +57,11 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         CacheUtil.getInstance().application.attributes.orderTypeMenus
     }
 
+    private val currentOrderType by lazy {
+        CacheUtil.getInstance()
+            .orderType
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         favoritesPresenter = FavoritesPresenter(this)
@@ -80,24 +85,21 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
 //        binding.blocker.visibility = View.VISIBLE
         binding.newMenuItemSearchShimmer.visibility = View.VISIBLE
         setUpNavigationObservers()
-
-        Log.d("FAFA","Menus bai ${CacheUtil.getInstance().application.attributes.orderTypeMenus}" )
-        if (orderTypeMenus.isNotEmpty()) {
-            favoritesPresenter.getFavorites(1, orderTypeMenus[0].id)
-        }
+        getFavoritesByOrderType(
+            currentOrderType,
+            orderTypeMenus = orderTypeMenus
+        )
     }
 
     private fun setUpNavigationObservers() {
         setFragmentResultListener(DialogClearCurrentBasketFragment.CURRENT_CART_KEY) { result, bundle ->
             val cartTotal = bundle.getInt(DialogClearCurrentBasketFragment.CART_TOTAL_KEY)
-            Log.d("FAFA","Cart total "  + cartTotal)
             binding.footer.setVisible(cartTotal >= 1)
             if (cartTotal == 0) {
-                CacheUtil.getInstance()
-                    .orderType = OrderType.NONE
-                if (orderTypeMenus.isNotEmpty()) {
-                    favoritesPresenter.getFavorites(1, orderTypeMenus[0].id)
-                }
+                val currentSelectedOrderType = CacheUtil.getInstance().orderType
+                getFavoritesByOrderType(currentSelectedOrderType,
+                    orderTypeMenus = orderTypeMenus
+                )
 
             }
             binding.txtCartFavouriteTotal.text = cartTotal.toString()
@@ -107,6 +109,16 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         favoritesPresenter = presenter
     }
 
+    private fun getFavoritesByOrderType(orderType: OrderType, orderTypeMenus: List<OrderTypeMenus>) {
+        if (orderType != OrderType.NONE && orderTypeMenus.isNotEmpty()) {
+            val selectedOrderTypeMenu = orderTypeMenus.find { it.type.equals(orderType.name, ignoreCase = true) }
+            Log.d("FAFA", "Selected order $selectedOrderTypeMenu")
+            val selectedOrderTypeId = selectedOrderTypeMenu?.id ?: orderTypeMenus.first().id
+            favoritesPresenter.getFavorites(1, selectedOrderTypeId)
+        } else if (orderTypeMenus.isNotEmpty()) {
+            favoritesPresenter.getFavorites(1, orderTypeMenus.first().id)
+        }
+    }
     override fun logEvent(
         eventName: String?,
         eventAttributes: HashMap<String, String>?,
@@ -147,6 +159,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         binding.icBack.ninjaTap(viewLifecycleScope) {
             findNavController().popBackStack()
         }
+        Log.d("FAFA","Is from order favourite ${args.isFromOrderType}")
         if (args.isFromOrderType && CacheUtil.getInstance().cart.isNotEmpty()) {
             binding.txtCartFavouriteTotal.text = CacheUtil.getInstance()
                 .cart
@@ -188,35 +201,45 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         }
     }
     override fun showFavorites(favorites: ArrayList<Favorite>) {
-        val mockOrderTypes = CacheUtil.getInstance()
-            .application
-            .attributes.orderTypeMenus
+        val mockOrderTypes = listOf(OrderTypeMenus("deliver", id = "9488","test",),
+            OrderTypeMenus("pickup", id = "9488","test",),
+            OrderTypeMenus("dine-in", id = "9488","test",))
+
+
+
         activity?.let { activity ->
             val baseActivity = activity as BaseActivity
             baseActivity.dismissDialogs()
             binding.orderTypeContainer.removeAllViews()
             val type = CacheUtil.getInstance().orderType
+            Log.d("FAFA","Current type bai $type" )
             // todo refactor this by extracting this to make this more readable
             if (args.isFromOrderType && type != OrderType.NONE) {
+                Log.d("FAFA","Test bai ");
                     mockOrderTypes
-                        .forEach { orderType->
+                        .forEach { orderType ->
                             val view = LayoutInflater.from(activity)
                                 .inflate(
                                     R.layout.item_favourite_order_type,
                                     binding.orderTypeContainer,
                                     false
                                 )
-                            view.tag = orderType.id
+                            view.tag = orderType.type
                             val txtOrder = view.findViewById<MaterialTextView>(R.id.txtOrderType)
-                            Log.d("FAFA","Test ${orderType.type.lowercase().contains(type.name.lowercase())}")
-                            if (type.name.lowercase()
-                                    .equals(orderType.type, ignoreCase = true) || orderType.type.lowercase()
-                                    .contains(type.name.lowercase()) ||  type.name.replace("_", " ")
-                            .equals(orderType.type, ignoreCase = true)
+                            if (orderType.type.contains("deliver",ignoreCase = true) && type == OrderType.DELIVERY
                             ) {
                                 txtOrder.setTextColor(Color.WHITE)
                                 txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
+                            } else if (type != null && type.name.lowercase()
+                                    .equals(orderType.type, ignoreCase = true) || orderType.type.lowercase()
+                                    .contains(type.name.lowercase()) || type.name.replace("_", " ")
+                                    .equals(orderType.type, ignoreCase = true)
+                            ) {
+                                Log.d("FAFA", "Test type bai ${orderType.type}")
+                                txtOrder.setTextColor(Color.WHITE)
+                                txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
                             } else {
+                                Log.d("FAFA", "Not bai type bai ${orderType.type}")
                                 txtOrder.setTextColor(
                                     ContextCompat.getColor(
                                         requireContext(),
@@ -232,14 +255,47 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                                     val childView = binding.orderTypeContainer.getChildAt(i)
                                     val txtOrderType: TextView =
                                         childView.findViewById(R.id.txtOrderType)
-                                    if (childView.tag == clickedView.tag) {
+                                    if (childView.tag == clickedView.tag && type != null && CacheUtil.getInstance()
+                                            .cart.isNotEmpty()
+                                    ) {
+                                        Log.d(
+                                            "FAFA",
+                                            "Current bai type " + OrderType.fromString(childView.tag as String)
+                                        )
                                         CacheUtil
-                                            .getInstance().orderType = OrderType.fromFavouriteType(txtOrderType.text.toString())
+                                            .getInstance().orderType =
+                                            OrderType.fromString(childView.tag as String)
+                                        DialogClearCurrentBasketFragment.newInstance()
+                                            .show(
+                                                parentFragmentManager,
+                                                DialogClearCurrentBasketFragment.TAG
+                                            )
+                                        txtOrderType.setTextColor(
+                                            ContextCompat.getColor(
+                                                requireContext(),
+                                                R.color.color_gray
+                                            )
+                                        )
+                                        return@setOnClickListener
+//                                        if (CacheUtil.getInstance().orderType != OrderType.NONE && args.isFromOrderType) {
+//                                            DialogClearCurrentBasketFragment.newInstance()
+//                                                .show(parentFragmentManager, DialogClearCurrentBasketFragment.TAG)
+//                                        }else {
+//                                            txtOrderType.setTextColor(Color.WHITE)
+//                                            txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
+//                                        }
+//
+//                                    } else {
+//                                        txtOrderType.setTextColor(
+//                                            ContextCompat.getColor(
+//                                                requireContext(),
+//                                                R.color.color_gray
+//                                            )
+//                                        )
+//                                        txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
+//                                    }
+                                    }else if (childView.tag == clickedView.tag) {
                                         txtOrderType.setTextColor(Color.WHITE)
-                                        if (CacheUtil.getInstance().orderType != OrderType.NONE && args.isFromOrderType) {
-                                            DialogClearCurrentBasketFragment.newInstance()
-                                                .show(parentFragmentManager, DialogClearCurrentBasketFragment.TAG)
-                                        }
                                         txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
                                     } else {
                                         txtOrderType.setTextColor(
@@ -250,17 +306,21 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                                         )
                                         txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
                                     }
-                                }
-                                val txtOrderType =
-                                    clickedView.findViewById<MaterialTextView>(R.id.txtOrderType)
-                                // todo ask maam rio what's the endpoint for filtering it
+//                                val txtOrderType =
+//                                    clickedView.findViewById<MaterialTextView>(R.id.txtOrderType)
+
                                 favoritesPresenter?.getFavouritesByOrderTypeId(
-                                    clickedView.tag as String,
-                                    txtOrderType.text.toString()
+                                   orderType.id,
+                                    clickedView.tag as String
                                 )
+                                }
+
                             }
-                            val txtOrderType = view.findViewById<MaterialTextView>(R.id.txtOrderType)
-                            txtOrderType.text = orderType.type
+                            val txtOrderType =
+                                view.findViewById<MaterialTextView>(R.id.txtOrderType)
+                            val formattedOrderType =
+                                OrderType.convertOrderTypeNameToDisplayName(orderType.type)
+                            txtOrderType.text = formattedOrderType
                             binding.orderTypeContainer.addView(view)
                         }
 
@@ -272,31 +332,31 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                             binding.orderTypeContainer,
                             false
                         )
-                    view.tag = orderType.id
+                    view.tag = orderType.type
                     val txtOrder = view.findViewById<MaterialTextView>(R.id.txtOrderType)
-                    Log.d("FAFA","Type bai" + CacheUtil.getInstance().orderType)
-                    Log.d("FAFA","Test bai  ${orderType.type.lowercase().contains(type.name.lowercase())} and ${type.name.lowercase()
-                        .equals(orderType.type, ignoreCase = true)}")
-                    if (orderType.type.lowercase()
-                            .equals(OrderType.DELIVERY.name, ignoreCase = true) && CacheUtil
+                    Log.d("FAFA","Type bai from $" + orderType.type.lowercase()
+                        .contains(OrderType.DELIVERY.name, ignoreCase = true) + " "  + orderType.type.contains("deliver",ignoreCase = true) + CacheUtil
+                        .getInstance().orderType)
+                    if (orderType.type.contains("deliver",ignoreCase = true) && CacheUtil
                             .getInstance().orderType == OrderType.NONE
                     ) {
+                        Log.d("FAFA", "Initial selected type ${orderType.type}")
                         CacheUtil.getInstance().orderType = OrderType.DELIVERY
                         txtOrder.setTextColor(Color.WHITE)
                         txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
 
-
                     }
 
-                    else if (type.name.lowercase()
-                            .equals(orderType.type, ignoreCase = true) || orderType.type.lowercase()
-                            .contains(type.name.lowercase()) || type.name.replace("_", " ")
-                            .equals(orderType.type, ignoreCase = true)
-                    ) {
-                        Log.d("FAFA","False bai")
+                    else if (type.name
+                            .lowercase().equals(orderType.type,ignoreCase = true) || type.name.replace("_", " ")
+                            .equals(orderType.type, ignoreCase = true)) {
+//                            .equals(orderType.type, ignoreCase = true)) {
+                        Log.d("FAFA", "Initial selected type 1  ${orderType.type}")
                         txtOrder.setTextColor(Color.WHITE)
                         txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
-                    }else {
+                    }
+                    else {
+                        Log.d("FAFA", "Initial not selected type 1  ${orderType.type}")
                         CacheUtil
                             .getInstance()
                             .orderType
@@ -316,8 +376,9 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                             val txtOrderType: TextView =
                                 childView.findViewById(R.id.txtOrderType)
                             if (childView.tag == clickedView.tag) {
+                                Log.d("FAFA","Tag bai ${childView.tag} and  ${txtOrderType.text.toString()}" )
                                 CacheUtil
-                                    .getInstance().orderType = OrderType.fromFavouriteType(txtOrderType.text.toString())
+                                    .getInstance().orderType = OrderType.fromString(clickedView.tag as String)
                                 txtOrderType.setTextColor(Color.WHITE)
                                 if (CacheUtil.getInstance().orderType != OrderType.NONE && args.isFromOrderType && CacheUtil
                                         .getInstance()
@@ -328,6 +389,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                                 }
                                 txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
                             } else {
+                                Log.d("FAFA","Not Tag bai ${childView.tag} and  ${txtOrderType.text.toString()}" )
                                 txtOrderType.setTextColor(
                                     ContextCompat.getColor(
                                         requireContext(),
@@ -341,13 +403,13 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                             clickedView.findViewById<MaterialTextView>(R.id.txtOrderType)
                         // todo ask maam rio what's the endpoint for filtering it
                         favoritesPresenter?.getFavouritesByOrderTypeId(
-                            clickedView.tag as String,
-                            txtOrderType.text.toString()
+                            orderType.id,
+                            clickedView.tag as String
                         )
                     }
 
-                    val type = view.findViewById<MaterialTextView>(R.id.txtOrderType)
-                    type.text = orderType.type
+                    val txtOrderType = view.findViewById<MaterialTextView>(R.id.txtOrderType)
+                    txtOrderType.text = getFormattedOrderType(orderType = orderType.type)
                     binding.orderTypeContainer.addView(view)
                 }
             }
@@ -363,7 +425,9 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             binding.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_FAVORITE_FOUND, "No favourites found."))
         }
 
-
+    private fun getFormattedOrderType(orderType:String): String {
+        return OrderType.convertOrderTypeNameToDisplayName(orderType)
+    }
 
     override fun setFavorite(favorite: Favorite, outOfStockLocations: ArrayList<String>, discount: Double, specialPrice: Double) {}
     override fun showMenuItem(categoryId: String, menuItemId: String) {
