@@ -50,7 +50,11 @@ class LoginViewModel @Inject constructor(
                     if (it.showAdd) {
                         _state.emit(LoginViewState.ShowAddNumber(cust))
                     } else {
-                        getCustomer(cust.id)
+                        if (it.showCode) {
+                            _state.emit(LoginViewState.GoogleGoOTP(cust))
+                        } else {
+                            getCustomer(cust.id)
+                        }
                     }
                 } else {
                     _state.emit(

@@ -165,6 +165,10 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     proceed(it.customer)
                 }
 
+                is LoginViewState.GoogleGoOTP -> {
+                    proceed(it.customer)
+                }
+
                 is LoginViewState.GoogleSuccess -> {
                     requireContext().applicationContext.sendBroadcast(
                         Intent(
