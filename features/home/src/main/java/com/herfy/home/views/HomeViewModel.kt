@@ -1,15 +1,15 @@
 package com.herfy.home.views
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.zip
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.herfy.database.entities.MenuItemEntity
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.home.adapter.PromotionCategoryAdapter
 import com.herfy.home.adapter.PromotionsAdapter
 import com.herfy.home.adapter.SliderImageAdapter
-import com.herfy.model.CampaignToAdd
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.PromotionCategory
 import com.herfy.repository.HomeRepository
@@ -18,29 +18,28 @@ import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
-import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.DispatcherProvider
 import com.herfy.utils.helper.Event
-import com.skylinedynamics.solosdk.api.ApiRequestListener
-import com.skylinedynamics.solosdk.api.calls.MenuApiCall
+import com.herfy.utils.helper.launchWithTimber
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyAttributes
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTier
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
-import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import com.skylinedynamics.solosdk.api.models.objects.Tier
-import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import java.util.Arrays
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -48,6 +47,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
+    private val dispatchers: DispatcherProvider
 ) : BaseViewModel(), PromotionsAdapter.PromotionListener, SliderImageAdapter.SliderListener,
     PromotionCategoryAdapter.PromotionCategoryListener, PromotionDetailBottomSheet.onAction {
 
@@ -111,9 +111,6 @@ class HomeViewModel @Inject constructor(
 
     private val _bottomSlideList = MutableLiveData<ArrayList<Slide>>()
     val bottomSlideList: LiveData<ArrayList<Slide>> = _bottomSlideList
-
-    private val _showCart = MutableLiveData<Event<Boolean>>()
-    val showCart : LiveData<Event<Boolean>> = _showCart
 
     fun getSliders() {
         invoke {
@@ -277,119 +274,103 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    @SuppressLint("CheckResult")
     fun getLoyalty() {
-        // Ensures that there will always be a tier when loyalty is shown
-        Single.zip<List<Tier>, Loyalty, android.util.Pair<Loyalty, List<Tier>>>(
-            getTiersObservable(), getLoyaltyObservable()
-        ) { tiers: List<Tier>, loyalty: Loyalty ->
-            android.util.Pair<Loyalty, List<Tier>>(loyalty, tiers)
-        }.subscribe({ pair: android.util.Pair<Loyalty, List<Tier>> ->
-            var tiers = pair.second
-            val loyalty = pair.first
-            tiers = tiers
-            val totalPointsAccumulated = loyalty.attributes.currentBalance
-            var eligibleTiers = Observable.fromIterable(tiers)
-                .filter { tier: Tier -> totalPointsAccumulated <= tier.endPoint }.toList()
-                .blockingGet()
-            var pointsToNextTier = 0
-            _loyalty.value = loyalty
-            var nextTier: Tier? = null
-            if (eligibleTiers.size <= 0 && tiers.size >= 1) {
-                eligibleTiers = java.util.ArrayList()
-                eligibleTiers.add(tiers[tiers.size - 1])
-            }
-            if (eligibleTiers.size >= 1) {
-                nextTier = eligibleTiers[0]
-            }
-            if (eligibleTiers.size > 1) {
-                nextTier = eligibleTiers[1]
-                pointsToNextTier = nextTier.startPoint - loyalty.attributes.currentBalance
-            }
-            var startPoints = 0
-            if (nextTier != null) {
-                startPoints = nextTier.startPoint
-            }
-
-            _tier.value = nextTier
-            _totalPointsAccumulated.value = totalPointsAccumulated
-            _pointsToNextTier.value = pointsToNextTier
-            _startPoints.value = startPoints
-
-        }) { error: Throwable? ->
-            val loyalty = Loyalty()
-            val loyaltyAttributes = LoyaltyAttributes()
-            val loyaltyTier = LoyaltyTier()
-            loyaltyTier.name = "Classic"
-            loyaltyAttributes.loyaltyTier = loyaltyTier
-            loyaltyAttributes.currentBalance = 0
-            val currentTier = Tier()
-            currentTier.name = "Classic"
-            currentTier.startPoint = 0
-            val nextTier = Tier()
-            nextTier.name = "Silver"
-            nextTier.startPoint = 100
-            loyaltyAttributes.loyaltyTier = loyaltyTier
-            loyaltyAttributes.currentBalance = 0
-            _tiers.value = java.util.ArrayList<Tier>(Arrays.asList<Tier>(currentTier))
-            loyalty.attributes = loyaltyAttributes
-            _tier.value = nextTier
-            _totalPointsAccumulated.value = 0
-            _pointsToNextTier.value = 100
-            _startPoints.value = 100
-
-        }
-    }
-
-    private fun getTiersObservable(): Single<List<Tier>?>? {
-        return Single.create<List<Tier>?> { source: SingleEmitter<List<Tier>?> ->
-
-            invoke {
-                homeRepository.getLoyaltyTiers { homeResponse ->
-                    if (homeResponse.success) {
-                        homeResponse.data?.let { it ->
-                            it.cast<ArrayList<Tier>> {
-                                _tiers.value = it
-                                source.onSuccess(it)
-                            }
-                        }
-                    } else {
-                        source.onError(
-                            Throwable(
-                                CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
-                            )
-                        )
-                    }
-                }
+        viewModelScope.launchWithTimber(dispatchers.io) {
+            getLoyaltyFlow().zip(getTierFlow()) { loyalty, tiers ->
+                loyalty to tiers
+            }.catch { error ->
+                handleError(error)
+            }.onStart {
+                showProgressBar.postValue(true)
+            }.onCompletion {
+                showProgressBar.postValue(false)
+            }.collect { pair ->
+                handleSuccess(pair)
             }
         }
     }
 
-    fun getLoyaltyObservable(): Single<Loyalty?>? {
-        return Single.create<Loyalty?> { source: SingleEmitter<Loyalty?> ->
-            invoke {
-                homeRepository.getCustomerLoyalty(AuthUtil.getInstance().customer.id) { homeResponse ->
-                    if (homeResponse.success) {
-                        homeResponse.data?.let { it ->
-                            it.cast<Loyalty> {
-                                _loyalty.value = it
-                                AuthUtil.getInstance().customerLoyalty = it
-                                source.onSuccess(it)
-                            }
-                        } ?: run {
-                            _loyalty.value = null
+    private fun handleSuccess(pair: Pair<Loyalty?, List<Tier>>) {
+        val (loyalty, tiers) = pair
+        var eligibleTiers = tiers.filter { tier -> loyalty?.attributes?.currentBalance!! <= tier.endPoint }
+        var pointsToNextTier = 0
+        _loyalty.value = loyalty
+        var nextTier: Tier? = null
+        if (eligibleTiers.isEmpty() && tiers.isNotEmpty()) {
+            eligibleTiers = arrayListOf(tiers.last())
+        }
+        if (eligibleTiers.isNotEmpty()) {
+            nextTier = eligibleTiers[0]
+        }
+        if (eligibleTiers.size > 1) {
+            nextTier = eligibleTiers[1]
+            pointsToNextTier = nextTier.startPoint - loyalty?.attributes?.currentBalance!!
+        }
+        val startPoints = nextTier?.startPoint ?: 0
+        _tier.value = nextTier
+        _totalPointsAccumulated.value = loyalty?.attributes?.currentBalance
+        _pointsToNextTier.value = pointsToNextTier
+        _startPoints.value = startPoints
+    }
+    private fun handleError(error: Throwable) {
+        // Handle the error gracefully or perform any necessary recovery steps
+        val loyalty = Loyalty()
+        val loyaltyAttributes = LoyaltyAttributes()
+        val loyaltyTier = LoyaltyTier().apply {
+            name = "Classic"
+        }
+        loyaltyAttributes.loyaltyTier = loyaltyTier
+        loyaltyAttributes.currentBalance = 0
+        val currentTier = Tier().apply {
+            name = "Classic"
+            startPoint = 0
+        }
+        val nextTier = Tier().apply {
+            name = "Silver"
+            startPoint = 100
+        }
+        loyalty.attributes = loyaltyAttributes
+        _tiers.value = arrayListOf(currentTier)
+        _tier.value = nextTier
+        _totalPointsAccumulated.value = 0
+        _pointsToNextTier.value = 100
+        _startPoints.value = 100
+    }
+    private fun getTierFlow(): Flow<List<Tier>> {
+        return flow {
+            homeRepository.getLoyaltyTiers { homeResponse ->
+                if (homeResponse.success) {
+                    homeResponse.data?.let { it ->
+                        it.cast<ArrayList<Tier>> {
+                            _tiers.value = it
+                            invoke { emit(it) }
                         }
-                    } else {
-                        _loyalty.value = null
-                        source.onError(
-                            Throwable(
-                                CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
-                            )
-                        )
-                        _showError.value = ErrorMsgItem(true, homeResponse.message)
                     }
                 }
             }
+        }.catch { error ->
+            _showError.value = ErrorMsgItem(true,  CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED))
+        }
+    }
+
+    private fun getLoyaltyFlow(): Flow<Loyalty?> {
+        return flow {
+            homeRepository.getCustomerLoyalty(AuthUtil.getInstance().customer.id) { homeResponse ->
+                if (homeResponse.success) {
+                    homeResponse.data?.let { it ->
+                        it.cast<Loyalty> {
+                            _loyalty.value = it
+                            AuthUtil.getInstance().customerLoyalty = it
+                            invoke {
+                                emit(it)
+                            }
+                        }
+                    }
+                }
+            }
+        }.catch { error ->
+            // Handle errors here
+            _showError.value = ErrorMsgItem(true, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED))
         }
     }
 
@@ -497,17 +478,6 @@ class HomeViewModel @Inject constructor(
                             )
                         )
                     }
-                    orderTypes.find { type -> type == OrderType.DRIVE_THRU }?.let {
-                        promocateglist.add(
-                            PromotionCategory(
-                                cacheUtil.getTranslations(
-                                    Text.DRIVE_THRU, "Drive Thru"
-                                ),
-                                false,
-                                it
-                            )
-                        )
-                    }
                     _promotionCategoryList.value = promocateglist
                 }
             }
@@ -517,100 +487,7 @@ class HomeViewModel @Inject constructor(
     override fun onClickClaimPromo(promo: Campaign) {
         trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
         CacheUtil.getInstance().campaign = promo
-        CacheUtil.getInstance().campaignPromotion = promo.promotion
-        if (promo.promotion?.attributes?.type.equals(
-                "item",
-                ignoreCase = true
-            )
-        ) {
-            getCampaignPromotionItem(promo)
-        } else {
-            _showCart.value = Event(true)
-        }
-    }
-
-    private fun getCampaignPromotionItem(digitalCoupon: Campaign?) {
-        invoke {
-            digitalCoupon?.promotion?.let { promotion ->
-                MenuApiCall.getInstance()
-                    .getItemDetails(promotion.attributes.itemId, object : ApiRequestListener {
-                        override fun onSuccess(o: Any) {
-                            try {
-                                val response = JSONObject(o.toString())
-                                val dataArray = response.getJSONArray("data")
-                                if (dataArray.length() > 0) {
-                                    val menuItem = GsonHelper.gsonFinal().fromJson(
-                                        dataArray.getJSONObject(0).toString(), MenuItem::class.java
-                                    )
-                                    menuItem.isPromo = true
-                                    if (promotion.attributes.itemQuantity > 0) {
-                                        menuItem.attributes.quantity = promotion.attributes.itemQuantity
-                                    } else {
-                                        menuItem.attributes.quantity = 1
-                                    }
-                                    var orderStoreId: String? = null
-                                    if (CacheUtil.getInstance().orderStore != null) {
-                                        orderStoreId = CacheUtil.getInstance().orderStore.id
-                                    }
-                                    menuItem.attributes.price = promotion.attributes.itemPrice
-                                    menuItem.toCdn(orderStoreId)
-                                    MixpanelUtil.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
-                                    if (menuItem.isMustBeCustomized || menuItem.isCombo) {
-                                        val campaignToAdd = CampaignToAdd(
-                                            digitalCoupon,
-                                            digitalCoupon.promotion,
-                                            menuItem
-                                        )
-                                        CacheUtil.getInstance().campaignToAdd = campaignToAdd
-                                    } else {
-                                        CacheUtil.getInstance().campaign = digitalCoupon
-                                        CacheUtil.getInstance().campaignPromotion =
-                                            digitalCoupon.promotion
-                                        CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
-                                    }
-                                    _showCart.value = Event(true)
-                                } else {
-                                    onError("")
-                                }
-                            } catch (e: JSONException) {
-                                e.printStackTrace()
-                                onError(e)
-                            }
-                        }
-
-                        override fun onError(o: Any) {
-                            AppLogger.printRetrofitError(o)
-                            if (o is JSONObject) {
-                                try {
-                                    val error = o["error"]
-                                    var detail =
-                                        CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
-                                    if (error is JSONObject) {
-                                        detail = error.getString("detail")
-                                    } else if (error is JSONArray) {
-                                        val errorObject = error.getJSONObject(0)
-                                        detail = errorObject.getString("detail")
-                                    }
-                                    _showError.value = ErrorMsgItem(true, detail)
-                                } catch (e: JSONException) {
-                                    e.printStackTrace()
-                                    _showError.value = ErrorMsgItem(true,CacheUtil.getInstance().getTranslations(
-                                        Text.YOU_ARE_NOT_ELIGIBLE_TO_CLAIM_THE_PROMOTION,
-                                        "You are not eligible to claim the promotion."
-                                    ))
-                                }
-                            } else {
-                                _showError.value = ErrorMsgItem(true,CacheUtil.getInstance().getTranslations(
-                                    Text.YOU_ARE_NOT_ELIGIBLE_TO_CLAIM_THE_PROMOTION,
-                                    "You are not eligible to claim the promotion."
-                                ))
-                            }
-                        }
-                    })
-            }
-        }
-
-
+        CacheUtil.getInstance().campaignPromotion = promo.getPromotion()
     }
 
 
