@@ -44,6 +44,7 @@ import com.herfy.font.FontHandler;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.LocaleUtil;
+import com.location.FusedLocationProvider;
 
 import java.util.HashMap;
 

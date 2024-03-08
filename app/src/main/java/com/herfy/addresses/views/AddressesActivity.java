@@ -45,13 +45,14 @@ import com.herfy.addresses.AddressesPresenter;
 import com.herfy.addresses.adapters.AddressesRecyclerViewAdapter;
 import com.herfy.addresses.adapters.PlacesRecyclerViewAdapter;
 import com.herfy.base.BaseActivity;
-import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
+import com.herfy.util.ViewUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.util.ViewUtil;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 
