@@ -9,9 +9,12 @@ sealed class LoginViewState {
 
     data class GoogleSuccess(val customer: Customer) : LoginViewState()
 
-    data class GoogleSuccessFromAddNumber(val customer: Customer, val mobile: String) : LoginViewState()
+    data class GoogleSuccessFromAddNumber(val customer: Customer, val mobile: String) :
+        LoginViewState()
 
     data class ShowAddNumber(val customer: Customer) : LoginViewState()
+
+    data class GoogleGoOTP(val customer: Customer) : LoginViewState()
     data class ShowLoading(val loading: Boolean) : LoginViewState()
-    data class ShowError(val error: String): LoginViewState()
+    data class ShowError(val error: String) : LoginViewState()
 }

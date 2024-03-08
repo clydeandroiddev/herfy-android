@@ -1,5 +1,6 @@
 package com.herfy.repository
 
+import android.util.Log
 import com.google.gson.Gson
 import com.herfy.model.auth.CustomerResponse
 import com.herfy.model.auth.GoogleResponse
@@ -245,8 +246,10 @@ class AuthRepositoryImpl @Inject constructor(
                                 val customer = GsonHelper.gsonFinal().fromJson(
                                     data.toString(), Customer::class.java
                                 )
+                                val token = attributes.getString("token")
+                                SoloAuth.getInstance().login(token)
                                 if (status == Values.STATUS_VERIFIED) {
-                                    result(GoogleResponse(true, true, false, customer, ""))
+                                    result(GoogleResponse(true, false, false, customer, ""))
                                 } else {
                                     if (customer.attributes.mobile != null && StringUtil.isValidPhoneNumber(
                                             customer.attributes.mobile

@@ -148,7 +148,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
         val status = customer.attributes.status.lowercase(Locale.getDefault()).trim { it <= ' ' }
         findNavController().navigate(
             LoginFragmentDirections.actionLoginToOtp(
-                phoneNumber = customer.attributes.mobile,
+                phoneNumber = customer.attributes.mobile ?: "",
                 customerId = customer.id,
                 isVerified = status == Values.STATUS_VERIFIED,
                 isGuest = false
@@ -165,8 +165,16 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     proceed(it.customer)
                 }
 
-                is LoginViewState.GoogleSuccess -> {
+                is LoginViewState.GoogleGoOTP -> {
                     proceed(it.customer)
+                }
+
+                is LoginViewState.GoogleSuccess -> {
+                    requireContext().applicationContext.sendBroadcast(
+                        Intent(
+                            requireContext().getString(R.string.exit_to_home)
+                        )
+                    )
                 }
 
                 is LoginViewState.ShowLoading -> {
