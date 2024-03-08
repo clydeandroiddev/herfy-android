@@ -50,7 +50,7 @@ class LoginViewModel @Inject constructor(
                     if (it.showAdd) {
                         _state.emit(LoginViewState.ShowAddNumber(cust))
                     } else {
-                        _state.emit(LoginViewState.GoogleSuccess(cust))
+                        getCustomer(cust.id)
                     }
                 } else {
                     _state.emit(
@@ -58,6 +58,26 @@ class LoginViewModel @Inject constructor(
                             it.message
                         )
                     )
+                }
+            }
+        }
+    }
+
+    fun getCustomer(customerId: String) {
+        viewModelScope.launchWithTimber(dispatchers.io) {
+            _state.emit(LoginViewState.ShowLoading(true))
+            authRepository.getCustomer(customerId) {
+                viewModelScope.launchWithTimber(dispatchers.io) {
+                    _state.emit(LoginViewState.ShowLoading(false))
+                    if (it.success) {
+                        _state.emit(LoginViewState.GoogleSuccess(it.data as Customer))
+                    } else {
+                        _state.emit(
+                            LoginViewState.ShowError(
+                                it.message
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -77,7 +97,11 @@ class LoginViewModel @Inject constructor(
                     viewModelScope.launchWithTimber(dispatchers.io) {
                         _state.emit(LoginViewState.ShowLoading(false))
                         if (it.success) {
-                            _state.emit(LoginViewState.GoogleSuccessFromAddNumber(it.data as Customer, mobile))
+                            _state.emit(
+                                LoginViewState.GoogleSuccessFromAddNumber(
+                                    it.data as Customer, mobile
+                                )
+                            )
                         } else {
                             _state.emit(
                                 LoginViewState.ShowError(
