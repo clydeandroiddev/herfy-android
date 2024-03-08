@@ -14,7 +14,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.NavOptions
@@ -22,7 +21,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.OnClick
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
@@ -31,18 +29,12 @@ import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
 import com.herfy.favourites.databinding.FragmentNewFavoritesBinding
 import com.herfy.favourites.ui.DialogClearCurrentBasketFragment
-import com.herfy.favourites.ui.model.FakeOrderTypeUIModel
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
-import com.herfy.order.views.ordertype.OrderTypeNewFragment
-import com.herfy.phonenumber.EnterNewPhoneNumberFragment
 import com.herfy.util.CacheHelper
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
-import com.herfy.utils.extensions.getNavigationResult
-import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.ninjaTap
-import com.herfy.utils.extensions.setNavigationResult
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.*
 import com.skylinedynamics.solosdk.api.models.objects.Favorite
@@ -60,6 +52,10 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
     private var adapter: FavoritesRecyclerViewAdapter? = null
 
     private val args: FavoritesFragmentArgs by navArgs()
+
+    private val orderTypeMenus by lazy {
+        CacheUtil.getInstance().application.attributes.orderTypeMenus
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,8 +80,11 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
 //        binding.blocker.visibility = View.VISIBLE
         binding.newMenuItemSearchShimmer.visibility = View.VISIBLE
         setUpNavigationObservers()
-       val test = CacheUtil.getInstance().application.attributes.orderTypeMenus
-        favoritesPresenter.getFavorites(1)
+
+        Log.d("FAFA","Menus bai ${CacheUtil.getInstance().application.attributes.orderTypeMenus}" )
+        if (orderTypeMenus.isNotEmpty()) {
+            favoritesPresenter.getFavorites(1, orderTypeMenus[0].id)
+        }
     }
 
     private fun setUpNavigationObservers() {
@@ -96,7 +95,9 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             if (cartTotal == 0) {
                 CacheUtil.getInstance()
                     .orderType = OrderType.NONE
-                favoritesPresenter.getFavorites(1)
+                if (orderTypeMenus.isNotEmpty()) {
+                    favoritesPresenter.getFavorites(1, orderTypeMenus[0].id)
+                }
 
             }
             binding.txtCartFavouriteTotal.text = cartTotal.toString()
@@ -187,16 +188,15 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         }
     }
     override fun showFavorites(favorites: ArrayList<Favorite>) {
-        val mockOrderTypes = listOf(
-            OrderTypeMenus(id = "1", type = "Delivery", menuUri = "test"),
-            OrderTypeMenus(id = "2", type = "Pickup", menuUri = "test"),
-            OrderTypeMenus(id = "3", type = "Dine In", menuUri = "test"),
-        )
+        val mockOrderTypes = CacheUtil.getInstance()
+            .application
+            .attributes.orderTypeMenus
         activity?.let { activity ->
             val baseActivity = activity as BaseActivity
             baseActivity.dismissDialogs()
             binding.orderTypeContainer.removeAllViews()
             val type = CacheUtil.getInstance().orderType
+            // todo refactor this by extracting this to make this more readable
             if (args.isFromOrderType && type != OrderType.NONE) {
                     mockOrderTypes
                         .forEach { orderType->
@@ -211,7 +211,8 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                             Log.d("FAFA","Test ${orderType.type.lowercase().contains(type.name.lowercase())}")
                             if (type.name.lowercase()
                                     .equals(orderType.type, ignoreCase = true) || orderType.type.lowercase()
-                                    .contains(type.name.lowercase())
+                                    .contains(type.name.lowercase()) ||  type.name.replace("_", " ")
+                            .equals(orderType.type, ignoreCase = true)
                             ) {
                                 txtOrder.setTextColor(Color.WHITE)
                                 txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
@@ -289,7 +290,8 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
 
                     else if (type.name.lowercase()
                             .equals(orderType.type, ignoreCase = true) || orderType.type.lowercase()
-                            .contains(type.name.lowercase())
+                            .contains(type.name.lowercase()) || type.name.replace("_", " ")
+                            .equals(orderType.type, ignoreCase = true)
                     ) {
                         Log.d("FAFA","False bai")
                         txtOrder.setTextColor(Color.WHITE)
@@ -317,7 +319,6 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                                 CacheUtil
                                     .getInstance().orderType = OrderType.fromFavouriteType(txtOrderType.text.toString())
                                 txtOrderType.setTextColor(Color.WHITE)
-                                Log.d("FAFA","Order type ${CacheUtil.getInstance().orderType} " + args.isFromOrderType)
                                 if (CacheUtil.getInstance().orderType != OrderType.NONE && args.isFromOrderType && CacheUtil
                                         .getInstance()
                                         .cart.isNotEmpty()

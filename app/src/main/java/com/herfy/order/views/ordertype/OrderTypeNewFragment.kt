@@ -339,6 +339,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     private fun navigateUp(proceed: Boolean) {
+        if(args.isFromFavorites) {
+            findNavController().navigate(OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true))
+        }
         if (proceed && args.fromHome) {
             findNavController().navigateToDeepLink("nav_menu")
         } else {
@@ -495,18 +498,20 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             pickupCurbsideStoresRecyclerViewAdapter =
                 StoresRecyclerViewAdapter(orderPresenter, false)
             binding.continueButton.setOnClickListener { v: View? ->
+                if (args.isFromFavorites && CacheUtil
+                        .getInstance().orderType != OrderType.NONE
+                ) {
+                    showLoadingDialog()
+                    orderPresenter.addCartItem(
+                        CacheUtil.getInstance().retrieveFavoriteToAddToCart()
+                    )
+                } else {
+                    chooseType(it)
+                }
                 if (dineInTabSelected) {
                     continueSelectingType(it, OrderType.DINE_IN)
                 } else if (deliveryTabSelected) {
                     goToAddAddress(false)
-                } else {
-                    if (args.isFromFavorites && CacheUtil
-                            .getInstance().orderType != OrderType.NONE) {
-                        showLoadingDialog()
-                        orderPresenter.addCartItem(CacheUtil.getInstance().retrieveFavoriteToAddToCart())
-                    }else {
-                        chooseType(it)
-                    }
                 }
             }
         }
@@ -1424,8 +1429,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun showMenuItem(categoryId: String?, menuItemId: String?) {
         activity?.let {
             val baseActivity = it as BaseActivity
-            Log.d("FAFA","Show menu item")
             baseActivity.dismissDialogs()
+            if (args.isFromFavorites) {
+                findNavController().navigate(OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true))
+            }
         }
     }
 
@@ -1459,7 +1466,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun diffMenuSaved(address: Address?) {
-
         orderPresenter.removeMukafaaRedemption()
         if (CacheUtil.getInstance().orderType == OrderType.DELIVERY || deliveryTabSelected) {
             orderPresenter.getStore(address)
@@ -1564,6 +1570,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         if (isMenuSeparate && cachedOrderType == OrderType.DELIVERY && (orderTypeSelected == OrderType.PICKUP || orderTypeSelected == OrderType.DRIVE_THRU || orderTypeSelected == OrderType.EAT_IN)) {
             val itemsInCart = CacheUtil.getInstance().cart
             if (itemsInCart.size > 0) {
+
                 showPromptChangeOrderTypeDialog(CacheUtil.getInstance().getTranslations(
                     Text.CHANGE_PICKUP_INSTEAD_LABEL,
                     "Your current Delivery order will be removed from cart. Would you like to proceed and pick up your order instead?"

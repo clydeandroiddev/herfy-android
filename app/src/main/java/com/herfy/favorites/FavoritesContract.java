@@ -44,7 +44,7 @@ public interface FavoritesContract {
 
         void setToSearch(boolean isFromSearch);
 
-        void getFavorites(int page);
+        void getFavorites(int page, String orderTypeId);
 
         void onBindFavoriteViewAtPosition(int position, FavoriteViewHolder favoriteViewHolder);
 

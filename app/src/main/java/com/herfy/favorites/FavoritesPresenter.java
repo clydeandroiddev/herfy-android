@@ -1,5 +1,6 @@
 package com.herfy.favorites;
 
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
@@ -82,19 +83,20 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     @Override
-    public void getFavorites(int page) {
-        CustomersApiCall.getInstance().getAllCustomerFavoriteItems(AuthUtil.getInstance().getCustomer().getId(),String.valueOf(page), new ApiRequestListener() {
+    public void getFavorites(int page, String orderTypeId) {
+        CustomersApiCall.getInstance().getFavouritesByOrderTypeId(String.valueOf(page),AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
                     JSONObject object = new JSONObject(o.toString());
-
+                    Log.d("FAFA","Response bai " + o.toString());
                     Pagination pagination = Pagination.parse(object);
                     if (page == 1) {
                         favorites.clear();
                     }
 
                     JSONArray data = object.getJSONArray("data");
+                    Log.d("FAFA","Data "  +data.length());
                     for (int i = 0; i < data.length(); i++) {
                         JSONObject favorite = data.getJSONObject(i);
                         favorites.add(Favorite.parseFavorites(favorite));
@@ -103,7 +105,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                     if (page == pagination.getTotalPages()) {
                         favoritesView.showFavorites(favorites);
                     } else {
-                        getFavorites(page + 1);
+                        getFavorites(page + 1,orderTypeId);
                     }
 
                 } catch (JSONException e) {
@@ -1125,6 +1127,8 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     @Override
     public void getFavouritesByOrderTypeId(String orderTypeId, String orderTypeName) {
        OrderType type =  OrderType.Companion.fromFavouriteType(orderTypeName);
-       CacheUtil.getInstance().setOrderType(type);
+        CacheUtil.getInstance().setOrderType(type);
+       getFavorites(1,orderTypeId);
+
     }
 }
