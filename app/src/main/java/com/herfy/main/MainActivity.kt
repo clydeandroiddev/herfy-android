@@ -605,11 +605,17 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             Text.YOU_ARE_CURRENTLY_SIGNED_IN_AS_A_GUEST,
             "You are currently signed in as a guest"
         )
-        val customerNameVisibility = if (isSignedIn && !isGuest) View.VISIBLE else View.GONE
-        binding.sidebar.lnCustomerName.visibility = customerNameVisibility
-        val customerNameLabel = CacheUtil.getInstance().getTranslations(Text.HI_LABEL, "Hi (x) !")
-        binding.sidebar.customerName.text =
-            customerNameLabel.replace("(x)", if (isSignedIn) customer.attributes.firstName else "")
+        if(AuthUtil.getInstance().isSignedIn) {
+            val customerNameLabel =
+                CacheUtil.getInstance().getTranslations(Text.HI_LABEL, "Hi (x)!")
+            binding.sidebar.customerName.text =
+                customerNameLabel.replace(
+                    "(x)",
+                    if (isSignedIn) customer.attributes.firstName.trim() else ""
+                )
+        } else {
+            binding.sidebar.customerName.text = CacheUtil.getInstance().getTranslations(Text.HI_LOGGED_OUT, "Hi!")
+        }
         binding.sidebar.fmAccount.visibility = if (isSignedIn) View.VISIBLE else View.GONE
         binding.sidebar.fmActiveSubscription.visibility =
             if (isSubs && isSignedIn) View.VISIBLE else View.GONE

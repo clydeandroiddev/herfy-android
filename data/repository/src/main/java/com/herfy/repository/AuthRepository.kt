@@ -245,8 +245,6 @@ class AuthRepositoryImpl @Inject constructor(
                                 val customer = GsonHelper.gsonFinal().fromJson(
                                     data.toString(), Customer::class.java
                                 )
-                                val token = attributes.getString("token")
-                                SoloAuth.getInstance().login(token)
                                 if (status == Values.STATUS_VERIFIED) {
                                     result(GoogleResponse(true, true, false, customer, ""))
                                 } else {

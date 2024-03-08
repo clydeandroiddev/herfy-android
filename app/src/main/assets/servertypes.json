@@ -24,6 +24,12 @@
     "isProd": false
   },
   {
+    "url": "https://test-kiosk-api.getsolo.io/",
+    "displayName": "Test Kiosk",
+    "contentUrlPrefix": "test/",
+    "isProd": false
+  },
+  {
     "url": "https://test-marketing-api.getsolo.io/",
     "displayName": "Test Marketing",
     "contentUrlPrefix": "test/",

@@ -1125,7 +1125,8 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void getFavouritesByOrderTypeId(long orderTypeId, String orderTypeName) {
-       OrderType type =  OrderType.Companion.fromFavouriteType(orderTypeName);
-       CacheUtil.getInstance().setOrderType(type);
+        //TODO - Uncomment when favorite changes have been merged
+        //OrderType type = OrderType.Companion.fromFavouriteType(orderTypeName);
+        //CacheUtil.getInstance().setOrderType(type);
     }
 }

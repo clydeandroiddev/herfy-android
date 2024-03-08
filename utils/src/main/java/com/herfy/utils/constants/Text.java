@@ -973,4 +973,5 @@ public class Text {
     public static final String STORE_LOCATER_LABEL="Store Locater";
     public static final String STAY_TUNED_PROMO = "stay_tuned_promo";
     public static final String PROMOTION_EMPTY_CONTENT="promotion_empty_content";
+    public static final String HI_LOGGED_OUT = "hi_logged_out";
 }
