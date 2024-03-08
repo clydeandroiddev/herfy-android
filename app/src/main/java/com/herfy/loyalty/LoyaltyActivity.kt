@@ -187,7 +187,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
 
     override fun setupTranslations() {
         binding.apply {
-            toolbar.title = cacheUtilHelper.getTranslations(Text.REWARDS_LABEL, "Rewards")
+            //toolbar.title = cacheUtilHelper.getTranslations(Text.REWARDS_LABEL, "Rewards")
             layoutCard.apply {
                 tvAshabHerfy.text = cacheUtilHelper.getTranslations(Text.ASHAB_HERFY, "Ashab Herfy")
                 tvTotalPointsLabel.text =
@@ -268,11 +268,12 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 } else {
                     progress.max = startingPointsOfNextTier
                     progress.progress = totalAccumulatedPoints
-                    tvTierProgressDesc.text = cacheUtilHelper.getTranslations(Text.POINTS_UNTIL_NEXT_TIER).replace("(x)", pointsUntilNextTier.toString()).replace("(y)", tier.name)
+                    tvTierProgressDesc.text = cacheUtilHelper.getTranslations(Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)").replace("(x)", pointsUntilNextTier.toString()).replace("(y)", tier.name)
                     progressTextIndicator.text = "${progress.progress}/${progress.max}"
                 }
             }
         }
+        rewardsTierAdapter.updateList(loyaltyPresenter.tiers)
         dismissDialogs()
     }
 
@@ -362,9 +363,10 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         StringUtil.localize(formatter.format(loyalty.attributes.currentBalanceAmount))
                     tvTotalPoints.text =
                         StringUtil.localize(loyalty.attributes.currentBalance.toLong().toString())
+                    tvProgressTier.text =loyaltyTier
                 }
             }
-            rewardsTierAdapter.updateList(loyaltyPresenter.tiers)
+
         }
 
         dismissDialogs()

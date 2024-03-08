@@ -1,6 +1,8 @@
 package com.herfy.common.toolbar
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageButton
@@ -8,7 +10,11 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.herfy.common.R
 
-class CustomButtonsToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
+class CustomButtonsToolbar @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var navButton: ImageButton? = null
     private var rightButton: ImageButton? = null
@@ -23,6 +29,7 @@ class CustomButtonsToolbar @JvmOverloads constructor(context: Context, attrs: At
         init(attrs)
     }
 
+    @SuppressLint("ResourceAsColor")
     private fun init(attrs: AttributeSet?) {
         View.inflate(context, R.layout.common_toolbar_with_custom_buttons, this)
 
@@ -33,24 +40,36 @@ class CustomButtonsToolbar @JvmOverloads constructor(context: Context, attrs: At
 
         val ta = context.obtainStyledAttributes(attrs, R.styleable.CustomButtonsToolbar)
         try {
-            val drawableSideMenu =
-                ta.getResourceId(R.styleable.CustomButtonsToolbar_navButton, R.drawable.ic_navigate_back)
-            navButton?.setImageResource(drawableSideMenu)
-            val drawableRight = ta.getResourceId(R.styleable.CustomButtonsToolbar_rightButtonIcon,0)
-            rightButton?.setImageResource(drawableRight)
-            tvTitle?.text = ta.getString(R.styleable.CustomButtonsToolbar_title)
-            val titleTextColor =  ta.getColor(R.styleable.TitleToolbar_rightButtonColor,0)
-            tvTitle?.setTextColor(titleTextColor)
+            ta.getResourceId(
+                R.styleable.CustomButtonsToolbar_navButton,
+                R.drawable.ic_navigate_back
+            ).let {
+                navButton?.setImageResource(it)
+            }
+
+            ta.getResourceId(
+                R.styleable.CustomButtonsToolbar_rightButtonIcon,
+                R.drawable.ic_history_circle_white
+            ).let {
+                rightButton?.setImageResource(it)
+            }
+
+            ta.getString(R.styleable.CustomButtonsToolbar_title)?.let {
+                tvTitle?.text = it
+            }
+            ta.getColor(R.styleable.TitleToolbar_rightButtonColor, Color.WHITE)?.let {
+                tvTitle?.setTextColor(it)
+            }
         } finally {
             ta.recycle()
         }
     }
 
-    fun setNavButtonAction(listener: OnClickListener){
+    fun setNavButtonAction(listener: OnClickListener) {
         navButton?.setOnClickListener(listener)
     }
 
-    fun setRightButtonAction(listener: OnClickListener){
+    fun setRightButtonAction(listener: OnClickListener) {
         rightButton?.setOnClickListener(listener)
     }
 

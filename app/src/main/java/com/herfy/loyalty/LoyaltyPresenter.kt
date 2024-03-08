@@ -52,13 +52,13 @@ class LoyaltyPresenter @Inject constructor(
     private val loyaltyView: LoyaltyContract.View,
     private val cacheUtil: CacheUtilHelper
 ) : LoyaltyContract.Presenter {
-    var filteredTransactionList = ArrayList<LoyaltyTransaction>()
-    var transactionsList = ArrayList<LoyaltyTransaction>()
-    var tiers: List<Tier> = ArrayList()
-    var sortingCategories = arrayListOf<SortingCategory>()
+    private var filteredTransactionList = ArrayList<LoyaltyTransaction>()
+    private var transactionsList = ArrayList<LoyaltyTransaction>()
+    private var tiers: List<Tier> = ArrayList()
+    private var sortingCategories = arrayListOf<SortingCategory>()
     private var newestToOldest = true
     private val disposables = CompositeDisposable()
-    var consolidatedList = ArrayList<ListItem>()
+    private var consolidatedList = ArrayList<ListItem>()
 
     init {
         loyaltyView.setPresenter(this)

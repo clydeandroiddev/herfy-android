@@ -22,12 +22,12 @@ import butterknife.ButterKnife;
 public class DateViewHolder extends RecyclerView.ViewHolder implements LoyaltyContract.View {
 
     private Context context;
-    private LoyaltyContract.Presenter loyaltyPresenter;
+    private LoyaltyHistoryContract.Presenter loyaltyPresenter;
 
     @BindView(R.id.tv_date) TextView tvDate;
 
 
-    public DateViewHolder(Context context, LoyaltyContract.Presenter loyaltyPresenter, View itemView) {
+    public DateViewHolder(Context context, LoyaltyHistoryContract.Presenter loyaltyPresenter, View itemView) {
         super(itemView);
 
         ButterKnife.bind(this, itemView);

@@ -62,7 +62,7 @@
                 android:textAlignment="center"
                 android:gravity="center_vertical"
                 android:drawablePadding="4dp"
-                tools:drawableStartCompat="@drawable/ic_loyalty_tier"
+                app:drawableStartCompat="@drawable/ic_loyalty_tier"
                 tools:background="@drawable/background_silver_tier"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_ashab_herfy"

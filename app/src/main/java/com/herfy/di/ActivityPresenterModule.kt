@@ -3,6 +3,8 @@ package com.herfy.di
 import android.app.Activity
 import com.herfy.loyalty.LoyaltyActivity
 import com.herfy.loyalty.LoyaltyContract
+import com.herfy.loyalty.LoyaltyHistoryContract
+import com.herfy.loyalty.LoyaltyHistoryPresenter
 import com.herfy.loyalty.LoyaltyPointsHistory
 import com.herfy.loyalty.LoyaltyPresenter
 import dagger.Binds
@@ -17,9 +19,11 @@ abstract class ActivityPresenterModule {
     @Binds
     abstract fun bindLoyaltyActivity(impl: LoyaltyActivity): LoyaltyContract.View
     @Binds
-    abstract fun bindLoyaltyPointsHistory(impl: LoyaltyActivity): LoyaltyContract.View
-    @Binds
     abstract fun bindLoyaltyPresenter(impl: LoyaltyPresenter): LoyaltyContract.Presenter
+    @Binds
+    abstract fun bindLoyaltyPointsHistory(impl: LoyaltyPointsHistory): LoyaltyHistoryContract.View
+    @Binds
+    abstract fun bindLoyaltyHistoryPresenter(impl : LoyaltyHistoryPresenter) : LoyaltyHistoryContract.Presenter
 }
 
 @InstallIn(ActivityComponent::class)

@@ -15,9 +15,9 @@ import com.herfy.loyalty.objects.ListItem;
 public class LoyaltyPointsRecyclerViewAdapter extends RecyclerView.Adapter {
 
     private Context context;
-    private final LoyaltyContract.Presenter pointsPresenter;
+    private final LoyaltyHistoryContract.Presenter pointsPresenter;
 
-    public LoyaltyPointsRecyclerViewAdapter(Context context, LoyaltyContract.Presenter presenter) {
+    public LoyaltyPointsRecyclerViewAdapter(Context context, LoyaltyHistoryContract.Presenter presenter) {
         this.context = context;
         this.pointsPresenter = presenter;
     }

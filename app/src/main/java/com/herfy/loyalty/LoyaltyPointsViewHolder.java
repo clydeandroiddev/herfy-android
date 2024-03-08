@@ -39,8 +39,8 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
     @BindView(R.id.tvAmountSpentLabel)
     TextView tvAmountSpentLabel;
 
-
-    public LoyaltyPointsViewHolder(Context context, LoyaltyContract.Presenter loyaltyPresenter, View itemView) {
+    private LoyaltyHistoryContract.Presenter loyaltyPresenter;
+    public LoyaltyPointsViewHolder(Context context, LoyaltyHistoryContract.Presenter loyaltyPresenter, View itemView) {
         super(itemView);
 
         ButterKnife.bind(this, itemView);

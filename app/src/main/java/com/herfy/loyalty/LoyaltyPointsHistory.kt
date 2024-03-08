@@ -30,10 +30,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LoyaltyPointsHistory : BaseActivity(), LoyaltyContract.View {
+class LoyaltyPointsHistory : BaseActivity(), LoyaltyHistoryContract.View {
 
     @Inject
-    lateinit var loyaltyPresenter: LoyaltyContract.Presenter
+    lateinit var loyaltyPresenter: LoyaltyHistoryContract.Presenter
     private val loyaltyPointsRewardTierAdapter: LoyaltyPointsRecyclerViewAdapter by lazy {
         LoyaltyPointsRecyclerViewAdapter(this, loyaltyPresenter)
     }
@@ -69,10 +69,6 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyContract.View {
 
     override fun onResume() {
         super.onResume()
-    }
-
-
-    override fun setPresenter(presenter: LoyaltyContract.Presenter) {
     }
 
     override fun logEvent(
@@ -134,9 +130,6 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyContract.View {
         }
     }
 
-    override fun showLoyalty(loyalty: Loyalty, name: String) {
-        dismissDialogs()
-    }
 
     override fun showLoyaltyError(message: String) {
         isLoadingHistory = false
@@ -148,11 +141,12 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyContract.View {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun showLoyaltyPointsHistory(
-        newestToOldest: Boolean,
-        loyaltyTransactions: ArrayList<LoyaltyTransaction>
-    ) {
+    override fun setPresenter(presenter: LoyaltyHistoryContract.Presenter?) {
+
+    }
+
+
+    override fun showLoyaltyPointsHistory(loyaltyTransactions: ArrayList<LoyaltyTransaction>) {
         isLoadingHistory = false
         page += 1
         canLoadMoreItems = loyaltyTransactions.size != 0 && loyaltyTransactions.size % 10 == 0
@@ -174,21 +168,10 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyContract.View {
     }
 
     override fun setLoyaltyHistory(loyaltyTransaction: LoyaltyTransaction) {}
-    override fun showNextTier(
-        tier: Tier,
-        totalAccumulatedPoints: Int,
-        pointsUntilNextTier: Int,
-        startingPointsOfNextTier: Int
-    ) {
+    override fun showSortingCategories(sortingCategories: ArrayList<SortingCategory>) {
+        historySortAdapter.updateList(sortingCategories)
     }
 
-    override fun showQRPage(loyalty: LoyaltyPointsPosRedemption) {}
-    override fun showQrData(data: String) {}
-    override fun showSortingCategories(sortingCategories: ArrayList<SortingCategory>?) {
-        sortingCategories?.let {
-            historySortAdapter.updateList(it)
-        }
-    }
 
     override fun updateSortingCategory(category: SortingCategory) {
         historySortAdapter.updateCategoryList(category)
