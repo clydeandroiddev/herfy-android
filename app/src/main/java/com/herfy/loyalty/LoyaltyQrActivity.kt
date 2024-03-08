@@ -13,6 +13,7 @@ import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.utils.constants.Text
 import com.herfy.databinding.ActivityLoyaltyQrBinding
+import com.herfy.model.SortingCategory
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
@@ -202,6 +203,18 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
 
     override fun showQrData(data: String?) {
 
+    }
+
+    override fun showSortingCategories(sortingCategories: java.util.ArrayList<SortingCategory>?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateSortingCategory(category: SortingCategory?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateTransactions() {
+        TODO("Not yet implemented")
     }
 
     private fun setupSixDigitCode(code: Int) {

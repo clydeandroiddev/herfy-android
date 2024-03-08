@@ -8,6 +8,9 @@
             name="category"
             type="com.herfy.model.SortingCategory" />
 
+        <variable
+            name="listener"
+            type="com.herfy.loyalty.HistorySortAdapter.CategoryListener" />
 
         <variable
             name="categoryPos"
@@ -20,6 +23,7 @@
         android:paddingVertical="6dp"
         android:paddingHorizontal="12dp"
         android:textColor="@{category.selected ? @color/white : @color/secondaryTextColor}"
+        android:onClick="@{() -> listener.selectCategory(category)}"
         style="@style/Styles.Text.Footnote.Medium"
         tools:text="All"
         android:text="@{category.label}"

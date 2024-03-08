@@ -1,7 +1,5 @@
 package com.herfy.utils.constants;
 
-import org.jetbrains.annotations.NotNull;
-
 public class Text {
 
     public static final String CART = "cart";
@@ -976,6 +974,13 @@ public class Text {
     public static final String STAY_TUNED_PROMO = "stay_tuned_promo";
     public static final String PROMOTION_EMPTY_CONTENT="promotion_empty_content";
     public static final String HI_LOGGED_OUT = "hi_logged_out";
-
     public static final String REWARDS_LABEL="rewards_label";
+    public static final String SAR_VALUE_LABEL="sar_value";
+    public static final String REWARD_TIER_LABEL="reward_tier_label";
+    public static final String SCAN_POINTS_LABEL="scan_points_label";
+    public static final String SCAN_POINTS_DESCRIPTION="scan_points_description";
+    public static final String PERCENT_OF_YOUR_ORDER="percent_of_your_order";
+    public static final String HISTORY_LABEL="history_label";
+    public static final String EARNED_LABEL="earned_label";
+    public static final String USED_LABEL="used_label";
 }

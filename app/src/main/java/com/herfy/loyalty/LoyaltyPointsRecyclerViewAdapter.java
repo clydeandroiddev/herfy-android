@@ -53,10 +53,6 @@ public class LoyaltyPointsRecyclerViewAdapter extends RecyclerView.Adapter {
         }
     }
 
-  /*  @Override
-    public void onBindViewHolder(@NonNull LoyaltyPointsViewHolder holder, int position) {
-        pointsPresenter.onBindLoyaltyHistoryViewAtPosition(position, holder);
-    }*/
 
     @Override
     public int getItemCount() {

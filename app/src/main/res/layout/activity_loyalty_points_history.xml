@@ -28,6 +28,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar_title">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_sorting"
             android:layout_marginTop="24dp"
             android:layout_marginHorizontal="13dp"
             android:layout_width="match_parent"

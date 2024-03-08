@@ -5,14 +5,17 @@ import android.util.Pair
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
+import com.herfy.enum.HistorySortType
 import com.herfy.loyalty.objects.DateItem
 import com.herfy.loyalty.objects.ListItem
 import com.herfy.loyalty.objects.LoyaltyTransactionItem
+import com.herfy.model.SortingCategory
 import com.herfy.util.AppLogger
 import com.herfy.utils.constants.Text
 import com.herfy.utils.handler.ErrorHandler.getErrorMessage
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.TimeUtil
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
@@ -45,9 +48,14 @@ import java.util.TimeZone
 import javax.inject.Inject
 
 @SuppressLint("CheckResult")
-class LoyaltyPresenter @Inject constructor (private val loyaltyView: LoyaltyContract.View) : LoyaltyContract.Presenter {
+class LoyaltyPresenter @Inject constructor(
+    private val loyaltyView: LoyaltyContract.View,
+    private val cacheUtil: CacheUtilHelper
+) : LoyaltyContract.Presenter {
+    var filteredTransactionList = ArrayList<LoyaltyTransaction>()
     var transactionsList = ArrayList<LoyaltyTransaction>()
     var tiers: List<Tier> = ArrayList()
+    var sortingCategories = arrayListOf<SortingCategory>()
     private var newestToOldest = true
     private val disposables = CompositeDisposable()
     var consolidatedList = ArrayList<ListItem>()
@@ -60,6 +68,69 @@ class LoyaltyPresenter @Inject constructor (private val loyaltyView: LoyaltyCont
         loyaltyView.setupViews()
         loyaltyView.setupFonts()
         loyaltyView.setupTranslations()
+    }
+
+    override fun selectCategory(category: SortingCategory) {
+        if(!category.isSelected){
+            category.isSelected = true
+            loyaltyView.updateSortingCategory(category)
+            filterTransactions(category)
+        }
+    }
+
+    private fun filterTransactions(category: SortingCategory){
+        if(category.sortType == HistorySortType.ALL){
+            filteredTransactionList.clear()
+            filteredTransactionList.addAll(transactionsList)
+        }else {
+            val selectedCategory = when(category.sortType) {
+                HistorySortType.EARNED -> {
+                    "collection"
+                }
+                HistorySortType.USED -> {
+                    "redeemed"
+                }
+                HistorySortType.ALL -> {
+                    ""
+                }
+            }
+            filteredTransactionList.addAll(
+                transactionsList.filter {
+                        trans -> trans.type.equals(selectedCategory, ignoreCase = true)
+                }
+            )
+        }
+        consolidatedList.clear()
+        val groupedHashMap = groupDataIntoHashMap(filteredTransactionList)
+        val keys: List<String> = ArrayList(groupedHashMap.keys)
+        Collections.sort(keys) { lhs: String?, rhs: String? ->
+            try {
+                val simpleDateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+                simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+                val lhsDate = simpleDateFormat.parse(lhs)
+                val rhsDate = simpleDateFormat.parse(rhs)
+                return@sort rhsDate.compareTo(lhsDate)
+
+            } catch (e: ParseException) {
+                e.printStackTrace()
+            }
+            0
+        }
+        val sortedHashMap: HashMap<String, List<LoyaltyTransaction>> = LinkedHashMap()
+        for (key in keys) {
+            sortedHashMap[key] = groupedHashMap[key]!!
+        }
+        for (date in sortedHashMap.keys) {
+            val dateItem = DateItem()
+            dateItem.date = date
+            consolidatedList.add(dateItem)
+            for (loyaltyTransaction in sortedHashMap[date]!!) {
+                val loyaltyTransactionItem = LoyaltyTransactionItem()
+                loyaltyTransactionItem.loyaltyTransaction = loyaltyTransaction
+                consolidatedList.add(loyaltyTransactionItem)
+            }
+        }
+        loyaltyView.updateTransactions()
     }
 
     val tiersObservable: Single<List<Tier>>
@@ -416,20 +487,20 @@ class LoyaltyPresenter @Inject constructor (private val loyaltyView: LoyaltyCont
                     disposable!!
                 )
             }.subscribe(
-            { transactionsList: List<LoyaltyTransaction>? ->
-                if (page == 1) {
-                    this.transactionsList.clear()
-                    consolidatedList.clear()
-                }
-                this.transactionsList.addAll(transactionsList!!)
-                sortTransactionList()
-            }) { error: Throwable? ->
-            loyaltyView.showLoyaltyError(
-                CacheUtil.getInstance().getTranslations(
-                    Text.AN_ERROR_OCCURRED
+                { transactionsList: List<LoyaltyTransaction>? ->
+                    if (page == 1) {
+                        this.transactionsList.clear()
+                        consolidatedList.clear()
+                    }
+                    this.transactionsList.addAll(transactionsList!!)
+                    sortTransactionList()
+                }) { error: Throwable? ->
+                loyaltyView.showLoyaltyError(
+                    CacheUtil.getInstance().getTranslations(
+                        Text.AN_ERROR_OCCURRED
+                    )
                 )
-            )
-        }
+            }
     }
 
     fun getLoyaltyHistory(page: Int): Single<List<LoyaltyTransaction>> {
@@ -687,22 +758,6 @@ class LoyaltyPresenter @Inject constructor (private val loyaltyView: LoyaltyCont
     }
 
     private fun sortTransactionList() {
-        Collections.sort(transactionsList) { lhs: LoyaltyTransaction, rhs: LoyaltyTransaction ->
-            try {
-                val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
-                val lhsDate = simpleDateFormat.parse(lhs.createdAt)
-                val rhsDate = simpleDateFormat.parse(rhs.createdAt)
-                if (newestToOldest) {
-                    return@sort rhsDate.compareTo(lhsDate)
-                } else {
-                    return@sort lhsDate.compareTo(rhsDate)
-                }
-            } catch (e: ParseException) {
-                e.printStackTrace()
-            }
-            0
-        }
         consolidatedList.clear()
         val groupedHashMap = groupDataIntoHashMap(transactionsList)
         val keys: List<String> = ArrayList(groupedHashMap.keys)
@@ -751,5 +806,31 @@ class LoyaltyPresenter @Inject constructor (private val loyaltyView: LoyaltyCont
             }
         }
         return groupedHashMap
+    }
+
+    override fun getSortingCategories() {
+        sortingCategories.clear()
+        sortingCategories.add(
+            SortingCategory(
+                cacheUtil.getTranslations(Text.ALL_LABEL, "All"),
+                true,
+                HistorySortType.ALL
+            )
+        )
+        sortingCategories.add(
+            SortingCategory(
+                cacheUtil.getTranslations(Text.EARNED_LABEL, "Earned"),
+                false,
+                HistorySortType.EARNED
+            )
+        )
+        sortingCategories.add(
+            SortingCategory(
+                cacheUtil.getTranslations(Text.USED_LABEL, "Used"),
+                false,
+                HistorySortType.USED
+            )
+        )
+        loyaltyView.showSortingCategories(sortingCategories)
     }
 }

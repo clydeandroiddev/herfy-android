@@ -15,8 +15,7 @@
         app:strokeColor="#D9E8F3"
         app:strokeWidth="1dp"
         android:layout_marginHorizontal="8dp"
-        android:layout_marginVertical="12dp"
-        android:onClick="@{() -> ()}">
+        android:layout_marginVertical="12dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

@@ -4,48 +4,23 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.SystemClock
-import android.text.TextUtils
-import android.util.Log
-import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.os.Looper
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
-import butterknife.BindView
-import butterknife.ButterKnife
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.card.MaterialCardView
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.databinding.ActivityLoyaltyBinding
-import com.herfy.font.FontHandler
-import com.herfy.loyalty.CustomerLoyaltyDialog
-import com.herfy.loyalty.CustomerLoyaltyDialog.Companion.newInstance
-import com.herfy.loyalty.RedeemLoyaltyDialog
-import com.herfy.loyalty.RedeemLoyaltyDialog.Companion.newInstance
-import com.herfy.util.StringUtil
+import com.herfy.model.SortingCategory
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.TimeUtil
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
@@ -53,36 +28,57 @@ import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
 import com.skylinedynamics.solosdk.api.models.objects.Tier
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.DecimalFormat
-import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LoyaltyActivity  : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialog.OnAction,
+class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialog.OnAction,
     CustomerLoyaltyDialog.OnAction {
-        
-        
-    @Inject    
-    private lateinit var loyaltyPresenter: LoyaltyContract.Presenter
+
+
     @Inject
-    private lateinit var cacheUtilHelper: CacheUtilHelper
-    
-    private lateinit var binding : ActivityLoyaltyBinding
-    
+    lateinit var loyaltyPresenter: LoyaltyContract.Presenter
+
+    @Inject
+    lateinit var cacheUtilHelper: CacheUtilHelper
+
+    private lateinit var binding: ActivityLoyaltyBinding
+
+
     private val POINTS = "points"
     private val VALUE = "value"
     private val CODE = "code"
     private val EXPIRES_AT = "expires-at"
     private val QR_DATA = "qr-data"
-    
-    
+
+    private val rewardsTierAdapter : RewardTierAdapter by lazy {
+        RewardTierAdapter()
+    }
+
     private var redeemLoyaltyDialog: RedeemLoyaltyDialog? = null
     private var customerLoyaltyDialog: CustomerLoyaltyDialog? = null
+
+    private val loyaltyQrActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    if (isNetworkAvailable) {
+                        if (AuthUtil.getInstance().customerLoyalty == null) {
+                            checkLoading()
+                        }
+                        loyaltyPresenter.getLoyalty()
+                        loyaltyPresenter.getCustomerLoyalty()
+                    }
+                }, 350)
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoyaltyBinding.inflate(layoutInflater)
         setContentView(binding.root)
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
-        
+        loyaltyPresenter.start()
+
         if (AuthUtil.getInstance().customerLoyalty != null) {
             val loyalty = AuthUtil.getInstance().customerLoyalty
             showLoyalty(
@@ -99,23 +95,12 @@ class LoyaltyActivity  : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDial
                 CacheUtil.getInstance().startingPointsOfNextTier
             )
         }
+        getLoyalty()
 
     }
 
-    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                overrideActivityTransition(AnimUtil.outF(), AnimUtil.outS(), R.color.white)
-            }else{
-                overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loyaltyPresenter.start()
-        Handler().postDelayed({
+    private fun getLoyalty() {
+        Handler(Looper.getMainLooper()).postDelayed({
             if (isNetworkAvailable) {
                 if (AuthUtil.getInstance().customerLoyalty == null) {
                     checkLoading()
@@ -124,6 +109,16 @@ class LoyaltyActivity  : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDial
                 loyaltyPresenter.getCustomerLoyalty()
             }
         }, 350)
+    }
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(AnimUtil.outF(), AnimUtil.outS(), R.color.white)
+            } else {
+                overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
+            }
+        }
     }
 
     private fun checkLoading() {
@@ -150,7 +145,6 @@ class LoyaltyActivity  : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDial
 
 
     override fun setPresenter(presenter: LoyaltyContract.Presenter) {
-        loyaltyPresenter = presenter
     }
 
     override fun logEvent(
@@ -165,12 +159,24 @@ class LoyaltyActivity  : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDial
     override fun setupViews() {
         binding.apply {
             toolbar.apply {
-                setNavButtonAction{
+                setNavButtonAction {
                     onBackPressedDispatcher.onBackPressed()
                 }
-                setRightButtonAction{
+                setRightButtonAction {
                     val intent = Intent(this@LoyaltyActivity, LoyaltyPointsHistory::class.java)
-                    startActivity(intent)
+                    loyaltyQrActivityLauncher.launch(intent)
+                }
+            }
+        }
+        setupRewardTiers()
+    }
+
+    private fun setupRewardTiers() {
+        binding.apply {
+            layoutRewardsTier.apply {
+                rvRewardTier.apply {
+                    adapter = rewardsTierAdapter
+                    setHasFixedSize(true)
                 }
             }
         }
@@ -183,37 +189,53 @@ class LoyaltyActivity  : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDial
         binding.apply {
             toolbar.title = cacheUtilHelper.getTranslations(Text.REWARDS_LABEL, "Rewards")
             layoutCard.apply {
-
+                tvAshabHerfy.text = cacheUtilHelper.getTranslations(Text.ASHAB_HERFY, "Ashab Herfy")
+                tvTotalPointsLabel.text =
+                    cacheUtilHelper.getTranslations(Text.TOTAL_POINTS, "Total Points")
+                tvSarValueLabel.text =
+                    cacheUtilHelper.getTranslations(Text.SAR_VALUE_LABEL, "SAR VALUE")
+            }
+            layoutRewardsTier.apply {
+                tvRewardTierLabel.text =
+                    cacheUtilHelper.getTranslations(Text.REWARD_TIER_LABEL, "Reward Tier")
+            }
+            layoutScanPoints.apply {
+                tvScanPoints.text =
+                    cacheUtilHelper.getTranslations(Text.SCAN_POINTS_LABEL, "Scan to earn points")
+                tvScanPointsDescription.text = cacheUtilHelper.getTranslations(
+                    Text.SCAN_POINTS_DESCRIPTION,
+                    "Scan your card to earn points on order in the restaurant."
+                )
             }
         }
-       /* tvCurrencyEquivalence!!.text = CacheUtil.getInstance()
-            .getTranslations(Text.CURRENCY_EQUIVALENCE, "(x) Equivalence")
-            .replace(
-                "(x)",
-                CacheUtil.getInstance()
-                    .getTranslations(CacheUtil.getInstance().concept.currencyCode.uppercase(Locale.getDefault()))
-            )
-        btnLearnMore!!.text = CacheUtil.getInstance().getTranslations(
-            Text.LEARN_ABOUT_THIS_POINTS_LABEL,
-            "Learn about points"
-        )
-        tvPointsLabel!!.text =
-            CacheUtil.getInstance().getTranslations(Text.PTS_LABEL, "PTS")
-                .replace("(x)", "")
-        btnHistory!!.text = CacheUtil.getInstance()
-            .getTranslations(Text.POINTS_HISTORY, "POINTS HISTORY")
-        tvSarLabel!!.text = CacheUtil.getInstance()
-            .getTranslations(CacheUtil.getInstance().concept.currencyCode.lowercase(Locale.getDefault()))
-        tvTotalPoints!!.text = CacheUtil.getInstance().getTranslations(
-            Text.LOYALTY_TOTAL_POINTS,
-            "Total number of points"
-        )
-        cardNumberLabel!!.text = CacheUtil.getInstance().getTranslations(
-            Text.LOYALTY_MOBILE_NUMBER_LABEL,
-            "MOBILE NUMBER"
-        )
-        btnRedeem!!.text = CacheUtil.getInstance()
-            .getTranslations(Text.REDEEM_IN_STORE, "REDEEM IN STORE")*/
+        /* tvCurrencyEquivalence!!.text = CacheUtil.getInstance()
+             .getTranslations(Text.CURRENCY_EQUIVALENCE, "(x) Equivalence")
+             .replace(
+                 "(x)",
+                 CacheUtil.getInstance()
+                     .getTranslations(CacheUtil.getInstance().concept.currencyCode.uppercase(Locale.getDefault()))
+             )
+         btnLearnMore!!.text = CacheUtil.getInstance().getTranslations(
+             Text.LEARN_ABOUT_THIS_POINTS_LABEL,
+             "Learn about points"
+         )
+         tvPointsLabel!!.text =
+             CacheUtil.getInstance().getTranslations(Text.PTS_LABEL, "PTS")
+                 .replace("(x)", "")
+         btnHistory!!.text = CacheUtil.getInstance()
+             .getTranslations(Text.POINTS_HISTORY, "POINTS HISTORY")
+         tvSarLabel!!.text = CacheUtil.getInstance()
+             .getTranslations(CacheUtil.getInstance().concept.currencyCode.lowercase(Locale.getDefault()))
+         tvTotalPoints!!.text = CacheUtil.getInstance().getTranslations(
+             Text.LOYALTY_TOTAL_POINTS,
+             "Total number of points"
+         )
+         cardNumberLabel!!.text = CacheUtil.getInstance().getTranslations(
+             Text.LOYALTY_MOBILE_NUMBER_LABEL,
+             "MOBILE NUMBER"
+         )
+         btnRedeem!!.text = CacheUtil.getInstance()
+             .getTranslations(Text.REDEEM_IN_STORE, "REDEEM IN STORE")*/
     }
 
     override fun showNextTier(
@@ -222,42 +244,36 @@ class LoyaltyActivity  : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDial
         pointsUntilNextTier: Int,
         startingPointsOfNextTier: Int
     ) {
-       /* AuthUtil.getInstance().customerLoyaltyTier = tier
-        CacheUtil.getInstance().totalAccumulatedPoints = totalAccumulatedPoints
-        CacheUtil.getInstance().pointsUntilNextTier = pointsUntilNextTier
-        CacheUtil.getInstance().startingPointsOfNextTier = startingPointsOfNextTier
-        for (thisTier in loyaltyPresenter.tiers) {
-            Glide.with(this).load(thisTier.imageUrl).preload()
-        }
-        if (pointsUntilNextTier <= 0) {
-            if (tier == null) {
-                progress!!.max = 100
-                progress!!.progress = 0
-                progressLabel!!.text = "You are now a Tier member"
-            } else {
-                progress!!.max = 100
-                progress!!.progress = 100
-                progressLabel!!.text = CacheUtil.getInstance().getTranslations(
-                    Text.TOTAL_POINTS_MAX_OUT,
-                    "You have maxed out on our tier levels"
-                )
+        binding.apply {
+            layoutCard.apply {
+                AuthUtil.getInstance().customerLoyaltyTier = tier
+                CacheUtil.getInstance().totalAccumulatedPoints = totalAccumulatedPoints
+                CacheUtil.getInstance().pointsUntilNextTier = pointsUntilNextTier
+                CacheUtil.getInstance().startingPointsOfNextTier = startingPointsOfNextTier
+                if (pointsUntilNextTier <= 0) {
+                    if (tier == null) {
+                        progress.max = 100
+                        progress.progress = 0
+                        tvTierProgressDesc.text = "You are now a Tier member"
+                        progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                    } else {
+                        progress.max = 100
+                        progress.progress = 100
+                        tvTierProgressDesc.text = CacheUtil.getInstance().getTranslations(
+                            Text.TOTAL_POINTS_MAX_OUT,
+                            "You have maxed out on our tier levels"
+                        )
+                        progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                    }
+                } else {
+                    progress.max = startingPointsOfNextTier
+                    progress.progress = totalAccumulatedPoints
+                    tvTierProgressDesc.text = cacheUtilHelper.getTranslations(Text.POINTS_UNTIL_NEXT_TIER).replace("(x)", pointsUntilNextTier.toString()).replace("(y)", tier.name)
+                    progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                }
             }
-        } else {
-            progress!!.max = startingPointsOfNextTier
-            progress!!.progress = totalAccumulatedPoints
-            progressLabel!!.text = HtmlCompat.fromHtml(
-                StringUtil.localize(
-                    CacheUtil.getInstance().getTranslations(
-                        Text.LOYALTY_POINTS_UNTIL_TIER, "(x) points till you reach (y) Tier"
-                    ).replace("(x)", pointsUntilNextTier.toString()).replace(
-                        "(y)", "<b>" + tier.name.substring(0, 1).uppercase(
-                            Locale.getDefault()
-                        ) + tier.name.substring(1).lowercase(Locale.getDefault())
-                    )
-                ) + "</b>", HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
         }
-        dismissDialogs()*/
+        dismissDialogs()
     }
 
     override fun showQRPage(loyalty: LoyaltyPointsPosRedemption) {
@@ -292,7 +308,68 @@ class LoyaltyActivity  : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDial
         }*/
     }
 
-    override fun showLoyalty(loyalty: Loyalty, name: String) {
+    override fun showSortingCategories(sortingCategories: java.util.ArrayList<SortingCategory>?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateSortingCategory(category: SortingCategory?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateTransactions() {
+        TODO("Not yet implemented")
+    }
+
+    override fun showLoyalty(loyalty: Loyalty?, name: String) {
+        binding.apply {
+            loyalty?.let { loyalty ->
+                layoutCard.apply {
+                    val loyaltyTier: String = when {
+                        loyalty.attributes.loyaltyTier == null
+                                && loyaltyPresenter.tiers != null &&
+                                loyaltyPresenter.tiers.size > 0 -> {
+                            loyaltyPresenter.tiers[0].name
+                        }
+
+                        else -> {
+                            loyalty.attributes.loyaltyTier.name
+                        }
+                    }
+                    var tierBackground = com.herfy.home.R.drawable.background_bronze_tier
+                    if (loyaltyTier.equals(
+                            "Silver",
+                            ignoreCase = true
+                        ) || loyaltyTier.equals("فضي")
+                    ) {
+                        tierBackground = com.herfy.home.R.drawable.background_silver_tier
+                    } else if (loyaltyTier.equals(
+                            "Gold",
+                            ignoreCase = true
+                        ) || loyaltyTier.equals("ذهبي")
+                    ) {
+                        tierBackground = com.herfy.home.R.drawable.background_gold_tier
+                    } else if (loyaltyTier.equals(
+                            "Diamond",
+                            ignoreCase = true
+                        ) || loyaltyTier.equals("البلاتين")
+                    ) {
+                        tierBackground = com.herfy.home.R.drawable.background_diamond_tier
+                    }
+                    tvTier.text = loyaltyTier
+                    tvTier.setBackgroundResource(tierBackground)
+                    val formatter = DecimalFormat("#,###")
+                    tvSarValue.text =
+                        StringUtil.localize(formatter.format(loyalty.attributes.currentBalanceAmount))
+                    tvTotalPoints.text =
+                        StringUtil.localize(loyalty.attributes.currentBalance.toLong().toString())
+                }
+            }
+            rewardsTierAdapter.updateList(loyaltyPresenter.tiers)
+        }
+
+        dismissDialogs()
+
+
         /*if (loyalty != null && loyalty.attributes.loyaltyTier != null && !TextUtils.isEmpty(loyalty.attributes.loyaltyTier.imageUrl)) {
             ivDefaultArt!!.visibility = View.GONE
             Glide.with(this).load(loyalty.attributes.loyaltyTier.imageUrl).preload()

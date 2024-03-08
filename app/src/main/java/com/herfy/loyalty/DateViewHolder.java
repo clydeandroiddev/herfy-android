@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
+import com.herfy.model.SortingCategory;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction;
@@ -102,6 +103,21 @@ public class DateViewHolder extends RecyclerView.ViewHolder implements LoyaltyCo
 
     @Override
     public void showQrData(String data) {
+
+    }
+
+    @Override
+    public void showSortingCategories(ArrayList<SortingCategory> sortingCategories) {
+
+    }
+
+    @Override
+    public void updateSortingCategory(SortingCategory category) {
+
+    }
+
+    @Override
+    public void updateTransactions() {
 
     }
 }

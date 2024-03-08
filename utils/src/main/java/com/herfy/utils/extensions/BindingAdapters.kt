@@ -12,7 +12,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.StringUtil
 import com.skylinedynamics.solosdk.util.AppLogger
 
@@ -154,6 +156,9 @@ fun ImageView.setIconWith(resource : Int){
     }else {
         visibility = View.GONE
     }
-
+}
+@BindingAdapter("app:rewardDescription")
+fun TextView.setRewardTierDescription(percentVal : String){
+    text = CacheUtil.getInstance().getTranslations(Text.PERCENT_OF_YOUR_ORDER, "(x) of your order value converts to points.").replace("(x)", percentVal)
 }
 
