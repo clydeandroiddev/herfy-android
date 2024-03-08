@@ -246,7 +246,8 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
                 indicator.setImageResource(R.drawable.ic_store_selected);
                 directionsImage.setImageResource(R.drawable.ic_direction_selected);
                 pickupMethodsContainer.setVisibility(View.VISIBLE);
-                card.setStrokeColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));
+                card.setStrokeColor(Color.parseColor("#F26224"));
+
             } else {
                 card.setCardBackgroundColor(ContextCompat.getColor(itemView.getContext(), com.herfy.ordertype.R.color.card_bg_unselected));
                 indicator.setImageResource(R.drawable.ic_store_unselected);

@@ -14,7 +14,6 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -45,7 +44,6 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.ViewUtil
 import com.location.FusedLocationProvider
-import com.location.FusedLocationProvider.LocationResultCallback
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,8 +51,8 @@ import java.io.IOException
 import java.util.Locale
 
 @AndroidEntryPoint
-class StoreLocatorFragment : BaseFragment<StoreLocatorViewModel, StoreLocatorBinding>(),
-    LocationResultCallback {
+class StoreLocatorFragmentNew : BaseFragment<StoreLocatorViewModel, StoreLocatorBinding>(),
+    FusedLocationProvider.LocationResultCallback {
 
     override val viewModel: StoreLocatorViewModel by viewModels()
 
@@ -73,6 +71,7 @@ class StoreLocatorFragment : BaseFragment<StoreLocatorViewModel, StoreLocatorBin
     private var location: Location? = null
 
     private var locationMarker: Marker? = null
+
     private val storeMarkers = ArrayList<Marker?>()
 
     private var hasLocation = false
@@ -240,7 +239,7 @@ class StoreLocatorFragment : BaseFragment<StoreLocatorViewModel, StoreLocatorBin
                 val activity: Activity? = activity
                 if (activity != null) {
                     val bitmapDrawable = ContextCompat.getDrawable(
-                        activity, com.herfy.ordertype.R.drawable.user_current_location
+                        activity, R.drawable.user_current_location
                     ) as BitmapDrawable?
                     if (bitmapDrawable != null) {
                         val bitmap = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 50, 50, true)
@@ -349,5 +348,4 @@ class StoreLocatorFragment : BaseFragment<StoreLocatorViewModel, StoreLocatorBin
             }
         }
     }
-
 }
