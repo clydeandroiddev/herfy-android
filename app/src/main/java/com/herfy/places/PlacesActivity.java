@@ -41,7 +41,6 @@ import com.herfy.R;
 import com.herfy.addresses.views.AddAddressDialogFragment;
 import com.herfy.base.BaseActivity;
 import com.herfy.font.FontHandler;
-import com.herfy.location.FusedLocationProvider;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.LocaleUtil;

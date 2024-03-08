@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -26,7 +25,6 @@ import com.herfy.database.entities.ModifierGroupDb;
 import com.herfy.database.entities.ModifierItemDb;
 import com.herfy.database.entities.StoreDb;
 import com.herfy.database.responses.MenuCategoryItemResponse;
-import com.herfy.location.FusedLocationProvider;
 import com.herfy.model.SupportedCountry;
 import com.herfy.order.viewholders.AddressViewHolder;
 import com.herfy.order.viewholders.StoreViewHolder;
@@ -42,6 +40,7 @@ import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.menu.MenuUtil;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.ApiRequestWithHeadersListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;

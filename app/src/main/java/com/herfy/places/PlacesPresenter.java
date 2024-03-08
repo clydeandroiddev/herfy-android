@@ -7,7 +7,6 @@ import android.location.Location;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
 import com.herfy.utils.constants.Text;
-import com.herfy.location.FusedLocationProvider;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;

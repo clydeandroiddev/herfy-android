@@ -48,7 +48,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.utils.constants.Text;
-import com.herfy.location.FusedLocationProvider;
 import com.herfy.order.OrderContract;
 import com.herfy.order.OrderPresenter;
 import com.herfy.order.adapters.StoresRecyclerViewAdapter;

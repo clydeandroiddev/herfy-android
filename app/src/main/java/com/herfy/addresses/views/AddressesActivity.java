@@ -47,7 +47,6 @@ import com.herfy.addresses.adapters.PlacesRecyclerViewAdapter;
 import com.herfy.base.BaseActivity;
 import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
-import com.herfy.location.FusedLocationProvider;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;

@@ -61,7 +61,6 @@ import com.herfy.base.BaseActivity;
 import com.herfy.cart.views.CartDialogFragment;
 import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
-import com.herfy.location.FusedLocationProvider;
 import com.herfy.main.MainActivity;
 import com.herfy.main.NavigationActivity;
 import com.herfy.order.OrderContract;

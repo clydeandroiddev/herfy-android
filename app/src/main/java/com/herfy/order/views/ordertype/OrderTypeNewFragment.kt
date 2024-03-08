@@ -11,6 +11,7 @@ import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -57,7 +58,6 @@ import com.herfy.common.utils.areaJson
 import com.herfy.curbside.curbsidenew.CurbsideNewActivity
 import com.herfy.ext.cast
 import com.herfy.font.FontHandler
-import com.herfy.location.FusedLocationProvider
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.order.OrderContract
@@ -79,6 +79,7 @@ import com.herfy.utils.helper.*
 import com.herfy.utils.helper.ViewUtil
 import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
+import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import java.util.*
@@ -207,6 +208,12 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         orderPresenter = OrderPresenter(this)
+        orderPresenter.setGeocoder(
+            Geocoder(
+                requireActivity(),
+                LocaleUtil.getInstance().createLocale()
+            )
+        )
         CacheUtil.getInstance().setAreas(areaJson())
     }
 
@@ -525,8 +532,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             var orderType = CacheUtil.getInstance().orderType
             if (typeOrder != 0) {
                 orderType = OrderType.fromInt(typeOrder)
-            }else
-            when (orderType) {
+            } else when (orderType) {
                 OrderType.DELIVERY -> {
                     binding.typeGroup.check(R.id.deliveryButton)
                 }
@@ -1497,8 +1503,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
-            currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {

@@ -53,7 +53,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.utils.constants.Text;
-import com.herfy.location.FusedLocationProvider;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
