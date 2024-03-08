@@ -218,6 +218,13 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
 
         if (store != null) {
             nearestLabel.setText(CacheUtil.getInstance().getTranslations(Text.NEAREST_CAPS, "NEAREST"));
+
+            if (getAdapterPosition() == 0) {
+                nearestLabel.setVisibility(View.VISIBLE);
+            } else {
+                nearestLabel.setVisibility(View.GONE);
+            }
+
             pickupMethodsLabel.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP_METHODS, "Pickup Methods"));
             walkInLabel.setText(CacheUtil.getInstance().getTranslations(Text.WALK_IN, "Walk In"));
             curbsideLabel.setText(CacheUtil.getInstance().getTranslations(Text.CURBSIDE_LABEL, "Curbside"));

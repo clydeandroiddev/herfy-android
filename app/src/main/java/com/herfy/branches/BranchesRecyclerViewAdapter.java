@@ -21,7 +21,7 @@ public class BranchesRecyclerViewAdapter extends RecyclerView.Adapter<BranchView
     @NonNull
     @Override
     public BranchViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new BranchViewHolder(branchesPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_store, parent, false));
+        return new BranchViewHolder(branchesPresenter, LayoutInflater.from(parent.getContext()).inflate(com.herfy.ordertype.R.layout.item_stores_pickup, parent, false));
     }
 
     @Override

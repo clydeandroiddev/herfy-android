@@ -45,10 +45,12 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.views.RecyclerViewUtil.smoothSnapToPosition
 import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.Store
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
 
-class BranchesActivity : BaseFragment(), BranchesContract.View {
+@AndroidEntryPoint
+class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
     private var branchesPresenter: BranchesContract.Presenter? = null
 
     private lateinit var binding: StoreLocatorBinding
@@ -340,7 +342,7 @@ class BranchesActivity : BaseFragment(), BranchesContract.View {
                                 )
                             )
                         )
-                        branchMarker.setAnchor(0.1f, 1.0f)
+                        branchMarker.setAnchor(0.5f, 1f)
                         branchMarker.title = i.toString()
                         map!!.animateCamera(
                             CameraUpdateFactory.newLatLngZoom(
