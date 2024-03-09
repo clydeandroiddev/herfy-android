@@ -15,12 +15,18 @@
     app:strokeWidth="1dp"
     android:layout_marginBottom="42dp">
 
+    <include
+        android:id="@+id/placeholder_reward_tier"
+        layout="@layout/placeholder_reward_tier"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_reward_tier"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
         android:paddingHorizontal="16dp"
-        android:paddingBottom="10dp">
+        android:paddingBottom="10dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/tv_reward_tier_label"
@@ -39,6 +45,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_reward_tier_label"

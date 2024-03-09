@@ -10,12 +10,16 @@ import android.os.Handler
 import android.os.Looper
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.doOnLayout
 import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.databinding.ActivityLoyaltyBinding
 import com.herfy.model.SortingCategory
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.OnLayoutLoadingCompleted
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
@@ -113,6 +117,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
+            finish()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 overrideActivityTransition(AnimUtil.outF(), AnimUtil.outS(), R.color.white)
             } else {
@@ -157,6 +162,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     }
 
     override fun setupViews() {
+        setupRewardTiers()
         binding.apply {
             toolbar.apply {
                 setNavButtonAction {
@@ -168,7 +174,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 }
             }
         }
-        setupRewardTiers()
+
     }
 
     private fun setupRewardTiers() {
@@ -187,7 +193,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
 
     override fun setupTranslations() {
         binding.apply {
-            //toolbar.title = cacheUtilHelper.getTranslations(Text.REWARDS_LABEL, "Rewards")
+            toolbar.title = cacheUtilHelper.getTranslations(Text.REWARDS_LABEL, "Rewards")
             layoutCard.apply {
                 tvAshabHerfy.text = cacheUtilHelper.getTranslations(Text.ASHAB_HERFY, "Ashab Herfy")
                 tvTotalPointsLabel.text =
@@ -208,34 +214,6 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 )
             }
         }
-        /* tvCurrencyEquivalence!!.text = CacheUtil.getInstance()
-             .getTranslations(Text.CURRENCY_EQUIVALENCE, "(x) Equivalence")
-             .replace(
-                 "(x)",
-                 CacheUtil.getInstance()
-                     .getTranslations(CacheUtil.getInstance().concept.currencyCode.uppercase(Locale.getDefault()))
-             )
-         btnLearnMore!!.text = CacheUtil.getInstance().getTranslations(
-             Text.LEARN_ABOUT_THIS_POINTS_LABEL,
-             "Learn about points"
-         )
-         tvPointsLabel!!.text =
-             CacheUtil.getInstance().getTranslations(Text.PTS_LABEL, "PTS")
-                 .replace("(x)", "")
-         btnHistory!!.text = CacheUtil.getInstance()
-             .getTranslations(Text.POINTS_HISTORY, "POINTS HISTORY")
-         tvSarLabel!!.text = CacheUtil.getInstance()
-             .getTranslations(CacheUtil.getInstance().concept.currencyCode.lowercase(Locale.getDefault()))
-         tvTotalPoints!!.text = CacheUtil.getInstance().getTranslations(
-             Text.LOYALTY_TOTAL_POINTS,
-             "Total number of points"
-         )
-         cardNumberLabel!!.text = CacheUtil.getInstance().getTranslations(
-             Text.LOYALTY_MOBILE_NUMBER_LABEL,
-             "MOBILE NUMBER"
-         )
-         btnRedeem!!.text = CacheUtil.getInstance()
-             .getTranslations(Text.REDEEM_IN_STORE, "REDEEM IN STORE")*/
     }
 
     override fun showNextTier(
@@ -271,9 +249,9 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                     tvTierProgressDesc.text = cacheUtilHelper.getTranslations(Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)").replace("(x)", pointsUntilNextTier.toString()).replace("(y)", tier.name)
                     progressTextIndicator.text = "${progress.progress}/${progress.max}"
                 }
+
             }
         }
-        rewardsTierAdapter.updateList(loyaltyPresenter.tiers)
         dismissDialogs()
     }
 
@@ -297,28 +275,30 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     }
 
     override fun showQrData(data: String) {
-        /*qrImageToolbar!!.visibility = View.VISIBLE
-        Log.e("ADADADADAD", "ADADAD1:$data")
-        qrImageToolbar!!.setOnClickListener {
-            customerLoyaltyDialog = newInstance(data)
-            customerLoyaltyDialog!!.isCancelable = true
-            customerLoyaltyDialog!!.show(
-                supportFragmentManager,
-                CustomerLoyaltyDialog::class.java.toString()
-            )
-        }*/
     }
 
-    override fun showSortingCategories(sortingCategories: java.util.ArrayList<SortingCategory>?) {
-        TODO("Not yet implemented")
-    }
 
-    override fun updateSortingCategory(category: SortingCategory?) {
-        TODO("Not yet implemented")
-    }
+    override fun showTiers(loyalty: Loyalty) {
+        binding.apply {
+            val tiers = loyaltyPresenter.tiers
+            if(tiers.size > 0){
+                rewardsTierAdapter.updateList(loyaltyPresenter.tiers)
+                layoutRewardsTier.apply {
+                    rvRewardTier.OnLayoutLoadingCompleted {
+                        placeholderRewardTier.shimmerRewardTier.gone()
+                        clRewardTier.visible()
+                    }
+                }
+                tiers.find { t -> t.name.equals(loyalty.attributes.loyaltyTier.name)}?.let {
+                    layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
+                        .replace("(x)", it.collectRules.earnPoint.toString())
+                        .replace("(y)", it.collectRules.perSar.toString())
+                }
+            }else {
+                fmRewardsTier.gone()
+            }
+        }
 
-    override fun updateTransactions() {
-        TODO("Not yet implemented")
     }
 
     override fun showLoyalty(loyalty: Loyalty?, name: String) {
@@ -365,149 +345,11 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         StringUtil.localize(loyalty.attributes.currentBalance.toLong().toString())
                     tvProgressTier.text =loyaltyTier
                 }
+
             }
 
         }
-
         dismissDialogs()
-
-
-        /*if (loyalty != null && loyalty.attributes.loyaltyTier != null && !TextUtils.isEmpty(loyalty.attributes.loyaltyTier.imageUrl)) {
-            ivDefaultArt!!.visibility = View.GONE
-            Glide.with(this).load(loyalty.attributes.loyaltyTier.imageUrl).preload()
-            Glide.with(this).load(loyalty.attributes.loyaltyTier.imageUrl).diskCacheStrategy(
-                DiskCacheStrategy.ALL
-            ).apply(RequestOptions.centerInsideTransform())
-                .addListener(object : RequestListener<Drawable?> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        tierCard!!.setCardBackgroundColor(Color.parseColor("#5730BF"))
-                        tier!!.setTextColor(
-                            ContextCompat.getColor(
-                                this@LoyaltyActivity,
-                                R.color.white
-                            )
-                        )
-                        cardNumberLabel!!.setTextColor(
-                            ContextCompat.getColor(
-                                this@LoyaltyActivity,
-                                R.color.white
-                            )
-                        )
-                        cardNumber!!.setTextColor(
-                            ContextCompat.getColor(
-                                this@LoyaltyActivity,
-                                R.color.white
-                            )
-                        )
-                        customerName!!.setTextColor(
-                            ContextCompat.getColor(
-                                this@LoyaltyActivity,
-                                R.color.white
-                            )
-                        )
-                        return false
-                    }
-
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        Thread {
-
-                            // allow image to load into target
-                            SystemClock.sleep(200)
-                            runOnUiThread {
-                                card!!.buildDrawingCache()
-                                val brightness = calculateBrightness(card!!.drawingCache, 1)
-                                if (brightness > 255 / 2) {
-                                    tier!!.setTextColor(
-                                        ContextCompat.getColor(
-                                            this@LoyaltyActivity,
-                                            R.color.black
-                                        )
-                                    )
-                                    cardNumberLabel!!.setTextColor(
-                                        ContextCompat.getColor(
-                                            this@LoyaltyActivity,
-                                            R.color.black
-                                        )
-                                    )
-                                    cardNumber!!.setTextColor(
-                                        ContextCompat.getColor(
-                                            this@LoyaltyActivity,
-                                            R.color.black
-                                        )
-                                    )
-                                    customerName!!.setTextColor(
-                                        ContextCompat.getColor(
-                                            this@LoyaltyActivity,
-                                            R.color.black
-                                        )
-                                    )
-                                }
-                            }
-                        }.start()
-                        return false
-                    }
-                }).into(card!!)
-        } else {
-            ivDefaultArt!!.visibility = View.VISIBLE
-            tierCard!!.setCardBackgroundColor(Color.parseColor("#5730BF"))
-        }
-        if (loyalty != null && loyalty.attributes.loyaltyTier == null) {
-            if (loyaltyPresenter.tiers != null && loyaltyPresenter.tiers.size > 0) {
-                tier!!.text = loyaltyPresenter.tiers[0].name
-            }
-        } else {
-            tier!!.text = loyalty.attributes.loyaltyTier.name
-        }
-        val customer = AuthUtil.getInstance().customer
-        cardNumber!!.text = customer.attributes.mobile
-        customerName!!.text = name
-        val formatter = DecimalFormat("#,###")
-        tvSarValue!!.text =
-            StringUtil.localize(formatter.format(loyalty.attributes.currentBalanceAmount))
-        tvPoints!!.text =
-            StringUtil.localize(formatter.format(loyalty.attributes.currentBalance.toLong()))
-        if (loyalty.attributes.currentBalance > 0) {
-            btnRedeem!!.visibility = View.VISIBLE
-            btnRedeem!!.setOnClickListener {
-                if (loyalty.attributes.currentBalanceAmount > 0) {
-                    redeemLoyaltyDialog = newInstance(loyalty)
-                    redeemLoyaltyDialog!!.isCancelable = true
-                    redeemLoyaltyDialog!!.show(
-                        supportFragmentManager,
-                        RedeemLoyaltyDialog::class.java.toString()
-                    )
-                } else {
-                    showAlertDialog(
-                        "",
-                        CacheUtil.getInstance().getTranslations(
-                            "not_enough_balance_amount_message",
-                            "Please make sure you have at least 1 (x) to redeem"
-                        ).replace(
-                            "(x)", CacheUtil.getInstance().getTranslations(
-                                CacheUtil.getInstance().concept.currencyCode.lowercase(
-                                    Locale.getDefault()
-                                )
-                            )
-                        ),
-                        CacheUtil.getInstance().getTranslations(Text.OK)
-                    ) { dialog, which -> dialog.dismiss() }
-                }
-            }
-        } else {
-            btnRedeem!!.visibility = View.GONE
-        }
-        dismissDialogs()*/
     }
 
     fun calculateBrightness(bitmap: Bitmap, skipPixel: Int): Int {

@@ -81,7 +81,7 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
 
     @Override
     public void setupTranslations() {
-        tvAmountSpentLabel.setText(CacheUtil.getInstance().getTranslations(Text.LOYALTY_AMOUNT_SPENT, "AMOUNT SPENT"));
+        tvAmountSpentLabel.setText(CacheUtil.getInstance().getTranslations(Text.LOYALTY_AMOUNT_SPENT, "Amount Spent"));
     }
 
     @Override
@@ -102,7 +102,7 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
     @Override
     public void setLoyaltyHistory(LoyaltyTransaction loyaltyTransaction) {
         Concept concept = CacheUtil.getInstance().getConcept();
-        tvDate.setText(TimeUtil.formatDate(loyaltyTransaction.getCreatedAt()).toUpperCase());
+        tvDate.setText(TimeUtil.formatDate(loyaltyTransaction.getCreatedAt()));
         DecimalFormat formatter = new DecimalFormat("#,###");
         if (loyaltyTransaction.getType() != null && loyaltyTransaction.getType().equalsIgnoreCase("collection")) {
             tvPoints.setText("+" + formatter.format(loyaltyTransaction.getPoints()));
@@ -116,8 +116,6 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
         } else {
             tvSarValue.setText(CurrencyUtils.Companion.updateAmountWithCurrency(0.0, true));
         }
-
-
     }
 
     @Override
@@ -134,19 +132,8 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
     public void showQrData(String data) {
 
     }
-
     @Override
-    public void showSortingCategories(ArrayList<SortingCategory> sortingCategories) {
-
-    }
-
-    @Override
-    public void updateSortingCategory(SortingCategory category) {
-
-    }
-
-    @Override
-    public void updateTransactions() {
+    public void showTiers(Loyalty loyalty) {
 
     }
 

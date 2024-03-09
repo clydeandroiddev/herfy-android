@@ -1,5 +1,7 @@
 package com.herfy.utils.constants;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Text {
 
     public static final String CART = "cart";
@@ -7,7 +9,7 @@ public class Text {
     public static final String SETTINGS = "settings";
     public static final String YOUR_FOOD_CART = "your_food_cart";
     public static final String PROMO_CODE = "promo_code";
-    public static final String APPLY = "apply";
+    public static final String APPLY = "apply_label";
     public static final String CART_TOTAL = "cart_total";
     public static final String DELIVERY = "delivery";
     public static final String PROMO_DISCOUNT = "promo_discount";
@@ -224,7 +226,7 @@ public class Text {
     public static final String INGREDIENTS = "ingredients";
     public static final String SIGN_IN_MESSAGE = "sign_in_message";
     public static final String EMAIL = "email";
-    public static final String OR = "or";
+    public static final String OR = "or_label";
     public static final String SIGN_IN_SOCIAL_ACCOUNT = "sign_in_social_account";
     public static final String SIGN_UP_SOCIAL_ACCOUNT = "sign_up_social_account";
     public static final String DONT_HAVE_ACCOUNT = "dont_have_account";
@@ -641,7 +643,7 @@ public class Text {
     public static final String LOYALTY_USE_POINTS_INPUT = "loyalty_use_points_input_hint";
     public static final String LOYALTY_TOTAL_POINTS = "total_numer_of_points";
     public static final String LOYALTY_POINTS_PAYMENT_LABEL = "loyalty_points_payment_label";
-    public static final String LOYALTY_AMOUNT_SPENT = "amount_spent";
+    public static final String LOYALTY_AMOUNT_SPENT = "amount_spent_label";
     public static final String LOYALTY_LEAVE_BLANK = "no_points_use";
     public static final String LOYALTY_USE_POINTS = "use_loyalty_points_caps";
     public static final String LOYALTY_USE_POINTS_NOT_CAPS = "use_loyalty_points_not_caps";
@@ -976,11 +978,13 @@ public class Text {
     public static final String HI_LOGGED_OUT = "hi_logged_out";
     public static final String REWARDS_LABEL="rewards_label";
     public static final String SAR_VALUE_LABEL="sar_value";
-    public static final String REWARD_TIER_LABEL="reward_tier_label";
+    public static final String REWARD_TIER_LABEL="reward_tiers";
     public static final String SCAN_POINTS_LABEL="scan_points_label";
     public static final String SCAN_POINTS_DESCRIPTION="scan_points_description";
     public static final String PERCENT_OF_YOUR_ORDER="percent_of_your_order";
     public static final String HISTORY_LABEL="history_label";
     public static final String EARNED_LABEL="earned_label";
     public static final String USED_LABEL="used_label";
+
+    public static final String POINTS_EQUAL_SAR="points_equal_sar";
 }

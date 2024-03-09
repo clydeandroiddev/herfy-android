@@ -9,10 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
 
-import com.herfy.loyalty.objects.DateItem;
-import com.herfy.loyalty.objects.ListItem;
 
-public class LoyaltyPointsRecyclerViewAdapter extends RecyclerView.Adapter {
+public class LoyaltyPointsRecyclerViewAdapter extends RecyclerView.Adapter<LoyaltyPointsViewHolder> {
 
     private Context context;
     private final LoyaltyHistoryContract.Presenter pointsPresenter;
@@ -24,43 +22,19 @@ public class LoyaltyPointsRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder viewHolder = null;
-        switch (viewType) {
-            case ListItem.TYPE_LOYALTY:
-                viewHolder = new LoyaltyPointsViewHolder(context, pointsPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loyalty_history, parent, false));
-                break;
-            case ListItem.TYPE_DATE:
-                viewHolder =new DateViewHolder(context, pointsPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_date, parent, false));
-                break;
-        }
-        return viewHolder;
+    public LoyaltyPointsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new LoyaltyPointsViewHolder(context, pointsPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loyalty_history, parent, false));
     }
-
-
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        switch (viewHolder.getItemViewType()) {
-            case ListItem.TYPE_LOYALTY:
-                pointsPresenter.onBindLoyaltyHistoryViewAtPosition(position,(LoyaltyPointsViewHolder) viewHolder);
-                break;
-            case ListItem.TYPE_DATE:
-                DateItem dateItem = (DateItem)  pointsPresenter.getConsolidatedList().get(position);
-                DateViewHolder dateViewHolder = (DateViewHolder) viewHolder;
-                dateViewHolder.tvDate.setText(dateItem.getDate());
-                break;
-        }
+    public void onBindViewHolder(@NonNull LoyaltyPointsViewHolder holder, int position) {
+        pointsPresenter.onBindLoyaltyHistoryViewAtPosition(position, holder);
     }
+
 
 
     @Override
     public int getItemCount() {
-        return pointsPresenter.getConsolidatedList().size();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return pointsPresenter.getConsolidatedList().get(position).getType();
+        return pointsPresenter.transactionListCount();
     }
 }

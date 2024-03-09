@@ -36,7 +36,8 @@ class RewardTierAdapter(private val tierList : ArrayList<Tier> = arrayListOf()) 
         this.tierList.apply {
             clear()
             addAll(tierList)
+            notifyDataSetChanged()
         }
-        notifyDataSetChanged()
+
     }
 }

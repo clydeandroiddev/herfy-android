@@ -8,7 +8,6 @@ import android.os.Looper
 import com.google.gson.Gson
 import com.herfy.base.BaseActivity
 import com.herfy.databinding.ActivityLoyaltyQrBinding
-import com.herfy.model.SortingCategory
 import com.herfy.util.QRHelper
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
@@ -176,15 +175,7 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
 
     }
 
-    override fun showSortingCategories(sortingCategories: java.util.ArrayList<SortingCategory>?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun updateSortingCategory(category: SortingCategory?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun updateTransactions() {
+    override fun showTiers(loyalty: Loyalty?) {
         TODO("Not yet implemented")
     }
 

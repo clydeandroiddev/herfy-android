@@ -3,29 +3,17 @@ package com.herfy.loyalty
 import android.annotation.SuppressLint
 import android.util.Pair
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
-import com.herfy.enum.HistorySortType
-import com.herfy.loyalty.objects.DateItem
-import com.herfy.loyalty.objects.ListItem
-import com.herfy.loyalty.objects.LoyaltyTransactionItem
-import com.herfy.model.SortingCategory
 import com.herfy.util.AppLogger
 import com.herfy.utils.constants.Text
-import com.herfy.utils.handler.ErrorHandler.getErrorMessage
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
-import com.herfy.utils.helper.CacheUtilHelper
-import com.herfy.utils.helper.TimeUtil
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
-import com.skylinedynamics.solosdk.api.models.objects.Customer
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyAttributes
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTier
-import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
-import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransactionDetails
 import com.skylinedynamics.solosdk.api.models.objects.QrData
 import com.skylinedynamics.solosdk.api.models.objects.Tier
 import com.skylinedynamics.solosdk.api.models.requestbodies.PosPointsRedemptionBody
@@ -35,30 +23,19 @@ import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.util.Arrays
 import java.util.Collections
-import java.util.Locale
-import java.util.TimeZone
 import javax.inject.Inject
 
 @SuppressLint("CheckResult")
 class LoyaltyPresenter @Inject constructor(
-    private val loyaltyView: LoyaltyContract.View,
-    private val cacheUtil: CacheUtilHelper
+    private val loyaltyView: LoyaltyContract.View
 ) : LoyaltyContract.Presenter {
-    private var filteredTransactionList = ArrayList<LoyaltyTransaction>()
-    private var transactionsList = ArrayList<LoyaltyTransaction>()
     private var tiers: List<Tier> = ArrayList()
-    private var sortingCategories = arrayListOf<SortingCategory>()
-    private var newestToOldest = true
     private val disposables = CompositeDisposable()
-    private var consolidatedList = ArrayList<ListItem>()
 
     init {
         loyaltyView.setPresenter(this)
@@ -70,68 +47,6 @@ class LoyaltyPresenter @Inject constructor(
         loyaltyView.setupTranslations()
     }
 
-    override fun selectCategory(category: SortingCategory) {
-        if(!category.isSelected){
-            category.isSelected = true
-            loyaltyView.updateSortingCategory(category)
-            filterTransactions(category)
-        }
-    }
-
-    private fun filterTransactions(category: SortingCategory){
-        if(category.sortType == HistorySortType.ALL){
-            filteredTransactionList.clear()
-            filteredTransactionList.addAll(transactionsList)
-        }else {
-            val selectedCategory = when(category.sortType) {
-                HistorySortType.EARNED -> {
-                    "collection"
-                }
-                HistorySortType.USED -> {
-                    "redeemed"
-                }
-                HistorySortType.ALL -> {
-                    ""
-                }
-            }
-            filteredTransactionList.addAll(
-                transactionsList.filter {
-                        trans -> trans.type.equals(selectedCategory, ignoreCase = true)
-                }
-            )
-        }
-        consolidatedList.clear()
-        val groupedHashMap = groupDataIntoHashMap(filteredTransactionList)
-        val keys: List<String> = ArrayList(groupedHashMap.keys)
-        Collections.sort(keys) { lhs: String?, rhs: String? ->
-            try {
-                val simpleDateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
-                simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
-                val lhsDate = simpleDateFormat.parse(lhs)
-                val rhsDate = simpleDateFormat.parse(rhs)
-                return@sort rhsDate.compareTo(lhsDate)
-
-            } catch (e: ParseException) {
-                e.printStackTrace()
-            }
-            0
-        }
-        val sortedHashMap: HashMap<String, List<LoyaltyTransaction>> = LinkedHashMap()
-        for (key in keys) {
-            sortedHashMap[key] = groupedHashMap[key]!!
-        }
-        for (date in sortedHashMap.keys) {
-            val dateItem = DateItem()
-            dateItem.date = date
-            consolidatedList.add(dateItem)
-            for (loyaltyTransaction in sortedHashMap[date]!!) {
-                val loyaltyTransactionItem = LoyaltyTransactionItem()
-                loyaltyTransactionItem.loyaltyTransaction = loyaltyTransaction
-                consolidatedList.add(loyaltyTransactionItem)
-            }
-        }
-        loyaltyView.updateTransactions()
-    }
 
     val tiersObservable: Single<List<Tier>>
         get() = Single.create { source: SingleEmitter<List<Tier>> ->
@@ -235,10 +150,6 @@ class LoyaltyPresenter @Inject constructor(
                 })
         }
 
-    override fun cleanup() {
-        disposables.clear()
-    }
-
     override fun redeemPoints(points: Int) {
         val customerId = AuthUtil.getInstance().customer.id
         val body = PosPointsRedemptionBody(points)
@@ -284,6 +195,7 @@ class LoyaltyPresenter @Inject constructor(
                         loyalty,
                         AuthUtil.getInstance().customer.attributes.firstName + " " + AuthUtil.getInstance().customer.attributes.lastName
                     )
+                    loyaltyView.showTiers(loyalty)
                     var nextTier: Tier? = null
                     if (eligibleTiers.size <= 0 && tiers.size >= 1) {
                         eligibleTiers = ArrayList()
@@ -327,6 +239,7 @@ class LoyaltyPresenter @Inject constructor(
                     loyalty,
                     AuthUtil.getInstance().customer.attributes.firstName + " " + AuthUtil.getInstance().customer.attributes.lastName
                 )
+                loyaltyView.showTiers(loyalty)
                 loyaltyView.showNextTier(nextTier, 0, 100, 100)
             }
     }
@@ -354,34 +267,6 @@ class LoyaltyPresenter @Inject constructor(
         })
     }
 
-    override fun getCustomerDetails() {
-        val customer = AuthUtil.getInstance().customer
-        CustomersApiCall.getInstance()
-            .getCustomerById(customer.id.toString(), object : ApiRequestListener {
-                override fun onSuccess(o: Any) {
-                    if (o is JSONObject) {
-                        try {
-                            val dataObj = o.getJSONObject("data")
-                            val customer = GsonHelper.gsonFinal()
-                                .fromJson(dataObj.toString(), Customer::class.java)
-                            if (customer.attributes.lastOrderId == CacheUtil.getInstance().lastOrderId) {
-                                getLoyalty()
-                            } else {
-                                fetchAndShowNextTier()
-                            }
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
-                        }
-                    } else {
-                    }
-                }
-
-                override fun onError(o: Any) {
-                    AppLogger.printRetrofitError(o)
-                    getLoyalty()
-                }
-            })
-    }
 
     private fun fetchAndShowNextTier() {
         CustomersApiCall.getInstance().getLoyaltyTiers(object : ApiRequestListener {
@@ -437,400 +322,9 @@ class LoyaltyPresenter @Inject constructor(
         })
     }
 
-    override fun getLoyaltyHistoryTransaction() {
-        CustomersApiCall.getInstance().getCustomerLoyaltyTransactions(
-            AuthUtil.getInstance().customer.id,
-            object : ApiRequestListener {
-                override fun onSuccess(o: Any) {
-                    try {
-                        val `object` = JSONObject(o.toString())
-                        val data = `object`.getJSONObject("data")
-                        val attributes = data.getJSONObject("attributes")
-                        val tier = attributes["tier"]
-                        if (tier !is JSONObject) {
-                            attributes.put("tier", LoyaltyTier().toJSON())
-                            data.put("attributes", attributes)
-                        }
-                        val loyalty =
-                            GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty::class.java)
-                        loyaltyView.showLoyalty(
-                            loyalty,
-                            AuthUtil.getInstance().customer.attributes.firstName + " " + AuthUtil.getInstance().customer.attributes.lastName
-                        )
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                        onError(e)
-                    }
-                }
-
-                override fun onError(o: Any) {
-                    AppLogger.printRetrofitError(o)
-                    loyaltyView.showLoyaltyError(
-                        getErrorMessage(
-                            o, CacheUtil.getInstance().getTranslations(
-                                Text.AN_ERROR_OCCURRED
-                            ), null
-                        )
-                    )
-                }
-            })
-    }
-
-    override fun getConsolidatedList(): ArrayList<ListItem> {
-        return consolidatedList
-    }
-
-    override fun getLoyaltyHistoryTransaction2(page: Int) {
-        getLoyaltyHistory(page).subscribeOn(Schedulers.io())
-            .doOnSubscribe { disposable: Disposable? ->
-                disposables.add(
-                    disposable!!
-                )
-            }.subscribe(
-                { transactionsList: List<LoyaltyTransaction>? ->
-                    if (page == 1) {
-                        this.transactionsList.clear()
-                        consolidatedList.clear()
-                    }
-                    this.transactionsList.addAll(transactionsList!!)
-                    sortTransactionList()
-                }) { error: Throwable? ->
-                loyaltyView.showLoyaltyError(
-                    CacheUtil.getInstance().getTranslations(
-                        Text.AN_ERROR_OCCURRED
-                    )
-                )
-            }
-    }
-
-    fun getLoyaltyHistory(page: Int): Single<List<LoyaltyTransaction>> {
-        return Single.create { source: SingleEmitter<List<LoyaltyTransaction>> ->
-            CustomersApiCall.getInstance().getLoyaltyTransactions(
-                AuthUtil.getInstance().customer.id,
-                page,
-                object : ApiRequestListener {
-                    override fun onSuccess(o: Any) {
-                        try {
-                            val `object` = JSONObject(o.toString())
-                            val array = `object`.getJSONArray("data")
-                            val list: MutableList<LoyaltyTransaction> = ArrayList()
-                            for (i in 0 until array.length()) {
-                                val object1 = array.getJSONObject(i)
-                                val details = object1.opt("details")
-                                if (!object1.has("details") || object1.isNull("details") || details !is JSONObject) {
-                                    val loyaltyTransactionDetails = LoyaltyTransactionDetails()
-                                    loyaltyTransactionDetails.amount = 0.0
-                                    object1.put(
-                                        "details",
-                                        JSONObject(Gson().toJson(loyaltyTransactionDetails))
-                                    )
-                                }
-                                val transaction = GsonHelper.gsonFinal()
-                                    .fromJson(object1.toString(), LoyaltyTransaction::class.java)
-                                list.add(transaction)
-                            }
-                            val filteredList: MutableList<LoyaltyTransaction> = ArrayList()
-                            for (loyaltyTransaction in list) {
-                                if (loyaltyTransaction.details != null && loyaltyTransaction.details.amount != null) {
-                                    filteredList.add(loyaltyTransaction)
-                                }
-                            }
-                            source.onSuccess(filteredList)
-                            loyaltyView.showLoyaltyPointsHistory(newestToOldest, transactionsList)
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
-                            onError(e)
-                        }
-                    }
-
-                    override fun onError(o: Any) {
-                        AppLogger.printRetrofitError(o)
-                        if (o is JSONException) {
-                            source.onError((o as Throwable))
-                        } else if (o is JSONObject) {
-                            try {
-                                val error = o["error"]
-                                var detail =
-                                    CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
-                                if (error is JSONObject) {
-                                    detail = error.getString("detail")
-                                } else if (error is JSONArray) {
-                                    val errorObject = error.getJSONObject(0)
-                                    detail = errorObject.getString("detail")
-                                }
-                                loyaltyView.showLoyaltyError(detail)
-                            } catch (e: JSONException) {
-                                e.printStackTrace()
-                                source.onError(e)
-                            }
-                        } else {
-                            source.onError(Throwable("API Error"))
-                        }
-                    }
-                })
-        }
-    }
-
-    override fun onBindLoyaltyHistoryViewAtPosition(
-        position: Int,
-        loyaltyPointsViewHolder: LoyaltyPointsViewHolder
-    ) {
-        val item = consolidatedList[position] as LoyaltyTransactionItem
-        loyaltyPointsViewHolder.setLoyaltyHistory(item.loyaltyTransaction)
-    }
-
-    override fun getLoyaltyPointsHistoryCount(): Int {
-        return transactionsList.size
-    }
-
-    private fun dummyResponse(): JsonObject {
-        val json =
-            """{
-  "type" : "transactions",
-  "data" : [
-    {
-      "status" : "successful",
-      "points" : 49,
-      "details" : [
-
-      ],
-      "id" : "9482e1b7-fb8f-463c-b7b6-f580469ae273",
-      "expires_at" : "2021-10-29 06:55:35",
-      "created-at" : "2021-09-29 06:55:35",
-      "type" : "collection",
-      "customer-id" : "9482e1aa-043a-4550-9264-248c3237437a",
-      "updated-at" : "2021-09-29 06:55:35"
-    },
-    {
-      "status" : "successful",
-      "points" : 1,
-      "details" : {
-        "date" : "2021-10-05",
-        "amount" : 17.390000000000001,
-        "order-id" : 1190911
-      },
-      "id" : "948f38fe-338c-41f2-b8c7-5dc40b842d6d",
-      "expires_at" : "2021-11-04 10:09:34",
-      "created-at" : "2021-10-05 10:09:34",
-      "type" : "collection",
-      "customer-id" : "9482e1aa-043a-4550-9264-248c3237437a",
-      "updated-at" : "2021-10-05 10:09:34"
-    },
-    {
-      "status" : "successful",
-      "points" : 2,
-      "details" : {
-        "date" : "2021-10-05",
-        "amount" : 27.829999999999998,
-        "order-id" : 1190912
-      },
-      "id" : "948f3d30-f926-497b-964f-24f2ee13ce60",
-      "expires_at" : "2021-11-04 10:21:18",
-      "created-at" : "2021-10-05 10:21:18",
-      "type" : "collection",
-      "customer-id" : "9482e1aa-043a-4550-9264-248c3237437a",
-      "updated-at" : "2021-10-05 10:21:18"
-    },
-    {
-      "status" : "successful",
-      "points" : 10,
-      "details" : {
-        "date" : "2021-10-05",
-        "amount" : 103.48,
-        "order-id" : 1190913
-      },
-      "id" : "948f3ea2-82c7-48cc-9646-92817668794e",
-      "expires_at" : "2021-11-04 10:25:20",
-      "created-at" : "2021-10-05 10:25:20",
-      "type" : "collection",
-      "customer-id" : "9482e1aa-043a-4550-9264-248c3237437a",
-      "updated-at" : "2021-10-05 10:25:20"
-    },
-    {
-      "status" : "successful",
-      "points" : 29,
-      "details" : {
-        "date" : "2021-10-05",
-        "amount" : 295.64999999999998,
-        "order-id" : 1190914
-      },
-      "id" : "948f4001-0947-47b4-ae2a-d7cf9d68bcc2",
-      "expires_at" : "2021-11-04 10:29:10",
-      "created-at" : "2021-10-05 10:29:10",
-      "type" : "collection",
-      "customer-id" : "9482e1aa-043a-4550-9264-248c3237437a",
-      "updated-at" : "2021-10-05 10:29:10"
-    },
-    {
-      "status" : "successful",
-      "points" : 11,
-      "details" : {
-        "date" : "2021-10-05",
-        "amount" : 113.04000000000001,
-        "order-id" : 1190915
-      },
-      "id" : "948f40d5-74f3-49bd-9f98-cbd8cd4c82fb",
-      "expires_at" : "2021-11-04 10:31:29",
-      "created-at" : "2021-10-05 10:31:29",
-      "type" : "collection",
-      "customer-id" : "9482e1aa-043a-4550-9264-248c3237437a",
-      "updated-at" : "2021-10-05 10:31:29"
-    },
-    {
-      "status" : "successful",
-      "points" : 0,
-      "details" : {
-        "date" : "2021-10-05",
-        "amount" : 0.20000000000000001,
-        "order-id" : 1190930
-      },
-      "id" : "948fbf97-8fe8-4cb5-be51-099e6545e0c8",
-      "created-at" : "2021-10-05 16:25:56",
-      "type" : "redemption",
-      "customer-id" : "9482e1aa-043a-4550-9264-248c3237437a",
-      "updated-at" : "2021-10-05 16:25:56"
-    },
-    {
-      "status" : "successful",
-      "points" : 10,
-      "details" : {
-        "date" : "2021-10-05",
-        "amount" : 103.48,
-        "order-id" : 1190930
-      },
-      "id" : "948fc05e-cd16-472e-b750-c0d5d177a3af",
-      "expires_at" : "2021-11-04 16:28:06",
-      "created-at" : "2021-10-05 16:28:06",
-      "type" : "collection",
-      "customer-id" : "9482e1aa-043a-4550-9264-248c3237437a",
-      "updated-at" : "2021-10-05 16:28:06"
-    },
-    {
-      "status" : "successful",
-      "points" : 869,
-      "details" : {
-        "date" : "2021-10-11",
-        "amount" : 8695.6399999999994,
-        "order-id" : 1191018
-      },
-      "id" : "949bc203-3bab-4a26-9cb5-bebf447cf8c4",
-      "expires_at" : "2021-11-10 15:42:38",
-      "created-at" : "2021-10-11 15:42:38",
-      "type" : "collection",
-      "customer-id" : "9482e1aa-043a-4550-9264-248c3237437a",
-      "updated-at" : "2021-10-11 15:42:38"
-    },
-    {
-      "status" : "successful",
-      "points" : 0,
-      "details" : {
-        "date" : "2021-10-13",
-        "amount" : 2,
-        "order-id" : 1191058
-      },
-      "id" : "949fb81c-695f-4554-8d74-a994887b9610",
-      "created-at" : "2021-10-13 14:58:15",
-      "type" : "redemption",
-      "customer-id" : "9482e1aa-043a-4550-9264-248c3237437a",
-      "updated-at" : "2021-10-13 14:58:15"
-    }
-  ],
-  "meta" : {
-    "total-pages" : 16,
-    "count" : 10,
-    "current-page" : 1,
-    "total" : 154,
-    "per-page" : 10
-  }
-}
-"""
-        return GsonHelper.gsonFinal().fromJson(json, JsonObject::class.java)
-    }
 
     override fun getTiers(): List<Tier> {
         return tiers
     }
 
-    override fun sortHistory() {
-        newestToOldest = !newestToOldest
-        sortTransactionList()
-        loyaltyView.showLoyaltyPointsHistory(newestToOldest, transactionsList)
-    }
-
-    private fun sortTransactionList() {
-        consolidatedList.clear()
-        val groupedHashMap = groupDataIntoHashMap(transactionsList)
-        val keys: List<String> = ArrayList(groupedHashMap.keys)
-        Collections.sort(keys) { lhs: String?, rhs: String? ->
-            try {
-                val simpleDateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
-                simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
-                val lhsDate = simpleDateFormat.parse(lhs)
-                val rhsDate = simpleDateFormat.parse(rhs)
-                if (newestToOldest) {
-                    return@sort rhsDate.compareTo(lhsDate)
-                } else {
-                    return@sort lhsDate.compareTo(rhsDate)
-                }
-            } catch (e: ParseException) {
-                e.printStackTrace()
-            }
-            0
-        }
-        val sortedHashMap: HashMap<String, List<LoyaltyTransaction>> = LinkedHashMap()
-        for (key in keys) {
-            sortedHashMap[key] = groupedHashMap[key]!!
-        }
-        for (date in sortedHashMap.keys) {
-            val dateItem = DateItem()
-            dateItem.date = date
-            consolidatedList.add(dateItem)
-            for (loyaltyTransaction in sortedHashMap[date]!!) {
-                val loyaltyTransactionItem = LoyaltyTransactionItem()
-                loyaltyTransactionItem.loyaltyTransaction = loyaltyTransaction
-                consolidatedList.add(loyaltyTransactionItem)
-            }
-        }
-    }
-
-    private fun groupDataIntoHashMap(loyaltyTransactions: List<LoyaltyTransaction>): HashMap<String, MutableList<LoyaltyTransaction>> {
-        val groupedHashMap = HashMap<String, MutableList<LoyaltyTransaction>>()
-        for (loyaltyTransaction in loyaltyTransactions) {
-            val hashMapKey = TimeUtil.formatDate(loyaltyTransaction.details.date, "yyyy-MM-dd")
-            if (groupedHashMap.containsKey(hashMapKey)) {
-                groupedHashMap[hashMapKey]!!.add(loyaltyTransaction)
-            } else {
-                val list: MutableList<LoyaltyTransaction> = ArrayList()
-                list.add(loyaltyTransaction)
-                groupedHashMap[hashMapKey] = list
-            }
-        }
-        return groupedHashMap
-    }
-
-    override fun getSortingCategories() {
-        sortingCategories.clear()
-        sortingCategories.add(
-            SortingCategory(
-                cacheUtil.getTranslations(Text.ALL_LABEL, "All"),
-                true,
-                HistorySortType.ALL
-            )
-        )
-        sortingCategories.add(
-            SortingCategory(
-                cacheUtil.getTranslations(Text.EARNED_LABEL, "Earned"),
-                false,
-                HistorySortType.EARNED
-            )
-        )
-        sortingCategories.add(
-            SortingCategory(
-                cacheUtil.getTranslations(Text.USED_LABEL, "Used"),
-                false,
-                HistorySortType.USED
-            )
-        )
-        loyaltyView.showSortingCategories(sortingCategories)
-    }
 }

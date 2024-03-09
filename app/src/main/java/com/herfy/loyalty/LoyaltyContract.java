@@ -32,40 +32,21 @@ public interface LoyaltyContract {
 
         void showQrData(String data);
 
-        void showSortingCategories(ArrayList<SortingCategory> sortingCategories);
-
-        void updateSortingCategory(SortingCategory category);
-
-        void updateTransactions();
+        void showTiers(Loyalty loyalty);
     }
 
-    interface Presenter extends BasePresenter, HistorySortAdapter.CategoryListener {
+    interface Presenter extends BasePresenter {
 
         void getLoyalty();
 
         void getCustomerLoyalty();
 
-        void getCustomerDetails();
-
-        void getLoyaltyHistoryTransaction();
-
-        void getLoyaltyHistoryTransaction2(int page);
-
-        void onBindLoyaltyHistoryViewAtPosition(int position, LoyaltyPointsViewHolder loyaltyPointsViewHolder);
-
-        int getLoyaltyPointsHistoryCount();
-
         List<Tier> getTiers();
 
-        void sortHistory();
-
-        void cleanup();
 
         void redeemPoints(int points);
 
-        ArrayList<ListItem> getConsolidatedList();
 
-        void getSortingCategories();
     }
 
 }

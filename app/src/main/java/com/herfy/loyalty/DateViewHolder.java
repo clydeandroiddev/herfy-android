@@ -107,17 +107,7 @@ public class DateViewHolder extends RecyclerView.ViewHolder implements LoyaltyCo
     }
 
     @Override
-    public void showSortingCategories(ArrayList<SortingCategory> sortingCategories) {
-
-    }
-
-    @Override
-    public void updateSortingCategory(SortingCategory category) {
-
-    }
-
-    @Override
-    public void updateTransactions() {
+    public void showTiers(Loyalty loyalty) {
 
     }
 }

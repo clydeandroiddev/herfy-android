@@ -53,11 +53,7 @@ class CustomButtonsToolbar @JvmOverloads constructor(
             ).let {
                 rightButton?.setImageResource(it)
             }
-
-            ta.getString(R.styleable.CustomButtonsToolbar_title)?.let {
-                tvTitle?.text = it
-            }
-            ta.getColor(R.styleable.TitleToolbar_rightButtonColor, Color.WHITE)?.let {
+            ta.getColor(R.styleable.CustomButtonsToolbar_titleTextColor, Color.WHITE)?.let {
                 tvTitle?.setTextColor(it)
             }
         } finally {

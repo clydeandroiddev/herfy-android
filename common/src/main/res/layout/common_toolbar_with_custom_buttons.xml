@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:textColor="#0C0C0C"
         android:textSize="18sp"
-        style="@style/Styles.Text.Title1"
+        style="@style/Styles.Text.Footnote.Semi.Bold"
         android:gravity="center_horizontal"
         tools:text="Testing"
         app:layout_constraintStart_toEndOf="@id/ib_navigation"

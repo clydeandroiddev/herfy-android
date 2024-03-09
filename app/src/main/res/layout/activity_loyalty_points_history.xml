@@ -13,6 +13,7 @@
         android:layout_height="60dp"
         android:background="#F7F7F7"
         android:elevation="4dp"
+        android:paddingHorizontal="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -52,9 +53,13 @@
                 android:visibility="gone"
                 tools:itemCount="3"
                 tools:listitem="@layout/item_loyalty_history"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <include
+            android:id="@+id/placeholder_loyalty_history"
+            layout="@layout/placeholder_loyalty_history"/>
 
     </LinearLayout>
 
@@ -63,12 +68,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="gone"
+        android:layout_marginTop="41dp"
         app:emptyStateDrawable="@drawable/ic_loyalty_no_history"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_title"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar_title" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

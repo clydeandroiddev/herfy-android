@@ -19,6 +19,9 @@ import com.herfy.base.BaseActivity
 import com.herfy.databinding.ActivityLoyaltyPointsHistoryBinding
 import com.herfy.model.SortingCategory
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.OnLayoutLoadingCompleted
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
 import com.moneyhash.sdk.android.extensions.inflater
@@ -87,16 +90,17 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyHistoryContract.View {
                     onBackPressedDispatcher.onBackPressed()
                 }
             }
-
+            loyaltyPresenter.getSortingCategories()
             rvSorting.apply {
                 adapter = historySortAdapter
                 setHasFixedSize(true)
             }
 
             swipeRefreshLayout.setOnRefreshListener {
-                empty.visibility = View.GONE
-                rvSorting.visibility = View.GONE
-                recyclerView.visibility = View.GONE
+                empty.gone()
+                rvSorting.visible()
+                recyclerView.gone()
+                placeholderLoyaltyHistory.shimmerLoyaltyHistory.visible()
                 page = 1
                 loyaltyPresenter.getLoyaltyHistoryTransaction2(page)
             }
@@ -138,6 +142,9 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyHistoryContract.View {
         binding.apply {
             empty.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
+            rvSorting.visibility = View.GONE
+            recyclerView.visibility = View.GONE
+            placeholderLoyaltyHistory.shimmerLoyaltyHistory.gone()
         }
     }
 
@@ -156,11 +163,15 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyHistoryContract.View {
             if (loyaltyTransactions.size > 0) {
                 empty.visibility = View.GONE
                 rvSorting.visibility = View.VISIBLE
-                recyclerView.visibility = View.VISIBLE
+                recyclerView.OnLayoutLoadingCompleted {
+                    placeholderLoyaltyHistory.shimmerLoyaltyHistory.gone()
+                    recyclerView.visibility = View.VISIBLE
+                }
             } else {
                 empty.visibility = View.VISIBLE
                 rvSorting.visibility = View.GONE
                 recyclerView.visibility = View.GONE
+                placeholderLoyaltyHistory.shimmerLoyaltyHistory.gone()
             }
         }
 
@@ -169,6 +180,7 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyHistoryContract.View {
 
     override fun setLoyaltyHistory(loyaltyTransaction: LoyaltyTransaction) {}
     override fun showSortingCategories(sortingCategories: ArrayList<SortingCategory>) {
+        binding.rvSorting.visible()
         historySortAdapter.updateList(sortingCategories)
     }
 
