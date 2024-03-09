@@ -34,8 +34,10 @@ import com.herfy.main.NavigationActivity
 import com.herfy.util.CacheHelper
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.*
 import com.skylinedynamics.solosdk.api.models.objects.Favorite
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
@@ -83,7 +85,8 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         eventAttributes["User ID"] = AuthUtil.getInstance().customer.id
         logEvent("MyFavoritesView", eventAttributes, "", 0.0)
 //        binding.blocker.visibility = View.VISIBLE
-        binding.newMenuItemSearchShimmer.visibility = View.VISIBLE
+        binding.newMenuItemSearchShimmer.visible()
+        binding.orderTypeShimmering.visible()
         setUpNavigationObservers()
         getFavoritesByOrderType(
             currentOrderType,
@@ -192,6 +195,12 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         binding.btnAddMoreItems.text = CacheUtil.getInstance().getTranslations(Text.ADD_MORE_ITEMS,"Add more items")
         binding.txtViewBasket.text = CacheUtil.getInstance().getTranslations(Text.VIEW_BASKET, "View basket")
         binding.txtFavourites.text = CacheUtil.getInstance().getTranslations(Text.FAVORITES,"Favourites")
+    }
+
+    override fun setIsLoading(isLoading: Boolean) {
+        binding.favouriteRecycleView.setVisible(!isLoading)
+        binding.newMenuItemSearchShimmer.setVisible(isLoading)
+        binding.newMenuItemSearchShimmer.startShimmer()
     }
 
     override fun showLoadingDialog() {
@@ -417,6 +426,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
 
             favoritesPresenter?.setToSearch(false)
             binding.newMenuItemSearchShimmer.visibility = View.GONE
+            binding.orderTypeShimmering.gone()
             adapter?.notifyDataSetChanged()
 
             val isFavoritesNotEmpty = favorites.isNotEmpty()

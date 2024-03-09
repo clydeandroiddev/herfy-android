@@ -47,7 +47,20 @@
 
 
   </androidx.constraintlayout.widget.ConstraintLayout>
-
+  <com.facebook.shimmer.ShimmerFrameLayout
+      android:id="@+id/orderTypeShimmering"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:clipToPadding="false"
+      android:paddingTop="@dimen/padding_large"
+      android:visibility="gone"
+      app:layout_constraintStart_toStartOf="parent"
+      android:layout_marginStart="@dimen/_15sdp"
+      app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"
+      app:shimmer_duration="1000"
+      tools:visibility="gone">
+    <include layout="@layout/item_favourite_order_type_placeholder" />
+  </com.facebook.shimmer.ShimmerFrameLayout>
   <LinearLayout
       android:id="@+id/orderTypeContainer"
       android:layout_width="wrap_content"
@@ -103,7 +116,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
+      <include layout="@layout/item_favourite_place_holder" />
       <include layout="@layout/item_favourite_place_holder" />
 
       <include layout="@layout/item_favourite_place_holder" />
