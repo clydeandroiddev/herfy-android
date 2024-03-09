@@ -175,7 +175,6 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         adapter?.setOnAction(object : FavoritesAction {
 
             override fun onFavouriteAddToCart(favorite: Favorite) {
-                Log.d("FAFA","Favourite clicked ${CacheUtil.getInstance().orderType}" )
                 if (CacheUtil
                         .getInstance().orderType != OrderType.NONE
                 ) {
@@ -243,11 +242,9 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                                     .lowercase()
                                     .equals(orderType.type.replace("-", " ").lowercase(), ignoreCase = true)
                             ) {
-                                Log.d("FAFA", "Test type bai ${orderType.type}")
                                 txtOrder.setTextColor(Color.WHITE)
                                 txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
                             } else {
-                                Log.d("FAFA", "Not bai type bai ${orderType.type}")
                                 txtOrder.setTextColor(
                                     ContextCompat.getColor(
                                         requireContext(),
@@ -266,10 +263,6 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                                     if (childView.tag == clickedView.tag && type != null && CacheUtil.getInstance()
                                             .cart.isNotEmpty()
                                     ) {
-                                        Log.d(
-                                            "FAFA",
-                                            "Current bai type " + OrderType.fromString(childView.tag as String)
-                                        )
                                         showDialogClearCurrentBasketDialog(childView)
                                         txtOrderType.setTextColor(
                                             ContextCompat.getColor(
@@ -337,16 +330,9 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                         )
                     view.tag = orderType.type
                     val txtOrder = view.findViewById<MaterialTextView>(R.id.txtOrderType)
-                    Log.d("FAFA","Type bai from $" + orderType.type.lowercase()
-                        .contains(OrderType.DELIVERY.name, ignoreCase = true) + " "  + orderType.type.contains("deliver",ignoreCase = true) + CacheUtil
-                        .getInstance().orderType)
-
-                    Log.d("FAFA","Type name bai " + type.name
-                        .lowercase().equals(orderType.type,ignoreCase = true) + "Test bai " + type.name.replace("_", "") + "Order type bai" + orderType.type.replace("-", "").lowercase())
                     if (orderType.type.contains("deliver",ignoreCase = true) && CacheUtil
                             .getInstance().orderType == OrderType.NONE
                     ) {
-                        Log.d("FAFA", "Initial selected type ${orderType.type}")
                         CacheUtil.getInstance().orderType = OrderType.DELIVERY
                         txtOrder.setTextColor(Color.WHITE)
                         txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
@@ -356,7 +342,6 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                             .lowercase().equals(orderType.type,ignoreCase = true) || type.name.replace("_", " ").lowercase()
                             .equals(orderType.type.replace("-", " ").lowercase(), ignoreCase = true)) {
 //                            .equals(orderType.type, ignoreCase = true)) {
-                        Log.d("FAFA", "Initial selected type 1  ${orderType.type}")
                         txtOrder.setTextColor(Color.WHITE)
                         txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
                     }
@@ -386,7 +371,6 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                             val txtOrderType: TextView =
                                 childView.findViewById(R.id.txtOrderType)
                             if (childView.tag == clickedView.tag) {
-                                Log.d("FAFA","Tag bai ${childView.tag} and  ${txtOrderType.text.toString()}" )
                                 CacheUtil
                                     .getInstance().orderType = OrderType.fromString(clickedView.tag as String)
                                 txtOrderType.setTextColor(Color.WHITE)
@@ -398,7 +382,6 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                                 }
                                 txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
                             } else {
-                                Log.d("FAFA","Not Tag bai ${childView.tag} and  ${txtOrderType.text.toString()}" )
                                 txtOrderType.setTextColor(
                                     ContextCompat.getColor(
                                         requireContext(),
