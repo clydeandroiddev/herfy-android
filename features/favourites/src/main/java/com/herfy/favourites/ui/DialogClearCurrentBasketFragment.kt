@@ -1,23 +1,19 @@
 package com.herfy.favourites.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.herfy.common.base.BaseBottomSheetDialog
 import com.herfy.favourites.R
 import com.herfy.favourites.databinding.DialogClearBasketBinding
 import com.herfy.utils.base.mvvm.BaseDialogFragmentV2
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.ninjaTap
-import com.herfy.utils.extensions.setNavigationResult
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.SnackBarUtils
-import com.herfy.utils.helper.ViewUtil
 import com.herfy.utils.helper.launchWithTimber
 import com.herfy.utils.helper.viewLifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,16 +28,25 @@ class DialogClearCurrentBasketFragment: BaseDialogFragmentV2<DialogClearBasketBi
         const val TAG = "com.herfy.favourites.ui.DialogClearCurrentBasketFragment"
         const val CURRENT_CART_KEY = "CURRENT_CART_KEY"
         const val CART_TOTAL_KEY = "CART_TOTAL_KEY"
-        fun newInstance(): DialogClearCurrentBasketFragment {
-            return DialogClearCurrentBasketFragment()
+        const val SELECTED_ORDER_TYPE = "SELECTED_ORDER_TYPE"
+
+        fun newInstance(bundle: Bundle): DialogClearCurrentBasketFragment {
+            val fragment = DialogClearCurrentBasketFragment()
+            fragment.arguments = bundle
+            return fragment
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews(binding)
+        arguments
+            ?.getString(SELECTED_ORDER_TYPE)?.let { selectedOrderType ->
+                viewModel.setSelectedOrderType(selectedOrderType)
+            }
         setUpVmObservers()
     }
+
 
     private fun setUpVmObservers() {
         viewLifecycleScope.launchWithTimber {
@@ -66,7 +71,6 @@ class DialogClearCurrentBasketFragment: BaseDialogFragmentV2<DialogClearBasketBi
                 DialogUtils.showProgressDialog(requireContext(), isLoading = state.isLoading)
             }
             is DialogClearBasketState.Success -> {
-                Log.d("FAFA","Success bai " + state.currentCart.size)
                 val bundle = Bundle().apply {
                     putInt(CART_TOTAL_KEY, state.currentCart.size)
                 }
