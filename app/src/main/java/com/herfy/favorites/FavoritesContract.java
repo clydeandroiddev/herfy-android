@@ -16,7 +16,7 @@ public interface FavoritesContract {
 
     interface View extends BaseView<Presenter> {
 
-        void showLoadingDialog();
+        void setIsLoading(boolean isLoading);
 
         void showFavorites(ArrayList<Favorite> favorites);
 

@@ -83,6 +83,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void getFavorites(int page, String orderTypeId) {
+        favoritesView.setIsLoading(true);
         CustomersApiCall.getInstance().getFavouritesByOrderTypeId(orderTypeId,AuthUtil.getInstance().getCustomer().getId(),
                 String.valueOf(page),new ApiRequestListener() {
             @Override
@@ -101,6 +102,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                     }
 
                     if (page == pagination.getTotalPages()) {
+                        favoritesView.setIsLoading(false);
                         favoritesView.showFavorites(favorites);
                     } else {
                         getFavorites(page + 1,orderTypeId);
@@ -139,49 +141,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     @Override
     public void onBindFavoriteViewAtPosition(int position, FavoriteViewHolder favoriteViewHolder) {
         ArrayList<String> outOfStockLocationList = new ArrayList<String>();
-        AppDatabase appDatabase = AppDatabase.getInstance();
-
-        String id = "";
-        if (fromSearch) {
-            id = searchFavorites.get(position).getAttributes().getItemId();
-        } else {
-            id = favorites.get(position).getAttributes().getItemId();
-        }
-
-        String data = "";
-
-        //TODO: Use file cache only for Lorenzo for now
-        if (BuildUtil.soloAppKey().equalsIgnoreCase("7r5YQwmSgZCtM0ux")) {
-            data = favoritesView.getFromCache(id);
-        } else {
-            String applicationId = CacheUtil.getInstance().getApplication().getId();
-            MenuItemDb menuItemDb = appDatabase.menuItemDao().findByApplicationAndId(applicationId, id);
-            if (menuItemDb != null) {
-                data = menuItemDb.data;
-            }
-        }
-        if (data != null && !data.isEmpty()) {
-            try {
-                itemById = GsonHelper.gsonFinal().fromJson(data, MenuItem.class);
-                outOfStockLocationList.addAll(itemById.getOutOfStockLocations());
-                listPrice = itemById.getListPrice();
-                if (CacheUtil.getInstance().getOrderStore() != null) {
-                    orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
-                }
-
-
-                if (fromSearch) {
-                    favoriteViewHolder.setFavorite(searchFavorites.get(position), outOfStockLocationList, listPrice, itemById.getPrice(orderStoreId));
-                } else {
-                    favoriteViewHolder.setFavorite(favorites.get(position), outOfStockLocationList, listPrice, itemById.getPrice(orderStoreId));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            listPrice = 0.0;
-            favoritesView.showError(CacheUtil.getInstance().getTranslations(Text.ITEM_NO_LONGER_AVAILABLE));
-        }
+        favoriteViewHolder.setFavorite(favorites.get(position), outOfStockLocationList, listPrice, itemById.getPrice(orderStoreId));
 
 
     }
@@ -284,6 +244,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                                     if (MenuUtil.isItemAvailable(timedEvent, concept.getCurrentTime())) {
                                         addCartItem(favorite);
                                     } else {
+                                        Log.d("FAFA","Error called");
                                         favoritesView.showError(MenuUtil.getTimedEventError(timedEvent));
                                     }
                                 }
@@ -304,6 +265,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
+                Log.d("FAFA","An error occured");
                 favoritesView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)));
             }
         });
@@ -769,6 +731,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
+                Log.d("FAFA","Error bai " + o.toString());
                 favoritesView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.ITEM_NO_LONGER_AVAILABLE)));
             }
         });
