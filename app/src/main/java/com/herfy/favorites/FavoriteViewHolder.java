@@ -128,8 +128,9 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 //        add.setText(CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG, "Add to Bag"));
     }
 
+
     @Override
-    public void showLoadingDialog() {
+    public void setIsLoading(boolean isLoading) {
 
     }
 
