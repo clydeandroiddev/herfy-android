@@ -297,6 +297,19 @@
                         layout="@layout/payment_method_new"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_medium"
+                        android:layout_marginStart="@dimen/margin_small"
+                        android:layout_marginEnd="@dimen/margin_small"/>
+
+                    <include
+                        android:id="@+id/layout_alrahji"
+                        layout="@layout/layout_alrhaji"/>
+
+                    <include
+                        android:id="@+id/layout_loyalty"
+                        layout="@layout/item_loyalty_points"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/_5sdp"
                         android:layout_marginStart="@dimen/margin_small"
                         android:layout_marginEnd="@dimen/margin_small"/>
