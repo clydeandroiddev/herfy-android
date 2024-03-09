@@ -3,13 +3,11 @@ package com.herfy.notification.views
 import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +26,7 @@ import com.herfy.notification.adapter.RecyclerTouchListener
 import com.herfy.notification.adapter.RecyclerTouchListener.OnRowClickListener
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
@@ -217,12 +215,7 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
         val value = notifDeeplink.value
         when (type) {
             "home" -> findNavController().navigateUp()
-            "categories", "category" -> {
-                val request =
-                    NavDeepLinkRequest.Builder.fromUri(Uri.parse("${Values.NAV_DEEP_LINK_BASE_URL}nav_menu/$value"))
-                        .build()
-                NavigationUtils.navigateSafe(findNavController(), request)
-            }
+            "categories", "category" -> findNavController().navigateToDeepLink("nav_menu/$value")
             "item" -> NavigationUtils.navigateSafe(findNavController(), NotificationsFragmentDirections.actionNotificationsToMenuItem("", value))
             "digital-coupon", "promotions", "promo" -> {
                 showLoadingDialog()

@@ -2,7 +2,6 @@ package com.herfy.home.views
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
@@ -10,7 +9,6 @@ import android.view.View
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,7 +30,6 @@ import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
-import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -276,12 +273,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 activity?.apply {
                     runOnUiThread {
                         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
-                        val request = NavDeepLinkRequest.Builder.fromUri(
-                            Uri.parse(
-                                "${Values.NAV_DEEP_LINK_BASE_URL}nav_menu_item/${pair.first}/${pair.second}"
-                            )
-                        ).build()
-                        NavigationUtils.navigateSafe(findNavController(), request)
+                        findNavController().navigate("nav_menu_item/${pair.first}/${pair.second}")
                     }
                 }
             }
@@ -289,10 +281,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.showMenuCategory.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { menuCategoryId ->
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
-                val request =
-                    NavDeepLinkRequest.Builder.fromUri(Uri.parse("android-app://com.herfy/nav_menu/$menuCategoryId"))
-                        .build()
-                NavigationUtils.navigateSafe(findNavController(), request)
+                findNavController().navigate("nav_menu/$menuCategoryId")
             }
         }
 
@@ -528,12 +517,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.showCart.observeNonNull(this){
             it.getContentIfNotHandled()?.let { isAvail ->
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
-                val request = NavDeepLinkRequest.Builder.fromUri(
-                    Uri.parse(
-                        "${Values.NAV_DEEP_LINK_BASE_URL}nav_cart/${isAvail}"
-                    )
-                ).build()
-                NavigationUtils.navigateSafe(findNavController(), request)
+                findNavController().navigate("nav_cart/$isAvail")
             }
         }
 

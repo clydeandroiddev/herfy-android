@@ -28,7 +28,6 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResultListener
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -68,6 +67,7 @@ import com.herfy.util.StringUtil
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
@@ -823,10 +823,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         })
         binding.homeOption4.checkOutMenu.setOnClickListener {
             MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
-            val request =
-                NavDeepLinkRequest.Builder.fromUri(Uri.parse("${Values.NAV_DEEP_LINK_BASE_URL}nav_menu"))
-                    .build()
-            NavigationUtils.navigateSafe(findNavController(), request)
+            findNavController().navigateToDeepLink("nav_menu")
         }
         binding.homeOption4.findBranches.setOnClickListener {
             NavigationUtils.navigateSafe(
@@ -835,10 +832,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         }
         binding.browseMenu.setOnClickListener {
             MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
-            val request =
-                NavDeepLinkRequest.Builder.fromUri(Uri.parse("${Values.NAV_DEEP_LINK_BASE_URL}nav_menu"))
-                    .build()
-            NavigationUtils.navigateSafe(findNavController(), request)
+            findNavController().navigateToDeepLink("nav_menu")
         }
         binding.totalContainer.setOnClickListener(View.OnClickListener {
             if (CacheUtil.getInstance().application.attributes.menuOnly) {
@@ -1524,10 +1518,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     override fun selectItem(menuCategory: MenuCategory, position: Int) {
         activity?.runOnUiThread {
             MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
-            val request =
-                NavDeepLinkRequest.Builder.fromUri(Uri.parse("${Values.NAV_DEEP_LINK_BASE_URL}nav_menu/${menuCategory.id}"))
-                    .build()
-            NavigationUtils.navigateSafe(findNavController(), request)
+            findNavController().navigateToDeepLink("nav_menu/${menuCategory.id}")
         }
     }
 

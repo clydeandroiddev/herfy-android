@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -15,7 +14,6 @@ import android.text.TextWatcher
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,13 +35,13 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.isVisible
+import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.smoothSnapToPosition
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
-import com.herfy.utils.helper.NavigationUtils
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -417,10 +415,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         viewModel.showMenuCategory.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { menuCategoryId ->
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
-                val request =
-                    NavDeepLinkRequest.Builder.fromUri(Uri.parse("android-app://com.herfy/nav_menu/$menuCategoryId"))
-                        .build()
-                NavigationUtils.navigateSafe(findNavController(), request)
+                findNavController().navigateToDeepLink("nav_menu/$menuCategoryId")
             }
         }
 
@@ -480,21 +475,11 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     }
 
     private fun navMenuItem(menuCategoryId: String, menuItemId: String) {
-        val request = NavDeepLinkRequest.Builder.fromUri(
-            Uri.parse(
-                "${Values.NAV_DEEP_LINK_BASE_URL}nav_menu_item/$menuCategoryId/${menuItemId}"
-            )
-        ).build()
-        NavigationUtils.navigateSafe(findNavController(), request)
+        findNavController().navigateToDeepLink("nav_menu_item/$menuCategoryId/$menuItemId")
     }
 
     private fun navCart() {
-        val request = NavDeepLinkRequest.Builder.fromUri(
-            Uri.parse(
-                "${Values.NAV_DEEP_LINK_BASE_URL}nav_cart"
-            )
-        ).build()
-        NavigationUtils.navigateSafe(findNavController(), request)
+        findNavController().navigateToDeepLink("nav_cart")
     }
 
 }
