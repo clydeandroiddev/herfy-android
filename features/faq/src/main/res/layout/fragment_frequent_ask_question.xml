@@ -39,17 +39,17 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/frequencyRecycleView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/margin_large"
-        android:layout_marginHorizontal="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginTop="16dp"
         android:clipToPadding="false"
         android:orientation="vertical"
         android:paddingBottom="@dimen/_100sdp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/icClose"
         app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
         tools:itemCount="4"
         tools:listitem="@layout/item_frequent" />
