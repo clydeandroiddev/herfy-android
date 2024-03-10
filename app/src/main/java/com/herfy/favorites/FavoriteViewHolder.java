@@ -226,7 +226,7 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
         ArrayList<MenuItem> cart = CacheUtil.getInstance().getCart();
 
         for (MenuItem item : cart) {
-            if (Objects.equals(String.valueOf(item.getId()), favorite.getItemId()) && item.getFavourites()) {
+            if (Objects.equals(String.valueOf(item.getId()), favorite.getItemId()) && item.isFavorite()) {
                 quantity++;
             }
         }

@@ -597,7 +597,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                                         }
                                     }
                                 }
-                                menuItem.setFavourites(true);
+                                menuItem.setFavorite(true);
                                 CacheUtil.getInstance().addToCart(menuItem);
                                 favoritesView.addToCartFavorite(menuItem, imageView);
                             }
@@ -708,7 +708,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
                                     int cartCount = CacheUtil.getInstance().getCartQuantity();
                                     removeMukafaaRedemption();
-                                    menuItem.setFavourites(true);
+                                    menuItem.setFavorite(true);
                                     CacheUtil.getInstance().addToCart(menuItem);
                                     if (cartCount == 0) {
                                         favoritesView.setCartExpiry();
