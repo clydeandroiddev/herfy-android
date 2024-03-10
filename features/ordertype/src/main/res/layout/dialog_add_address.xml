@@ -7,7 +7,8 @@
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/order_type_bg_color">
+        android:background="@color/order_type_bg_color"
+        android:isScrollContainer="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -186,6 +187,7 @@
                                 android:digits="+1234567890"
                                 android:fontFamily="@font/inter_regular"
                                 android:gravity="center_vertical"
+                                android:imeOptions="actionNext"
                                 android:inputType="phone"
                                 android:paddingStart="16dp"
                                 android:paddingEnd="16dp"
@@ -212,8 +214,10 @@
                                 android:background="@drawable/background_edit_text"
                                 android:fontFamily="@font/inter_regular"
                                 android:gravity="center_vertical"
+                                android:imeOptions="actionNext"
                                 android:paddingStart="16dp"
                                 android:paddingEnd="16dp"
+                                android:singleLine="true"
                                 android:textColor="#0C0C0C"
                                 android:textSize="14sp"
                                 tools:text="45" />
@@ -237,6 +241,7 @@
                                 android:background="@drawable/background_edit_text"
                                 android:fontFamily="@font/inter_regular"
                                 android:gravity="center_vertical"
+                                android:imeOptions="actionDone"
                                 android:lineSpacingExtra="4dp"
                                 android:lines="2"
                                 android:maxLines="6"

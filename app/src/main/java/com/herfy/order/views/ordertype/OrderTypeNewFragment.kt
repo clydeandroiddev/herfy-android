@@ -239,9 +239,74 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         orderPresenter.getOrderTypes()
         orderPresenter.getAddresses(false)
         if (typeOrder != 0) {
-            selectOrderType(OrderType.fromInt(typeOrder))
+            simulateClick(OrderType.fromInt(typeOrder))
         } else {
-            selectOrderType(CacheUtil.getInstance().orderType)
+            simulateClick(CacheUtil.getInstance().orderType)
+        }
+    }
+
+    private fun findOrderType(type: OrderType): OrderType {
+        var typeNew = type
+        if (type === OrderType.NONE) {
+            if (isDeliveryAvailable) {
+                typeNew = OrderType.DELIVERY
+            } else if (isCurbsideAvailable) {
+                typeNew = OrderType.CURBSIDE
+            } else if (isPickupAvailable) {
+                typeNew = OrderType.PICKUP
+            } else if (isDineInAvailable) {
+                typeNew = OrderType.DINE_IN
+            }
+        } else {
+            if (type === OrderType.DELIVERY) {
+                if (!isDeliveryAvailable) {
+                    typeNew = if (isCurbsideAvailable) {
+                        OrderType.CURBSIDE
+                    } else if (isPickupAvailable) {
+                        OrderType.PICKUP
+                    } else {
+                        OrderType.DINE_IN
+                    }
+                }
+            } else if (type === OrderType.PICKUP) {
+                if (!isPickupAvailable) {
+                    typeNew = if (isDeliveryAvailable) {
+                        OrderType.DELIVERY
+                    } else if (isCurbsideAvailable) {
+                        OrderType.CURBSIDE
+                    } else {
+                        OrderType.DINE_IN
+                    }
+                }
+            } else if (type === OrderType.DINE_IN) {
+                if (!isDineInAvailable) {
+                    typeNew = if (isDeliveryAvailable) {
+                        OrderType.DELIVERY
+                    } else if (isCurbsideAvailable) {
+                        OrderType.CURBSIDE
+                    } else {
+                        OrderType.PICKUP
+                    }
+                }
+            }
+        }
+        return typeNew
+    }
+
+    private fun simulateClick(type: OrderType) {
+        try {
+            val typeNew = findOrderType(type)
+            if (typeNew === OrderType.DELIVERY) {
+                binding.deliveryButton.performClick()
+            } else if (typeNew === OrderType.PICKUP) {
+                binding.pickupButton.performClick()
+            } else if (typeNew === OrderType.DINE_IN) {
+                binding.dineInButton.performClick()
+            } else if (typeNew === OrderType.CURBSIDE) {
+                binding.pickupButton.performClick()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -565,51 +630,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         binding.dineInButton.typeface = FontHandler.getRegularTypeface()
         binding.pickupButton.typeface = FontHandler.getRegularTypeface()
         val isNone = false
-        var orderType = type
-        if (type === OrderType.NONE) {
-            if (isDeliveryAvailable) {
-                orderType = OrderType.DELIVERY
-            } else if (isCurbsideAvailable) {
-                orderType = OrderType.CURBSIDE
-            } else if (isPickupAvailable) {
-                orderType = OrderType.PICKUP
-            } else if (isDineInAvailable) {
-                orderType = OrderType.DINE_IN
-            }
-        } else {
-            if (type === OrderType.DELIVERY) {
-                if (!isDeliveryAvailable) {
-                    if (isCurbsideAvailable) {
-                        orderType = OrderType.CURBSIDE
-                    } else if (isPickupAvailable) {
-                        orderType = OrderType.PICKUP
-                    } else {
-                        orderType = OrderType.DINE_IN
-                    }
-                }
-            } else if (type === OrderType.PICKUP) {
-                if (!isPickupAvailable) {
-                    if (isDeliveryAvailable) {
-                        orderType = OrderType.DELIVERY
-                    } else if (isCurbsideAvailable) {
-                        orderType = OrderType.CURBSIDE
-                    } else {
-                        orderType = OrderType.DINE_IN
-                    }
-                }
-            } else if (type === OrderType.DINE_IN) {
-                if (!isDineInAvailable) {
-                    if (isDeliveryAvailable) {
-                        orderType = OrderType.DELIVERY
-                    } else if (isCurbsideAvailable) {
-                        orderType = OrderType.CURBSIDE
-                    } else {
-                        orderType = OrderType.PICKUP
-                    }
-                }
-            }
-        }
-
+        val orderType = findOrderType(type)
         var title: String? = ""
         if (orderType === OrderType.DELIVERY) {
             selectDelivery()
@@ -1509,7 +1530,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
+            currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (type == OrderType.CURBSIDE) {
