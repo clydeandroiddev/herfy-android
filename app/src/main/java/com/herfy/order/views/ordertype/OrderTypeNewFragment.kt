@@ -76,6 +76,7 @@ import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
 import com.herfy.util.*
 import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
+import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.*
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.setNavigationResult
@@ -208,6 +209,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult? ->
         if (result?.resultCode == Activity.RESULT_OK) {
+
             activity?.cast<BaseActivity> {
                 continueSelectingType(it, OrderType.CURBSIDE)
             }
@@ -339,11 +341,14 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     private fun navigateUp(proceed: Boolean) {
-        if(args.isFromFavorites) {
-            findNavController().navigate(OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true))
-        }
-        if (proceed && args.fromHome) {
-            findNavController().navigateToDeepLink("nav_menu")
+        if (args.isFromFavorites) {
+            orderPresenter.addToCartFavorite(CacheUtil.getInstance()
+                .retrieveFavoriteToAddToCart())
+        }else if (proceed && args.fromHome) {
+            val request =
+                NavDeepLinkRequest.Builder.fromUri(Uri.parse("${Values.NAV_DEEP_LINK_BASE_URL}nav_menu"))
+                    .build()
+            NavigationUtils.navigateSafe(findNavController(), request)
         } else {
             activity?.runOnUiThread {
                 activity?.cast<MainActivity> {
@@ -498,20 +503,12 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             pickupCurbsideStoresRecyclerViewAdapter =
                 StoresRecyclerViewAdapter(orderPresenter, false)
             binding.continueButton.setOnClickListener { v: View? ->
-                if (args.isFromFavorites && CacheUtil
-                        .getInstance().orderType != OrderType.NONE
-                ) {
-                    showLoadingDialog()
-                    orderPresenter.addCartItem(
-                        CacheUtil.getInstance().retrieveFavoriteToAddToCart()
-                    )
-                } else {
-                    chooseType(it)
-                }
                 if (dineInTabSelected) {
                     continueSelectingType(it, OrderType.DINE_IN)
                 } else if (deliveryTabSelected) {
                     goToAddAddress(false)
+                }else {
+                    chooseType(it)
                 }
             }
         }
@@ -641,10 +638,14 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     CacheUtil.getInstance().getTranslations(Text.FAVORITE_ADDED_TO_CART),
                     Toast.LENGTH_SHORT
                 ).show()
-
-                chooseType(it)
+               navigateToFavourites()
             }
         }
+    }
+
+    private fun navigateToFavourites() {
+        NavigationUtils
+            .navigateSafe(findNavController(), OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true))
     }
 
     private fun initialTypeState() {
@@ -1329,13 +1330,18 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             if (CacheUtil.getInstance().orderType !== OrderType.CURBSIDE) {
                 CacheUtil.getInstance().curbsideCar = null
             }
-            if (isMenuSeparate && isMenuRedownloaded) {
+            if (args.isFromFavorites) {
+                MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_ORDER_TYPE)
+                orderPresenter.addToCartFavorite(CacheUtil.getInstance()
+                    .retrieveFavoriteToAddToCart())
+            }else if (isMenuSeparate && isMenuRedownloaded) {
                 navigateUp(true)
             } else {
                 activity?.cast<BaseActivity> {
                     it.dismissDialogs()
                     val eventAttributes = HashMap<String, String>()
                     eventAttributes["Delivery"] = StringUtil.trimEventAttribute(address)
+
                     logEvent("OrderTypeSelection", eventAttributes, "", 0.0)
                     navigateUp(true)
                 }
@@ -1430,9 +1436,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         activity?.let {
             val baseActivity = it as BaseActivity
             baseActivity.dismissDialogs()
-            if (args.isFromFavorites) {
-                findNavController().navigate(OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true))
-            }
+            val isFromFavorites = args.isFromFavorites
         }
     }
 
@@ -1596,6 +1600,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 } else {
                     diffMenuSaved(null)
                 }
+
             } else {
                 diffMenuSaved(null)
             }
@@ -1608,8 +1613,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
-                    if (args.isFromFavorites) {
-                       findNavController().navigate(OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true))
+                    if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type == OrderType.EAT_IN || type == OrderType.DRIVE_THRU) {
+                        MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_ORDER_TYPE)
+                        orderPresenter.addToCartFavorite(CacheUtil
+                            .getInstance().retrieveFavoriteToAddToCart())
                     } else {
                         if (type == OrderType.CURBSIDE) {
                             proceedToCurbside()

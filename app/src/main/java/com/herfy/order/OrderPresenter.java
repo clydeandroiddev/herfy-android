@@ -1005,9 +1005,8 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                                         }
                                     }
                                 }
-                                menuItem.setFavourites(true);
+                                menuItem.setFavorite(true);
                                 CacheUtil.getInstance().addToCart(menuItem);
-                                Log.d("FAFA","Added to cart bai");
                                 orderView.addToCartFavorite(menuItem);
                             }
 
@@ -1117,12 +1116,11 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
                                     int cartCount = CacheUtil.getInstance().getCartQuantity();
                                     removeMukafaaRedemption();
-                                    menuItem.setFavourites(true);
+                                    menuItem.setFavorite(true);
                                     CacheUtil.getInstance().addToCart(menuItem);
                                     if (cartCount == 0) {
                                         orderView.setCartExpiry();
                                     }
-                                    Log.d("FAFA","Item to cart");
                                     orderView.addToCartFavorite(menuItem);
                                 }
 
@@ -1505,6 +1503,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
             }
 
         } else {
+
             orderView.showStore(true, store, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
         }
     }
