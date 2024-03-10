@@ -715,8 +715,8 @@ public class CacheUtil {
 
         for (MenuItem cartMenuItem : menuItems) {
             if (position != menuItems.indexOf(cartMenuItem)) {
-                if (Objects.equals(cartMenuItem.getId(), menuItem.getId()) && menuItem.getFavourites()) {
-                    cartMenuItem.setFavourites(true);
+                if (Objects.equals(cartMenuItem.getId(), menuItem.getId()) && menuItem.isFavorite()) {
+                    cartMenuItem.setFavorite(true);
                 }
                 if (menuItem.getId().equals(cartMenuItem.getId())) {
                     int sizeIndex = 0;
