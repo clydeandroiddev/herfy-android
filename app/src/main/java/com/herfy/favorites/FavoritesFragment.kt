@@ -1,7 +1,7 @@
 package com.herfy.favorites
 
 import android.content.Context.VIBRATOR_SERVICE
-import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -10,10 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.NavOptions
@@ -21,7 +18,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.OnClick
-import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
 import com.herfy.base.BaseActivity
@@ -32,6 +28,7 @@ import com.herfy.favourites.ui.DialogClearCurrentBasketFragment
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.util.CacheHelper
+import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
@@ -43,7 +40,6 @@ import com.skylinedynamics.solosdk.api.models.objects.Favorite
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.OrderTypeMenus
-import io.shipbook.shipbooksdk.Log
 
 class FavoritesFragment : BaseFragment(), FavoritesContract.View {
 
@@ -52,7 +48,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
     private lateinit var favoritesPresenter: FavoritesContract.Presenter
 
     private var adapter: FavoritesRecyclerViewAdapter? = null
-
+    private val orderTypeViews = mutableListOf<OrderTypeView>()
     private val args: FavoritesFragmentArgs by navArgs()
 
     private val orderTypeMenus by lazy {
@@ -160,13 +156,13 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             }
 
         binding.icBack.ninjaTap(viewLifecycleScope) {
-            findNavController().popBackStack()
+            findNavController().navigateUp()
         }
 
         if (args.isFromOrderType || CacheUtil.getInstance().cart.isNotEmpty()) {
             val cartTotalHasFavorites = CacheUtil.getInstance()
                 .cart
-                .map { it.favourites }
+                .map { it.isFavorite }
                 .count()
             binding.txtCartFavouriteTotal.text = cartTotalHasFavorites.toString()
             binding.footer.setVisible(cartTotalHasFavorites >= 1 )
@@ -178,6 +174,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                 if (CacheUtil
                         .getInstance().orderType != OrderType.NONE
                 ) {
+                    MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_FAVOURITES)
                     CacheUtil
                         .getInstance().saveFavoriteToAddToCart(favorite)
                     findNavController().navigate(FavoritesFragmentDirections.actionFavoritesToOrderType(isFromFavorites = true))
@@ -209,203 +206,34 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         }
     }
     override fun showFavorites(favorites: ArrayList<Favorite>) {
-        val mockOrderTypes = listOf(OrderTypeMenus("deliver", id = "9488","test",),
-            OrderTypeMenus("pickup", id = "9488","test",),
-            OrderTypeMenus("dine-in", id = "9488","test",))
-
+        val orderTypeMenus = CacheUtil
+            .getInstance()
+            .application
+            .attributes.orderTypeMenus
 
 
         activity?.let { activity ->
             val baseActivity = activity as BaseActivity
             baseActivity.dismissDialogs()
-            binding.orderTypeContainer.removeAllViews()
             val type = CacheUtil.getInstance().orderType
-            // todo refactor this by extracting this to make this more readable
-            if (args.isFromOrderType && type != OrderType.NONE) {
-                    mockOrderTypes
-                        .forEach { orderType ->
-                            val view = LayoutInflater.from(activity)
-                                .inflate(
-                                    R.layout.item_favourite_order_type,
-                                    binding.orderTypeContainer,
-                                    false
-                                )
-                            view.tag = orderType.type
-                            val txtOrder = view.findViewById<MaterialTextView>(R.id.txtOrderType)
-                            if (orderType.type.contains("deliver",ignoreCase = true) && type == OrderType.DELIVERY
-                            ) {
-                                txtOrder.setTextColor(Color.WHITE)
-                                txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
-                            } else if (type != null && type.name.lowercase()
-                                    .equals(orderType.type, ignoreCase = true) || orderType.type.lowercase()
-                                    .contains(type.name.lowercase()) || type.name.replace("_", " ")
-                                    .lowercase()
-                                    .equals(orderType.type.replace("-", " ").lowercase(), ignoreCase = true)
-                            ) {
-                                txtOrder.setTextColor(Color.WHITE)
-                                txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
-                            } else {
-                                txtOrder.setTextColor(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.color_gray
-                                    )
-                                )
-                                txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
-                            }
-                            val container =
-                                view.findViewById<ConstraintLayout>(R.id.favouriteOrderContainer)
-                            container.setOnClickListener { clickedView ->
-                                for (i in 0 until binding.orderTypeContainer.childCount) {
-                                    val childView = binding.orderTypeContainer.getChildAt(i)
-                                    val txtOrderType: TextView =
-                                        childView.findViewById(R.id.txtOrderType)
-                                    if (childView.tag == clickedView.tag && type != null && CacheUtil.getInstance()
-                                            .cart.isNotEmpty()
-                                    ) {
-                                        showDialogClearCurrentBasketDialog(childView)
-                                        txtOrderType.setTextColor(
-                                            ContextCompat.getColor(
-                                                requireContext(),
-                                                R.color.color_gray
-                                            )
-                                        )
-                                        return@setOnClickListener
-//                                        if (CacheUtil.getInstance().orderType != OrderType.NONE && args.isFromOrderType) {
-//                                            DialogClearCurrentBasketFragment.newInstance()
-//                                                .show(parentFragmentManager, DialogClearCurrentBasketFragment.TAG)
-//                                        }else {
-//                                            txtOrderType.setTextColor(Color.WHITE)
-//                                            txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
-//                                        }
-//
-//                                    } else {
-//                                        txtOrderType.setTextColor(
-//                                            ContextCompat.getColor(
-//                                                requireContext(),
-//                                                R.color.color_gray
-//                                            )
-//                                        )
-//                                        txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
-//                                    }
-                                    }else if (childView.tag == clickedView.tag) {
-                                        txtOrderType.setTextColor(Color.WHITE)
-                                        txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
-                                    } else {
-                                        txtOrderType.setTextColor(
-                                            ContextCompat.getColor(
-                                                requireContext(),
-                                                R.color.color_gray
-                                            )
-                                        )
-                                        txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
-                                    }
-
-                                    if (CacheUtil
-                                            .getInstance().cart.isEmpty()) {
-
-                                        favoritesPresenter?.getFavouritesByOrderTypeId(
-                                            orderType.id,
-                                            clickedView.tag as String
-                                        )
-                                    }
-                                }
-
-                            }
-                            val txtOrderType =
-                                view.findViewById<MaterialTextView>(R.id.txtOrderType)
-                            val formattedOrderType =
-                                OrderType.convertOrderTypeNameToDisplayName(orderType.type)
-                            txtOrderType.text = formattedOrderType
-                            binding.orderTypeContainer.addView(view)
+            if (type == OrderType.CURBSIDE) {
+                CacheUtil.getInstance().orderType = OrderType.DELIVERY
+            }
+                    binding.orderTypeContainer.removeAllViews()
+                    orderTypeMenus.forEach { orderType ->
+                        val view = LayoutInflater.from(activity)
+                            .inflate(R.layout.item_favourite_order_type, binding.orderTypeContainer, false)
+                        val viewHolder = OrderTypeViewHolder(view, orderType) { clickedOrderType ->
+                            handleOrderTypeClick(clickedOrderType,orderType)
                         }
-
-                } else {
-                mockOrderTypes.forEach { orderType ->
-                    val view = LayoutInflater.from(activity)
-                        .inflate(
-                            R.layout.item_favourite_order_type,
-                            binding.orderTypeContainer,
-                            false
-                        )
-                    view.tag = orderType.type
-                    val txtOrder = view.findViewById<MaterialTextView>(R.id.txtOrderType)
-                    if (orderType.type.contains("deliver",ignoreCase = true) && CacheUtil
-                            .getInstance().orderType == OrderType.NONE
-                    ) {
-                        CacheUtil.getInstance().orderType = OrderType.DELIVERY
-                        txtOrder.setTextColor(Color.WHITE)
-                        txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
-
+                        viewHolder.setInitialSelectedOrderType()
+                        orderTypeViews.add(viewHolder)
+                        viewHolder.bind()
+                        binding.orderTypeContainer.addView(view)
                     }
-                    else if (type.name
-                            .lowercase().equals(orderType.type,ignoreCase = true) || type.name.replace("_", " ").lowercase()
-                            .equals(orderType.type.replace("-", " ").lowercase(), ignoreCase = true)) {
-//                            .equals(orderType.type, ignoreCase = true)) {
-                        txtOrder.setTextColor(Color.WHITE)
-                        txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
-                    }
-                    else {
-                        if (type.value == OrderType.DELIVERY.value && orderType.type.contains("deliver")) {
-                            CacheUtil.getInstance().orderType = OrderType.DELIVERY
-                            txtOrder.setTextColor(Color.WHITE)
-                            txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
-                        }else {
-                            CacheUtil
-                                .getInstance()
-                                .orderType
-                            txtOrder.setTextColor(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.color_gray
-                                )
-                            )
-                            txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
-                        }
-                    }
-                    val container =
-                        view.findViewById<ConstraintLayout>(R.id.favouriteOrderContainer)
-                    container.setOnClickListener { clickedView ->
-                        for (i in 0 until binding.orderTypeContainer.childCount) {
-                            val childView = binding.orderTypeContainer.getChildAt(i)
-                            val txtOrderType: TextView =
-                                childView.findViewById(R.id.txtOrderType)
-                            if (childView.tag == clickedView.tag) {
-                                CacheUtil
-                                    .getInstance().orderType = OrderType.fromString(clickedView.tag as String)
-                                txtOrderType.setTextColor(Color.WHITE)
-                                if (CacheUtil.getInstance().orderType != OrderType.NONE && args.isFromOrderType && CacheUtil
-                                        .getInstance()
-                                        .cart.isNotEmpty()
-                                ) {
-                                    showDialogClearCurrentBasketDialog(childView)
-                                }
-                                txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
-                            } else {
-                                txtOrderType.setTextColor(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.color_gray
-                                    )
-                                )
-                                txtOrderType.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
-                            }
-                        }
-                        val txtOrderType =
-                            clickedView.findViewById<MaterialTextView>(R.id.txtOrderType)
-                        // todo ask maam rio what's the endpoint for filtering it
-                        favoritesPresenter?.getFavouritesByOrderTypeId(
-                            orderType.id,
-                            clickedView.tag as String
-                        )
-                    }
-
-                    val txtOrderType = view.findViewById<MaterialTextView>(R.id.txtOrderType)
-                    txtOrderType.text = getFormattedOrderType(orderType = orderType.type)
-                    binding.orderTypeContainer.addView(view)
                 }
-            }
-            }
+
+
 
             favoritesPresenter?.setToSearch(false)
             binding.newMenuItemSearchShimmer.visibility = View.GONE
@@ -418,13 +246,28 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             binding.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_FAVORITE_FOUND, "No favourites found."))
         }
 
-    private fun getFormattedOrderType(orderType:String): String {
-        return OrderType.convertOrderTypeNameToDisplayName(orderType)
-    }
+    private fun handleOrderTypeClick(selectedOrderTypeTag: String, orderType: OrderTypeMenus) {
+        orderTypeViews.forEach { orderTypeView ->
+            if (orderTypeView.tag == selectedOrderTypeTag) {
+                orderTypeView.setOrderTypeSelected()
+                CacheUtil.getInstance().orderType = OrderType.fromString(selectedOrderTypeTag)
+            } else {
+                orderTypeView.setOrderTypeUnselected()
+            }
+        }
 
-    private fun showDialogClearCurrentBasketDialog(selectedOrderTypeView: View) {
+        if (CacheUtil.getInstance().cart.isEmpty()) {
+            favoritesPresenter?.getFavouritesByOrderTypeId(
+                orderType.id,
+                orderType.type
+            )
+        } else {
+            showDialogClearCurrentBasketDialog(selectedOrderTypeTag)
+        }
+    }
+    private fun showDialogClearCurrentBasketDialog(selectedOrderTypeTag: String) {
         val bundle = Bundle().apply {
-            putString(DialogClearCurrentBasketFragment.SELECTED_ORDER_TYPE, selectedOrderTypeView.tag as String)
+            putString(DialogClearCurrentBasketFragment.SELECTED_ORDER_TYPE, selectedOrderTypeTag)
         }
 
         DialogClearCurrentBasketFragment.newInstance(bundle =bundle)
@@ -433,6 +276,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                 DialogClearCurrentBasketFragment.TAG
             )
     }
+
 
     override fun setFavorite(favorite: Favorite, outOfStockLocations: ArrayList<String>, discount: Double, specialPrice: Double) {}
     override fun showMenuItem(categoryId: String, menuItemId: String) {
