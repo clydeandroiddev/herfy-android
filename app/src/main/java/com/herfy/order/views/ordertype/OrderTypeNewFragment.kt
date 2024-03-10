@@ -82,6 +82,7 @@ import com.herfy.views.RecyclerViewUtil
 import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import io.shipbook.shipbooksdk.Log
 import java.util.*
 
 
@@ -156,7 +157,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                                 orderPresenter.getDiffMenuCdn(null)
                             } else {
                                 fromAddAddressDifferentMenu = false
-                                navigateUp()
+                                navigateUp(true)
                             }
                         }, { dialog, which ->
                             activity?.cast<BaseActivity> { it.dismissDialogs() }
@@ -173,7 +174,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                             orderPresenter.getDiffMenuCdn(null)
                         } else {
                             fromAddAddressDifferentMenu = false
-                            navigateUp()
+                            navigateUp(true)
                         }
                     }
                 } else {
@@ -210,8 +211,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         orderPresenter = OrderPresenter(this)
         orderPresenter.setGeocoder(
             Geocoder(
-                requireActivity(),
-                LocaleUtil.getInstance().createLocale()
+                requireActivity(), LocaleUtil.getInstance().createLocale()
             )
         )
         CacheUtil.getInstance().setAreas(areaJson())
@@ -1268,7 +1268,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
 
-    override fun saveAddress(address: Address) {}
+    override fun saveAddress(address: Address) {
+
+    }
+
     override fun updateAddress(address: String) {
         if (bookmarkAddressDialogFragment != null) {
             bookmarkAddressDialogFragment?.dismiss()
@@ -1368,6 +1371,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun diffMenuSaved(address: Address?) {
+
         orderPresenter.removeMukafaaRedemption()
         if (CacheUtil.getInstance().orderType == OrderType.DELIVERY || deliveryTabSelected) {
             orderPresenter.getStore(address)
@@ -1390,7 +1394,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
         if (fromAddAddressDifferentMenu) {
             fromAddAddressDifferentMenu = false
-            navigateUp()
+            navigateUp(true)
         }
     }
 
@@ -1494,7 +1498,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             if (orderTypeSelected != OrderType.NONE) {
                 if (cachedOrderType == OrderType.NONE) {
                     orderPresenter.getDiffMenuCdn(null)
-                } else diffMenuSaved(null)
+                } else {
+                    diffMenuSaved(null)
+                }
             } else {
                 diffMenuSaved(null)
             }

@@ -188,7 +188,6 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                                 latestAddress = address;
                             }
                             bookmarkedAddresses.add(address);
-
                         }
 
                         if (!fromSave) {
@@ -719,22 +718,15 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                         checkUnavailableMenuItems();
 
                     } else if (data instanceof JSONArray) {
-
                         JSONArray array = (JSONArray) data;
-
                         if (array.length() > 0) {
-
                             CacheUtil.getInstance().setOrderType(OrderType.DELIVERY);
                             store = Store.parseStore(array.getJSONObject(0));
                             CacheUtil.getInstance().setOrderStore(store);
                             selectedAddress = null;
-
                             checkUnavailableMenuItems();
-
                         } else {
-
                             orderView.showError(CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA));
-
                         }
 
                     }
@@ -1230,9 +1222,19 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     }
 
     @Override
-    public void getStore(com.skylinedynamics.solosdk.api.models.objects.Address address) {
-        String latitude = address.getAttributes().getLat();
-        String longitude = address.getAttributes().getLongt();
+    public void getStore(com.skylinedynamics.solosdk.api.models.objects.Address addressNew) {
+
+        String latitude = "";
+        String longitude = "";
+
+        if (addressNew != null) {
+            latitude = addressNew.getAttributes().getLat();
+            longitude = addressNew.getAttributes().getLongt();
+        } else {
+            latitude = String.valueOf(address.getLatitude());
+            longitude = String.valueOf(address.getLongitude());
+        }
+
         LocationApiCall.getInstance().getNearestStoreOrderOptions(latitude, longitude, new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
@@ -1241,33 +1243,21 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                     Object data = object.get("data");
 
                     if (data instanceof JSONObject) {
-
                         store = Store.parseStore((JSONObject) data);
                         CacheUtil.getInstance().setOrderStore(store);
-                        selectedAddress = address;
-
+                        selectedAddress = addressNew;
                         checkUnavailableMenuItems();
-
                     } else if (data instanceof JSONArray) {
-
                         JSONArray array = (JSONArray) data;
-
                         if (array.length() > 0) {
-
                             store = Store.parseStore(array.getJSONObject(0));
                             CacheUtil.getInstance().setOrderStore(store);
-                            selectedAddress = address;
-
+                            selectedAddress = addressNew;
                             checkUnavailableMenuItems();
-
                         } else {
-
                             orderView.showError(CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA));
-
                         }
-
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                     orderView.showError(CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA));

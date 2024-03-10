@@ -335,7 +335,11 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
                     addressLabel = labelValue
                     orderPresenter.address = address
                     showLoadingDialog()
-                    orderPresenter.updateAddAddress()
+                    if (AuthUtil.getInstance().isSignedIn) {
+                        orderPresenter.addAddress(phoneNumber, addressLabel, driverNote)
+                    } else {
+                        dismissDialogs()
+                    }
                 }
 
                 override fun error(text: String) {

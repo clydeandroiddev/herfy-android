@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.maps.model.LatLng
+import com.herfy.R2
 import com.herfy.common.utils.staticMap
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.DialogAddAddressBinding
@@ -21,6 +22,7 @@ import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
+
 
 class AddAddressDialog : DialogFragment() {
 
@@ -70,6 +72,7 @@ class AddAddressDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         setupViews()
     }
 
@@ -162,7 +165,13 @@ class AddAddressDialog : DialogFragment() {
             }
 
             if (AuthUtil.getInstance().isSignedIn) {
-                phoneNumberEdit.setText(AuthUtil.getInstance().customer.attributes.mobile.orEmpty())
+                phoneNumberEdit.apply {
+                    val mobileNumber = AuthUtil.getInstance().customer.attributes.mobile.orEmpty()
+                    setText(mobileNumber)
+                    if (mobileNumber.isNotEmpty()) {
+                        setSelection(length())
+                    }
+                }
             }
 
             continueButton.setOnClickListener {
