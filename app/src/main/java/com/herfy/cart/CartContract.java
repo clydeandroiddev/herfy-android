@@ -11,8 +11,7 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.ApiLogLevel;
-
+import com.herfy.utils.helper.ApiLogLevel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;

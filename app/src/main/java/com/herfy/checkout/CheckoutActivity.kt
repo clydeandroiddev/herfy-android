@@ -78,8 +78,8 @@ import com.herfy.payment.views.CustomCheckoutDialog.OnActionSelectedListener
 import com.herfy.payment.views.MoyasarActivity
 import com.herfy.payment.views.PaymentDialogFragment
 import com.herfy.ratings.AppRatingBroadcastReceiver
-import com.herfy.util.ApiLogLevel
-import com.herfy.util.ApiLogUtil.Companion.sendOrderLog
+import com.herfy.utils.helper.ApiLogLevel
+import com.herfy.utils.helper.ApiLogUtil.Companion.sendOrderLog
 import com.herfy.util.AppLogger
 import com.herfy.utils.helper.CurrencyUtils.Companion.updateCurrency
 import com.herfy.util.ShipBookLogger.logError

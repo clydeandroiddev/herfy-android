@@ -16,8 +16,8 @@ import com.herfy.model.CampaignToAdd
 import com.herfy.model.CouponResult
 import com.herfy.model.CouponToAdd
 import com.herfy.upsell.UpsellViewHolder
-import com.herfy.util.ApiLogLevel
-import com.herfy.util.ApiLogUtil.Companion.sendMessageLog
+import com.herfy.utils.helper.ApiLogLevel
+import com.herfy.utils.helper.ApiLogUtil.Companion.sendMessageLog
 import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
 import com.herfy.utils.analytics.MixpanelUtil

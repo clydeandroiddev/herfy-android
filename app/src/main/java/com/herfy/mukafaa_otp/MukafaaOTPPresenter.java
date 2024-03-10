@@ -10,8 +10,8 @@ import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.models.requestbodies.AuthorizeProviderBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.RedeemProviderBody;
 import com.skylinedynamics.solosdk.util.GsonHelper;
-import com.herfy.util.ApiLogLevel;
-import com.herfy.util.ApiLogUtil;
+import com.herfy.utils.helper.ApiLogLevel;
+import com.herfy.utils.helper.ApiLogUtil;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.handler.ErrorHandler;
 

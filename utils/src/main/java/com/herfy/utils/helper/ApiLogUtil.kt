@@ -1,7 +1,6 @@
-package com.herfy.util
+package com.herfy.utils.helper
 
 import com.google.gson.JsonObject
-import com.herfy.utils.helper.AuthUtil
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.LogsApiCall
 
