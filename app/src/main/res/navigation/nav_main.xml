@@ -641,5 +641,11 @@
         android:name="com.skylinedynamics.order.views.OrderTypeDialogFragment"
         android:label="order_type_caps"
         tools:layout="@layout/fragment_dialog_order_type" />
+    <fragment
+        android:id="@+id/nav_frequency"
+        android:name="com.herfy.faq.FrequencyAskQuestionFragment"
+        android:label="FrequencyAskQuestionFragment">
+        <deepLink app:uri="android-app://com.herfy/nav_frequency/" />
+    </fragment>
 
 </navigation>
