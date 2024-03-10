@@ -3,44 +3,15 @@
     <!-- Selected state -->
     <item android:state_selected="true">
         <layer-list>
-            <!-- Background color for selected state -->
-            <item>
-                <shape android:shape="rectangle">
-                    <solid android:color="@android:color/white" />
-                    <corners android:radius="20dp" />
-                </shape>
-            </item>
+
             <!-- Stroke for selected state -->
             <item android:top="1dp">
                 <shape android:shape="rectangle">
-                    <solid android:color="@color/white" />
-                    <stroke
-                        android:width="1dp"
-                        android:color="#0064AC" />
-                    <corners android:radius="@dimen/radius_small" />
-                </shape>
-            </item>
-        </layer-list>
-    </item>
-
-    <!-- Default state (unselected) -->
-    <item>
-        <layer-list>
-            <!-- Background color for unselected state -->
-            <item>
-                <shape android:shape="rectangle">
                     <solid android:color="@android:color/white" />
-                    <corners android:radius="20dp" />
-                </shape>
-            </item>
-            <!-- Stroke for unselected state -->
-            <item android:top="1dp">
-                <shape android:shape="rectangle">
-                    <solid android:color="@color/white" />
                     <stroke
                         android:width="1dp"
-                        android:color="#E6F0F7" />
-                    <corners android:radius="20dp" />
+                        android:color="#0064AC" /> <!-- Use the color of the radius here -->
+                    <corners android:radius="@dimen/radius_small" />
                 </shape>
             </item>
         </layer-list>
