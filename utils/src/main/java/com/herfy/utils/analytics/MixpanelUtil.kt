@@ -41,6 +41,8 @@ class MixpanelUtil(val context: Context) {
         const val EVENT_SEARCH_ITEM = "search_item"
         const val EVENT_VIEW_MENU = "view_menu"
         const val EVENT_VIEW_ITEM = "view_item"
+        const val ADD_TO_CART_FROM_FAVOURITES = "add_to_cart_from_favorites"
+        const val ADD_TO_CART_FROM_ORDER_TYPE = "add_to_cart_from_favorites"
         const val EVENT_FAVORITE_ITEM = "favorite_item"
         const val EVENT_VIEW_FAVORITE_ITEMS = "view_favorite_items"
         const val EVENT_VIEW_STORE_LOCATOR = "view_store_locator"
