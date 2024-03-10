@@ -1,4 +1,6 @@
-gpackage com.herfy.faq.adapter
+
+
+package com.herfy.faq.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
