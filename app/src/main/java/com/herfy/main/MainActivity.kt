@@ -28,6 +28,8 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -646,6 +648,18 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.drawerLayout.setScrimColor(Color.TRANSPARENT)
         showSocialMediaLinks()
 
+        binding
+            .sidebar
+            .faqs
+            .ninjaTap(lifecycleScope) {
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+                val request = NavDeepLinkRequest.Builder.fromUri(
+                    Uri.parse(
+                        "${Values.NAV_DEEP_LINK_BASE_URL}nav_frequency/"
+                    )
+                ).build()
+                NavigationUtils.navigateSafe(navController, request)
+            }
         binding.sidebar.signin.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             val intent = Intent(this, AuthActivity::class.java)
@@ -769,7 +783,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         binding.sidebar.promotions.setOnClickListener { view: View? ->
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            navController.navigateToDeepLink("nav_promotions")
+            NavigationUtils.navigateSafe(
+                navController,
+                HomeFragmentDirections.actionHomeToPromotions()
+            )
         }
         binding.toolbarMain.apply {
             setSideButtonAction {
