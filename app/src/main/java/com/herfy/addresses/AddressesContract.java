@@ -10,7 +10,7 @@ import com.herfy.addresses.viewholders.AddressViewHolder;
 import com.herfy.addresses.viewholders.PlaceViewHolder;
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
-import com.herfy.location.FusedLocationProvider;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 
 import java.util.ArrayList;

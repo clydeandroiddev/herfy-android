@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -26,7 +25,6 @@ import com.herfy.database.entities.ModifierGroupDb;
 import com.herfy.database.entities.ModifierItemDb;
 import com.herfy.database.entities.StoreDb;
 import com.herfy.database.responses.MenuCategoryItemResponse;
-import com.herfy.location.FusedLocationProvider;
 import com.herfy.model.SupportedCountry;
 import com.herfy.order.viewholders.AddressViewHolder;
 import com.herfy.order.viewholders.StoreViewHolder;
@@ -42,6 +40,7 @@ import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.menu.MenuUtil;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.ApiRequestWithHeadersListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
@@ -189,7 +188,6 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                                 latestAddress = address;
                             }
                             bookmarkedAddresses.add(address);
-
                         }
 
                         if (!fromSave) {
@@ -720,22 +718,15 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                         checkUnavailableMenuItems();
 
                     } else if (data instanceof JSONArray) {
-
                         JSONArray array = (JSONArray) data;
-
                         if (array.length() > 0) {
-
                             CacheUtil.getInstance().setOrderType(OrderType.DELIVERY);
                             store = Store.parseStore(array.getJSONObject(0));
                             CacheUtil.getInstance().setOrderStore(store);
                             selectedAddress = null;
-
                             checkUnavailableMenuItems();
-
                         } else {
-
                             orderView.showError(CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA));
-
                         }
 
                     }
@@ -1231,9 +1222,19 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     }
 
     @Override
-    public void getStore(com.skylinedynamics.solosdk.api.models.objects.Address address) {
-        String latitude = address.getAttributes().getLat();
-        String longitude = address.getAttributes().getLongt();
+    public void getStore(com.skylinedynamics.solosdk.api.models.objects.Address addressNew) {
+
+        String latitude = "";
+        String longitude = "";
+
+        if (addressNew != null) {
+            latitude = addressNew.getAttributes().getLat();
+            longitude = addressNew.getAttributes().getLongt();
+        } else {
+            latitude = String.valueOf(address.getLatitude());
+            longitude = String.valueOf(address.getLongitude());
+        }
+
         LocationApiCall.getInstance().getNearestStoreOrderOptions(latitude, longitude, new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
@@ -1242,33 +1243,21 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                     Object data = object.get("data");
 
                     if (data instanceof JSONObject) {
-
                         store = Store.parseStore((JSONObject) data);
                         CacheUtil.getInstance().setOrderStore(store);
-                        selectedAddress = address;
-
+                        selectedAddress = addressNew;
                         checkUnavailableMenuItems();
-
                     } else if (data instanceof JSONArray) {
-
                         JSONArray array = (JSONArray) data;
-
                         if (array.length() > 0) {
-
                             store = Store.parseStore(array.getJSONObject(0));
                             CacheUtil.getInstance().setOrderStore(store);
-                            selectedAddress = address;
-
+                            selectedAddress = addressNew;
                             checkUnavailableMenuItems();
-
                         } else {
-
                             orderView.showError(CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA));
-
                         }
-
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                     orderView.showError(CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA));

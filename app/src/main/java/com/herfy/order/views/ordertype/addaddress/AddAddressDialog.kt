@@ -22,6 +22,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 
+
 class AddAddressDialog : DialogFragment() {
 
     private var onSubmit: OnSubmit? = null
@@ -61,7 +62,7 @@ class AddAddressDialog : DialogFragment() {
             val height = ViewGroup.LayoutParams.MATCH_PARENT
             dialog.window!!.setLayout(width, height)
             dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+            dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
             val typedValue = TypedValue()
             dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             dialog.window!!.statusBarColor = typedValue.data
@@ -71,6 +72,11 @@ class AddAddressDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
     }
 
     private fun setupViews() {
@@ -162,7 +168,13 @@ class AddAddressDialog : DialogFragment() {
             }
 
             if (AuthUtil.getInstance().isSignedIn) {
-                phoneNumberEdit.setText(AuthUtil.getInstance().customer.attributes.mobile.orEmpty())
+                phoneNumberEdit.apply {
+                    val mobileNumber = AuthUtil.getInstance().customer.attributes.mobile.orEmpty()
+                    setText(mobileNumber)
+                    if (mobileNumber.isNotEmpty()) {
+                        setSelection(length())
+                    }
+                }
             }
 
             continueButton.setOnClickListener {

@@ -52,15 +52,15 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.utils.constants.Text;
-import com.herfy.location.FusedLocationProvider;
-import com.herfy.utils.constants.Values;
-import com.herfy.utils.helper.CacheUtil;
-import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.herfy.util.AppLogger;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.CacheUtil;
 import com.herfy.views.RecyclerViewUtil;
+import com.location.FusedLocationProvider;
+import com.skylinedynamics.solosdk.api.models.objects.Store;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -375,7 +375,7 @@ public class BranchesActivity extends BaseActivity implements BranchesContract.V
                     .appendQueryParameter("travelmode", "driving")
                     .appendQueryParameter("destination", branch.getAttributes().getLat() + "," + branch.getAttributes().getLng());
 
-            if(StringUtil.hasOrderLatLong()) {
+            if (StringUtil.hasOrderLatLong()) {
                 directionsBuilder.appendQueryParameter("origin", CacheUtil.getInstance().getOrderLatitude() + "," + CacheUtil.getInstance().getOrderLongitude());
             }
 
@@ -417,7 +417,7 @@ public class BranchesActivity extends BaseActivity implements BranchesContract.V
 
                                         .appendQueryParameter("destination", branch.getAttributes().getLat() + "," + branch.getAttributes().getLng());
 
-                                if(StringUtil.hasOrderLatLong()) {
+                                if (StringUtil.hasOrderLatLong()) {
                                     directionsBuilder.appendQueryParameter("origin", CacheUtil.getInstance().getOrderLatitude() + "," + CacheUtil.getInstance().getOrderLongitude());
                                 }
 

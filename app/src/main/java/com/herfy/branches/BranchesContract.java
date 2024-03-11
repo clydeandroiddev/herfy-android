@@ -3,7 +3,7 @@ package com.herfy.branches;
 import com.google.android.gms.maps.model.LatLng;
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
-import com.herfy.location.FusedLocationProvider;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 
 import java.util.ArrayList;

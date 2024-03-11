@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
-import com.herfy.location.FusedLocationProvider;
+import com.location.FusedLocationProvider;
 
 public interface PlacesContract {
 

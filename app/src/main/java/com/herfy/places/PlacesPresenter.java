@@ -7,10 +7,10 @@ import android.location.Location;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
 import com.herfy.utils.constants.Text;
-import com.herfy.location.FusedLocationProvider;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddressBody;
@@ -53,7 +53,7 @@ public class PlacesPresenter implements PlacesContract.Presenter, FusedLocationP
 
     @Override
     public void getLocation(FusedLocationProvider fusedLocationProvider) {
-        if(this.fusedLocationProvider != null) {
+        if (this.fusedLocationProvider != null) {
             this.fusedLocationProvider.disconnect();
         }
 
@@ -80,21 +80,17 @@ public class PlacesPresenter implements PlacesContract.Presenter, FusedLocationP
 
     @Override
     public void addAddress(String phoneNumber, String label, String note) {
-        if(address == null && place == null) {
+        if (address == null && place == null) {
             placesView.showMessage(CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS));
-        } else if(phoneNumber == null && label == null && note == null) {
+        } else if (phoneNumber == null && label == null && note == null) {
             placesView.showAddAddress(address, place);
         } else {
             CreateCustomerAddressBody createCustomerAddressBody;
 
-            if(place != null && place.getLatLng() != null) {
-                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "",
-                        "", "", "", place.getName(), place.getLatLng().latitude, place.getLatLng().longitude,
-                        phoneNumber, note, "");
+            if (place != null && place.getLatLng() != null) {
+                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "", "", "", "", place.getName(), place.getLatLng().latitude, place.getLatLng().longitude, phoneNumber, note, "");
             } else {
-                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "",
-                        "", "", "", address.getAddressLine(0), address.getLatitude(), address.getLongitude(),
-                        phoneNumber, note, "");
+                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "", "", "", "", address.getAddressLine(0), address.getLatitude(), address.getLongitude(), phoneNumber, note, "");
             }
 
             CustomersApiCall.getInstance().addCustomerAddress(createCustomerAddressBody, AuthUtil.getInstance().getCustomer().getId(), "1", new ApiRequestListener() {
@@ -106,7 +102,7 @@ public class PlacesPresenter implements PlacesContract.Presenter, FusedLocationP
                 @Override
                 public void onError(Object o) {
                     AppLogger.printRetrofitError(o);
-                    String detail = ErrorHandler.getErrorMessage(o , CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS), null);
+                    String detail = ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS), null);
                     placesView.showMessage(detail);
                 }
             });

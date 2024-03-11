@@ -11,6 +11,7 @@ import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -57,7 +58,6 @@ import com.herfy.common.utils.areaJson
 import com.herfy.curbside.curbsidenew.CurbsideNewActivity
 import com.herfy.ext.cast
 import com.herfy.font.FontHandler
-import com.herfy.location.FusedLocationProvider
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.order.OrderContract
@@ -79,8 +79,10 @@ import com.herfy.utils.helper.*
 import com.herfy.utils.helper.ViewUtil
 import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
+import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import io.shipbook.shipbooksdk.Log
 import java.util.*
 
 
@@ -155,7 +157,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                                 orderPresenter.getDiffMenuCdn(null)
                             } else {
                                 fromAddAddressDifferentMenu = false
-                                navigateUp()
+                                navigateUp(true)
                             }
                         }, { dialog, which ->
                             activity?.cast<BaseActivity> { it.dismissDialogs() }
@@ -172,7 +174,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                             orderPresenter.getDiffMenuCdn(null)
                         } else {
                             fromAddAddressDifferentMenu = false
-                            navigateUp()
+                            navigateUp(true)
                         }
                     }
                 } else {
@@ -207,6 +209,11 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         orderPresenter = OrderPresenter(this)
+        orderPresenter.setGeocoder(
+            Geocoder(
+                requireActivity(), LocaleUtil.getInstance().createLocale()
+            )
+        )
         CacheUtil.getInstance().setAreas(areaJson())
     }
 
@@ -232,9 +239,74 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         orderPresenter.getOrderTypes()
         orderPresenter.getAddresses(false)
         if (typeOrder != 0) {
-            selectOrderType(OrderType.fromInt(typeOrder))
+            simulateClick(OrderType.fromInt(typeOrder))
         } else {
-            selectOrderType(CacheUtil.getInstance().orderType)
+            simulateClick(CacheUtil.getInstance().orderType)
+        }
+    }
+
+    private fun findOrderType(type: OrderType): OrderType {
+        var typeNew = type
+        if (type === OrderType.NONE) {
+            if (isDeliveryAvailable) {
+                typeNew = OrderType.DELIVERY
+            } else if (isCurbsideAvailable) {
+                typeNew = OrderType.CURBSIDE
+            } else if (isPickupAvailable) {
+                typeNew = OrderType.PICKUP
+            } else if (isDineInAvailable) {
+                typeNew = OrderType.DINE_IN
+            }
+        } else {
+            if (type === OrderType.DELIVERY) {
+                if (!isDeliveryAvailable) {
+                    typeNew = if (isCurbsideAvailable) {
+                        OrderType.CURBSIDE
+                    } else if (isPickupAvailable) {
+                        OrderType.PICKUP
+                    } else {
+                        OrderType.DINE_IN
+                    }
+                }
+            } else if (type === OrderType.PICKUP) {
+                if (!isPickupAvailable) {
+                    typeNew = if (isDeliveryAvailable) {
+                        OrderType.DELIVERY
+                    } else if (isCurbsideAvailable) {
+                        OrderType.CURBSIDE
+                    } else {
+                        OrderType.DINE_IN
+                    }
+                }
+            } else if (type === OrderType.DINE_IN) {
+                if (!isDineInAvailable) {
+                    typeNew = if (isDeliveryAvailable) {
+                        OrderType.DELIVERY
+                    } else if (isCurbsideAvailable) {
+                        OrderType.CURBSIDE
+                    } else {
+                        OrderType.PICKUP
+                    }
+                }
+            }
+        }
+        return typeNew
+    }
+
+    private fun simulateClick(type: OrderType) {
+        try {
+            val typeNew = findOrderType(type)
+            if (typeNew === OrderType.DELIVERY) {
+                binding.deliveryButton.performClick()
+            } else if (typeNew === OrderType.PICKUP) {
+                binding.pickupButton.performClick()
+            } else if (typeNew === OrderType.DINE_IN) {
+                binding.dineInButton.performClick()
+            } else if (typeNew === OrderType.CURBSIDE) {
+                binding.pickupButton.performClick()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -525,8 +597,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             var orderType = CacheUtil.getInstance().orderType
             if (typeOrder != 0) {
                 orderType = OrderType.fromInt(typeOrder)
-            }else
-            when (orderType) {
+            } else when (orderType) {
                 OrderType.DELIVERY -> {
                     binding.typeGroup.check(R.id.deliveryButton)
                 }
@@ -559,51 +630,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         binding.dineInButton.typeface = FontHandler.getRegularTypeface()
         binding.pickupButton.typeface = FontHandler.getRegularTypeface()
         val isNone = false
-        var orderType = type
-        if (type === OrderType.NONE) {
-            if (isDeliveryAvailable) {
-                orderType = OrderType.DELIVERY
-            } else if (isCurbsideAvailable) {
-                orderType = OrderType.CURBSIDE
-            } else if (isPickupAvailable) {
-                orderType = OrderType.PICKUP
-            } else if (isDineInAvailable) {
-                orderType = OrderType.DINE_IN
-            }
-        } else {
-            if (type === OrderType.DELIVERY) {
-                if (!isDeliveryAvailable) {
-                    if (isCurbsideAvailable) {
-                        orderType = OrderType.CURBSIDE
-                    } else if (isPickupAvailable) {
-                        orderType = OrderType.PICKUP
-                    } else {
-                        orderType = OrderType.DINE_IN
-                    }
-                }
-            } else if (type === OrderType.PICKUP) {
-                if (!isPickupAvailable) {
-                    if (isDeliveryAvailable) {
-                        orderType = OrderType.DELIVERY
-                    } else if (isCurbsideAvailable) {
-                        orderType = OrderType.CURBSIDE
-                    } else {
-                        orderType = OrderType.DINE_IN
-                    }
-                }
-            } else if (type === OrderType.DINE_IN) {
-                if (!isDineInAvailable) {
-                    if (isDeliveryAvailable) {
-                        orderType = OrderType.DELIVERY
-                    } else if (isCurbsideAvailable) {
-                        orderType = OrderType.CURBSIDE
-                    } else {
-                        orderType = OrderType.PICKUP
-                    }
-                }
-            }
-        }
-
+        val orderType = findOrderType(type)
         var title: String? = ""
         if (orderType === OrderType.DELIVERY) {
             selectDelivery()
@@ -1262,7 +1289,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
 
-    override fun saveAddress(address: Address) {}
+    override fun saveAddress(address: Address) {
+
+    }
+
     override fun updateAddress(address: String) {
         if (bookmarkAddressDialogFragment != null) {
             bookmarkAddressDialogFragment?.dismiss()
@@ -1362,6 +1392,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun diffMenuSaved(address: Address?) {
+
         orderPresenter.removeMukafaaRedemption()
         if (CacheUtil.getInstance().orderType == OrderType.DELIVERY || deliveryTabSelected) {
             orderPresenter.getStore(address)
@@ -1384,7 +1415,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
         if (fromAddAddressDifferentMenu) {
             fromAddAddressDifferentMenu = false
-            navigateUp()
+            navigateUp(true)
         }
     }
 
@@ -1488,7 +1519,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             if (orderTypeSelected != OrderType.NONE) {
                 if (cachedOrderType == OrderType.NONE) {
                     orderPresenter.getDiffMenuCdn(null)
-                } else diffMenuSaved(null)
+                } else {
+                    diffMenuSaved(null)
+                }
             } else {
                 diffMenuSaved(null)
             }

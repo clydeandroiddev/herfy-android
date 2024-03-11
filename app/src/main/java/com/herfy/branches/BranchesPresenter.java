@@ -5,8 +5,8 @@ import android.location.Location;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.utils.constants.Text;
-import com.herfy.location.FusedLocationProvider;
 import com.herfy.utils.helper.CacheUtil;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
 import com.skylinedynamics.solosdk.api.models.Pagination;
@@ -54,7 +54,7 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
 
     @Override
     public void getLocation(FusedLocationProvider fusedLocationProvider) {
-        if(this.fusedLocationProvider != null) {
+        if (this.fusedLocationProvider != null) {
             this.fusedLocationProvider.disconnect();
         }
 
@@ -117,15 +117,15 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                branchesView.showError(ErrorHandler.getErrorMessage(o,CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                branchesView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
             }
         });
     }
 
     @Override
     public void getDistances() {
-        if(location != null) {
-            for(Store store : branches) {
+        if (location != null) {
+            for (Store store : branches) {
 
                 Location storeLocation = new Location("Store Location");
                 storeLocation.setLatitude(store.getAttributes().getLat());
@@ -148,7 +148,7 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
 
     @Override
     public void onBindBranchViewAtPosition(int position, BranchViewHolder branchViewHolder, boolean selected) {
-        if(position < branches.size()) {
+        if (position < branches.size()) {
             branchViewHolder.setBranch(branches.get(position), selected);
         } else {
             branchViewHolder.setBranch(null, false);
@@ -171,7 +171,6 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
     }
 
 
-
     @Override
     public void selectBranch(String id) {
         branchesView.selectBranch(id);
@@ -185,7 +184,7 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
 
     @Override
     public void callBranch() {
-        if(callBranch != null) {
+        if (callBranch != null) {
             branchesView.callBranch(callBranch);
         }
     }
@@ -195,7 +194,7 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
         this.location = location;
         CacheUtil.getInstance().setOrderLatitude(String.valueOf(location.getLatitude()));
         CacheUtil.getInstance().setOrderLongitude(String.valueOf(location.getLongitude()));
-        if(branches.size() > 0) {
+        if (branches.size() > 0) {
             getBranches(1);
         }
         fusedLocationProvider.disconnect();

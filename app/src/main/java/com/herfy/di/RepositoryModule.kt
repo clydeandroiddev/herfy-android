@@ -9,6 +9,8 @@ import com.herfy.repository.HomeRepository
 import com.herfy.repository.HomeRepositoryImpl
 import com.herfy.repository.MenuRepository
 import com.herfy.repository.MenuRepositoryImpl
+import com.herfy.repository.StoreRepository
+import com.herfy.repository.StoreRepositoryImpl
 import com.herfy.utils.helper.CacheUtilHelper
 import dagger.Module
 import dagger.Provides
@@ -26,15 +28,15 @@ object RepositoryModule {
     fun provideHomeRepository(
         appDatabase: AppDatabase,
         cacheUtilHelper: CacheUtilHelper
-    ) : HomeRepository =
-       HomeRepositoryImpl(appDatabase, cacheUtilHelper)
+    ): HomeRepository =
+        HomeRepositoryImpl(appDatabase, cacheUtilHelper)
 
     @Provides
     @Singleton
     fun provideMenuRepository(
         appDatabase: AppDatabase,
         cacheUtilHelper: CacheUtilHelper
-    ) : MenuRepository =
+    ): MenuRepository =
         MenuRepositoryImpl(appDatabase, cacheUtilHelper)
 
     @Provides
@@ -42,7 +44,7 @@ object RepositoryModule {
     fun provideFavoriteRepository(
         appDatabase: AppDatabase,
         cacheUtilHelper: CacheUtilHelper
-    ) : FavoriteRepository =
+    ): FavoriteRepository =
         FavoriteRepositoryImpl()
 
     @Provides
@@ -50,7 +52,15 @@ object RepositoryModule {
     fun provideAuthRepository(
         appDatabase: AppDatabase,
         cacheUtilHelper: CacheUtilHelper
-    ) : AuthRepository =
+    ): AuthRepository =
         AuthRepositoryImpl()
+
+    @Provides
+    @Singleton
+    fun provideStoreRepository(
+        appDatabase: AppDatabase,
+        cacheUtilHelper: CacheUtilHelper
+    ): StoreRepository =
+        StoreRepositoryImpl()
 
 }

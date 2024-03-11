@@ -39,7 +39,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.tabs.TabLayout
 import com.herfy.R
 import com.herfy.base.BaseActivity
-import com.herfy.location.FusedLocationProvider
 import com.herfy.order.OrderContract
 import com.herfy.order.OrderPresenter
 import com.herfy.order.views.ordertype.selectarea.SelectCityDialog
@@ -51,6 +50,7 @@ import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus
@@ -335,7 +335,11 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
                     addressLabel = labelValue
                     orderPresenter.address = address
                     showLoadingDialog()
-                    orderPresenter.updateAddAddress()
+                    if (AuthUtil.getInstance().isSignedIn) {
+                        orderPresenter.addAddress(phoneNumber, addressLabel, driverNote)
+                    } else {
+                        dismissDialogs()
+                    }
                 }
 
                 override fun error(text: String) {

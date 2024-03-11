@@ -258,7 +258,7 @@
         tools:layout="@layout/fragment_herfy_cart">
 
         <deepLink app:uri="android-app://com.herfy/nav_cart" />
-        <deepLink app:uri="android-app://com.herfy/nav_cart/{isFromPromotions}"/>
+        <deepLink app:uri="android-app://com.herfy/nav_cart/{isFromPromotions}" />
         <argument
             android:name="isBranchPreselected"
             android:defaultValue="false"
@@ -469,6 +469,15 @@
             android:id="@+id/action_order_to_cart"
             app:destination="@id/nav_cart"
             app:popUpTo="@+id/nav_order" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/storeLocatorFragment"
+        android:name="com.herfy.branches.StoreLocatorFragment"
+        tools:layout="@layout/store_locator">
+
+        <deepLink app:uri="android-app://com.herfy/store_locator_nav/" />
 
     </fragment>
 

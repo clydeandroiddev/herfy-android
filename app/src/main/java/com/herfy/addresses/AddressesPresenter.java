@@ -19,10 +19,10 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.herfy.addresses.viewholders.AddressViewHolder;
 import com.herfy.addresses.viewholders.PlaceViewHolder;
 import com.herfy.utils.constants.Text;
-import com.herfy.location.FusedLocationProvider;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
@@ -131,10 +131,7 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
 
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
-        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
-                .setSessionToken(token)
-                .setQuery(query)
-                .build();
+        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder().setSessionToken(token).setQuery(query).build();
 
         AsyncTask<Void, String, Void> asyncTask = new AsyncTask<Void, String, Void>() {
 
@@ -317,15 +314,11 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
     @Override
     public void saveAddress(boolean home) {
         if (currentAddress != null && currentLocationLatLng != null) {
-            CreateCustomerAddressBody createCustomerAddressBody = new CreateCustomerAddressBody("", home ? "Home" : "Work", currentAddress.getCountryName(), "",
-                    "", "", "", currentAddress.getAddressLine(0), currentLocationLatLng.latitude, currentLocationLatLng.longitude,
-                    AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), "", "");
+            CreateCustomerAddressBody createCustomerAddressBody = new CreateCustomerAddressBody("", home ? "Home" : "Work", currentAddress.getCountryName(), "", "", "", "", currentAddress.getAddressLine(0), currentLocationLatLng.latitude, currentLocationLatLng.longitude, AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), "", "");
             //For Burgerizzr
             if (BuildUtil.soloAppKey().equalsIgnoreCase("SeBwUS2G9SEnkwty")) {
                 String mobile = CacheUtil.getInstance().getConcept().getDialingCode() + AuthUtil.getInstance().getCustomer().getAttributes().getMobile().substring(1);
-                createCustomerAddressBody = new CreateCustomerAddressBody("", home ? "Home" : "Work", currentAddress.getCountryName(), "",
-                        "", "", "", currentAddress.getAddressLine(0), currentLocationLatLng.latitude, currentLocationLatLng.longitude,
-                        mobile, "", "");
+                createCustomerAddressBody = new CreateCustomerAddressBody("", home ? "Home" : "Work", currentAddress.getCountryName(), "", "", "", "", currentAddress.getAddressLine(0), currentLocationLatLng.latitude, currentLocationLatLng.longitude, mobile, "", "");
             }
             CustomersApiCall.getInstance().addCustomerAddress(createCustomerAddressBody, AuthUtil.getInstance().getCustomer().getId(), "1", new ApiRequestListener() {
                 @Override
@@ -336,7 +329,7 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
                 @Override
                 public void onError(Object o) {
                     AppLogger.printRetrofitError(o);
-                    addressesView.showMessage(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS),null));
+                    addressesView.showMessage(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS), null));
                 }
             });
         } else {
@@ -350,11 +343,10 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
 
         FetchPlaceRequest request = FetchPlaceRequest.newInstance(places.get(position).getPlaceId(), placeFields);
 
-        placesClient.fetchPlace(request).addOnSuccessListener(
-                (response) -> {
-                    addressesView.showPlace(response.getPlace());
+        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+            addressesView.showPlace(response.getPlace());
 
-                }).addOnFailureListener((exception) -> {
+        }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 ApiException apiException = (ApiException) exception;
                 int statusCode = apiException.getStatusCode();
@@ -449,13 +441,9 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
         CreateCustomerAddressBody createCustomerAddressBody;
 
         if (place != null) {
-            createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "",
-                    "", "", "", place.getName(), place.getLatLng().latitude, place.getLatLng().longitude,
-                    phoneNumber, note, "");
+            createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "", "", "", "", place.getName(), place.getLatLng().latitude, place.getLatLng().longitude, phoneNumber, note, "");
         } else {
-            createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "",
-                    "", "", "", address.getAddressLine(0), address.getLatitude(), address.getLongitude(),
-                    phoneNumber, note, "");
+            createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "", "", "", "", address.getAddressLine(0), address.getLatitude(), address.getLongitude(), phoneNumber, note, "");
         }
 
         CustomersApiCall.getInstance().addCustomerAddress(createCustomerAddressBody, AuthUtil.getInstance().getCustomer().getId(), "1", new ApiRequestListener() {
@@ -468,7 +456,7 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                addressesView.showMessage(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS),null));
+                addressesView.showMessage(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS), null));
             }
         });
 
@@ -488,7 +476,7 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
                 @Override
                 public void onError(Object o) {
                     AppLogger.printRetrofitError(o);
-                    addressesView.showMessage(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS),null));
+                    addressesView.showMessage(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS), null));
                 }
             });
         } else {
