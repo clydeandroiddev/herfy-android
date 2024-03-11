@@ -345,10 +345,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             orderPresenter.addToCartFavorite(CacheUtil.getInstance()
                 .retrieveFavoriteToAddToCart())
         }else if (proceed && args.fromHome) {
-            val request =
-                NavDeepLinkRequest.Builder.fromUri(Uri.parse("${Values.NAV_DEEP_LINK_BASE_URL}nav_menu"))
-                    .build()
-            NavigationUtils.navigateSafe(findNavController(), request)
+            findNavController().navigateToDeepLink("nav_menu")
         } else {
             activity?.runOnUiThread {
                 activity?.cast<MainActivity> {
