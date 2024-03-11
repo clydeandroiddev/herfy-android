@@ -564,9 +564,9 @@
 
     <fragment
         android:id="@+id/nav_notifications"
-        android:name="com.herfy.notification.presenter.ui.NotificationFragment"
+        android:name="com.herfy.notification.views.NotificationsFragment"
         android:label="notifications"
-        tools:layout="@layout/fragment_notifications">
+        tools:layout="@layout/fragment_new_notification">
         <deepLink app:uri="android-app://com.herfy/nav_notifications" />
         <action
             android:id="@+id/action_notifications_to_notification"
@@ -604,7 +604,7 @@
         android:id="@+id/nav_notification"
         android:name="com.herfy.notification.views.NotificationFragment"
         android:label=""
-        tools:layout="@layout/fragment_notification">
+        tools:layout="@layout/fragment_new_notification">
 
         <argument
             android:name="notification_id"
