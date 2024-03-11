@@ -89,6 +89,7 @@ dependencies {
     implementation project(path: ':data:model')
     implementation project(path: ':data:repository')
     implementation project(path: ':commonStyles')
+    implementation project(path: ':features:ordertype')
     implementation project(path: ':common')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
