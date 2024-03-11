@@ -710,6 +710,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             .sidebar
             .notification
             .ninjaTap(lifecycleScope) {
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
               navController.navigateToDeepLink("nav_notifications")
             }
         binding.sidebar.history.setOnClickListener { showHistory() }
