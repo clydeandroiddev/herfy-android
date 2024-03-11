@@ -11,12 +11,9 @@ import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.databinding.FragmentNotificationsBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
 import com.herfy.notification.NotificationContract
@@ -24,12 +21,15 @@ import com.herfy.notification.NotificationPresenter
 import com.herfy.notification.adapter.NotificationAdapter
 import com.herfy.notification.adapter.RecyclerTouchListener
 import com.herfy.notification.adapter.RecyclerTouchListener.OnRowClickListener
+import com.herfy.notification.databinding.FragmentNewNotificationBinding
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateToDeepLink
+import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
+import com.herfy.utils.helper.viewLifecycleScope
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifDeeplink
@@ -38,7 +38,7 @@ import java.util.LinkedList
 
 class NotificationsFragment : BaseFragment(), NotificationContract.View {
 
-    private lateinit var binding: FragmentNotificationsBinding
+    private lateinit var binding: FragmentNewNotificationBinding
 
     private var touchListener: RecyclerTouchListener? = null
 
@@ -58,7 +58,7 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        binding = FragmentNewNotificationBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -104,9 +104,6 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
                             processDeeplink(notifDeeplink)
                             notificationPresenter?.getNotification(notification.id)
                         } else {
-                            notificationPresenter?.getNotification(position)?.id?.let {
-                                NavigationUtils.navigateSafe(findNavController(), NotificationsFragmentDirections.actionNotificationsToNotification(it))
-                            }
                         }
                     }
                 }
@@ -131,16 +128,18 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
                 }
             }
         })
+        binding
+            .icClose.ninjaTap(viewLifecycleScope) {
+                findNavController().navigateUp()
+            }
     }
 
     override fun setupFonts() {}
     override fun setupTranslations() {
-        binding.tvNoNotif.text = CacheUtil.getInstance()
-            .getTranslations(Text.NO_NOTIFICATIONS, "No notifications")
-        binding.tvNoNotifDesc.text = CacheUtil.getInstance().getTranslations(
-            Text.YOU_HAVE_NO_NOTIFICATIONS,
-            "You have no notifications yet."
-        )
+        binding.emptyState.setTitle( CacheUtil.getInstance()
+            .getTranslations(Text.NO_NOTIFICATIONS, "No notifications."))
+        binding.txtNotificationTitle.setText(CacheUtil
+            .getInstance().getTranslations(Text.NOTIFICATIONS, "Notifications"))
     }
 
     override fun showNotifications(notifications: LinkedList<Notification>, pageCount: Int) {
@@ -155,7 +154,6 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
         notificationAdapter!!.notifyDataSetChanged()
         dismissDialogs()
         if (notifications.size > 0) {
-            binding.layoutEmpty.visibility = View.GONE
             binding.rvNotif.visibility = View.VISIBLE
             activity?.cast<MainActivity> {
                 if(it.currentDestination == R.id.nav_notifications) {
@@ -171,7 +169,7 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
                 }
             }
         } else {
-            binding.layoutEmpty.visibility = View.VISIBLE
+            binding.emptyState.visibility = View.VISIBLE
             binding.rvNotif.visibility = View.GONE
             activity?.cast<MainActivity> {
                 it.showToolbarCustomActionButton(false)
@@ -182,13 +180,6 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
     override fun setupNotification(notification: Notification) {}
     override fun showNotificationDetails(notifData: NotifData) {}
     override fun orderDeleted() {
-        Snackbar.make(
-            binding.coordinatorLayout,
-            CacheUtil.getInstance()
-                .getTranslations(Text.NOTIFICATIONS_DELETED, "Notification Deleted"),
-            Snackbar.LENGTH_SHORT
-        ).show()
-        page = 1
         notificationPresenter!!.getNotifications(page)
     }
 
@@ -200,9 +191,6 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
 
     override fun showDigitalCoupon(digitalCoupon: Campaign) {
         dismissDialogs()
-        NavigationUtils.navigateSafe(findNavController(), NotificationsFragmentDirections.actionNotificationsToDigitalCoupon(
-            Gson().toJson(digitalCoupon)
-        ))
     }
 
     override fun showError(message: String) {
