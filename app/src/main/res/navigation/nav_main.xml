@@ -491,7 +491,7 @@
         android:name="com.herfy.branches.StoreLocatorFragment"
         tools:layout="@layout/store_locator">
 
-        <deepLink app:uri="android-app://com.herfy/store_locator_nav/" />
+        <deepLink app:uri="android-app://com.herfy/store_locator_nav" />
 
     </fragment>
 
