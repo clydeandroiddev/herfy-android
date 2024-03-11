@@ -12,12 +12,12 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_large"
         android:src="@drawable/ic_common_close"
-        app:layout_constraintBottom_toBottomOf="@+id/txtFAQs"
+        app:layout_constraintBottom_toBottomOf="@+id/txtNotificationTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtFAQs" />
+        app:layout_constraintTop_toTopOf="@+id/txtNotificationTitle" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/txtFAQs"
+        android:id="@+id/txtNotificationTitle"
         style="@style/Styles.Text.Headline1"
         android:layout_width="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/viewSeparator"
@@ -31,11 +31,21 @@
         android:layout_width="match_parent"
         android:background="#E6E8EB"
         android:layout_marginTop="@dimen/margin_large"
-        app:layout_constraintTop_toBottomOf="@+id/txtFAQs"
+        app:layout_constraintTop_toBottomOf="@+id/txtNotificationTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_height="@dimen/_1sdp"
         />
+    <com.herfy.common.component.EmptyStateView
+        android:id="@+id/emptyState"
+        android:layout_width="match_parent"
+        app:emptyStateDrawable="@drawable/ic_empty_notification"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_height="wrap_content"/>
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/notificationShimmer"
         android:layout_width="match_parent"
@@ -64,7 +74,7 @@
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/notificationRecycleview"
+        android:id="@+id/rvNotif"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin_large"
@@ -76,7 +86,13 @@
         app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
         app:layout_constraintVertical_bias="0.0"
         tools:itemCount="3"
-        tools:listitem="@layout/item_notification" />
-
+        tools:listitem="@layout/item_new_notification" />
+    <ProgressBar
+        android:id="@+id/load_more_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:visibility="gone"
+        android:indeterminateTint="?colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
