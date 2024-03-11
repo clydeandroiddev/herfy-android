@@ -3,16 +3,12 @@ package com.herfy.browser;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import com.google.android.material.button.MaterialButton;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
+import com.herfy.common.toolbar.TitleToolbar;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
 
@@ -21,11 +17,7 @@ import butterknife.ButterKnife;
 
 public class BrowserActivity extends BaseActivity {
 
-    @BindView(R.id.back) MaterialButton back;
-
-    @BindView(R.id.title) TextView title;
-
-    @BindView(R.id.cart) ConstraintLayout cart;
+    @BindView(R.id.toolbar) TitleToolbar toolbar;
 
     @BindView(R.id.webView) WebView webView;
 
@@ -58,22 +50,16 @@ public class BrowserActivity extends BaseActivity {
 
         showLoadingDialog();
 
-        back.setText(CacheUtil.getInstance().getTranslations(Text.BACK, "Back"));
-        back.setVisibility(View.VISIBLE);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        cart.setVisibility(View.INVISIBLE);
+        toolbar.setNavButtonAction(view -> onBackPressed());
 
         Bundle bundle = getIntent().getExtras();
 
         if(bundle != null && bundle.containsKey("title") && bundle.containsKey("url")) {
 
-            title.setText(bundle.getString("title"));
+            String title = bundle.getString("title");
+            if(title != null) {
+                toolbar.setTitle(title);
+            }
 
             webView.setWebViewClient(new WebViewClient() {
                 @Override

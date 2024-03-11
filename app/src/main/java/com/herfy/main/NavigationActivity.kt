@@ -173,7 +173,9 @@ class NavigationActivity : BaseActivity(), MainContract.View {
 
     }
 
+    override fun setTermsAndConditions(url: String?) {
 
+    }
 
     fun showScheduleBubble() {
       /*  if (CacheUtil.getInstance().concept.allowAdvanceOrder && currentDestination == R.id.nav_cart) {

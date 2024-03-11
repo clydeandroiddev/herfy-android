@@ -529,6 +529,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         CacheUtil.shouldDismiss = false
         fromShowOrderType = false
+        mainPresenter.getTermsAndConditions()
         setupSideBar()
 
         if (curbside) {
@@ -1017,6 +1018,16 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         mainPresenter.multibrandValidation(proceed)
     }
 
+    override fun setTermsAndConditions(url: String) {
+        binding.sidebar.terms.setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            navBrowser(
+                title = CacheUtil.getInstance().getTranslations(Text.TERMS_LABEL, "Terms & Condition"),
+                url = url
+            )
+        }
+    }
+
     fun triggerMainRebirth() {
         val multiCountry =
             BuildConfig.APPLICATION_ID.contains("com.labeeb") || BuildConfig.MULTI_COUNTRY_ENABLED
@@ -1478,5 +1489,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         fragment?.cast<NewMenuHomePageFragment> {
             it.refreshFavorites()
         }
+    }
+
+    private fun navBrowser(title: String, url: String) {
+        val intent = Intent(this, BrowserActivity::class.java)
+        intent.putExtra("title", title)
+        intent.putExtra("url", url)
+        startActivity(intent)
     }
 }

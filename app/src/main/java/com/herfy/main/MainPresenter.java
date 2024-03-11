@@ -498,6 +498,35 @@ public class MainPresenter implements MainContract.Presenter {
         }
     }
 
+    @Override
+    public void getTermsAndConditions() {
+        CmsApiCall.getInstance().getPageByLabel("Terms and Conditions", new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object obj) {
+                try {
+                    JSONObject jsonObject = new JSONObject(obj.toString());
+                    JSONArray data = jsonObject.optJSONArray("data");
+                    if (data != null && data.length() > 0) {
+                        CmsPage termsAndConditionsPage = new CmsPage().parse(data.getJSONObject(0));
+                        String url = termsAndConditionsPage.getAttributes().getUrl();
+                        if (url != null && !url.isEmpty() && URLUtil.isValidUrl(url)) {
+
+                            mainView.setTermsAndConditions(url);
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Object error) {
+                AppLogger.printRetrofitError(error);
+            }
+        });
+    }
+
     public void getSliders() {
         CmsApiCall.getInstance().getSliders(new ApiRequestListener() {
             @Override

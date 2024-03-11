@@ -7,9 +7,10 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <include
+    <com.herfy.common.toolbar.TitleToolbar
         android:id="@+id/toolbar"
-        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <WebView
