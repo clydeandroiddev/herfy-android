@@ -27,12 +27,10 @@ import com.herfy.menu.databinding.FragmentMenuBinding
 import com.herfy.menu.viewmodel.MenuViewModel
 import com.herfy.menu.widgets.CenterLayoutManager
 import com.herfy.utils.analytics.MixpanelUtil
-import com.herfy.utils.base.mvvm.BaseActivity
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
-import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.isVisible
 import com.herfy.utils.extensions.navigateToDeepLink
@@ -110,7 +108,6 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                         scrollToMenuCategory(menuCategoryId)
                     }
                 } else if(menuCategoryItemAdapter.getMenuItemCategory(lastVisibleItem) != null) {
-                    AppLogger.error("lastVisibleItem $lastVisibleItem")
                     menuCategoryItemAdapter.getMenuItemCategory(lastVisibleItem)?.let { menuCategory ->
                         scrollToMenuCategory(menuCategory.id)
                     }
@@ -347,10 +344,12 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }
 
         viewModel.showAddToCart.observeNonNull(this) {
-            activity?.cast<BaseActivity<*, *>> {
-                it.runOnUiThread {
+            AppLogger.error("349")
+            activity?.apply {
+                runOnUiThread {
+                    AppLogger.error("352")
                     val vibrator: Vibrator =
-                        it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                        getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         vibrator.vibrate(
                             VibrationEffect.createOneShot(
@@ -361,38 +360,39 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                         vibrator.vibrate(100)
                     }
                     Toast.makeText(
-                        it,
+                        this,
                         CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART),
                         Toast.LENGTH_SHORT
                     ).show()
+                    AppLogger.error("368")
                     binding.orderTypeToolbar.setCart(CacheUtil.getInstance().cartQuantity)
                 }
             }
         }
 
         viewModel.showMessage.observeNonNull(this) { message ->
-            activity?.cast<BaseActivity<*, *>> {
-                it.runOnUiThread {
-                    Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
+            activity?.apply {
+                runOnUiThread {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
         viewModel.showError.observeNonNull(this) { error ->
-            activity?.cast<BaseActivity<*, *>> {
-                it.runOnUiThread {
-                    it.showAlertDialog("", error)
+            activity?.apply {
+                runOnUiThread {
+                    showAlertDialog("", error)
                 }
             }
         }
 
         viewModel.showLoading.observeNonNull(this) { showLoading ->
-            activity?.cast<BaseActivity<*, *>> {
-                it.runOnUiThread {
+            activity?.apply {
+                runOnUiThread {
                     if (showLoading) {
-                        it.showProgressDialog(false)
+                        showProgressDialog(false)
                     } else {
-                        it.dismissProgressDialog()
+                        dismissProgressDialog()
                     }
                 }
             }
