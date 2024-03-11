@@ -38,7 +38,7 @@ class NotificationFragment: BaseFragment<NotificationViewModel,FragmentNotificat
             viewModel
                 .state
                 .flowWithLifecycle(lifecycle = lifecycle, Lifecycle.State.CREATED)
-                .collectLatest {state->
+                .collectLatest { state->
                     handleState(state)
                 }
         }

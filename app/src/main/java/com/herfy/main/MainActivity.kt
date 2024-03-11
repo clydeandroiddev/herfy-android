@@ -710,10 +710,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             .sidebar
             .notification
             .ninjaTap(lifecycleScope) {
-                val request =
-                    NavDeepLinkRequest.Builder.fromUri(Uri.parse("android-app://com.herfy/nav_menu/$menuCategoryId"))
-                        .build()
-                NavigationUtils.navigateSafe(findNavController(), request)
+              navController.navigateToDeepLink("nav_notifications")
             }
         binding.sidebar.history.setOnClickListener { showHistory() }
         binding.sidebar.loyalty.setOnClickListener {
