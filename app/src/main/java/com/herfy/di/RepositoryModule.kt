@@ -11,8 +11,6 @@ import com.herfy.repository.MenuRepository
 import com.herfy.repository.MenuRepositoryImpl
 import com.herfy.repository.StoreRepository
 import com.herfy.repository.StoreRepositoryImpl
-import com.herfy.repository.NotificationRepository
-import com.herfy.repository.NotificationRepositoryImpl
 import com.herfy.utils.helper.CacheUtilHelper
 import dagger.Module
 import dagger.Provides
@@ -49,9 +47,6 @@ object RepositoryModule {
     ): FavoriteRepository =
         FavoriteRepositoryImpl()
 
-    @Provides
-    @Singleton
-    fun providesNotificationRepository(): NotificationRepository = NotificationRepositoryImpl()
 
     @Provides
     @Singleton
