@@ -105,7 +105,7 @@
                             android:singleLine="true"
                             android:textColor="#0C0C0C"
                             android:textSize="14sp"
-                            tools:text="+9667887373" />
+                            tools:text="Ahmed Ahmasi" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/phoneNumberLabel"
@@ -141,8 +141,7 @@
                                 android:textColor="#0C0C0C"
                                 android:textSize="14sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="p
-"
+                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="+966" />
 
@@ -183,9 +182,141 @@
                             tools:text="Gender" />
 
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/maleSelection"
                             android:layout_width="match_parent"
+                            android:layout_height="48dp"
                             android:layout_marginTop="8dp"
-                            android:layout_height="wrap_content">
+                            android:background="@drawable/background_common_default">
+
+                            <ImageView
+                                android:id="@+id/maleImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:src="@drawable/ic_male"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/maleLabel"
+                                style="@style/Styles.Text.Footnote_Bold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp"
+                                android:gravity="center_vertical"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="4dp"
+                                android:singleLine="true"
+                                android:textColor="#0C0C0C"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/maleImage"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Male" />
+
+                            <ImageView
+                                android:id="@+id/selectionMale"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:src="@drawable/ic_store_unselected"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/femaleSelection"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/background_common_default">
+
+                            <ImageView
+                                android:id="@+id/femaleImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:src="@drawable/ic_female"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/femaleLabel"
+                                style="@style/Styles.Text.Footnote_Bold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp"
+                                android:gravity="center_vertical"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="4dp"
+                                android:singleLine="true"
+                                android:textColor="#0C0C0C"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/femaleImage"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Female" />
+
+                            <ImageView
+                                android:id="@+id/selectionFemale"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:src="@drawable/ic_store_unselected"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/dateOfBirthLabel"
+                            style="@style/Styles.Text.Caption.Regular"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:textColor="#0C0C0C"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Date of Birth" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/background_edit_text">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/birthDate"
+                                style="@style/Styles.Text.Caption.Semibold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp"
+                                android:gravity="center_vertical"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="4dp"
+                                android:singleLine="true"
+                                android:textColor="#0C0C0C"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="18-10-1997" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:src="@drawable/ic_birthday_calendar"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
