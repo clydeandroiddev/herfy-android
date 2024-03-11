@@ -43,27 +43,12 @@ class AmountTextView @JvmOverloads constructor(
 
             binding.midText.text = localize(formattedDecimal)
 
-            when (concept.currencyFormat) {
-                CurrencyFormat.currencySymbolAmount,
-                CurrencyFormat.currencyCodeAmount -> {
-                    binding.endText.isVisible = false
-                    binding.endSpace.isVisible = false
-                    binding.startText.text = when(concept.currencyFormat) {
-                        CurrencyFormat.currencySymbolAmount -> concept.currencyCode
-                        CurrencyFormat.currencyCodeAmount -> concept.currencyCode
-                        else -> ""
-                    }
-                }
-                CurrencyFormat.amountCurrencySymbol,
-                CurrencyFormat.amountCurrencyCode -> {
-                    binding.startText.isVisible = false
-                    binding.startSpace.isVisible = false
-                    binding.endText.text = when(concept.currencyFormat) {
-                        CurrencyFormat.amountCurrencySymbol -> concept.currencyCode
-                        CurrencyFormat.amountCurrencyCode -> concept.currencyCode
-                        else -> ""
-                    }
-                }
+            binding.endText.isVisible = false
+            binding.endSpace.isVisible = false
+            binding.startText.text = when(concept.currencyFormat) {
+                CurrencyFormat.currencySymbolAmount -> concept.currencyCode
+                CurrencyFormat.currencyCodeAmount -> concept.currencyCode
+                else -> ""
             }
 
         }
@@ -73,16 +58,7 @@ class AmountTextView @JvmOverloads constructor(
     }
 
     fun currencyTextView(): TextView {
-        return when (concept.currencyFormat) {
-            CurrencyFormat.currencySymbolAmount,
-            CurrencyFormat.currencyCodeAmount -> {
-                binding.startText
-            }
-            CurrencyFormat.amountCurrencySymbol,
-            CurrencyFormat.amountCurrencyCode -> {
-                binding.endText
-            }
-        }
+        return binding.startText
     }
 
     private val binding: AmountViewBinding
