@@ -1,8 +1,6 @@
 package com.herfy.notification.core
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.herfy.common.dispatchers.MainDispatcherRule
-import com.herfy.common.dispatchers.TestDispatcherProvider
 import com.herfy.utils.base.mvvm.BaseViewModel
 import io.mockk.junit4.MockKRule
 import kotlinx.coroutines.test.StandardTestDispatcher
