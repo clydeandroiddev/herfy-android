@@ -30,7 +30,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -74,6 +73,7 @@ import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.*
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.*
 import com.herfy.utils.helper.ViewUtil
@@ -81,7 +81,6 @@ import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
-import io.shipbook.shipbooksdk.Log
 import java.util.*
 
 
@@ -261,10 +260,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun navigateUp(proceed: Boolean) {
         if (proceed && args.fromHome) {
-            val request =
-                NavDeepLinkRequest.Builder.fromUri(Uri.parse("${Values.NAV_DEEP_LINK_BASE_URL}nav_menu"))
-                    .build()
-            NavigationUtils.navigateSafe(findNavController(), request)
+            findNavController().navigateToDeepLink("nav_menu")
         } else {
             activity?.runOnUiThread {
                 activity?.cast<MainActivity> {

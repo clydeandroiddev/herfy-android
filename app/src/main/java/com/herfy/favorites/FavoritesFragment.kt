@@ -2,7 +2,6 @@ package com.herfy.favorites
 
 import android.content.Context.VIBRATOR_SERVICE
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -15,7 +14,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.OnClick
@@ -32,6 +30,7 @@ import com.herfy.main.NavigationActivity
 import com.herfy.util.CacheHelper
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.*
@@ -216,12 +215,14 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                     }
                 }
 
-                val request = NavDeepLinkRequest.Builder.fromUri(
-                    Uri.parse(
-                        "${Values.NAV_DEEP_LINK_BASE_URL}nav_order_type/${1}" // todo hardcoded for now ask maam rio where to get the store id
-                    )
-                ).build()
-                NavigationUtils.navigateSafe(findNavController(), request)
+                val storeId = CacheUtil.getInstance().orderStore
+                findNavController().navigateToDeepLink(
+                    if(storeId != null) {
+                        "nav_order_type/$storeId"
+                    } else {
+                        "nav_order_type"
+                    }
+                )
                 Toast.makeText(
                     baseActivity,
                     CacheUtil.getInstance().getTranslations(Text.FAVORITE_ADDED_TO_CART),

@@ -27,7 +27,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -72,6 +71,7 @@ import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
@@ -766,25 +766,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.favorites.setOnClickListener {
             MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_FAVORITE_ITEMS)
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            /*if (isDefaultHomeScreenDesign) {
-                NavigationUtils.navigateSafe(
-                    navController,
-                    NewMenuFragmentDirections.actionMenuToFavorites()
-                )
-            } else {
-                NavigationUtils.navigateSafe(
-                    navController,
-                    NewMenuHomePageFragmentDirections.actionHomeToFavorites()
-                )
-            }*/
-            val request = NavDeepLinkRequest.Builder.fromUri(
-                Uri.parse(
-                    "${Values.NAV_DEEP_LINK_BASE_URL}nav_favorites/"
-                )
-            ).build()
-            NavigationUtils.navigateSafe(navController, request)
-
-
+            navController.navigateToDeepLink("nav_favorites")
         }
         binding.sidebar.quickOrder.setOnClickListener { v: View? ->
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -837,10 +819,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         binding.sidebar.promotions.setOnClickListener { view: View? ->
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            NavigationUtils.navigateSafe(
-                navController,
-                HomeFragmentDirections.actionHomeToPromotions()
-            )
+            navController.navigateToDeepLink("nav_promotions")
         }
         binding.toolbarMain.apply {
             setSideButtonAction {
