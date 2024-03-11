@@ -252,6 +252,7 @@ dependencies {
     implementation project(path: ':analytics:kochava')
     implementation project(path: ':data:repository')
     implementation(project(":features:updatephonenumber"))
+    implementation(project(":features:notification"))
     implementation(project(":features:favourites"))
     implementation project(path: ':features:promotions')
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'

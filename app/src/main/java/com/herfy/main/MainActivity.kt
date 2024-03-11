@@ -26,8 +26,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -72,6 +74,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateToDeepLink
+import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
@@ -703,7 +706,15 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             authLauncher.launch(intent)
         }
         binding.sidebar.liveChatLayout.setOnClickListener { view: View? -> openWhatsApp() }
-
+        binding
+            .sidebar
+            .notification
+            .ninjaTap(lifecycleScope) {
+                val request =
+                    NavDeepLinkRequest.Builder.fromUri(Uri.parse("android-app://com.herfy/nav_menu/$menuCategoryId"))
+                        .build()
+                NavigationUtils.navigateSafe(findNavController(), request)
+            }
         binding.sidebar.history.setOnClickListener { showHistory() }
         binding.sidebar.loyalty.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)

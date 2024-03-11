@@ -2,7 +2,7 @@ package com.herfy.notification.presenter
 
 import com.herfy.notification.presenter.model.NotificationUIModel
 
-object Stub {
+object Stubs {
 
     fun fakeNotifications(): List<NotificationUIModel> {
         val notifications = mutableListOf<NotificationUIModel>()
@@ -12,6 +12,7 @@ object Stub {
                     id = it + 1,
                     description = "Notification text explaining about notification $it.",
                     minutes = "$it minutes ago",
+                    image = "https://console-uploads-sandbox.s3.eu-west-1.amazonaws.com/cszalrtpn.png"
                 )
             )
         }

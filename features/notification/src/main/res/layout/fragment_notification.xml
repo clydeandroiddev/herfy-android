@@ -36,12 +36,42 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_height="@dimen/_1sdp"
         />
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/notificationShimmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/padding_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
+        app:shimmer_duration="1000"
+        tools:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/item_notification_placeholder" />
+
+            <include layout="@layout/item_notification_placeholder" />
+
+            <include layout="@layout/item_notification_placeholder" />
+
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notificationRecycleview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin_large"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="@dimen/margin_large"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
         app:layout_constraintVertical_bias="0.0"
