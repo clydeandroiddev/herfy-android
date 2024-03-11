@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="tier"
+            type="com.skylinedynamics.solosdk.api.models.objects.Tier" />
+
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:id="@+id/ln_reward_tier"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintWidth_min="90dp"
+            app:layout_constraintWidth_max="90dp"
+            app:layout_constrainedWidth="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_reward_tier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_reward_tier_blue" />
+
+
+            <TextView
+                android:id="@+id/tv_reward_tier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:textSize="14sp"
+                android:includeFontPadding="false"
+                android:textColor="@color/color_dark_gray_blue"
+                style="@style/Styles.Text.SmallTitle"
+                android:text="@{tier.name}"
+                tools:text="Diamond "/>
+
+        </LinearLayout>
+
+
+
+
+        <TextView
+            android:id="@+id/tv_reward_tier_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:textSize="14sp"
+            android:includeFontPadding="false"
+            android:textColor="@color/secondaryTextColor"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ln_reward_tier"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:rewardDescription="@{`3%`}"
+            style="@style/Styles.Text.Caption.Regular"
+            tools:text="3% of your order value converts to points."/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

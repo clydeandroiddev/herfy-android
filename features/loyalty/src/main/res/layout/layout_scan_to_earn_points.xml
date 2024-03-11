@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginBottom="28dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="false"
+    app:cardCornerRadius="16dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_blue_gradient"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+
+        <ImageView
+            android:id="@+id/iv_scan_points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_scan_points"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_scan_points"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:includeFontPadding="false"
+            app:layout_constraintStart_toEndOf="@id/iv_scan_points"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/iv_arrow_right"
+            tools:text="Scan to earn points"
+            style="@style/Styles.Text.Title1"/>
+
+        <TextView
+            android:id="@+id/tv_scan_points_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:includeFontPadding="false"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_scan_points"
+            app:layout_constraintStart_toStartOf="@id/tv_scan_points"
+            app:layout_constraintEnd_toEndOf="@id/tv_scan_points"
+            style="@style/Styles.Text.Body.Medium"
+            tools:text="Scan your card to earn points on order in the restaurant."/>
+
+
+        <ImageView
+            android:id="@+id/iv_arrow_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_right_white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

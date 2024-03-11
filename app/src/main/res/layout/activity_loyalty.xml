@@ -1,410 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".loyalty.LoyaltyActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background_rewards_page">
 
-    <include
-        android:id="@+id/navigation"
-        layout="@layout/toolbar"
+
+    <com.herfy.common.toolbar.CustomButtonsToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="16dp"
+        app:titleTextColor="@color/white"
+        app:rightButtonIcon="@drawable/ic_history_circle_white"
+        app:navButton="@drawable/ic_navigate_back_circle_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/view_background"
+        android:background="@drawable/common_background_half_corner_top"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/nsv_rewards"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="115dp"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nsv_rewards"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/navigation">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent">
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/navigation"
-            app:layout_constraintVertical_bias="0.0"
-            tools:layout_editor_absoluteX="16dp">
+            android:layout_height="wrap_content">
 
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/v_tier_card"
+            <FrameLayout
+                android:id="@+id/fm_layout_card"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="16dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/transparent_card"
-                app:cardCornerRadius="8dp"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintDimensionRatio="1.6:1"
+                android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:cardBackgroundColor="@color/silver">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-
-                    <ImageView
-                        android:id="@+id/iv_default_art"
-                        android:layout_width="170dp"
-                        android:layout_height="170dp"
-                        android:layout_marginEnd="@dimen/margin_basic_16dp"
-                        android:background="@drawable/ic_card_default_art"
-                        android:scaleType="centerCrop"
-                        android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:visibility="visible" />
-
-                    <ImageView
-                        android:id="@+id/iv_card"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="fitXY" />
-
-                    <TextView
-                        android:id="@+id/tv_tier"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="28dp"
-                        android:layout_marginEnd="24dp"
-                        android:fontFamily="@font/cairo_bold"
-                        android:textAllCaps="true"
-                        android:textColor="@color/white"
-                        android:textSize="15dp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/iv_card"
-                        app:layout_constraintTop_toTopOf="@+id/iv_card"
-                        tools:text="Tier" />
-
-                    <TextView
-                        android:id="@+id/tv_card_number_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginBottom="12dp"
-                        android:text="Mobile Number"
-                        android:fontFamily="@font/cairo_regular"
-                        android:textAllCaps="true"
-                        android:textColor="@color/white"
-                        android:textSize="13sp"
-                        android:visibility="visible"
-                        app:layout_constraintBottom_toTopOf="@+id/tv_card_number"
-                        app:layout_constraintStart_toStartOf="@+id/iv_card" />
-
-                    <TextView
-                        android:id="@+id/tv_card_number"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginEnd="24dp"
-                        android:gravity="start"
-                        android:textAlignment="viewStart"
-                        android:textColor="@color/white"
-                        android:textSize="25sp"
-                        android:visibility="visible"
-                        android:fontFamily="@font/cairo_bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="966 123 4567 89" />
-
-                    <TextView
-                        android:id="@+id/tv_customer_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:textAllCaps="true"
-                        android:textColor="@color/white"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/cairo_bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_card_number"
-                        tools:text="Customer Name" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <LinearLayout
-                android:id="@+id/materialCardView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/v_tier_card">
+                app:layout_constraintEnd_toEndOf="parent">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="10dp"
-                    app:cardPreventCornerOverlap="true"
-                    app:cardUseCompatPadding="true">
+                <include
+                    android:id="@+id/layout_card"
+                    layout="@layout/layout_card"
+                    />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingTop="20dp"
-                        android:paddingBottom="20dp">
+            </FrameLayout>
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/points"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:includeFontPadding="true"
-                                android:textColor="#1C1C1E"
-                                android:textSize="20sp"
-                                android:fontFamily="@font/cairo_semibold"
-                                tools:text="2,260" />
-
-                            <TextView
-                                android:id="@+id/points_currency"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center_vertical"
-                                android:layout_marginStart="8dp"
-                                android:includeFontPadding="true"
-                                android:paddingBottom="2dp"
-                                android:text="PTS"
-                                android:fontFamily="@font/cairo_semibold"
-                                android:textAllCaps="true"
-                                android:textColor="#1C1C1E"
-                                android:textSize="14sp" />
-
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/total_points"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:text="Total number of points"
-                            android:fontFamily="@font/cairo_regular"
-                            android:alpha=".4"
-                            android:layout_marginTop="6dp"
-                            android:textColor="#1E1E1E"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="10dp"
-                    app:cardPreventCornerOverlap="true"
-                    app:cardUseCompatPadding="true">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingTop="20dp"
-                        android:paddingBottom="20dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/amount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:includeFontPadding="true"
-                                android:textColor="#1C1C1E"
-                                android:textSize="20sp"
-                                android:fontFamily="@font/cairo_semibold"
-                                tools:text="113" />
-
-                            <TextView
-                                android:id="@+id/amount_currency"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center_vertical"
-                                android:layout_gravity="bottom"
-                                android:layout_marginStart="8dp"
-                                android:includeFontPadding="true"
-                                android:paddingBottom="2dp"
-                                android:textAllCaps="true"
-                                android:textColor="#1C1C1E"
-                                android:textSize="14sp"
-                                android:fontFamily="@font/cairo_semibold"
-                                tools:text="SAR" />
-
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_marginTop="6dp"
-                            android:id="@+id/amount_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:text="(x) equivalence"
-                            android:alpha=".4"
-                            android:fontFamily="@font/cairo_regular"
-                            android:textColor="#1E1E1E"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
-            </LinearLayout>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_marginTop="6dp"
-                android:id="@+id/materialCardView2"
+            <FrameLayout
+                android:id="@+id/fm_rewards_tier"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="10dp"
-                app:cardPreventCornerOverlap="true"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintTop_toBottomOf="@+id/materialCardView">
+                app:layout_constraintTop_toBottomOf="@id/fm_layout_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <include
+                    android:id="@+id/layout_rewards_tier"
+                    layout="@layout/layout_rewards_tier"
+                    />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="10dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+            </FrameLayout>
 
-                        <TextView
-                            android:id="@+id/progress_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:textAlignment="center"
-                            android:textColor="#4A4A4A"
-                            android:fontFamily="@font/cairo_regular"
-                            android:textSize="14sp"
-                            tools:text="192 points till you reach Gold Tier" />
-
-                        <ProgressBar
-                            android:id="@+id/progress"
-                            style="?android:attr/progressBarStyleHorizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="20dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="9dp"
-                            android:progressDrawable="@drawable/loyalty_progress" />
-
-                    </LinearLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnHistory"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            <FrameLayout
+                android:id="@+id/fm_scan_points"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:backgroundTint="?attr/colorPrimary"
-                app:cornerRadius="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/materialCardView2"
-                android:fontFamily="@font/cairo_bold"
-                tools:layout_editor_absoluteX="0dp"
-                tools:text="POINTS HISTORY" />
+                app:layout_constraintTop_toBottomOf="@id/fm_rewards_tier"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRedeem"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                app:backgroundTint="?attr/colorPrimary"
-                app:cornerRadius="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/btnHistory"
-                android:fontFamily="@font/cairo_bold"
-                tools:layout_editor_absoluteX="0dp"
-                tools:text="REDEEM IN STORE"
-                tools:visibility="visible" />
+                <include
+                    android:id="@+id/layout_scan_points"
+                    layout="@layout/layout_scan_to_earn_points"
+                    />
 
-            <TextView
-                android:id="@+id/btnLearnMore"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/cairo_semibold"
-                android:includeFontPadding="false"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textColor="#48484A"
-                android:textSize="16sp"
-                app:layout_constraintTop_toBottomOf="@+id/btnRedeem"
-                tools:text="LEARN ABOUT POINTS" />
+            </FrameLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </ScrollView>
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/qr_img_toolbar"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:visibility="visible"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/qr_loyalty_white" />
-
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

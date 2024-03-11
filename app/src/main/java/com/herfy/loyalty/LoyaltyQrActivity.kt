@@ -1,28 +1,27 @@
 package com.herfy.loyalty
 
-import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import android.view.View
-import androidx.core.content.ContextCompat
 import com.google.gson.Gson
-import com.herfy.R
 import com.herfy.base.BaseActivity
-import com.herfy.utils.constants.Text
 import com.herfy.databinding.ActivityLoyaltyQrBinding
+import com.herfy.util.QRHelper
+import com.herfy.util.StringUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.TimeUtil
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
 import com.skylinedynamics.solosdk.api.models.objects.Tier
-import com.herfy.util.*
-import com.herfy.utils.helper.CacheUtil
-import com.herfy.utils.helper.TimeUtil
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 const val POINTS = "points"
 const val VALUE = "value"
@@ -31,10 +30,12 @@ const val EXPIRES_AT = "expires-at"
 const val QR_DATA = "qr-data"
 
 
+@AndroidEntryPoint
 class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
 
     private lateinit var binding: ActivityLoyaltyQrBinding
-    private lateinit var loyaltyPresenter: LoyaltyContract.Presenter
+    @Inject
+    lateinit var loyaltyPresenter: LoyaltyContract.Presenter
     private var countDownTimer: CountDownTimer? = null
 
     private var points: Int = 0
@@ -48,7 +49,6 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
         binding = ActivityLoyaltyQrBinding.inflate(layoutInflater)
         setContentView(binding.root)
         loadPreferences()
-        loyaltyPresenter = LoyaltyPresenter(this)
         loyaltyPresenter.start()
     }
 
@@ -96,18 +96,6 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
     override fun setupViews() {
         showLoadingDialog()
         binding.apply {
-            toolbar.apply {
-                close.setOnClickListener { onBackPressed() }
-            }
-
-            btnRegenerate.setOnClickListener {
-                if (points != 0) {
-                    showLoadingDialog()
-                    loyaltyPresenter.redeemPoints(points)
-                }
-            }
-
-            btnRegenerate.paintFlags = btnRegenerate.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             generateQRCode(qrData)
         }
     }
@@ -119,25 +107,12 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
     override fun setupTranslations() {
         binding.apply {
             val cacheUtil = CacheUtil.getInstance()
-            toolbar.title.text = cacheUtil.getTranslations(Text.LOYALTY_QR_CODE, "LOYALTY QR CODE")
-            tvClaimDiscountInStore.text = cacheUtil.getTranslations(
-                Text.CLAIM_DISCOUNT_IN_STORE, "Claim your discount In-store:"
-            )
-            tvClaimDiscountInStoreSub.text = cacheUtil.getTranslations(
-                Text.SCAN_QR_CODE, "Scan this QR Code to your nearest store to avail this discount."
-            )
             tvClaimYourDiscount.text =
                 cacheUtil.getTranslations(Text.CLAIM_YOUR_DISCOUNT, "Claim your discount")
             tvClaimYourDiscountSub.text = cacheUtil.getTranslations(
                 Text.WHEN_COME_TO_ORDER,
                 "When you come in to order, tell this promo code to get your discount:"
             )
-            toolbar.close.text = cacheUtil.getTranslations(Text.CLOSE, "Close")
-            tvExpiry.text =
-                cacheUtil.getTranslations(Text.QR_CODE_WILL_EXPIRE, "This QR Code will expire in")
-                    .replace("(x)", "")
-            btnRegenerate.text =
-                cacheUtil.getTranslations(Text.GENERATE_NEW_CODE, "Generate new code")
         }
     }
 
@@ -173,8 +148,6 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
                     setupSixDigitCode(code)
                 }
                 if (expiresAt != 0L) {
-                    expiryLayout.visibility = View.VISIBLE
-                    btnRegenerate.visibility = View.GONE
                     setupExpiry(expiresAt)
                 }
             }
@@ -191,8 +164,6 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
             }
             it.qrData?.let { qr ->
                 binding.ivQrCode.alpha = 1f
-                binding.tvPromoCode.alpha = 1f
-                binding.tvPromoCode.setTextColor(ViewUtil.getColorMain(binding.tvPromoCode.context))
                 qrData = Gson().toJson(qr)
                 generateQRCode(qrData)
             }
@@ -204,8 +175,11 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
 
     }
 
+    override fun showTiers(loyalty: Loyalty?) {
+        TODO("Not yet implemented")
+    }
+
     private fun setupSixDigitCode(code: Int) {
-        binding.tvPromoCode.text = code.toString()
     }
 
     private fun setupExpiry(expiresAt: Long) {
@@ -217,7 +191,7 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
         countDownTimer = object : CountDownTimer(expiresAt, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val lbl: String = getFormattedTimeForCountdown(millisUntilFinished) ?: ""
-                binding.tvExpiryTime.text = lbl
+
             }
 
             override fun onFinish() {
@@ -230,10 +204,6 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
     private fun showRegenerateCode() {
         binding.apply {
             ivQrCode.alpha = 0.3f
-            tvPromoCode.alpha = 0.6f
-            tvPromoCode.setTextColor(ContextCompat.getColor(this@LoyaltyQrActivity, R.color.gray))
-            expiryLayout.visibility = View.GONE
-            btnRegenerate.visibility = View.VISIBLE
             countDownTimer = null
         }
     }

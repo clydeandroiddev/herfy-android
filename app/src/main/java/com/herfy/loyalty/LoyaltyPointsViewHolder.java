@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
+import com.herfy.model.SortingCategory;
 import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.utils.helper.CacheUtil;
@@ -29,17 +30,17 @@ import butterknife.ButterKnife;
 public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements LoyaltyContract.View {
 
     private Context context;
-    private LoyaltyContract.Presenter loyaltyPresenter;
+    @BindView(R.id.tvDate)
+    TextView tvDate;
+    @BindView(R.id.tvSarValue)
+    TextView tvSarValue;
+    @BindView(R.id.tvPoints)
+    TextView tvPoints;
+    @BindView(R.id.tvAmountSpentLabel)
+    TextView tvAmountSpentLabel;
 
-    @BindView(R.id.tvDate) TextView tvDate;
-    @BindView(R.id.tvSarValue) TextView tvSarValue;
-    @BindView(R.id.tvPoints) TextView tvPoints;
-    @BindView(R.id.tvAmountSpentLabel) TextView tvAmountSpentLabel;
-
-    @BindView(R.id.tvExpiry) TextView tvExpiresAt;
-
-
-    public LoyaltyPointsViewHolder(Context context, LoyaltyContract.Presenter loyaltyPresenter, View itemView) {
+    private LoyaltyHistoryContract.Presenter loyaltyPresenter;
+    public LoyaltyPointsViewHolder(Context context, LoyaltyHistoryContract.Presenter loyaltyPresenter, View itemView) {
         super(itemView);
 
         ButterKnife.bind(this, itemView);
@@ -80,7 +81,7 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
 
     @Override
     public void setupTranslations() {
-        tvAmountSpentLabel.setText(CacheUtil.getInstance().getTranslations(Text.LOYALTY_AMOUNT_SPENT, "AMOUNT SPENT"));
+        tvAmountSpentLabel.setText(CacheUtil.getInstance().getTranslations(Text.LOYALTY_AMOUNT_SPENT, "Amount Spent"));
     }
 
     @Override
@@ -101,33 +102,20 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
     @Override
     public void setLoyaltyHistory(LoyaltyTransaction loyaltyTransaction) {
         Concept concept = CacheUtil.getInstance().getConcept();
-        tvDate.setText(TimeUtil.formatDate(loyaltyTransaction.getCreatedAt()).toUpperCase());
+        tvDate.setText(TimeUtil.formatDate(loyaltyTransaction.getCreatedAt()));
         DecimalFormat formatter = new DecimalFormat("#,###");
         if (loyaltyTransaction.getType() != null && loyaltyTransaction.getType().equalsIgnoreCase("collection")) {
-            tvPoints.setText(CacheUtil.getInstance().getTranslations(Text.COLLECTED_PTS_LABEL, "Collected (x) pts").replace("(x)", formatter.format(loyaltyTransaction.getPoints())));
-            tvPoints.setTextColor(context.getResources().getColor(R.color.loyalty_green));
+            tvPoints.setText("+" + formatter.format(loyaltyTransaction.getPoints()));
+            tvPoints.setTextColor(context.getResources().getColor(R.color.background_color_blue));
         } else {
-            tvPoints.setText(CacheUtil.getInstance().getTranslations(Text.REDEEMED_PTS_LABEL, "(x) pts redeemed").replace("(x)", formatter.format(loyaltyTransaction.getPoints())));
-            tvPoints.setTextColor(context.getResources().getColor(R.color.loyalty_red));
+            tvPoints.setText("-" + formatter.format(loyaltyTransaction.getPoints()));
+            tvPoints.setTextColor(context.getResources().getColor(R.color.text_color_red_points));
         }
-        if(loyaltyTransaction.getDetails() != null && loyaltyTransaction.getDetails().getAmount() != null) {
-            tvSarValue.setText(StringUtil.localize(formatter.format(loyaltyTransaction.getDetails().getAmount())+" "+CacheUtil.getInstance().getTranslations(concept.getCurrencySymbol())));
+        if (loyaltyTransaction.getDetails() != null && loyaltyTransaction.getDetails().getAmount() != null) {
+            tvSarValue.setText(StringUtil.localize(formatter.format(loyaltyTransaction.getDetails().getAmount()) + " " + CacheUtil.getInstance().getTranslations(concept.getCurrencySymbol())));
         } else {
             tvSarValue.setText(CurrencyUtils.Companion.updateAmountWithCurrency(0.0, true));
         }
-
-        try{
-            if(loyaltyTransaction.getExpiresAt()!= null && !loyaltyTransaction.getExpiresAt().isEmpty()){
-                tvExpiresAt.setVisibility(View.VISIBLE);
-                tvExpiresAt.setText(CacheUtil.getInstance().getTranslations(Text.EXPIRE_DATE)+" "+TimeUtil.formatDateNoComma(loyaltyTransaction.getExpiresAt()));
-            }else{
-                tvExpiresAt.setVisibility(View.GONE);
-            }
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-
-
     }
 
     @Override
@@ -144,4 +132,9 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
     public void showQrData(String data) {
 
     }
+    @Override
+    public void showTiers(Loyalty loyalty) {
+
+    }
+
 }

@@ -428,6 +428,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                 ) + tier.name.substring(1).lowercase(Locale.getDefault())
                             ) + "</b>", HtmlCompat.FROM_HTML_MODE_LEGACY
                         )
+                        tvProgressTier.text = tier.name
+
                     }
                 }
 

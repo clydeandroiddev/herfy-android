@@ -78,6 +78,7 @@
     <color name="background_loading_transparent">#99000000</color>
     <color name="text_color_red">#D12928</color>
     <color name="text_color_blue">#2266A7</color>
+    <color name="text_color_red_points">#BE3624</color>
 </resources>
 
 

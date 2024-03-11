@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:textColor="#0C0C0C"
         android:textSize="18sp"
-        style="@style/Styles.Text.Title1"
+        style="@style/Styles.Text.Headline1"
         tools:text="Testing"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/ib_navigation"

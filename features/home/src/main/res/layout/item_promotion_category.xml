@@ -30,8 +30,8 @@
         android:layout_marginHorizontal="3dp"
         app:isSelected="@{category.selected}"
         android:gravity="center"
-        android:background="@drawable/background_unselected_promo_category"
-        app:unselectedBackground="@{@drawable/background_unselected_promo_category}"
+        android:background="@drawable/background_unselected_category"
+        app:unselectedBackground="@{@drawable/background_unselected_category}"
         app:selectedBackground="@{@drawable/background_red_gradient}"
          />
 

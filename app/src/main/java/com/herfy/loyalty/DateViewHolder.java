@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
+import com.herfy.model.SortingCategory;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction;
@@ -21,12 +22,12 @@ import butterknife.ButterKnife;
 public class DateViewHolder extends RecyclerView.ViewHolder implements LoyaltyContract.View {
 
     private Context context;
-    private LoyaltyContract.Presenter loyaltyPresenter;
+    private LoyaltyHistoryContract.Presenter loyaltyPresenter;
 
     @BindView(R.id.tv_date) TextView tvDate;
 
 
-    public DateViewHolder(Context context, LoyaltyContract.Presenter loyaltyPresenter, View itemView) {
+    public DateViewHolder(Context context, LoyaltyHistoryContract.Presenter loyaltyPresenter, View itemView) {
         super(itemView);
 
         ButterKnife.bind(this, itemView);
@@ -102,6 +103,11 @@ public class DateViewHolder extends RecyclerView.ViewHolder implements LoyaltyCo
 
     @Override
     public void showQrData(String data) {
+
+    }
+
+    @Override
+    public void showTiers(Loyalty loyalty) {
 
     }
 }
