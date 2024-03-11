@@ -229,6 +229,15 @@ class MenuCategoryItemAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
+    fun getMenuItemCategory(position: Int): MenuCategory? {
+        if(position < itemList.size) {
+            if(itemList[position] is MenuItemAdapterItem) {
+                return (itemList[position] as MenuItemAdapterItem).menuCategory
+            }
+        }
+        return null
+    }
+
     class Diff(private val old: List<MenuAdapterItem>, private val newItem: List<MenuAdapterItem>) :
         DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPos: Int, newPosition: Int): Boolean {

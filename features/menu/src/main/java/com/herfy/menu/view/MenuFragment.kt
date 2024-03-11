@@ -40,6 +40,7 @@ import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.smoothSnapToPosition
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
+import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -102,15 +103,16 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
             if(menuIsScrolled && binding.rvMenuCategories.isVisible()) {
                 val firstVisibleItem =
                     (binding.rvMenuCategoriesItems.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                val lastVisibleItem =
+                    (binding.rvMenuCategoriesItems.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                 if (firstVisibleItem in viewModel.menuCategoryPositions.values) {
                     viewModel.getMenuCategoryId(firstVisibleItem)?.let { menuCategoryId ->
-                        menuCategoryAdapter.getPosition(menuCategoryId)?.let {
-                            if(it != menuCategoryAdapter.getSelected() &&
-                                it < menuCategoryAdapter.itemCount) {
-                                binding.rvMenuCategories.smoothScrollToPosition(it)
-                                menuCategoryAdapter.select(it)
-                            }
-                        }
+                        scrollToMenuCategory(menuCategoryId)
+                    }
+                } else if(menuCategoryItemAdapter.getMenuItemCategory(lastVisibleItem) != null) {
+                    AppLogger.error("lastVisibleItem $lastVisibleItem")
+                    menuCategoryItemAdapter.getMenuItemCategory(lastVisibleItem)?.let { menuCategory ->
+                        scrollToMenuCategory(menuCategory.id)
                     }
                 }
             }
@@ -451,6 +453,16 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 intent.putExtra("checkout", false)
                 intent.putExtra("storeId", storeId)
                 it.startActivity(intent)
+            }
+        }
+    }
+
+    fun scrollToMenuCategory(menuCategoryId: String) {
+        menuCategoryAdapter.getPosition(menuCategoryId)?.let {
+            if(it != menuCategoryAdapter.getSelected() &&
+                it < menuCategoryAdapter.itemCount) {
+                binding.rvMenuCategories.smoothScrollToPosition(it)
+                menuCategoryAdapter.select(it)
             }
         }
     }
