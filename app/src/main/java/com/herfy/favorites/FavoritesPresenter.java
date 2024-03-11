@@ -244,7 +244,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                                     if (MenuUtil.isItemAvailable(timedEvent, concept.getCurrentTime())) {
                                         addCartItem(favorite);
                                     } else {
-                                        Log.d("FAFA","Error called");
                                         favoritesView.showError(MenuUtil.getTimedEventError(timedEvent));
                                     }
                                 }
@@ -265,7 +264,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                Log.d("FAFA","An error occured");
+
                 favoritesView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)));
             }
         });
@@ -731,7 +730,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                Log.d("FAFA","Error bai " + o.toString());
                 favoritesView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.ITEM_NO_LONGER_AVAILABLE)));
             }
         });
@@ -1087,11 +1085,9 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void getFavouritesByOrderTypeId(String orderTypeId, String orderTypeName) {
-        Log.d("FAFA","Type baii " + orderTypeName);
        OrderType type =  OrderType.Companion.fromString(orderTypeName);
-        Log.d("FAFA","Order type saved " + type);
         CacheUtil.getInstance().setOrderType(type);
-        Log.d("FAFA","Get type" + CacheUtil.getInstance().getOrderType());
+
        getFavorites(1,orderTypeId);
 
     }
