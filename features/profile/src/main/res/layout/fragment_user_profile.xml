@@ -349,6 +349,85 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/deleteAccountLabel"
+                                style="@style/Styles.Text.Caption"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginStart="18dp"
+                                android:layout_marginTop="14dp"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textColor="#212121"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Delete Account" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/deleteAccountDescription"
+                                style="@style/Styles.Text.Caption.Semibold.Common"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginStart="18dp"
+                                android:layout_marginTop="6dp"
+                                android:layout_marginEnd="18dp"
+                                android:ellipsize="end"
+                                android:gravity="start"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="2dp"
+                                android:textColor="#212121"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/deleteAccountLabel"
+                                tools:text="Delete account and remove all data. Please remember this action can not be reversed." />
+
+                            <ImageView
+                                android:id="@+id/deleteImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="18dp"
+                                android:layout_marginTop="12dp"
+                                android:src="@drawable/ic_delete_account"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/deleteAccountDescription" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/deleteMyAccountLabel"
+                                style="@style/Styles.Text.Caption.Semibold"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="7dp"
+                                android:gravity="start"
+                                android:includeFontPadding="false"
+                                android:textColor="#C51F0F"
+                                android:textSize="16sp"
+                                app:layout_constraintBottom_toBottomOf="@id/deleteImage"
+                                app:layout_constraintStart_toEndOf="@id/deleteImage"
+                                app:layout_constraintTop_toTopOf="@id/deleteImage"
+                                tools:text="Delete My Account" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="16dp"
+                                android:background="#F2F2F7"
+                                app:layout_constraintTop_toBottomOf="@id/deleteImage" />
+
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
                     </LinearLayout>
 
                 </ScrollView>
