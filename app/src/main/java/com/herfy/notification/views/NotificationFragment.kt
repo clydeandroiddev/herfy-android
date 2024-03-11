@@ -129,4 +129,7 @@ class NotificationFragment : BaseFragment(), NotificationContract.View {
     override fun showNotifError() {}
     override fun showDigitalCoupon(digitalCoupon: Campaign) {}
     override fun showError(message: String?) {}
+    override fun setIsLoading(isLoading: Boolean) {
+        TODO("Not yet implemented")
+    }
 }

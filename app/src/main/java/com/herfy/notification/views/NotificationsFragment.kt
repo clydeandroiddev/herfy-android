@@ -26,6 +26,8 @@ import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.ninjaTap
+import com.herfy.utils.extensions.setVisible
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
@@ -65,6 +67,7 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showLoadingDialog()
+        binding.notificationShimmer.visible()
         notificationPresenter!!.start()
         notificationPresenter!!.getNotifications(page)
         binding.rvNotif.addOnItemTouchListener(touchListener!!)
@@ -123,7 +126,8 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!isLoadingHistory && page <= notificationPresenter!!.totalNotifPageCount && linearLayoutManager.findLastCompletelyVisibleItemPosition() >= linearLayoutManager.itemCount - 1) {
                     isLoadingHistory = true
-                    binding.loadMoreProgressbar.visibility = View.VISIBLE
+                    binding.notificationShimmer.setVisible(true)
+                    binding.notificationShimmer.startShimmer()
                     notificationPresenter!!.getNotifications(page)
                 }
             }
@@ -147,7 +151,7 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
         if (page < pageCount) {
             page += 1
         }
-        binding.loadMoreProgressbar.visibility = View.GONE
+        binding.notificationShimmer.visibility = View.GONE
         if (notifications.isEmpty()) {
             page = 1
         }
@@ -180,7 +184,7 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
     override fun setupNotification(notification: Notification) {}
     override fun showNotificationDetails(notifData: NotifData) {}
     override fun orderDeleted() {
-        notificationPresenter!!.getNotifications(page)
+//        notificationPresenter!!.getNotifications(page)
     }
 
     override fun showNotifError() {
@@ -198,6 +202,13 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
             it.showAlertDialog("", message)
         }
     }
+
+    override fun setIsLoading(isLoading: Boolean) {
+        binding.rvNotif.setVisible(!isLoading)
+        binding.notificationShimmer.setVisible(isLoading)
+        binding.notificationShimmer.startShimmer()
+    }
+
     private fun processDeeplink(notifDeeplink: NotifDeeplink) {
         val type = notifDeeplink.type
         val value = notifDeeplink.value
