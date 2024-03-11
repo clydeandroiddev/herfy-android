@@ -409,6 +409,14 @@ public class Text {
     public static final String YOU_ARE_CURRENTLY_NOT_SIGNED_IN = "you_are_currently_not_signed_in";
     public static final String LOYALTY = "loyalty";
     public static final String FAVORITES = "favorites";
+    public static final String CLEAR_BASKET = "clear_basket";
+    public static final String ADD_MORE_ITEMS = "add_more_items";
+    public static final String VIEW_BASKET = "view_basket";
+    public static final String KEEP_CURRENT_BASKET = "keep_current_basket";
+
+    public static final String CLEAR_YOUR_BASKET_DESCRIPTION = "clear_your_basket_descrption";
+
+    public static final String CLEAR_YOUR_CURRENT_BASKET = "Clear your current basket";
     public static final String QUICK_ORDER = "quick_order";
     public static final String SUBSCRIPTIONS = "subscriptions";
     public static final String PICK_MEAL_SIZE_CAPS = "pick_meal_size_caps";

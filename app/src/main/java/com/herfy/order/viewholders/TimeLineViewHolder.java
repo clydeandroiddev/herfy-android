@@ -18,6 +18,7 @@ import com.herfy.R;
 import com.herfy.font.FontHandler;
 import com.herfy.order.OrderContract;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
@@ -88,6 +89,11 @@ public class TimeLineViewHolder extends RecyclerView.ViewHolder implements Order
 
     @Override
     public void showOrderTypes(Set<OrderType> orderTypes) {
+
+    }
+
+    @Override
+    public void addToCartFavorite(MenuItem menuItem) {
 
     }
 
@@ -355,5 +361,14 @@ public class TimeLineViewHolder extends RecyclerView.ViewHolder implements Order
     public void showMessage(String message) {
 
     }
+    @Override
+    public void showMenuItem(String categoryId, String menuItemId) {
+
+    }
+    @Override
+    public void logFirebaseEvent(String event) {
+
+    }
+
 }
 

@@ -14,6 +14,7 @@ import com.herfy.order.viewholders.StoreViewHolder;
 import com.herfy.order.viewholders.TimeLineViewHolder;
 import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
+import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
@@ -34,7 +35,7 @@ public interface OrderContract {
     interface View extends BaseView<Presenter> {
 
         void showOrderTypes(Set<OrderType> orderTypes);
-
+        void addToCartFavorite(MenuItem menuItem);
         void createOrderType(OrderType orderType);
 
         void selectOrderType(OrderType orderType);
@@ -60,7 +61,6 @@ public interface OrderContract {
         void updateAddAddress(@Nullable Address updateAddress, @Nullable android.location.Address saveAddress);
 
         void showStores(ArrayList<Store> pickupStores, ArrayList<Store> curbsideStores);
-
         void setStore(Store store, boolean selected);
 
         void callStore(Store store);
@@ -86,6 +86,7 @@ public interface OrderContract {
         void saveAddress(Address address);
 
         void updateAddress(String address);
+        void logFirebaseEvent(String event);
 
         void showUnavailableMenuItems();
 
@@ -114,7 +115,7 @@ public interface OrderContract {
         void showRatings(OrderStatus orderStatus, List<Rating> ratings);
 
         void showOrders();
-        
+        void showMenuItem(String categoryId, String menuItemId);
         void enableConfirmButton(boolean enable, String storeName);
 
         void saveToCache(String key, String value);
@@ -122,7 +123,6 @@ public interface OrderContract {
         void preloadImage(String imageUrl, RequestOptions requestOptions);
 
         void diffMenuSaved(Address address);
-
         void showPromptChangeOrderType(Address address);
 
         void showMinimumDeliveryForAreaMessage(String error);
@@ -158,7 +158,7 @@ public interface OrderContract {
         ArrayList<Store> getDineInStores();
 
         void getStores(int page);
-
+        void addToCartFavorite(Favorite favorite);
         void getDistances();
 
         void onBindStoreViewAtPosition(boolean isDineIn, int position, StoreViewHolder storeViewHolder, boolean selected);
@@ -176,6 +176,8 @@ public interface OrderContract {
         void setOrderType(OrderType orderType);
 
         android.location.Address getAddress();
+        void addCartItem(Favorite favorite);
+
 
         String getAddress(LatLng latLng);
 
@@ -246,7 +248,7 @@ public interface OrderContract {
         void removeCurbside();
 
         void getDiffMenuCdn(Address address);
-
+        String getMenuCategory(String menuItemId);
 
         void parseMenu(JSONObject data, Address address);
 

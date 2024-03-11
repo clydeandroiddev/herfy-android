@@ -59,6 +59,7 @@ import com.herfy.utils.helper.CacheUtil;
 import com.herfy.views.NestedScrollableViewHelper;
 import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
@@ -200,6 +201,11 @@ public class PickupBranchActivity extends BaseActivity implements OrderContract.
 
     @Override
     public void showOrderTypes(Set<OrderType> orderTypes) {
+
+    }
+
+    @Override
+    public void addToCartFavorite(MenuItem menuItem) {
 
     }
 
@@ -490,6 +496,11 @@ public class PickupBranchActivity extends BaseActivity implements OrderContract.
     }
 
     @Override
+    public void logFirebaseEvent(String event) {
+
+    }
+
+    @Override
     public void showUnavailableMenuItems() {
 
     }
@@ -556,6 +567,11 @@ public class PickupBranchActivity extends BaseActivity implements OrderContract.
 
     @Override
     public void showOrders() {
+
+    }
+
+    @Override
+    public void showMenuItem(String categoryId, String menuItemId) {
 
     }
 

@@ -43,6 +43,7 @@ import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
@@ -350,13 +351,13 @@ class HomeViewModel @Inject constructor(
         _startPoints.value = 100
     }
     private fun getTierFlow(): Flow<List<Tier>> {
-        return flow {
+        return channelFlow {
             homeRepository.getLoyaltyTiers { homeResponse ->
                 if (homeResponse.success) {
                     homeResponse.data?.let { it ->
                         it.cast<ArrayList<Tier>> {
                             _tiers.value = it
-                            invoke { emit(it) }
+                            trySend(it)
                         }
                     }
                 }
@@ -367,16 +368,14 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getLoyaltyFlow(): Flow<Loyalty?> {
-        return flow {
+        return channelFlow {
             homeRepository.getCustomerLoyalty(AuthUtil.getInstance().customer.id) { homeResponse ->
                 if (homeResponse.success) {
                     homeResponse.data?.let { it ->
                         it.cast<Loyalty> {
                             _loyalty.value = it
                             AuthUtil.getInstance().customerLoyalty = it
-                            invoke {
-                                emit(it)
-                            }
+                            trySend(it)
                         }
                     }
                 }

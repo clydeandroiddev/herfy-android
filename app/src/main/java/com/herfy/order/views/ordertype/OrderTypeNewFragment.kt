@@ -17,6 +17,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResult
@@ -49,6 +51,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
@@ -57,6 +60,8 @@ import com.herfy.cart.views.CartFragment
 import com.herfy.common.utils.areaJson
 import com.herfy.curbside.curbsidenew.CurbsideNewActivity
 import com.herfy.ext.cast
+import com.herfy.favorites.FavoritesContract
+import com.herfy.favorites.FavoritesFragmentDirections
 import com.herfy.font.FontHandler
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
@@ -71,8 +76,10 @@ import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
 import com.herfy.util.*
 import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
+import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.*
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.setNavigationResult
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.*
@@ -81,6 +88,7 @@ import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
 import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.*
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import io.shipbook.shipbooksdk.Log
 import java.util.*
@@ -92,6 +100,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         const val ARGS_KEY_FRAGMENT_RESULT = "fragmentResult"
         const val ARGS_KEY_CURBSIDE = "curbside"
         const val ARGS_KEY_IS_SAME_BRANCH = "is_same_branch"
+        const val IS_FROM_ORDER_TYPE = "IS_FROM_ORDER_TYPE"
     }
 
     private lateinit var binding: FragmentOrderTypeBinding
@@ -200,6 +209,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult? ->
         if (result?.resultCode == Activity.RESULT_OK) {
+
             activity?.cast<BaseActivity> {
                 continueSelectingType(it, OrderType.CURBSIDE)
             }
@@ -331,7 +341,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     private fun navigateUp(proceed: Boolean) {
-        if (proceed && args.fromHome) {
+        if (args.isFromFavorites) {
+            orderPresenter.addToCartFavorite(CacheUtil.getInstance()
+                .retrieveFavoriteToAddToCart())
+        }else if (proceed && args.fromHome) {
             findNavController().navigateToDeepLink("nav_menu")
         } else {
             activity?.runOnUiThread {
@@ -491,7 +504,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     continueSelectingType(it, OrderType.DINE_IN)
                 } else if (deliveryTabSelected) {
                     goToAddAddress(false)
-                } else {
+                }else {
                     chooseType(it)
                 }
             }
@@ -590,6 +603,46 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 binding.soloType.gone()
             }
         }
+    }
+
+    override fun addToCartFavorite(menuItem: MenuItem?) {
+        activity?.let {
+            val baseActivity = it as BaseActivity
+            dismissDialogs()
+            baseActivity.runOnUiThread {
+                activity?.cast<MainActivity> { mainActivity ->
+                    mainActivity.setCartQuantity(CacheUtil.getInstance().cartQuantity)
+                }
+                activity?.cast<NavigationActivity> { menuItemActivity ->
+                    menuItemActivity.setCartQuantity(CacheUtil.getInstance().cartQuantity)
+                }
+                val vibrator = baseActivity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                if (vibrator != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(
+                            VibrationEffect.createOneShot(
+                                500,
+                                VibrationEffect.DEFAULT_AMPLITUDE
+                            )
+                        )
+                    } else {
+                        vibrator.vibrate(100)
+                    }
+                }
+
+                Toast.makeText(
+                    baseActivity,
+                    CacheUtil.getInstance().getTranslations(Text.FAVORITE_ADDED_TO_CART),
+                    Toast.LENGTH_SHORT
+                ).show()
+               navigateToFavourites()
+            }
+        }
+    }
+
+    private fun navigateToFavourites() {
+        NavigationUtils
+            .navigateSafe(findNavController(), OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true))
     }
 
     private fun initialTypeState() {
@@ -1274,13 +1327,18 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             if (CacheUtil.getInstance().orderType !== OrderType.CURBSIDE) {
                 CacheUtil.getInstance().curbsideCar = null
             }
-            if (isMenuSeparate && isMenuRedownloaded) {
+            if (args.isFromFavorites) {
+                MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_ORDER_TYPE)
+                orderPresenter.addToCartFavorite(CacheUtil.getInstance()
+                    .retrieveFavoriteToAddToCart())
+            }else if (isMenuSeparate && isMenuRedownloaded) {
                 navigateUp(true)
             } else {
                 activity?.cast<BaseActivity> {
                     it.dismissDialogs()
                     val eventAttributes = HashMap<String, String>()
                     eventAttributes["Delivery"] = StringUtil.trimEventAttribute(address)
+
                     logEvent("OrderTypeSelection", eventAttributes, "", 0.0)
                     navigateUp(true)
                 }
@@ -1299,6 +1357,15 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
         activity?.cast<BaseActivity> {
             it.dismissDialogs()
+        }
+    }
+
+    override fun logFirebaseEvent(event: String?) {
+        activity?.let {
+            if (Values.sDeepLinkUtm != null) {
+                val firebaseAnalytics = FirebaseAnalytics.getInstance(it)
+                firebaseAnalytics.logEvent(event.orEmpty(), Values.sDeepLinkUtm)
+            }
         }
     }
 
@@ -1362,6 +1429,14 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     override fun showRatings(orderStatus: OrderStatus, ratings: List<Rating>) {}
     override fun showOrders() {}
+    override fun showMenuItem(categoryId: String?, menuItemId: String?) {
+        activity?.let {
+            val baseActivity = it as BaseActivity
+            baseActivity.dismissDialogs()
+            val isFromFavorites = args.isFromFavorites
+        }
+    }
+
     override fun enableConfirmButton(enable: Boolean, storeName: String) {
         if (!deliveryTabSelected) {
             isPreselectedBranch = enable
@@ -1392,7 +1467,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun diffMenuSaved(address: Address?) {
-
         orderPresenter.removeMukafaaRedemption()
         if (CacheUtil.getInstance().orderType == OrderType.DELIVERY || deliveryTabSelected) {
             orderPresenter.getStore(address)
@@ -1497,6 +1571,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         if (isMenuSeparate && cachedOrderType == OrderType.DELIVERY && (orderTypeSelected == OrderType.PICKUP || orderTypeSelected == OrderType.DRIVE_THRU || orderTypeSelected == OrderType.EAT_IN)) {
             val itemsInCart = CacheUtil.getInstance().cart
             if (itemsInCart.size > 0) {
+
                 showPromptChangeOrderTypeDialog(CacheUtil.getInstance().getTranslations(
                     Text.CHANGE_PICKUP_INSTEAD_LABEL,
                     "Your current Delivery order will be removed from cart. Would you like to proceed and pick up your order instead?"
@@ -1522,6 +1597,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 } else {
                     diffMenuSaved(null)
                 }
+
             } else {
                 diffMenuSaved(null)
             }
@@ -1534,10 +1610,16 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
-                    if (type == OrderType.CURBSIDE) {
-                        proceedToCurbside()
+                    if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type == OrderType.EAT_IN || type == OrderType.DRIVE_THRU) {
+                        MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_ORDER_TYPE)
+                        orderPresenter.addToCartFavorite(CacheUtil
+                            .getInstance().retrieveFavoriteToAddToCart())
                     } else {
-                        continueSelectingType(activity, type)
+                        if (type == OrderType.CURBSIDE) {
+                            proceedToCurbside()
+                        } else {
+                            continueSelectingType(activity, type)
+                        }
                     }
                     dismissPickupTypeDialog()
                 }
@@ -1546,7 +1628,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     dismissPickupTypeDialog()
                 }
 
-            })
+            }
+        )
         choosePickupTypeDialog.show(
             requireActivity().supportFragmentManager, ChoosePickupTypeDialog::class.java.simpleName
         )

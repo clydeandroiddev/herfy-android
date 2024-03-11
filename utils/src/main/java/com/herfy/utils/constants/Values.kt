@@ -45,6 +45,7 @@ object Values {
     const val TABLE_ALLERGENS = "allergens"
     const val TABLE_STORES = "stores"
     const val TABLE_FACILITIES = "facilities"
+    const val TABLE_FAVOURITES = "favourites"
     const val TABLE_MENU_CATEGORIES_ENTITY = "menu_categories_entity"
     const val TABLE_MENU_ITEMS_ENTITY = "menu_items_entity"
     const val TABLE_MODIFIER_GROUPS_ENTITY = "modifier_groups_entity"

@@ -38,6 +38,7 @@ import com.herfy.order.OrderContract;
 import com.herfy.order.OrderPresenter;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
@@ -253,6 +254,11 @@ public class DineInTableNumberDialogFragment extends BaseDialogFragment implemen
     }
 
     @Override
+    public void addToCartFavorite(MenuItem menuItem) {
+
+    }
+
+    @Override
     public void createOrderType(OrderType orderType) {
 
     }
@@ -383,6 +389,11 @@ public class DineInTableNumberDialogFragment extends BaseDialogFragment implemen
     }
 
     @Override
+    public void logFirebaseEvent(String event) {
+
+    }
+
+    @Override
     public void showUnavailableMenuItems() {
 
     }
@@ -449,6 +460,11 @@ public class DineInTableNumberDialogFragment extends BaseDialogFragment implemen
 
     @Override
     public void showOrders() {
+
+    }
+
+    @Override
+    public void showMenuItem(String categoryId, String menuItemId) {
 
     }
 

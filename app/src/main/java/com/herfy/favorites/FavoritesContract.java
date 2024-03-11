@@ -16,7 +16,7 @@ public interface FavoritesContract {
 
     interface View extends BaseView<Presenter> {
 
-        void showLoadingDialog();
+        void setIsLoading(boolean isLoading);
 
         void showFavorites(ArrayList<Favorite> favorites);
 
@@ -44,7 +44,7 @@ public interface FavoritesContract {
 
         void setToSearch(boolean isFromSearch);
 
-        void getFavorites(int page);
+        void getFavorites(int page, String orderTypeId);
 
         void onBindFavoriteViewAtPosition(int position, FavoriteViewHolder favoriteViewHolder);
 
@@ -70,7 +70,7 @@ public interface FavoritesContract {
 
         void removeMukafaaRedemption();
 
-        void getFavouritesByOrderTypeId(long orderTypeId, String orderTypeName);
+        void getFavouritesByOrderTypeId(String orderTypeId, String orderTypeName);
 
     }
 

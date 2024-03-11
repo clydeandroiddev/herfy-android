@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:background="@color/light_gray"
-    android:layout_height="match_parent">
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      android:background="@color/light_gray"
+      android:layout_height="match_parent">
+
   <androidx.constraintlayout.widget.ConstraintLayout
       android:id="@+id/toolbarLayout"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
 
@@ -42,48 +45,58 @@
         android:layout_marginTop="@dimen/margin_large"
         android:layout_height="@dimen/_1sdp"/>
 
-    <com.herfy.common.component.EmptyStateView
-        android:id="@+id/emptyState"
-        android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/margin_xlarge"
-        android:visibility="gone"
-        app:emptyStateDrawable="@drawable/ic_favourite_empty"
-        tools:visibility="visible"
-        android:layout_height="wrap_content"/>
-  </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--    <com.google.android.material.textview.MaterialTextView-->
-<!--      android:id="@+id/txtOrderType"-->
-<!--      android:layout_width="wrap_content"-->
-<!--      style="@style/Styles.Text.Footnote"-->
-<!--      android:layout_marginTop="@dimen/margin_xlarge"-->
-<!--      android:fontFamily="@font/inter_medium"-->
-<!--      android:gravity="center"-->
-<!--      tools:text="Pick up"-->
-<!--      tools:background="@drawable/bg_favourite_order_type_selected"-->
-<!--      android:layout_height="wrap_content"/>-->
+  </androidx.constraintlayout.widget.ConstraintLayout>
+  <com.facebook.shimmer.ShimmerFrameLayout
+      android:id="@+id/orderTypeShimmering"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:clipToPadding="false"
+      android:paddingTop="@dimen/padding_large"
+      android:visibility="gone"
+      app:layout_constraintStart_toStartOf="parent"
+      android:layout_marginStart="@dimen/_15sdp"
+      app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"
+      app:shimmer_duration="1000"
+      tools:visibility="gone">
+    <include layout="@layout/item_favourite_order_type_placeholder" />
+  </com.facebook.shimmer.ShimmerFrameLayout>
   <LinearLayout
       android:id="@+id/orderTypeContainer"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginTop="@dimen/margin_xlarge"
+      app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"
+      app:layout_constraintStart_toStartOf="parent"
       android:layout_marginEnd="12dp"
       android:orientation="horizontal"
       android:layout_marginStart="@dimen/margin_large"
       tools:visibility="visible" />
-
+  <com.herfy.common.component.EmptyStateView
+      android:id="@+id/emptyState"
+      android:layout_width="match_parent"
+      app:layout_constraintTop_toBottomOf="@+id/orderTypeContainer"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      android:layout_marginTop="@dimen/margin_xlarge"
+      android:visibility="gone"
+      app:emptyStateDrawable="@drawable/ic_favourite_empty"
+      tools:visibility="visible"
+      android:layout_height="wrap_content"/>
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/favouriteRecycleView"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      app:layout_constraintTop_toBottomOf="@+id/emptyState"
+      android:layout_height="0dp"
       android:layout_marginTop="@dimen/margin_large"
       android:orientation="vertical"
+      android:layout_marginHorizontal="@dimen/margin_large"
       android:visibility="gone"
       app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
       tools:itemCount="5"
+      android:clipToPadding="false"
+      android:paddingBottom="@dimen/_150sdp"
+      app:layout_constraintBottom_toTopOf="@+id/footer"
       tools:listitem="@layout/item_new_favourite"
       tools:visibility="visible" />
 
@@ -95,7 +108,7 @@
       android:paddingTop="@dimen/padding_large"
       android:visibility="gone"
       app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/txtOrderType"
+      app:layout_constraintTop_toBottomOf="@+id/orderTypeContainer"
       app:shimmer_duration="1000"
       tools:visibility="gone">
 
@@ -103,7 +116,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
+      <include layout="@layout/item_favourite_place_holder" />
       <include layout="@layout/item_favourite_place_holder" />
 
       <include layout="@layout/item_favourite_place_holder" />
@@ -113,5 +126,95 @@
     </LinearLayout>
 
   </com.facebook.shimmer.ShimmerFrameLayout>
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/footer"
+      android:layout_width="match_parent"
+      android:layout_height="104dp"
+      android:visibility="gone"
+      tools:visibility="visible"
+      android:background="@color/card_selected_bg"
+      app:layout_constraintBottom_toBottomOf="parent"
+      android:layout_gravity="bottom">
 
-</LinearLayout>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btnAddMoreItems"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_rounded_white"
+        android:fontFamily="@font/inter_medium"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:paddingStart="@dimen/_20sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_20sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        android:textAllCaps="false"
+        android:textColor="@color/background_color_blue"
+        app:layout_constraintEnd_toStartOf="@+id/viewBasketLayout"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginEnd="@dimen/margin_small"
+        app:cornerRadius="@dimen/_24sdp"
+        tools:text = "Add more items"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <LinearLayout
+        android:id="@+id/viewBasketLayout"
+        android:layout_width="0dp"
+        android:layout_marginEnd="@dimen/margin_large"
+        app:layout_constraintStart_toEndOf="@+id/btnAddMoreItems"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/common_rounder_corner"
+        app:cardCornerRadius="24dp"
+        android:paddingHorizontal="@dimen/_20sdp"
+        android:paddingVertical="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+          <com.google.android.material.textview.MaterialTextView
+              android:id="@+id/txtViewBasket"
+              android:layout_width="wrap_content"
+              app:layout_constraintStart_toStartOf="parent"
+              style="@style/Styles.Text.Footnote.Semi.Bold"
+              android:fontFamily="@font/inter_medium"
+              tools:text = "View basket"
+              android:textColor="@color/white"
+              app:layout_constraintEnd_toStartOf="@+id/counterLayout"
+              app:layout_constraintTop_toTopOf="parent"
+              app:layout_constraintBottom_toBottomOf="parent"
+              android:layout_height="wrap_content">
+          </com.google.android.material.textview.MaterialTextView>
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:id="@+id/counterLayout"
+              android:layout_width="20dp"
+              android:background="@drawable/bg_rounded"
+              android:gravity="center_vertical"
+              android:layout_gravity="center"
+              android:textAlignment="center"
+              app:layout_constraintStart_toEndOf="@+id/txtViewBasket"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintTop_toTopOf="@+id/txtViewBasket"
+              android:layout_height="20dp">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtCartFavouriteTotal"
+                android:layout_width="wrap_content"
+                tools:text = "1"
+                android:textColor="@color/white"
+                style="@style/Styles.Text.Footnote.Medium"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_height="wrap_content"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>

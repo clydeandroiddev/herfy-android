@@ -1,7 +1,7 @@
 package com.herfy.favorites;
 
+import android.util.Log;
 import android.widget.ImageView;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -82,13 +82,14 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     @Override
-    public void getFavorites(int page) {
-        CustomersApiCall.getInstance().getAllCustomerFavoriteItems(AuthUtil.getInstance().getCustomer().getId(), String.valueOf(page), new ApiRequestListener() {
+    public void getFavorites(int page, String orderTypeId) {
+        favoritesView.setIsLoading(true);
+        CustomersApiCall.getInstance().getFavouritesByOrderTypeId(orderTypeId,AuthUtil.getInstance().getCustomer().getId(),
+                String.valueOf(page),new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
                     JSONObject object = new JSONObject(o.toString());
-
                     Pagination pagination = Pagination.parse(object);
                     if (page == 1) {
                         favorites.clear();
@@ -101,9 +102,10 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                     }
 
                     if (page == pagination.getTotalPages()) {
+                        favoritesView.setIsLoading(false);
                         favoritesView.showFavorites(favorites);
                     } else {
-                        getFavorites(page + 1);
+                        getFavorites(page + 1,orderTypeId);
                     }
 
                 } catch (JSONException e) {
@@ -139,49 +141,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     @Override
     public void onBindFavoriteViewAtPosition(int position, FavoriteViewHolder favoriteViewHolder) {
         ArrayList<String> outOfStockLocationList = new ArrayList<String>();
-        AppDatabase appDatabase = AppDatabase.getInstance();
-
-        String id = "";
-        if (fromSearch) {
-            id = searchFavorites.get(position).getAttributes().getItemId();
-        } else {
-            id = favorites.get(position).getAttributes().getItemId();
-        }
-
-        String data = "";
-
-        //TODO: Use file cache only for Lorenzo for now
-        if (BuildUtil.soloAppKey().equalsIgnoreCase("7r5YQwmSgZCtM0ux")) {
-            data = favoritesView.getFromCache(id);
-        } else {
-            String applicationId = CacheUtil.getInstance().getApplication().getId();
-            MenuItemDb menuItemDb = appDatabase.menuItemDao().findByApplicationAndId(applicationId, id);
-            if (menuItemDb != null) {
-                data = menuItemDb.data;
-            }
-        }
-        if (data != null && !data.isEmpty()) {
-            try {
-                itemById = GsonHelper.gsonFinal().fromJson(data, MenuItem.class);
-                outOfStockLocationList.addAll(itemById.getOutOfStockLocations());
-                listPrice = itemById.getListPrice();
-                if (CacheUtil.getInstance().getOrderStore() != null) {
-                    orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
-                }
-
-
-                if (fromSearch) {
-                    favoriteViewHolder.setFavorite(searchFavorites.get(position), outOfStockLocationList, listPrice, itemById.getPrice(orderStoreId));
-                } else {
-                    favoriteViewHolder.setFavorite(favorites.get(position), outOfStockLocationList, listPrice, itemById.getPrice(orderStoreId));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            listPrice = 0.0;
-            favoritesView.showError(CacheUtil.getInstance().getTranslations(Text.ITEM_NO_LONGER_AVAILABLE));
-        }
+        favoriteViewHolder.setFavorite(favorites.get(position), outOfStockLocationList, listPrice, itemById.getPrice(orderStoreId));
 
 
     }
@@ -252,9 +212,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     @Override
     public void addToCartFavorite(Favorite favorite, ImageView view) {
         imageView = view;
-        favoritesView.showLoadingDialog();
-
-        addCartItem(favorite);
     }
 
     @Override
@@ -307,6 +264,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
+
                 favoritesView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)));
             }
         });
@@ -317,7 +275,6 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     public void addCartItem(Favorite favorite) {
 
         MenuItem favoriteMenuItem = MenuUtil.getFavoriteMenuItem(favorite);
-
         HashMap<String, ModifierItem> favoriteModifiers = new HashMap<>();
         for (ModifierItem modifierItem : favoriteMenuItem.getModifierItems()) {
             favoriteModifiers.put(modifierItem.getId(), modifierItem);
@@ -337,9 +294,8 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                     JSONArray dataArray = object.getJSONArray("data");
 
                     if (dataArray.length() > 0) {
-
-                        MenuItem menuItem = GsonHelper.gsonFinal().fromJson(dataArray.getJSONObject(0).toString(), MenuItem.class);
-                        menuItem.toCdn(CacheUtil.getOrderStoreId());
+                            MenuItem menuItem = GsonHelper.gsonFinal().fromJson(dataArray.getJSONObject(0).toString(), MenuItem.class);
+                            menuItem.toCdn(CacheUtil.getOrderStoreId());
 
                         try {
                             menuItem.isCombo = dataArray.getJSONObject(0).getJSONObject("attributes").getBoolean("is-combo");
@@ -640,7 +596,9 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                                         }
                                     }
                                 }
-
+                                menuItem.setFavorite(true);
+                                CacheUtil.getInstance().addToCart(menuItem);
+                                favoritesView.addToCartFavorite(menuItem, imageView);
                             }
 
                             Store store = CacheUtil.getInstance().getOrderStore();
@@ -746,8 +704,10 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
                                     menuItem.getAttributes().setReorder(true);
 
+
                                     int cartCount = CacheUtil.getInstance().getCartQuantity();
                                     removeMukafaaRedemption();
+                                    menuItem.setFavorite(true);
                                     CacheUtil.getInstance().addToCart(menuItem);
                                     if (cartCount == 0) {
                                         favoritesView.setCartExpiry();
@@ -1124,9 +1084,11 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     }
 
     @Override
-    public void getFavouritesByOrderTypeId(long orderTypeId, String orderTypeName) {
-        //TODO - Uncomment when favorite changes have been merged
-        //OrderType type = OrderType.Companion.fromFavouriteType(orderTypeName);
-        //CacheUtil.getInstance().setOrderType(type);
+    public void getFavouritesByOrderTypeId(String orderTypeId, String orderTypeName) {
+       OrderType type =  OrderType.Companion.fromString(orderTypeName);
+        CacheUtil.getInstance().setOrderType(type);
+
+       getFavorites(1,orderTypeId);
+
     }
 }

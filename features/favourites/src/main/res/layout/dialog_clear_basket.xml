@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_marginHorizontal="@dimen/margin_large"
+    android:layout_height="wrap_content">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        app:cardCornerRadius="16dp"
+        app:contentPadding="@dimen/padding_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/icClear"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_clear_cart"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtClearYourBasket"
+        android:layout_width="wrap_content"
+
+        app:layout_constraintTop_toBottomOf="@+id/icClear"
+        app:layout_constraintStart_toStartOf="parent"
+        style="@style/Styles.Text.Footnote.Regular_Large"
+        android:textColor="@color/primaryTextColor"
+        android:layout_marginTop="@dimen/margin_large"
+        android:fontFamily="@font/inter_semi_bold"
+        tools:text = "Clear your current basket "
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"/>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtClearDescription"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtClearYourBasket"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:maxLines="3"
+        android:gravity="center"
+        tools:text = "You already have a items in your basket with another order type. Those will be removed to start a new one."
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btnClearBasket"
+        android:layout_width="match_parent"
+        tools:text = "Clear Basket"
+        android:textColor="@color/white"
+        android:gravity="center"
+        app:cornerRadius="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/margin_xlarge"
+        android:paddingStart="@dimen/_30sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_30sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        app:layout_constraintBottom_toTopOf="@+id/btnKeepCurrentBasket"
+        app:layout_constraintTop_toBottomOf="@+id/txtClearDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/common_rounder_corner"
+        android:layout_height="wrap_content"/>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btnKeepCurrentBasket"
+        android:layout_width="match_parent"
+        tools:text = "Keep Current Basket"
+        android:textColor="@color/background_color_blue"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/margin_large"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:cornerRadius="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/margin_large"
+        android:paddingStart="@dimen/_30sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_30sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        app:layout_constraintTop_toBottomOf="@+id/btnClearBasket"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/bg_rounded_white"
+        android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
