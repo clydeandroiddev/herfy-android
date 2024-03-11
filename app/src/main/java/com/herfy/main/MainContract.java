@@ -45,6 +45,8 @@ public interface MainContract {
 
         void multibrandValidation(boolean proceed);
 
+        void setTermsAndConditions(String url);
+
     }
 
     interface Presenter extends BasePresenter {
@@ -74,6 +76,8 @@ public interface MainContract {
         void getDigitalCoupons(String digitalCouponId);
 
         void multibrandValidation(boolean proceed);
+
+        void getTermsAndConditions();
 
     }
 
