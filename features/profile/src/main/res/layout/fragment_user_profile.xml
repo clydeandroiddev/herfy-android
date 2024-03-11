@@ -34,7 +34,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_close_button_transparent"
+                        android:src="@drawable/ic_close_page"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -74,6 +74,280 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="16dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="4dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:padding="20dp">
+
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/profileName"
+                                    style="@style/Styles.Text.Caption"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="7dp"
+                                    android:ellipsize="end"
+                                    android:gravity="center"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="#212121"
+                                    android:textSize="25sp"
+                                    tools:text="Ahmed Alhamed" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/profileNumber"
+                                    style="@style/Styles.Text.Caption.Semibold"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="7dp"
+                                    android:ellipsize="end"
+                                    android:gravity="center"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="#212121"
+                                    android:textSize="16sp"
+                                    tools:text="+966551234567" />
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/sendAgainLayout"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="40dp"
+                                    android:layout_marginTop="16dp"
+                                    app:cardCornerRadius="20dp"
+                                    app:cardElevation="4dp"
+                                    app:strokeColor="#0064AC"
+                                    app:strokeWidth="1.5dp">
+
+                                    <androidx.constraintlayout.widget.ConstraintLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:paddingStart="20dp"
+                                        android:paddingEnd="20dp">
+
+                                        <androidx.appcompat.widget.AppCompatTextView
+                                            android:id="@+id/resendText"
+                                            style="@style/Styles.Text.Caption.Semibold"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:includeFontPadding="false"
+                                            android:textColor="#0064AC"
+                                            android:textSize="14sp"
+                                            app:layout_constraintBottom_toBottomOf="parent"
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintStart_toStartOf="parent"
+                                            app:layout_constraintTop_toTopOf="parent"
+                                            tools:text="Edit" />
+
+                                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="4dp" />
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="16dp" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp">
+
+                            <ImageView
+                                android:id="@+id/locationImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="18dp"
+                                android:src="@drawable/ic_delivery_address"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ImageView
+                                android:id="@+id/locationEnd"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="18dp"
+                                android:src="@drawable/ic_angle_right"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/deliveryAddressesLabel"
+                                style="@style/Styles.Text.Caption.Semibold"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="7dp"
+                                android:gravity="start"
+                                android:includeFontPadding="false"
+                                android:textColor="#212121"
+                                android:textSize="16sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@id/locationEnd"
+                                app:layout_constraintStart_toEndOf="@id/locationImage"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Delivery Addresses" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#F2F2F7"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp">
+
+                            <ImageView
+                                android:id="@+id/paymentImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="18dp"
+                                android:src="@drawable/ic_payment_methods"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ImageView
+                                android:id="@+id/paymentEnd"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="18dp"
+                                android:src="@drawable/ic_angle_right"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/paymentMethodsLabel"
+                                style="@style/Styles.Text.Caption.Semibold"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="7dp"
+                                android:gravity="start"
+                                android:includeFontPadding="false"
+                                android:textColor="#212121"
+                                android:textSize="16sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@id/paymentEnd"
+                                app:layout_constraintStart_toEndOf="@id/paymentImage"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Payment Methods" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#F2F2F7"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp">
+
+                            <ImageView
+                                android:id="@+id/curbsideImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="18dp"
+                                android:src="@drawable/ic_curbside_vehicles"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ImageView
+                                android:id="@+id/curbsideEnd"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="18dp"
+                                android:src="@drawable/ic_angle_right"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/curbsideVehiclesLabel"
+                                style="@style/Styles.Text.Caption.Semibold"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="7dp"
+                                android:gravity="start"
+                                android:includeFontPadding="false"
+                                android:textColor="#212121"
+                                android:textSize="16sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@id/curbsideEnd"
+                                app:layout_constraintStart_toEndOf="@id/curbsideImage"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Curbside Vehicles" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#F2F2F7"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp">
+
+                            <ImageView
+                                android:id="@+id/logoutImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="18dp"
+                                android:src="@drawable/ic_logout"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/logoutLabel"
+                                style="@style/Styles.Text.Caption.Semibold"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="7dp"
+                                android:gravity="start"
+                                android:includeFontPadding="false"
+                                android:textColor="#C51F0F"
+                                android:textSize="16sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/logoutImage"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Logout" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#F2F2F7"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                     </LinearLayout>
 
