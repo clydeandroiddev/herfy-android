@@ -6,15 +6,12 @@
 
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_alrhaji"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         app:cardElevation="4dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardUseCompatPadding="false"
-        android:layout_marginStart="@dimen/margin_small"
-        android:layout_marginEnd="@dimen/margin_small"
-        android:layout_marginBottom="@dimen/margin_large">
+        app:cardCornerRadius="16dp"
+        app:cardBackgroundColor="@color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -53,6 +50,7 @@
                 tools:text="Al Rhaji Bank (Mokafa's Rewards)" />
 
             <TextView
+                android:id="@+id/tv_alrhaji_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:lines="3"

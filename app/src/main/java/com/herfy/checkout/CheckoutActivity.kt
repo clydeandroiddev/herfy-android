@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -28,6 +29,7 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
@@ -57,6 +59,7 @@ import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.checkout.DialogAlrajiRequestOtpBottomSheet
+import com.herfy.checkout.BottomSheetAlrhaji
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
 import com.herfy.decorator.BeforeDateDecorator
@@ -99,6 +102,7 @@ import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.DistanceCalculator
+import com.herfy.utils.helper.GlideUtils
 import com.herfy.utils.helper.launchWithTimber
 import com.herfy.utils.permission.PermissionManager
 import com.herfy.utils.permission.PermissionResult
@@ -140,7 +144,7 @@ import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
-    OnDateSelectedListener {
+    OnDateSelectedListener, BottomSheetAlrhaji.OTPAlrahjiListener {
     private var binding: ActivityCheckoutPageBinding? = null
     var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private var mMap: GoogleMap? = null
@@ -187,6 +191,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     private val mapOverlays: List<Overlay> = arrayListOf()
     private val projection: Projection? = null
+
+    private var bottomSheetAlrhaji : BottomSheetAlrhaji? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCheckoutPageBinding.inflate(layoutInflater)
@@ -495,6 +502,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
         orderType = CacheUtil.getInstance().orderType
         requestPermissionLocation()
+        binding!!.tvEditMobileNumber.ninjaTap(lifecycleScope) {
+            EnterNewPhoneNumberFragment.newInstance()
+                .show(supportFragmentManager, EnterNewPhoneNumberFragment.TAG)
+        }
         //        rvOrderSummary.setLayoutManager(new LinearLayoutManager(this));
 //        menuItemsRecyclerViewAdapter = new OrderSummaryItemRecyclerViewAdapter(paymentPresenter);
 //        rvOrderSummary.setAdapter(menuItemsRecyclerViewAdapter);
@@ -784,8 +795,28 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 isEligibleForLoyaltyDiscount
             )
             binding!!.ivOrderType.setVisible(isBranchImageAvailable)
+            GlideUtils.loadImageUrl(
+                binding!!.ivOrderType, url = CacheUtil.getInstance().orderStore.attributes.image,
+                this
+            )
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+
+        binding!!.layoutAlrahji.apply {
+            cvAlrhaji.visibility = when(paymentPresenter?.isMukafaaEnabled){
+                true -> View.VISIBLE
+                else -> View.GONE
+            }
+
+            switchAlrahji.setOnCheckedChangeListener { compoundButton, b ->
+                if(!b){
+                    paymentPresenter?.removeMukafaa()
+                    switchAlrahji.isEnabled = false
+                }else {
+                    switchAlrahji.isEnabled = true
+                }
+            }
         }
         //total.setText(StringUtil.getFormattedPrice(paymentPresenter.getTotalPrice()));
 
@@ -861,6 +892,20 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 placeOrder.setVisibility(View.VISIBLE);
             }
         }*/
+
+        binding!!.layoutAlrahji.apply {
+           cvAlrhaji.setOnClickListener{
+               paymentPresenter?.let {
+                   bottomSheetAlrhaji = BottomSheetAlrhaji.newInstance(
+                       it.validatedTotal,
+                       it.validatedBody,
+                       it.validatedDeliveryCharge
+                   )
+                   bottomSheetAlrhaji?.show(supportFragmentManager, BottomSheetAlrhaji::class.java.simpleName)
+               }
+
+           }
+        }
     }
 
     override fun setupFonts() {}
@@ -916,6 +961,17 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL)
         binding!!.layoutPaymentSummary.tvDiscount.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
+        binding!!.totalVatDescription.text = CacheUtil.getInstance()
+            .getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
+        binding?.layoutAlrahji?.apply {
+            tvAlrhajiLabel.text = CacheUtil.getInstance().getTranslations(
+                Text.ALRHAJI_LABEL, "Al Rhaji Bank (Mokafa's Rewards)"
+            )
+            tvAlrhajiDescription.text = CacheUtil.getInstance().getTranslations(
+                Text.ALRHAJI_DESCRIPTION,
+                "The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful."
+            )
+        }
         binding!!
             .layoutPaymentSummary.tvDeliveryChargeLabel.text = CacheUtil
             .getInstance()
@@ -1386,23 +1442,29 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun showErrorPrayerTime() {}
-    val activityResultLauncher: ActivityResultLauncher<Pair<String, ResultType>> = registerForActivityResult(
-        PaymentResultContract() as ActivityResultContract<Pair<String, ResultType>, Any>,
-        ActivityResultCallback<Any> { result ->
-            if (result == null) return@ActivityResultCallback
-            when (result) {
-                is PaymentStatus.Success -> paymentPresenter?.sendUpsells()
-                is PaymentStatus.Redirect -> {
-                    if (result.result.component2()?.status.equals("SUCCESSFUL", ignoreCase = true)) {
-                        paymentPresenter?.sendUpsells()
-                    } else {
-                        showCardFailed()
+    val activityResultLauncher: ActivityResultLauncher<Pair<String, ResultType>> =
+        registerForActivityResult(
+            PaymentResultContract() as ActivityResultContract<Pair<String, ResultType>, Any>,
+            ActivityResultCallback<Any> { result ->
+                if (result == null) return@ActivityResultCallback
+                when (result) {
+                    is PaymentStatus.Success -> paymentPresenter?.sendUpsells()
+                    is PaymentStatus.Redirect -> {
+                        if (result.result.component2()?.status.equals(
+                                "SUCCESSFUL",
+                                ignoreCase = true
+                            )
+                        ) {
+                            paymentPresenter?.sendUpsells()
+                        } else {
+                            showCardFailed()
+                        }
                     }
+
+                    else -> showCardFailed()
                 }
-                else -> showCardFailed()
             }
-        }
-    )
+        )
 
     override fun moneyHashContract(): ActivityResultLauncher<Pair<String, ResultType>> {
         return activityResultLauncher
@@ -1535,10 +1597,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             } ?: run {
             val isUserNotSelectedAnyPaymentMethod =
                 selecetedPayment == PaymentType.NONE && CacheUtil.getInstance().customCard == null
-            /*binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
-            binding!!.layoutPayment.emptyState.setTitle(
-                CacheUtil.getInstance()
-                    .getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found.")
+        /*binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
+        binding!!.layoutPayment.emptyState.setTitle(
+            CacheUtil.getInstance()
+                .getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found.")
+
             )*/
             if (isUserNotSelectedAnyPaymentMethod) {
                 binding!!.layoutPayment.tvSelectedPayment.visibility = View.VISIBLE
@@ -1827,7 +1890,31 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             message = getString(R.string.permission_read_write_denied_msg)
         )
     }
-    fun setUpdatedPhoneNumber(phoneNumber:String) {
+
+    fun setUpdatedPhoneNumber(phoneNumber: String) {
         binding?.tvMobileNumber?.text = phoneNumber
+    }
+
+    override fun otpResult(transactionId: String, amount: String, invalidMukafaa: Boolean) {
+        if (!invalidMukafaa && transactionId.isNotEmpty()) {
+            paymentPresenter?.mukafaaTransactionId = transactionId
+            binding?.apply {
+                layoutAlrahji.switchAlrahji.isChecked = true
+            }
+
+        } else {
+            CacheUtil.getInstance().orderPayment = PaymentType.NONE
+            binding?.apply {
+                layoutAlrahji.switchAlrahji.isChecked = false
+            }
+        }
+
+        paymentPresenter?.validateOrder(
+            false,
+            CacheUtil.getInstance().orderStore,
+            null,
+            0,
+            false
+        )
     }
 }
