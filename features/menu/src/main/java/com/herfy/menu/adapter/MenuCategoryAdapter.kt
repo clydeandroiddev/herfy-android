@@ -63,8 +63,8 @@ class MenuCategoryAdapter(
                     Values.DEFAULT_IMAGE_URL
                 } else {
                     StringUtil.getCloudflareUrl(
-                        32,
-                        32,
+                        48,
+                        48,
                         imageUrl
                     )
                 }
