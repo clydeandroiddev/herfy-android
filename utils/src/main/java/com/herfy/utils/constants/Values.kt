@@ -83,6 +83,8 @@ object Values {
     const val BOTTOM_SLIDER_ID = "3767"
     const val SLIDER_INTERVAL = 8_000L
     const val NAV_DEEP_LINK_BASE_URL = "android-app://com.herfy/"
-    const val YOUTUBE_LINK = "https://www.youtube.com/channel/UCVEZKa37P9m6_JsYp6mtuig"
-    const val TIKTOK_LINK = "https://www.youtube.com/channel/UCVEZKa37P9m6_JsYp6mtuig"
+    const val INSTAGRAM_LINK = "https://www.instagram.com/herfyfsc/"
+    const val FACEBOOK_LINK = "https://www.facebook.com/herfyfscksa"
+    const val TIKTOK_LINK = "https://www.tiktok.com/@herfyfsc"
+    const val TWITTER_LINK = "https://twitter.com/herfyfs"
 }

@@ -116,7 +116,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private var isDefaultHomeScreenDesign = false
 
     var backClicked = false
-    private var hasLinks = false
     private val manual = true
     private var signIn = false
     private var orderType = false
@@ -423,64 +422,18 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
     }
 
-    fun showSocialMediaLinks() {
-        hasLinks = false
-        if (CacheUtil.getInstance().concept.facebookLink != null && CacheUtil.getInstance().concept.facebookLink.isNotEmpty()) {
-            binding.sidebar.cvFacebook.visibility = View.VISIBLE
-            hasLinks = true
-            binding.sidebar.cvFacebook.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.facebookLink) }
-        } else {
-            binding.sidebar.cvFacebook.visibility = View.GONE
+    private fun showSocialMediaLinks() {
+        binding.sidebar.cvIg.setOnClickListener {
+            openSocialMediaLink(Values.INSTAGRAM_LINK)
         }
-        if (CacheUtil.getInstance().concept.twitterLink != null && CacheUtil.getInstance().concept.twitterLink.isNotEmpty()) {
-            binding.sidebar.cvTwitter.visibility = View.GONE
-            hasLinks = true
-            binding.sidebar.cvTwitter.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.twitterLink) }
-        } else {
-            binding.sidebar.cvTwitter.visibility = View.GONE
+        binding.sidebar.cvFacebook.setOnClickListener {
+            openSocialMediaLink(Values.FACEBOOK_LINK)
         }
-        if (CacheUtil.getInstance().concept.instagramLink != null && CacheUtil.getInstance().concept.instagramLink.isNotEmpty()) {
-            binding.sidebar.cvIg.visibility = View.VISIBLE
-            hasLinks = true
-            binding.sidebar.cvIg.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.instagramLink) }
-        } else {
-            binding.sidebar.cvIg.visibility = View.GONE
-        }/*if (CacheUtil.getInstance().concept.youtubeLink != null && CacheUtil.getInstance().concept.youtubeLink.isNotEmpty()) {
-            binding.sidebar.cvYoutube.visibility = View.VISIBLE
-            hasLinks = true
-            binding.sidebar.cvYoutube.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.youtubeLink) }
-        } else {
-            binding.sidebar.cvYoutube.visibility = View.GONE
-        }*/
-        binding.sidebar.cvYoutube.visibility = View.VISIBLE
-        hasLinks = true
-        binding.sidebar.cvYoutube.setOnClickListener { openSocialMediaLink(Values.YOUTUBE_LINK) }
-        if (CacheUtil.getInstance().concept.websiteLink != null && CacheUtil.getInstance().concept.websiteLink.isNotEmpty()) {
-            binding.sidebar.cvWeb.visibility = View.VISIBLE
-            hasLinks = true
-            binding.sidebar.cvWeb.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.websiteLink) }
-        } else {
-            binding.sidebar.cvWeb.visibility = View.GONE
+        binding.sidebar.cvTiktok.setOnClickListener {
+            openSocialMediaLink(Values.TIKTOK_LINK)
         }
-        if (CacheUtil.getInstance().concept.tiktokLink != null && CacheUtil.getInstance().concept.tiktokLink.isNotEmpty()) {
-            binding.sidebar.cvTiktok.visibility = View.VISIBLE
-            hasLinks = true
-            binding.sidebar.cvTiktok.setOnClickListener { openSocialMediaLink(CacheUtil.getInstance().concept.tiktokLink) }
-        } else {
-            binding.sidebar.cvTiktok.visibility = View.GONE
-        }
-        binding.sidebar.cvShare.setOnClickListener {
-            try {
-                val shareIntent = Intent(Intent.ACTION_SEND)
-                shareIntent.type = "text/plain"
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, BuildConfig.TAG)
-                val shareMessage =
-                    "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "\n\n"
-                shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
-                startActivity(Intent.createChooser(shareIntent, "Select One"))
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        binding.sidebar.cvTwitter.setOnClickListener {
+            openSocialMediaLink(Values.TWITTER_LINK)
         }
     }
 
@@ -490,6 +443,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             startActivity(browserIntent)
         } catch (e: ActivityNotFoundException) {
             e.printStackTrace()
+            navBrowser(
+                CacheUtil.getInstance().getTranslations(Text.SOCIAL_MEDIA_LABEL, "Follow Us On Social Media"),
+                url
+            )
         }
     }
 
@@ -590,15 +547,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         val isSignedIn = AuthUtil.getInstance().isSignedIn
         val isGuest =
             (isSignedIn && !customer.attributes.accountType.equals("full", ignoreCase = true))
-        val signedOut = CacheUtil.getInstance().getTranslations(
-            Text.YOU_ARE_CURRENTLY_NOT_SIGNED_IN, "You are currently not signed in"
-        )
-        val signedInFull =
-            CacheUtil.getInstance().getTranslations(Text.WELCOME_BACK, "Welcome back,")
-        val signedInGuest = CacheUtil.getInstance().getTranslations(
-            Text.YOU_ARE_CURRENTLY_SIGNED_IN_AS_A_GUEST, "You are currently signed in as a guest"
-        )
-        if(AuthUtil.getInstance().isSignedIn) {
+        if(isSignedIn) {
             val customerNameLabel =
                 CacheUtil.getInstance().getTranslations(Text.HI_LABEL, "Hi (x)!")
             binding.sidebar.customerName.text =
@@ -606,8 +555,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     "(x)",
                     if (isSignedIn) customer.attributes.firstName.trim() else ""
                 )
+            binding.sidebar.clNotification.visible()
+            binding.sidebar.fmLoyalty.visible()
         } else {
             binding.sidebar.customerName.text = CacheUtil.getInstance().getTranslations(Text.HI_LOGGED_OUT, "Hi!")
+            binding.sidebar.clNotification.gone()
+            binding.sidebar.fmLoyalty.gone()
         }
         binding.sidebar.fmAccount.visibility = if (isSignedIn) View.VISIBLE else View.GONE
         binding.sidebar.fmActiveSubscription.visibility =
@@ -616,20 +569,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             if (isSignedIn && !isGuest) View.GONE else View.VISIBLE
         val loggedInRules = if (isSignedIn) (if (isSubs) View.GONE else View.VISIBLE) else View.GONE
         binding.sidebar.fmHistory.visibility = loggedInRules
-        val containsLoyalty =
-            CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes().contains(
-                PaymentType.LOYALTY
-            ) || CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
-                .contains(PaymentType.LOYALTY)
-        val isFullSignedIn =
-            (isSignedIn && !customer.attributes.accountType.equals("guest", ignoreCase = true))
-        val isNotificationCenterEnabled =
-            CacheUtil.getInstance().concept.isNotificationCenterEnabled
-        if (containsLoyalty && isFullSignedIn) {
-            binding.sidebar.fmLoyalty.visibility = View.VISIBLE
-        } else {
-            binding.sidebar.fmLoyalty.visibility = View.GONE
-        }
         binding.sidebar.fmFavorites.visibility = loggedInRules
         binding.sidebar.selectionLayout.visibility =
             if (BuildConfig.SUBSCRIPTION_ENABLED) View.VISIBLE else View.GONE
@@ -1193,13 +1132,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             CacheUtil.getInstance().getTranslations(Text.SUBSCRIPTIONS, "Subscriptions")
         binding.sidebar.notification.text =
             CacheUtil.getInstance().getTranslations(Text.NOTIFICATIONS, "Notifications")
-        if (hasLinks) {
-            binding.sidebar.tvReachUs.text = CacheUtil.getInstance()
+        binding.sidebar.tvReachUs.text = CacheUtil.getInstance()
                 .getTranslations(Text.SOCIAL_MEDIA_LABEL, "Follow Us On Social Media")
-        } else {
-            binding.sidebar.tvReachUs.text =
-                CacheUtil.getInstance().getTranslations(Text.SHARE_OUR_APP, "Share our app:")
-        }
         binding.sidebar.support.text =
             CacheUtil.getInstance().getTranslations(Text.HELP_SUPPORT_LABEL, "Help & Support")
         binding.sidebar.faqs.text = CacheUtil.getInstance().getTranslations(Text.FAQS_LABEL, "FAQs")
