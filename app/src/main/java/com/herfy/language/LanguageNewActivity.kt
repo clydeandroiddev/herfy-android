@@ -93,7 +93,7 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
                     intent.putExtra("autoLogin", true)
                     startActivity(intent)
                     overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
-                    finish()
+                    finishAffinity()
                 }
             }
         }
