@@ -109,13 +109,8 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
         provider: String?
     ) {
         binding.apply {
-            phoneNumberLabel.isVisible =
-                AuthUtil.getInstance().customer.attributes.provider != Values.PROVIDER_GOOGLE
-            numberLayout.isVisible =
-                AuthUtil.getInstance().customer.attributes.provider != Values.PROVIDER_GOOGLE
-
             if (!phoneNumber.isNullOrEmpty()) {
-
+                binding.mobileNum.text = "+" + phoneNumber.toString().replace("+", "")
             }
 
             if (!firstName.isNullOrEmpty()) {

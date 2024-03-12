@@ -124,14 +124,14 @@
                             tools:text="Phone Number" />
 
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/numberLayout"
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
-                            android:id="@+id/numberLayout"
                             android:layout_marginTop="8dp"
-                            android:background="@drawable/background_edit_text">
+                            android:background="@drawable/background_common_selection">
 
                             <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/dialCode"
+                                android:id="@+id/mobileNum"
                                 style="@style/Styles.Text.Caption.Semibold"
                                 android:layout_width="wrap_content"
                                 android:layout_height="48dp"
@@ -145,24 +145,6 @@
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="+966" />
-
-                            <androidx.appcompat.widget.AppCompatEditText
-                                android:id="@+id/numberEdit"
-                                style="@style/Styles.Text.Caption.Semibold"
-                                android:layout_width="0dp"
-                                android:layout_height="48dp"
-                                android:background="@null"
-                                android:gravity="center_vertical"
-                                android:imeOptions="actionDone"
-                                android:singleLine="true"
-                                android:textColor="#0C0C0C"
-                                android:textSize="14sp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/dialCode"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:text="7887373" />
-
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
