@@ -170,6 +170,8 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
+                            android:id="@+id/deliveryAddressLayout"
+                            android:background="?attr/selectableItemBackgroundBorderless"
                             android:layout_height="60dp">
 
                             <ImageView

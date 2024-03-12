@@ -70,6 +70,11 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
                     ProfileFragmentDirections.actionProfileToEdit()
                 )
             }
+            deliveryAddressLayout.setOnClickListener {
+                findNavController().navigate(
+                    ProfileFragmentDirections.actionProfileToUserAddresses()
+                )
+            }
         }
     }
 
@@ -82,9 +87,8 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
             title.text =
                 CacheUtil.getInstance().getTranslations(Text.MY_PROFILE_LABEL, "My Profile")
             editLabel.text = CacheUtil.getInstance().getTranslations(Text.EDIT)
-            deliveryAddressesLabel.text =
-                CacheUtil.getInstance()
-                    .getTranslations(Text.DELIVERY_ADDRESSES, "Delivery Addresses")
+            deliveryAddressesLabel.text = CacheUtil.getInstance()
+                .getTranslations(Text.DELIVERY_ADDRESSES, "Delivery Addresses")
             paymentMethodsLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.PAYMENT_METHODS, "Payment Methods")
             curbsideVehiclesLabel.text =

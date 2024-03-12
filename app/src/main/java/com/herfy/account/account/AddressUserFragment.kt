@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
+import com.herfy.profile.databinding.FragmentUserAddressesBinding
 import com.herfy.profile.databinding.FragmentUserEditProfileBinding
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,7 +17,7 @@ import java.util.Date
 class AddressUserFragment : BaseFragment(), AccountContract.View {
     private var accountPresenter: AccountContract.Presenter? = null
 
-    private lateinit var binding: FragmentUserEditProfileBinding
+    private lateinit var binding: FragmentUserAddressesBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +27,7 @@ class AddressUserFragment : BaseFragment(), AccountContract.View {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentUserEditProfileBinding.inflate(inflater, container, false)
+        binding = FragmentUserAddressesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
