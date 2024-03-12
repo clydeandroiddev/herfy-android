@@ -929,22 +929,22 @@ public class Text {
     public static final String CONFIRM_LABEL = "confirm_label";
     public static final String SELECT_CITY = "select_city";
 
-    public static final String APPLY_COUPONS_LABEL="apply_coupons_label";
-    public static final String ENTER_COUPON_CODE="enter_coupon_code";
-    public static final String APPLY_DIGITAL_COUPONS="apply_digital_coupons";
+    public static final String APPLY_COUPONS_LABEL = "apply_coupons_label";
+    public static final String ENTER_COUPON_CODE = "enter_coupon_code";
+    public static final String APPLY_DIGITAL_COUPONS = "apply_digital_coupons";
     public static final String AVAILABLE_TO_REDEEM = "available_to_redeem";
-    public static final String MORE_TO_REDEEM ="more_to_redeem";
-    public static final String EXPIRES_LABEL="expires_label";
+    public static final String MORE_TO_REDEEM = "more_to_redeem";
+    public static final String EXPIRES_LABEL = "expires_label";
     public static final String APPLY_A_COUPON_LABEL = "apply_a_coupon_label";
-    public static final String VIEW_COUPONS_LABEL="view_coupons_label";
-    public static final String INVALID_FOR_THIS_ORDER="invalid_for_this_order";
-    public static final String GOT_IT_LABEL="got_it_label";
-    public static final String ADD_MORE_ITEMS_LABEL="add_more_items_label";
-    public static final String COUPON_DISCOUNT_LABEL="coupon_discount_label";
-    public static final String CHECKOUT_LABEL="checkout_label";
+    public static final String VIEW_COUPONS_LABEL = "view_coupons_label";
+    public static final String INVALID_FOR_THIS_ORDER = "invalid_for_this_order";
+    public static final String GOT_IT_LABEL = "got_it_label";
+    public static final String ADD_MORE_ITEMS_LABEL = "add_more_items_label";
+    public static final String COUPON_DISCOUNT_LABEL = "coupon_discount_label";
+    public static final String CHECKOUT_LABEL = "checkout_label";
 
-    public static final String ADD_MORE_ITEM_LABEL="add_more_item_label";
-    public static final String YOUR_CART_IS_EMPTY_LABEL="your_cart_is_empty";
+    public static final String ADD_MORE_ITEM_LABEL = "add_more_item_label";
+    public static final String YOUR_CART_IS_EMPTY_LABEL = "your_cart_is_empty";
 
     public static final String CHOOSE_YOUR_LANG = "choose_your_lang";
 
@@ -982,7 +982,7 @@ public class Text {
     public static final String REFER_AND_EARN_LABEL="refer_and_earn_label";
     public static final String STORE_LOCATOR = "store_locator_label";
     public static final String STAY_TUNED_PROMO = "stay_tuned_promo";
-    public static final String PROMOTION_EMPTY_CONTENT="promotion_empty_content";
+    public static final String PROMOTION_EMPTY_CONTENT = "promotion_empty_content";
     public static final String HI_LOGGED_OUT = "hi_logged_out";
     public static final String REWARDS_LABEL="rewards_label";
     public static final String SAR_VALUE_LABEL="sar_value";
@@ -1000,4 +1000,21 @@ public class Text {
     public static final String FULL_NAME_LABEL = "full_name_label";
 
     public static final String DYNAMIC_CODE_DIGIT = "dyamic_code_digit";
+    public static final String REWARDS_LABEL = "rewards_label";
+    public static final String SAR_VALUE_LABEL = "sar_value";
+    public static final String REWARD_TIER_LABEL = "reward_tiers";
+    public static final String SCAN_POINTS_LABEL = "scan_points_label";
+    public static final String SCAN_POINTS_DESCRIPTION = "scan_points_description";
+    public static final String PERCENT_OF_YOUR_ORDER = "percent_of_your_order";
+    public static final String HISTORY_LABEL = "history_label";
+    public static final String EARNED_LABEL = "earned_label";
+    public static final String USED_LABEL = "used_label";
+    public static final String DELIVERY_ADDRESSES = "delivery_addresses";
+    public static final String CURBSIDE_VEHICLES = "curbside_vehicles";
+    public static final String LOGOUT = "logout";
+    public static final String DELETE_MY_ACCOUNT = "delete_my_account";
+    public static final String DELETE_ACCOUNT = "delete_account";
+    public static final String DELETE_ACCOUNT_AND_REMOVE = "delete_account_and_remove";
+    public static final String COMPLETE_PROFILE = "complete_profile";
+    public static final String COMPLETE_YOUR_PROFILE = "complete_your_profile";
 }

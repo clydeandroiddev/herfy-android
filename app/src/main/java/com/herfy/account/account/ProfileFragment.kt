@@ -4,10 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
+import com.herfy.commonstyles.R
 import com.herfy.profile.databinding.FragmentUserProfileBinding
+import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.navigateUp
+import com.herfy.utils.extensions.setVisible
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
@@ -53,7 +60,14 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
     }
 
     override fun setupViews() {
+        binding.apply {
+            back.setOnClickListener {
+                navigateUp()
+            }
+            editProfile.setOnClickListener {
 
+            }
+        }
     }
 
     override fun setupFonts() {
@@ -61,7 +75,24 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
     }
 
     override fun setupTranslations() {
-
+        binding.title.text =
+            CacheUtil.getInstance().getTranslations(Text.MY_PROFILE_LABEL, "My Profile")
+        binding.editLabel.text = CacheUtil.getInstance().getTranslations(Text.EDIT)
+        binding.deliveryAddressesLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.DELIVERY_ADDRESSES, "Delivery Addresses")
+        binding.paymentMethodsLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.PAYMENT_METHODS, "Payment Methods")
+        binding.curbsideVehiclesLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.CURBSIDE_VEHICLES, "Curbside Vehicles")
+        binding.logoutLabel.text = CacheUtil.getInstance().getTranslations(Text.LOGOUT, "Logout")
+        binding.deleteAccountLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.DELETE_ACCOUNT, "Delete Account")
+        binding.deleteMyAccountLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.DELETE_MY_ACCOUNT, "Delete My Account")
+        binding.deleteAccountDescription.text = CacheUtil.getInstance().getTranslations(
+            Text.DELETE_ACCOUNT_AND_REMOVE,
+            "Delete account and remove all data. Please remember this action can not be reversed."
+        )
     }
 
     override fun showCustomer(
@@ -72,7 +103,30 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
         email: String?,
         provider: String?
     ) {
-
+        binding.profileName.text = "$firstName $lastName"
+        if (phoneNumber.isNullOrEmpty()) {
+            binding.profileNumber.text = email.orEmpty()
+        } else {
+            binding.profileNumber.text = phoneNumber
+        }
+        if (firstName.isNullOrEmpty() || lastName.isNullOrEmpty() || gender.isNullOrEmpty() || AuthUtil.getInstance().customer.attributes.birthDate.isNullOrEmpty()) {
+            binding.profileCard.setCardBackgroundColor(requireActivity().resources.getColor(R.color.card_selected_bg))
+            binding.editLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.COMPLETE_PROFILE, "Complete Profile")
+            binding.profileName.text = CacheUtil.getInstance()
+                .getTranslations(Text.COMPLETE_YOUR_PROFILE, "Complete your profile")
+            binding.deleteAccountLabel.isVisible = false
+            binding.deleteAccountDescription.isVisible = false
+            binding.deleteMyAccountLabel.isVisible = false
+            binding.deleteImage.isVisible = false
+        } else {
+            binding.profileCard.setCardBackgroundColor(requireActivity().resources.getColor(R.color.white))
+            binding.deleteAccountLabel.isVisible = true
+            binding.deleteAccountDescription.isVisible = true
+            binding.deleteMyAccountLabel.isVisible = true
+            binding.deleteImage.isVisible = true
+            binding.editLabel.text = CacheUtil.getInstance().getTranslations(Text.EDIT, "Edit")
+        }
     }
 
     override fun showDateOfBirth(birthDate: Date?, date: String?) {
