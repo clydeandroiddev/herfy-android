@@ -126,8 +126,7 @@
                             app:layout_constraintTop_toBottomOf="@id/progress_label"
                             app:layout_constraintWidth_percent=".65">
 
-
-                            <SeekBar
+                            <androidx.appcompat.widget.AppCompatSeekBar
                                 android:id="@+id/progress"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -142,8 +141,7 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                android:splitTrack="false"
-                                />
+                                android:splitTrack="false" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/tv_progress_tier"
