@@ -130,7 +130,7 @@
             android:id="@+id/txtmodifierPrice"
             android:layout_width="wrap_content"
             style="@style/Styles.Text.Footnote_Bold"
-            android:textColor="@color/color_light_blue"
+            android:textColor="@color/text_color_blue"
             android:layout_marginTop="@dimen/margin_large"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
