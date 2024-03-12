@@ -1,13 +1,20 @@
 package com.herfy.account.account
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
 import com.herfy.profile.databinding.FragmentUserEditProfileBinding
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.navigateUp
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
@@ -53,7 +60,17 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
     }
 
     override fun setupViews() {
+        binding.apply {
+            back.setOnClickListener {
+                navigateUp()
+            }
+            maleSelection.setOnClickListener {
 
+            }
+            femaleSelection.setOnClickListener {
+
+            }
+        }
     }
 
     override fun setupFonts() {
@@ -61,9 +78,28 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
     }
 
     override fun setupTranslations() {
+        binding.apply {
+            title.text = CacheUtil.getInstance().getTranslations(Text.EDIT_PROFILE, "Edit Profile")
 
+            nameLabel.text = CacheUtil.getInstance().getTranslations(Text.NAME, "Name")
+            nameEdit.hint = CacheUtil.getInstance().getTranslations(Text.YOUR_NAME, "Your Name")
+
+            maleLabel.text = CacheUtil.getInstance().getTranslations(Text.MALE, "Male")
+            femaleLabel.text = CacheUtil.getInstance().getTranslations(Text.FEMALE, "Female")
+
+            phoneNumberLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_NEW, "Phone Number")
+
+            dateOfBirthLabel.hint =
+                CacheUtil.getInstance().getTranslations(Text.DATE_OF_BIRTH, "Date of Birth")
+            birthDate.hint = CacheUtil.getInstance()
+                .getTranslations(Text.SELECT_YOUR_DATE_OF_BIRTH, "Select your date of birth")
+
+            genderLabel.text = CacheUtil.getInstance().getTranslations(Text.GENDER, "Gender")
+        }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun showCustomer(
         firstName: String?,
         lastName: String?,
@@ -72,7 +108,20 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
         email: String?,
         provider: String?
     ) {
+        binding.apply {
+            phoneNumberLabel.isVisible =
+                AuthUtil.getInstance().customer.attributes.provider != Values.PROVIDER_GOOGLE
+            numberLayout.isVisible =
+                AuthUtil.getInstance().customer.attributes.provider != Values.PROVIDER_GOOGLE
 
+            if (!phoneNumber.isNullOrEmpty()) {
+
+            }
+
+            if (!firstName.isNullOrEmpty()) {
+                binding.nameEdit.setText("$firstName $lastName")
+            }
+        }
     }
 
     override fun showDateOfBirth(birthDate: Date?, date: String?) {

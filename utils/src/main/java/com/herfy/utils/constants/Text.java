@@ -1017,4 +1017,14 @@ public class Text {
     public static final String DELETE_ACCOUNT_AND_REMOVE = "delete_account_and_remove";
     public static final String COMPLETE_PROFILE = "complete_profile";
     public static final String COMPLETE_YOUR_PROFILE = "complete_your_profile";
+
+    public static final String POINTS_EQUAL_SAR = "points_equal_sar";
+
+    public static final String NAME = "name_label";
+    public static final String PHONE_NUMBER_NEW = "phone_number_new";
+    public static final String GENDER = "gender";
+    public static final String DATE_OF_BIRTH = "date_of_birth";
+    public static final String SELECT_YOUR_DATE_OF_BIRTH = "select_your_date_of_birth";
+    public static final String YOUR_NAME = "your_name";
+
 }

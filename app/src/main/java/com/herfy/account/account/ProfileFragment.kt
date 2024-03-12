@@ -1,10 +1,12 @@
 package com.herfy.account.account
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
@@ -12,7 +14,6 @@ import com.herfy.commonstyles.R
 import com.herfy.profile.databinding.FragmentUserProfileBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
-import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.Address
@@ -65,7 +66,9 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
                 navigateUp()
             }
             editProfile.setOnClickListener {
-
+                findNavController().navigate(
+                    ProfileFragmentDirections.actionProfileToEdit()
+                )
             }
         }
     }
@@ -75,26 +78,30 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
     }
 
     override fun setupTranslations() {
-        binding.title.text =
-            CacheUtil.getInstance().getTranslations(Text.MY_PROFILE_LABEL, "My Profile")
-        binding.editLabel.text = CacheUtil.getInstance().getTranslations(Text.EDIT)
-        binding.deliveryAddressesLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.DELIVERY_ADDRESSES, "Delivery Addresses")
-        binding.paymentMethodsLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.PAYMENT_METHODS, "Payment Methods")
-        binding.curbsideVehiclesLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.CURBSIDE_VEHICLES, "Curbside Vehicles")
-        binding.logoutLabel.text = CacheUtil.getInstance().getTranslations(Text.LOGOUT, "Logout")
-        binding.deleteAccountLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.DELETE_ACCOUNT, "Delete Account")
-        binding.deleteMyAccountLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.DELETE_MY_ACCOUNT, "Delete My Account")
-        binding.deleteAccountDescription.text = CacheUtil.getInstance().getTranslations(
-            Text.DELETE_ACCOUNT_AND_REMOVE,
-            "Delete account and remove all data. Please remember this action can not be reversed."
-        )
+        binding.apply {
+            title.text =
+                CacheUtil.getInstance().getTranslations(Text.MY_PROFILE_LABEL, "My Profile")
+            editLabel.text = CacheUtil.getInstance().getTranslations(Text.EDIT)
+            deliveryAddressesLabel.text =
+                CacheUtil.getInstance()
+                    .getTranslations(Text.DELIVERY_ADDRESSES, "Delivery Addresses")
+            paymentMethodsLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.PAYMENT_METHODS, "Payment Methods")
+            curbsideVehiclesLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.CURBSIDE_VEHICLES, "Curbside Vehicles")
+            logoutLabel.text = CacheUtil.getInstance().getTranslations(Text.LOGOUT, "Logout")
+            deleteAccountLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.DELETE_ACCOUNT, "Delete Account")
+            deleteMyAccountLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.DELETE_MY_ACCOUNT, "Delete My Account")
+            deleteAccountDescription.text = CacheUtil.getInstance().getTranslations(
+                Text.DELETE_ACCOUNT_AND_REMOVE,
+                "Delete account and remove all data. Please remember this action can not be reversed."
+            )
+        }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun showCustomer(
         firstName: String?,
         lastName: String?,
@@ -107,7 +114,7 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
         if (phoneNumber.isNullOrEmpty()) {
             binding.profileNumber.text = email.orEmpty()
         } else {
-            binding.profileNumber.text = phoneNumber
+            binding.profileNumber.text = "+" + phoneNumber.replace("+", "")
         }
         if (firstName.isNullOrEmpty() || lastName.isNullOrEmpty() || gender.isNullOrEmpty() || AuthUtil.getInstance().customer.attributes.birthDate.isNullOrEmpty()) {
             binding.profileCard.setCardBackgroundColor(requireActivity().resources.getColor(R.color.card_selected_bg))

@@ -12,6 +12,18 @@
 
         <deepLink app:uri="android-app://com.herfy/profile_fragment_nav" />
 
+        <action
+            android:id="@+id/action_profile_to_edit"
+            app:destination="@id/edit_profile_fragment"
+            app:popUpTo="@+id/profile_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/edit_profile_fragment"
+        android:name="com.herfy.account.account.EditProfileFragment"
+        tools:layout="@layout/fragment_user_edit_profile">
+
     </fragment>
 
 </navigation>

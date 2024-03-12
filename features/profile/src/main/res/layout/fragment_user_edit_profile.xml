@@ -41,7 +41,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/saveAddressLabel"
+                        android:id="@+id/title"
                         style="@style/Styles.Text.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -126,6 +126,7 @@
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
+                            android:id="@+id/numberLayout"
                             android:layout_marginTop="8dp"
                             android:background="@drawable/background_edit_text">
 
@@ -288,16 +289,18 @@
                             tools:text="Date of Birth" />
 
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/dateOfBirthLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:background="@drawable/background_edit_text">
 
-                            <androidx.appcompat.widget.AppCompatTextView
+                            <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/birthDate"
                                 style="@style/Styles.Text.Caption.Semibold"
                                 android:layout_width="wrap_content"
                                 android:layout_height="48dp"
+                                android:editable="false"
                                 android:gravity="center_vertical"
                                 android:paddingStart="16dp"
                                 android:paddingEnd="4dp"
@@ -316,6 +319,14 @@
                                 android:src="@drawable/ic_birthday_calendar"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
