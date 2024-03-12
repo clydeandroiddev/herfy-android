@@ -244,7 +244,7 @@ public class MenuUtil {
     }
 
     public static MenuItem processMenuItemCustomObject(MenuItem menuItem) {
-        String cObject = menuItem.customField.toString().replace(" ", "");
+        String cObject = new Gson().toJson(menuItem.customField).replace(" ", "");
         try {
             if (!String.valueOf(cObject.charAt(0)).equals("[")) {
                 menuItem.customFieldObjectMap = GsonHelper.gsonFinal().fromJson(cObject, CustomFieldObject.class);
