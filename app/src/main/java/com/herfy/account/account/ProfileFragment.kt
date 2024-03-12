@@ -1,21 +1,30 @@
 package com.herfy.account.account
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import com.facebook.login.LoginManager
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
 import com.herfy.commonstyles.R
+import com.herfy.main.MainActivity
 import com.herfy.profile.databinding.FragmentUserProfileBinding
+import com.herfy.utils.analytics.MixpanelUtil.Companion.logout
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
+import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
+import com.skylinedynamics.solosdk.api.SoloAuth
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
@@ -74,6 +83,31 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
                 findNavController().navigate(
                     ProfileFragmentDirections.actionProfileToUserAddresses()
                 )
+            }
+            logoutLayout.setOnClickListener {
+                LoginManager.getInstance().logOut()
+                val googleSignInOptions =
+                    GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(BuildUtil.googleInClient(requireActivity())).requestEmail()
+                        .build()
+                val googleSignInClient =
+                    GoogleSignIn.getClient(requireActivity(), googleSignInOptions)
+                googleSignInClient.signOut()
+                accountPresenter!!.removeMukafaaRedemption()
+                CacheUtil.getInstance().clearOrder()
+                SoloAuth.getInstance().logout()
+                logout()
+                AuthUtil.getInstance().customer = null
+                val intent: Intent = Intent(requireActivity(), MainActivity::class.java)
+                intent.putExtra("home", false)
+                intent.putExtra("menu", true)
+                intent.putExtra("cart", false)
+                intent.putExtra("settings", false)
+                intent.putExtra("isFromLogOut", true)
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                startActivity(intent)
+                requireActivity().overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
+                requireActivity().finishAffinity()
             }
         }
     }
