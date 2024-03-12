@@ -227,6 +227,7 @@ public class Text {
     public static final String SIGN_IN_MESSAGE = "sign_in_message";
     public static final String EMAIL = "email";
     public static final String OR = "or_label";
+    public static final String OR_NEW = "or_label_new";
     public static final String SIGN_IN_SOCIAL_ACCOUNT = "sign_in_social_account";
     public static final String SIGN_UP_SOCIAL_ACCOUNT = "sign_up_social_account";
     public static final String DONT_HAVE_ACCOUNT = "dont_have_account";
