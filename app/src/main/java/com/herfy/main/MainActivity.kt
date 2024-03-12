@@ -561,18 +561,17 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         val isSignedIn = AuthUtil.getInstance().isSignedIn
         val isGuest =
             (isSignedIn && !customer.attributes.accountType.equals("full", ignoreCase = true))
-        if(isSignedIn) {
+        if (isSignedIn) {
             val customerNameLabel =
                 CacheUtil.getInstance().getTranslations(Text.HI_LABEL, "Hi (x)!")
-            binding.sidebar.customerName.text =
-                customerNameLabel.replace(
-                    "(x)",
-                    if (isSignedIn) customer.attributes.firstName.trim() else ""
-                )
+            binding.sidebar.customerName.text = customerNameLabel.replace(
+                "(x)", if (isSignedIn) customer.attributes.firstName.trim() else ""
+            )
             binding.sidebar.clNotification.visible()
             binding.sidebar.fmLoyalty.visible()
         } else {
-            binding.sidebar.customerName.text = CacheUtil.getInstance().getTranslations(Text.HI_LOGGED_OUT, "Hi!")
+            binding.sidebar.customerName.text =
+                CacheUtil.getInstance().getTranslations(Text.HI_LOGGED_OUT, "Hi!")
             binding.sidebar.clNotification.gone()
             binding.sidebar.fmLoyalty.gone()
         }
@@ -654,7 +653,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             .notification
             .ninjaTap(lifecycleScope) {
                 binding.drawerLayout.closeDrawer(GravityCompat.START)
-              navController.navigateToDeepLink("nav_notifications")
+                navController.navigateToDeepLink("nav_notifications")
             }
         binding.sidebar.history.setOnClickListener { showHistory() }
         binding.sidebar.loyalty.setOnClickListener {
@@ -697,9 +696,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.account.setOnClickListener {
             MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ACCOUNT)
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            val intent = Intent(this@MainActivity, AccountActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
+//            val intent = Intent(this@MainActivity, AccountActivity::class.java)
+//            startActivity(intent)
+//            overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            navController.navigateToDeepLink("profile_fragment_nav")
         }
         binding.sidebar.storeLocator.setOnClickListener {
             MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_STORE_LOCATOR)
@@ -1158,7 +1159,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.notification.text =
             CacheUtil.getInstance().getTranslations(Text.NOTIFICATIONS, "Notifications")
         binding.sidebar.tvReachUs.text = CacheUtil.getInstance()
-                .getTranslations(Text.SOCIAL_MEDIA_LABEL, "Follow Us On Social Media")
+            .getTranslations(Text.SOCIAL_MEDIA_LABEL, "Follow Us On Social Media")
         binding.sidebar.support.text =
             CacheUtil.getInstance().getTranslations(Text.HELP_SUPPORT_LABEL, "Help & Support")
         binding.sidebar.faqs.text = CacheUtil.getInstance().getTranslations(Text.FAQS_LABEL, "FAQs")
