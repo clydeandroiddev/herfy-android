@@ -14,35 +14,12 @@ import java.text.DecimalFormatSymbols
 fun String.updateCurrency(currency: String, withSpace: Boolean): SpannedString {
     val space = if (withSpace) " " else ""
     val concept = CacheUtil.getInstance().concept
-    return when (concept.currencyFormat) {
-        CurrencyFormat.currencySymbolAmount -> buildSpannedString {
-            scale(0.58f) {
-                concept.currencySymbol
-            }
-            append(space)
-            append(StringUtil.localize(this@updateCurrency))
+    return buildSpannedString {
+        scale(0.58f) {
+            concept.currencyCode
         }
-        CurrencyFormat.currencyCodeAmount -> buildSpannedString {
-            scale(0.58f) {
-                concept.currencyCode
-            }
-            append(space)
-            append(StringUtil.localize(this@updateCurrency))
-        }
-        CurrencyFormat.amountCurrencySymbol -> buildSpannedString {
-            append(StringUtil.localize(this@updateCurrency))
-            append(space)
-            scale(0.58f) {
-                concept.currencySymbol
-            }
-        }
-        CurrencyFormat.amountCurrencyCode -> buildSpannedString {
-            append(StringUtil.localize(this@updateCurrency))
-            append(space)
-            scale(0.58f) {
-                concept.currencyCode
-            }
-        }
+        append(space)
+        append(StringUtil.localize(this@updateCurrency))
     }
 }
 
@@ -104,31 +81,11 @@ class CurrencyUtils {
 
             val discount = if (isDiscount) "-" else ""
             val space = if (withSpace) " " else ""
-            return when (concept.currencyFormat) {
-                CurrencyFormat.currencySymbolAmount -> buildSpannedString {
-                    append(discount)
-                    append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
-                    append(space)
-                    append(StringUtil.localize(formattedDecimal))
-                }
-                CurrencyFormat.currencyCodeAmount -> buildSpannedString {
-                    append(discount)
-                    append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
-                    append(space)
-                    append(StringUtil.localize(formattedDecimal))
-                }
-                CurrencyFormat.amountCurrencySymbol -> buildSpannedString {
-                    append(discount)
-                    append(StringUtil.localize(formattedDecimal))
-                    append(space)
-                    append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
-                }
-                CurrencyFormat.amountCurrencyCode -> buildSpannedString {
-                    append(discount)
-                    append(StringUtil.localize(formattedDecimal))
-                    append(space)
-                    append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
-                }
+            return buildSpannedString {
+                append(discount)
+                append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
+                append(space)
+                append(StringUtil.localize(formattedDecimal))
             }
         }
 
@@ -150,27 +107,10 @@ class CurrencyUtils {
             val decimalFormat = DecimalFormat(pattern, symbols)
             val formattedDecimal: String = decimalFormat.format(amount)
             val space = if (withSpace) " " else ""
-            return when (concept.currencyFormat) {
-                CurrencyFormat.currencySymbolAmount -> buildSpannedString {
-                    append(StringUtil.localize(formattedDecimal))
-                    append(space)
-                    append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
-                }
-                CurrencyFormat.currencyCodeAmount -> buildSpannedString {
-                    append(StringUtil.localize(formattedDecimal))
-                    append(space)
-                    append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
-                }
-                CurrencyFormat.amountCurrencySymbol -> buildSpannedString {
-                    append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
-                    append(space)
-                    append(StringUtil.localize(formattedDecimal))
-                }
-                CurrencyFormat.amountCurrencyCode -> buildSpannedString {
-                    append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
-                    append(space)
-                    append(StringUtil.localize(formattedDecimal))
-                }
+            return buildSpannedString {
+                append(StringUtil.localize(formattedDecimal))
+                append(space)
+                append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
             }
         }
 

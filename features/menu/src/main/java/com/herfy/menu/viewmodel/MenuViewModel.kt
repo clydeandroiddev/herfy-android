@@ -12,6 +12,7 @@ import com.herfy.repository.MenuRepository
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
+import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.Event
 import com.herfy.utils.helper.LocaleUtil
@@ -262,6 +263,8 @@ class MenuViewModel @Inject constructor(
 
     private fun addToCart(menuItem: MenuItem) {
 
+        AppLogger.error("addToCart")
+
         val store = CacheUtil.getInstance().orderStore
 
         if (store != null && menuItem.disabledStores.containsKey(store.id)) {
@@ -273,6 +276,7 @@ class MenuViewModel @Inject constructor(
         } else {
             CacheUtil.getInstance().addToCart(menuItem)
             _showLoading.postValue(false)
+            AppLogger.error("266")
             _showAddToCart.postValue(menuItem)
         }
     }

@@ -98,26 +98,16 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.0">
 
-<!--                        <fragment-->
-<!--                            android:id="@+id/checkout_map"-->
-<!--                            android:name="com.google.android.gms.maps.SupportMapFragment"-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="@dimen/_200sdp"-->
-<!--                            android:layout_marginStart="@dimen/margin_large"-->
-<!--                            android:layout_marginEnd="@dimen/margin_large"-->
-<!--                            app:layout_constraintEnd_toEndOf="parent"-->
-<!--                            app:layout_constraintStart_toStartOf="parent"-->
-<!--                            app:layout_constraintTop_toTopOf="parent" />-->
-
-                        <!--                    <ImageView-->
-                        <!--                        android:id="@+id/staticMap"-->
-                        <!--                        android:layout_width="match_parent"-->
-                        <!--                        android:layout_height="200dp"-->
-                        <!--                        android:src="@color/placeholder_color"-->
-                        <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-                        <!--                        app:layout_constraintStart_toStartOf="parent"-->
-                        <!--                        app:layout_constraintTop_toTopOf="parent" />-->
-
+                        <fragment
+                            android:id="@+id/checkout_map"
+                            android:name="com.google.android.gms.maps.SupportMapFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_200sdp"
+                            android:layout_marginStart="@dimen/margin_large"
+                            android:layout_marginEnd="@dimen/margin_large"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/branch_image_container"

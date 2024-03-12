@@ -633,14 +633,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }*/
         binding.paymentSummaryContainer.placeOrder.setOnClickListener { view: View? ->
             binding.paymentSummaryContainer.placeOrder.isEnabled = false
-            if ((((CacheUtil.getInstance().orderType == OrderType.PICKUP) || (CacheUtil.getInstance().orderType == OrderType.CURBSIDE) || (CacheUtil.getInstance().orderType == OrderType.EAT_IN) || (CacheUtil.getInstance().orderType == OrderType.DRIVE_THRU))) && CacheUtil.getOrderStoreId() != null && !continueCheckout) {
-                showDynamicPickUpPrompt()
-            } else {
-                activity?.cast<BaseActivity> {
-                    it.showLoadingDialog()
-                }
-                cartPresenter.proceed(scheduleTime)
+            activity?.cast<BaseActivity> {
+                it.showLoadingDialog()
             }
+            cartPresenter.proceed(scheduleTime)
         }
         binding.upsellContainer.apply {
             upsellRecyclerViewAdapter = UpsellRecyclerViewAdapter(cartPresenter)
@@ -1116,31 +1112,24 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showError(error: String) {
         activity?.runOnUiThread {
             continueCheckout = false
-            binding.paymentSummaryContainer.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
-            // binding.main.totalLoader.gone()
-            activity?.cast<BaseActivity> {
-                it.dismissDialogs()
-                it.showAlertDialog("", error)
-            }
+            binding.paymentSummaryContainer.placeOrder.isEnabled = CacheUtil.getInstance().cartQuantity > 0
+            showAlertDialog("", error)
         }
     }
 
     override fun showValidateOrderError(errors: List<String>) {
         continueCheckout = false
-        binding.paymentSummaryContainer.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
-        activity?.cast<BaseActivity> {
-            it.dismissDialogs()
-            val builder = StringBuilder()
-            builder.append("")
-            for (i in errors.indices) {
-                builder.append("- ")
-                builder.append(errors[i])
-                if ((i + 1) != errors.size) {
-                    builder.append("\n\n")
-                }
+        binding.paymentSummaryContainer.placeOrder.isEnabled = CacheUtil.getInstance().cartQuantity > 0
+        val builder = StringBuilder()
+        builder.append("")
+        for (i in errors.indices) {
+            builder.append("- ")
+            builder.append(errors[i])
+            if ((i + 1) != errors.size) {
+                builder.append("\n\n")
             }
-            it.showAlertDialog("", builder.toString())
         }
+        showAlertDialog("", builder.toString())
     }
 
     override fun showUnavailableMenuItems() {
@@ -2054,6 +2043,49 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 shimmerOrderDetails.startShimmer()
             }
         }
+    }
+
+    fun showAlertDialog(title: String?, message: String) {
+        activity?.cast<BaseActivity> {
+            it.runOnUiThread {
+                try {
+                    it.dismissDialogs()
+                    val builder = AlertDialog.Builder(it)
+                    builder.setCancelable(true)
+                    builder.setTitle(title)
+                    builder.setMessage(message)
+                    val alertDialog = builder.create()
+                    alertDialog.setButton(
+                        AlertDialog.BUTTON_POSITIVE,
+                        CacheUtil.getInstance().getTranslations(Text.OK)
+                    ) {
+                      dialogInterface, i -> dialogInterface.dismiss()
+                    }
+                    alertDialog.setOnShowListener { dialogInterface ->
+                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps = false
+                        if (!CacheUtil.getInstance().colorMain.equals(
+                                "#FFFFFF",
+                                ignoreCase = true
+                            )
+                        ) {
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                                .setTextColor(ViewUtil.getColorMain(it))
+                        } else {
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                                ContextCompat.getColor(
+                                    it,
+                                    R.color.primary_text
+                                )
+                            )
+                        }
+                    }
+                    alertDialog.show()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
     }
 
 }

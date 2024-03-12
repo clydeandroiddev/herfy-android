@@ -2,8 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layoutMenuCategory"
-    android:layout_width="102dp"
-    android:layout_height="78dp"
+    android:layout_width="123dp"
+    android:layout_height="94dp"
     android:layout_marginStart="12dp"
     android:focusable="true"
     android:clickable="true"
@@ -21,8 +21,8 @@
 
         <ImageView
             android:id="@+id/ivImage"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="center_horizontal" />
 
         <TextView
