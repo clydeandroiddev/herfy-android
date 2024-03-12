@@ -12,6 +12,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
 import com.herfy.notification.NotificationContract;
+import com.herfy.utils.helper.DateFormatterUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData;
 import com.skylinedynamics.solosdk.api.models.objects.notification.Notification;
@@ -92,7 +93,8 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder implements N
         } else {
             notificationImage.setVisibility(View.GONE);
         }
-
+        txtMinutes.setText(DateFormatterUtil.INSTANCE.formatTimeAgo(notification
+                .getNotifData().getCreatedAt()));
     }
 
     @Override
@@ -117,6 +119,11 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder implements N
 
     @Override
     public void showError(String message) {
+
+    }
+
+    @Override
+    public void setIsLoading(boolean isLoading) {
 
     }
 
