@@ -97,13 +97,13 @@ class LoginViewModel @Inject constructor(
                 )
             } else {
                 _state.emit(LoginViewState.ShowLoading(true))
-                authRepository.updateMobile(customer.id, mobile) {
+                authRepository.sendVerification(customer.id, mobile) {
                     viewModelScope.launchWithTimber(dispatchers.io) {
                         _state.emit(LoginViewState.ShowLoading(false))
                         if (it.success) {
                             _state.emit(
                                 LoginViewState.GoogleSuccessFromAddNumber(
-                                    it.data as Customer, mobile
+                                    customer, mobile
                                 )
                             )
                         } else {

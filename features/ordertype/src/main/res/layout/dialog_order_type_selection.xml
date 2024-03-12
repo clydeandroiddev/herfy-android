@@ -111,8 +111,9 @@
                         app:layout_constraintTop_toTopOf="@id/pickupEllipse"
                         tools:text="Walk In Pickup" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/descriptionPickup"
+                        style="@style/TextAppearance.Caption.Regular"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
@@ -185,12 +186,12 @@
                         app:layout_constraintTop_toTopOf="@id/curbsideEllipse"
                         tools:text="Curbside pickup" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/descriptionCurbside"
+                        style="@style/TextAppearance.Caption.Regular"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/inter_regular"
                         android:includeFontPadding="false"
                         android:maxLines="2"
                         android:paddingStart="12dp"
@@ -260,8 +261,9 @@
                         app:layout_constraintTop_toTopOf="@id/driveThruEllipse"
                         tools:text="Drive Thru" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/descriptionDriveThru"
+                        style="@style/TextAppearance.Caption.Regular"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"

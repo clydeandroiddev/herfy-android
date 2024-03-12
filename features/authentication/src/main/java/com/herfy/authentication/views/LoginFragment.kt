@@ -133,7 +133,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                 Text.CONTINUE_LABEL, "Continue"
             )
             orLabel.text = CacheUtil.getInstance().getTranslations(
-                Text.OR, "Or"
+                Text.OR_NEW, "Or"
             )
             loginGoogle.text = CacheUtil.getInstance().getTranslations(
                 Text.CONTINUE_WITH_GOOGLE, "Continue with Google"
@@ -210,7 +210,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                         LoginFragmentDirections.actionLoginToOtp(
                             phoneNumber = it.mobile,
                             customerId = it.customer.id,
-                            isVerified = true,
+                            isVerified = false,
                             isGuest = false
                         )
                     )
