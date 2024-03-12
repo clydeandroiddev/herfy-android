@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_large"
+        android:src="@drawable/ic_common_close"
+        app:layout_constraintBottom_toBottomOf="@+id/txtNotificationTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtNotificationTitle" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtNotificationTitle"
+        style="@style/Styles.Text.Headline1"
+        android:layout_width="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/viewSeparator"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Notification" />
+    <View
+        android:id="@+id/viewSeparator"
+        android:layout_width="match_parent"
+        android:background="#E6E8EB"
+        android:layout_marginTop="@dimen/margin_large"
+        app:layout_constraintTop_toBottomOf="@+id/txtNotificationTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="@dimen/_1sdp"
+        />
+    <com.herfy.common.component.EmptyStateView
+        android:id="@+id/emptyState"
+        android:layout_width="match_parent"
+        app:emptyStateDrawable="@drawable/ic_empty_notification"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_height="wrap_content"/>
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/notificationShimmer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/padding_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
+        app:shimmer_duration="1000"
+        tools:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/item_notification_placeholder" />
+
+            <include layout="@layout/item_notification_placeholder" />
+
+            <include layout="@layout/item_notification_placeholder" />
+
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvNotif"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_large"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="@dimen/margin_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emptyState"
+        app:layout_constraintVertical_bias="0.0"
+        tools:itemCount="3"
+        tools:listitem="@layout/item_new_notification" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

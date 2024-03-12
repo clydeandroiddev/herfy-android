@@ -2,22 +2,21 @@ package com.herfy.notification.views;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.card.MaterialCardView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
-import com.herfy.utils.constants.Text;
 import com.herfy.notification.NotificationContract;
-import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.DateFormatterUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData;
 import com.skylinedynamics.solosdk.api.models.objects.notification.Notification;
 import com.herfy.utils.helper.LocaleUtil;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -30,21 +29,13 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder implements N
     private Context context;
     private NotificationContract.Presenter notificationPresenter;
 
-    @BindView(R.id.container)
-    ConstraintLayout notifContainer;
     @BindView(R.id.tvNotifTitle)
     TextView title;
-    @BindView(R.id.tvNotifDesc)
-    TextView desc;
-    @BindView(R.id.ivNewNotif)
-    ImageView notifBadge;
-    public @BindView(R.id.foregroundRow)
-    MaterialCardView foregroundRow;
-    @BindView(R.id.clDelete)
-    public ConstraintLayout clDelete;
-    @BindView(R.id.textView)
-    public TextView tvDelete;
 
+    @BindView(R.id.txtMinutes)
+    MaterialTextView txtMinutes;
+    @BindView(R.id.notificationImage)
+    ShapeableImageView notificationImage;
 
     public NotificationViewHolder(Context context, NotificationContract.Presenter notificationPresenter, View itemView) {
         super(itemView);
@@ -94,16 +85,16 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder implements N
 
     @Override
     public void setupNotification(Notification notification) {
+        String imageUrl = notification.getNotifData().getImageUri();
         title.setText(notification.getNotifData().getTitle().getValue(LocaleUtil.getInstance().getLanguage()));
-        desc.setText(notification.getNotifData().getMessage().getValue(LocaleUtil.getInstance().getLanguage()));
-        tvDelete.setText(CacheUtil.getInstance().getTranslations(Text.DELETE, "Delete"));
-
-        if(notification.getNotifData().getReadAt() != null) {
-            notifBadge.setVisibility(View.GONE);
+        if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
+            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(notificationImage);
+            notificationImage.setVisibility(View.VISIBLE);
         } else {
-            notifBadge.setVisibility(View.VISIBLE);
+            notificationImage.setVisibility(View.GONE);
         }
-
+        txtMinutes.setText(DateFormatterUtil.INSTANCE.formatTimeAgo(notification
+                .getNotifData().getCreatedAt()));
     }
 
     @Override
@@ -128,6 +119,11 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder implements N
 
     @Override
     public void showError(String message) {
+
+    }
+
+    @Override
+    public void setIsLoading(boolean isLoading) {
 
     }
 

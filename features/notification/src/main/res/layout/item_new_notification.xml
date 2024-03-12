@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="10dp"
+        app:strokeColor="#E6F0F7"
+        app:strokeWidth="1dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:cardCornerRadius="20dp"
+        app:contentPadding="8dp"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/notificationImage"
+            android:layout_width="68dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="68dp"
+            android:layout_gravity="center"
+            android:scaleType="fitXY"
+            tools:src = "@tools:sample/avatars"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Corner12dp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvNotifTitle"
+                android:layout_width="0dp"
+                app:layout_constraintStart_toEndOf="@+id/notificationImage"
+                style="@style/Styles.Text.Footnote.Medium_Regular"
+                app:layout_constraintTop_toTopOf="@+id/notificationImage"
+                android:layout_marginStart="@dimen/margin_10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text = "Notification text explaining about the notification. Notification text explaining about the notification."
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtMinutes"
+                android:layout_width="wrap_content"
+                style="@style/Styles.Text.Footnote.Medium_Regular"
+                android:layout_marginTop="@dimen/margin_small"
+                app:layout_constraintTop_toBottomOf="@+id/tvNotifTitle"
+                tools:text = "2 mins ago"
+                app:layout_constraintStart_toStartOf="@+id/tvNotifTitle"
+                android:layout_height="wrap_content"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

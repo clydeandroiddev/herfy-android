@@ -47,6 +47,7 @@ object RepositoryModule {
     ): FavoriteRepository =
         FavoriteRepositoryImpl()
 
+
     @Provides
     @Singleton
     fun provideAuthRepository(

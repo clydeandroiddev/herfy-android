@@ -49,6 +49,7 @@ public class NotificationPresenter implements  NotificationContract.Presenter {
 
     @Override
     public void getNotifications(int page) {
+        notificationView.setIsLoading(true);
         NotificationApiCall.getInstance().getNotifications(String.valueOf(page), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
@@ -60,6 +61,7 @@ public class NotificationPresenter implements  NotificationContract.Presenter {
                     JSONArray jArray =jObject.getJSONArray("data");
                     totalNotifPageCount = jObject.getJSONObject("meta").getJSONObject("pagination").getInt("total_pages");
                     notifications.addAll(GsonHelper.gsonFinal().fromJson(jArray.toString(), new TypeToken<LinkedList<Notification>>(){}.getType()));
+                    notificationView.setIsLoading(false);
                     notificationView.showNotifications(notifications, totalNotifPageCount);
 //                    if (page == totalNotifPageCount) {
 //                        notificationView.showNotifications(notifications);

@@ -29,6 +29,8 @@ public interface NotificationContract {
 
         void showError(String message);
 
+        void setIsLoading(boolean isLoading);
+
     }
 
     interface Presenter extends BasePresenter {
