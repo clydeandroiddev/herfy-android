@@ -66,8 +66,6 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showLoadingDialog()
-        binding.notificationShimmer.visible()
         notificationPresenter!!.start()
         notificationPresenter!!.getNotifications(page)
         binding.rvNotif.addOnItemTouchListener(touchListener!!)
@@ -141,7 +139,7 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
     override fun setupFonts() {}
     override fun setupTranslations() {
         binding.emptyState.setTitle( CacheUtil.getInstance()
-            .getTranslations(Text.NO_NOTIFICATIONS, "No notifications."))
+            .getTranslations(Text.NO_NOTIFICATIONS, "No notifications.") + ".");
         binding.txtNotificationTitle.setText(CacheUtil
             .getInstance().getTranslations(Text.NOTIFICATIONS, "Notifications"))
     }
