@@ -83,16 +83,9 @@
         android:orientation="vertical"
         android:layout_marginHorizontal="@dimen/margin_large"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
+        app:layout_constraintTop_toBottomOf="@+id/emptyState"
         app:layout_constraintVertical_bias="0.0"
         tools:itemCount="3"
         tools:listitem="@layout/item_new_notification" />
-    <ProgressBar
-        android:id="@+id/load_more_progressbar"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:visibility="gone"
-        android:indeterminateTint="?colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
