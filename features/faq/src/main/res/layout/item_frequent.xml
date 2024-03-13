@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_gray">
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="@dimen/margin_20dp"
+    app:cardUseCompatPadding="true"
+    android:elevation="0dp"
+    app:cardElevation="0dp"
+    app:contentPaddingTop="@dimen/margin_small"
+    android:id="@+id/frequentlyBackground"
+    android:layout_marginBottom="@dimen/margin_large"
+    app:contentPaddingBottom="@dimen/margin_small"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_small"
+        android:orientation="horizontal">
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtFrequentTitle"
+            android:layout_width="0dp"
+            tools:text = "FAQ"
+            style="@style/Styles.Text.Callout"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/margin_large"
+            android:fontFamily="@font/inter_bold"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/icPlus"
+            android:layout_width="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="@dimen/margin_5dp"
+            android:layout_weight="0.1"
+            android:src="@drawable/ic_common_black_plus"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/webViewParentLayout"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_height="360dp">
+            <WebView
+                android:id="@+id/webView"
+                android:layout_width="match_parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/frequencyRecycleView"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

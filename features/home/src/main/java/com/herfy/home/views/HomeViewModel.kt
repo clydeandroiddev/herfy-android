@@ -412,6 +412,7 @@ class HomeViewModel @Inject constructor(
         }
 
 
+
         allPromotionsList?.let { promos ->
             val filteredList = arrayListOf<Campaign>()
             if (promos.isNotEmpty() && category.isNotEmpty()) {

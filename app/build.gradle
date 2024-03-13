@@ -251,6 +251,7 @@ dependencies {
     implementation project(path: ':data:model')
     implementation project(path: ':analytics:kochava')
     implementation project(path: ':data:repository')
+    implementation(project(":features:faq"))
     implementation(project(":features:updatephonenumber"))
     implementation(project(":features:notification"))
     implementation(project(":features:favourites"))
