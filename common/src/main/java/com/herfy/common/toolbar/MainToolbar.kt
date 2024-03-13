@@ -49,14 +49,7 @@ class MainToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSe
     }
 
     fun setCart(quantity : Int = CacheUtil.getInstance().cartQuantity) {
-        qtyText?.apply {
-            if(quantity > 0) {
-                text = quantity.toString()
-                visible()
-            } else {
-                gone()
-            }
-        }
+        qtyText?.text = quantity.toString()
     }
 
     fun setSideButtonAction(listener : OnClickListener){
