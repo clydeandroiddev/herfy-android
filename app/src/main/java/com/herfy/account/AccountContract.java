@@ -97,6 +97,12 @@ public interface AccountContract {
 
         void getRevelRewardPoints();
 
+        String getOriginalName();
+
+        String getOriginalBirthday();
+
+        String getOriginalGender();
+
     }
 
 }
