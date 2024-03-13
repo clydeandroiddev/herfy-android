@@ -97,7 +97,6 @@ import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
-import com.herfy.utils.helper.DistanceCalculator
 import com.herfy.utils.helper.GlideUtils
 import com.herfy.utils.helper.launchWithTimber
 import com.herfy.utils.permission.PermissionManager
