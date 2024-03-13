@@ -45,7 +45,10 @@ public interface MainContract {
 
         void multibrandValidation(boolean proceed);
 
-        void setTermsAndConditions(String url);
+        void setFaqs(String content);
+        void setAboutUs(String content);
+
+        void setTermsAndConditions(String content);
 
     }
 
@@ -76,6 +79,10 @@ public interface MainContract {
         void getDigitalCoupons(String digitalCouponId);
 
         void multibrandValidation(boolean proceed);
+
+        void getFaqs();
+
+        void getAboutUs();
 
         void getTermsAndConditions();
 

@@ -18,6 +18,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.Window
+import android.webkit.URLUtil
 import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.TextView
@@ -46,6 +47,7 @@ import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
 import com.herfy.browser.BrowserActivity
 import com.herfy.cart.views.CartFragment
+import com.herfy.cmspage.CmsPageActivity
 import com.herfy.contactsupport.ContactSupportBottomSheetDialogFragment
 import com.herfy.country.CountriesFragment
 import com.herfy.databinding.ActivityMainBinding
@@ -450,7 +452,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             startActivity(browserIntent)
         } catch (e: ActivityNotFoundException) {
             e.printStackTrace()
-            navBrowser(
+            navCmsPage(
                 CacheUtil.getInstance().getTranslations(Text.SOCIAL_MEDIA_LABEL, "Follow Us On Social Media"),
                 url
             )
@@ -488,7 +490,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         CacheUtil.shouldDismiss = false
         fromShowOrderType = false
-        mainPresenter.getTermsAndConditions()
+        mainPresenter.apply {
+            getFaqs()
+            getAboutUs()
+            getTermsAndConditions()
+        }
         setupSideBar()
 
         if (curbside) {
@@ -635,19 +641,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         mainPresenter.getCaloriesPage()
         binding.drawerLayout.setScrimColor(Color.TRANSPARENT)
         showSocialMediaLinks()
-
-        binding
-            .sidebar
-            .faqs
-            .ninjaTap(lifecycleScope) {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                val request = NavDeepLinkRequest.Builder.fromUri(
-                    Uri.parse(
-                        "${Values.NAV_DEEP_LINK_BASE_URL}nav_frequency/"
-                    )
-                ).build()
-                NavigationUtils.navigateSafe(navController, request)
-            }
         binding.sidebar.signin.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             val intent = Intent(this, AuthActivity::class.java)
@@ -972,12 +965,35 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         mainPresenter.multibrandValidation(proceed)
     }
 
-    override fun setTermsAndConditions(url: String) {
+    override fun setFaqs(content: String) {
+        binding.sidebar.faqs.setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            navCmsPage(
+                title = CacheUtil.getInstance()
+                    .getTranslations(Text.FAQS_LABEL, "FAQs"),
+                content = content
+            )
+        }
+    }
+
+    override fun setAboutUs(content: String) {
+        binding.sidebar.aboutUs.setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            navCmsPage(
+                title = CacheUtil.getInstance()
+                    .getTranslations(Text.ABOUT_US_LABEL, "About Us"),
+                content = content
+            )
+        }
+    }
+
+    override fun setTermsAndConditions(content: String) {
         binding.sidebar.terms.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            navBrowser(
-                title = CacheUtil.getInstance().getTranslations(Text.TERMS_LABEL, "Terms & Condition"),
-                url = url
+            navCmsPage(
+                title = CacheUtil.getInstance()
+                    .getTranslations(Text.TERMS_LABEL, "Terms & Condition"),
+                content = content
             )
         }
     }
@@ -1442,10 +1458,16 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
     }
 
-    private fun navBrowser(title: String, url: String) {
-        val intent = Intent(this, BrowserActivity::class.java)
+    private fun navCmsPage(title: String, content: String) {
+        val intent: Intent
+        if(URLUtil.isValidUrl(content)) {
+            intent = Intent(this, BrowserActivity::class.java)
+            intent.putExtra("url", content)
+        } else {
+            intent = Intent(this, CmsPageActivity::class.java)
+            intent.putExtra("content", content)
+        }
         intent.putExtra("title", title)
-        intent.putExtra("url", url)
         startActivity(intent)
     }
 }

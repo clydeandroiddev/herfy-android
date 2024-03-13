@@ -499,6 +499,62 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
+    public void getFaqs() {
+        CmsApiCall.getInstance().getPageByLabel("FAQ", new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object obj) {
+                try {
+                    JSONObject jsonObject = new JSONObject(obj.toString());
+                    JSONArray data = jsonObject.optJSONArray("data");
+                    if (data != null && data.length() > 0) {
+                        CmsPage termsAndConditionsPage = new CmsPage().parse(data.getJSONObject(0));
+                        String content = termsAndConditionsPage.getAttributes().getUrl();
+                        if (content != null && !content.isEmpty()) {
+                            mainView.setFaqs(content);
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Object error) {
+                AppLogger.printRetrofitError(error);
+            }
+        });
+    }
+
+    @Override
+    public void getAboutUs() {
+        CmsApiCall.getInstance().getPageByLabel("About Us", new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object obj) {
+                try {
+                    JSONObject jsonObject = new JSONObject(obj.toString());
+                    JSONArray data = jsonObject.optJSONArray("data");
+                    if (data != null && data.length() > 0) {
+                        CmsPage termsAndConditionsPage = new CmsPage().parse(data.getJSONObject(0));
+                        String content = termsAndConditionsPage.getAttributes().getUrl();
+                        if (content != null && !content.isEmpty()) {
+                            mainView.setAboutUs(content);
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Object error) {
+                AppLogger.printRetrofitError(error);
+            }
+        });
+    }
+
+    @Override
     public void getTermsAndConditions() {
         CmsApiCall.getInstance().getPageByLabel("Terms and Conditions", new ApiRequestListener() {
             @Override
@@ -508,10 +564,9 @@ public class MainPresenter implements MainContract.Presenter {
                     JSONArray data = jsonObject.optJSONArray("data");
                     if (data != null && data.length() > 0) {
                         CmsPage termsAndConditionsPage = new CmsPage().parse(data.getJSONObject(0));
-                        String url = termsAndConditionsPage.getAttributes().getUrl();
-                        if (url != null && !url.isEmpty() && URLUtil.isValidUrl(url)) {
-
-                            mainView.setTermsAndConditions(url);
+                        String content = termsAndConditionsPage.getAttributes().getUrl();
+                        if (content != null && !content.isEmpty()) {
+                            mainView.setTermsAndConditions(content);
                         }
                     }
 
