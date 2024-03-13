@@ -98,7 +98,8 @@ public class EditProfileActivity extends BaseActivity implements AccountContract
     TextView lastNameError;
     @BindView(R.id.phone_number_error)
     TextView phoneNumberError;
-    @BindView(R.id.email_error) TextView emailError;
+    @BindView(R.id.email_error)
+    TextView emailError;
     @BindView(R.id.new_password_error)
     TextView newPasswordError;
     @BindView(R.id.confirm_password_error)
@@ -398,18 +399,19 @@ public class EditProfileActivity extends BaseActivity implements AccountContract
     @Override
     public void showDateOfBirth(Date birthDate, String date) {
         Calendar calendar = Calendar.getInstance();
-        if(date != null && !date.isEmpty()) {
+        if (date != null && !date.isEmpty()) {
             calendar.setTime(birthDate);
             dateOfBirth.setText(date);
             dateOfBirth.setTextColor(Color.BLACK);
-        }  else {
+        } else {
             calendar.setTime(new Date());
             dateOfBirth.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_DATE_OF_BIRTH, "Select date of birth"));
             dateOfBirth.setTextColor(lastName.getCurrentHintTextColor());
         }
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
-                (datePicker, year, month, day) -> {},
+                (datePicker, year, month, day) -> {
+                },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
@@ -483,7 +485,7 @@ public class EditProfileActivity extends BaseActivity implements AccountContract
 
     @Override
     public void showErrorEmail(String error) {
-        if(error.isEmpty()) {
+        if (error.isEmpty()) {
             emailError.setVisibility(View.GONE);
         } else {
             emailError.setText(error);
@@ -537,6 +539,7 @@ public class EditProfileActivity extends BaseActivity implements AccountContract
             onBackPressed();
             finish();
         } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 

@@ -24,6 +24,7 @@ import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.DialogUtils.showAlertDialog
 import com.skylinedynamics.solosdk.api.SoloAuth
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import dagger.hilt.android.AndroidEntryPoint
@@ -219,7 +220,14 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
     }
 
     override fun showError(error: String?) {
-
+        showAlertDialog(
+            context = requireContext(),
+            title = "",
+            body = error.orEmpty(),
+            dialogInterface = { dialog, which ->
+                dialog.dismiss()
+            }
+        )
     }
 
     override fun showAccount() {

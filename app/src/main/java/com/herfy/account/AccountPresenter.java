@@ -233,7 +233,7 @@ public class AccountPresenter implements AccountContract.Presenter {
         String birthDate = "";
         if (!dateOfBirth.isEmpty()) {
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy", Locale.getDefault());
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
                 Date date = sdf.parse(dateOfBirth);
                 if (date != null) {
                     sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
@@ -254,18 +254,6 @@ public class AccountPresenter implements AccountContract.Presenter {
             accountView.showErrorPhoneNumber("");
         }
 
-        String key = CacheUtil.getInstance().getConceptKey();
-        if (key.equalsIgnoreCase("CQcFAwgLDA0")) {
-            if (email.isEmpty()) {
-                valid = false;
-                accountView.showErrorEmail(CacheUtil.getInstance().getTranslations(Text.EMAIL_REQUIRED));
-            } else if (!StringUtil.isValidEmail(email)) {
-                valid = false;
-                accountView.showErrorEmail(CacheUtil.getInstance().getTranslations(Text.EMAIL_INVALID));
-            } else {
-                accountView.showErrorEmail("");
-            }
-        }
 
         if (valid) {
 
