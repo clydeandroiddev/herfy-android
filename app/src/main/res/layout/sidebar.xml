@@ -474,8 +474,7 @@
             <FrameLayout
                 android:id="@+id/fm_support"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:visibility="gone">
+                android:layout_height="56dp">
 
                 <ImageView
                     android:layout_width="20dp"

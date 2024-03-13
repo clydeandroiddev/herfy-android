@@ -16,12 +16,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.android.material.button.MaterialButton
 import com.nguyenhoanglam.imagepicker.helper.DeviceHelper
 import com.nguyenhoanglam.imagepicker.model.ImagePickerConfig
 import com.nguyenhoanglam.imagepicker.model.RootDirectory
@@ -39,9 +35,6 @@ import com.herfy.utils.helper.*
 class FeedbackActivity : BaseActivity(), FeedbackContract.View {
 
     private lateinit var binding: ActivityFeedbackBinding
-
-    private lateinit var back: MaterialButton
-    private lateinit var title: TextView
 
     private lateinit var feedbackPresenter: FeedbackContract.Presenter
 
@@ -115,47 +108,19 @@ class FeedbackActivity : BaseActivity(), FeedbackContract.View {
 
     override fun setupViews() {
 
-        val collapsing = binding.appBarLayout.findViewById<CollapsingToolbarLayout>(R.id.collapsing_toolbar_layout)
-        val toolbar = collapsing.findViewById<Toolbar>(R.id.toolbar)
-
-        val cart = toolbar.findViewById<ConstraintLayout>(R.id.cart)
-        cart.visibility = View.INVISIBLE
-
-        back = toolbar.findViewById(R.id.back)
-        back.visibility = View.VISIBLE
-        back.setOnClickListener { onBackPressed() }
-
-        title = toolbar.findViewById(R.id.title)
-
-        val key = CacheUtil.getInstance().conceptKey
-        val isBurgerizzr = key.equals("CQcFAwgLDA0", ignoreCase = true)
+        binding.toolbar.setNavButtonAction {
+            onBackPressed()
+        }
 
         if (AuthUtil.getInstance().isSignedIn) {
             val customer = AuthUtil.getInstance().customer
             binding.fullName.setText(customer.attributes.firstName + " " + customer.attributes.lastName)
             binding.username.setText(customer.attributes.email)
-            //phoneNumber.setText(StringUtil.localize(customer.getAttributes().getMobile()));
-            if (isBurgerizzr) {
-                binding.phoneNumber.setText(
-                    StringUtil.localize(
-                        CacheUtil.getInstance().concept.dialingCode + customer.attributes.mobile.substring(
-                            1
-                        )
-                    )
-                )
-            } else {
-                binding.phoneNumber.setText(StringUtil.localize(customer.attributes.mobile))
-            }
+            binding.phoneNumber.setText(StringUtil.localize(customer.attributes.mobile))
             binding.comment.requestFocus()
         } else {
-            if (isBurgerizzr) {
-                binding.username.setText(StringUtil.generateRandomEmail())
-            }
             binding.fullName.requestFocus()
         }
-
-        binding.usernameLabel.visibility = if (isBurgerizzr) View.GONE else View.VISIBLE
-        binding.usernameContainer.visibility = if (isBurgerizzr) View.GONE else View.VISIBLE
 
         val phoneNumberTextWatcher: TextWatcher = object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
@@ -228,18 +193,15 @@ class FeedbackActivity : BaseActivity(), FeedbackContract.View {
     }
 
     override fun setupTranslations() {
-        back.text = CacheUtil.getInstance().getTranslations(Text.BACK, "Back")
+        binding.toolbar.title =       CacheUtil.getInstance().getTranslations(Text.HELP_SUPPORT_LABEL, "Help & Support")
 
-        title.setText(CacheUtil.getInstance().getTranslations(Text.FEEDBACK))
-        binding.message.setText(
-            CacheUtil.getInstance().getTranslations(
-                Text.FEEDBACK_MESSAGE,
-                "We value your opinion, so please tell us about your experience with our app or about your meal."
-            )
+        binding.message.text = CacheUtil.getInstance().getTranslations(
+            Text.FEEDBACK_MESSAGE,
+            "We value your opinion, so please tell us about your experience with our app or about your meal."
         )
         binding.addImageLabel.text =
             CacheUtil.getInstance().getTranslations(Text.ADD_AN_IMAGE_CAPS, "ADD AN IMAGE")
-        binding.uploadImage.text = CacheUtil.getInstance().getTranslations(Text.UPLOAD_IMAGE_CAPS, "UPLOAD IMAGE")
+        binding.uploadImage.text = CacheUtil.getInstance().getTranslations(Text.UPLOAD_IMAGE, "Upload Image")
         binding.fullNameLabel.text = CacheUtil.getInstance().getTranslations(Text.FULL_NAME)
         binding.usernameLabel.text = CacheUtil.getInstance().getTranslations(Text.EMAIL_ADDRESS)
         binding.phoneNumberLabel.text = CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER)
@@ -248,7 +210,7 @@ class FeedbackActivity : BaseActivity(), FeedbackContract.View {
             Text.TELL_US_ABOUT_YOUR_EXPERIENCE_HERE,
             "Tell us about your experience here"
         )
-        binding.submit.text = CacheUtil.getInstance().getTranslations(Text.SEND_FEEDBACK_CAPS, "SEND FEEDBACK")
+        binding.submit.text = CacheUtil.getInstance().getTranslations(Text.SUBMIT, "Submit")
     }
 
     override fun showErrorFullName(error: String?) {
@@ -320,24 +282,6 @@ class FeedbackActivity : BaseActivity(), FeedbackContract.View {
         val primary =
             StringUtil.colorIntToString(ViewUtil.getColorMain(this@FeedbackActivity))
 
-        /*val config = ImagePickerConfig(
-            isFolderMode = false,
-            folderTitle = CacheUtil.getInstance().getTranslations(Text.ALBUMS, "Albums"),
-            imageTitle = CacheUtil.getInstance().getTranslations(Text.PHOTOS, "Photos"),
-            uploadButtonText = CacheUtil.getInstance().getTranslations(Text.UPLOAD_SELECTED_IMAGE, "UPLOAD SELECTED IMAGE"),
-            backButtonText = CacheUtil.getInstance().getTranslations(Text.BACK, "Back"),
-            subDirectory = getString(R.string.app_name),
-            primaryColor = primary,
-            statusBarColor = primary,
-            toolbarColor = white,
-            backgroundColor = white,
-            progressIndicatorColor = primary,
-            selectedIndicatorColor = primary,
-            isShowNumberIndicator = false,
-            isMultipleMode = true,
-            maxSize = 1,
-            isShowCamera = true
-        )*/
         val config = ImagePickerConfig(
             isFolderMode = false,
             uploadButtonText = CacheUtil.getInstance().getTranslations(Text.UPLOAD_SELECTED_IMAGE, "UPLOAD SELECTED IMAGE"),

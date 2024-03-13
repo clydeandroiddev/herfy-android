@@ -583,20 +583,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.selectionLayout.visibility =
             if (BuildConfig.SUBSCRIPTION_ENABLED) View.VISIBLE else View.GONE
         processLiveChat()
-        if (CacheUtil.getInstance().isContactUsEnabled) {
-            binding.sidebar.fmSupport.apply {
-                visible()
-                setOnClickListener {
-                    binding.drawerLayout.closeDrawer(GravityCompat.START)
-                    val contactSupportBottomSheet = ContactSupportBottomSheetDialogFragment()
-                    contactSupportBottomSheet.show(
-                        supportFragmentManager,
-                        ContactSupportBottomSheetDialogFragment::class.java.name
-                    )
-                }
-            }
-        } else {
-            binding.sidebar.support.gone()
+        binding.sidebar.support.setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            val intent = Intent(this, FeedbackActivity::class.java)
+            startActivity(intent)
         }
         binding.sidebar.fmRefer.isVisible = isSignedIn
         binding.sidebar.fmStoreLocator.isVisible = isSignedIn
