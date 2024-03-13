@@ -1,6 +1,8 @@
 package com.herfy.nutritiondetails
 
 import android.os.Bundle
+import android.util.Log
+import androidx.core.view.isVisible
 import com.herfy.common.base.BaseBottomSheetDialog
 import com.herfy.nutritiondetails.databinding.DialogNutritionInfoBottomSheetBinding
 import com.herfy.utils.constants.Text
@@ -25,14 +27,15 @@ class NutritionInfoFragmentBottomSheet: BaseBottomSheetDialog<DialogNutritionInf
         }
     }
 
-    override fun isFullScreen(): Boolean = true
-    override fun shouldExpandOnOpen(): Boolean = true
+    override fun isFullScreen(): Boolean = false
+    override fun shouldExpandOnOpen(): Boolean = false
 
     override fun isDraggable(): Boolean = false
 
     override fun isDismissible(): Boolean = true
 
-    override fun shouldSkipCollapsedState(): Boolean = true
+    override fun shouldSkipCollapsedState(): Boolean = false
+
     private val cacheUtilHelper by lazy {
         CacheUtilHelper(requireContext())
     }
@@ -50,11 +53,14 @@ class NutritionInfoFragmentBottomSheet: BaseBottomSheetDialog<DialogNutritionInf
             with(binding) {
                 txtNutritionInfo.text = params.menuName
                 storyLayout.setVisible(params.nutritionStory.isNotEmpty())
+                Log.d("FAFA","Story layout visible ${storyLayout.isVisible}")
                 loadImage(nutritionImage,params.nutritionImageUrl)
                 txtStoryDescription.text = params.nutritionStory
                 cacheUtilHelper.let { cacheHelper ->
                     binding.txtNutritionLabel.text = cacheHelper.getTranslations(Text.NUTRITION_INFO,"Nutrition info")
                     txtStory.text = cacheHelper.getTranslations(Text.STORY, "Story")
+                    Log.d("FAFA","Description bai ${ binding.txtNutritionLabel.text}")
+                    Log.d("FAFA","Story bai  ${binding.txtStory.text}")
                 }
             }
         }

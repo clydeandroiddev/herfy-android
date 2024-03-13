@@ -6,13 +6,24 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:background="@color/color_background"
             android:layout_height="wrap_content">
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                style="@style/CustomCardViewStyle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_height="wrap_content">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guidelineLeft"
@@ -83,16 +94,23 @@
             <ImageView
                 android:id="@+id/nutritionImage"
                 android:layout_width="300dp"
-                android:layout_height="600dp"
+                android:layout_height="300dp"
                 android:layout_marginHorizontal="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_xlarge"
-                android:scaleType="fitCenter"
+                android:scaleType="centerInside"
                 app:layout_constraintEnd_toEndOf="@+id/guidelineRight"
                 app:layout_constraintHorizontal_bias="0.505"
                 app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
                 app:layout_constraintTop_toBottomOf="@+id/txtNutritionLabel"
                 tools:src="@tools:sample/avatars" />
-
+                    <View
+                        android:id="@+id/imageSeparator"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="@dimen/margin_large"
+                        app:layout_constraintTop_toBottomOf="@+id/nutritionImage"
+                        android:layout_marginTop="@dimen/margin_large"
+                        android:background="#E6E8EB"/>
             <LinearLayout
                 android:id="@+id/storyLayout"
                 android:layout_width="match_parent"
@@ -101,7 +119,7 @@
                 tools:visibility="visible"
                 android:layout_marginHorizontal="@dimen/margin_xlarge"
                 android:layout_marginTop="@dimen/margin_xxlarge"
-                app:layout_constraintTop_toBottomOf="@+id/nutritionImage"
+                app:layout_constraintTop_toBottomOf="@+id/imageSeparator"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
                 android:orientation="vertical">
@@ -111,7 +129,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/Styles.Text.Headline1"
-                    android:layout_marginBottom="@dimen/margin_xlarge"
+                    android:layout_marginBottom="@dimen/margin_small"
                     app:layout_constraintBottom_toTopOf="@+id/txtStoryDescription"
                     app:layout_constraintTop_toBottomOf="@+id/nutritionImage"
                     app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
@@ -130,7 +148,8 @@
                     tools:text="Story of the product with multiple lines go here...Story of the product with multiple lines go here...Story of the product with multiple lines go here...Story of the product with multiple lines go here..." />
 
             </LinearLayout>
-
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
