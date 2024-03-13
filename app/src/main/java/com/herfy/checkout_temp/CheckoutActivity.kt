@@ -103,7 +103,6 @@ import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.DistanceCalculator
-import com.herfy.utils.helper.GlideUtils
 import com.herfy.utils.helper.launchWithTimber
 import com.herfy.utils.permission.PermissionManager
 import com.herfy.utils.permission.PermissionResult
@@ -588,7 +587,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
 
             else -> {}
-
         }
         binding!!.placeOrder.setOnClickListener { view: View? ->
             val canProceedViaFullPoints = paymentPresenter!!.canProceedViaFullPoints()

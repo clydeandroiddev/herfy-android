@@ -30,7 +30,8 @@
                 android:id="@+id/image_view"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_45sdp"
-                android:src="@drawable/background_loyalty"
+                android:background="@drawable/background_loyalty"
+                android:src="@drawable/ic_loyalty_white"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_loyalty_points"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_loyalty_points_label" />
