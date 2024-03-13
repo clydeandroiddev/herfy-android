@@ -173,7 +173,15 @@ class NavigationActivity : BaseActivity(), MainContract.View {
 
     }
 
-    override fun setTermsAndConditions(url: String?) {
+    override fun setFaqs(content: String?) {
+
+    }
+
+    override fun setAboutUs(content: String) {
+
+    }
+
+    override fun setTermsAndConditions(content: String) {
 
     }
 

@@ -396,6 +396,10 @@
             android:screenOrientation="portrait"
             android:taskAffinity="" />
         <activity
+            android:name="com.herfy.cmspage.CmsPageActivity"
+            android:screenOrientation="portrait"
+            android:taskAffinity="" />
+        <activity
             android:name="com.herfy.loyalty.LoyaltyPointsHistory"
             android:screenOrientation="portrait"
             android:taskAffinity="" />
