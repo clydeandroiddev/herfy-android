@@ -263,6 +263,7 @@
             android:id="@+id/content_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#F7F7F7"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -450,7 +451,7 @@
                         android:includeFontPadding="false"
                         android:text="@string/special_instruction"
                         android:textAlignment="viewStart"
-                        android:textAllCaps="true"
+                        android:textAllCaps="false"
                         android:textColor="#0C0C0C"
                         android:textSize="14sp" />
 
@@ -459,14 +460,15 @@
                         style="@style/TextAppearance.Footnote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
                         android:ellipsize="end"
+                        android:layout_marginTop="@dimen/margin_small"
                         android:gravity="start"
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:textAlignment="viewStart"
                         android:textAllCaps="false"
-                        android:textColor="#ACACAC"
-                        android:textSize="14sp"
+                        android:textColor="#55667B"
                         android:textStyle="bold" />
 
                     <EditText
