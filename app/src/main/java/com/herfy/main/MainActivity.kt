@@ -29,9 +29,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -1182,7 +1180,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.refer.text =
             CacheUtil.getInstance().getTranslations(Text.REFER_AND_EARN_LABEL, "Refer & Earn")
         binding.sidebar.storeLocator.text =
-            CacheUtil.getInstance().getTranslations(Text.STORE_LOCATER_LABEL, "Store Locater")
+            CacheUtil.getInstance().getTranslations(Text.STORE_LOCATOR, "Store Locator")
     }
 
     override fun setCaloriesPage(caloriesPage: CmsPage) {

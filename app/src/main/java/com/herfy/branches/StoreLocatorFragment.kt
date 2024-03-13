@@ -157,7 +157,7 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
 
     override fun setupTranslations() {
         binding.title.text =
-            CacheUtil.getInstance().getTranslations(Text.STORE_LOCATER_LABEL, "Store Locator")
+            CacheUtil.getInstance().getTranslations(Text.STORE_LOCATOR, "Store Locator")
     }
 
     override fun initializeLocation() {

@@ -220,7 +220,7 @@ class StoreLocatorFragmentNew : BaseFragment<StoreLocatorViewModel, StoreLocator
         super.initTranslations()
         binding.apply {
             title.text =
-                CacheUtil.getInstance().getTranslations(Text.STORE_LOCATER_LABEL,"Store Locator")
+                CacheUtil.getInstance().getTranslations(Text.STORE_LOCATOR,"Store Locator")
         }
     }
 
