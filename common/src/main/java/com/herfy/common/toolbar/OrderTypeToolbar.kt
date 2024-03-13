@@ -53,14 +53,7 @@ class OrderTypeToolbar @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     fun setCart(quantity : Int = CacheUtil.getInstance().cartQuantity) {
-        qtyText?.apply {
-            if(quantity > 0) {
-                text = quantity.toString()
-                visible()
-            } else {
-                gone()
-            }
-        }
+        qtyText?.text = quantity.toString()
     }
 
     fun setNavButton(listener : OnClickListener){
