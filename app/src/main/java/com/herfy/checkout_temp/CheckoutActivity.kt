@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -96,7 +97,9 @@ import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
+import com.herfy.utils.helper.DistanceCalculator
 import com.herfy.utils.helper.GlideUtils
+import com.herfy.utils.helper.launchWithTimber
 import com.herfy.utils.permission.PermissionManager
 import com.herfy.utils.permission.PermissionResult
 import com.herfy.utils.permission.permissionProvider
@@ -125,6 +128,8 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import io.shipbook.shipbooksdk.Log
+import kotlinx.coroutines.delay
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.ParseException
@@ -854,7 +859,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPaymentSummary.tvDiscountLabel.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
         binding!!.layoutLoyalty.tvLoyaltyPointsLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.LOYALTY_USE_POINTS, "Use Loyalty Points")
+            .getTranslations(Text.LOYALTY_USE_POINTS_NOT_CAPS, "Use Loyalty Points")
         val orderType = CacheUtil.getInstance().orderType
         if (orderType === OrderType.DELIVERY) {
             binding!!.tvTimeLabel.text = CacheUtil.getInstance()
