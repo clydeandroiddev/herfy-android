@@ -66,7 +66,6 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChoosePaymentMethodBinding.inflate(layoutInflater)
-        Log.d("FAFA","Choose payment activity")
         setContentView(binding.root)
         checkoutPresenter  = PaymentPresenter(this)
         checkoutPresenter.getPaymentTypes()
