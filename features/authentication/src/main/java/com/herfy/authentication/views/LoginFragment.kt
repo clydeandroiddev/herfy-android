@@ -78,6 +78,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     .requestIdToken(BuildUtil.googleInClient(it)).requestEmail().build()
             googleSignInClient = GoogleSignIn.getClient(it, googleSignInOptions)
         }
+
     }
 
     override fun initViews() {
