@@ -3,6 +3,7 @@ package com.herfy.browser;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -68,6 +69,7 @@ public class BrowserActivity extends BaseActivity {
                     dismissDialogs();
                 }
             });
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.loadUrl(bundle.getString("url"));
 
