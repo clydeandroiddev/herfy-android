@@ -99,6 +99,7 @@
             android:layout_marginEnd="4dp"
             android:fontFamily="@font/inter_semi_bold"
             android:includeFontPadding="false"
+            android:textAlignment="viewStart"
             android:textStyle="bold"
             android:textSize="14sp"
             android:textColor="#0C0C0C" />
@@ -115,6 +116,7 @@
             android:ellipsize="end"
             android:maxLines="3"
             android:includeFontPadding="false"
+            android:textAlignment="viewStart"
             android:textSize="11sp"
             android:textColor="#55667B" />
 
