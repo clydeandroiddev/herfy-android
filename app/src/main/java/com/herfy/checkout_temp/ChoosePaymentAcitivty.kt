@@ -330,9 +330,11 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
     }
 
     override fun showPaymentTypes(paymentTypes: ArrayList<PaymentType>) {
+        val type = CacheUtil
+            .getInstance().orderType
         val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         paymentTypes.forEach { paymentType ->
-            if (paymentType == PaymentType.CASH) {
+            if (paymentType == PaymentType.CASH && type != OrderType.DELIVERY) {
                 isCashPaymentAvailable = true
                 val view: View = inflater.inflate(R.layout.item_payment_cash, null)
                 cashPayment = view.findViewById(R.id.cash_layout)
@@ -359,7 +361,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
                     selectedView(rbCard, cardImage, cardContainer, cardPayment)
                     checkoutPresenter.cashPresented = 0.0
                 }
-            } else if (paymentType == PaymentType.CARD_ON_DELIVERY || paymentType == PaymentType.CARD_ON_PICKUP) {
+            } else if (paymentType == PaymentType.CARD_ON_DELIVERY || paymentType == PaymentType.CARD_ON_PICKUP && type == OrderType.DELIVERY) {
                 isCODPaymentAvailable = true
                 val view: View = inflater.inflate(R.layout.item_payment_cod_cop, null)
                 codPayment = view.findViewById(R.id.cod_layout)

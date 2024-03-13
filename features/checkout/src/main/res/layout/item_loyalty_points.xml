@@ -30,8 +30,7 @@
                 android:id="@+id/image_view"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_45sdp"
-                android:background="@drawable/bg_loyalty_points"
-                android:src="@drawable/ic_loyalty_white"
+                android:src="@drawable/background_loyalty"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_loyalty_points"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_loyalty_points_label" />
@@ -45,6 +44,7 @@
                 android:layout_marginBottom="@dimen/margin_large"
                 android:fontFamily="@font/inter_semi_bold"
                 tools:text="Use Loyalty Points"
+                android:textAllCaps="false"
                 android:textColor="@color/black"
                 style="@style/Styles.Text.Footnote.Semi.Bold"
                 app:layout_constraintStart_toEndOf="@+id/image_view"

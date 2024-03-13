@@ -4,22 +4,15 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
-import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -38,11 +31,6 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
         binding.unbind()
     }
 
-        override fun onStart() {
-        super.onStart()
-
-        dialog?.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-    }
     @LayoutRes
     abstract fun getLayoutId(): Int
 
@@ -64,6 +52,7 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
     protected open fun isDraggable(): Boolean = true
 
     protected open fun isTransparent(): Boolean = false
+    protected open fun shouldShouldInputMode() = false
 
     protected open fun peekHeight(): Int = BottomSheetBehavior.PEEK_HEIGHT_AUTO
 
@@ -73,7 +62,7 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
 
     open fun onStateHidden() {}
 
-     lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+    lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
 
     open fun InsetterDsl.mainContentInset() {
         type(navigationBars = true) {
@@ -85,13 +74,6 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
         type(statusBars = true) {
             margin()
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        setStyle(DialogFragment.STYLE_NORMAL, R.style.BottomSheetDialogStyle)
-
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
     @CallSuper
@@ -106,10 +88,12 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
                 getLayoutId(),
                 null
             )
-        dialog?.window?.setSoftInputMode(
-            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
-                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-        )
+        if (shouldShouldInputMode()) {
+            dialog?.window?.setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
+                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+            )
+        }
         dialogView.applyInsetter {
             mainContentInset()
         }
@@ -197,10 +181,12 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
         override fun onAttachedToWindow() {
             super.onAttachedToWindow()
             window?.let { window ->
-                window.setSoftInputMode(
-                    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
-                            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-                )
+                if (shouldShouldInputMode()) {
+                    window.setSoftInputMode(
+                        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
+                                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+                    )
+                }
             }
 
 
@@ -222,4 +208,5 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
         }
     }
 }
+
 
