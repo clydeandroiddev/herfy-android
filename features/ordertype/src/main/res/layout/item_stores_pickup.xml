@@ -117,6 +117,7 @@
                     android:gravity="start"
                     android:includeFontPadding="false"
                     android:maxLines="3"
+                    android:textAlignment="viewStart"
                     android:textColor="#212121"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toStartOf="@id/kmCount"
@@ -136,6 +137,7 @@
                 android:gravity="start"
                 android:includeFontPadding="false"
                 android:maxLines="3"
+                android:textAlignment="viewStart"
                 android:textColor="#55667B"
                 android:textSize="14sp"
                 tools:text="QQHF+6W4, Al Hamra, Riyadh 13217" />
@@ -149,6 +151,7 @@
                 android:ellipsize="end"
                 android:gravity="start"
                 android:includeFontPadding="false"
+                android:textAlignment="viewStart"
                 android:textColor="#212121"
                 android:textSize="14sp"
                 tools:text="10AM - 2AM" />
@@ -168,6 +171,7 @@
                     android:gravity="start"
                     android:includeFontPadding="false"
                     android:maxLines="3"
+                    android:textAlignment="viewStart"
                     android:textColor="#0064AC"
                     android:textSize="14sp"
                     app:layout_constraintTop_toTopOf="parent"

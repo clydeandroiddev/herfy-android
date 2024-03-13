@@ -131,6 +131,8 @@
                 android:background="@drawable/background_edit_field"
                 android:gravity="center_vertical"
                 android:imeOptions="actionDone"
+                android:inputType="textPersonName"
+                android:maxLines="1"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="#1c1c1c"

@@ -980,7 +980,7 @@ public class Text {
     public static final String BECOME_ASHAB_HERFY_DESCRIPTION="become_ashab_herfy_description";
     public static final String POINTS_UNTIL_NEXT_TIER="points_until_next_tier";
     public static final String REFER_AND_EARN_LABEL="refer_and_earn_label";
-    public static final String STORE_LOCATOR = "store_locator";
+    public static final String STORE_LOCATOR = "store_locator_label";
     public static final String STAY_TUNED_PROMO = "stay_tuned_promo";
     public static final String PROMOTION_EMPTY_CONTENT="promotion_empty_content";
     public static final String HI_LOGGED_OUT = "hi_logged_out";
@@ -998,4 +998,6 @@ public class Text {
     public static final String UPLOAD_IMAGE = "upload_image";
     public static final String WELCOME_TO_HERFY="welcome_to_herfy";
     public static final String FULL_NAME_LABEL = "full_name_label";
+
+    public static final String DYNAMIC_CODE_DIGIT = "dyamic_code_digit";
 }
