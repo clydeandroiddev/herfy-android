@@ -1027,4 +1027,6 @@ public class Text {
     public static final String SELECT_YOUR_DATE_OF_BIRTH = "select_your_date_of_birth";
     public static final String YOUR_NAME = "your_name";
 
+    public static final String CAN_NOT_BE_EDITED = "can_not_be_edited";
+
 }

@@ -17,7 +17,9 @@ import com.herfy.base.BaseFragment
 import com.herfy.profile.R
 import com.herfy.profile.databinding.FragmentUserEditProfileBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
@@ -166,6 +168,9 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
 
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.SAVE_CHANGES, "Save Changes")
+
+            canNotBeLabel.text = CacheUtil.getInstance()
+                .getTranslations(Text.CAN_NOT_BE_EDITED, "Can not be edited.")
         }
     }
 
@@ -200,18 +205,21 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
     private fun finalState() {
         if (fullName.isNotEmpty() && genderSelected.isNotEmpty() && birthdaySelected.isNotEmpty()) {
             if (!isSaveGender && !isSaveBirthdate && !isSaveName) {
+                binding.canNotBeEdited.visible()
                 binding.continueButton.alpha = 0.5f
             } else {
+                binding.canNotBeEdited.gone()
                 binding.continueButton.alpha = 1f
             }
         } else {
+            binding.canNotBeEdited.visible()
             binding.continueButton.alpha = 0.5f
         }
     }
 
     private fun checkGenderState() {
         isSaveGender = true
-        if (genderSelected == accountPresenter?.originalGender) {
+        if (genderSelected.equals(accountPresenter?.originalGender, ignoreCase = true)) {
             isSaveGender = false
         }
         finalState()
