@@ -43,7 +43,7 @@ class PromotionsAdapter(
                 if(promoRules.isNotEmpty() && promoRules.find { rule -> rule.ruleKey.equals("order-type", true) } != null){
                     promoRules.find { rule -> rule.ruleKey.equals("order-type", true) }?.let {
                         val orderTypes = it.text.split(Pattern.compile(","))
-                        when(orderTypes[0]){
+                        when(orderTypes[0].trim()){
                             "pickup" -> {
                                 orderTypeVal = cacheUtil.getTranslations(Text.PICKUP)
                                 orderTypeIconVal = R.drawable.ic_pickup_promo
@@ -60,7 +60,7 @@ class PromotionsAdapter(
                                 orderTypeIconVal = R.drawable.ic_drive_thru_promo
                             }
                             "drive-thru"->{
-                                orderTypeVal = cacheUtil.getTranslations(Text.DRIVE_THRU)
+                                orderTypeVal = cacheUtil.getTranslations(Text.DRIVE_THRU, "Drive Thru")
                                 orderTypeIconVal = R.drawable.ic_drive_thru_promo
                             }
                         }

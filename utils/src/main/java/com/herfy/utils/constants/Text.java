@@ -849,6 +849,7 @@ public class Text {
     public static final String PICKUP_DESCRIPTION = "pickup_description";
     public static final String CURBSIDE_PICKUP_LABEL = "curbside_pickup_label";
     public static final String CURBSIDE_DESCRIPTION = "curbside_description";
+
     public static final String DRIVE_THRU = "drive_thru";
     public static final String DRIVE_THRU_DESCRIPTION = "drive_thru_description";
 

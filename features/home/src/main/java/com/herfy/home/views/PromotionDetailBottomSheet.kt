@@ -24,8 +24,8 @@ import com.herfy.home.databinding.BottomSheetPromotionDetailBinding
 import com.herfy.model.PromotionOrderType
 import com.herfy.utils.base.mvvm.BaseBottomSheetDialogFragment
 import com.herfy.utils.constants.Text
-import com.herfy.utils.extensions.visible
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.ViewUtil
@@ -134,43 +134,6 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                     dismissAllowingStateLoss()
                 }
                 val cacheUtil = CacheUtil.getInstance()
-                var orderTypeVal = cacheUtil.getTranslations(Text.DELIVERY)
-                var orderTypeIconVal = R.drawable.ic_delivery_promo
-                promoData.promotion?.attributes?.rules?.let {
-                    val orderTypeRule = it.find { rule-> rule.ruleKey.equals("order-type", ignoreCase = true) }
-                    if(it.isNotEmpty() && orderTypeRule != null){
-                        val orderTypes = orderTypeRule.text.split(Pattern.compile(","))
-                        when(orderTypes[0]){
-                            "pickup" -> {
-                                orderTypeVal = cacheUtil.getTranslations(Text.PICKUP)
-                                orderTypeIconVal = R.drawable.ic_pickup_promo
-                            }
-                            "eat-in"-> {
-                                orderTypeVal = cacheUtil.getTranslations(Text.DINE_IN)
-                            }
-                            "delivery"->{
-                                orderTypeVal = cacheUtil.getTranslations(Text.DELIVERY)
-                                orderTypeIconVal = R.drawable.ic_delivery_promo
-                            }
-                            "curbside"->{
-                                orderTypeVal = cacheUtil.getTranslations(Text.CURBSIDE_PICKUP)
-                                orderTypeIconVal = R.drawable.ic_drive_thru_promo
-                            }
-                            "drive-thru"->{
-                                orderTypeVal = cacheUtil.getTranslations(Text.DRIVE_THRU)
-                                orderTypeIconVal = R.drawable.ic_drive_thru_promo
-                            }
-                        }
-                    }else {
-                        tvRequirements.gone()
-                        rvRequirements.gone()
-                    }
-                    orderType = orderTypeVal
-                    orderTypeIcon = orderTypeIconVal
-                }?: run {
-                    tvRequirements.gone()
-                    rvRequirements.gone()
-                }
                 val cacheCampaign = cacheUtil.campaign
                 var toRemove = false
                 cacheUtilHelper?.getCartQuantity { qty ->
@@ -236,24 +199,38 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
 
                 promoData.promotion?.attributes?.rules?.let {
-                    if (it.isNotEmpty()) {
-                        val promotionRulesAdapter = PromotionRulesAdapter(it)
-                        val divider =
-                            rvRequirements.apply {
-                                adapter = promotionRulesAdapter
-                                layoutManager = LinearLayoutManager(
-                                    context,
-                                    LinearLayoutManager.VERTICAL,
-                                    false
-                                )
-                                setHasFixedSize(true)
-                                ContextCompat.getDrawable(context, R.drawable.divider_promo_rules)
-                                    ?.let { divider ->
-                                        addItemDecoration(DividerItemDecorator(divider))
-                                    }
-                            }
-                        promotionRulesAdapter.notifyDataSetChanged()
+
+                    it.find { r-> r.ruleKey.equals("total.gte", ignoreCase = true)  }?.let { gte ->
+                        fmPromoCategory.visible()
+                        totalGte = gte.text
                     }
+
+                    val requirements = it.filter { r -> r.ruleKey != "order-type" && !r.ruleKey.equals("total.gte", ignoreCase = true) }
+                    if (requirements.isNotEmpty()) {
+
+                        val promotionRulesAdapter = PromotionRulesAdapter(requirements)
+
+                        rvRequirements.apply {
+                            adapter = promotionRulesAdapter
+                            layoutManager = LinearLayoutManager(
+                                context,
+                                LinearLayoutManager.VERTICAL,
+                                false
+                            )
+                            setHasFixedSize(true)
+                            ContextCompat.getDrawable(context, R.drawable.divider_promo_rules)
+                                ?.let { divider ->
+                                    addItemDecoration(DividerItemDecorator(divider))
+                                }
+                        }
+                        promotionRulesAdapter.notifyDataSetChanged()
+                    } else {
+                        tvRequirements.gone()
+                        rvRequirements.gone()
+                    }
+                } ?: run {
+                    tvRequirements.gone()
+                    rvRequirements.gone()
                 }
 
             }
@@ -279,12 +256,11 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
         val cacheUtil = CacheUtil.getInstance()
         promoData.promotion?.attributes?.rules?.let {
-            val orderTypeRule =
-                it.find { rule -> rule.ruleKey.equals("order-type", ignoreCase = true) }
+            val orderTypeRule = it.find { rule -> rule.ruleKey.equals("order-type", ignoreCase = true) }
             if (orderTypeRule != null) {
                 promoOrderTypeList.clear()
                 val orderTypes = orderTypeRule.text.split(Pattern.compile(","))
-                orderTypes.find { s -> s.equals("delivery", ignoreCase = true) }?.let {
+                orderTypes.find { s -> s.trim().equals("delivery", ignoreCase = true) }?.let {
                     promoOrderTypeList.add(
                         PromotionOrderType(
                             cacheUtil.getTranslations(Text.DELIVERY),
@@ -292,7 +268,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                         )
                     )
                 }
-                orderTypes.find { s -> s.equals("pickup", ignoreCase = true) }?.let {
+                orderTypes.find { s -> s.trim().equals("pickup", ignoreCase = true) }?.let {
                     promoOrderTypeList.add(
                         PromotionOrderType(
                             cacheUtil.getTranslations(Text.PICKUP),
@@ -300,7 +276,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                         )
                     )
                 }
-                orderTypes.find { s -> s.equals("eat-in", ignoreCase = true) }?.let {
+                orderTypes.find { s -> s.trim().equals("eat-in", ignoreCase = true) }?.let {
                     promoOrderTypeList.add(
                         PromotionOrderType(
                             cacheUtil.getTranslations(Text.DINE_IN),
@@ -308,7 +284,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                         )
                     )
                 }
-                orderTypes.find { s -> s.equals("curbside", ignoreCase = true) }?.let {
+                orderTypes.find { s -> s.trim().equals("curbside", ignoreCase = true) }?.let {
                     promoOrderTypeList.add(
                         PromotionOrderType(
                             cacheUtil.getTranslations(Text.CURBSIDE_PICKUP),
@@ -316,10 +292,10 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                         )
                     )
                 }
-                orderTypes.find { s -> s.equals("drive-thru", ignoreCase = true) }?.let {
+                orderTypes.find { s -> s.trim().equals("drive-thru", ignoreCase = true) }?.let {
                     promoOrderTypeList.add(
                         PromotionOrderType(
-                            cacheUtil.getTranslations(Text.DRIVE_THRU),
+                            cacheUtil.getTranslations(Text.DRIVE_THRU,"Drive Thru"),
                             R.drawable.ic_drive_thru_promo
                         )
                     )
@@ -383,4 +359,6 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
         bottomSheet.layoutParams = layoutParams
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
+
+
 }
