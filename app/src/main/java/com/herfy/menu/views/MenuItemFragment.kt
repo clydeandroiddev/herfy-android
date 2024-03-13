@@ -690,9 +690,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 if (cartMenuItem >= 0 || args.isEdit) {
                     binding.add.text = CacheUtil.getInstance().getTranslations(Text.UPDATE)
                 } else {
-                    val translatedText = CacheUtil.getInstance().getTranslations(Text.ADD_TO_CART_CAPS, "Add to cart")
-                    addToCart = "$translatedText \u2022 ${PriceFormatter.formatPriceWithLocale(menuPresenter.menuItemsTotalPrice, translatedText)}"
-                    binding.add.text = addToCart
+                    binding.add.text = CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
+                        .replace("(x)","${StringUtil.getFormattedPrice(menuPresenter.menuItemsTotalPrice)}")
 
                     }
 

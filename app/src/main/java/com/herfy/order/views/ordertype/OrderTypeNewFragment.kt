@@ -629,7 +629,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                         vibrator.vibrate(100)
                     }
                 }
-
                 Toast.makeText(
                     baseActivity,
                     CacheUtil.getInstance().getTranslations(Text.FAVORITE_ADDED_TO_CART),
@@ -1610,10 +1609,15 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
-                    if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type == OrderType.EAT_IN || type == OrderType.DRIVE_THRU) {
-                        MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_ORDER_TYPE)
-                        orderPresenter.addToCartFavorite(CacheUtil
-                            .getInstance().retrieveFavoriteToAddToCart())
+                    if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN ) {
+                        val currentFavourite = CacheUtil
+                            .getInstance().retrieveFavoriteToAddToCart()
+                        if (currentFavourite != null) {
+                            MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_ORDER_TYPE)
+                            orderPresenter.addToCartFavorite(
+                                currentFavourite
+                            )
+                        }
                     } else {
                         if (type == OrderType.CURBSIDE) {
                             proceedToCurbside()

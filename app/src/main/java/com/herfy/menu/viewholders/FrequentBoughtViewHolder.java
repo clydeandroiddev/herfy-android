@@ -1,12 +1,8 @@
 package com.herfy.menu.viewholders;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -16,23 +12,10 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
-import com.herfy.util.PriceFormatter;
+import com.herfy.util.StringUtil;
 import com.herfy.utils.helper.LocaleUtil;
-import com.skylinedynamics.solosdk.api.models.objects.Campaign;
-import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
-import com.skylinedynamics.solosdk.api.models.objects.Favorite;
-import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
-import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
-import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
-import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
-import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
-import com.skylinedynamics.solosdk.api.models.objects.Store;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,7 +55,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
       MenuItemAttributes menuItemAttributes = menuItem.getAttributes();
         name.setText(menuItemAttributes.getName());
         txtModifierDescription.setText(menuItem.getDescription(LocaleUtil.getInstance().getLanguage()));
-        txtModifierPrice.setText(PriceFormatter.INSTANCE.formatPriceWithLocale(menuItemAttributes.getPrice(),menuItemAttributes.getName()));
+        txtModifierPrice.setText(StringUtil.getFormattedPrice((menuItemAttributes.getPrice())));
         txtCalories.setText(menuItem.getCalories());
     }
 
