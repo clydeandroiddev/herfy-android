@@ -187,14 +187,11 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
                 indicator.setImageResource(R.drawable.ic_store_selected);
                 directionsImage.setImageResource(R.drawable.ic_direction_selected);
                 pickupMethodsContainer.setVisibility(View.VISIBLE);
-                card.setStrokeColor(Color.parseColor("#F26224"));
-
             } else {
                 card.setCardBackgroundColor(ContextCompat.getColor(itemView.getContext(), com.herfy.ordertype.R.color.card_bg_unselected));
                 indicator.setImageResource(R.drawable.ic_store_unselected);
                 pickupMethodsContainer.setVisibility(View.GONE);
                 directionsImage.setImageResource(R.drawable.ic_direction_unselected);
-                card.setStrokeColor(ContextCompat.getColor(itemView.getContext(), com.herfy.ordertype.R.color.card_bg_stroke));
             }
 
             pickupMethodsContainer.setVisibility(View.GONE);
@@ -224,7 +221,7 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
             }
 
             if (selected) {
-                card.setStrokeColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));
+                card.setStrokeColor(ContextCompat.getColor(itemView.getContext(), com.herfy.ordertype.R.color.card_stroke));
             } else {
                 card.setStrokeColor(ContextCompat.getColor(itemView.getContext(), android.R.color.transparent));
             }

@@ -64,7 +64,7 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
             fewMoreLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.A_FEW_MORE_THINGS, "A few more things to know you better")
             fullNameLabel.text =
-                CacheUtil.getInstance().getTranslations(Text.FULL_NAME, "Full Name")
+                CacheUtil.getInstance().getTranslations(Text.FULL_NAME_LABEL, "Full Name")
             continueButton.text = CacheUtil.getInstance().getTranslations(Text.NEXT, "Next")
             skipButton.text = CacheUtil.getInstance().getTranslations(Text.SKIP, "Skip")
         }

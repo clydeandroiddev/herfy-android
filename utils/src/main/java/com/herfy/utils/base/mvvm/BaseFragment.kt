@@ -8,9 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
@@ -35,9 +35,7 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
     private var alertDialog: AlertDialog? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, layout, container, false)
         binding.lifecycleOwner = this
@@ -99,6 +97,12 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
         imm!!.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
+    fun showKeyboard(view: EditText) {
+        val inputMethodManager =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+
     private fun handleNavigation(navCommand: NavigationCommand) {
         when (navCommand) {
             is NavigationCommand.ToDirection -> findNavController().navigate(navCommand.directions)
@@ -130,20 +134,20 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
                                 setOnShowListener {
                                     getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps = false
                                     if (!CacheUtil.getInstance().colorMain.equals(
-                                            "#FFFFFF",
-                                            ignoreCase = true
+                                            "#FFFFFF", ignoreCase = true
                                         )
                                     ) {
-                                        getButton(AlertDialog.BUTTON_POSITIVE)
-                                            .setTextColor(ViewUtil.getColorMain(ctx))
-                                    } else {
-                                        getButton(AlertDialog.BUTTON_POSITIVE)
-                                            .setTextColor(
-                                                ContextCompat.getColor(
-                                                    ctx,
-                                                    R.color.primary_text
-                                                )
+                                        getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                                            ViewUtil.getColorMain(
+                                                ctx
                                             )
+                                        )
+                                    } else {
+                                        getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                                            ContextCompat.getColor(
+                                                ctx, R.color.primary_text
+                                            )
+                                        )
                                     }
                                 }
                                 show()
@@ -177,28 +181,25 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
                             alertDialog = builder.create()
                             alertDialog?.apply {
                                 setButton(
-                                    AlertDialog.BUTTON_POSITIVE,
-                                    neutral,
-                                    neutralOnClickListener
+                                    AlertDialog.BUTTON_POSITIVE, neutral, neutralOnClickListener
                                 )
                                 setOnShowListener {
-                                    getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps =
-                                        false
+                                    getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps = false
                                     if (!CacheUtil.getInstance().colorMain.equals(
-                                            "#FFFFFF",
-                                            ignoreCase = true
+                                            "#FFFFFF", ignoreCase = true
                                         )
                                     ) {
-                                        getButton(AlertDialog.BUTTON_POSITIVE)
-                                            .setTextColor(ViewUtil.getColorMain(ctx))
-                                    } else {
-                                        getButton(AlertDialog.BUTTON_POSITIVE)
-                                            .setTextColor(
-                                                ContextCompat.getColor(
-                                                    ctx,
-                                                    R.color.primary_text
-                                                )
+                                        getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                                            ViewUtil.getColorMain(
+                                                ctx
                                             )
+                                        )
+                                    } else {
+                                        getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                                            ContextCompat.getColor(
+                                                ctx, R.color.primary_text
+                                            )
+                                        )
                                     }
                                 }
                                 show()
@@ -233,46 +234,41 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
                         alertDialog?.apply {
                             if (positive != "") {
                                 setButton(
-                                    AlertDialog.BUTTON_POSITIVE,
-                                    positive,
-                                    positiveOnClickListener
+                                    AlertDialog.BUTTON_POSITIVE, positive, positiveOnClickListener
                                 )
                             }
                             if (negative != "") {
                                 setButton(
-                                    AlertDialog.BUTTON_NEGATIVE,
-                                    negative,
-                                    negativeOnClickListener
+                                    AlertDialog.BUTTON_NEGATIVE, negative, negativeOnClickListener
                                 )
                             }
                             setOnShowListener {
                                 if (positive != "") {
                                     getButton(AlertDialog.BUTTON_POSITIVE).setAllCaps(false)
                                     if (!CacheUtil.getInstance().colorMain.equals(
-                                            "#FFFFFF",
-                                            ignoreCase = true
+                                            "#FFFFFF", ignoreCase = true
                                         )
                                     ) {
-                                        getButton(AlertDialog.BUTTON_POSITIVE)
-                                            .setTextColor(ViewUtil.getColorMain(ctx))
+                                        getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                                            ViewUtil.getColorMain(
+                                                ctx
+                                            )
+                                        )
                                     } else {
                                         getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
                                             ContextCompat.getColor(
-                                                ctx,
-                                                R.color.primary_text
+                                                ctx, R.color.primary_text
                                             )
                                         )
                                     }
                                 }
                                 if (negative != "") {
                                     getButton(AlertDialog.BUTTON_NEGATIVE).setAllCaps(false)
-                                    getButton(AlertDialog.BUTTON_NEGATIVE)
-                                        .setTextColor(
-                                            ContextCompat.getColor(
-                                                ctx,
-                                                R.color.secondary_text
-                                            )
+                                    getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(
+                                        ContextCompat.getColor(
+                                            ctx, R.color.secondary_text
                                         )
+                                    )
                                 }
                             }
                             show()

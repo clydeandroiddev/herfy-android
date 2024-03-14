@@ -30,20 +30,7 @@ class AuthActivity : BaseActivity() {
         val graph = inflater.inflate(R.navigation.auth_nav)
 
         val bundle = Bundle()
-//        intent.extras?.let {
-//            bundle.putBoolean("sign_in", it.getBoolean("sign_in"))
-//            bundle.putBoolean("guest", it.getBoolean("guest"))
-//            guest = it.getBoolean("guest")
-//        }
-//        bundle.putBoolean("curbside", false)
-//        bundle.putBoolean("checkout", false)
-//
-//        if (!guest) {
         graph.setStartDestination(R.id.nav_login_fragment)
-//        } else {
-//            graph.setStartDestination(R.id.nav_guest)
-//        }
-
         navController.setGraph(graph, bundle)
 
     }
@@ -55,25 +42,15 @@ class AuthActivity : BaseActivity() {
 
     private val actReceiver = object : BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
-            showMain()
+            setResult(RESULT_OK)
+            finish()
         }
     }
 
     private fun setupBroadcastReceiver() {
         registerReceiver(
-            actReceiver,
-            IntentFilter(getString(com.herfy.authentication.R.string.exit_to_home))
+            actReceiver, IntentFilter(getString(com.herfy.authentication.R.string.exit_to_home))
         )
-    }
-
-    fun showMain() {
-        val intent = Intent(this, com.herfy.main.MainActivity::class.java)
-        intent.putExtra("home", true)
-        intent.putExtra("menu", true)
-        intent.putExtra("sign_in", true)
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
-        finish()
     }
 
     override fun onSupportNavigateUp(): Boolean {

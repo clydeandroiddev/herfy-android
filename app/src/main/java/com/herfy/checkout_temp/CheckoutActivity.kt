@@ -200,7 +200,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private var moyasarActivityResultLauncher: ActivityResultLauncher<Intent>? = null
     private var isShowCardFailed = false
 
-   private val permissionManager: PermissionManager by permissionProvider()
+    private val permissionManager: PermissionManager by permissionProvider()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCheckoutPageBinding.inflate(layoutInflater)
@@ -394,44 +394,44 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         )
                         markerOptions.icon(icon)
                         markerOptions.anchor(0.5f, 1f)
-                            val supportMapFragment =
-                                supportFragmentManager.findFragmentById(R.id.checkout_map) as OrderSupportMapFragment?
-                            supportMapFragment!!.getMapAsync { googleMap ->
-                                mMap = googleMap
-                                mMap?.uiSettings?.isCompassEnabled = false
-                                mMap?.uiSettings?.isZoomControlsEnabled = false
-                                mMap?.uiSettings?.isMapToolbarEnabled = false
+                        val supportMapFragment =
+                            supportFragmentManager.findFragmentById(R.id.checkout_map) as OrderSupportMapFragment?
+                        supportMapFragment!!.getMapAsync { googleMap ->
+                            mMap = googleMap
+                            mMap?.uiSettings?.isCompassEnabled = false
+                            mMap?.uiSettings?.isZoomControlsEnabled = false
+                            mMap?.uiSettings?.isMapToolbarEnabled = false
 
-                                if (orderType === OrderType.DELIVERY) {
-                                    mMap!!.addMarker(markerOptions)
-                                    mMap!!.moveCamera(
-                                        CameraUpdateFactory.newLatLngZoom(
-                                            markerOptions.position,
-                                            13f
-                                        )
+                            if (orderType === OrderType.DELIVERY) {
+                                mMap!!.addMarker(markerOptions)
+                                mMap!!.moveCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        markerOptions.position,
+                                        13f
                                     )
-                                } else {
-                                    mMap!!.addMarker(markerOptions)
-                                    mMap!!.moveCamera(
-                                        CameraUpdateFactory.newLatLngZoom(
-                                            markerOptions.position,
-                                            13f
-                                        )
+                                )
+                            } else {
+                                mMap!!.addMarker(markerOptions)
+                                mMap!!.moveCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        markerOptions.position,
+                                        13f
                                     )
-                                }
-                                supportMapFragment.setListener {
-                                    binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
-                                        true
-                                    )
-                                }
-                                if (orderType !== OrderType.DELIVERY) {
+                                )
+                            }
+                            supportMapFragment.setListener {
+                                binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
+                                    true
+                                )
+                            }
+                            if (orderType !== OrderType.DELIVERY) {
 
 
-
-                                }
 
                             }
+
                         }
+                    }
 
                 }.addOnFailureListener {
                     it.printStackTrace()
@@ -700,8 +700,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 updateCurrency(currentBalanceAmount, true).toString()
             )
             binding!!.layoutLoyalty.tvLoyaltyPoints.text = loyaltyBalanceLabelText
-                //loyaltyLabel.setText(StringUtil.getFormattedAmount(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getCurrentBalance())+" Points ("+StringUtil.getFormattedAmount(loyalty.getAttributes().getCurrentBalanceAmount()) +")");
-            }
+            //loyaltyLabel.setText(StringUtil.getFormattedAmount(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getCurrentBalance())+" Points ("+StringUtil.getFormattedAmount(loyalty.getAttributes().getCurrentBalanceAmount()) +")");
+        }
 
         disposable.add(textInput.debounce(300, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.io())
             .subscribe(

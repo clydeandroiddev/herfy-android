@@ -267,19 +267,19 @@
             </intent-filter>
         </activity>
         <activity
-        android:name=".checkout_temp.CheckoutActivity"
-        android:exported="true"
-        android:screenOrientation="portrait"
-        android:taskAffinity="">
-        <intent-filter>
-            <data android:scheme="@string/checkout_ui_callback_scheme" />
+            android:name=".checkout_temp.CheckoutActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:taskAffinity="">
+            <intent-filter>
+                <data android:scheme="@string/checkout_ui_callback_scheme" />
 
-            <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW" />
 
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-        </intent-filter>
-    </activity>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".checkout_temp.ChoosePaymentAcitivty"
             android:exported="true"

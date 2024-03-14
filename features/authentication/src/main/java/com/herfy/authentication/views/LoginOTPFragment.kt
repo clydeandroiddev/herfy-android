@@ -1,13 +1,13 @@
 package com.herfy.authentication.views
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.CountDownTimer
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.TextView
+import android.os.Handler
+import android.os.Looper
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,11 +17,11 @@ import com.herfy.authentication.state.LoginOTPPageViewState
 import com.herfy.authentication.viewmodel.LoginOTPViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.collectViewModelState
+import com.herfy.utils.widgets.otp.OTPListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,100 +42,39 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
         super.initViews()
         binding.apply {
             continueButton.setOnClickListener {
-                val code =
-                    StringUtil.toEnglish(codeOne.text.toString() + codeTwo.text.toString() + codeThree.text.toString() + codeFour.text.toString() + codeFive.text.toString() + codeSix.text.toString())
-                viewModel.verify(code.orEmpty(), args.customerId)
+                verify(binding.otpView.otp.orEmpty())
             }
-
             backButton.setOnClickListener {
                 navigateUp()
             }
-
-            codeOne.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence, start: Int, count: Int, after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: Editable) {
-                    val nextField = codeOne.focusSearch(View.FOCUS_RIGHT) as TextView
-                    nextField.requestFocus()
-                }
-            })
-
-            codeTwo.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence, start: Int, count: Int, after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: Editable) {
-                    val nextField = codeTwo.focusSearch(View.FOCUS_RIGHT) as TextView
-                    nextField.requestFocus()
-                }
-            })
-
-            codeThree.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence, start: Int, count: Int, after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: Editable) {
-                    val nextField = codeThree.focusSearch(View.FOCUS_RIGHT) as TextView
-                    nextField.requestFocus()
-                }
-            })
-
-            codeFour.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence, start: Int, count: Int, after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: Editable) {
-                    val nextField = codeFour.focusSearch(View.FOCUS_RIGHT) as TextView
-                    nextField.requestFocus()
-                }
-            })
-
-            codeFive.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence, start: Int, count: Int, after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: Editable) {
-                    val nextField = codeFive.focusSearch(View.FOCUS_RIGHT) as TextView
-                    nextField.requestFocus()
-                }
-            })
-
-            codeSix.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence, start: Int, count: Int, after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: Editable) {
-                }
-            })
-
-            codeSix.setOnEditorActionListener { v, actionId, event ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    continueButton.performClick()
-                    true
-                } else false
+            var otpLength = CacheUtil.getInstance().concept.otpLength
+            if (otpLength == 0) {
+                otpLength = 6
             }
+            enterForDigitLabel.text = CacheUtil.getInstance().getTranslations(
+                Text.DYNAMIC_CODE_DIGIT, "Enter the (x) digit code sent to your number"
+            ).replace("(x)", otpLength.toString())
+            binding.otpView.setLength(otpLength)
+            binding.otpView.generate()
+            binding.otpView.otpListener = object : OTPListener {
+                override fun onInteractionListener() {}
+                override fun onOTPComplete(otp: String) {
+                    verify(otp)
+                }
+            }
+            val handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({
+                showKeyboard(dummyEdit)
+                binding.otpView.requestFocusOTP()
+            }, 500)
         }
         initTimer()
         initArgs()
+    }
+
+    private fun verify(otp: String) {
+        val code = StringUtil.toEnglish(otp)
+        viewModel.verify(code.orEmpty(), args.customerId)
     }
 
     private fun enableResend() {
@@ -175,8 +114,6 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
             title.text = CacheUtil.getInstance()
                 .getTranslations(Text.CONFIRM_YOUR_NUMBER, "Confirm your number")
             continueButton.text = CacheUtil.getInstance().getTranslations(Text.NEXT, "Next")
-            enterForDigitLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.ENTER_SIX_DIGIT, "Enter the 6 digit code sent to your number")
             notReceiveLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.DID_NOT_GE_CODE, "Did not get the code?")
         }

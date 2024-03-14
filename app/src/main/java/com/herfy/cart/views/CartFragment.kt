@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.*
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
@@ -25,6 +26,7 @@ import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent
+import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.CartContract
@@ -1125,12 +1127,27 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             }
         }
         CacheUtil.getInstance().signinUsername = ""
-        NavigationUtils.navigateSafe(
-            findNavController(), CartFragmentDirections.actionCartToAuth(
-                signIn = true, guest = true, curbside = false, checkout = true
-            )
-        )
+        val intent = Intent(requireActivity(), AuthActivity::class.java)
+        intent.putExtra("sign_in", true)
+        intent.putExtra("guest", false)
+        intent.putExtra("curbside", false)
+        intent.putExtra("checkout", true)
+        authLauncher.launch(intent)
+//        NavigationUtils.navigateSafe(
+//            findNavController(), CartFragmentDirections.actionCartToAuth(
+//                signIn = true, guest = true, curbside = false, checkout = true
+//            )
+//        )
     }
+
+    private var authLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                if (AuthUtil.getInstance().isSignedIn) {
+                    binding.paymentSummaryContainer.placeOrder.performClick()
+                }
+            }
+        }
 
     override fun showMessage(message: String) {
         activity?.runOnUiThread {
