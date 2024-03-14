@@ -51,6 +51,7 @@
                     app:layout_constraintStart_toStartOf="parent"/>
 
                 <ImageView
+                    android:id="@+id/iv_home_greetings"
                     android:layout_width="18dp"
                     android:layout_height="22dp"
                     app:layout_constraintStart_toEndOf="@+id/tv_home_greetings"

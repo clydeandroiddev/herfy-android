@@ -260,45 +260,36 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
             if (orderTypeRule != null) {
                 promoOrderTypeList.clear()
                 val orderTypes = orderTypeRule.text.split(Pattern.compile(","))
-                orderTypes.find { s -> s.trim().equals("delivery", ignoreCase = true) }?.let {
-                    promoOrderTypeList.add(
-                        PromotionOrderType(
-                            cacheUtil.getTranslations(Text.DELIVERY),
-                            R.drawable.ic_delivery_promo
-                        )
-                    )
-                }
-                orderTypes.find { s -> s.trim().equals("pickup", ignoreCase = true) }?.let {
-                    promoOrderTypeList.add(
-                        PromotionOrderType(
-                            cacheUtil.getTranslations(Text.PICKUP),
-                            R.drawable.ic_pickup_promo
-                        )
-                    )
-                }
-                orderTypes.find { s -> s.trim().equals("eat-in", ignoreCase = true) }?.let {
-                    promoOrderTypeList.add(
-                        PromotionOrderType(
-                            cacheUtil.getTranslations(Text.DINE_IN),
-                            R.drawable.ic_dine_in_promo
-                        )
-                    )
-                }
-                orderTypes.find { s -> s.trim().equals("curbside", ignoreCase = true) }?.let {
-                    promoOrderTypeList.add(
-                        PromotionOrderType(
-                            cacheUtil.getTranslations(Text.CURBSIDE_PICKUP),
-                            R.drawable.ic_drive_thru_promo
-                        )
-                    )
-                }
-                orderTypes.find { s -> s.trim().equals("drive-thru", ignoreCase = true) }?.let {
-                    promoOrderTypeList.add(
-                        PromotionOrderType(
-                            cacheUtil.getTranslations(Text.DRIVE_THRU,"Drive Thru"),
-                            R.drawable.ic_drive_thru_promo
-                        )
-                    )
+                for(type in orderTypes){
+                    var orderTypeIcon = R.drawable.ic_delivery_promo
+                    var orderTypeLabel = type.trim()
+                    when(type.trim()){
+                        "delivery" -> {
+                            orderTypeLabel = cacheUtil.getTranslations(Text.DELIVERY)
+                            orderTypeIcon = R.drawable.ic_delivery_promo
+                        }
+                        "pickup" -> {
+                            orderTypeLabel = cacheUtil.getTranslations(Text.PICKUP)
+                            orderTypeIcon = R.drawable.ic_pickup_promo
+                        }
+                        "eat-in" -> {
+                            orderTypeLabel = cacheUtil.getTranslations(Text.DINE_IN)
+                            orderTypeIcon = R.drawable.ic_dine_in_promo
+                        }
+                        "curbside" -> {
+                            orderTypeLabel = cacheUtil.getTranslations(Text.CURBSIDE_PICKUP)
+                            orderTypeIcon = R.drawable.ic_drive_thru_promo
+                        }
+                        "drive-thru"->{
+                            orderTypeLabel = cacheUtil.getTranslations(Text.DRIVE_THRU,"Drive Thru")
+                            orderTypeIcon = R.drawable.ic_drive_thru_promo
+                        }
+                    }
+
+                    promoOrderTypeList.add(PromotionOrderType(
+                        orderTypeLabel,
+                        orderTypeIcon
+                    ))
                 }
             }
         }

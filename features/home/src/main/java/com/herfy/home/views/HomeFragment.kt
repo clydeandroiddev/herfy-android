@@ -113,9 +113,11 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             val authUtil = AuthUtil.getInstance()
             if (authUtil.isSignedIn && authUtil.customer != null) {
                 tvHomeGreetings.visible()
+                ivHomeGreetings.visible()
                 tvHomeGreetings.text =
                     "${TimeUtil.getGreetings()}, ${authUtil.customer.attributes.firstName}!"
             } else {
+                ivHomeGreetings.gone()
                 tvHomeGreetings.gone()
             }
         }

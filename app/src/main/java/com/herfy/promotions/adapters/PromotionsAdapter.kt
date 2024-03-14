@@ -63,6 +63,10 @@ class PromotionsAdapter(
                                 orderTypeVal = cacheUtil.getTranslations(Text.DRIVE_THRU, "Drive Thru")
                                 orderTypeIconVal = R.drawable.ic_drive_thru_promo
                             }
+                            else -> {
+                                orderTypeVal = orderTypes[0].trim()
+                                orderTypeIconVal = R.drawable.ic_delivery_promo
+                            }
                         }
                         orderTypeCountVal = orderTypes.size
                     }
