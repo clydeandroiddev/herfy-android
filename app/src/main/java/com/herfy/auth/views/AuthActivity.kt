@@ -42,12 +42,8 @@ class AuthActivity : BaseActivity() {
 
     private val actReceiver = object : BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
-            if (intent.extras?.getBoolean("checkout", false) == true) {
-                setResult(RESULT_OK)
-                finish()
-            } else {
-                showMain()
-            }
+            setResult(RESULT_OK)
+            finish()
         }
     }
 
@@ -55,16 +51,6 @@ class AuthActivity : BaseActivity() {
         registerReceiver(
             actReceiver, IntentFilter(getString(com.herfy.authentication.R.string.exit_to_home))
         )
-    }
-
-    fun showMain() {
-        val intent = Intent(this, com.herfy.main.MainActivity::class.java)
-        intent.putExtra("home", true)
-        intent.putExtra("menu", true)
-        intent.putExtra("sign_in", true)
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
-        finishAffinity()
     }
 
     override fun onSupportNavigateUp(): Boolean {

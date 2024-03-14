@@ -1,8 +1,13 @@
 package com.herfy.authentication.views
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -39,7 +44,6 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
             continueButton.setOnClickListener {
                 verify(binding.otpView.otp.orEmpty())
             }
-
             backButton.setOnClickListener {
                 navigateUp()
             }
@@ -58,6 +62,11 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
                     verify(otp)
                 }
             }
+            val handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({
+                showKeyboard(dummyEdit)
+                binding.otpView.requestFocusOTP()
+            }, 500)
         }
         initTimer()
         initArgs()

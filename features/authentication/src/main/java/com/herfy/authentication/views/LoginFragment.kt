@@ -107,7 +107,6 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
             loginGuest.setOnClickListener {
                 requireActivity().finish()
-                //showAddNumber(true, null)
             }
 
             phoneNumberEdit.setOnEditorActionListener { v, actionId, event ->
