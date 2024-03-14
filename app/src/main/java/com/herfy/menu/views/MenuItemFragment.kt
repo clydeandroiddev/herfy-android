@@ -32,6 +32,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -58,12 +59,14 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.invisible
+import com.herfy.utils.extensions.loadImage
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
 import com.herfy.utils.widgets.AppBarStateChangeListener
@@ -105,7 +108,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     private var viewEventSent = false
     private var _totalPrice = 0.0
     private var calorieCount = 0;
-
+    private val cacheUtilHelper by lazy {
+        CacheUtilHelper(requireContext())
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.cast<MainActivity> {
@@ -391,7 +396,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuName = menuItem.getName(LocaleUtil.getInstance().language)
                     )
                     )
-                    val fragment = NutritionInfoFragmentBottomSheet.newInstance(bundle).show(childFragmentManager,NutritionInfoFragmentBottomSheet.TAG)
+                    NutritionInfoFragmentBottomSheet.newInstance(bundle).show(childFragmentManager,NutritionInfoFragmentBottomSheet.TAG)
                 }
                 if (menuItem.attributes.notes.isNotEmpty()) {
                     binding.etItemNotes.setText(menuItem.attributes.notes)
