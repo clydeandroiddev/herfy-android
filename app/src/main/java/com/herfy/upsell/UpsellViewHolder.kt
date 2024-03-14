@@ -28,8 +28,12 @@ class UpsellViewHolder(val binding: ItemUpsellBinding, private val upsellPresent
             }
 
             plus.setOnClickListener {
-                upsell.attributes.quantity = 1
-                upsellPresenter.addToCart(upsell)
+                if (upsell.isMustBeCustomized) {
+                    upsellPresenter.goToItemDetails(adapterPosition, upsell)
+                } else {
+                    upsell.attributes.quantity = 1
+                    upsellPresenter.addToCart(upsell)
+                }
             }
             var imageUrl = upsell.attributes.image
             if (imageUrl == null || imageUrl.equals(

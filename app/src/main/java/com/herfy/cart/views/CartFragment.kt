@@ -818,28 +818,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         dontShowDigitalCoupons = false
         cartPresenter!!.getTotalPrice(false, false)
         binding.paymentSummaryContainer.placeOrder.isEnabled = menuItems.size > 0
-        var itemCount = 0
-        for (item in menuItems) {
-            itemCount += item.attributes.quantity
-        }
-        binding.orderDetailsContainer.apply {
-            if (itemCount > 0) {
-                placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
-                yourOrderLabel.text = "Your Order (${itemCount})"
-                rvCartItems.OnLayoutLoadingCompleted {
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        clOrderDetails.visibility = View.VISIBLE
-                    }, 500)
-                }
-                adapter!!.notifyDataSetChanged()
-            } else {
-                yourOrderLabel.text = "Your Order (0)"
-                emptyCart.visible()
-                rvCartItems.gone()
-                layoutItemCoupons.contentMain.gone()
-                placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
-            }
-        }
+        setCartQuantity(menuItems)
+
 
         if (signIn) {
             signIn = false
@@ -861,6 +841,33 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
     }
 
+    private fun setCartQuantity(menuItems: List<MenuItem>) {
+        var itemCount = 0
+        for (item in menuItems) {
+            itemCount += item.attributes.quantity
+        }
+        binding.orderDetailsContainer.apply {
+            if (itemCount > 0) {
+                placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
+                yourOrderLabel.text = "Your Order (${itemCount})"
+                emptyCart.gone()
+                rvCartItems.visible()
+                rvCartItems.OnLayoutLoadingCompleted {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        clOrderDetails.visibility = View.VISIBLE
+                    }, 500)
+                }
+                adapter?.notifyDataSetChanged()
+            } else {
+                yourOrderLabel.text = "Your Order (0)"
+                emptyCart.visible()
+                rvCartItems.gone()
+                layoutItemCoupons.contentMain.gone()
+                placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
+            }
+        }
+    }
+
     override fun refreshMenuItems(position: Int, fromChangeQuantity: Boolean) {
         if (position != -1) {
             adapter?.notifyItemChanged(position)
@@ -868,6 +875,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             adapter?.notifyDataSetChanged()
         }
         if (!fromChangeQuantity) update()
+        setCartQuantity(cartPresenter.menuItemsList)
     }
 
     override fun updateMenuItems(menuItems: List<MenuItem>) {
@@ -2059,7 +2067,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun goToItemDetails(position: Int, upsell: MenuItem) {
         NavigationUtils.navigateSafe(
             findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                upsell.attributes.categoryId.toString(), upsell.id, -1
+                upsell.attributes.categoryId.toString(), upsell.id, -1,
+                isUpsell = upsell.attributes.isUpsell
             )
         )
     }

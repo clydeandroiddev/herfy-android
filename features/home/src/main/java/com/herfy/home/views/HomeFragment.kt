@@ -118,7 +118,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     "${TimeUtil.getGreetings()}, ${authUtil.customer.attributes.firstName}!"
             } else {
                 ivHomeGreetings.gone()
-                tvHomeGreetings.gone()
+                tvHomeGreetings.visible()
+                tvHomeGreetings.text = cacheUtilHelper?.getTranslations(Text.WELCOME_TO_HERFY, "Welcome to Herfy!")?:""
             }
         }
     }
@@ -175,7 +176,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
                 val displayMetrics = DisplayMetrics()
                 it.windowManager.defaultDisplay.getMetrics(displayMetrics)
-                val sliderHeight = (displayMetrics.widthPixels / 1.5).toInt()
+                val sliderHeight = (displayMetrics.widthPixels / 1.1).toInt()
                 layoutBanner.mainToolbar.layoutParams.height = sliderHeight
                 layoutBanner.sliderViewPager.layoutParams.height = sliderHeight
                 layoutBanner.newMenuBannerShimmer.layoutParams.height = sliderHeight

@@ -24,7 +24,6 @@ import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
-import com.herfy.utils.extensions.intersect
 import com.herfy.utils.handler.ErrorHandler
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
@@ -255,6 +254,7 @@ class CartPresenter @Inject constructor(
 
     override fun getMenuItems() {
         GlobalScope.launch(contextPool.IO) {
+            menuItems.clear()
             cacheUtilHelper.getCartItems {
                 menuItems = it
                 if (CacheUtil.getInstance().concept.isCartItemsNotesEnabled) {
@@ -2096,7 +2096,6 @@ class CartPresenter @Inject constructor(
                             addAll(upsells)
                         }
                         currUpsells.clear()
-                        val testUpsell1 = arrayListOf<MenuItem>()
                         for (upsell in upsells) {
                             val isFound = menuItems.find { m -> m.id == upsell.id && m.attributes.isUpsell } != null
 
@@ -2105,7 +2104,6 @@ class CartPresenter @Inject constructor(
                             }
                         }
 
-                        val testUpsell2 = upsells.intersect(menuItems){ upsell, cartItems -> cartItems.attributes.isUpsell  && cartItems.id != upsell.id}
                         cartView.showUpsell(currUpsells)
                     } catch (e: JSONException) {
                         e.printStackTrace()

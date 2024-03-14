@@ -61,8 +61,9 @@
                     <View
                         android:id="@+id/name_1"
                         android:layout_width="0dp"
-                        android:layout_height="28dp"
+                        android:layout_height="17dp"
                         android:maxWidth="100dp"
+                        android:layout_marginTop="6dp"
                         android:background="@color/placeholder_color"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -127,8 +128,9 @@
                     <View
                         android:id="@+id/name_2"
                         android:layout_width="0dp"
-                        android:layout_height="28dp"
+                        android:layout_height="17dp"
                         android:maxWidth="100dp"
+                        android:layout_marginTop="6dp"
                         android:background="@color/placeholder_color"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -193,8 +195,9 @@
                     <View
                         android:id="@+id/name_3"
                         android:layout_width="0dp"
-                        android:layout_height="28dp"
+                        android:layout_height="17dp"
                         android:maxWidth="100dp"
+                        android:layout_marginTop="6dp"
                         android:background="@color/placeholder_color"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

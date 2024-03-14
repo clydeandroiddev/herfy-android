@@ -1,5 +1,7 @@
 package com.herfy.utils.constants;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Text {
 
     public static final String CART = "cart";
@@ -994,4 +996,5 @@ public class Text {
     public static final String POINTS_EQUAL_SAR="points_equal_sar";
     public static final String ADD_TO_BAG_AMOUNT = "add_to_bag_amount";
     public static final String UPLOAD_IMAGE = "upload_image";
+    public static final String WELCOME_TO_HERFY="welcome_to_herfy";
 }
