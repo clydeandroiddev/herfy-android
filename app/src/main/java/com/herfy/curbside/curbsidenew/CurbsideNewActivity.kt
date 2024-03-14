@@ -81,7 +81,8 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
                 }
 
                 override fun onDeleteItem(car: CustomerCar, position: Int) {
-
+                    showLoadingDialog()
+                    curbsidePresenter.deleteCar(car.id, position)
                 }
 
                 override fun onEditItem(car: CustomerCar, position: Int) {
@@ -183,7 +184,18 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
     }
 
     override fun successDelete(position: Int) {
-
+        dismissDialogs()
+        val car = curbsideVehicleAdapter.getCar(position)
+        curbsideVehicleAdapter.removeItem(position)
+        if (curbsideVehicleAdapter.listCount() == 0) {
+            showAddDialog(true)
+        }
+        val car1 = CacheUtil.getInstance().curbsideCar
+        if (car1 != null) {
+            if (car1.id == car.id) {
+                CacheUtil.getInstance().curbsideCar = null
+            }
+        }
     }
 
     private fun dismissAddressDialog() {

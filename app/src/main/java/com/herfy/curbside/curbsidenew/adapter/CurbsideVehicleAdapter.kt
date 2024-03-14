@@ -128,6 +128,18 @@ class CurbsideVehicleAdapter(
         notifyDataSetChanged()
     }
 
+    fun getCar(position: Int): CustomerCar {
+        return this.curbsideList[position]
+    }
+    fun removeItem(position: Int) {
+        this.curbsideList.removeAt(position)
+        notifyDataSetChanged()
+    }
+
+    fun listCount(): Int {
+        return this.curbsideList.size
+    }
+
     fun updateSelectedId(id: String) {
         this.selectedId = id
         notifyDataSetChanged()
