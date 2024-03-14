@@ -83,7 +83,7 @@
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/txtNutritionLabel"
-                        style="@style/TextAppearance.Headline1"
+                        style="@style/Styles.Text.Headline1"
                         android:layout_width="wrap_content"
                         android:textColor="#0C0C0C"
                         android:layout_height="wrap_content"
