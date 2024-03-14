@@ -58,6 +58,7 @@
                     app:layout_constraintTop_toTopOf="@+id/tv_home_greetings"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_home_greetings"
                     android:layout_marginStart="4dp"
+                    android:textSize="16sp"
                     android:textColor="@color/black"/>
 
                 <FrameLayout

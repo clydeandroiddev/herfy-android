@@ -416,6 +416,10 @@ dependencies {
 
     def kochava_tracker_version = "5.2.0"
     implementation("com.kochava.tracker:events:$kochava_tracker_version")
+
+    def emojiVersion = "1.0.0-alpha03"
+    implementation "androidx.emoji2:emoji2:$emojiVersion"
+    implementation "androidx.emoji2:emoji2-views:$emojiVersion"
 }
 
 
