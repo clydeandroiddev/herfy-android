@@ -1,5 +1,8 @@
 package com.herfy.utils.helper;
 
+import androidx.annotation.StringRes;
+
+import com.herfy.utils.R;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
@@ -195,6 +198,16 @@ public class TimeUtil {
             greetings = CacheUtil.getInstance().getTranslations(Text.GOOD_EVENING, "Good evening");
         }
         return greetings;
+    }
+
+    public static @StringRes int getGreetingsIcon() {
+        Calendar c = Calendar.getInstance();
+        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
+        @StringRes int greetingsIcon = R.string.home_greeting_sun;
+        if(timeOfDay >= 18) {
+            greetingsIcon = R.string.home_greeting_moon;
+        }
+        return greetingsIcon;
     }
 
 }

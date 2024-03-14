@@ -47,20 +47,14 @@ class MenuCategoryItemAdapter(
             binding.apply {
 
                 var imageUrl = item.menuCategory.image
-                imageUrl = if (imageUrl == null || imageUrl.equals(
+                if (imageUrl == null || imageUrl.equals(
                         "null",
                         ignoreCase = true
                     ) || imageUrl.isEmpty() || imageUrl.lowercase(
                         Locale.getDefault()
                     ).contains("default-image.png")
                 ) {
-                    Values.DEFAULT_IMAGE_URL
-                } else {
-                    StringUtil.getCloudflareUrl(
-                        20,
-                        20,
-                        imageUrl
-                    )
+                    imageUrl = Values.DEFAULT_IMAGE_URL
                 }
 
                 Glide.with(itemView.context)
@@ -93,20 +87,14 @@ class MenuCategoryItemAdapter(
                 val menuItem = item.menuItem
 
                 var imageUrl = menuItem.image
-                imageUrl = if (imageUrl == null || imageUrl.equals(
+                if (imageUrl == null || imageUrl.equals(
                         "null",
                         ignoreCase = true
                     ) || imageUrl.isEmpty() || imageUrl.lowercase(
                         Locale.getDefault()
                     ).contains("default-image.png")
                 ) {
-                    Values.DEFAULT_IMAGE_URL
-                } else {
-                    StringUtil.getCloudflareUrl(
-                        134,
-                        134,
-                        imageUrl
-                    )
+                    imageUrl = Values.DEFAULT_IMAGE_URL
                 }
 
                 Glide.with(itemView.context)
