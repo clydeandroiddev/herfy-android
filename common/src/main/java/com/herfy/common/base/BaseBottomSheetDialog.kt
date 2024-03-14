@@ -158,7 +158,6 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
             if (shouldExpandOnOpen()) {
                 bottomSheetBehavior?.skipCollapsed = true
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                bottomSheetBehavior
             }
         }
 
