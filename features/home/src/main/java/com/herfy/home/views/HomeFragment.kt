@@ -113,13 +113,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             val authUtil = AuthUtil.getInstance()
             if (authUtil.isSignedIn && authUtil.customer != null) {
                 tvHomeGreetings.visible()
-                ivHomeGreetings.visible()
                 tvHomeGreetings.text =
                     "${TimeUtil.getGreetings()}, ${authUtil.customer.attributes.firstName}!"
+                tvHomeGreetingsEmoji.visible()
+                tvHomeGreetingsEmoji.text = resources.getString(TimeUtil.getGreetingsIcon())
             } else {
-                ivHomeGreetings.gone()
-                tvHomeGreetings.visible()
-                tvHomeGreetings.text = cacheUtilHelper?.getTranslations(Text.WELCOME_TO_HERFY, "Welcome to Herfy!")?:""
+                tvHomeGreetings.gone()
+                tvHomeGreetingsEmoji.gone()
             }
         }
     }

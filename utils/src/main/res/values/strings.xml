@@ -43,4 +43,7 @@
     <string name="modifier_name_with_quantity_text">%1$s (%2$s)</string>
     <string name="add_on">Add-ons</string>
     <string name="permissions_error_message">Failed to initialize PermissionManager. Note that we can only access this after onCreate</string>
+    <string name="side_menu_hi">&#128075;</string>
+    <string name="home_greeting_sun">&#9728;&#65039;</string>
+    <string name="home_greeting_moon">&#127765;</string>
 </resources>

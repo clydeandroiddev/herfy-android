@@ -53,20 +53,14 @@ class MenuCategoryAdapter(
                 )
 
                 var imageUrl = menuCategory.image
-                imageUrl = if (imageUrl == null || imageUrl.equals(
+                if (imageUrl == null || imageUrl.equals(
                         "null",
                         ignoreCase = true
                     ) || imageUrl.isEmpty() || imageUrl.lowercase(
                         Locale.getDefault()
                     ).contains("default-image.png")
                 ) {
-                    Values.DEFAULT_IMAGE_URL
-                } else {
-                    StringUtil.getCloudflareUrl(
-                        48,
-                        48,
-                        imageUrl
-                    )
+                    imageUrl = Values.DEFAULT_IMAGE_URL
                 }
 
                 Glide.with(itemView.context)

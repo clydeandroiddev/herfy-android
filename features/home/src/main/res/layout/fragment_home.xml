@@ -50,16 +50,16 @@
                     app:layout_constraintTop_toBottomOf="@id/space"
                     app:layout_constraintStart_toStartOf="parent"/>
 
-                <ImageView
-                    android:id="@+id/iv_home_greetings"
-                    android:layout_width="18dp"
-                    android:layout_height="22dp"
+                <androidx.emoji2.widget.EmojiTextView
+                    android:id="@+id/tv_home_greetings_emoji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toEndOf="@+id/tv_home_greetings"
                     app:layout_constraintTop_toTopOf="@+id/tv_home_greetings"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_home_greetings"
-                    android:scaleType="centerInside"
                     android:layout_marginStart="4dp"
-                    android:src="@drawable/ic_sun" />
+                    android:textSize="16sp"
+                    android:textColor="@color/black"/>
 
                 <FrameLayout
                     android:id="@+id/layout_order_type"

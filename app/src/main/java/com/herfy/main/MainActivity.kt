@@ -586,7 +586,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.fmFavorites.visibility = loggedInRules
         binding.sidebar.selectionLayout.visibility =
             if (BuildConfig.SUBSCRIPTION_ENABLED) View.VISIBLE else View.GONE
-        processLiveChat()
         binding.sidebar.support.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             val intent = Intent(this, FeedbackActivity::class.java)
@@ -650,7 +649,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             intent.putExtra("checkout", false)
             authLauncher.launch(intent)
         }
-        binding.sidebar.liveChatLayout.setOnClickListener { view: View? -> openWhatsApp() }
         binding
             .sidebar
             .notification
@@ -814,21 +812,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             val intentUrl = "https://play.google.com/store/apps/details?id=com.whatsapp"
             intent.data = Uri.parse(intentUrl)
             startActivity(intent)
-        }
-    }
-
-    private fun processLiveChat() {
-        val callCenterNumber: String = CacheUtil.getInstance().concept.whatsappNumber
-        try {
-            if (callCenterNumber != null) {
-                if (callCenterNumber.isNotEmpty()) {
-                    if (!callCenterNumber.equals("null", ignoreCase = true)) {
-                        binding.sidebar.liveChatLayout.visibility = View.VISIBLE
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
