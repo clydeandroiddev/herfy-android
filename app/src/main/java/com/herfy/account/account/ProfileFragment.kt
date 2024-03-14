@@ -282,16 +282,7 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
         SoloAuth.getInstance().logout()
         logout()
         AuthUtil.getInstance().customer = null
-        val intent = Intent(requireActivity(), MainActivity::class.java)
-        intent.putExtra("home", false)
-        intent.putExtra("menu", true)
-        intent.putExtra("cart", false)
-        intent.putExtra("settings", false)
-        intent.putExtra("isFromLogOut", true)
-        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-        startActivity(intent)
-        requireActivity().overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
-        requireActivity().finish()
+        navigateUp()
     }
 
     override fun showCustomerCards() {
@@ -326,15 +317,6 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
         SoloAuth.getInstance().logout()
         logout()
         AuthUtil.getInstance().customer = null
-        val intent = Intent(requireActivity(), MainActivity::class.java)
-        intent.putExtra("home", false)
-        intent.putExtra("menu", true)
-        intent.putExtra("cart", false)
-        intent.putExtra("settings", false)
-        intent.putExtra("isFromLogOut", true)
-        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-        startActivity(intent)
-        requireActivity().overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
-        requireActivity().finish()
+        navigateUp()
     }
 }

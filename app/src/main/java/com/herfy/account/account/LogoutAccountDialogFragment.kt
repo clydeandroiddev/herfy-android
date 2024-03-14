@@ -35,7 +35,7 @@ class LogoutAccountDialogFragment : BaseDialogFragmentV2<DialogLogoutAccountBind
         }
 
         binding.cancelButton.setOnClickListener {
-            onAction.onLogout()
+            onAction.onLogoutClose()
             dismiss()
         }
 
@@ -44,18 +44,14 @@ class LogoutAccountDialogFragment : BaseDialogFragmentV2<DialogLogoutAccountBind
 
     fun setupTranslations() {
         binding.txtDeleteLabel.text = CacheUtil.getInstance().getTranslations(
-            Text.ARE_YOU_SURE_YOU_WANT_TO_LOGOUT,
-            "Are you sure you want to log out?"
+            Text.ARE_YOU_SURE_YOU_WANT_TO_LOGOUT, "Are you sure you want to log out?"
         )
-        binding.txtClearDescription.text = CacheUtil.getInstance()
-            .getTranslations(
-                Text.YOU_CAN_ALWAYS_LOGIN_ANYTIME,
-                "You can always log in again anytime."
-            )
-        binding.deleteButton.text = CacheUtil.getInstance()
-            .getTranslations(Text.LOGOUT, "Logout")
-        binding.cancelButton.text = CacheUtil.getInstance()
-            .getTranslations(Text.CANCEL_LABEL, "Cancel")
+        binding.txtClearDescription.text = CacheUtil.getInstance().getTranslations(
+            Text.YOU_CAN_ALWAYS_LOGIN_ANYTIME, "You can always log in again anytime."
+        )
+        binding.deleteButton.text = CacheUtil.getInstance().getTranslations(Text.LOGOUT, "Logout")
+        binding.cancelButton.text =
+            CacheUtil.getInstance().getTranslations(Text.CANCEL_LABEL, "Cancel")
     }
 
     override fun shouldBackgroundTransparent(): Boolean = false

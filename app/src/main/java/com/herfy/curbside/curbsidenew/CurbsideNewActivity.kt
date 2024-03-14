@@ -94,8 +94,16 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
 
     override fun setupTranslations() {
         binding.apply {
-            curbsideLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.CHOOSE_YOUR_CURBSIDE_VEHICLE, "Choose your curbside vehicle")
+            if (intent.getBooleanExtra("fromProfile", false)) {
+                curbsideLabel.text = CacheUtil.getInstance()
+                    .getTranslations(Text.CURBSIDE_VEHICLES, "Curbside Vehicles")
+            } else {
+                curbsideLabel.text = CacheUtil.getInstance()
+                    .getTranslations(
+                        Text.CHOOSE_YOUR_CURBSIDE_VEHICLE,
+                        "Choose your curbside vehicle"
+                    )
+            }
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.ADD_NEW_VEHICLE, "Add New Vehicle")
             continueButton.setOnClickListener {
