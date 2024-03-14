@@ -53,7 +53,10 @@
                 style="@style/Styles.Text.Caption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                android:ellipsize="end"
                 android:includeFontPadding="false"
+                android:maxLines="1"
                 android:paddingStart="10dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="4dp"
@@ -82,6 +85,25 @@
                 app:layout_constraintEnd_toStartOf="@id/selectedIdentifier"
                 app:layout_constraintStart_toEndOf="@id/curbsideEllipse"
                 tools:text="Added: Feb 19, 2024" />
+
+            <ImageButton
+                android:id="@+id/deleteItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_trash_item"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/curbsidePlateNumber" />
+
+            <ImageButton
+                android:id="@+id/editItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_edit_item"
+                app:layout_constraintEnd_toStartOf="@id/deleteItem"
+                app:layout_constraintTop_toTopOf="@id/curbsidePlateNumber" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

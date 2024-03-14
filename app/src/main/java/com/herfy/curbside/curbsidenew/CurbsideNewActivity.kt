@@ -71,15 +71,20 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
         curbsideVehicleAdapter = CurbsideVehicleAdapter(
             ArrayList(), object : CurbsideVehicleAdapter.CurbsideListener {
                 override fun onSelectedCar(car: CustomerCar, position: Int) {
-                    if (intent.getBooleanExtra("fromProfile", false)) {
-
-                    } else {
+                    if (!intent.getBooleanExtra("fromProfile", false)) {
                         if (AuthUtil.getInstance().isSignedIn) {
                             CacheUtil.getInstance().curbsideCar = car
                             setResult(RESULT_OK)
                             finish()
                         }
                     }
+                }
+
+                override fun onDeleteItem(car: CustomerCar, position: Int) {
+
+                }
+
+                override fun onEditItem(car: CustomerCar, position: Int) {
 
                 }
             }, carId, intent.getBooleanExtra("fromProfile", false)
@@ -98,10 +103,8 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
                 curbsideLabel.text = CacheUtil.getInstance()
                     .getTranslations(Text.CURBSIDE_VEHICLES, "Curbside Vehicles")
             } else {
-                curbsideLabel.text = CacheUtil.getInstance()
-                    .getTranslations(
-                        Text.CHOOSE_YOUR_CURBSIDE_VEHICLE,
-                        "Choose your curbside vehicle"
+                curbsideLabel.text = CacheUtil.getInstance().getTranslations(
+                        Text.CHOOSE_YOUR_CURBSIDE_VEHICLE, "Choose your curbside vehicle"
                     )
             }
             continueButton.text =
@@ -136,7 +139,8 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
 
     private fun showAddDialog(isEmpty: Boolean) {
         dismissAddressDialog()
-        addCurbsideDialog = AddCurbsideVehicleDialog.newInstance(isEmpty,
+        addCurbsideDialog = AddCurbsideVehicleDialog.newInstance(
+            isEmpty,
             object : AddCurbsideVehicleDialog.OnSubmit {
                 override fun onSuccess() {
                     if (intent.getBooleanExtra("fromProfile", false)) {

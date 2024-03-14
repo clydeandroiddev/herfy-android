@@ -18,6 +18,8 @@ import com.bumptech.glide.request.target.Target
 import com.herfy.common.formatDate
 import com.herfy.ordertype.databinding.ItemCurbsideNewBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.isVisible
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
 
@@ -63,10 +65,28 @@ class CurbsideVehicleAdapter(
                 selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_store_selected)
             }
 
+            if (fromProfile) {
+                editItem.isVisible()
+                deleteItem.isVisible()
+                selectedIdentifier.gone()
+            } else {
+                editItem.gone()
+                selectedIdentifier.isVisible()
+                deleteItem.gone()
+            }
+
             curbsidePlateNumber.text = item.attributes.plateNumber
 
             chooseCurbside.setOnClickListener {
                 curbsideListener.onSelectedCar(item, position)
+            }
+
+            editItem.setOnClickListener {
+                curbsideListener.onEditItem(item, position)
+            }
+
+            deleteItem.setOnClickListener {
+                curbsideListener.onDeleteItem(item, position)
             }
 
             Glide.with(curbsideBrand.context).load(item.attributes.carMakerImageUri)
@@ -115,5 +135,7 @@ class CurbsideVehicleAdapter(
 
     interface CurbsideListener {
         fun onSelectedCar(car: CustomerCar, position: Int)
+        fun onDeleteItem(car: CustomerCar, position: Int)
+        fun onEditItem(car: CustomerCar, position: Int)
     }
 }

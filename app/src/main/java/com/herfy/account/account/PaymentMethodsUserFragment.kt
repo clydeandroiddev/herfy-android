@@ -69,9 +69,6 @@ class PaymentMethodsUserFragment : BaseFragment(), PaymentContract.View {
             back.setOnClickListener {
                 navigateUp()
             }
-            continueButton.setOnClickListener {
-
-            }
         }
     }
 
