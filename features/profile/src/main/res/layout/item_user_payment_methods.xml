@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="6dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/chooseCurbside"
+            android:layout_width="match_parent"
+            android:layout_height="84dp"
+            android:background="@drawable/background_cards"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/curbsideEllipse"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_card_bg"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/cardImage"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:padding="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/curbsideEllipse"
+                app:layout_constraintEnd_toEndOf="@id/curbsideEllipse"
+                app:layout_constraintStart_toStartOf="@id/curbsideEllipse"
+                app:layout_constraintTop_toTopOf="@id/curbsideEllipse" />
+
+            <ImageView
+                android:id="@+id/arrowRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_blue_right"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="5dp"
+                app:layout_constraintEnd_toStartOf="@id/arrowRight"
+                app:layout_constraintStart_toEndOf="@id/curbsideEllipse">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/primaryLabel"
+                    style="@style/Styles.Text.Footnote_Bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0064AC"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:text="Primary" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/cardNumber"
+                    style="@style/Styles.Text.Footnote.Regular_Large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    tools:text="Visa ****6789" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>
