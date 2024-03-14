@@ -1042,4 +1042,9 @@ public class Text {
 
     public static final String ADDRESSES_LABEL = "addresses";
 
+
+    public static final String YOU_CAN_ALWAYS_LOGIN_ANYTIME = "you_can_always_login";
+
+    public static final String ARE_YOU_SURE_YOU_WANT_TO_LOGOUT = "are_you_sure_want_logout";
+
 }

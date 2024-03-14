@@ -25,7 +25,8 @@ import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
 class CurbsideVehicleAdapter(
     val curbsideList: ArrayList<CustomerCar> = arrayListOf(),
     val curbsideListener: CurbsideListener,
-    var selectedId: String
+    var selectedId: String,
+    val fromProfile: Boolean
 ) : RecyclerView.Adapter<CurbsideVehicleAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: ItemCurbsideNewBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -52,7 +53,7 @@ class CurbsideVehicleAdapter(
                 )
             )
 
-            if (selectedId != item.id) {
+            if (fromProfile || selectedId != item.id) {
                 curbsideEllipse.imageTintList = null
                 chooseCurbside.setBackgroundResource(com.herfy.ordertype.R.drawable.bg_deliver)
                 selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_circle_unselected)

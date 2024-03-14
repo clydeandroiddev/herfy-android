@@ -36,7 +36,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
 
 @AndroidEntryPoint
-class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialogFragment.OnAction {
+class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialogFragment.OnAction,
+    LogoutAccountDialogFragment.OnLogoutAction {
     private var accountPresenter: AccountContract.Presenter? = null
 
     private lateinit var binding: FragmentUserProfileBinding
@@ -110,29 +111,9 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
             }
 
             logoutLayout.setOnClickListener {
-                LoginManager.getInstance().logOut()
-                val googleSignInOptions =
-                    GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(BuildUtil.googleInClient(requireActivity())).requestEmail()
-                        .build()
-                val googleSignInClient =
-                    GoogleSignIn.getClient(requireActivity(), googleSignInOptions)
-                googleSignInClient.signOut()
-                accountPresenter!!.removeMukafaaRedemption()
-                CacheUtil.getInstance().clearOrder()
-                SoloAuth.getInstance().logout()
-                logout()
-                AuthUtil.getInstance().customer = null
-                val intent = Intent(requireActivity(), MainActivity::class.java)
-                intent.putExtra("home", false)
-                intent.putExtra("menu", true)
-                intent.putExtra("cart", false)
-                intent.putExtra("settings", false)
-                intent.putExtra("isFromLogOut", true)
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                startActivity(intent)
-                requireActivity().overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
-                requireActivity().finish()
+                LogoutAccountDialogFragment.newInstance(onAction = this@ProfileFragment).show(
+                    parentFragmentManager, LogoutAccountDialogFragment::class.java.toString()
+                )
             }
         }
     }
@@ -328,5 +309,32 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
     override fun onDelete() {
         showLoadingDialog()
         accountPresenter?.deleteAccount()
+    }
+
+    override fun onLogoutClose() {
+
+    }
+
+    override fun onLogout() {
+        LoginManager.getInstance().logOut()
+        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(BuildUtil.googleInClient(requireActivity())).requestEmail().build()
+        val googleSignInClient = GoogleSignIn.getClient(requireActivity(), googleSignInOptions)
+        googleSignInClient.signOut()
+        accountPresenter!!.removeMukafaaRedemption()
+        CacheUtil.getInstance().clearOrder()
+        SoloAuth.getInstance().logout()
+        logout()
+        AuthUtil.getInstance().customer = null
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        intent.putExtra("home", false)
+        intent.putExtra("menu", true)
+        intent.putExtra("cart", false)
+        intent.putExtra("settings", false)
+        intent.putExtra("isFromLogOut", true)
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        startActivity(intent)
+        requireActivity().overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
+        requireActivity().finish()
     }
 }

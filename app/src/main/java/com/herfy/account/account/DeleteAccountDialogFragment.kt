@@ -53,8 +53,6 @@ class DeleteAccountDialogFragment : BaseDialogFragmentV2<DialogDeleteAccountNewB
             .getTranslations(Text.DELETE_LABEL, "Delete")
         binding.cancelButton.text = CacheUtil.getInstance()
             .getTranslations(Text.CANCEL_LABEL, "Cancel")
-        binding.txtClearDescription.text = CacheUtil.getInstance()
-            .getTranslations(Text.THIS_ACTION_CAN_NOT_REVERSE, "This action can not be reversed.")
     }
 
     override fun shouldBackgroundTransparent(): Boolean = false

@@ -59,7 +59,7 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
     override fun setupViews() {
         var carId = ""
         val car = CacheUtil.getInstance().curbsideCar
-        if (car != null) {
+        if (car != null && !intent.getBooleanExtra("fromProfile", false)) {
             carId = car.id.orEmpty()
         }
         binding.apply {
@@ -71,13 +71,18 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
         curbsideVehicleAdapter = CurbsideVehicleAdapter(
             ArrayList(), object : CurbsideVehicleAdapter.CurbsideListener {
                 override fun onSelectedCar(car: CustomerCar, position: Int) {
-                    if (AuthUtil.getInstance().isSignedIn) {
-                        CacheUtil.getInstance().curbsideCar = car
-                        setResult(RESULT_OK)
-                        finish()
+                    if (intent.getBooleanExtra("fromProfile", false)) {
+
+                    } else {
+                        if (AuthUtil.getInstance().isSignedIn) {
+                            CacheUtil.getInstance().curbsideCar = car
+                            setResult(RESULT_OK)
+                            finish()
+                        }
                     }
+
                 }
-            }, carId
+            }, carId, intent.getBooleanExtra("fromProfile", false)
         )
         binding.curbsideList.adapter = curbsideVehicleAdapter
     }
@@ -126,9 +131,13 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
         addCurbsideDialog = AddCurbsideVehicleDialog.newInstance(isEmpty,
             object : AddCurbsideVehicleDialog.OnSubmit {
                 override fun onSuccess() {
-                    dismissAddressDialog()
-                    setResult(RESULT_OK)
-                    finish()
+                    if (intent.getBooleanExtra("fromProfile", false)) {
+                        curbsidePresenter.getCustomerCars()
+                    } else {
+                        dismissAddressDialog()
+                        setResult(RESULT_OK)
+                        finish()
+                    }
                 }
 
                 override fun error(text: String) {
