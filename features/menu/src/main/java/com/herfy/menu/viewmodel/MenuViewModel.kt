@@ -11,6 +11,7 @@ import com.herfy.repository.HomeRepository
 import com.herfy.repository.MenuRepository
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.CacheUtil
@@ -82,7 +83,7 @@ class MenuViewModel @Inject constructor(
 
     fun getSlides() {
         invoke {
-            homeRepository.getSliders { homeResponse ->
+            homeRepository.getSliders(Values.CATEGORY_PAGE_TOP_BANNER) { homeResponse ->
                 if (homeResponse.success) {
                     homeResponse.data?.let {
                         it.cast<ArrayList<Slide>> {

@@ -13,7 +13,6 @@ import com.herfy.menu.R
 import com.herfy.menu.databinding.CardMenuCategoryBinding
 import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.LocaleUtil
-import com.herfy.utils.helper.StringUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import java.util.Locale
 

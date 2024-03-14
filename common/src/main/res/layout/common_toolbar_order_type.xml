@@ -75,13 +75,13 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_cart"
         android:layout_width="wrap_content"
-        android:layout_height="42dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="12dp"
         app:cardBackgroundColor="#2865A8"
         app:cardCornerRadius="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cl_order_type"
+        app:layout_constraintBottom_toBottomOf="@+id/cl_order_type"
         tools:cardBackgroundColor="@color/colorPrimary">
 
         <LinearLayout

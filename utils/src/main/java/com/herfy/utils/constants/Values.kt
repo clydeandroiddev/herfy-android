@@ -74,13 +74,13 @@ object Values {
     var sDeepLinkUtm: Bundle? = null
     @JvmField
     var IMAGE_TEXT = "image_text"
-    const val AL_TASAJ_CONCEPT_KEY = "8vhbIIrPWF3"
-    const val AL_TASAJ_FEEDBACK_PAGE = "https://www.taza.com.sa/en/pages/you-are-heard"
     const val MUKAFA_ENABLED = true
     const val MUKAFAA_PROVIDER = "alrajhi"
     const val LOYALTY_PROVIDER = "solo-loyalty"
     const val MIXPANEL_TOKEN = "3a172b606e1bd18abfad3bd6f511bbd5"
-    const val BOTTOM_SLIDER_ID = "3767"
+    const val HOME_PAGE_TOP_BANNER = "3768"
+    const val HOME_PAGE_BOTTOM_BANNER = "3769"
+    const val CATEGORY_PAGE_TOP_BANNER = "3770"
     const val SLIDER_INTERVAL = 8_000L
     const val NAV_DEEP_LINK_BASE_URL = "android-app://com.herfy/"
     const val INSTAGRAM_LINK = "https://www.instagram.com/herfyfsc/"
