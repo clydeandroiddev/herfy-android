@@ -4,34 +4,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
+import com.herfy.account.AccountContract
+import com.herfy.account.AccountPresenter
+import com.herfy.account.account.adapter.PaymentMethodsAdapter
 import com.herfy.base.BaseFragment
-import com.herfy.payment.PaymentContract
-import com.herfy.payment.PaymentPresenter
 import com.herfy.profile.databinding.FragmentUserPaymentMethodsBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
-import com.moneyhash.sdk.android.ResultType
-import com.skylinedynamics.solosdk.api.models.objects.MenuItem
-import com.skylinedynamics.solosdk.api.models.objects.OrderType
-import com.skylinedynamics.solosdk.api.models.objects.PaymentType
-import com.skylinedynamics.solosdk.api.models.objects.PrayerTime
-import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge
+import com.herfy.utils.helper.DialogUtils
+import com.skylinedynamics.solosdk.api.models.objects.Address
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Calendar
+import java.util.Date
 
 @AndroidEntryPoint
-class PaymentMethodsUserFragment : BaseFragment(), PaymentContract.View {
-    private var paymentPresenter: PaymentContract.Presenter? = null
+class PaymentMethodsUserFragment : BaseFragment(), AccountContract.View {
+    private var paymentPresenter: AccountContract.Presenter? = null
 
     private lateinit var binding: FragmentUserPaymentMethodsBinding
 
+    private lateinit var adapter: PaymentMethodsAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        paymentPresenter = PaymentPresenter(this)
+        paymentPresenter = AccountPresenter(this)
     }
 
     override fun onCreateView(
@@ -44,10 +40,11 @@ class PaymentMethodsUserFragment : BaseFragment(), PaymentContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         paymentPresenter?.start()
-        setupViews()
+        showLoadingDialog()
+        paymentPresenter?.fetchCustomerCards()
     }
 
-    override fun setPresenter(presenter: PaymentContract.Presenter) {
+    override fun setPresenter(presenter: AccountContract.Presenter) {
         paymentPresenter = presenter
     }
 
@@ -69,6 +66,8 @@ class PaymentMethodsUserFragment : BaseFragment(), PaymentContract.View {
             back.setOnClickListener {
                 navigateUp()
             }
+            adapter = PaymentMethodsAdapter(ArrayList())
+            binding.paymentsList.adapter = adapter
         }
     }
 
@@ -81,61 +80,84 @@ class PaymentMethodsUserFragment : BaseFragment(), PaymentContract.View {
             CacheUtil.getInstance().getTranslations(Text.PAYMENT_METHODS, "Payment Methods")
     }
 
-    override fun showPaymentTypes(paymentTypes: MutableSet<PaymentType>?) {
-
-    }
-
-    override fun showPaymentTypes(paymentTypes: ArrayList<PaymentType>?) {
-
-    }
-
-    override fun setStartName(startName: String?) {
-
-    }
-
-    override fun setStartAddress(startAddress: String?) {
-
-    }
-
-    override fun setEndName(endName: String?) {
-
-    }
-
-    override fun setEndAddress(endAddress: String?) {
-
-    }
-
-    override fun updateMap(
-        orderType: OrderType?, startLocation: LatLng?, endLocation: LatLng?, bounds: LatLngBounds?
+    override fun showCustomer(
+        firstName: String?,
+        lastName: String?,
+        gender: String?,
+        phoneNumber: String?,
+        email: String?,
+        provider: String?
     ) {
 
     }
 
-    override fun updateTime(calendar: Calendar?) {
+    override fun showDateOfBirth(birthDate: Date?, date: String?) {
 
     }
 
-    override fun selectPaymentTypeCash() {
+    override fun showEmail(show: Boolean) {
 
     }
 
-    override fun showValidateOrderError(errors: MutableList<String>?) {
+    override fun showPassword(show: Boolean) {
 
     }
 
-    override fun sendOrder() {
+    override fun showErrorFirstName(error: String?) {
 
     }
 
-    override fun initializeTap(orderId: String?, total: Double) {
+    override fun showErrorLastName(error: String?) {
 
     }
 
-    override fun showCheckoutPaymentForm(orderId: String?) {
+    override fun showErrorPhoneNumber(error: String?) {
 
     }
 
-    override fun showCardFailed() {
+    override fun showErrorEmail(error: String?) {
+
+    }
+
+    override fun showErrorNewPassword(error: String?) {
+
+    }
+
+    override fun showErrorConfirmPassword(error: String?) {
+
+    }
+
+    override fun showErrorConfirmNewPassword(error: String?) {
+
+    }
+
+    override fun showPasswordUpdated() {
+
+    }
+
+    override fun showError(error: String?) {
+        dismissDialogs()
+        DialogUtils.showAlertDialog(context = requireContext(),
+            title = "",
+            body = error.orEmpty(),
+            dialogInterface = { dialog, which ->
+                dialog.dismiss()
+            })
+    }
+
+    override fun showAccount() {
+
+    }
+
+    override fun showLocations(locations: ArrayList<Address>?) {
+
+    }
+
+    override fun hideLocations() {
+
+    }
+
+    override fun setLocation(location: Address?) {
 
     }
 
@@ -143,94 +165,16 @@ class PaymentMethodsUserFragment : BaseFragment(), PaymentContract.View {
 
     }
 
-    override fun showError(error: String?) {
+    override fun accountDeleted() {
 
     }
 
-    override fun showCompleted(orderId: String?, orderType: OrderType?) {
-
+    override fun showCustomerCards() {
+        dismissDialogs()
+        adapter.updateList(ArrayList(CacheUtil.getInstance().customerCards))
     }
 
-    override fun setSchedule() {
-
-    }
-
-    override fun setTax(inclusive: Boolean, taxAmount: CharSequence?) {
-
-    }
-
-    override fun setPriceDetails(
-        subtotalPrice: Double,
-        discount: Double,
-        totalPrice: Double,
-        deliveryCharge: Double,
-        pointsSarValue: Double,
-        pointsEarnable: Int,
-        pointsUsed: Int,
-        charges: ArrayList<ServiceCharge>?
-    ) {
-
-    }
-
-    override fun setMenuItem(menuItem: MenuItem?) {
-
-    }
-
-    override fun logFirebaseEvent(event: String?, orderTotalPrice: String?) {
-
-    }
-
-    override fun showPrayerTime(prayerTime: PrayerTime?) {
-
-    }
-
-    override fun showErrorPrayerTime() {
-
-    }
-
-    override fun moneyHashContract(): ActivityResultLauncher<Pair<String, ResultType>>? {
-        return null
-    }
-
-    override fun setOrderId(orderId: String?) {
-
-    }
-
-    override fun showCardDialogList(orderId: String?) {
-
-    }
-
-    override fun firebaseECommercePurchaseEvent(
-        orderedItem: MutableList<MenuItem>?, total: Double
-    ) {
-
-    }
-
-    override fun firebaseAddPaymentInfoEvent() {
-
-    }
-
-    override fun firebaseApplyPromotionEvent(
-        promotionId: String?, promotionName: String?, orderedItems: MutableList<MenuItem>?
-    ) {
-
-    }
-
-    override fun updateMenuItems() {
-
-    }
-
-    override fun showMoyasarSheet(
-        orderId: String?, validatedTotal: Double, menuItems: String?, apiKey: String?
-    ) {
-
-    }
-
-    override fun showOrderType(checkout: Boolean?) {
-
-    }
-
-    override fun showSelectedPyament() {
+    override fun showRevelRewardPoints(pointValue: Double?) {
 
     }
 

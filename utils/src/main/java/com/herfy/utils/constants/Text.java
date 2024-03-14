@@ -1034,4 +1034,6 @@ public class Text {
 
     public static final String ARE_YOU_SURE_YOU_WANT_TO_LOGOUT = "are_you_sure_want_logout";
 
+    public static final String CARD_DETAILS = "card_details";
+
 }

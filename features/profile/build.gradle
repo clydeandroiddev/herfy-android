@@ -142,5 +142,8 @@ dependencies {
     //FlexBox
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
+    //SwitchView
+    implementation 'com.github.iielse:switchbutton:1.0.4'
+
 
 }
