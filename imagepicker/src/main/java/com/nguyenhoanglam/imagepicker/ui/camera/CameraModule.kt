@@ -131,9 +131,9 @@ class CameraModule : Serializable {
 
                     newFileUri = contentResolver.insert(url, values)
                     if (newFileUri != null) {
-                        val imageOutputStream = openOutputStream(newFileUri!!)
-                        orientedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, imageOutputStream)
-
+                        openOutputStream(newFileUri!!)?.let { imageOutputStream ->
+                            orientedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, imageOutputStream)
+                        }
                         val images = arrayListOf(
                             Image(newFileUri!!, currentFileName!!, 0, config.subDirectory!!)
                         )

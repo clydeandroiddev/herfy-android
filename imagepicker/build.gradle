@@ -5,10 +5,10 @@ apply plugin: 'maven-publish'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 33
+    compileSdk 34
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 33
+        targetSdk 34
     }
     buildTypes {
         debug {
