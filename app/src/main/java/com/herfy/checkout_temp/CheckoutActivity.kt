@@ -420,19 +420,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                     )
                                 }
                                 supportMapFragment.setListener {
-                                    Log.d("TEST","test");
                                     binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
                                         true
                                     )
                                 }
                                 if (orderType !== OrderType.DELIVERY) {
-                                    val myLocation = LatLng(location.latitude, location.longitude)
-                                    mMap!!.addPolyline(
-                                        PolylineOptions()
-                                            .add(storeLocation, myLocation).width(10f)
-                                            .color(Color.parseColor("#0064AC"))
-                                    )
-                                    showCurveLine(storeLocation, myLocation, 0.5)
+
+
+
                                 }
 
                             }
@@ -447,41 +442,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
     }
 
-    private fun showCurveLine(storeLocation: LatLng, currentLocation: LatLng, k: Double) {
-        val distanceBetween = SphericalUtil.computeDistanceBetween(storeLocation, currentLocation)
-        val heading = SphericalUtil.computeDistanceBetween(storeLocation, currentLocation)
-
-        //midpoint position
-        val p = SphericalUtil.computeOffset(storeLocation, distanceBetween * 0.5, heading)
-        val x = (1 - k * k) * distanceBetween * 0.5 / (2 * k)
-        val r = (1 + k * k) * distanceBetween * 0.5 / (2 * k)
-        val c = SphericalUtil.computeOffset(p, x, heading + 90.0)
-        val polygon = PolygonOptions()
-        val h1 = SphericalUtil.computeHeading(c, storeLocation)
-        val h2 = SphericalUtil.computeHeading(c, currentLocation)
-        val numpoints = 200
-        val step = (h2 - h1) / numpoints
-        val temp = ArrayList<LatLng>()
-        for (i in 0 until numpoints) {
-            val latLng = SphericalUtil.computeOffset(c, r, h1 + i * step)
-            polygon.add(latLng)
-            temp.add(latLng)
-        }
-        for (i in temp.size - 1 downTo 1) {
-            polygon.add(temp[i])
-        }
-
-        mMap!!.addPolygon(polygon)
-        temp.clear()
-    }
 
     override fun setupViews() {
         orderType = CacheUtil.getInstance().orderType
         requestPermissionLocation()
-        binding!!.tvEditMobileNumber.ninjaTap(lifecycleScope) {
-           EnterNewPhoneNumberFragment.newInstance()
-               .show(supportFragmentManager, EnterNewPhoneNumberFragment.TAG)
-        }
+
         //        rvOrderSummary.setLayoutManager(new LinearLayoutManager(this));
 //        menuItemsRecyclerViewAdapter = new OrderSummaryItemRecyclerViewAdapter(paymentPresenter);
 //        rvOrderSummary.setAdapter(menuItemsRecyclerViewAdapter);
@@ -886,8 +851,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.toolbarLayout.title.text =
             CacheUtil.getInstance().getTranslations(Text.CHECKOUT, "Checkout")
         binding!!.layoutPayment.tvEditPaymentMethod.text =
-            CacheUtil.getInstance().getTranslations(Text.EDIT, "Edit")
-        binding!!.tvEditMobileNumber.text =
             CacheUtil.getInstance().getTranslations(Text.EDIT, "Edit")
         binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance().getTranslations(
             Text.DELIVERY_INSTRUCTION,

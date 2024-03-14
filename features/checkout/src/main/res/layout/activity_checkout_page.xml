@@ -219,36 +219,14 @@
                                 style="@style/Styles.Text.Footnote.Regular_Large"
                                 android:textColor="@color/black"
                                 app:layout_constraintBottom_toBottomOf="@+id/iv_mobile_number"
-                                app:layout_constraintEnd_toStartOf="@+id/imageView3"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.0"
                                 app:layout_constraintStart_toEndOf="@+id/iv_mobile_number"
                                 app:layout_constraintTop_toTopOf="@+id/iv_mobile_number"
                                 tools:text="+966-5671982192" />
 
 
-                            <ImageView
-                                android:id="@+id/imageView3"
-                                android:layout_width="@dimen/_14sdp"
-                                android:layout_height="@dimen/_14sdp"
-                                android:layout_marginEnd="@dimen/_2sdp"
-                                android:src="@drawable/ic_edit"
-                                app:layout_constraintBottom_toBottomOf="@+id/tv_edit_mobile_number"
-                                app:layout_constraintEnd_toStartOf="@+id/tv_edit_mobile_number"
-                                app:layout_constraintTop_toTopOf="@+id/tv_edit_mobile_number" />
 
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/tv_edit_mobile_number"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/inter_medium"
-                                style="@style/TextAppearance.Footnote.Semi_Bold"
-                                android:lineHeight="19dp"
-                                android:textColor="#0064AC"
-                                android:textAllCaps="false"
-                                app:layout_constraintBottom_toBottomOf="@+id/tv_mobile_number"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="@+id/tv_mobile_number"
-                                tools:text="Edit" />
 
                             <androidx.constraintlayout.widget.Group
                                 android:id="@+id/grp_delivery_note"
