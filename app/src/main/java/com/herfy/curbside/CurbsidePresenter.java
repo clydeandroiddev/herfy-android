@@ -143,13 +143,24 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
         if (valid) {
 
             JsonObject addBody = new JsonObject();
-            addBody.addProperty("color", carColor);
+            if (carColor != null) {
+                if (!carColor.isEmpty()) {
+                    addBody.addProperty("color", carColor);
+                }
+            }
+
             if (carMakerId != null) {
-                addBody.addProperty("car-maker-id", carMakerId);
+                if (carMakerId != 0) {
+                    addBody.addProperty("car-maker-id", carMakerId);
+                }
             }
+
             if (carMakerName != null) {
-                addBody.addProperty("car-maker-name", carMakerName);
+                if (!carMakerName.isEmpty()) {
+                    addBody.addProperty("car-maker-name", carMakerName);
+                }
             }
+
             if (!plateNumber.isEmpty()) {
                 addBody.addProperty("plate-number", plateNumber);
             }

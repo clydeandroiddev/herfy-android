@@ -85,7 +85,7 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
                 }
 
                 override fun onEditItem(car: CustomerCar, position: Int) {
-
+                    showAddDialog(false, car)
                 }
             }, carId, intent.getBooleanExtra("fromProfile", false)
         )
@@ -104,8 +104,8 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
                     .getTranslations(Text.CURBSIDE_VEHICLES, "Curbside Vehicles")
             } else {
                 curbsideLabel.text = CacheUtil.getInstance().getTranslations(
-                        Text.CHOOSE_YOUR_CURBSIDE_VEHICLE, "Choose your curbside vehicle"
-                    )
+                    Text.CHOOSE_YOUR_CURBSIDE_VEHICLE, "Choose your curbside vehicle"
+                )
             }
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.ADD_NEW_VEHICLE, "Add New Vehicle")
@@ -138,15 +138,20 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
     }
 
     private fun showAddDialog(isEmpty: Boolean) {
+        showAddDialog(isEmpty, null)
+    }
+
+    private fun showAddDialog(isEmpty: Boolean, customerCar: CustomerCar?) {
         dismissAddressDialog()
         addCurbsideDialog = AddCurbsideVehicleDialog.newInstance(
+            customerCar,
             isEmpty,
             object : AddCurbsideVehicleDialog.OnSubmit {
                 override fun onSuccess() {
+                    dismissAddressDialog()
                     if (intent.getBooleanExtra("fromProfile", false)) {
                         curbsidePresenter.getCustomerCars()
                     } else {
-                        dismissAddressDialog()
                         setResult(RESULT_OK)
                         finish()
                     }
