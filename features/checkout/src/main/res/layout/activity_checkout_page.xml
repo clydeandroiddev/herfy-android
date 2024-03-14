@@ -23,6 +23,7 @@
                 layout="@layout/toolbar_layout"/>
 
             <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -58,7 +59,9 @@
 
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/tv_time_label"
+                            android:drawablePadding="@dimen/padding_small"
                             android:layout_width="wrap_content"
+                            android:drawableStart="@drawable/ic_alarm"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_semi_bold"
                             android:textColor="@color/color_dark_gray_blue"
@@ -98,16 +101,19 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.0">
 
-                        <fragment
-                            android:id="@+id/checkout_map"
-                            android:name="com.google.android.gms.maps.SupportMapFragment"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/_200sdp"
-                            android:layout_marginStart="@dimen/margin_large"
-                            android:layout_marginEnd="@dimen/margin_large"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+
+                            <fragment
+                                android:id="@+id/checkout_map"
+                                android:name="com.herfy.common.base.OrderSupportMapFragment"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_200sdp"
+                                android:layout_marginStart="@dimen/margin_large"
+                                android:layout_marginEnd="@dimen/margin_large"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintBottom_toTopOf="@+id/branch_image_container"
+                                app:layout_constraintTop_toTopOf="parent" />
+
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/branch_image_container"
@@ -213,35 +219,14 @@
                                 style="@style/Styles.Text.Footnote.Regular_Large"
                                 android:textColor="@color/black"
                                 app:layout_constraintBottom_toBottomOf="@+id/iv_mobile_number"
-                                app:layout_constraintEnd_toStartOf="@+id/imageView3"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.0"
                                 app:layout_constraintStart_toEndOf="@+id/iv_mobile_number"
                                 app:layout_constraintTop_toTopOf="@+id/iv_mobile_number"
                                 tools:text="+966-5671982192" />
 
-                            <ImageView
-                                android:id="@+id/imageView3"
-                                android:layout_width="@dimen/_14sdp"
-                                android:layout_height="@dimen/_14sdp"
-                                android:layout_marginEnd="@dimen/_2sdp"
-                                android:src="@drawable/ic_edit"
-                                app:layout_constraintBottom_toBottomOf="@+id/tv_edit_mobile_number"
-                                app:layout_constraintEnd_toStartOf="@+id/tv_edit_mobile_number"
-                                app:layout_constraintTop_toTopOf="@+id/tv_edit_mobile_number" />
 
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/tv_edit_mobile_number"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/inter_medium"
-                                style="@style/TextAppearance.Footnote.Semi_Bold"
-                                android:lineHeight="19dp"
-                                android:textColor="#0064AC"
-                                android:textAllCaps="false"
-                                app:layout_constraintBottom_toBottomOf="@+id/tv_mobile_number"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="@+id/tv_mobile_number"
-                                tools:text="Edit" />
+
 
                             <androidx.constraintlayout.widget.Group
                                 android:id="@+id/grp_delivery_note"
@@ -373,6 +358,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/light_red"
+                android:visibility="gone"
                 style="@style/Styles.Text.Footnote.Medium_Regular"
                 app:layout_constraintBottom_toTopOf="@+id/tv_discounted_price"
                 app:layout_constraintStart_toStartOf="parent"
