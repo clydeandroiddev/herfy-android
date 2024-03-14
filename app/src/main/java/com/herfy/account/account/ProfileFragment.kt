@@ -1,11 +1,15 @@
 package com.herfy.account.account
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.facebook.login.LoginManager
@@ -15,6 +19,7 @@ import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
 import com.herfy.commonstyles.R
+import com.herfy.curbside.curbsidenew.CurbsideNewActivity
 import com.herfy.main.MainActivity
 import com.herfy.profile.databinding.FragmentUserProfileBinding
 import com.herfy.utils.analytics.MixpanelUtil.Companion.logout
@@ -31,7 +36,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
 
 @AndroidEntryPoint
-class ProfileFragment : BaseFragment(), AccountContract.View {
+class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialogFragment.OnAction {
     private var accountPresenter: AccountContract.Presenter? = null
 
     private lateinit var binding: FragmentUserProfileBinding
@@ -75,16 +80,35 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
             back.setOnClickListener {
                 navigateUp()
             }
+
             editProfile.setOnClickListener {
                 findNavController().navigate(
                     ProfileFragmentDirections.actionProfileToEdit()
                 )
             }
+
             deliveryAddressLayout.setOnClickListener {
                 findNavController().navigate(
                     ProfileFragmentDirections.actionProfileToUserAddresses()
                 )
             }
+
+            paymentMethodsLayout.setOnClickListener {
+                findNavController().navigate(
+                    ProfileFragmentDirections.actionProfileToUserPayments()
+                )
+            }
+
+            curbsideLayout.setOnClickListener {
+                showCurbside()
+            }
+
+            deleteAccountLayout.setOnClickListener {
+                DeleteAccountDialogFragment.newInstance(onAction = this@ProfileFragment).show(
+                    parentFragmentManager, DeleteAccountDialogFragment::class.java.toString()
+                )
+            }
+
             logoutLayout.setOnClickListener {
                 LoginManager.getInstance().logOut()
                 val googleSignInOptions =
@@ -99,7 +123,7 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
                 SoloAuth.getInstance().logout()
                 logout()
                 AuthUtil.getInstance().customer = null
-                val intent: Intent = Intent(requireActivity(), MainActivity::class.java)
+                val intent = Intent(requireActivity(), MainActivity::class.java)
                 intent.putExtra("home", false)
                 intent.putExtra("menu", true)
                 intent.putExtra("cart", false)
@@ -108,7 +132,7 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 startActivity(intent)
                 requireActivity().overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
-                requireActivity().finishAffinity()
+                requireActivity().finish()
             }
         }
     }
@@ -164,14 +188,31 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
             binding.deleteAccountLabel.isVisible = false
             binding.deleteAccountDescription.isVisible = false
             binding.deleteMyAccountLabel.isVisible = false
+            binding.deleteAccountLayout.isVisible = false
             binding.deleteImage.isVisible = false
         } else {
             binding.profileCard.setCardBackgroundColor(requireActivity().resources.getColor(R.color.white))
             binding.deleteAccountLabel.isVisible = true
             binding.deleteAccountDescription.isVisible = true
             binding.deleteMyAccountLabel.isVisible = true
+            binding.deleteAccountLayout.isVisible = true
             binding.deleteImage.isVisible = true
             binding.editLabel.text = CacheUtil.getInstance().getTranslations(Text.EDIT, "Edit")
+        }
+    }
+
+    private var curbsideLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult? ->
+        if (result?.resultCode == Activity.RESULT_OK) {
+        }
+    }
+
+    private fun showCurbside() {
+        activity?.let {
+            val intent = Intent(it, CurbsideNewActivity::class.java)
+            intent.putExtra("fromProfile", true)
+            curbsideLauncher.launch(intent)
         }
     }
 
@@ -220,14 +261,13 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
     }
 
     override fun showError(error: String?) {
-        showAlertDialog(
-            context = requireContext(),
+        dismissDialogs()
+        showAlertDialog(context = requireContext(),
             title = "",
             body = error.orEmpty(),
             dialogInterface = { dialog, which ->
                 dialog.dismiss()
-            }
-        )
+            })
     }
 
     override fun showAccount() {
@@ -251,7 +291,26 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
     }
 
     override fun accountDeleted() {
-
+        dismissDialogs()
+        LoginManager.getInstance().logOut()
+        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(BuildUtil.googleInClient(requireActivity())).requestEmail().build()
+        val googleSignInClient = GoogleSignIn.getClient(requireActivity(), googleSignInOptions)
+        googleSignInClient.signOut()
+        CacheUtil.getInstance().clearOrder()
+        SoloAuth.getInstance().logout()
+        logout()
+        AuthUtil.getInstance().customer = null
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        intent.putExtra("home", false)
+        intent.putExtra("menu", true)
+        intent.putExtra("cart", false)
+        intent.putExtra("settings", false)
+        intent.putExtra("isFromLogOut", true)
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        startActivity(intent)
+        requireActivity().overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
+        requireActivity().finish()
     }
 
     override fun showCustomerCards() {
@@ -260,5 +319,14 @@ class ProfileFragment : BaseFragment(), AccountContract.View {
 
     override fun showRevelRewardPoints(pointValue: Double?) {
 
+    }
+
+    override fun onClose() {
+
+    }
+
+    override fun onDelete() {
+        showLoadingDialog()
+        accountPresenter?.deleteAccount()
     }
 }

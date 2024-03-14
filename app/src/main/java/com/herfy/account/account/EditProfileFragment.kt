@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+
 
 @AndroidEntryPoint
 class EditProfileFragment : BaseFragment(), AccountContract.View {
@@ -125,9 +128,9 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
                 .getTranslations(Text.LAST_NAME_EMPTY, "Please complete your full name")
             showError(error)
         } else {
+            showLoadingDialog()
             val firstName = fName[0]
             val lastName = fName.drop(1).joinToString(" ")
-            showLoadingDialog()
             accountPresenter?.save(
                 firstName,
                 lastName,

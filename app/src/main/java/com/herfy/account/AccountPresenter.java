@@ -216,8 +216,6 @@ public class AccountPresenter implements AccountContract.Presenter {
         } else if (!StringUtil.isValidName(firstName)) {
             valid = false;
             accountView.showErrorFirstName(CacheUtil.getInstance().getTranslations(Text.NAME_VALIDATION, "Name fields should not accept numbers and special character."));
-        } else {
-            accountView.showErrorFirstName("");
         }
 
         if (lastName.isEmpty()) {
@@ -226,8 +224,6 @@ public class AccountPresenter implements AccountContract.Presenter {
         } else if (!StringUtil.isValidName(lastName)) {
             valid = false;
             accountView.showErrorFirstName(CacheUtil.getInstance().getTranslations(Text.NAME_VALIDATION, "Name fields should not accept numbers and special character."));
-        } else {
-            accountView.showErrorLastName("");
         }
 
         String birthDate = "";
@@ -250,8 +246,6 @@ public class AccountPresenter implements AccountContract.Presenter {
         } else if (!StringUtil.isValidPhoneNumber(phoneNumber)) {
             valid = false;
             accountView.showErrorPhoneNumber(CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_INVALID));
-        } else {
-            accountView.showErrorPhoneNumber("");
         }
 
 

@@ -56,7 +56,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="Edit Profile" />
+                        tools:text="Addresses" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -65,275 +65,18 @@
                     android:layout_height="1dp"
                     android:background="#E6E8EB" />
 
-                <ScrollView
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/addresses"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/nameLabel"
-                            style="@style/Styles.Text.Caption.Regular"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:includeFontPadding="false"
-                            android:textColor="#0C0C0C"
-                            android:textSize="14sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:text="Name" />
-
-                        <androidx.appcompat.widget.AppCompatEditText
-                            android:id="@+id/nameEdit"
-                            style="@style/Styles.Text.Caption.Semibold"
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:layout_marginTop="8dp"
-                            android:background="@drawable/background_edit_text"
-                            android:gravity="center_vertical"
-                            android:imeOptions="actionNext"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:singleLine="true"
-                            android:textColor="#0C0C0C"
-                            android:textSize="14sp"
-                            tools:text="Ahmed Ahmasi" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/phoneNumberLabel"
-                            style="@style/Styles.Text.Caption.Regular"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp"
-                            android:gravity="center"
-                            android:includeFontPadding="false"
-                            android:textColor="#0C0C0C"
-                            android:textSize="14sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:text="Phone Number" />
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:id="@+id/numberLayout"
-                            android:layout_marginTop="8dp"
-                            android:background="@drawable/background_edit_text">
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/dialCode"
-                                style="@style/Styles.Text.Caption.Semibold"
-                                android:layout_width="wrap_content"
-                                android:layout_height="48dp"
-                                android:gravity="center_vertical"
-                                android:paddingStart="16dp"
-                                android:paddingEnd="4dp"
-                                android:singleLine="true"
-                                android:textColor="#0C0C0C"
-                                android:textSize="14sp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:text="+966" />
-
-                            <androidx.appcompat.widget.AppCompatEditText
-                                android:id="@+id/numberEdit"
-                                style="@style/Styles.Text.Caption.Semibold"
-                                android:layout_width="0dp"
-                                android:layout_height="48dp"
-                                android:background="@null"
-                                android:gravity="center_vertical"
-                                android:imeOptions="actionDone"
-                                android:singleLine="true"
-                                android:textColor="#0C0C0C"
-                                android:textSize="14sp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/dialCode"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:text="7887373" />
-
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/genderLabel"
-                            style="@style/Styles.Text.Caption.Regular"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp"
-                            android:gravity="center"
-                            android:includeFontPadding="false"
-                            android:textColor="#0C0C0C"
-                            android:textSize="14sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:text="Gender" />
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/maleSelection"
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:layout_marginTop="8dp"
-                            android:background="@drawable/background_common_default">
-
-                            <ImageView
-                                android:id="@+id/maleImage"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
-                                android:src="@drawable/ic_male"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/maleLabel"
-                                style="@style/Styles.Text.Footnote_Bold"
-                                android:layout_width="wrap_content"
-                                android:layout_height="48dp"
-                                android:gravity="center_vertical"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="4dp"
-                                android:singleLine="true"
-                                android:textColor="#0C0C0C"
-                                android:textSize="14sp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/maleImage"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:text="Male" />
-
-                            <ImageView
-                                android:id="@+id/selectionMale"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="16dp"
-                                android:src="@drawable/ic_store_unselected"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/femaleSelection"
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:layout_marginTop="8dp"
-                            android:background="@drawable/background_common_default">
-
-                            <ImageView
-                                android:id="@+id/femaleImage"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
-                                android:src="@drawable/ic_female"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/femaleLabel"
-                                style="@style/Styles.Text.Footnote_Bold"
-                                android:layout_width="wrap_content"
-                                android:layout_height="48dp"
-                                android:gravity="center_vertical"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="4dp"
-                                android:singleLine="true"
-                                android:textColor="#0C0C0C"
-                                android:textSize="14sp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/femaleImage"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:text="Female" />
-
-                            <ImageView
-                                android:id="@+id/selectionFemale"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="16dp"
-                                android:src="@drawable/ic_store_unselected"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/dateOfBirthLabel"
-                            style="@style/Styles.Text.Caption.Regular"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp"
-                            android:gravity="center"
-                            android:includeFontPadding="false"
-                            android:textColor="#0C0C0C"
-                            android:textSize="14sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:text="Date of Birth" />
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/dateOfBirthLayout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:background="@drawable/background_edit_text">
-
-                            <androidx.appcompat.widget.AppCompatEditText
-                                android:id="@+id/birthDate"
-                                style="@style/Styles.Text.Caption.Semibold"
-                                android:layout_width="wrap_content"
-                                android:layout_height="48dp"
-                                android:editable="false"
-                                android:gravity="center_vertical"
-                                android:paddingStart="16dp"
-                                android:paddingEnd="4dp"
-                                android:singleLine="true"
-                                android:textColor="#0C0C0C"
-                                android:textSize="14sp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:text="18-10-1997" />
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="16dp"
-                                android:src="@drawable/ic_birthday_calendar"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <View
-                                android:layout_width="0dp"
-                                android:layout_height="0dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    </LinearLayout>
-
-                </ScrollView>
+                    android:clipToPadding="false"
+                    android:paddingStart="16dp"
+                    android:paddingTop="20dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="20dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="4"
+                    tools:listitem="@layout/item_address_delivery_new" />
 
             </LinearLayout>
 
@@ -359,7 +102,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Save Changes" />
+                    tools:text="Add New Address" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

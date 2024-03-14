@@ -22,6 +22,11 @@
             app:destination="@id/address_profile_fragment"
             app:popUpTo="@+id/profile_fragment" />
 
+        <action
+            android:id="@+id/action_profile_to_user_payments"
+            app:destination="@id/payments_profile_fragment"
+            app:popUpTo="@+id/profile_fragment" />
+
     </fragment>
 
     <fragment
@@ -36,6 +41,13 @@
         android:id="@+id/address_profile_fragment"
         android:name="com.herfy.account.account.AddressUserFragment"
         tools:layout="@layout/fragment_user_addresses">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/payments_profile_fragment"
+        android:name="com.herfy.account.account.PaymentMethodsUserFragment"
+        tools:layout="@layout/fragment_user_payment_methods">
 
     </fragment>
 

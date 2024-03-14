@@ -1009,6 +1009,9 @@ public class Text {
     public static final String HISTORY_LABEL = "history_label";
     public static final String EARNED_LABEL = "earned_label";
     public static final String USED_LABEL = "used_label";
+    public static final String POINTS_EQUAL_SAR = "points_equal_sar";
+    public static final String ADD_TO_BAG_AMOUNT = "add_to_bag_amount";
+    public static final String UPLOAD_IMAGE = "upload_image";
     public static final String DELIVERY_ADDRESSES = "delivery_addresses";
     public static final String CURBSIDE_VEHICLES = "curbside_vehicles";
     public static final String LOGOUT = "logout";
@@ -1028,5 +1031,15 @@ public class Text {
     public static final String YOUR_NAME = "your_name";
 
     public static final String CAN_NOT_BE_EDITED = "can_not_be_edited";
+
+    public static final String ARE_YOU_SURE_YOU_WANT_TO_DELETE = "are_you_sure_want_delete";
+    public static final String THIS_ACTION_CAN_NOT_REVERSE = "this_action_can_not_reverse";
+
+    public static final String DELETE_LABEL = "delete_label";
+    public static final String CANCEL_LABEL = "cancel_label";
+
+    public static final String ADD_NEW_ADDRESS_LABEL = "add_new_address_label";
+
+    public static final String ADDRESSES_LABEL = "addresses";
 
 }
