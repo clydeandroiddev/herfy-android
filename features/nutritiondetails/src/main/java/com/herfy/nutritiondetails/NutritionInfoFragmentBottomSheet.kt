@@ -86,7 +86,7 @@ class NutritionInfoFragmentBottomSheet: BottomSheetDialogFragment() {
                     txtStoryDescription.text = params.nutritionStory
                     cacheUtilHelper.let { cacheHelper ->
                         binding.txtNutritionLabel.text =
-                            cacheHelper.getTranslations(Text.NUTRITION_INFO, "Nutrition info")
+                            cacheHelper.getTranslations(Text.NUTRITION_INFO, "Nutrition info.")
                         txtStory.text = cacheHelper.getTranslations(Text.STORY, "Story")
                     }
                 }
