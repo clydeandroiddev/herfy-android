@@ -161,6 +161,7 @@
 									android:layout_marginEnd="12dp"
 									android:background="@null"
 									android:imeOptions="actionSearch"
+									android:textAlignment="viewStart"
 									android:textColorHint="#BABABA"
 									android:textColor="#0C0C0C"
 									android:hint="Search menu"/>
