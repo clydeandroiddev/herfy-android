@@ -21,7 +21,6 @@ import com.skylinedynamics.solosdk.api.models.objects.PaymentType
 import com.skylinedynamics.solosdk.api.models.objects.PrayerTime
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.ArrayList
 import java.util.Calendar
 
 @AndroidEntryPoint
@@ -45,6 +44,7 @@ class PaymentMethodsUserFragment : BaseFragment(), PaymentContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         paymentPresenter?.start()
+        setupViews()
     }
 
     override fun setPresenter(presenter: PaymentContract.Presenter) {

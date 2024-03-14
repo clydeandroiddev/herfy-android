@@ -203,7 +203,7 @@ public interface OrderContract {
 
         boolean validateUpdateAddAddress(String phoneNumber);
 
-        void addAddress(String phoneNumber, String label, String note);
+        void addAddress(String phoneNumber, String label, String note, String flat);
 
         void updateAddress(boolean fromSave, Address address, boolean isExistingAddress);
 

@@ -1,11 +1,13 @@
 package com.herfy.order.views.ordertype
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.herfy.ordertype.databinding.ItemAddressDeliveryNewBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import io.shipbook.shipbooksdk.Log
@@ -40,6 +42,7 @@ class DeliveryAddressAdapter(
                 deliveryMain.setBackgroundResource(com.herfy.ordertype.R.drawable.bg_deliver_selected)
                 selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_store_selected)
             }
+
 //            editDelivery.setOnClickListener {
 //                addressListener.onEditAddress(item, position)
 //            }
