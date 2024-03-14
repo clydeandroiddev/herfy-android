@@ -146,7 +146,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 if (args.menuCategoryId.isNotEmpty()) {
                     menuPresenter.setMenuCategory(args.menuCategoryId)
                 }
-                menuPresenter.getMenuItem(false, args.menuItemId)
+                val isUpsell = args.isUpsell
+                if(isUpsell){
+                    menuPresenter.getMenuItem(false, args.menuItemId, isUpsell)
+                }else {
+                    menuPresenter.getMenuItem(false, args.menuItemId)
+                }
             } else if (args.cartMenuItemPosition != -1) {
                 cartMenuItem = args.cartMenuItemPosition
                 val menuItems: List<MenuItem>? = CacheUtil.getInstance().cart

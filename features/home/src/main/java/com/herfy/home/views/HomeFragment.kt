@@ -23,6 +23,7 @@ import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.setInteractionDisabled
 import com.herfy.utils.extensions.visible
@@ -67,7 +68,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             layoutLoyalty.apply {
                 progress.isEnabled = false
                 btnContinue.setOnClickListener {
-                    context?.let{
+                    context?.let {
                         val intent = Intent()
                         intent.setClassName(it, Navigation.AUTH_ACTIVITY)
                         intent.putExtra("sign_in", true)
@@ -78,7 +79,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     }
 
                 }
-                clSeeRewards.setOnClickListener{
+                clSeeRewards.setOnClickListener {
                     context?.let {
                         val intent = Intent()
                         intent.setClassName(it, Navigation.LOYALTY_ACTIVITY)
@@ -112,10 +113,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             val authUtil = AuthUtil.getInstance()
             if (authUtil.isSignedIn && authUtil.customer != null) {
                 tvHomeGreetings.visible()
+                ivHomeGreetings.visible()
                 tvHomeGreetings.text =
                     "${TimeUtil.getGreetings()}, ${authUtil.customer.attributes.firstName}!"
             } else {
-                tvHomeGreetings.gone()
+                ivHomeGreetings.gone()
+                tvHomeGreetings.visible()
+                tvHomeGreetings.text = cacheUtilHelper?.getTranslations(Text.WELCOME_TO_HERFY, "Welcome to Herfy!")?:""
             }
         }
     }
@@ -153,8 +157,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     tvSeeRewards.text =
                         cacheHelper.getTranslations(Text.SEE_MY_REWARDS, "See my rewards")
                     tvTitleEmptyState.text = cacheHelper.getTranslations(
-                        Text.BECOME_ASHAB_HERFY,
-                        "Become an Ashab Herfy"
+                        Text.BECOME_ASHAB_HERFY, "Become an Ashab Herfy"
                     )
                     tvDescriptionEmptyState.text = cacheHelper.getTranslations(
                         Text.BECOME_ASHAB_HERFY_DESCRIPTION,
@@ -173,7 +176,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
                 val displayMetrics = DisplayMetrics()
                 it.windowManager.defaultDisplay.getMetrics(displayMetrics)
-                val sliderHeight = (displayMetrics.widthPixels / 1.5).toInt()
+                val sliderHeight = (displayMetrics.widthPixels / 1.1).toInt()
                 layoutBanner.mainToolbar.layoutParams.height = sliderHeight
                 layoutBanner.sliderViewPager.layoutParams.height = sliderHeight
                 layoutBanner.newMenuBannerShimmer.layoutParams.height = sliderHeight
@@ -273,7 +276,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 activity?.apply {
                     runOnUiThread {
                         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
-                        findNavController().navigate("nav_menu_item/${pair.first}/${pair.second}")
+                        findNavController().navigateToDeepLink("nav_menu_item/${pair.first}/${pair.second}")
                     }
                 }
             }
@@ -281,15 +284,15 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.showMenuCategory.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { menuCategoryId ->
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
-                findNavController().navigate("nav_menu/$menuCategoryId")
+                findNavController().navigateToDeepLink("nav_menu/$menuCategoryId")
             }
         }
 
         viewModel.showPromo.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { promo ->
                 promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(
-                    promo,
-                    viewModel)
+                    promo, viewModel
+                )
                 promotionDetailBottomSheet?.show(
                     childFragmentManager, PromotionDetailBottomSheet::class.java.simpleName
                 )
@@ -345,28 +348,27 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     tvPoints.text = loyalty.attributes.pointsAccumulated.toString()
                     val loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
                     if (loyaltyTier.isNotEmpty()) {
-                        var tierBackground = R.drawable.background_diamond_tier
+                        var tierBackground = R.drawable.background_bronze_tier
                         if (loyaltyTier.equals(
-                                "Bronze",
-                                ignoreCase = true
-                            ) || loyaltyTier.equals("برونزية")
-                        ) {
-                            tierBackground = R.drawable.background_bronze_tier
-                        } else if (loyaltyTier.equals(
-                                "Silver",
-                                ignoreCase = true
-                            ) || loyaltyTier.equals("فضي")
+                                "Silver", ignoreCase = true
+                            ) || loyaltyTier == "فضي"
                         ) {
                             tierBackground = R.drawable.background_silver_tier
                         } else if (loyaltyTier.equals(
-                                "Gold",
-                                ignoreCase = true
-                            ) || loyaltyTier.equals("ذهبي")
+                                "Gold", ignoreCase = true
+                            ) || loyaltyTier == "ذهبي"
                         ) {
                             tierBackground = R.drawable.background_gold_tier
+                        } else if (loyaltyTier.equals(
+                                "Diamond",
+                                true
+                            ) || loyaltyTier == "البلاتين"
+                        ) {
+                            tierBackground = R.drawable.background_diamond_tier
                         }
                         tvLoyaltyTier.text = loyaltyTier
                         tvLoyaltyTier.setBackgroundResource(tierBackground)
+                        tvProgressTier.text = loyaltyTier
                     }
 
                 } ?: run {
@@ -385,16 +387,17 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             progress.progress = 0
                             progressLabel.text = "You are now a Tier member"
                             progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                            tvProgressTier.text = tier?.name?:""
                         }
                     } else {
                         binding.layoutLoyalty.apply {
                             progress.max = 100
                             progress.progress = 100
                             progressLabel.text = CacheUtil.getInstance().getTranslations(
-                                Text.TOTAL_POINTS_MAX_OUT,
-                                "You have maxed out on our tier levels"
+                                Text.TOTAL_POINTS_MAX_OUT, "You have maxed out on our tier levels"
                             )
                             progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                            tvProgressTier.text = tier.name
                         }
                     }
 
@@ -420,15 +423,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     binding.layoutLoyalty.apply {
                         progressLabel.text = HtmlCompat.fromHtml(
                             CacheUtil.getInstance().getTranslations(
-                                Text.POINTS_UNTIL_NEXT_TIER,
-                                "(x) points until (y)"
+                                Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)"
                             ).replace("(x)", pointsToNextTier.toString()).replace(
                                 "(y)", "<b>" + tier!!.name.substring(0, 1).uppercase(
                                     Locale.getDefault()
                                 ) + tier.name.substring(1).lowercase(Locale.getDefault())
                             ) + "</b>", HtmlCompat.FROM_HTML_MODE_LEGACY
                         )
-                        tvProgressTier.text = tier.name
+
 
                     }
                 }
@@ -516,21 +518,23 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.showCart.observeNonNull(this){
+        viewModel.showCart.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { isAvail ->
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
                 findNavController().navigate("nav_cart/$isAvail")
             }
         }
 
-        viewModel.showProgressBar.observe(this){
+        viewModel.showProgressBar.observe(this) {
             activity?.window?.setInteractionDisabled(it)
-            if(it){
+            if (it) {
                 showProgressDialog(true)
-            }else {
+            } else {
                 dismissProgressDialog()
             }
         }
+
+
 
 
     }
@@ -600,7 +604,9 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             activity?.let {
                 val itemHeight = (ViewUtil.getScreenWidth(it) / 1.65).toInt()
                 promotionsAdapter = PromotionsAdapter(
-                    promoListener = viewModel, itemWidth = 0, itemHeight = itemHeight,
+                    promoListener = viewModel,
+                    itemWidth = 0,
+                    itemHeight = itemHeight,
                     defaultOrderTypeCount = CacheUtil.getInstance().application.attributes.getOrderTypes().size,
                     cacheUtil = CacheUtil.getInstance()
                 )

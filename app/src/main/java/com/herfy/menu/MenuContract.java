@@ -251,6 +251,8 @@ public interface MenuContract {
 
         void getMenuItem(boolean addToBag, String menuItemId);
 
+        void getMenuItem(boolean addToBag, String menuItemId, boolean isUpsell);
+
         void prepareMenuItem(boolean addToBag);
 
         void setMenuItem(MenuItem menuItem);

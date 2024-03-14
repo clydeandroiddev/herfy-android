@@ -2040,6 +2040,197 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
+    public void getMenuItem(boolean addToBag, String menuItemId, boolean isUpsell) {
+
+        Executor executor = Executors.newSingleThreadExecutor();
+
+        AppDatabase appDatabase = AppDatabase.getInstance();
+
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                String data = getMenuItemData(appDatabase, menuItemId);
+                if (data != null && !data.isEmpty()) {
+                    String applicationId = CacheUtil.getInstance().getApplication().getId();
+                    menuItem = MenuUtil.processMenuItemCustomObject(GsonHelper.gsonFinal().fromJson(data, MenuItem.class));
+
+                    if (menuCategory == null) {
+                        MenuItemEntity menuItemEntity = appDatabase.menuItemEntityDao().findById(applicationId, menuItemId);
+                        setMenuCategory(menuItemEntity.getMenuCategoryId());
+                    }
+
+                    if (menuItem.isCombo) {
+                        menuView.showLoader();
+                    }
+                    menuItem.getAttributes().setUpsell(isUpsell);
+                    menuView.setMenuItemDetails(menuItem);
+
+                    LinkedList<Allergen> allergens = new LinkedList<>();
+                    for (AllergenDb allergenDb : appDatabase.allergenDao().findAllByApplicationAndIds(applicationId, menuItem.getAllergensIds().toArray(new String[menuItem.getAllergensIds().size()]))) {
+                        AllergenCdn allergenCdn = GsonHelper.gsonFinal().fromJson(allergenDb.data, AllergenCdn.class);
+                        allergens.add(AllergenCdn.convert(allergenCdn, LocaleUtil.getInstance().getLanguage()));
+                    }
+                    Collections.sort(allergens, new Comparator<Allergen>() {
+                        @Override
+                        public int compare(Allergen allergen1, Allergen allergen2) {
+                            return allergen1.getAttributes().getDisplayOrder() - allergen2.getAttributes().getDisplayOrder();
+                        }
+                    });
+                    menuItem.setAllergens(allergens);
+
+                    LinkedList<Ingredient> ingredients = new LinkedList<>();
+                    HashMap<String, Ingredient> ingredientIds = new HashMap<>();
+                    for (Ingredient ingredient : menuItem.getIngredientIds()) {
+                        ingredientIds.put(ingredient.getIngredientId(), ingredient);
+                    }
+                    for (IngredientDb ingredientDb : appDatabase.ingredientDao().findAllByApplicationAndIds(applicationId, ingredientIds.keySet().toArray(new String[ingredientIds.size()]))) {
+                        IngredientCdn ingredientCdn = GsonHelper.gsonFinal().fromJson(ingredientDb.data, IngredientCdn.class);
+                        Ingredient ingredient = IngredientCdn.convert(ingredientCdn, LocaleUtil.getInstance().getLanguage());
+                        ingredient.setId(ingredientIds.get(ingredientCdn.getId()).getId());
+                        ingredients.add(ingredient);
+                    }
+                    Collections.sort(ingredients, new Comparator<Ingredient>() {
+                        @Override
+                        public int compare(Ingredient ingredient1, Ingredient ingredient2) {
+                            return ingredient1.getAttributes().getDisplayOrder() - ingredient2.getAttributes().getDisplayOrder();
+                        }
+                    });
+                    menuItem.setIngredients(ingredients);
+
+                    //menuItemModifierGroups.clear();
+
+                    ModifierGroup sizes = new ModifierGroup();
+                    LinkedList<ModifierGroup> modifierGroups = new LinkedList<>();
+                    HashMap<String, ModifierGroup> modifierGroupIds = new HashMap<>();
+                    HashMap<String, Integer> modifierGroupDisplayOrders = new HashMap<>();
+                    for (ModifierGroup modifierGroup : menuItem.getModifierGroupIds()) {
+                        modifierGroupIds.put(modifierGroup.getId(), modifierGroup);
+                        //modifierGroupDisplayOrders.put(modifierGroup.getId(), menuItem.getModifierGroupIds().indexOf(modifierGroup));
+                    }
+                    for (ModifierGroupDb modifierGroupDb : appDatabase.modifierGroupDao().findAllByApplicationAndIds(applicationId, modifierGroupIds.keySet().toArray(new String[modifierGroupIds.size()]))) {
+                        ModifierGroupCdn modifierGroupCdn = MenuUtil.processModifierGroupCustomObject(GsonHelper.gsonFinal().fromJson(modifierGroupDb.data, ModifierGroupCdn.class));
+                        LinkedList<ModifierItem> modifierItems = new LinkedList<>();
+                        ArrayList<ModifierItem> modifierGroupModifierItems = modifierGroupIds.get(modifierGroupCdn.getId()).getModifiers();
+                        ArrayList<String> modifierGroupModifierItemIds = new ArrayList<>();
+                        ArrayList<Integer> excludeModifierItems = modifierGroupIds.get(modifierGroupCdn.getId()).getExcludeModifiers();
+                        Set<String> excludedModifierItems = new HashSet<>();
+                        for (Integer exclude : excludeModifierItems) {
+                            excludedModifierItems.add(String.valueOf(exclude));
+                        }
+
+                        // Exclude by location
+                        Store orderStore = CacheUtil.getInstance().getOrderStore();
+                        List<String> excludedItemsByLocationId = Observable.fromArray(modifierGroupIds.get(modifierGroupCdn.getId()))
+                                .map(modifierGroup -> {
+                                    if (orderStore == null) return new ArrayList<ModifierItem>();
+                                    // if group contains store id in included location, add all modifiers within it to the excluded items
+                                    // else check modifier item excluded location if it contains store id
+                                    if (Observable.fromIterable(modifierGroup.getExcludedLocations())
+                                            .map(Object::toString)
+                                            .any(excludedLocation -> excludedLocation.equals(orderStore.getId()))
+                                            .blockingGet()) {
+                                        return modifierGroup.getModifiers();
+                                    } else {
+                                        return Observable.fromIterable(modifierGroup.getModifierItems())
+                                                .filter(modifierItem -> Observable.fromIterable(modifierItem.getAttributes().getExcludedLocations())
+                                                        .any(item -> item.toString().equals(orderStore.getId()))
+                                                        .blockingGet())
+                                                .toList()
+                                                .blockingGet();
+                                    }
+                                })
+                                .flatMap(Observable::fromIterable)
+                                .map(ModifierItem::getId)
+                                .toList()
+                                .blockingGet();
+
+                        excludedModifierItems.addAll(excludedItemsByLocationId);
+
+                        HashMap<String, Integer> modifierGroupModifierItemDisplayOrders = new HashMap<>();
+                        for (ModifierItem modifierGroupModifierItem : modifierGroupModifierItems) {
+                            if (!excludedModifierItems.contains(modifierGroupModifierItem.getId())) {
+                                modifierGroupModifierItemIds.add(modifierGroupModifierItem.getId());
+                                modifierGroupModifierItemDisplayOrders.put(modifierGroupModifierItem.getId(), modifierGroupModifierItems.indexOf(modifierGroupModifierItem));
+                            }
+                        }
+                        for (ModifierItemDb modifierItemDb : appDatabase.modifierItemDao().findAllByApplicationAndIds(applicationId, modifierGroupModifierItemIds.toArray(new String[modifierGroupModifierItemIds.size()]))) {
+                            ModifierItemCdn modifierItemCdn = GsonHelper.gsonFinal().fromJson(modifierItemDb.data, ModifierItemCdn.class);
+                            ModifierItem modifierItem = ModifierItemCdn.convert(modifierItemCdn, LocaleUtil.getInstance().getLanguage());
+                            modifierItem.getAttributes().setSelected(modifierItem.getAttributes().getMinimum() == 1);
+                            if (modifierGroupModifierItemDisplayOrders.containsKey(modifierItem.getId()) && modifierGroupModifierItemDisplayOrders.get(modifierItem.getId()) != null) {
+                                modifierItem.getAttributes().setDisplayOrder(modifierGroupModifierItemDisplayOrders.get(modifierItem.getId()));
+                            }
+                            boolean isExcluded = orderStore != null && Observable.fromIterable(modifierItem.getAttributes().getExcludedLocations())
+                                    .any(item -> item.toString().equals(orderStore.getId()))
+                                    .blockingGet();
+                            if (!isExcluded) {
+                                modifierItems.add(modifierItem);
+                            }
+                        }
+                        Collections.sort(modifierItems, new Comparator<ModifierItem>() {
+                            @Override
+                            public int compare(ModifierItem modifierItem1, ModifierItem modifierItem2) {
+                                return modifierItem1.getAttributes().getDisplayOrder() - modifierItem2.getAttributes().getDisplayOrder();
+                            }
+                        });
+                        ModifierGroup modifierGroup = ModifierGroupCdn.convert(modifierGroupCdn, LocaleUtil.getInstance().getLanguage());
+                        ModifierGroup mapModifierGroup = modifierGroupIds.get(modifierGroup.getId());
+                        if (mapModifierGroup != null) {
+                            modifierGroup.getAttributes().setMinimum(mapModifierGroup.getMin());
+                            modifierGroup.getAttributes().setMaximum(mapModifierGroup.getMax());
+                            modifierGroup.getAttributes().setDisplayOrder(mapModifierGroup.getDisplayOrder());
+                            modifierGroup.getAttributes().setFreeModifiersCount(mapModifierGroup.getFreeModifiersCount());
+                            modifierGroup.setDefaultModifiers(new ArrayList<>(mapModifierGroup.getDefaultModifiers()));
+                            modifierGroup.getAttributes().setVisibilityConfig(mapModifierGroup.getVisibilityConfig());
+                        }
+                    /*if(modifierGroupDisplayOrders.containsKey(modifierGroup.getId()) && modifierGroupDisplayOrders.get(modifierGroup.getId()) != null) {
+                        modifierGroup.getAttributes().setDisplayOrder(modifierGroupDisplayOrders.get(modifierGroup.getId()));
+                    }*/
+                        modifierGroup.setModifierItems(modifierItems);
+
+                        //hamburgini ingredients handling
+                        if (BuildConfig.SOLO_CONCEPT == "1") {
+
+                            for (ModifierItem modifierItem : modifierGroup.getModifierItems()) {
+                                for (String modifierId : modifierGroup.getDefaultModifiers()) {
+                                    if (modifierItem.getId().equalsIgnoreCase(modifierId)) {
+                                        modifierItem.getAttributes().setQuantity(1);
+                                        modifierItem.getAttributes().setSelected(true);
+                                    }
+                                }
+                            }
+
+                        }
+
+
+                        if (modifierGroupDb.type == ModifierGroupType.SIZES.getValue()) {
+                            sizes = modifierGroup;
+                        } else {
+                            //menuItemModifierGroups.put(modifierGroup.getId(), modifierGroup);
+                            modifierGroups.add(modifierGroup);
+                        }
+                    }
+                    menuItem.setSizes(sizes);
+                    Collections.sort(modifierGroups, new Comparator<ModifierGroup>() {
+                        @Override
+                        public int compare(ModifierGroup modifierGroup1, ModifierGroup modifierGroup2) {
+                            return modifierGroup1.getAttributes().getDisplayOrder() - modifierGroup2.getAttributes().getDisplayOrder();
+                        }
+                    });
+
+
+                    menuItem.setModifierGroups(modifierGroups);
+
+                    prepareMenuItem(addToBag);
+
+                } else {
+                    menuView.showError(CacheUtil.getInstance().getTranslations(Text.ITEM_NO_LONGER_AVAILABLE));
+                }
+            }
+        });
+
+    }
+    @Override
     public void getMenuItem(boolean addToBag, String menuItemId) {
 
         Executor executor = Executors.newSingleThreadExecutor();
@@ -2062,7 +2253,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                     if (menuItem.isCombo) {
                         menuView.showLoader();
                     }
-
                     menuView.setMenuItemDetails(menuItem);
 
                     LinkedList<Allergen> allergens = new LinkedList<>();
