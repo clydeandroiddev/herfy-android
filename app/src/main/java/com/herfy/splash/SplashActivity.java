@@ -94,6 +94,8 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
     private int sliderPosition = 0;
     private MediaController mediaControls;
 
+    private boolean videoCompleted = false;
+
     private final ActivityResultLauncher<String> notificationsPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 checkAlarmPermission();
@@ -318,15 +320,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         if (!language) {
             proceedMain = false;
             intent = new Intent(this, LanguageNewActivity.class);
-        }
-//        else if (!onboarding && BuildUtil.splashOnboardingApp()) {
-//            proceedMain = false;
-//            intent = new Intent(this, OnboardingActivity.class);
-//        } else if (BuildConfig.SUBSCRIPTION_ENABLED && CacheUtil.getInstance().getMode() == 0) {
-//            proceedMain = false;
-//            intent = new Intent(this, SelectionActivity.class);
-//        }
-        else {
+        } else {
             intent.putExtra("home", true);
         }
 
@@ -339,7 +333,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             startActivity(intent, bundle);
             finish();
         } else {
-            if (BuildConfig.DISABLE_SPLASH_ANIMATION) {
+            if(BuildConfig.DISABLE_SPLASH_ANIMATION || BuildUtil.splashBackgroundApp() || videoCompleted) {
                 proceedNext(false, finalIntent);
             } else {
                 animateLogo(false, finalIntent);
@@ -373,9 +367,12 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             image.setVisibility(View.GONE);
         }
 
-        background.setVisibility(View.VISIBLE);
-
-        if (BuildUtil.splashVideoApp()) {
+        if (BuildUtil.splashBackgroundApp()) {
+            if (BuildConfig.SOLO_CONCEPT != "Adjx12OokD0") {
+                image.setImageResource(android.R.color.transparent);
+            }
+            background.setVisibility(View.VISIBLE);
+        } else if (BuildUtil.splashVideoApp()) {
             vvSplash.setVisibility(View.VISIBLE);
             image.setVisibility(View.INVISIBLE);
             background.setVisibility(View.INVISIBLE);
@@ -386,6 +383,17 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             vvSplash.setVideoURI(Uri.parse("android.resource://" + this.getPackageName() + "/" + R.raw.splash_video));
             vvSplash.requestFocus();
             vvSplash.start();
+            vvSplash.setOnCompletionListener(mediaPlayer -> {
+                videoCompleted = true;
+                boolean forceLocation = false;
+                if (CacheUtil.getInstance().getApplication() != null && CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0) {
+                    forceLocation = true;
+                }
+                if(CacheUtil.getInstance().isSeparatedMenus() && CacheUtil.getInstance().getCartQuantity() == 0) {
+                    forceLocation = false;
+                }
+                proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), forceLocation);
+            });
         } else {
             image.setImageResource(BuildUtil.splashImage());
         }
