@@ -44,8 +44,6 @@ import com.herfy.base.BaseActivity;
 import com.herfy.country.CountriesActivity;
 import com.herfy.language.LanguageNewActivity;
 import com.herfy.main.MainActivity;
-import com.herfy.onboarding.views.OnboardingActivity;
-import com.herfy.selection.SelectionActivity;
 import com.herfy.util.CacheHelper;
 import com.herfy.util.DeepLinkUtil;
 import com.herfy.util.JsonUtil;
