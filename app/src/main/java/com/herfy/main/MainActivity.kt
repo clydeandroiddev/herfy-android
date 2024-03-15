@@ -637,7 +637,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     override fun setupViews() {
-        binding.sidebar.concept.setImageResource(R.drawable.header)
         mainPresenter.getCaloriesPage()
         binding.drawerLayout.apply {
             setScrimColor(Color.parseColor("#B30C0C0C"))
