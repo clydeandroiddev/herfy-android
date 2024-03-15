@@ -147,6 +147,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private var fromChangeLanguage = false
     var currentDestination = -1
     private var languageAdapter: LanguageAdapter? = null
+    var isDrawerOpen = false
 
     private var authLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -636,8 +637,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         )
     }
 
-
-    var isDrawerOpen = false
     override fun setupViews() {
         binding.sidebar.concept.setImageResource(R.drawable.header)
         mainPresenter.getCaloriesPage()
