@@ -8,10 +8,11 @@
     android:background="@drawable/bg_modifier_item_selector"
     android:padding="10dp"
     app:cardPreventCornerOverlap="false"
-    android:layout_marginHorizontal="@dimen/margin_small"
-    app:contentPadding="8dp"
+    android:layout_marginHorizontal="@dimen/margin_large"
+    app:contentPadding="10dp"
     android:id="@+id/optionCardView"
-    app:cardUseCompatPadding="true">
+    app:cardUseCompatPadding="false"
+    app:cardCornerRadius="20dp">
     <LinearLayout
         android:id="@+id/clickable_layout"
         android:layout_width="match_parent"
@@ -85,7 +86,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/check_layout"
                 app:layout_constraintTop_toTopOf="parent"
                 app:strokeWidth="1dp"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
                 <com.google.android.material.textview.MaterialTextView
                     style="@style/Styles.Text.Footnote"
@@ -205,6 +206,17 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/ib_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_right_tail_blue"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline"
                 android:layout_width="wrap_content"
