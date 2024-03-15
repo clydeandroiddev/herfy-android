@@ -126,7 +126,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         if (bundle != null) {
             if (bundle.containsKey("fromChangeLanguage")) {
                 fromChangeLanguage = bundle.getBoolean("fromChangeLanguage");
-                if (fromChangeLanguage) {
+                if (fromChangeLanguage && !BuildUtil.splashVideoApp()) {
                     ActivitySwitcher.animationIn(findViewById(R.id.container), getWindowManager());
                 }
             }
@@ -147,19 +147,25 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                     Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                     intent.putExtra("fromChangeLanguage", true);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    ActivitySwitcher.animationOut(findViewById(R.id.container), getWindowManager(), new ActivitySwitcher.AnimationListener() {
-                        @Override
-                        public void onAnimationStarted() {
-                            startActivity(intent);
-                            overridePendingTransition(0, 0);
-                            finish();
-                        }
+                    if(!BuildUtil.splashVideoApp()) {
+                        ActivitySwitcher.animationOut(findViewById(R.id.container), getWindowManager(), new ActivitySwitcher.AnimationListener() {
+                            @Override
+                            public void onAnimationStarted() {
+                                startActivity(intent);
+                                overridePendingTransition(0, 0);
+                                finish();
+                            }
 
-                        @Override
-                        public void onAnimationFinished() {
+                            @Override
+                            public void onAnimationFinished() {
 
-                        }
-                    });
+                            }
+                        });
+                    } else {
+                        startActivity(intent);
+                        overridePendingTransition(0, 0);
+                        finish();
+                    }
                 }
             }, 500);
         } else {
