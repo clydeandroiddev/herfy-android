@@ -79,6 +79,7 @@ public interface AccountContract {
         void onBindLocationItemViewAtPosition(int position, LocationViewHolder locationViewHolder);
 
         int getLocationsCount();
+
         int getBookmarkLocationsCount();
 
         void fetchCustomerCards();

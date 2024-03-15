@@ -458,6 +458,23 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
     }
 
     @Override
+    public void deleteUserLocation(com.skylinedynamics.solosdk.api.models.objects.Address address, int position) {
+        CustomersApiCall.getInstance().deleteCustomerAddress(AuthUtil.getInstance().getCustomer().getId(), address.getId(), new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                addressesView.successDelete(position);
+                addressesView.showMessage(CacheUtil.getInstance().getTranslations(Text.ADDRESS_DELETED, "Address successfully deleted"));
+            }
+
+            @Override
+            public void onError(Object o) {
+                AppLogger.printRetrofitError(o);
+                addressesView.showMessage(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.DELETING_ADDRESS_ERROR)));
+            }
+        });
+    }
+
+    @Override
     public void updateAddress(com.skylinedynamics.solosdk.api.models.objects.Address address) {
         if (AuthUtil.getInstance().isSignedIn()) {
             UpdateCustomerAddressBody updateCustomerAddressBody = new UpdateCustomerAddressBody(address.getAttributes().getLabel(), address.getAttributes().getTelephone(), address.getAttributes().getInstructions());

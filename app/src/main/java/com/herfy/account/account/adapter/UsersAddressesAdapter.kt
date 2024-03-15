@@ -35,10 +35,10 @@ class UsersAddressesAdapter(
         holder.binding.apply {
             executePendingBindings()
             editItem.setOnClickListener {
-                addressUserListner.onEditCard(item, position)
+                addressUserListner.onEditAddress(item, position)
             }
             deleteItem.setOnClickListener {
-                addressUserListner.onDeleteCard(item, position)
+                addressUserListner.onDeleteAddress(item, position)
             }
 
             val labelValue = item.attributes.label
@@ -77,8 +77,13 @@ class UsersAddressesAdapter(
         notifyDataSetChanged()
     }
 
+    fun removeItem(position: Int) {
+        this.customerAddresses.removeAt(position)
+        notifyDataSetChanged()
+    }
+
     interface AddressUserListener {
-        fun onEditCard(card: Address, position: Int)
-        fun onDeleteCard(card: Address, position: Int)
+        fun onEditAddress(address: Address, position: Int)
+        fun onDeleteAddress(address: Address, position: Int)
     }
 }

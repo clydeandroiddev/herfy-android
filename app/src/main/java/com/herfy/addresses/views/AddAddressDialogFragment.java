@@ -261,6 +261,11 @@ public class AddAddressDialogFragment extends BaseDialogFragment implements Addr
     }
 
     @Override
+    public void successDelete(int position) {
+
+    }
+
+    @Override
     public void showLocation(LatLng latLng) {
 
     }

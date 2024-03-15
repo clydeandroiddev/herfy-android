@@ -443,6 +443,11 @@ public class AddressesActivity extends BaseActivity implements AddressesContract
     }
 
     @Override
+    public void successDelete(int position) {
+
+    }
+
+    @Override
     public void showLocation(LatLng latLng) {
         String address = addressesPresenter.getLocation(new Geocoder(this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa")), latLng);
         if(!address.isEmpty()) {

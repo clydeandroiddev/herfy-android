@@ -1,41 +1,27 @@
 package com.herfy.account.account
 
-import android.graphics.drawable.Drawable
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.request.RequestOptions
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.material.tabs.TabLayout
-import com.herfy.account.AccountContract
-import com.herfy.account.AccountPresenter
-import com.herfy.account.account.adapter.PaymentMethodsAdapter
 import com.herfy.account.account.adapter.UsersAddressesAdapter
 import com.herfy.addresses.AddressesContract
 import com.herfy.addresses.AddressesPresenter
 import com.herfy.base.BaseFragment
-import com.herfy.order.OrderContract
-import com.herfy.order.OrderPresenter
+import com.herfy.order.views.ordertype.addaddress.AddNewAddressActivity
 import com.herfy.profile.databinding.FragmentUserAddressesBinding
-import com.herfy.profile.databinding.FragmentUserEditProfileBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
 import com.skylinedynamics.solosdk.api.models.objects.Address
-import com.skylinedynamics.solosdk.api.models.objects.MenuItem
-import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
-import com.skylinedynamics.solosdk.api.models.objects.OrderStatus
-import com.skylinedynamics.solosdk.api.models.objects.OrderType
-import com.skylinedynamics.solosdk.api.models.objects.Rating
-import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.ArrayList
-import java.util.Date
 
 @AndroidEntryPoint
 class AddressUserFragment : BaseFragment(), AddressesContract.View,
@@ -82,13 +68,26 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
 
     }
 
+    private var addressLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                showLoadingDialog()
+                accountPresenter?.getAddresses(false)
+            }
+        }
+
+    private fun goToAddAddress() {
+        val intent = Intent(activity, AddNewAddressActivity::class.java)
+        addressLauncher.launch(intent)
+    }
+
     override fun setupViews() {
         binding.apply {
             back.setOnClickListener {
                 navigateUp()
             }
             continueButton.setOnClickListener {
-
+                goToAddAddress()
             }
             adapter = UsersAddressesAdapter(ArrayList(), this@AddressUserFragment)
             binding.addresses.adapter = adapter
@@ -113,6 +112,11 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
 
     override fun getLocation() {
 
+    }
+
+    override fun successDelete(position: Int) {
+        dismissDialogs()
+        adapter.removeItem(position)
     }
 
     override fun showLocation(latLng: LatLng?) {
@@ -186,11 +190,12 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
             })
     }
 
-    override fun onEditCard(card: Address, position: Int) {
+    override fun onEditAddress(address: Address, position: Int) {
 
     }
 
-    override fun onDeleteCard(card: Address, position: Int) {
-
+    override fun onDeleteAddress(address: Address, position: Int) {
+        showLoadingDialog()
+        accountPresenter?.deleteUserLocation(address, position)
     }
 }

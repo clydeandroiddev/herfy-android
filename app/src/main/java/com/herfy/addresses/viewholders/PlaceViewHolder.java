@@ -94,6 +94,11 @@ public class PlaceViewHolder extends RecyclerView.ViewHolder implements Addresse
     }
 
     @Override
+    public void successDelete(int position) {
+
+    }
+
+    @Override
     public void showLocation(LatLng latLng) {
 
     }
