@@ -186,18 +186,18 @@ public class TimeUtil {
         }
     }
 
-    public static String getGreetings(){
+    public static String getGreetings(String name){
         Calendar c = Calendar.getInstance();
         int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
         String greetings = "";
         if(timeOfDay >= 0 && timeOfDay < 12){
-            greetings = CacheUtil.getInstance().getTranslations(Text.GOOD_MORNING, "Good morning");
+            greetings = CacheUtil.getInstance().getTranslations(Text.GOOD_MORNING_USER, "Good morning, (x)!");
         }else if(timeOfDay >= 12 && timeOfDay < 18){
-            greetings = CacheUtil.getInstance().getTranslations(Text.GOOD_AFTERNOON, "Good afternoon");
+            greetings = CacheUtil.getInstance().getTranslations(Text.GOOD_AFTERNOON_USER, "Good afternoon, (x)!");
         }else if(timeOfDay >= 18){
-            greetings = CacheUtil.getInstance().getTranslations(Text.GOOD_EVENING, "Good evening");
+            greetings = CacheUtil.getInstance().getTranslations(Text.GOOD_EVENING_USER, "Good evening, (x)!");
         }
-        return greetings;
+        return greetings.replace("(x)", name);
     }
 
     public static @StringRes int getGreetingsIcon() {

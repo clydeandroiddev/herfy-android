@@ -1045,4 +1045,8 @@ public class Text {
 
     public static final String NOTE_TO_RIDER_LABEL = "note_to_rider_label";
 
+    public static final String GOOD_MORNING_USER = "good_morning_user";
+    public static final String GOOD_AFTERNOON_USER = "good_afternoon_user";
+    public static final String GOOD_EVENING_USER = "good_evening_user";
+
 }
