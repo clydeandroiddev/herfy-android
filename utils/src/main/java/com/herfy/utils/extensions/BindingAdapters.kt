@@ -15,20 +15,13 @@ import com.bumptech.glide.request.target.Target
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.CacheUtil
-import com.herfy.utils.helper.StringUtil
 import com.skylinedynamics.solosdk.util.AppLogger
 
 @BindingAdapter("app:sliderImageUri")
 fun loadSliderImage(imageView: ImageView, sliderImageUri: String?){
     if(!sliderImageUri.isNullOrEmpty()){
-        val imageUrl: String = StringUtil.getCloudflareSliderUrl(
-            Values.SLIDER_IMAGE_WIDTH,
-            Values.SLIDER_IMAGE_HEIGHT,
-            sliderImageUri
-        )
 
-        Glide.with(imageView.context).load(imageUrl)
-            .centerCrop()
+        Glide.with(imageView.context).load(sliderImageUri)
             .skipMemoryCache(false)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .listener(object : RequestListener<Drawable>{
@@ -61,13 +54,8 @@ fun loadSliderImage(imageView: ImageView, sliderImageUri: String?){
 @BindingAdapter("app:promoImageUri")
 fun loadPromoImage(imageView: ImageView, sliderImageUri: String?){
     if(!sliderImageUri.isNullOrEmpty()){
-        val imageUrl: String = StringUtil.getCloudflareSliderUrl(
-            Values.SLIDER_IMAGE_WIDTH,
-            Values.SLIDER_IMAGE_HEIGHT,
-            sliderImageUri
-        )
 
-        Glide.with(imageView.context).load(imageUrl)
+        Glide.with(imageView.context).load(sliderImageUri)
             .skipMemoryCache(false)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .listener(object : RequestListener<Drawable>{

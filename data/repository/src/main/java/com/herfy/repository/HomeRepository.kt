@@ -35,7 +35,7 @@ import javax.inject.Inject
 
 
 interface HomeRepository {
-    suspend fun getSliders(response: (HomeResponse) -> Unit)
+    suspend fun getSliders(sliderId: String, response: (HomeResponse) -> Unit)
 
     suspend fun getGuestDigitalCoupons(orderType: OrderType, response: (HomeResponse) -> Unit)
 
@@ -62,8 +62,8 @@ interface HomeRepository {
 class HomeRepositoryImpl @Inject constructor(
     val appDatabase: AppDatabase, val cacheUtilHelper: CacheUtilHelper
 ) : HomeRepository {
-    override suspend fun getSliders(response: (HomeResponse) -> Unit) {
-        CmsApiCall.getInstance().getSlider(getSliderId(), object : ApiRequestListener {
+    override suspend fun getSliders(sliderId: String, response: (HomeResponse) -> Unit) {
+        CmsApiCall.getInstance().getSlider(sliderId, object : ApiRequestListener {
                 override fun onSuccess(o: Any) {
                     val slides = arrayListOf<Slide>()
                     try {
@@ -616,7 +616,7 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getBottomSliders(response: (HomeResponse) -> Unit) {
-        CmsApiCall.getInstance().getSlider(Values.BOTTOM_SLIDER_ID, object : ApiRequestListener {
+        CmsApiCall.getInstance().getSlider(Values.HOME_PAGE_BOTTOM_BANNER, object : ApiRequestListener {
             override fun onSuccess(o: Any) {
                 val slides = arrayListOf<Slide>()
                 try {

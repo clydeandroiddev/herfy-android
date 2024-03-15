@@ -17,6 +17,7 @@ import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.AuthUtil
@@ -120,7 +121,7 @@ class HomeViewModel @Inject constructor(
 
     fun getSliders() {
         invoke {
-            homeRepository.getSliders { homeResponse ->
+            homeRepository.getSliders(Values.HOME_PAGE_TOP_BANNER) { homeResponse ->
                 if (homeResponse.success) {
                     homeResponse.data?.let {
                         it.cast<ArrayList<Slide>> {
