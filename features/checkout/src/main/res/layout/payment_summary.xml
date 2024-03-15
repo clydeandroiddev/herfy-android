@@ -60,7 +60,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_subtotal_label" />
-
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_delivery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:text="24 SR"
+        android:textColor="@color/black"
+        style="@style/TextAppearance.Footnote_Bold"
+        android:textFontWeight="500"
+        android:lineHeight="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_payment_label" />
     <androidx.constraintlayout.widget.Group
         android:id="@+id/grp_mukafaa"
         android:layout_width="wrap_content"
@@ -127,6 +138,44 @@
         app:constraint_referenced_ids="tv_discount_label,tv_discount,view1"/>
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvDeliveryChargeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Delivery Charges"
+        android:layout_marginTop="10dp"
+        android:textColor="#55667B"
+        android:textSize="14sp"
+        android:fontFamily="@font/inter_regular"
+        android:textFontWeight="500"
+        android:lineHeight="14dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view0" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvDeliveryChargeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:text="24 SR"
+        android:textColor="@color/black"
+        style="@style/TextAppearance.Footnote_Bold"
+        android:textFontWeight="500"
+        android:lineHeight="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view0" />
+
+
+    <View
+        android:id="@+id/viewDeliverySeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/gray_400"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDeliveryChargeValue" />
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_discount_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -137,7 +186,7 @@
         android:textFontWeight="500"
         android:fontFamily="@font/inter_regular"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_mukafaa" />
+        app:layout_constraintTop_toBottomOf="@+id/viewDeliverySeparator" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_discount"
@@ -150,7 +199,7 @@
         android:lineHeight="14dp"
         android:fontFamily="@font/inter_bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_mukafaa"
+        app:layout_constraintTop_toBottomOf="@+id/tvDeliveryChargeLabel"
         tools:text="-5 SR" />
 
     <View

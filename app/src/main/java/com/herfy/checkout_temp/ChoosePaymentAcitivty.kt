@@ -11,6 +11,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.card.MaterialCardView
@@ -21,6 +22,7 @@ import com.herfy.payment.PaymentContract
 import com.herfy.payment.PaymentPresenter
 import com.herfy.payment.views.PaymentDialogFragment
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.helper.CacheUtil
 import com.moneyhash.sdk.android.ResultType
 import com.moneyhash.sdk.android.payment.PaymentResultContract
@@ -32,6 +34,7 @@ import com.skylinedynamics.solosdk.api.models.objects.PaymentType
 import com.skylinedynamics.solosdk.api.models.objects.PrayerTime
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge
 import io.shipbook.shipbooksdk.Log
+import com.herfy.checkout.R as checkoutR
 import java.util.Calendar
 
 class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
@@ -47,9 +50,11 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
     private var isCardPaymentAvailable = false
     private var isCODPaymentAvailable = false
 
-    private lateinit var rbCash: AppCompatRadioButton
-    private lateinit var rbCard: AppCompatRadioButton
-    private lateinit var rbCod: AppCompatRadioButton
+    private var selectedPaymentType: PaymentType? =null
+
+    private lateinit var rbCash: ImageView
+    private lateinit var rbCard: ImageView
+    private lateinit var rbCod: ImageView
     private lateinit var cashPayment: MaterialCardView
     private lateinit var cardPayment: MaterialCardView
     private lateinit var codPayment: MaterialCardView
@@ -96,16 +101,18 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
 
     override fun setupViews() {
        val cards = CacheUtil.getInstance().customerCards
+        binding.confirmButton
+            .setText(CacheUtil.getInstance().getTranslations(Text.CONFIRM_LABEL,"Confirm"))
        val creditCardAdapter = CardsAdapter(cards) { card, position ->
             selectedCard = card
             if (isCashPaymentAvailable) {
-                rbCash.isChecked = false
+                rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
                 cashPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
                 cashPayment.setBackgroundColor(Color.WHITE)
             }
 
              if (isCashPaymentAvailable) {
-                 rbCard.isChecked = false
+                rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
                  cardPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
                  cardPayment.setBackgroundColor(Color.WHITE)
              }
@@ -115,6 +122,13 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
         creditCardAdapter.notifyDataSetChanged()
 
         binding.toolbarContainer.btnBack.setOnClickListener { onBackPressed() }
+        binding
+            .confirmButton
+            .ninjaTap(lifecycleScope) {
+                CacheUtil
+                    .getInstance().orderPayment = selectedPaymentType
+                onBackPressed()
+            }
 
     }
 
@@ -269,7 +283,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
     }
 
     override fun selectPaymentTypeCash() {
-        CacheUtil.getInstance().orderPayment = PaymentType.CASH
+        selectedPaymentType = PaymentType.CASH
         if (this::creditCardAdapter.isInitialized) creditCardAdapter.setSelectedPosition(-1)
         selectedView(rbCash, cashImage, cashContainer, cashPayment)
         if (isCardPaymentAvailable) unselectedView(rbCard, cardImage, cardContainer, cardPayment)
@@ -354,7 +368,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
                 cardPayment = view.findViewById(R.id.cards_layout)
                 binding.paymentTypeContainer.addView(view)
                 rbCard.setOnClickListener {
-                    CacheUtil.getInstance().orderPayment = PaymentType.CARD
+                    selectedPaymentType = PaymentType.CARD
                     if (isCashPaymentAvailable) unselectedView(rbCash, cashImage, cashContainer, cashPayment)
                     if (isCODPaymentAvailable) unselectedView(rbCod, codImage, codContainer, codPayment)
                     if (this::creditCardAdapter.isInitialized)  creditCardAdapter.setSelectedPosition(-1)
@@ -369,13 +383,13 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
                 codLabel = view.findViewById(R.id.cod_label)
                 rbCod = view.findViewById(R.id.rb_cod)
                 codImage = view.findViewById(R.id.cod_image)
-                binding.paymentTypeContainer.addView(view)
+                binding.cashOnDeliveryContainer.addView(view)
                 rbCod.setOnClickListener {
                     if (this::creditCardAdapter.isInitialized)  creditCardAdapter.setSelectedPosition(-1)
                     if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
-                        CacheUtil.getInstance().orderPayment = PaymentType.CARD_ON_DELIVERY
+                        selectedPaymentType = PaymentType.CARD_ON_DELIVERY
                     } else {
-                        CacheUtil.getInstance().orderPayment = PaymentType.CARD_ON_PICKUP
+                        selectedPaymentType = PaymentType.CARD_ON_PICKUP
                     }
                     selectedView(rbCod, codImage, codContainer, codPayment)
 
@@ -399,15 +413,15 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
         }
     }
 
-    private fun unselectedView(radioButton: AppCompatRadioButton, imageView: ImageView, constraintLayout: ConstraintLayout, cardView: MaterialCardView) {
-        radioButton.isChecked = false
+    private fun unselectedView(radioButton: ImageView, imageView: ImageView, constraintLayout: ConstraintLayout, cardView: MaterialCardView) {
+        radioButton.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
         cardView.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
         constraintLayout.setBackgroundColor(Color.WHITE)
         imageView.background = resources.getDrawable(R.drawable.unselected_image_bg)
     }
-    private fun selectedView(radioButton: AppCompatRadioButton, imageView: ImageView, constraintLayout: ConstraintLayout, cardView: MaterialCardView) {
-        radioButton.isChecked = true
-        cardView.strokeColor = Color.parseColor(CacheUtil.getInstance().colorMain)
+    private fun selectedView(radioButton: ImageView, imageView: ImageView, constraintLayout: ConstraintLayout, cardView: MaterialCardView) {
+        radioButton.setImageResource(checkoutR.drawable.ic_payment_radio_selected)
+        cardView.strokeColor = ContextCompat.getColor(this,R.color.border_color_light)
         constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.card_selected_bg))
         imageView.background = resources.getDrawable(R.drawable.selected_image_bg)
     }
@@ -425,6 +439,11 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
             }
             else -> showCardFailed()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        selectedPaymentType = null
     }
 
 }
