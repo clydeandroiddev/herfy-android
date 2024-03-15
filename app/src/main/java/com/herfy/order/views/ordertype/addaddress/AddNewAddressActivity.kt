@@ -331,7 +331,9 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     private fun proceedToAddAddress() {
         dismissAddressDialog()
         addAddressDialog = AddAddressDialog.newInstance(
+            null,
             orderPresenter.currentAddress,
+            false,
             object : AddAddressDialog.OnSubmit {
                 override fun onSuccess(
                     labelValue: String,

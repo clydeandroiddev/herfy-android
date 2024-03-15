@@ -356,6 +356,8 @@ public class Text {
     public static final String CARD_FAILED = "card_failed";
     public static final String ABANDON_ALERT_MESSAGE = "abandon_alert_message";
     public static final String ADDRESS_DELETED = "address_deleted";
+
+    public static final String ADDRESS_UDPATED = "address_updated";
     public static final String REMOVED_ITEM_CART_SUCCESSFULLY = "removed_item_cart_successfully";
     public static final String OPEN_CAPS = "open_caps";
     public static final String CLOSED_CAPS = "closed_caps";

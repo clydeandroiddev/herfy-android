@@ -18,7 +18,10 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.herfy.addresses.viewholders.AddressViewHolder;
 import com.herfy.addresses.viewholders.PlaceViewHolder;
+import com.herfy.util.AppLogger;
+import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.utils.constants.Text;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
@@ -29,9 +32,6 @@ import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddressBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerAddressBody;
-import com.herfy.util.AppLogger;
-import com.herfy.utils.analytics.MixpanelUtil;
-import com.herfy.utils.handler.ErrorHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -483,6 +483,29 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
                 public void onSuccess(Object o) {
                     getStore(address);
                     //addressesView.saveAddress(address);
+                }
+
+                @Override
+                public void onError(Object o) {
+                    AppLogger.printRetrofitError(o);
+                    addressesView.showMessage(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS), null));
+                }
+            });
+        } else {
+            addressesView.showMessage(CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS));
+        }
+    }
+
+    @Override
+    public void updateAddress(com.skylinedynamics.solosdk.api.models.objects.Address address, String note, String label, String phoneNumber) {
+        if (AuthUtil.getInstance().isSignedIn()) {
+            UpdateCustomerAddressBody updateCustomerAddressBody = new UpdateCustomerAddressBody(label, phoneNumber, note);
+            CustomersApiCall.getInstance().updateCustomerAddress(AuthUtil.getInstance().getCustomer().getId(), address.getId(), updateCustomerAddressBody, new ApiRequestListener() {
+                @Override
+                public void onSuccess(Object o) {
+                    getAddresses(false);
+                    addressesView.successEdit();
+                    addressesView.showMessage(CacheUtil.getInstance().getTranslations(Text.ADDRESS_UDPATED, "Address successfully updated"));
                 }
 
                 @Override

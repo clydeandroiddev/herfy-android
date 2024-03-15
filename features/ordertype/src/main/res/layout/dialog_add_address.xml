@@ -141,6 +141,8 @@
                                     style="@style/Styles.Text.Caption"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:maxLines="1"
                                     android:textColor="#0C0C0C"
                                     android:textSize="16sp"
                                     tools:text="Home" />

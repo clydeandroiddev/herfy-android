@@ -14,10 +14,12 @@ import com.herfy.account.account.adapter.UsersAddressesAdapter
 import com.herfy.addresses.AddressesContract
 import com.herfy.addresses.AddressesPresenter
 import com.herfy.base.BaseFragment
+import com.herfy.order.views.ordertype.addaddress.AddAddressDialog
 import com.herfy.order.views.ordertype.addaddress.AddNewAddressActivity
 import com.herfy.profile.databinding.FragmentUserAddressesBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
 import com.skylinedynamics.solosdk.api.models.objects.Address
@@ -30,7 +32,14 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
 
     private lateinit var binding: FragmentUserAddressesBinding
 
+    private lateinit var addAddressDialog: AddAddressDialog
+
     private lateinit var adapter: UsersAddressesAdapter
+
+    private var phoneNumber = ""
+    private var addressLabel = ""
+    private var addressLabel2 = ""
+    private var driverNote = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +103,56 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
         }
     }
 
+    private fun dismissAddressDialog() {
+        try {
+            addAddressDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun proceedToUpdateAddress(addressTrue: Address) {
+        dismissAddressDialog()
+        addAddressDialog = AddAddressDialog.newInstance(addressTrue,
+            null,
+            true,
+            object : AddAddressDialog.OnSubmit {
+                override fun onSuccess(
+                    labelValue: String,
+                    address: android.location.Address?,
+                    flatNumber: String,
+                    mobile: String,
+                    note: String
+                ) {
+                    phoneNumber = mobile
+                    driverNote = note
+                    addressLabel2 = flatNumber
+                    addressLabel = labelValue
+                    showLoadingDialog()
+                    if (AuthUtil.getInstance().isSignedIn) {
+                        showLoadingDialog()
+                        accountPresenter?.updateAddress(
+                            addressTrue, driverNote, addressLabel, phoneNumber
+                        )
+                    } else {
+                        dismissDialogs()
+                    }
+                }
+
+                override fun error(text: String) {
+                    showMessage(text)
+                }
+
+                override fun exit() {
+                    dismissAddressDialog()
+                }
+
+            })
+        addAddressDialog.show(
+            requireActivity().supportFragmentManager, AddAddressDialog::class.java.simpleName
+        )
+    }
+
     override fun setupFonts() {
 
     }
@@ -117,6 +176,10 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
     override fun successDelete(position: Int) {
         dismissDialogs()
         adapter.removeItem(position)
+    }
+
+    override fun successEdit() {
+        dismissAddressDialog()
     }
 
     override fun showLocation(latLng: LatLng?) {
@@ -191,7 +254,7 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
     }
 
     override fun onEditAddress(address: Address, position: Int) {
-
+        proceedToUpdateAddress(address)
     }
 
     override fun onDeleteAddress(address: Address, position: Int) {
