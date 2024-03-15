@@ -19,6 +19,8 @@ import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.DialogAddAddressBinding
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 
@@ -29,7 +31,11 @@ class AddAddressDialog : DialogFragment() {
 
     private var address: Address? = null
 
+    private var addressMain: com.skylinedynamics.solosdk.api.models.objects.Address? = null
+
     private var labelValue = ""
+
+    private var isEdit: Boolean = false
 
     private lateinit var binding: DialogAddAddressBinding
 
@@ -89,6 +95,7 @@ class AddAddressDialog : DialogFragment() {
                 onSubmit?.exit()
                 dismiss()
             }
+
             phoneNumberLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_LABEL, "Phone number")
             flatNumberLabel.text = CacheUtil.getInstance()
@@ -99,6 +106,7 @@ class AddAddressDialog : DialogFragment() {
                 Text.NOTE_FOR_THE_DRIVER_HINT,
                 "e.g. Orange door on left, white coloured building, don’t ring the bell"
             )
+
             addLabel.text = CacheUtil.getInstance().getTranslations(
                 Text.ADD_LABEL, "Add label"
             )
@@ -163,13 +171,59 @@ class AddAddressDialog : DialogFragment() {
                 featureName.text = it.featureName
             }
 
+            addressMain?.let {
+                Glide.with(requireActivity()).load(
+                    LatLng(
+                        it.attributes.lat.toDouble(), it.attributes.longt.toDouble()
+                    ).staticMap(requireActivity().resources.getString(com.herfy.R.string.google_maps_api_key))
+                ).apply(RequestOptions.centerInsideTransform())
+                    .placeholder(com.herfy.R.drawable.imagepicker_image_placeholder)
+                    .diskCacheStrategy(
+                        DiskCacheStrategy.ALL
+                    ).into(staticMap)
+
+                noteForTheDriverEdit.setText(it.attributes.instructions)
+                flatNumber.setText(it.attributes.line2)
+                flatNumber.isEnabled = false
+                flatNumber.setBackgroundResource(R.drawable.background_edit_filled)
+                addressLine.text = it.attributes.line1
+                featureName.text = it.attributes.line1
+                val labelValue = it.attributes.label
+                val type = if (labelValue != null && !labelValue.isEmpty() && !labelValue.equals(
+                        "null", ignoreCase = true
+                    )
+                ) {
+                    labelValue
+                } else {
+                    CacheUtil.getInstance().getTranslations(Text.OTHER, "Other")
+                }
+                if (type.equals("home", ignoreCase = true)) {
+                    labelHome.performClick()
+                } else if (type.equals("work", ignoreCase = true)) {
+                    labelWork.performClick()
+                } else {
+                    labelOther.performClick()
+                }
+            }
+
+            if (isEdit) {
+                editButton.gone()
+            } else {
+                editButton.visible()
+            }
+
             editButton.setOnClickListener {
                 back.performClick()
             }
 
             if (AuthUtil.getInstance().isSignedIn) {
                 phoneNumberEdit.apply {
-                    val mobileNumber = AuthUtil.getInstance().customer.attributes.mobile.orEmpty()
+                    var mobileNumber = AuthUtil.getInstance().customer.attributes.mobile.orEmpty()
+                    addressMain?.let {
+                        if (isEdit) {
+                            mobileNumber = it.attributes.telephone
+                        }
+                    }
                     setText(mobileNumber)
                     if (mobileNumber.isNotEmpty()) {
                         setSelection(length())
@@ -202,9 +256,16 @@ class AddAddressDialog : DialogFragment() {
     }
 
     companion object {
-        fun newInstance(address: Address?, listener: OnSubmit): AddAddressDialog {
+        fun newInstance(
+            addressMain: com.skylinedynamics.solosdk.api.models.objects.Address?,
+            address: Address?,
+            isEdit: Boolean,
+            listener: OnSubmit
+        ): AddAddressDialog {
             val addressDialogFragment = AddAddressDialog()
             addressDialogFragment.onSubmit = listener
+            addressDialogFragment.isEdit = isEdit
+            addressDialogFragment.addressMain = addressMain
             addressDialogFragment.address = address
             return addressDialogFragment
         }

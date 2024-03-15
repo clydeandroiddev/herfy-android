@@ -81,6 +81,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     private var phoneNumber = ""
     private var addressLabel = ""
+    private var addressLabel2 = ""
     private var driverNote = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -292,7 +293,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         markerOptions.position(latLng!!)
         try {
             val bitmapDrawable =
-                ContextCompat.getDrawable(this, R.drawable.user_current_location) as BitmapDrawable?
+                ContextCompat.getDrawable(
+                    this,
+                    com.herfy.ordertype.R.drawable.ic_location_add_address
+                ) as BitmapDrawable?
             val bitmap = Bitmap.createScaledBitmap(
                 bitmapDrawable!!.bitmap, 50, 50, true
             )
@@ -326,7 +330,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     private fun proceedToAddAddress() {
         dismissAddressDialog()
-        addAddressDialog = AddAddressDialog.newInstance(orderPresenter.currentAddress,
+        addAddressDialog = AddAddressDialog.newInstance(
+            null,
+            orderPresenter.currentAddress,
+            false,
             object : AddAddressDialog.OnSubmit {
                 override fun onSuccess(
                     labelValue: String,
@@ -337,11 +344,14 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
                 ) {
                     phoneNumber = mobile
                     driverNote = note
+                    addressLabel2 = flatNumber
                     addressLabel = labelValue
                     orderPresenter.address = address
                     showLoadingDialog()
                     if (AuthUtil.getInstance().isSignedIn) {
-                        orderPresenter.addAddress(phoneNumber, addressLabel, driverNote)
+                        orderPresenter.addAddress(
+                            phoneNumber, addressLabel, driverNote, addressLabel2
+                        )
                     } else {
                         dismissDialogs()
                     }
@@ -412,7 +422,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     override fun updateAddAddress(updateAddress: Address?, saveAddress: android.location.Address?) {
         if (AuthUtil.getInstance().isSignedIn) {
-            orderPresenter.addAddress(phoneNumber, addressLabel, driverNote)
+            orderPresenter.addAddress(phoneNumber, addressLabel, driverNote, addressLabel2)
         } else {
             dismissDialogs()
         }

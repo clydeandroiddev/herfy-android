@@ -288,7 +288,7 @@ public class AddressActivity extends BaseActivity implements OrderContract.View 
         String languageToLoad = "en";
         if (LocaleUtil.getInstance().getLanguage().equalsIgnoreCase("ar")) {
             languageToLoad = "ar";
-        }else if(LocaleUtil.getInstance().getLanguage().equalsIgnoreCase("fr")){
+        } else if (LocaleUtil.getInstance().getLanguage().equalsIgnoreCase("fr")) {
             languageToLoad = "fr";
         }
         Locale locale = new Locale(languageToLoad);
@@ -481,7 +481,7 @@ public class AddressActivity extends BaseActivity implements OrderContract.View 
                                 orderPresenter.updateAddress(false, updateAddress, false);
                             }
                         } else {
-                            orderPresenter.addAddress(phoneNumber, label, note);
+                            orderPresenter.addAddress(phoneNumber, label, note, "");
                         }
                     } else {
                         dismissDialogs();
@@ -697,16 +697,16 @@ public class AddressActivity extends BaseActivity implements OrderContract.View 
     @Override
     public void showMinimumDeliveryForAreaMessage(String error) {
         runOnUiThread(() -> {
-            dismissDialogs();
-            showAlertDialog(
-            "",
-                error,
-                CacheUtil.getInstance().getTranslations(Text.OK),
-                (dialogInterface, i) -> {
-                    orderPresenter.setOrderType();
+                    dismissDialogs();
+                    showAlertDialog(
+                            "",
+                            error,
+                            CacheUtil.getInstance().getTranslations(Text.OK),
+                            (dialogInterface, i) -> {
+                                orderPresenter.setOrderType();
+                            }
+                    );
                 }
-            );
-            }
         );
     }
 

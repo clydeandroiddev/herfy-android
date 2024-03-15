@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
@@ -20,6 +21,8 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.herfy.base.BaseActivity
 import com.herfy.curbside.CurbsideContract
 import com.herfy.curbside.CurbsidePresenter
@@ -30,8 +33,11 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColorAttributes
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMakerAttributes
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
+import io.shipbook.shipbooksdk.Log
 
 class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
@@ -47,7 +53,11 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
     private var carMaker: CarMaker? = null
 
+    private var isEdit: Boolean = false
+
     private var carColor: CarColor? = null
+
+    private var customerCar: CustomerCar? = null
 
     private lateinit var binding: AddCurbsideVehicleDialogBinding
 
@@ -88,7 +98,41 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isEdit = customerCar != null
         curbsidePresenter.start()
+        setupCar()
+    }
+
+    private fun setupCar() {
+        if (isEdit) {
+            customerCar?.let {
+                binding.plateNumberEdit.setText(it.attributes.plateNumber)
+                binding.plateNumberEdit.setSelection(binding.plateNumberEdit.length())
+                binding.confirmContainer.isVisible =
+                    binding.plateNumberEdit.text.toString().isNotEmpty()
+                try {
+                    val carMake = CarMaker()
+                    val carAtt = CarMakerAttributes()
+                    carMake.id = it.attributes.carMakerId
+                    carAtt.imageUri = it.attributes.carMakerImageUri
+                    carAtt.name = it.attributes.carMakerName
+                    carMake.attributes = carAtt
+                    carMaker = carMake
+                    val cColor = CarColor()
+                    val colorAtt = CarColorAttributes()
+                    colorAtt.color = it.attributes.color
+                    colorAtt.name = it.attributes.colorName
+                    colorAtt.label = it.attributes.colorName.toLowerCase()
+                    cColor.attributes = colorAtt
+                    carColor = cColor
+                    setupColor()
+                    setupBrand()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+        }
     }
 
     override fun setPresenter(presenter: CurbsideContract.Presenter?) {
@@ -139,15 +183,23 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 }
 
                 override fun afterTextChanged(editable: Editable?) {
-                    binding.confirmContainer.isVisible =
-                        binding.plateNumberEdit.text.toString().isNotEmpty()
+                    confirmContainer.isVisible = plateNumberEdit.text.toString().isNotEmpty()
                 }
             })
 
-            binding.continueButton.setOnClickListener {
+            plateNumberEdit.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    if (confirmContainer.isVisible) {
+                        continueButton.performClick()
+                    }
+                    true
+                } else false
+            }
+
+            continueButton.setOnClickListener {
                 saveAndContinue()
             }
-            
+
             binding.continueButton.isVisible = true
         }
     }
@@ -172,13 +224,32 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 carMakerName = it.attributes.name
             }
 
-            curbsidePresenter.addNewCar(
-                color,
-                carMakerId.toInt(),
-                carMakerName,
-                binding.plateNumberEdit.text.toString().trim(),
-                user.attributes.mobile.toString().trim().replace("+", "")
-            )
+            if (isEdit) {
+                val editBody = JsonObject()
+                carColor?.let {
+                    editBody.addProperty("color", carColor?.attributes?.color)
+                }
+                carMaker?.let {
+                    editBody.addProperty(
+                        "car-maker-id", carMaker?.id?.toInt()
+                    )
+                    if (!it.attributes.name.isNullOrEmpty()) {
+                        editBody.addProperty(
+                            "car-maker-name", it.attributes.name
+                        )
+                    }
+                }
+                editBody.addProperty("plate-number", binding.plateNumberEdit.text.toString())
+                curbsidePresenter.editNewCar(customerCar?.id, editBody, -1)
+            } else {
+                curbsidePresenter.addNewCar(
+                    color,
+                    carMakerId.toInt(),
+                    carMakerName,
+                    binding.plateNumberEdit.text.toString().trim(),
+                    user.attributes.mobile.toString().trim().replace("+", "")
+                )
+            }
         }
     }
 
@@ -232,12 +303,24 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
             val baseActivity = it as BaseActivity
             baseActivity.dismissDialogs()
         }
-        CacheUtil.getInstance().curbsideCar = car
+        if (!isEdit) {
+            CacheUtil.getInstance().curbsideCar = car
+        }
         onSubmit?.onSuccess()
     }
 
     override fun successEdit(car: CustomerCar?, position: Int) {
-
+        activity?.let {
+            val baseActivity = it as BaseActivity
+            baseActivity.dismissDialogs()
+        }
+        val car1 = CacheUtil.getInstance().curbsideCar
+        if (car1 != null) {
+            if (car1.id == car?.id) {
+                CacheUtil.getInstance().curbsideCar = car1
+            }
+        }
+        onSubmit?.onSuccess()
     }
 
     override fun successDelete(position: Int) {
@@ -245,9 +328,12 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
     }
 
     companion object {
-        fun newInstance(isEmpty: Boolean, listener: OnSubmit): AddCurbsideVehicleDialog {
+        fun newInstance(
+            customerCar: CustomerCar?, isEmpty: Boolean, listener: OnSubmit
+        ): AddCurbsideVehicleDialog {
             val addressDialogFragment = AddCurbsideVehicleDialog()
             addressDialogFragment.onSubmit = listener
+            addressDialogFragment.customerCar = customerCar
             addressDialogFragment.isEmpty = isEmpty
             return addressDialogFragment
         }

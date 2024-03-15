@@ -18,7 +18,10 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.herfy.addresses.viewholders.AddressViewHolder;
 import com.herfy.addresses.viewholders.PlaceViewHolder;
+import com.herfy.util.AppLogger;
+import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.utils.constants.Text;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
@@ -29,9 +32,6 @@ import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddressBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerAddressBody;
-import com.herfy.util.AppLogger;
-import com.herfy.utils.analytics.MixpanelUtil;
-import com.herfy.utils.handler.ErrorHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -196,26 +196,20 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
         CustomersApiCall.getInstance().getCustomerAddresses(AuthUtil.getInstance().getCustomer().getId(), "1", new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
+                homeAddresses = new ArrayList<>();
+                workAddresses = new ArrayList<>();
+                otherAddresses = new ArrayList<>();
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     JSONArray array = object.getJSONArray("data");
                     com.skylinedynamics.solosdk.api.models.objects.Address latestAddress = null;
-                    homeAddresses = new ArrayList<>();
-                    workAddresses = new ArrayList<>();
-                    otherAddresses = new ArrayList<>();
                     for (int i = 0; i < array.length(); i++) {
                         com.skylinedynamics.solosdk.api.models.objects.Address address = com.skylinedynamics.solosdk.api.models.objects.Address.parseAddress(array.getJSONObject(i));
                         if (i == 0) {
                             latestAddress = address;
                         }
                         String label = address.getAttributes().getLabel();
-                        if (label.equalsIgnoreCase("Home") || label.equalsIgnoreCase("الصفحة الرئيسية")) {
-                            homeAddresses.add(address);
-                        } else if (label.equalsIgnoreCase("Work") || label.equalsIgnoreCase("عمل")) {
-                            workAddresses.add(address);
-                        } else {
-                            otherAddresses.add(address);
-                        }
+                        homeAddresses.add(address);
                     }
 
                     if (!fromSave) {
@@ -226,6 +220,7 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    addressesView.showAddresses(homeAddresses, workAddresses, otherAddresses);
                     this.onError(e.getMessage());
                 }
 
@@ -463,6 +458,23 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
     }
 
     @Override
+    public void deleteUserLocation(com.skylinedynamics.solosdk.api.models.objects.Address address, int position) {
+        CustomersApiCall.getInstance().deleteCustomerAddress(AuthUtil.getInstance().getCustomer().getId(), address.getId(), new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                addressesView.successDelete(position);
+                addressesView.showMessage(CacheUtil.getInstance().getTranslations(Text.ADDRESS_DELETED, "Address successfully deleted"));
+            }
+
+            @Override
+            public void onError(Object o) {
+                AppLogger.printRetrofitError(o);
+                addressesView.showMessage(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.DELETING_ADDRESS_ERROR)));
+            }
+        });
+    }
+
+    @Override
     public void updateAddress(com.skylinedynamics.solosdk.api.models.objects.Address address) {
         if (AuthUtil.getInstance().isSignedIn()) {
             UpdateCustomerAddressBody updateCustomerAddressBody = new UpdateCustomerAddressBody(address.getAttributes().getLabel(), address.getAttributes().getTelephone(), address.getAttributes().getInstructions());
@@ -471,6 +483,29 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
                 public void onSuccess(Object o) {
                     getStore(address);
                     //addressesView.saveAddress(address);
+                }
+
+                @Override
+                public void onError(Object o) {
+                    AppLogger.printRetrofitError(o);
+                    addressesView.showMessage(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS), null));
+                }
+            });
+        } else {
+            addressesView.showMessage(CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS));
+        }
+    }
+
+    @Override
+    public void updateAddress(com.skylinedynamics.solosdk.api.models.objects.Address address, String note, String label, String phoneNumber) {
+        if (AuthUtil.getInstance().isSignedIn()) {
+            UpdateCustomerAddressBody updateCustomerAddressBody = new UpdateCustomerAddressBody(label, phoneNumber, note);
+            CustomersApiCall.getInstance().updateCustomerAddress(AuthUtil.getInstance().getCustomer().getId(), address.getId(), updateCustomerAddressBody, new ApiRequestListener() {
+                @Override
+                public void onSuccess(Object o) {
+                    getAddresses(false);
+                    addressesView.successEdit();
+                    addressesView.showMessage(CacheUtil.getInstance().getTranslations(Text.ADDRESS_UDPATED, "Address successfully updated"));
                 }
 
                 @Override

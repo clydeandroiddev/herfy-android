@@ -98,6 +98,16 @@ public class AddressViewHolder extends RecyclerView.ViewHolder implements Addres
     }
 
     @Override
+    public void successDelete(int position) {
+
+    }
+
+    @Override
+    public void successEdit() {
+
+    }
+
+    @Override
     public void showLocation(LatLng latLng) {
 
     }

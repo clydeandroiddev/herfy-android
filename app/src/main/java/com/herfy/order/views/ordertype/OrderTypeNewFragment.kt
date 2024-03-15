@@ -342,9 +342,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun navigateUp(proceed: Boolean) {
         if (args.isFromFavorites) {
-            orderPresenter.addToCartFavorite(CacheUtil.getInstance()
-                .retrieveFavoriteToAddToCart())
-        }else if (proceed && args.fromHome) {
+            orderPresenter.addToCartFavorite(
+                CacheUtil.getInstance().retrieveFavoriteToAddToCart()
+            )
+        } else if (proceed && args.fromHome) {
             findNavController().navigateToDeepLink("nav_menu")
         } else {
             activity?.runOnUiThread {
@@ -504,7 +505,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     continueSelectingType(it, OrderType.DINE_IN)
                 } else if (deliveryTabSelected) {
                     goToAddAddress(false)
-                }else {
+                } else {
                     chooseType(it)
                 }
             }
@@ -621,8 +622,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         vibrator.vibrate(
                             VibrationEffect.createOneShot(
-                                500,
-                                VibrationEffect.DEFAULT_AMPLITUDE
+                                500, VibrationEffect.DEFAULT_AMPLITUDE
                             )
                         )
                     } else {
@@ -634,14 +634,16 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     CacheUtil.getInstance().getTranslations(Text.FAVORITE_ADDED_TO_CART),
                     Toast.LENGTH_SHORT
                 ).show()
-               navigateToFavourites()
+                navigateToFavourites()
             }
         }
     }
 
     private fun navigateToFavourites() {
-        NavigationUtils
-            .navigateSafe(findNavController(), OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true))
+        NavigationUtils.navigateSafe(
+            findNavController(),
+            OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true)
+        )
     }
 
     private fun initialTypeState() {
@@ -990,9 +992,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         if (!curbsideTabSelected) {
             dineInStoresRecyclerViewAdapter?.selected = position
             if (dineInStoresRecyclerViewAdapter?.selected != -1) {
-                binding.continueButton.alpha = 1f
+                binding.confirmContainer.visibility = View.VISIBLE
             } else {
-                binding.continueButton.alpha = 0f
+                binding.confirmContainer.visibility = View.GONE
             }
             binding.continueButton.isFocusable = dineInStoresRecyclerViewAdapter?.selected != -1
             binding.continueButton.isClickable = dineInStoresRecyclerViewAdapter?.selected != -1
@@ -1002,9 +1004,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         } else {
             pickupCurbsideStoresRecyclerViewAdapter?.selected = position
             if (pickupCurbsideStoresRecyclerViewAdapter?.selected != -1) {
-                binding.continueButton.alpha = 1f
+                binding.confirmContainer.visibility = View.VISIBLE
             } else {
-                binding.continueButton.alpha = 0f
+                binding.confirmContainer.visibility = View.GONE
             }
 
             binding.continueButton.isFocusable =
@@ -1264,9 +1266,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
         binding.pickupLayout.location.visibility = View.VISIBLE
         if (pickupCurbsideStoresRecyclerViewAdapter?.selected != -1) {
-            binding.continueButton.alpha = 1f
+            binding.confirmContainer.visibility = View.VISIBLE
         } else {
-            binding.continueButton.alpha = 0f
+            binding.confirmContainer.visibility = View.GONE
         }
         binding.continueButton.isFocusable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
         binding.continueButton.isClickable = pickupCurbsideStoresRecyclerViewAdapter?.selected != -1
@@ -1309,13 +1311,12 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
         binding.pickupLayout.location.visibility = View.VISIBLE
         if (dineInStoresRecyclerViewAdapter?.selected != -1) {
-            binding.continueButton.alpha = 1f
+            binding.confirmContainer.visibility = View.VISIBLE
         } else {
-            binding.continueButton.alpha = 0f
+            binding.confirmContainer.visibility = View.GONE
         }
         binding.continueButton.isFocusable = dineInStoresRecyclerViewAdapter?.selected != -1
         binding.continueButton.isClickable = dineInStoresRecyclerViewAdapter?.selected != -1
-        binding.confirmContainer.visibility = View.VISIBLE
         activity?.cast<BaseActivity> {
             it.dismissDialogs()
         }
@@ -1328,9 +1329,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             }
             if (args.isFromFavorites) {
                 MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_ORDER_TYPE)
-                orderPresenter.addToCartFavorite(CacheUtil.getInstance()
-                    .retrieveFavoriteToAddToCart())
-            }else if (isMenuSeparate && isMenuRedownloaded) {
+                orderPresenter.addToCartFavorite(
+                    CacheUtil.getInstance().retrieveFavoriteToAddToCart()
+                )
+            } else if (isMenuSeparate && isMenuRedownloaded) {
                 navigateUp(true)
             } else {
                 activity?.cast<BaseActivity> {
@@ -1440,9 +1442,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         if (!deliveryTabSelected) {
             isPreselectedBranch = enable
             if (enable) {
-                binding.continueButton.alpha = 1f
+                binding.confirmContainer.visibility = View.VISIBLE
             } else {
-                binding.continueButton.alpha = 0f
+                binding.confirmContainer.visibility = View.GONE
             }
             binding.continueButton.isFocusable = enable
             binding.continueButton.isClickable = enable
@@ -1609,9 +1611,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
-                    if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN ) {
-                        val currentFavourite = CacheUtil
-                            .getInstance().retrieveFavoriteToAddToCart()
+                    if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN) {
+                        val currentFavourite = CacheUtil.getInstance().retrieveFavoriteToAddToCart()
                         if (currentFavourite != null) {
                             MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_ORDER_TYPE)
                             orderPresenter.addToCartFavorite(
@@ -1632,8 +1633,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     dismissPickupTypeDialog()
                 }
 
-            }
-        )
+            })
         choosePickupTypeDialog.show(
             requireActivity().supportFragmentManager, ChoosePickupTypeDialog::class.java.simpleName
         )

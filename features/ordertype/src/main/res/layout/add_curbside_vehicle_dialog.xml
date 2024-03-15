@@ -262,7 +262,7 @@
                     android:textSize="14sp"
                     tools:text="License Plate Number" />
 
-                <androidx.appcompat.widget.AppCompatEditText
+                <EditText
                     android:id="@+id/plateNumberEdit"
                     style="@style/Styles.Text.Footnote"
                     android:layout_width="match_parent"
@@ -271,10 +271,14 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/background_edit_text"
+                    android:ellipsize="end"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center_vertical"
+                    android:imeOptions="actionDone"
+                    android:maxLines="1"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:singleLine="true"
                     android:textColor="#0C0C0C"
                     android:textSize="12sp"
                     tools:hint="e.g. KLK98898" />

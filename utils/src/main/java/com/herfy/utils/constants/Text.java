@@ -356,6 +356,8 @@ public class Text {
     public static final String CARD_FAILED = "card_failed";
     public static final String ABANDON_ALERT_MESSAGE = "abandon_alert_message";
     public static final String ADDRESS_DELETED = "address_deleted";
+
+    public static final String ADDRESS_UDPATED = "address_updated";
     public static final String REMOVED_ITEM_CART_SUCCESSFULLY = "removed_item_cart_successfully";
     public static final String OPEN_CAPS = "open_caps";
     public static final String CLOSED_CAPS = "closed_caps";
@@ -929,22 +931,22 @@ public class Text {
     public static final String CONFIRM_LABEL = "confirm_label";
     public static final String SELECT_CITY = "select_city";
 
-    public static final String APPLY_COUPONS_LABEL="apply_coupons_label";
-    public static final String ENTER_COUPON_CODE="enter_coupon_code";
-    public static final String APPLY_DIGITAL_COUPONS="apply_digital_coupons";
+    public static final String APPLY_COUPONS_LABEL = "apply_coupons_label";
+    public static final String ENTER_COUPON_CODE = "enter_coupon_code";
+    public static final String APPLY_DIGITAL_COUPONS = "apply_digital_coupons";
     public static final String AVAILABLE_TO_REDEEM = "available_to_redeem";
-    public static final String MORE_TO_REDEEM ="more_to_redeem";
-    public static final String EXPIRES_LABEL="expires_label";
+    public static final String MORE_TO_REDEEM = "more_to_redeem";
+    public static final String EXPIRES_LABEL = "expires_label";
     public static final String APPLY_A_COUPON_LABEL = "apply_a_coupon_label";
-    public static final String VIEW_COUPONS_LABEL="view_coupons_label";
-    public static final String INVALID_FOR_THIS_ORDER="invalid_for_this_order";
-    public static final String GOT_IT_LABEL="got_it_label";
-    public static final String ADD_MORE_ITEMS_LABEL="add_more_items_label";
-    public static final String COUPON_DISCOUNT_LABEL="coupon_discount_label";
-    public static final String CHECKOUT_LABEL="checkout_label";
+    public static final String VIEW_COUPONS_LABEL = "view_coupons_label";
+    public static final String INVALID_FOR_THIS_ORDER = "invalid_for_this_order";
+    public static final String GOT_IT_LABEL = "got_it_label";
+    public static final String ADD_MORE_ITEMS_LABEL = "add_more_items_label";
+    public static final String COUPON_DISCOUNT_LABEL = "coupon_discount_label";
+    public static final String CHECKOUT_LABEL = "checkout_label";
 
-    public static final String ADD_MORE_ITEM_LABEL="add_more_item_label";
-    public static final String YOUR_CART_IS_EMPTY_LABEL="your_cart_is_empty";
+    public static final String ADD_MORE_ITEM_LABEL = "add_more_item_label";
+    public static final String YOUR_CART_IS_EMPTY_LABEL = "your_cart_is_empty";
 
     public static final String CHOOSE_YOUR_LANG = "choose_your_lang";
 
@@ -973,31 +975,74 @@ public class Text {
     public static final String GOOD_MORNING = "good_morning";
     public static final String GOOD_AFTERNOON = "good_afternoon";
     public static final String GOOD_EVENING = "good_evening";
-    public static final String ASHAB_HERFY="ashab_herfy";
-    public static final String TOTAL_POINTS="total_points";
-    public static final String SEE_MY_REWARDS="see_my_rewards";
-    public static final String BECOME_ASHAB_HERFY="become_ashab_herfy";
-    public static final String BECOME_ASHAB_HERFY_DESCRIPTION="become_ashab_herfy_description";
-    public static final String POINTS_UNTIL_NEXT_TIER="points_until_next_tier";
-    public static final String REFER_AND_EARN_LABEL="refer_and_earn_label";
+    public static final String ASHAB_HERFY = "ashab_herfy";
+    public static final String TOTAL_POINTS = "total_points";
+    public static final String SEE_MY_REWARDS = "see_my_rewards";
+    public static final String BECOME_ASHAB_HERFY = "become_ashab_herfy";
+    public static final String BECOME_ASHAB_HERFY_DESCRIPTION = "become_ashab_herfy_description";
+    public static final String POINTS_UNTIL_NEXT_TIER = "points_until_next_tier";
+    public static final String REFER_AND_EARN_LABEL = "refer_and_earn_label";
     public static final String STORE_LOCATOR = "store_locator_label";
     public static final String STAY_TUNED_PROMO = "stay_tuned_promo";
-    public static final String PROMOTION_EMPTY_CONTENT="promotion_empty_content";
+    public static final String PROMOTION_EMPTY_CONTENT = "promotion_empty_content";
     public static final String HI_LOGGED_OUT = "hi_logged_out";
-    public static final String REWARDS_LABEL="rewards_label";
-    public static final String SAR_VALUE_LABEL="sar_value";
-    public static final String REWARD_TIER_LABEL="reward_tiers";
-    public static final String SCAN_POINTS_LABEL="scan_points_label";
-    public static final String SCAN_POINTS_DESCRIPTION="scan_points_description";
-    public static final String PERCENT_OF_YOUR_ORDER="percent_of_your_order";
-    public static final String HISTORY_LABEL="history_label";
-    public static final String EARNED_LABEL="earned_label";
-    public static final String USED_LABEL="used_label";
-    public static final String POINTS_EQUAL_SAR="points_equal_sar";
+    public static final String REWARDS_LABEL = "rewards_label";
+    public static final String SAR_VALUE_LABEL = "sar_value";
+    public static final String REWARD_TIER_LABEL = "reward_tiers";
+    public static final String SCAN_POINTS_LABEL = "scan_points_label";
+    public static final String SCAN_POINTS_DESCRIPTION = "scan_points_description";
+    public static final String PERCENT_OF_YOUR_ORDER = "percent_of_your_order";
+    public static final String HISTORY_LABEL = "history_label";
+    public static final String EARNED_LABEL = "earned_label";
+    public static final String USED_LABEL = "used_label";
     public static final String ADD_TO_BAG_AMOUNT = "add_to_bag_amount";
     public static final String UPLOAD_IMAGE = "upload_image";
-    public static final String WELCOME_TO_HERFY="welcome_to_herfy";
+    public static final String WELCOME_TO_HERFY = "welcome_to_herfy";
     public static final String FULL_NAME_LABEL = "full_name_label";
 
     public static final String DYNAMIC_CODE_DIGIT = "dyamic_code_digit";
+    public static final String DELIVERY_ADDRESSES = "delivery_addresses";
+    public static final String CURBSIDE_VEHICLES = "curbside_vehicles";
+    public static final String LOGOUT = "logout";
+    public static final String DELETE_MY_ACCOUNT = "delete_my_account";
+    public static final String DELETE_ACCOUNT = "delete_account";
+    public static final String DELETE_ACCOUNT_AND_REMOVE = "delete_account_and_remove";
+    public static final String COMPLETE_PROFILE = "complete_profile";
+    public static final String COMPLETE_YOUR_PROFILE = "complete_your_profile";
+
+    public static final String POINTS_EQUAL_SAR = "points_equal_sar";
+
+    public static final String NAME = "name_label";
+    public static final String PHONE_NUMBER_NEW = "phone_number_new";
+    public static final String GENDER = "gender";
+    public static final String DATE_OF_BIRTH = "date_of_birth";
+    public static final String SELECT_YOUR_DATE_OF_BIRTH = "select_your_date_of_birth";
+    public static final String YOUR_NAME = "your_name";
+
+    public static final String CAN_NOT_BE_EDITED = "can_not_be_edited";
+
+    public static final String ARE_YOU_SURE_YOU_WANT_TO_DELETE = "are_you_sure_want_delete";
+    public static final String THIS_ACTION_CAN_NOT_REVERSE = "this_action_can_not_reverse";
+
+    public static final String DELETE_LABEL = "delete_label";
+    public static final String CANCEL_LABEL = "cancel_label";
+
+    public static final String ADD_NEW_ADDRESS_LABEL = "add_new_address_label";
+
+    public static final String ADDRESSES_LABEL = "addresses";
+
+
+    public static final String YOU_CAN_ALWAYS_LOGIN_ANYTIME = "you_can_always_login";
+
+    public static final String ARE_YOU_SURE_YOU_WANT_TO_LOGOUT = "are_you_sure_want_logout";
+
+    public static final String CARD_DETAILS = "card_details";
+
+    public static final String CARD_NUMBER = "card_number";
+    public static final String EXPIRATION_DATE = "expiration_date";
+    public static final String SET_THIS_CARD_DEFAULT = "set_this_card_default";
+    public static final String REMOVE_THIS_PAYMENT = "remove_this_payment";
+
+    public static final String NOTE_TO_RIDER_LABEL = "note_to_rider_label";
+
 }

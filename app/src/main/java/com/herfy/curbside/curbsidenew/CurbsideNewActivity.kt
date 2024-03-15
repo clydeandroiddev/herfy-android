@@ -59,7 +59,7 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
     override fun setupViews() {
         var carId = ""
         val car = CacheUtil.getInstance().curbsideCar
-        if (car != null) {
+        if (car != null && !intent.getBooleanExtra("fromProfile", false)) {
             carId = car.id.orEmpty()
         }
         binding.apply {
@@ -71,13 +71,24 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
         curbsideVehicleAdapter = CurbsideVehicleAdapter(
             ArrayList(), object : CurbsideVehicleAdapter.CurbsideListener {
                 override fun onSelectedCar(car: CustomerCar, position: Int) {
-                    if (AuthUtil.getInstance().isSignedIn) {
-                        CacheUtil.getInstance().curbsideCar = car
-                        setResult(RESULT_OK)
-                        finish()
+                    if (!intent.getBooleanExtra("fromProfile", false)) {
+                        if (AuthUtil.getInstance().isSignedIn) {
+                            CacheUtil.getInstance().curbsideCar = car
+                            setResult(RESULT_OK)
+                            finish()
+                        }
                     }
                 }
-            }, carId
+
+                override fun onDeleteItem(car: CustomerCar, position: Int) {
+                    showLoadingDialog()
+                    curbsidePresenter.deleteCar(car.id, position)
+                }
+
+                override fun onEditItem(car: CustomerCar, position: Int) {
+                    showAddDialog(false, car)
+                }
+            }, carId, intent.getBooleanExtra("fromProfile", false)
         )
         binding.curbsideList.adapter = curbsideVehicleAdapter
     }
@@ -89,8 +100,14 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
 
     override fun setupTranslations() {
         binding.apply {
-            curbsideLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.CHOOSE_YOUR_CURBSIDE_VEHICLE, "Choose your curbside vehicle")
+            if (intent.getBooleanExtra("fromProfile", false)) {
+                curbsideLabel.text = CacheUtil.getInstance()
+                    .getTranslations(Text.CURBSIDE_VEHICLES, "Curbside Vehicles")
+            } else {
+                curbsideLabel.text = CacheUtil.getInstance().getTranslations(
+                    Text.CHOOSE_YOUR_CURBSIDE_VEHICLE, "Choose your curbside vehicle"
+                )
+            }
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.ADD_NEW_VEHICLE, "Add New Vehicle")
             continueButton.setOnClickListener {
@@ -122,13 +139,23 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
     }
 
     private fun showAddDialog(isEmpty: Boolean) {
+        showAddDialog(isEmpty, null)
+    }
+
+    private fun showAddDialog(isEmpty: Boolean, customerCar: CustomerCar?) {
         dismissAddressDialog()
-        addCurbsideDialog = AddCurbsideVehicleDialog.newInstance(isEmpty,
+        addCurbsideDialog = AddCurbsideVehicleDialog.newInstance(
+            customerCar,
+            isEmpty,
             object : AddCurbsideVehicleDialog.OnSubmit {
                 override fun onSuccess() {
                     dismissAddressDialog()
-                    setResult(RESULT_OK)
-                    finish()
+                    if (intent.getBooleanExtra("fromProfile", false)) {
+                        curbsidePresenter.getCustomerCars()
+                    } else {
+                        setResult(RESULT_OK)
+                        finish()
+                    }
                 }
 
                 override fun error(text: String) {
@@ -157,7 +184,18 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
     }
 
     override fun successDelete(position: Int) {
-
+        dismissDialogs()
+        val car = curbsideVehicleAdapter.getCar(position)
+        curbsideVehicleAdapter.removeItem(position)
+        if (curbsideVehicleAdapter.listCount() == 0) {
+            showAddDialog(true)
+        }
+        val car1 = CacheUtil.getInstance().curbsideCar
+        if (car1 != null) {
+            if (car1.id == car.id) {
+                CacheUtil.getInstance().curbsideCar = null
+            }
+        }
     }
 
     private fun dismissAddressDialog() {

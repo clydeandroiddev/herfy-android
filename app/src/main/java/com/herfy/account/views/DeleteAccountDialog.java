@@ -39,7 +39,7 @@ public class DeleteAccountDialog extends DialogFragment {
     @Nullable
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        View view = inflater.inflate(R.layout.dialog_delete_account, container, false);
+        View view = inflater.inflate(R.layout.dialog_delete_account_new, container, false);
         MaterialButton delete = view.findViewById(R.id.delete);
         MaterialButton cancel = view.findViewById(R.id.cancel);
         MaterialCardView card = view.findViewById(R.id.card);

@@ -1527,16 +1527,16 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     }
 
     @Override
-    public void addAddress(String phoneNumber, String label, String note) {
+    public void addAddress(String phoneNumber, String label, String note, String flat) {
 
         if (AuthUtil.getInstance().isSignedIn()) {
 
             CreateCustomerAddressBody createCustomerAddressBody = null;
 
             if (address != null) {
-                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "", "", "", "", address.getAddressLine(0), address.getLatitude(), address.getLongitude(), phoneNumber, note, "");
+                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "", "", "", flat, address.getAddressLine(0), address.getLatitude(), address.getLongitude(), phoneNumber, note, "");
             } else if (place != null) {
-                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "", "", "", "", place.getName(), place.getLatLng().latitude, place.getLatLng().longitude, phoneNumber, note, "");
+                createCustomerAddressBody = new CreateCustomerAddressBody("", label, "", "", "", "", flat, place.getName(), place.getLatLng().latitude, place.getLatLng().longitude, phoneNumber, note, "");
             }
 
             if (createCustomerAddressBody != null) {

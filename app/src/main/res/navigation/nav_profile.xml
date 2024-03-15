@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_profile"
+    app:startDestination="@id/profile_fragment">
+
+    <fragment
+        android:id="@+id/profile_fragment"
+        android:name="com.herfy.account.account.ProfileFragment"
+        tools:layout="@layout/fragment_user_profile">
+
+        <deepLink app:uri="android-app://com.herfy/profile_fragment_nav" />
+
+        <action
+            android:id="@+id/action_profile_to_edit"
+            app:destination="@id/edit_profile_fragment"
+            app:popUpTo="@+id/profile_fragment" />
+
+        <action
+            android:id="@+id/action_profile_to_user_addresses"
+            app:destination="@id/address_profile_fragment"
+            app:popUpTo="@+id/profile_fragment" />
+
+        <action
+            android:id="@+id/action_profile_to_user_payments"
+            app:destination="@id/payments_profile_fragment"
+            app:popUpTo="@+id/profile_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/edit_profile_fragment"
+        android:name="com.herfy.account.account.EditProfileFragment"
+        tools:layout="@layout/fragment_user_edit_profile">
+
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/address_profile_fragment"
+        android:name="com.herfy.account.account.AddressUserFragment"
+        tools:layout="@layout/fragment_user_addresses">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/payments_profile_fragment"
+        android:name="com.herfy.account.account.PaymentMethodsUserFragment"
+        tools:layout="@layout/fragment_user_payment_methods">
+
+        <action
+            android:id="@+id/action_profile_to_card_detail"
+            app:destination="@id/card_details_fragment"
+            app:popUpTo="@+id/payments_profile_fragment">
+
+            <argument
+                android:name="cardId"
+                app:argType="string"
+                app:nullable="false" />
+
+        </action>
+
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/card_details_fragment"
+        android:name="com.herfy.account.account.CardDetailsFragment"
+        tools:layout="@layout/fragment_user_card_detail">
+
+        <argument
+            android:name="cardId"
+            app:argType="string"
+            app:nullable="false" />
+
+    </fragment>
+
+</navigation>

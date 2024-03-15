@@ -189,7 +189,7 @@ android {
             buildConfigField "boolean", "MULTI_COUNTRY_ENABLED", "false"
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "true"
             buildConfigField "boolean", "DISABLE_SPLASH_ANIMATION", "false"
-       }
+        }
     }
 
     compileOptions {
@@ -219,7 +219,7 @@ android {
             def buildType = variant.buildType.name
             def versionName = variant.versionName
             def flavor = variant.flavorName
-            outputFileName = "${flavor}-${buildType}-v${versionName}(${versionCode})-${new Date().format( 'yyyy.MM.dd.hh.mm.aa' )}.apk"
+            outputFileName = "${flavor}-${buildType}-v${versionName}(${versionCode})-${new Date().format('yyyy.MM.dd.hh.mm.aa')}.apk"
         }
     }
 }
@@ -243,6 +243,7 @@ dependencies {
     implementation project(path: ':features:menu')
     implementation project(path: ':features:ordertype')
     implementation project(path: ':features:promotions')
+    implementation project(path: ':features:profile')
     implementation project(path: ':features:upsell')
     implementation project(path: ':features:checkout')
     implementation project(path: ':utils')
@@ -302,7 +303,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'org.apache.commons:commons-lang3:3.8'
     def glide_version = "4.11.0"
-    implementation ("com.github.bumptech.glide:glide:$glide_version"){
+    implementation("com.github.bumptech.glide:glide:$glide_version") {
         exclude group: "com.android.support"
     }
     implementation "com.github.bumptech.glide:glide:$glide_version"

@@ -79,6 +79,7 @@ public interface AccountContract {
         void onBindLocationItemViewAtPosition(int position, LocationViewHolder locationViewHolder);
 
         int getLocationsCount();
+
         int getBookmarkLocationsCount();
 
         void fetchCustomerCards();
@@ -96,6 +97,12 @@ public interface AccountContract {
         void removeMukafaaRedemption();
 
         void getRevelRewardPoints();
+
+        String getOriginalName();
+
+        String getOriginalBirthday();
+
+        String getOriginalGender();
 
     }
 

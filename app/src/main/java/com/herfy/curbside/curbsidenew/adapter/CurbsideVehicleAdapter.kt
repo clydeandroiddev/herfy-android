@@ -18,6 +18,8 @@ import com.bumptech.glide.request.target.Target
 import com.herfy.common.formatDate
 import com.herfy.ordertype.databinding.ItemCurbsideNewBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.isVisible
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
 
@@ -25,7 +27,8 @@ import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
 class CurbsideVehicleAdapter(
     val curbsideList: ArrayList<CustomerCar> = arrayListOf(),
     val curbsideListener: CurbsideListener,
-    var selectedId: String
+    var selectedId: String,
+    val fromProfile: Boolean
 ) : RecyclerView.Adapter<CurbsideVehicleAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: ItemCurbsideNewBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -52,7 +55,7 @@ class CurbsideVehicleAdapter(
                 )
             )
 
-            if (selectedId != item.id) {
+            if (fromProfile || selectedId != item.id) {
                 curbsideEllipse.imageTintList = null
                 chooseCurbside.setBackgroundResource(com.herfy.ordertype.R.drawable.bg_deliver)
                 selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_circle_unselected)
@@ -62,10 +65,28 @@ class CurbsideVehicleAdapter(
                 selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_store_selected)
             }
 
+            if (fromProfile) {
+                editItem.isVisible()
+                deleteItem.isVisible()
+                selectedIdentifier.gone()
+            } else {
+                editItem.gone()
+                selectedIdentifier.isVisible()
+                deleteItem.gone()
+            }
+
             curbsidePlateNumber.text = item.attributes.plateNumber
 
             chooseCurbside.setOnClickListener {
                 curbsideListener.onSelectedCar(item, position)
+            }
+
+            editItem.setOnClickListener {
+                curbsideListener.onEditItem(item, position)
+            }
+
+            deleteItem.setOnClickListener {
+                curbsideListener.onDeleteItem(item, position)
             }
 
             Glide.with(curbsideBrand.context).load(item.attributes.carMakerImageUri)
@@ -107,6 +128,18 @@ class CurbsideVehicleAdapter(
         notifyDataSetChanged()
     }
 
+    fun getCar(position: Int): CustomerCar {
+        return this.curbsideList[position]
+    }
+    fun removeItem(position: Int) {
+        this.curbsideList.removeAt(position)
+        notifyDataSetChanged()
+    }
+
+    fun listCount(): Int {
+        return this.curbsideList.size
+    }
+
     fun updateSelectedId(id: String) {
         this.selectedId = id
         notifyDataSetChanged()
@@ -114,5 +147,7 @@ class CurbsideVehicleAdapter(
 
     interface CurbsideListener {
         fun onSelectedCar(car: CustomerCar, position: Int)
+        fun onDeleteItem(car: CustomerCar, position: Int)
+        fun onEditItem(car: CustomerCar, position: Int)
     }
 }

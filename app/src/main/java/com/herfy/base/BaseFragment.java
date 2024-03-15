@@ -1,5 +1,6 @@
 package com.herfy.base;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -68,7 +69,7 @@ public class BaseFragment extends Fragment {
     public void showLoadingDialog() {
         try {
             BaseActivity baseActivity = (BaseActivity) getActivity();
-            if(baseActivity != null) {
+            if (baseActivity != null) {
                 baseActivity.showLoadingDialog();
             }
         } catch (Exception e) {
@@ -79,12 +80,11 @@ public class BaseFragment extends Fragment {
     public void dismissDialogs() {
         try {
             BaseActivity baseActivity = (BaseActivity) getActivity();
-            if(baseActivity != null) {
+            if (baseActivity != null) {
                 baseActivity.dismissDialogs();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }

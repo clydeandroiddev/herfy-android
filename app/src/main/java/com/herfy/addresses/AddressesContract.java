@@ -23,6 +23,10 @@ public interface AddressesContract {
 
         void getLocation();
 
+        void successDelete(int position);
+
+        void successEdit();
+
         void showLocation(LatLng latLng);
 
         void showPlaces(ArrayList<AutocompletePrediction> places);
@@ -97,6 +101,9 @@ public interface AddressesContract {
 
         void updateAddress(Address address);
 
+        void updateAddress(Address address, String note, String label, String phoneNumber);
+
+        void deleteUserLocation(Address address, int position);
 
     }
 

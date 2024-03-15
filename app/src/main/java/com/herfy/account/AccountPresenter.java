@@ -42,6 +42,10 @@ public class AccountPresenter implements AccountContract.Presenter {
     private ArrayList<Address> bookmarkLocations = new ArrayList<>();
     private ArrayList<Address> otherLocations = new ArrayList<>();
 
+    private String originalName = "";
+    private String originalBirthdate = "";
+    private String originalGender = "";
+
     public AccountPresenter(AccountContract.View accountView) {
         this.accountView = accountView;
         this.accountView.setPresenter(this);
@@ -71,6 +75,8 @@ public class AccountPresenter implements AccountContract.Presenter {
             case Values.PROVIDER_GOOGLE:
                 provider = CacheUtil.getInstance().getTranslations(Text.SIGN_IN_WITH_GOOGLE, "Sign in with Google");
         }
+        originalName = customer.getAttributes().getFirstName() + " " + customer.getAttributes().getLastName();
+        originalGender = customer.getAttributes().getGender();
         accountView.showCustomer(customer.getAttributes().getFirstName(), customer.getAttributes().getLastName(), customer.getAttributes().getGender(), customer.getAttributes().getMobile(), customer.getAttributes().getEmail(), provider);
         getSelectedDateOfBirth(customer.getAttributes().getBirthDate());
     }
@@ -86,12 +92,13 @@ public class AccountPresenter implements AccountContract.Presenter {
 
     @Override
     public void getSelectedDateOfBirth(String dateOfBirth) {
-        if(dateOfBirth != null && !dateOfBirth.isEmpty()) {
+        if (dateOfBirth != null && !dateOfBirth.isEmpty()) {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                 Date date = sdf.parse(dateOfBirth);
-                if(date != null) {
-                    sdf = new SimpleDateFormat("MM/dd/yy", Locale.getDefault());
+                if (date != null) {
+                    sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                    originalBirthdate = sdf.format(date);
                     accountView.showDateOfBirth(date, sdf.format(date));
                     return;
                 }
@@ -99,14 +106,15 @@ public class AccountPresenter implements AccountContract.Presenter {
                 e.printStackTrace();
             }
         }
+        originalBirthdate = "";
         accountView.showDateOfBirth(null, "");
     }
 
     @Override
     public int getSelectedGender(String gender, List<String> genderOptions) {
-        if(gender.equalsIgnoreCase("male")) {
+        if (gender.equalsIgnoreCase("male")) {
             return 1;
-        } else if(gender.equalsIgnoreCase("female")) {
+        } else if (gender.equalsIgnoreCase("female")) {
             return 2;
         }
         return 0;
@@ -208,8 +216,6 @@ public class AccountPresenter implements AccountContract.Presenter {
         } else if (!StringUtil.isValidName(firstName)) {
             valid = false;
             accountView.showErrorFirstName(CacheUtil.getInstance().getTranslations(Text.NAME_VALIDATION, "Name fields should not accept numbers and special character."));
-        } else {
-            accountView.showErrorFirstName("");
         }
 
         if (lastName.isEmpty()) {
@@ -218,16 +224,14 @@ public class AccountPresenter implements AccountContract.Presenter {
         } else if (!StringUtil.isValidName(lastName)) {
             valid = false;
             accountView.showErrorFirstName(CacheUtil.getInstance().getTranslations(Text.NAME_VALIDATION, "Name fields should not accept numbers and special character."));
-        } else {
-            accountView.showErrorLastName("");
         }
 
         String birthDate = "";
-        if(!dateOfBirth.isEmpty()) {
+        if (!dateOfBirth.isEmpty()) {
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy", Locale.getDefault());
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
                 Date date = sdf.parse(dateOfBirth);
-                if(date != null) {
+                if (date != null) {
                     sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                     birthDate = sdf.format(date);
                 }
@@ -242,22 +246,8 @@ public class AccountPresenter implements AccountContract.Presenter {
         } else if (!StringUtil.isValidPhoneNumber(phoneNumber)) {
             valid = false;
             accountView.showErrorPhoneNumber(CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_INVALID));
-        } else {
-            accountView.showErrorPhoneNumber("");
         }
 
-        String key = CacheUtil.getInstance().getConceptKey();
-        if (key.equalsIgnoreCase("CQcFAwgLDA0")) {
-            if (email.isEmpty()) {
-                valid = false;
-                accountView.showErrorEmail(CacheUtil.getInstance().getTranslations(Text.EMAIL_REQUIRED));
-            } else if (!StringUtil.isValidEmail(email)) {
-                valid = false;
-                accountView.showErrorEmail(CacheUtil.getInstance().getTranslations(Text.EMAIL_INVALID));
-            } else {
-                accountView.showErrorEmail("");
-            }
-        }
 
         if (valid) {
 
@@ -364,8 +354,7 @@ public class AccountPresenter implements AccountContract.Presenter {
                         locations.add(address);
                         if (label != null && !label.isEmpty()) {
                             bookmarkLocations.add(address);
-                        }
-                        else {
+                        } else {
                             otherLocations.add(address);
                         }
                     }
@@ -458,18 +447,14 @@ public class AccountPresenter implements AccountContract.Presenter {
 
     @Override
     public List<Address> getLocations() {
-        if (locations == null || locations.isEmpty())
-            return new ArrayList<>();
-        else
-            return locations;
+        if (locations == null || locations.isEmpty()) return new ArrayList<>();
+        else return locations;
     }
 
     @Override
     public String getLocationsAsString() {
-        if (locations == null || locations.isEmpty())
-            return "";
-        else
-            return new Gson().toJson(locations);
+        if (locations == null || locations.isEmpty()) return "";
+        else return new Gson().toJson(locations);
     }
 
     @Override
@@ -496,7 +481,7 @@ public class AccountPresenter implements AccountContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o.toString());
-                accountView.showError(ErrorHandler.getErrorMessage(o,CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                accountView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
             }
         });
     }
@@ -541,6 +526,21 @@ public class AccountPresenter implements AccountContract.Presenter {
                 AppLogger.printRetrofitError(o);
             }
         });
+    }
+
+    @Override
+    public String getOriginalName() {
+        return originalName;
+    }
+
+    @Override
+    public String getOriginalBirthday() {
+        return originalBirthdate;
+    }
+
+    @Override
+    public String getOriginalGender() {
+        return originalGender;
     }
 
 }
