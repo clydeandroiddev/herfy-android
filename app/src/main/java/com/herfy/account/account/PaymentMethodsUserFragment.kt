@@ -177,6 +177,4 @@ class PaymentMethodsUserFragment : BaseFragment(), AccountContract.View {
     override fun showRevelRewardPoints(pointValue: Double?) {
 
     }
-
-
 }
