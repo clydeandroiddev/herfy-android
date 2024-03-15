@@ -72,6 +72,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun login(phoneNumber: String, result: (LoginResponse) -> Unit) {
         AuthUtil.getInstance().password = ""
+        val phoneNumberTrue = phoneNumber.replace("+", "")
         val loginBody = LoginSimpleBody(StringUtil.toEnglish(phoneNumber.replace("+", "")), "full")
         CustomersApiCall.getInstance().loginCustomer(loginBody, object : ApiRequestListener {
             override fun onSuccess(o: Any) {
@@ -93,7 +94,7 @@ class AuthRepositoryImpl @Inject constructor(
                                     )
                                 ) {
                                     verificationSend(
-                                        customer.id, customer.attributes.mobile
+                                        customer.id, phoneNumberTrue
                                     )
                                 }
                                 result(LoginResponse(true, true, customer, ""))

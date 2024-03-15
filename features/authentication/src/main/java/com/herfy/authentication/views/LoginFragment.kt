@@ -1,13 +1,16 @@
 package com.herfy.authentication.views
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -36,6 +39,10 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
     override val viewModel: LoginViewModel by viewModels()
 
     override val layout: Int = R.layout.fragment_login
+
+    private var keyboardShown = false
+
+    private var addIsShown = false
 
     private var googleSignInClient: GoogleSignInClient? = null
 
@@ -85,6 +92,19 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
         super.initViews()
 
         binding.apply {
+
+            binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+                val r = Rect()
+                rootView.getWindowVisibleDisplayFrame(r)
+                val screenHeight = rootView.height
+                val keypadHeight = screenHeight - r.bottom
+                val isShown = keypadHeight > screenHeight * 0.15
+                if (isShown != keyboardShown && !addIsShown) {
+                    keyboardShown = isShown
+                    adjustViewHeight(isShown)
+                }
+            }
+
             loginButton.setOnClickListener {
                 hideKeyboard(binding.root)
                 viewModel.login(
@@ -97,6 +117,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
             }
 
             loginGoogle.setOnClickListener {
+                hideKeyboard(binding.root)
                 googleSignInClient!!.signOut()
                 showProgressDialog(
                     false, CacheUtil.getInstance().getTranslations(Text.LOADING, "Loading")
@@ -106,7 +127,8 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
             }
 
             loginGuest.setOnClickListener {
-                requireActivity().finish()
+                //requireActivity().finish()
+                showAddNumber(true, null)
             }
 
             phoneNumberEdit.setOnEditorActionListener { v, actionId, event ->
@@ -145,15 +167,30 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
     }
 
     private fun proceed(customer: Customer) {
-        val status = customer.attributes.status.lowercase(Locale.getDefault()).trim { it <= ' ' }
-        findNavController().navigate(
-            LoginFragmentDirections.actionLoginToOtp(
-                phoneNumber = customer.attributes.mobile ?: "",
-                customerId = customer.id,
-                isVerified = status == Values.STATUS_VERIFIED,
-                isGuest = false
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            val status =
+                customer.attributes.status.lowercase(Locale.getDefault()).trim { it <= ' ' }
+            findNavController().navigate(
+                LoginFragmentDirections.actionLoginToOtp(
+                    phoneNumber = customer.attributes.mobile ?: "",
+                    customerId = customer.id,
+                    isVerified = status == Values.STATUS_VERIFIED,
+                    isGuest = false
+                )
             )
-        )
+        }, 100)
+    }
+
+    private fun adjustViewHeight(keyboardVisible: Boolean) {
+        if (keyboardVisible) {
+            binding.spacing.layoutParams.height =
+                resources.getDimensionPixelSize(R.dimen.view_keyboard_shown)
+        } else {
+            binding.spacing.layoutParams.height =
+                resources.getDimensionPixelSize(R.dimen.view_keyboard_regular)
+        }
+        binding.spacing.requestLayout()
     }
 
     override fun observe() {
@@ -250,6 +287,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
             }
 
         })
+        addIsShown = true
         addNumberDialog.show(
             requireActivity().supportFragmentManager, AddNumberDialog::class.java.simpleName
         )
@@ -257,6 +295,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
     private fun dismissAddNumberDialog() {
         try {
+            addIsShown = false
             addNumberDialog.dismiss()
         } catch (e: java.lang.Exception) {
             e.printStackTrace()

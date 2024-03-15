@@ -52,26 +52,25 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
             if (otpLength == 0) {
                 otpLength = 6
             }
-            enterForDigitLabel.text = CacheUtil.getInstance().getTranslations(
-                Text.DYNAMIC_CODE_DIGIT, "Enter the (x) digit code sent to your number"
-            ).replace("(x)", otpLength.toString())
             binding.otpView.setLength(otpLength)
             binding.otpView.generate()
             binding.otpView.otpListener = object : OTPListener {
                 override fun onInteractionListener() {}
                 override fun onOTPComplete(otp: String) {
-                    Log.e("ADADADADAD", "ADADADAD:" + otp)
                     verify(otp)
                 }
             }
             val handler = Handler(Looper.getMainLooper())
             handler.postDelayed({
-                showKeyboard(dummyEdit)
+                enterForDigitLabel.text = CacheUtil.getInstance().getTranslations(
+                    Text.DYNAMIC_CODE_DIGIT, "Enter the (x) digit code sent to your number"
+                ).replace("(x)", otpLength.toString())
+                showKeyboard(requireContext(), dummyEdit)
                 binding.otpView.requestFocusOTP()
+                initTimer()
+                initArgs()
             }, 500)
         }
-        initTimer()
-        initArgs()
     }
 
     private fun verify(otp: String) {
