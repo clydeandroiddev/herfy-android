@@ -49,6 +49,31 @@
         android:name="com.herfy.account.account.PaymentMethodsUserFragment"
         tools:layout="@layout/fragment_user_payment_methods">
 
+        <action
+            android:id="@+id/action_profile_to_card_detail"
+            app:destination="@id/card_details_fragment"
+            app:popUpTo="@+id/payments_profile_fragment">
+
+            <argument
+                android:name="cardId"
+                app:argType="string"
+                app:nullable="false" />
+
+        </action>
+
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/card_details_fragment"
+        android:name="com.herfy.account.account.CardDetailsFragment"
+        tools:layout="@layout/fragment_user_card_detail">
+
+        <argument
+            android:name="cardId"
+            app:argType="string"
+            app:nullable="false" />
+
     </fragment>
 
 </navigation>

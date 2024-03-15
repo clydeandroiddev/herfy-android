@@ -1036,4 +1036,9 @@ public class Text {
 
     public static final String CARD_DETAILS = "card_details";
 
+    public static final String CARD_NUMBER = "card_number";
+    public static final String EXPIRATION_DATE = "expiration_date";
+    public static final String SET_THIS_CARD_DEFAULT = "set_this_card_default";
+    public static final String REMOVE_THIS_PAYMENT = "remove_this_payment";
+
 }

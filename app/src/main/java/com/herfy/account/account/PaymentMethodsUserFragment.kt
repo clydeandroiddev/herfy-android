@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.account.account.adapter.PaymentMethodsAdapter
@@ -14,11 +15,13 @@ import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
 import com.skylinedynamics.solosdk.api.models.objects.Address
+import com.skylinedynamics.solosdk.api.models.objects.CustomerCard
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
 
 @AndroidEntryPoint
-class PaymentMethodsUserFragment : BaseFragment(), AccountContract.View {
+class PaymentMethodsUserFragment : BaseFragment(), AccountContract.View,
+    PaymentMethodsAdapter.CardListener {
     private var paymentPresenter: AccountContract.Presenter? = null
 
     private lateinit var binding: FragmentUserPaymentMethodsBinding
@@ -66,7 +69,7 @@ class PaymentMethodsUserFragment : BaseFragment(), AccountContract.View {
             back.setOnClickListener {
                 navigateUp()
             }
-            adapter = PaymentMethodsAdapter(ArrayList())
+            adapter = PaymentMethodsAdapter(ArrayList(), this@PaymentMethodsUserFragment)
             binding.paymentsList.adapter = adapter
         }
     }
@@ -176,5 +179,11 @@ class PaymentMethodsUserFragment : BaseFragment(), AccountContract.View {
 
     override fun showRevelRewardPoints(pointValue: Double?) {
 
+    }
+
+    override fun onSelectCard(card: CustomerCard, position: Int) {
+        findNavController().navigate(
+            PaymentMethodsUserFragmentDirections.actionProfileToCardDetail(card.getId())
+        )
     }
 }

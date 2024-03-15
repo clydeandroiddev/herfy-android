@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.navArgs
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
@@ -30,6 +31,8 @@ class CardDetailsFragment : BaseFragment(), AccountContract.View {
 
     private lateinit var binding: FragmentUserCardDetailBinding
 
+    private val args: CardDetailsFragmentArgs by navArgs()
+
     private var card: CustomerCard? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +50,16 @@ class CardDetailsFragment : BaseFragment(), AccountContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         paymentPresenter?.start()
+        setCard()
+    }
+
+    private fun setCard() {
+        val list = CacheUtil.getInstance().customerCards
+        card = list.firstOrNull { it.id == args.cardId }
+        card?.let {
+            binding.cardBrand.text = it.attributes.brand
+            binding.cardNumber.text = "**** **** **** " + it.attributes.last4Digits
+        }
     }
 
     override fun setPresenter(presenter: AccountContract.Presenter) {
@@ -124,6 +137,15 @@ class CardDetailsFragment : BaseFragment(), AccountContract.View {
     override fun setupTranslations() {
         binding.title.text =
             CacheUtil.getInstance().getTranslations(Text.CARD_DETAILS, "Card Details")
+        binding.cardNumberLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.CARD_NUMBER, "Card number")
+        binding.expirationLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.EXPIRATION_DATE, "Expiration Date")
+        binding.removeLabel.text = CacheUtil.getInstance()
+            .getTranslations(Text.REMOVE_THIS_PAYMENT, "Remove this payment method")
+        binding.setCardLabel.text = CacheUtil.getInstance()
+            .getTranslations(Text.SET_THIS_CARD_DEFAULT, "Set this card as default")
+
     }
 
     override fun showCustomer(

@@ -5,11 +5,14 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.herfy.R
+import com.herfy.curbside.curbsidenew.adapter.CurbsideBrandAdapter
 import com.herfy.profile.databinding.ItemUserPaymentMethodsBinding
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 
 class PaymentMethodsAdapter(
     val customerCards: ArrayList<CustomerCard> = arrayListOf(),
+    val cardListener: CardListener
 ) : RecyclerView.Adapter<PaymentMethodsAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: ItemUserPaymentMethodsBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -30,6 +33,9 @@ class PaymentMethodsAdapter(
         val item = customerCards[position]
         holder.binding.apply {
             executePendingBindings()
+            chooseCurbside.setOnClickListener {
+                cardListener.onSelectCard(item, position)
+            }
             cardNumber.text = item.attributes.brand + " ****" + item.attributes.last4Digits
             var res: Int = R.drawable.ic_saved_card
             if ("visa".equals(item.attributes.brand, ignoreCase = true)) res =
@@ -45,5 +51,9 @@ class PaymentMethodsAdapter(
         this.customerCards.clear()
         this.customerCards.addAll(promoList)
         notifyDataSetChanged()
+    }
+
+    interface CardListener {
+        fun onSelectCard(card: CustomerCard, position: Int)
     }
 }
