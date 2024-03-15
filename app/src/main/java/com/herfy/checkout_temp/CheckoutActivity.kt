@@ -548,7 +548,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             OrderType.DELIVERY -> {
                 binding!!.tvOrderType.text = CacheUtil.getInstance()
                     .getTranslations(Text.DELIVERY_ADDRESS, "Delivery Address")
-                binding!!.ivOrderType.setImageResource(R.drawable.ic_delivery_small)
+                binding!!.ivOrderType.setImageResource(R.drawable.ic_delivery_medium)
             }
 
             OrderType.CURBSIDE -> {
@@ -761,7 +761,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutLoyalty.etPoints.addTextChangedListener(pointsInSarTextWatcher)
 
 
-        val isDelivery = false
         val customer = AuthUtil.getInstance().customer
         val isSignedIn = AuthUtil.getInstance().isSignedIn
         val isFullSignedIn =
@@ -770,12 +769,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         try {
             var paymentTypes: Set<PaymentType?> =
                 CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes()
-            if (!isDelivery) {
+            if (CacheUtil
+                    .getInstance()
+                    .orderType != OrderType.DELIVERY) {
                 paymentTypes =
                     CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name;
             } else {
-                binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name;
+                binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress
+                    .attributes.line1
 //                tvBranchAddress.setText(CacheUtil.getInstance().getOrderAddress().getAttributes().getLine1());
             }
             val isEligibleForLoyaltyDiscount =
