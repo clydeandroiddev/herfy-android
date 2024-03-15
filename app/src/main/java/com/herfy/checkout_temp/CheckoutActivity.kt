@@ -522,7 +522,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
             paymentPresenter.getStore(geocoder);*/
             if (CacheUtil.getInstance().orderAddress != null) {
-                binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress.attributes.line2
+                binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress.attributes.line1
             }
             binding!!.grpDeliveryNote.visibility = View.VISIBLE
             binding!!.tvDeliveryInstruction.text = CacheUtil.getInstance().orderAddress.attributes.instructions
