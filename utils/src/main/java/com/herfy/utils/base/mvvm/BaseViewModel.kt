@@ -1,6 +1,5 @@
 package com.herfy.utils.base.mvvm
 
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
