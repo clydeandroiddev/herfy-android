@@ -288,7 +288,9 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
     public void setupTranslations() {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     @Override
     public void showStore(Store store) {
 
@@ -517,7 +519,9 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
         dismissDialogs();
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showError(String error) {
         dismissDialogs();

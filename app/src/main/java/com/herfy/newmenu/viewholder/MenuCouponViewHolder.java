@@ -142,6 +142,9 @@ public class MenuCouponViewHolder extends RecyclerView.ViewHolder implements Men
     public void setFavorite(MenuItem menuItem) {
       
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
+
+    }
 
     @Override
     public void showSearchedMenuItems(ArrayList<MenuItem> searchedMenuItems) {
@@ -217,7 +220,9 @@ public class MenuCouponViewHolder extends RecyclerView.ViewHolder implements Men
     public void showMessage(String message) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showError(String error) {
 

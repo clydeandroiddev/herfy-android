@@ -163,7 +163,9 @@ public class IngredientViewHolder extends RecyclerView.ViewHolder implements Men
     public void setMenuItem(MenuCategory menuCategory, MenuItem menuItem) {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     @Override
     public void setFavorite(MenuItem menuItem) {
 
@@ -310,6 +312,10 @@ public class IngredientViewHolder extends RecyclerView.ViewHolder implements Men
 
     @Override
     public void showError(String error) {
+
+    }
+    @Override
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
     }
 

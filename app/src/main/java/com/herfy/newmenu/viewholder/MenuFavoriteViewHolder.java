@@ -308,6 +308,9 @@ public class MenuFavoriteViewHolder extends RecyclerView.ViewHolder implements M
     public void reloadMenu() {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
+
+    }
 
     @Override
     public void showMenuCategories(boolean refresh, boolean isFromInitialLoad, List<MenuCategory> menuCategories) {
@@ -428,7 +431,9 @@ public class MenuFavoriteViewHolder extends RecyclerView.ViewHolder implements M
     public void showMessage(String message) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showError(String error) {
 

@@ -118,7 +118,9 @@ public class MenuCategoryViewHolder extends RecyclerView.ViewHolder implements M
     public void showStoreOpen(boolean open, String messag) {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     @Override
     public void showAddress(String address) {
 
@@ -281,6 +283,10 @@ public class MenuCategoryViewHolder extends RecyclerView.ViewHolder implements M
 
     @Override
     public void showError(String error) {
+
+    }
+    @Override
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
     }
 

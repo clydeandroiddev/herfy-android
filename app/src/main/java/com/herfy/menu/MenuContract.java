@@ -47,7 +47,7 @@ public interface MenuContract {
         void showStore(Store store);
 
         void showStoreOpen(boolean open, String message);
-
+        void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems);
         void showAddress(String address);
 
         void reloadMenu();
@@ -96,6 +96,8 @@ public interface MenuContract {
         void updateCartItem();
 
         void showMessage(String message);
+
+        void updateFavoriteByPosition(int position,MenuItem menuItem);
 
         void showError(String error);
 
@@ -351,7 +353,7 @@ public interface MenuContract {
 
         void getGuestDigitalCoupons();
 
-        void getFrequentBoughtItems();
+        void getFrequentBoughtItemsByMenuId(int page,String menuId);
 
         void selectDigitalCoupon(int position);
 
@@ -384,6 +386,9 @@ public interface MenuContract {
         boolean isPreselectedBranch();
 
         void updateCart(boolean forceUpdate);
+
+        void toggleFavorites(boolean isAddToFavorite, MenuItem menuItem, int position);
+
 
     }
 
