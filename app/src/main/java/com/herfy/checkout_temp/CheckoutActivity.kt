@@ -334,7 +334,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         val markerOptions = MarkerOptions()
         val supportMapFragment =
             supportFragmentManager.findFragmentById(R.id.checkout_map) as OrderSupportMapFragment?
-        supportMapFragment!!.getMapAsync { googleMap ->
+        supportMapFragment?.getMapAsync { googleMap ->
             mMap = googleMap
             mMap?.uiSettings?.isCompassEnabled = false
             mMap?.uiSettings?.isZoomControlsEnabled = false
@@ -380,8 +380,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         )
                         markerOptions.icon(icon)
                         markerOptions.anchor(0.5f, 1f)
-                        mMap!!.addMarker(markerOptions)
-                        mMap!!.moveCamera(
+                        mMap?.addMarker(markerOptions)
+                        mMap?.moveCamera(
                             CameraUpdateFactory.newLatLngZoom(
                                 markerOptions.position,
                                 13f
@@ -412,8 +412,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 view.findViewById<TextView>(R.id.kmAway)
 
             lifecycleScope.launchWithTimber {
-                val task = fusedLocationProviderClient!!.lastLocation
-                task.addOnSuccessListener { location ->
+                val task = fusedLocationProviderClient?.lastLocation
+                task?.addOnSuccessListener { location ->
                     location?.let {
                         val currentLocation = LatLng(it.latitude, it.longitude)
                         val currentDistance = DistanceCalculator.calculateDistance(
@@ -433,8 +433,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         )
                         markerOptions.icon(icon)
                         markerOptions.anchor(0.5f, 1f)
-                        mMap!!.addMarker(markerOptions)
-                        mMap!!.moveCamera(
+                        mMap?.addMarker(markerOptions)
+                        mMap?.moveCamera(
                             CameraUpdateFactory.newLatLngZoom(
                                 markerOptions.position,
                                 13f
@@ -447,7 +447,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         }
 
                     }
-                }.addOnFailureListener {
+                }?.addOnFailureListener {
                     it.printStackTrace()
                     AppLogger.printRetrofitError(it)
                 }
