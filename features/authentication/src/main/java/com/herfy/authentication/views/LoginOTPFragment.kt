@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.viewModels
@@ -59,6 +60,7 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
             binding.otpView.otpListener = object : OTPListener {
                 override fun onInteractionListener() {}
                 override fun onOTPComplete(otp: String) {
+                    Log.e("ADADADADAD", "ADADADAD:" + otp)
                     verify(otp)
                 }
             }

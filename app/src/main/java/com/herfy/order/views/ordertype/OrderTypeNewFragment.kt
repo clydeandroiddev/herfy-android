@@ -1195,6 +1195,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         dineInTabSelected = false
         binding.deliveryFrame.visible()
         binding.pickupFrame.gone()
+        binding.confirmContainer.visibility = View.VISIBLE
         binding.continueButton.text =
             CacheUtil.getInstance().getTranslations(Text.ADD_NEW_ADDRESS, "Add new address")
         binding.slidingPanel.post {

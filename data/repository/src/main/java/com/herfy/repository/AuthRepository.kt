@@ -249,7 +249,14 @@ class AuthRepositoryImpl @Inject constructor(
                                 val token = attributes.getString("token")
                                 SoloAuth.getInstance().login(token)
                                 if (status == Values.STATUS_VERIFIED) {
-                                    result(GoogleResponse(true, false, false, customer, ""))
+                                    if (customer.attributes.mobile != null && StringUtil.isValidPhoneNumber(
+                                            customer.attributes.mobile
+                                        )
+                                    ) {
+                                        result(GoogleResponse(true, false, false, customer, ""))
+                                    } else {
+                                        result(GoogleResponse(true, false, true, customer, ""))
+                                    }
                                 } else {
                                     if (customer.attributes.mobile != null && StringUtil.isValidPhoneNumber(
                                             customer.attributes.mobile
