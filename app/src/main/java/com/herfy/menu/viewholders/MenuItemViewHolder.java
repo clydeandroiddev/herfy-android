@@ -149,6 +149,11 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
     }
 
     @Override
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
+
+    }
+
+    @Override
     public void showAddress(String address) {
 
     }
@@ -232,6 +237,11 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
     public void showMessage(String message) {
         /*((HomeActivity) context).dismissDialogs();
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();*/
+    }
+
+    @Override
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
+
     }
 
     @Override

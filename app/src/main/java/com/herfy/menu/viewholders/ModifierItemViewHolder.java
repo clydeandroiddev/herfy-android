@@ -143,7 +143,9 @@ public class ModifierItemViewHolder extends RecyclerView.ViewHolder implements M
     public void showStore(Store store) {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     @Override
     public void showStoreOpen(boolean open, String message) {
 
@@ -405,7 +407,9 @@ public class ModifierItemViewHolder extends RecyclerView.ViewHolder implements M
     public void showError(String error) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
 

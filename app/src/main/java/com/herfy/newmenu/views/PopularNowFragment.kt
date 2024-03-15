@@ -65,6 +65,10 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
 
     override fun showStore(store: Store) {}
     override fun showStoreOpen(open: Boolean, message: String) {}
+    override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
+
+    }
+
     override fun showAddress(address: String) {}
     override fun reloadMenu() {}
     override fun showMenuCategories(
@@ -164,6 +168,11 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
     override fun updateCartItem() {}
     override fun showMessage(message: String) {}
     override fun showError(error: String) {}
+
+    override fun updateFavoriteByPosition(
+        position: Int,
+        menuItem: MenuItem?
+    ) {}
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean,

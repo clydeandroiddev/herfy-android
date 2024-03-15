@@ -180,7 +180,9 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     public void setModifierItem(ModifierGroup modifierGroup, ModifierItem modifierItem, int position) {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     @Override
     public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
 
@@ -280,6 +282,11 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
 
     @Override
     public void showMessage(String message) {
+
+    }
+
+    @Override
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
     }
 

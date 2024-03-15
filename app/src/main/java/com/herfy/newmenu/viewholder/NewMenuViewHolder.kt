@@ -79,6 +79,10 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
 
     override fun showStore(store: Store) {}
     override fun showStoreOpen(open: Boolean, message: String) {}
+    override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
+        TODO("Not yet implemented")
+    }
+
     override fun showAddress(address: String) {}
     override fun reloadMenu() {}
     override fun showMenuCategories(
@@ -116,7 +120,10 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
         /*((HomeActivity) context).dismissDialogs();
         ((HomeActivity) context).showAlertDialog("", error);*/
     }
-
+    override fun updateFavoriteByPosition(
+        position: Int,
+        menuItem: MenuItem?
+    ) {}
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean,
@@ -183,10 +190,10 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
                 (context as MainActivity).showLoadingDialog()
                 if (CacheUtil.getInstance().favorites.contains(menuItem.id)) {
                     binding.favoriteIcon.setColorFilter(notFavoriteColor)
-                    menuPresenter.addRemoveFavorite(false)
+                    menuPresenter.addRemoveFavorite(false,)
                 } else {
                     binding.favoriteIcon.setColorFilter(favoriteColor)
-                    menuPresenter.addRemoveFavorite(true)
+                    menuPresenter.addRemoveFavorite(true,)
                 }
             } else {
                 CacheUtil.getInstance().favoriteMenuCategory = menuPresenter.menuCategory

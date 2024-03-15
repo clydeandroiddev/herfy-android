@@ -317,6 +317,9 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
     public void showStore(Store store) {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String messag) {
@@ -520,7 +523,9 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
     public void showError(String error) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
 

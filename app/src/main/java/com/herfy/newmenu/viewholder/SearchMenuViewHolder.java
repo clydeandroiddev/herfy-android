@@ -185,7 +185,9 @@ public class SearchMenuViewHolder extends RecyclerView.ViewHolder implements Men
     public void setMenuItemTotalPrice(double totalPrice, double menuItemPrice) {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     @Override
     public void selectSize() {
 
@@ -215,6 +217,11 @@ public class SearchMenuViewHolder extends RecyclerView.ViewHolder implements Men
     public void showMessage(String message) {
         /*((HomeActivity) context).dismissDialogs();
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();*/
+    }
+
+    @Override
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
+
     }
 
     @Override

@@ -109,6 +109,9 @@ public class MenuItemImageViewHolder extends RecyclerListAdapter.ViewHolder<Obje
     public void selectMenuCategory(int position, MenuCategory menuCategory) {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
+
+    }
 
     @Override
     public void selectMenuItem(@Nullable MenuCategory menuCategory, @Nullable MenuItem menuItem) {
@@ -214,7 +217,9 @@ public class MenuItemImageViewHolder extends RecyclerListAdapter.ViewHolder<Obje
     public void showError(String error) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
 

@@ -92,7 +92,9 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
 
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     public void setupFonts() {
 
 
@@ -343,7 +345,9 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
     public void showError(String error) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
 

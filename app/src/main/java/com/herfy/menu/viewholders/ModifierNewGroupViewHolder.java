@@ -342,11 +342,17 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
     }
 
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
+
+    }
+
     @Override
     public void showError(String error) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
 

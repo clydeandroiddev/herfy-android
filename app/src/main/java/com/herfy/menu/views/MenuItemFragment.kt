@@ -139,7 +139,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             binding.image.invalidate()
         }
         menuPresenter.start()
-        menuPresenter.getFrequentBoughtItems();
 
         initialModifierId = ""
         activity?.cast<BaseActivity> {
@@ -370,6 +369,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun showStore(store: Store) {}
     override fun showStoreOpen(open: Boolean, message: String) {}
+    override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
+        frequentBoughItemsAdapter?.notifyDataSetChanged()
+    }
+
     override fun showAddress(address: String) {}
     override fun reloadMenu() {}
     override fun showMenuCategories(
@@ -383,6 +386,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun selectMenuItem(menuCategory: MenuCategory?, menuItem: MenuItem?) {}
     override fun setMenuCategory(menuCategory: MenuCategory, selected: Boolean) {}
     override fun setMenuItemDetails(menuItem: MenuItem) {
+        menuPresenter.getFrequentBoughtItemsByMenuId(1,menuItem.id)
         activity?.cast<BaseActivity> {
             it.runOnUiThread {
 //                binding.mealDealsContainer.visibility = View.GONE
@@ -1257,7 +1261,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             }
         }
     }
-
+    override fun updateFavoriteByPosition(
+        position: Int,
+        menuItem: MenuItem?
+    ) {
+        frequentBoughItemsAdapter?.notifyItemChanged(position,menuItem)
+    }
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {
         modifierGroupsAdapter!!.showModifierItemPrice(show, modifierGroupPosition)
     }

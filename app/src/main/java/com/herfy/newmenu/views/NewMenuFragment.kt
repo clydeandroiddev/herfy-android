@@ -952,6 +952,10 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
     override fun showStore(store: Store) {}
     override fun showStoreOpen(open: Boolean, message: String) {}
+    override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
+
+    }
+
     override fun showAddress(address: String) {}
     override fun reloadMenu() {
         menuPresenter.reloadMenu()
@@ -1389,6 +1393,11 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
         }
     }
 
+
+    override fun updateFavoriteByPosition(
+        position: Int,
+        menuItem: MenuItem?
+    ) {}
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean, modifierGroupPosition: Int
