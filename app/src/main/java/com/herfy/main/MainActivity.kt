@@ -27,6 +27,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
@@ -93,6 +94,7 @@ import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.api.models.objects.cms.CmsPage
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.AndroidEntryPoint
+import jp.wasabeef.blurry.Blurry
 import java.util.*
 
 @AndroidEntryPoint
@@ -145,6 +147,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private var fromChangeLanguage = false
     var currentDestination = -1
     private var languageAdapter: LanguageAdapter? = null
+    var isDrawerOpen = false
 
     private var authLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -633,11 +636,32 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         )
     }
 
-
     override fun setupViews() {
         binding.sidebar.concept.setImageResource(R.drawable.header)
         mainPresenter.getCaloriesPage()
-        binding.drawerLayout.setScrimColor(Color.TRANSPARENT)
+        binding.drawerLayout.apply {
+            setScrimColor(Color.parseColor("#B30C0C0C"))
+            addDrawerListener(object : DrawerListener {
+                override fun onDrawerSlide(p0: View, p1: Float) {
+                    if(isDrawerOpen) {
+                        Blurry.delete(binding.drawerMain)
+                    }
+                }
+
+                override fun onDrawerOpened(p0: View) {
+                    isDrawerOpen = true
+                }
+
+                override fun onDrawerClosed(p0: View) {
+                    isDrawerOpen = false
+                }
+
+                override fun onDrawerStateChanged(p0: Int) {
+
+                }
+
+            })
+        }
         showSocialMediaLinks()
         binding.sidebar.signin.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -770,6 +794,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         binding.toolbarMain.apply {
             setSideButtonAction {
+                Blurry.with(this@MainActivity).radius(25).sampling(2).onto(binding.drawerMain)
                 binding.drawerLayout.openDrawer(GravityCompat.START)
             }
             setCartButtonAction {
@@ -780,10 +805,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         if (intent.getBooleanExtra("autoLogin", false)) {
             binding.sidebar.signin.performClick()
         }
-    }
-
-    private fun navMenuItem() {
-
     }
 
     private fun showNotifications() {
