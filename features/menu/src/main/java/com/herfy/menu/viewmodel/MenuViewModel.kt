@@ -83,16 +83,21 @@ class MenuViewModel @Inject constructor(
 
     fun getSlides() {
         invoke {
-            homeRepository.getSliders(Values.CATEGORY_PAGE_TOP_BANNER) { homeResponse ->
-                if (homeResponse.success) {
-                    homeResponse.data?.let {
-                        it.cast<ArrayList<Slide>> {
-                            _slides.value = it
+            val sliderId = CacheUtil.getInstance().getSliderId(Values.CATEGORY_PAGE_TOP_BANNER_LABEL)
+            if(!sliderId.isNullOrEmpty()) {
+                homeRepository.getSliders(sliderId) { homeResponse ->
+                    if (homeResponse.success) {
+                        homeResponse.data?.let {
+                            it.cast<ArrayList<Slide>> {
+                                _slides.value = it
+                            }
                         }
+                    } else {
+                        _slides.value = ArrayList()
                     }
-                } else {
-                    _slides.value = ArrayList()
                 }
+            } else {
+                _slides.value = ArrayList()
             }
         }
     }
