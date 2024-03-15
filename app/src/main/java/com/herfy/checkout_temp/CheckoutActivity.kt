@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -22,8 +21,8 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -31,7 +30,6 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -40,21 +38,15 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolygonOptions
-import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.google.maps.android.SphericalUtil
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.FacebookAppEventUtil
@@ -81,7 +73,6 @@ import com.herfy.payment.savedcards.SavedCardsDialog
 import com.herfy.payment.views.CustomCheckoutDialog
 import com.herfy.payment.views.MoyasarActivity
 import com.herfy.payment.views.OrderDialogFragment
-import com.herfy.phonenumber.EnterNewPhoneNumberFragment
 import com.herfy.ratings.AppRatingBroadcastReceiver
 import com.herfy.util.ApiLogLevel
 import com.herfy.util.ApiLogUtil.Companion.sendOrderLog
@@ -93,11 +84,8 @@ import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
-import com.herfy.utils.extensions.gone
-import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.showToast
-import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
@@ -134,7 +122,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.shipbook.shipbooksdk.Log
-import kotlinx.coroutines.delay
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.ParseException
@@ -345,7 +332,13 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         val storeLocation = LatLng(storeLat, storeLon)
         val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val markerOptions = MarkerOptions()
-
+        val supportMapFragment =
+            supportFragmentManager.findFragmentById(R.id.checkout_map) as OrderSupportMapFragment?
+        supportMapFragment?.getMapAsync { googleMap ->
+            mMap = googleMap
+            mMap?.uiSettings?.isCompassEnabled = false
+            mMap?.uiSettings?.isZoomControlsEnabled = false
+            mMap?.uiSettings?.isMapToolbarEnabled = false
         if (orderType === OrderType.DELIVERY) {
             val lat = CacheUtil.getInstance().orderAddress.attributes.lat.toDouble()
             val lon = CacheUtil.getInstance().orderAddress.attributes.longt.toDouble()
@@ -356,23 +349,16 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             if (bitmapDrawable != null) {
                 val bitmap = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 110, 110, true)
                 val canvas = Canvas(bitmap)
+                val view = inflater.inflate(R.layout.marker_store_new, null)
+                val textView =
+                    view.findViewById<TextView>(R.id.kmAway)
+                val image = view.findViewById<ImageView>(R.id.icon)
+                image.setImageResource(R.drawable.delivery_marker_selected)
                 val paint = Paint()
                 val filter: ColorFilter = PorterDuffColorFilter(
                     Color.parseColor(CacheUtil.getInstance().colorMain),
                     PorterDuff.Mode.SRC_IN
                 )
-                paint.setColorFilter(filter)
-                canvas.drawBitmap(bitmap, 0f, 0f, paint)
-                markerOptions.position(addressLocation)
-                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-            }
-        } else {
-            markerOptions.position(storeLocation)
-            val view = inflater.inflate(R.layout.marker_store_new, null)
-            val textView =
-                view.findViewById<TextView>(R.id.kmAway)
-
-            lifecycleScope.launchWithTimber {
                 val task = fusedLocationProviderClient!!.lastLocation
                 task.addOnSuccessListener { location ->
                     location?.let {
@@ -394,50 +380,80 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         )
                         markerOptions.icon(icon)
                         markerOptions.anchor(0.5f, 1f)
-                        val supportMapFragment =
-                            supportFragmentManager.findFragmentById(R.id.checkout_map) as OrderSupportMapFragment?
-                        supportMapFragment!!.getMapAsync { googleMap ->
-                            mMap = googleMap
-                            mMap?.uiSettings?.isCompassEnabled = false
-                            mMap?.uiSettings?.isZoomControlsEnabled = false
-                            mMap?.uiSettings?.isMapToolbarEnabled = false
-
-                            if (orderType === OrderType.DELIVERY) {
-                                mMap!!.addMarker(markerOptions)
-                                mMap!!.moveCamera(
-                                    CameraUpdateFactory.newLatLngZoom(
-                                        markerOptions.position,
-                                        13f
-                                    )
-                                )
-                            } else {
-                                mMap!!.addMarker(markerOptions)
-                                mMap!!.moveCamera(
-                                    CameraUpdateFactory.newLatLngZoom(
-                                        markerOptions.position,
-                                        13f
-                                    )
-                                )
-                            }
-                            supportMapFragment.setListener {
-                                binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
-                                    true
-                                )
-                            }
-                            if (orderType !== OrderType.DELIVERY) {
-
-
-
-                            }
-
+                        mMap?.addMarker(markerOptions)
+                        mMap?.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                markerOptions.position,
+                                13f
+                            )
+                        )
+                        supportMapFragment.setListener {
+                            binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
+                                true
+                            )
                         }
-                    }
 
+
+                    }
                 }.addOnFailureListener {
                     it.printStackTrace()
                     AppLogger.printRetrofitError(it)
                 }
+//                paint.setColorFilter(filter)
+//                canvas.drawBitmap(bitmap, 0f, 0f, paint)
+                markerOptions.position(addressLocation)
+//                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+
             }
+        } else {
+            markerOptions.position(storeLocation)
+            val view = inflater.inflate(R.layout.marker_store_new, null)
+            val textView =
+                view.findViewById<TextView>(R.id.kmAway)
+
+            lifecycleScope.launchWithTimber {
+                val task = fusedLocationProviderClient?.lastLocation
+                task?.addOnSuccessListener { location ->
+                    location?.let {
+                        val currentLocation = LatLng(it.latitude, it.longitude)
+                        val currentDistance = DistanceCalculator.calculateDistance(
+                            currentLocation.latitude, currentLocation.longitude,
+                            storeLocation.latitude, storeLocation.longitude
+                        )
+
+                        val distanceValue = StringUtil.getDistance(currentDistance)
+
+                        textView.text =
+                            CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                                .replace("(x)", distanceValue).toLowerCase()
+                        val icon = BitmapDescriptorFactory.fromBitmap(
+                            ViewUtil.createDrawableFromView(
+                                this@CheckoutActivity, view
+                            )
+                        )
+                        markerOptions.icon(icon)
+                        markerOptions.anchor(0.5f, 1f)
+                        mMap?.addMarker(markerOptions)
+                        mMap?.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                markerOptions.position,
+                                13f
+                            )
+                        )
+                        supportMapFragment.setListener {
+                            binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
+                                true
+                            )
+                        }
+
+                    }
+                }?.addOnFailureListener {
+                    it.printStackTrace()
+                    AppLogger.printRetrofitError(it)
+                }
+
+            }
+        }
 
         }
     }
@@ -490,7 +506,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }*/
 
 //        slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-        binding!!.tvMobileNumber.text = AuthUtil.getInstance().customer.attributes.mobile
+        binding!!.tvMobileNumber.text = "+${AuthUtil.getInstance().customer.attributes.mobile}"
         binding!!.toolbarLayout.btnBack.setOnClickListener { onBackPressed() }
         if (CacheUtil.getInstance().orderStore != null) {
             paymentPresenter!!.validateOrder(
@@ -509,8 +525,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress.attributes.line1
             }
             binding!!.grpDeliveryNote.visibility = View.VISIBLE
-            binding!!.tvDeliveryInstruction.text =
-                CacheUtil.getInstance().orderAddress.attributes.instructions
+            binding!!.tvDeliveryInstruction.text = CacheUtil.getInstance().orderAddress.attributes.instructions
         } else {
             /*Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
             paymentPresenter.getAddresses(geocoder);*/
@@ -533,7 +548,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             OrderType.DELIVERY -> {
                 binding!!.tvOrderType.text = CacheUtil.getInstance()
                     .getTranslations(Text.DELIVERY_ADDRESS, "Delivery Address")
-                binding!!.ivOrderType.setImageResource(com.herfy.checkout.R.drawable.ic_herfy_delivery)
+                binding!!.ivOrderType.setImageResource(R.drawable.ic_delivery_small)
             }
 
             OrderType.CURBSIDE -> {
@@ -893,12 +908,17 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPaymentSummary.tvDiscount.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
         binding!!.layoutPaymentSummary.tvTotalLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL)
+            CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL,"Total")
+                .replace(":","")
         binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance().getTranslations(Text.DELIVERY_INSTRUCTION, "Delivery Instruction")
         binding!!.layoutPaymentSummary.tvSubtotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL)
         binding!!.layoutPaymentSummary.tvDiscount.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
+        binding!!
+            .layoutPaymentSummary.tvDeliveryChargeLabel.text = CacheUtil
+            .getInstance()
+            .getTranslations(Text.DELIVERY_CHARGE,"Delivery Charges")
         binding!!.totalVatDescription.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
     }
 
@@ -993,12 +1013,16 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         pointsUsed: Int,
         charges: ArrayList<ServiceCharge>
     ) {
+        val isDelivery = CacheUtil.getInstance().orderType == OrderType.DELIVERY
         val hasPromotion = CacheUtil.getInstance().hasPromotion()
         val total = updateCurrency(subtotalPrice, true, hasPromotion).toString()
-
+        val deliveryChargeTotal = updateCurrency(deliveryCharge,withSpace = true).toString()
         binding!!.layoutPaymentSummary.tvSubtotal.text =
             total
         binding!!.tvOriginalPrice.setVisible(discount >= 1)
+        binding!!.layoutPaymentSummary.tvDeliveryChargeValue.setVisible(deliveryCharge >=1 && isDelivery)
+        binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.setVisible(deliveryCharge >=1 && isDelivery)
+        binding!!.layoutPaymentSummary.tvDeliveryChargeValue.text = deliveryChargeTotal
         if (discount != 0.0) {
             binding!!.layoutPaymentSummary.grpDiscount.visibility = View.VISIBLE
             binding!!.layoutPaymentSummary.tvDiscount.text =
