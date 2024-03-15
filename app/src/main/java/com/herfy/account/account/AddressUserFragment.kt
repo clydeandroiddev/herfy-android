@@ -8,9 +8,15 @@ import android.view.ViewGroup
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.model.Place
 import com.google.android.material.tabs.TabLayout
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
+import com.herfy.account.account.adapter.PaymentMethodsAdapter
+import com.herfy.account.account.adapter.UsersAddressesAdapter
+import com.herfy.addresses.AddressesContract
+import com.herfy.addresses.AddressesPresenter
 import com.herfy.base.BaseFragment
 import com.herfy.order.OrderContract
 import com.herfy.order.OrderPresenter
@@ -19,6 +25,7 @@ import com.herfy.profile.databinding.FragmentUserEditProfileBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.DialogUtils
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -31,14 +38,17 @@ import java.util.ArrayList
 import java.util.Date
 
 @AndroidEntryPoint
-class AddressUserFragment : BaseFragment(), OrderContract.View {
-    private var accountPresenter: OrderContract.Presenter? = null
+class AddressUserFragment : BaseFragment(), AddressesContract.View,
+    UsersAddressesAdapter.AddressUserListener {
+    private var accountPresenter: AddressesContract.Presenter? = null
 
     private lateinit var binding: FragmentUserAddressesBinding
 
+    private lateinit var adapter: UsersAddressesAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        accountPresenter = OrderPresenter(this)
+        accountPresenter = AddressesPresenter(this)
     }
 
     override fun onCreateView(
@@ -51,9 +61,11 @@ class AddressUserFragment : BaseFragment(), OrderContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         accountPresenter?.start()
+        showLoadingDialog()
+        accountPresenter?.getAddresses(false)
     }
 
-    override fun setPresenter(presenter: OrderContract.Presenter) {
+    override fun setPresenter(presenter: AddressesContract.Presenter) {
         accountPresenter = presenter
     }
 
@@ -78,6 +90,8 @@ class AddressUserFragment : BaseFragment(), OrderContract.View {
             continueButton.setOnClickListener {
 
             }
+            adapter = UsersAddressesAdapter(ArrayList(), this@AddressUserFragment)
+            binding.addresses.adapter = adapter
         }
     }
 
@@ -92,25 +106,6 @@ class AddressUserFragment : BaseFragment(), OrderContract.View {
             CacheUtil.getInstance().getTranslations(Text.ADD_NEW_ADDRESS_LABEL, "Add New Address")
     }
 
-    override fun showOrderTypes(orderTypes: MutableSet<OrderType>?) {
-
-    }
-
-    override fun addToCartFavorite(menuItem: MenuItem?) {
-
-    }
-
-    override fun createOrderType(orderType: OrderType?) {
-
-    }
-
-    override fun selectOrderType(orderType: OrderType?) {
-
-    }
-
-    override fun createTab(tag: String?, text: String?, icon: Drawable?): TabLayout.Tab? {
-        return null
-    }
 
     override fun initializeLocation() {
 
@@ -120,22 +115,40 @@ class AddressUserFragment : BaseFragment(), OrderContract.View {
 
     }
 
-    override fun showLocation(isPlace: Boolean, latLng: LatLng?, address: String?) {
+    override fun showLocation(latLng: LatLng?) {
+
+    }
+
+    override fun showPlaces(places: ArrayList<AutocompletePrediction>?) {
+
+    }
+
+    override fun setPlace(position: Int, place: AutocompletePrediction?, selected: Boolean) {
+
+    }
+
+    override fun selectPlace(position: Int) {
 
     }
 
     override fun showAddresses(
-        bookmarkedAddresses: ArrayList<Address>?,
-        otherAddresses: ArrayList<Address>?
+        homeAddresses: ArrayList<Address>,
+        workAddresses: ArrayList<Address>,
+        otherAddresses: ArrayList<Address>
     ) {
-
+        dismissDialogs()
+        adapter.updateList(ArrayList(homeAddresses))
     }
 
     override fun setAddress(address: Address?, selected: Boolean) {
 
     }
 
-    override fun selectAddressHome(address: Address?, redownloadMenu: Boolean) {
+    override fun showPlace(place: Place?) {
+
+    }
+
+    override fun selectAddressHome(position: Int) {
 
     }
 
@@ -143,59 +156,15 @@ class AddressUserFragment : BaseFragment(), OrderContract.View {
 
     }
 
-    override fun selectAddressOther(address: Address?, redownloadMenu: Boolean) {
+    override fun selectAddressOther(position: Int) {
 
     }
 
-    override fun updateAddAddress(updateAddress: Address?, saveAddress: android.location.Address?) {
+    override fun addAddress(place: Place?, address: android.location.Address?) {
 
     }
 
-    override fun showStores(pickupStores: ArrayList<Store>?, curbsideStores: ArrayList<Store>?) {
-
-    }
-
-    override fun setStore(store: Store?, selected: Boolean) {
-
-    }
-
-    override fun callStore(store: Store?) {
-
-    }
-
-    override fun selectStore(position: Int, store: Store?, initialLoad: Boolean) {
-
-    }
-
-    override fun showStore(markerClicked: Boolean, position: Int) {
-
-    }
-
-    override fun showStore(open: Boolean, store: Store?, error: String?) {
-
-    }
-
-    override fun showOrderType(orderType: OrderType?) {
-
-    }
-
-    override fun selectDelivery() {
-
-    }
-
-    override fun selectPickup() {
-
-    }
-
-    override fun selectDineIn() {
-
-    }
-
-    override fun selectCurbside() {
-
-    }
-
-    override fun saveAddress(address: String?) {
+    override fun updateAddress(place: Place?, address: Address?) {
 
     }
 
@@ -203,100 +172,25 @@ class AddressUserFragment : BaseFragment(), OrderContract.View {
 
     }
 
-    override fun updateAddress(address: String?) {
-
-    }
-
-    override fun logFirebaseEvent(event: String?) {
-
-    }
-
-    override fun showUnavailableMenuItems() {
-
-    }
-
-    override fun deleteUnavailableItems() {
-
-    }
-
-    override fun showPhoneNumberError(error: String?) {
-
-    }
-
-    override fun showError(error: String?) {
-
-    }
-
-    override fun updateMap(
-        orderType: OrderType?,
-        startLocation: LatLng?,
-        endLocation: LatLng?,
-        bounds: LatLngBounds?
-    ) {
-
-    }
-
-    override fun showOrder(order: OrderDetails?) {
-
-    }
-
-    override fun showOrderStatuses(orderStatuses: ArrayList<OrderStatus>?) {
-
-    }
-
-    override fun setTimeLine(orderStatus: OrderStatus?) {
-
-    }
-
-    override fun showStatus(orderStatus: OrderStatus?) {
-
-    }
-
-    override fun showDriver(latLng: LatLng?) {
-
-    }
-
-    override fun updateDriver(latLng: LatLng?) {
+    override fun showOrderType() {
 
     }
 
     override fun showMessage(message: String?) {
+        dismissDialogs()
+        DialogUtils.showAlertDialog(context = requireContext(),
+            title = "",
+            body = message.orEmpty(),
+            dialogInterface = { dialog, which ->
+                dialog.dismiss()
+            })
+    }
+
+    override fun onEditCard(card: Address, position: Int) {
 
     }
 
-    override fun showRatings(orderStatus: OrderStatus?, ratings: MutableList<Rating>?) {
-
-    }
-
-    override fun showOrders() {
-
-    }
-
-    override fun showMenuItem(categoryId: String?, menuItemId: String?) {
-
-    }
-
-    override fun enableConfirmButton(enable: Boolean, storeName: String?) {
-
-    }
-
-    override fun saveToCache(key: String?, value: String?) {
-
-    }
-
-    override fun preloadImage(imageUrl: String?, requestOptions: RequestOptions?) {
-
-    }
-
-    override fun diffMenuSaved(address: Address?) {
-
-    }
-
-    override fun showPromptChangeOrderType(address: Address?) {
-
-    }
-
-    override fun showMinimumDeliveryForAreaMessage(error: String?) {
+    override fun onDeleteCard(card: Address, position: Int) {
 
     }
 }

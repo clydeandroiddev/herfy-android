@@ -70,13 +70,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
-                    android:paddingStart="16dp"
-                    android:paddingTop="20dp"
-                    android:paddingEnd="16dp"
-                    android:paddingBottom="20dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="4"
-                    tools:listitem="@layout/item_address_delivery_new" />
+                    tools:listitem="@layout/item_user_addresses" />
 
             </LinearLayout>
 

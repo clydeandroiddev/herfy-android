@@ -196,26 +196,20 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
         CustomersApiCall.getInstance().getCustomerAddresses(AuthUtil.getInstance().getCustomer().getId(), "1", new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
+                homeAddresses = new ArrayList<>();
+                workAddresses = new ArrayList<>();
+                otherAddresses = new ArrayList<>();
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     JSONArray array = object.getJSONArray("data");
                     com.skylinedynamics.solosdk.api.models.objects.Address latestAddress = null;
-                    homeAddresses = new ArrayList<>();
-                    workAddresses = new ArrayList<>();
-                    otherAddresses = new ArrayList<>();
                     for (int i = 0; i < array.length(); i++) {
                         com.skylinedynamics.solosdk.api.models.objects.Address address = com.skylinedynamics.solosdk.api.models.objects.Address.parseAddress(array.getJSONObject(i));
                         if (i == 0) {
                             latestAddress = address;
                         }
                         String label = address.getAttributes().getLabel();
-                        if (label.equalsIgnoreCase("Home") || label.equalsIgnoreCase("الصفحة الرئيسية")) {
-                            homeAddresses.add(address);
-                        } else if (label.equalsIgnoreCase("Work") || label.equalsIgnoreCase("عمل")) {
-                            workAddresses.add(address);
-                        } else {
-                            otherAddresses.add(address);
-                        }
+                        homeAddresses.add(address);
                     }
 
                     if (!fromSave) {
@@ -226,6 +220,7 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    addressesView.showAddresses(homeAddresses, workAddresses, otherAddresses);
                     this.onError(e.getMessage());
                 }
 

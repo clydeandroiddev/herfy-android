@@ -293,7 +293,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         markerOptions.position(latLng!!)
         try {
             val bitmapDrawable =
-                ContextCompat.getDrawable(this, R.drawable.user_current_location) as BitmapDrawable?
+                ContextCompat.getDrawable(
+                    this,
+                    com.herfy.ordertype.R.drawable.ic_location_add_address
+                ) as BitmapDrawable?
             val bitmap = Bitmap.createScaledBitmap(
                 bitmapDrawable!!.bitmap, 50, 50, true
             )

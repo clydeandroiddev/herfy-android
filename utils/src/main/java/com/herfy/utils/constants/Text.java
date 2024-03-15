@@ -1041,4 +1041,6 @@ public class Text {
     public static final String SET_THIS_CARD_DEFAULT = "set_this_card_default";
     public static final String REMOVE_THIS_PAYMENT = "remove_this_payment";
 
+    public static final String NOTE_TO_RIDER_LABEL = "note_to_rider_label";
+
 }
