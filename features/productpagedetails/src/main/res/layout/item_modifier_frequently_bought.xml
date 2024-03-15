@@ -62,46 +62,55 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/txtCalories"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_fire"
-            android:visibility="gone"
             style="@style/TextAppearance.Caption"
             android:fontFamily="@font/inter_regular"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/txtModifierItemName"
             android:layout_marginStart="@dimen/margin_large"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="@dimen/margin_large"
             android:layout_gravity="center_vertical"
             android:drawablePadding="@dimen/padding_micro"
             android:gravity="start|center_vertical"
-            android:paddingStart="10dp"
             android:paddingEnd="4dp"
+            tools:visibility="visible"
             android:textAlignment="viewStart"
             android:textColor="#0C0C0C"
             tools:text="2000 Kcal" />
 
         <ImageView
+            android:id="@+id/icFavorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:src="@drawable/ic_frequent_favourites"
             android:layout_marginEnd="@dimen/margin_small"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
         <TextView
             android:id="@+id/txtModifierItemName"
+            style="@style/Styles.Text.Footnote.Semi.Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Styles.Text.Footnote.Semi.Bold"
-            android:fontFamily="@font/inter_bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtCalories"
-            android:layout_marginStart="@dimen/margin_large"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/margin_micro"
+            android:fontFamily="@font/inter_bold"
             android:gravity="start|center_vertical"
+
+            android:paddingStart="10dp"
 
             android:paddingEnd="4dp"
             android:textAlignment="viewStart"
             android:textColor="#0C0C0C"
+            app:layout_constraintEnd_toEndOf="@+id/txtCalories"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtCalories"
             tools:text="Marinara dip" />
 
         <TextView
@@ -109,7 +118,7 @@
             style="@style/Styles.Text.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginStart="@dimen/_14sdp"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="@dimen/margin_small"
             android:ellipsize="end"
@@ -126,23 +135,25 @@
             app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
             app:layout_constraintWidth_percent="0.45"
             tools:text="Dive into a flavor-packed adventure with our New Triple Herfy!" />
+
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtmodifierPrice"
-            android:layout_width="wrap_content"
             style="@style/Styles.Text.Footnote_Bold"
-            android:textColor="@color/text_color_blue"
-            android:layout_marginTop="@dimen/margin_large"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="@dimen/margin_large"
             android:layout_marginBottom="@dimen/margin_large"
+            android:textColor="@color/text_color_blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/txtCalories"
             app:layout_constraintTop_toBottomOf="@+id/modifierDescription"
-            app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
             tools:text="+Sar 2" />
 
         <ImageButton
             android:id="@+id/quantityDown"
             android:layout_width="35dp"
             android:layout_height="35dp"
+            android:layout_marginEnd="@dimen/margin_micro"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/quantity_up_blue"
             app:layout_constraintBottom_toBottomOf="parent"
