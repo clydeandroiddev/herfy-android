@@ -1,6 +1,7 @@
 package com.herfy.menu;
 
 
+import android.util.Log;
 import android.util.Pair;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
@@ -69,7 +70,6 @@ import com.skylinedynamics.solosdk.api.models.objects.IngredientCdn;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategoryItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
-import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemCombo;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
@@ -1197,6 +1197,72 @@ public class MenuPresenter implements MenuContract.Presenter {
                     }
                     CacheUtil.getInstance().setCart(items);
                     menuView.updateFloatingTotalPrice();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void toggleFavorites(boolean isAddToFavorite, MenuItem menuItem, int position) {
+        if (!isAddToFavorite) {
+            CustomersApiCall.getInstance().addItemToFavorite(AuthUtil.getInstance().getCustomer().getId(), AddFavoriteItemBody.getCdn(LocaleUtil.getInstance().getLanguage(), this.menuItem), new ApiRequestListener() {
+                @Override
+                public void onSuccess(Object o) {
+
+                    MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM);
+                    KochavaTrackerUtil.trackEvent(EventType.ADD_TO_WISH_LIST);
+
+                    getFavorites(true, 1);
+
+                    Set<String> favorites = CacheUtil.getInstance().getFavorites();
+                    favorites.add(MenuPresenter.this.menuItem.getId());
+                    CacheUtil.getInstance().setFavorites(favorites);
+
+                    HashMap<String, String> eventAttributes = new HashMap<>();
+                    eventAttributes.put("Item ID", MenuPresenter.this.menuItem.getId());
+                    eventAttributes.put("Item Name", MenuPresenter.this.menuItem.getAttributes().getName());
+
+                    menuView.logEvent("AddToFavorites", eventAttributes, null, 0);
+                    menuView.logAddToWishlistEvent(MenuPresenter.this.menuItem);
+                    menuItem
+                            .setFavorite(true);
+
+                    menuView.setFavorite(MenuPresenter.this.menuItem);
+
+                    menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_FAVORITES));
+                    menuView.updateFavoriteByPosition(position,menuItem);
+
+                }
+
+                @Override
+                public void onError(Object o) {
+                    AppLogger.printRetrofitError(o);
+                    menuView.showMessage(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.ERROR_ADD_TO_FAVORITES), null));
+                }
+            });
+        } else {
+            CustomersApiCall.getInstance().deleteItemFromFavorites(AuthUtil.getInstance().getCustomer().getId(), this.menuItem.getId(), new ApiRequestListener() {
+                @Override
+                public void onSuccess(Object o) {
+
+                    getFavorites(true, 1);
+
+                    Set<String> favorites = CacheUtil.getInstance().getFavorites();
+                    favorites.remove(MenuPresenter.this.menuItem.getId());
+                    CacheUtil.getInstance().setFavorites(favorites);
+
+                    menuView.setFavorite(MenuPresenter.this.menuItem);
+                    menuItem
+                            .setFavorite(false);
+                    menuView.updateFavoriteByPosition(position,menuItem);
+                    menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES));
+
+                }
+
+                @Override
+                public void onError(Object o) {
+                    AppLogger.printRetrofitError(o);
+                    menuView.showMessage(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.ERROR_REMOVE_FROM_FAVORITES), null));
                 }
             });
         }
@@ -3916,7 +3982,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     @Override
     public void addRemoveFavorite(boolean add) {
         if (add || !CacheUtil.getInstance().getFavorites().contains(menuItem.getId())) {
-            CustomersApiCall.getInstance().addItemToFavorite(AuthUtil.getInstance().getCustomer().getId(), AddFavoriteItemBody.getCdn(LocaleUtil.getInstance().getLanguage(), menuItem), new ApiRequestListener() {
+            CustomersApiCall.getInstance().addItemToFavorite(AuthUtil.getInstance().getCustomer().getId(), AddFavoriteItemBody.getCdn(LocaleUtil.getInstance().getLanguage(), this.menuItem), new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
 
@@ -3926,17 +3992,17 @@ public class MenuPresenter implements MenuContract.Presenter {
                     getFavorites(true, 1);
 
                     Set<String> favorites = CacheUtil.getInstance().getFavorites();
-                    favorites.add(menuItem.getId());
+                    favorites.add(MenuPresenter.this.menuItem.getId());
                     CacheUtil.getInstance().setFavorites(favorites);
 
                     HashMap<String, String> eventAttributes = new HashMap<>();
-                    eventAttributes.put("Item ID", menuItem.getId());
-                    eventAttributes.put("Item Name", menuItem.getAttributes().getName());
+                    eventAttributes.put("Item ID", MenuPresenter.this.menuItem.getId());
+                    eventAttributes.put("Item Name", MenuPresenter.this.menuItem.getAttributes().getName());
 
                     menuView.logEvent("AddToFavorites", eventAttributes, null, 0);
-                    menuView.logAddToWishlistEvent(menuItem);
+                    menuView.logAddToWishlistEvent(MenuPresenter.this.menuItem);
 
-                    menuView.setFavorite(menuItem);
+                    menuView.setFavorite(MenuPresenter.this.menuItem);
 
                     menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_FAVORITES));
 
@@ -3949,17 +4015,17 @@ public class MenuPresenter implements MenuContract.Presenter {
                 }
             });
         } else {
-            CustomersApiCall.getInstance().deleteItemFromFavorites(AuthUtil.getInstance().getCustomer().getId(), menuItem.getId(), new ApiRequestListener() {
+            CustomersApiCall.getInstance().deleteItemFromFavorites(AuthUtil.getInstance().getCustomer().getId(), this.menuItem.getId(), new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
 
                     getFavorites(true, 1);
 
                     Set<String> favorites = CacheUtil.getInstance().getFavorites();
-                    favorites.remove(menuItem.getId());
+                    favorites.remove(MenuPresenter.this.menuItem.getId());
                     CacheUtil.getInstance().setFavorites(favorites);
 
-                    menuView.setFavorite(menuItem);
+                    menuView.setFavorite(MenuPresenter.this.menuItem);
 
                     menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES));
 
@@ -4668,22 +4734,49 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void getFrequentBoughtItems() {
-         MenuItem mockMenuItem = new MenuItem();
-         mockMenuItem.setId("1201192");
-         mockMenuItem.setType("item");
-        // todo remove this mock data once api is already deployed
-        frequentBoughtMenuItems.clear();
-        MenuItemAttributes mockMenuItemAttributes = new MenuItemAttributes();
-        mockMenuItemAttributes.setName("Single Sandwich");
-        mockMenuItemAttributes.setDescription("The radian is the SI unit for measuring angles, and is the standard unit of angular measure used in many areas of mathematics. The length of an arc of a unit circle is numerically equal to the measurement in radians of the angle that it subtends; one radian is just under 57.3 degrees.");
-        mockMenuItemAttributes.setImage("https://console-uploads-sandbox.s3.eu-west-1.amazonaws.com/cszalrtpn.png");
-        mockMenuItemAttributes.setPrice(10);
-        mockMenuItemAttributes.setListPrice(0);
-        mockMenuItemAttributes.setDescription("2200 Kcal");
-        mockMenuItem.setAttributes(mockMenuItemAttributes);
-        frequentBoughtMenuItems.add(mockMenuItem);
-        menuView.setMenuItemDetails(mockMenuItem);
+    public void getFrequentBoughtItemsByMenuId(int page, String menuId) {
+        MenuApiCall
+                .getInstance()
+                .getFrequentlyBoughtMenuItems(CacheUtil
+                        .getInstance()
+                        .getMenuId(), menuId,String.valueOf(page), new ApiRequestListener() {
+
+                    @Override
+                    public void onSuccess(Object obj) {
+                        try {
+                            Log.d("FAFA","Obj " + obj.toString());
+                            JSONObject object = new JSONObject(obj.toString());
+                            Pagination pagination = Pagination.parse(object);
+                            if (page == 1) {
+                                favorites.clear();
+                            }
+
+                            JSONArray response = object.getJSONArray("data");
+                            Log.d("FAFA","Response bai  " + response + " "  + menuId + "Per page " + page) ;
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                MenuItem frequentBoughtMenu = GsonHelper.gsonFinal().fromJson(jsonObject.toString(), MenuItem.class);
+                                frequentBoughtMenuItems.add(frequentBoughtMenu);
+                            }
+                            Log.d("FAFA","Total page " + pagination.getTotalPages());
+                            if (page == pagination.getTotalPages()) {
+                                menuView.showFrequentBoughtItems(frequentBoughtMenuItems);
+                            } else {
+                                getFrequentBoughtItemsByMenuId(page + 1,menuId);
+                            }
+                        }catch (Exception e) {
+                            Log.d("FAFA","Error bai e " + e.getLocalizedMessage());
+                            e.printStackTrace();
+                            this.onError(e);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Object error) {
+                        Log.d("FAFA","Error ");
+                        AppLogger.printRetrofitError(error);
+                    }
+                });
     }
 
     @Override
