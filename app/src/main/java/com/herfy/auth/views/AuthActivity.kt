@@ -37,7 +37,11 @@ class AuthActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(actReceiver)
+        try {
+            unregisterReceiver(actReceiver)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private val actReceiver = object : BroadcastReceiver() {
@@ -48,9 +52,13 @@ class AuthActivity : BaseActivity() {
     }
 
     private fun setupBroadcastReceiver() {
-        registerReceiver(
-            actReceiver, IntentFilter(getString(com.herfy.authentication.R.string.exit_to_home))
-        )
+        try {
+            registerReceiver(
+                actReceiver, IntentFilter(getString(com.herfy.authentication.R.string.exit_to_home))
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
