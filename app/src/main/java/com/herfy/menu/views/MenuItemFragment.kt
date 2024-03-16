@@ -139,7 +139,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             binding.image.invalidate()
         }
         menuPresenter.start()
-
+        binding.frequentlyBoughtShimmering.setVisible(true)
         initialModifierId = ""
         activity?.cast<BaseActivity> {
             if (BuildUtil.soloAppKey().equals("SpeWD37HZx9Uqora", ignoreCase = true)) {
@@ -371,6 +371,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun showStoreOpen(open: Boolean, message: String) {}
     override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
         frequentBoughItemsAdapter?.notifyDataSetChanged()
+        binding.frequentlyBoughtShimmering.setVisible(false)
     }
 
     override fun showAddress(address: String) {}

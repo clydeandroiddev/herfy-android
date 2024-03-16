@@ -453,7 +453,31 @@
                         android:layout_marginTop="@dimen/margin_small"
                         android:textColor="@color/dark_shade_of_grey"
                         android:textSize="16sp" />
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/frequentlyBoughtShimmering"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:layout_marginTop="@dimen/margin_large"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/orderTypeContainer"
+                        app:shimmer_duration="1000"
+                        tools:visibility="gone">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <include layout="@layout/item_frequently_bought_placeholder" />
+                        <include layout="@layout/item_frequently_bought_placeholder" />
+
+                        <include layout="@layout/item_frequently_bought_placeholder" />
+
+                        <include layout="@layout/item_frequently_bought_placeholder" />
+
+                    </LinearLayout>
+                    </com.facebook.shimmer.ShimmerFrameLayout>
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/frequently_bough_recycleview"
                         android:layout_width="match_parent"
