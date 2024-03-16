@@ -63,7 +63,7 @@ import com.herfy.newmenu.adapter.SearchMenuRecyclerViewAdapter
 import com.herfy.newmenu.adapter.SliderFragmentStateAdapter
 import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
-import com.herfy.util.CacheHelper
+import com.herfy.utils.helper.CacheHelper
 import com.herfy.util.StringUtil
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text

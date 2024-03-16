@@ -2,9 +2,11 @@ package com.herfy.utils.helper
 
 
 import android.content.Context
+import android.text.SpannedString
 import android.util.Patterns
 import com.herfy.utils.R
 import com.herfy.utils.constants.Values
+import java.util.Locale
 import java.util.regex.Pattern
 
 
@@ -128,4 +130,22 @@ object StringUtil {
                 .replace("9", "٩").replace("0", "٠").replace(",", ".").replace("٫", ".")
         }
     }
+
+    fun getFormattedPriceWithText(price: Double): SpannedString? {
+        return CurrencyUtils.updateCurrencyWithText(price, true)
+    }
+
+    fun getFormattedPrice(price: Double): SpannedString? {
+        return CurrencyUtils.updateCurrency(price, true)
+    }
+
+    fun getFormattedAmount(amount: Double): String? {
+        val decimalPlaces = CacheUtil.getInstance().concept.decimalPlaces
+        if (decimalPlaces > 0 && amount != amount.toInt().toDouble()) {
+            val format = "%." + decimalPlaces + "f"
+            return localize(String.format(Locale.ENGLISH, format, amount))
+        }
+        return localize("" + amount.toInt())
+    }
+
 }

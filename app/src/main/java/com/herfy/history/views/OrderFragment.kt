@@ -39,7 +39,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.databinding.FragmentOrderBinding
 import com.herfy.ext.cast
-import com.herfy.ext.hasDecimalPart
+import com.herfy.utils.extensions.hasDecimalPart
 import com.herfy.firebase.FirebaseService
 import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
@@ -57,7 +57,9 @@ import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheHelper
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
 import com.skylinedynamics.solosdk.api.models.objects.*

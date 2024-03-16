@@ -1,4 +1,4 @@
-package com.herfy.util;
+package com.herfy.utils.helper;
 
 import android.content.Context;
 

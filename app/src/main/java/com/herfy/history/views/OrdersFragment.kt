@@ -21,7 +21,7 @@ import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
 import com.herfy.history.adapters.OrdersRecyclerViewAdapter
 import com.herfy.main.MainActivity
-import com.herfy.util.CacheHelper
+import com.herfy.utils.helper.CacheHelper
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values

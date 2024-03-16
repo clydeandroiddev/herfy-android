@@ -102,7 +102,7 @@ import com.herfy.summary.OrderSummaryMenuItemRecyclerViewAdapter;
 import com.herfy.util.ApiLogLevel;
 import com.herfy.util.ApiLogUtil;
 import com.herfy.util.AppLogger;
-import com.herfy.util.CurrencyUtils;
+import com.herfy.utils.helper.CurrencyUtils;
 import com.herfy.analytics.facebook.FacebookAppEventUtil;
 import com.herfy.analytics.FirebaseECommerceEventUtil;
 import com.herfy.utils.helper.LocaleUtil;

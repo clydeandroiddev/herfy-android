@@ -1,12 +1,9 @@
-package com.herfy.util
+package com.herfy.utils.helper
 
 import android.text.SpannedString
 import androidx.core.text.buildSpannedString
 import androidx.core.text.scale
-import com.herfy.ext.hasDecimalPart
-import com.herfy.utils.helper.CacheUtil
-import com.herfy.utils.helper.LocaleUtil
-import com.skylinedynamics.solosdk.api.models.objects.CurrencyFormat
+import com.herfy.utils.extensions.hasDecimalPart
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 

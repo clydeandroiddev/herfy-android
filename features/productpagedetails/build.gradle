@@ -1,10 +1,13 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'com.jakewharton.butterknife'
 }
-apply plugin: 'com.jakewharton.butterknife'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-parcelize'
+
 android {
     namespace 'com.herfy.productpagedetails'
     compileSdk 34
@@ -75,9 +78,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation(project(":solosdk"))
-    implementation project(path: ':utils')
+
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
@@ -89,6 +90,14 @@ dependencies {
     kapt 'com.jakewharton:butterknife-compiler:10.2.3'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 
+    //Modules
+    implementation project(path: ':data:database')
+    implementation project(path: ':data:model')
+    implementation project(path: ':data:repository')
+    implementation(project(":common"))
+    implementation(project(":solosdk"))
+    implementation project(path: ':utils')
+
     //ViewModel and LiveData
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0"
@@ -97,6 +106,11 @@ dependencies {
     def navigation = "2.5.2"
     implementation "androidx.navigation:navigation-fragment:$navigation"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
+    implementation "androidx.navigation:navigation-ui:$navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$navigation"
+    androidTestImplementation "androidx.navigation:navigation-testing:$navigation"
+    implementation "androidx.navigation:navigation-compose:$navigation"
 
     //Dagger Hilt
     def dagger_version = "2.48"
@@ -107,5 +121,9 @@ dependencies {
     //RXJava
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+    kapt 'com.github.bumptech.glide:compiler:4.14.2'
 
 }

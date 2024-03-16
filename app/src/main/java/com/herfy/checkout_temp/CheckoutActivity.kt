@@ -85,7 +85,7 @@ import com.herfy.ratings.AppRatingBroadcastReceiver
 import com.herfy.util.ApiLogLevel
 import com.herfy.util.ApiLogUtil.Companion.sendOrderLog
 import com.herfy.util.AppLogger
-import com.herfy.util.CurrencyUtils.Companion.updateCurrency
+import com.herfy.utils.helper.CurrencyUtils.Companion.updateCurrency
 import com.herfy.util.ShipBookLogger.logError
 import com.herfy.util.ShipBookLogger.logInfo
 import com.herfy.util.StringUtil

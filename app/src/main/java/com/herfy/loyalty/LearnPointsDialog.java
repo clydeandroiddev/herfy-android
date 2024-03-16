@@ -21,7 +21,7 @@ import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.CollectRules;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
 import com.skylinedynamics.solosdk.api.models.objects.Tier;
-import com.herfy.util.CurrencyUtils;
+import com.herfy.utils.helper.CurrencyUtils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

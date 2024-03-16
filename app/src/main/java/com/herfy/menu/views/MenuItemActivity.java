@@ -50,7 +50,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.CacheHelper;
+import com.herfy.utils.helper.CacheHelper;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;
 

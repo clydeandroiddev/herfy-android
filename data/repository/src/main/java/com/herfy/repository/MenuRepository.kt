@@ -1,5 +1,6 @@
 package com.herfy.repository
 
+import android.content.Context
 import com.herfy.database.AppDatabase
 import com.herfy.database.entities.MenuCategoryEntity.Companion.toDomain
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
@@ -29,11 +30,13 @@ interface MenuRepository {
 
     suspend fun getMenuItem(menuItemId: String, result: (MenuItem) -> Unit)
 
+    suspend fun getMenuItemEntityBy(id: String, applicationId: String, result: (String) -> Unit)
 }
 
 class MenuRepositoryImpl @Inject constructor(
     private val appDatabase: AppDatabase,
-    private val cacheUtilHelper: CacheUtilHelper
+    private val cacheUtilHelper: CacheUtilHelper,
+    private val context: Context,
 ) : MenuRepository {
 
     override suspend fun getMenuCategoriesItems(result: (List<MenuCategory>) -> Unit) {
@@ -364,11 +367,14 @@ class MenuRepositoryImpl @Inject constructor(
                         }
                     }
                 }
-
                 result(menuItem)
-
             }
         }
     }
+
+    override suspend fun getMenuItemEntityBy(id : String, applicationId : String, result:(String) -> Unit){
+        result(appDatabase.menuItemEntityDao().findById(applicationId, id).menuCategoryId)
+    }
+
 
 }
