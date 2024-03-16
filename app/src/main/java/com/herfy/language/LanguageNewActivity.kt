@@ -73,8 +73,8 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
             }
 
             continueButton.setOnClickListener {
+                showLoadingDialog();
                 if (isLanguageSelected) {
-                    showLoadingDialog()
                     val eventAttributes = java.util.HashMap<String, String>()
                     if (isArabicSelected) {
                         LocaleUtil.getInstance().language = "ar"
@@ -87,13 +87,13 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
                     }
                     logEvent("ChangeLanguage", eventAttributes, null, 0.0)
                     languagePresenter.changeLanguage()
-
+                    dismissDialogs()
                     val intent = Intent(this@LanguageNewActivity, MainActivity::class.java)
                     intent.putExtra("home", true)
                     intent.putExtra("autoLogin", true)
                     startActivity(intent)
                     overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
-                    finishAffinity()
+                    finish()
                 }
             }
         }
