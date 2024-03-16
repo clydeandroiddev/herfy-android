@@ -1,5 +1,6 @@
 package com.herfy.authentication.views
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -113,6 +114,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
             }
 
             closeButton.setOnClickListener {
+                hideKeyboard(binding.root)
                 requireActivity().finish()
             }
 
@@ -127,8 +129,8 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
             }
 
             loginGuest.setOnClickListener {
-                //requireActivity().finish()
-                showAddNumber(true, null)
+                hideKeyboard(binding.root)
+                requireActivity().finish()
             }
 
             phoneNumberEdit.setOnEditorActionListener { v, actionId, event ->
@@ -207,11 +209,8 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                 }
 
                 is LoginViewState.GoogleSuccess -> {
-                    requireContext().applicationContext.sendBroadcast(
-                        Intent(
-                            requireContext().getString(R.string.exit_to_home)
-                        )
-                    )
+                    requireActivity().setResult(Activity.RESULT_OK)
+                    requireActivity().finish()
                 }
 
                 is LoginViewState.ShowLoading -> {

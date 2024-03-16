@@ -1,6 +1,7 @@
 package com.herfy.authentication.views
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.CountDownTimer
@@ -159,11 +160,8 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
     private fun toNextPage() {
         if (args.isVerified) {
-            requireContext().applicationContext.sendBroadcast(
-                Intent(
-                    requireContext().getString(R.string.exit_to_home)
-                )
-            )
+            requireActivity().setResult(Activity.RESULT_OK)
+            requireActivity().finish()
         } else {
             findNavController().navigate(
                 LoginOTPFragmentDirections.actionOtpToInputUser(
