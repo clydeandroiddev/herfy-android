@@ -392,10 +392,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 //                binding.mealDealsContainer.visibility = View.GONE
                 binding.txtMoreInfo.isVisible = !menuItem.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
                 frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(),menuPresenter)
-                frequentBoughItemsAdapter?.notifyDataSetChanged()
-                binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(requireContext())
-
                 binding.frequentlyBoughRecycleview.adapter = frequentBoughItemsAdapter
+                frequentBoughItemsAdapter?.notifyDataSetChanged()
                 binding.txtMoreInfo.ninjaTap(viewLifecycleScope) {
                     val bundle = Bundle()
                     bundle.putParcelable(NAV_ARGS_INFO_KEY,  NutritionInfoParams(
@@ -459,6 +457,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     .into(binding.image)
 
                 binding.name.text = menuItem.getName(LocaleUtil.getInstance().language)
+                binding.txtFrequntlyBought
+                    .text = CacheUtil
+                    .getInstance()
+                    .getTranslations(Text.FREQUETLY_BOUGHT_TOGETHER,"Frequently bought together")
                 val caloriesValue = menuItem.calories
                 val calorieCount = menuItem.calorieCount
                 if (caloriesValue != null && !caloriesValue.isEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
