@@ -1,12 +1,13 @@
 package com.herfy.menu.viewholders;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -36,13 +37,15 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
     MaterialTextView txtModifierDescription;
     @BindView(R.id.txtmodifierPrice)
     MaterialTextView txtModifierPrice;
-    @BindView(R.id.txtCalories)
+    @BindView(R.id.tvCalories)
     MaterialTextView txtCalories;
 
-    @BindView(R.id.icFavorite)
-    ImageView icFavorite;
+    @BindView(R.id.layoutCalories)
+    LinearLayout layoutCalories;
+    @BindView(R.id.btnFavorite)
+    ImageView btnFavorite;
 
-    @BindView(R.id.quantityDown)
+    @BindView(R.id.btnAdd)
     ImageButton addToCart;
 
     private Context context;
@@ -64,37 +67,34 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         } else {
             image.setVisibility(View.GONE);
         }
-        icFavorite.setOnClickListener(new View.OnClickListener() {
+        btnFavorite.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                        menuPresenter.toggleFavorites(menuItem.isFavorite(),menuItem,getAbsoluteAdapterPosition());
                     }
                 });
 
-        int calorieCount = menuItem.getCalorieCount();
         String caloriesValue = menuItem.getCalories();
-
+        int calorieCount = menuItem.getCalorieCount();
         if (calorieCount != 0) {
-            txtCalories.setVisibility(View.VISIBLE);
+            layoutCalories.setVisibility(View.VISIBLE);
             txtCalories.setText(String.valueOf(calorieCount));
         } else if (caloriesValue != null && !caloriesValue.isEmpty() && !caloriesValue.trim().equals("null") && !caloriesValue.trim().equals("0")) {
-            txtCalories.setVisibility(View.VISIBLE);
+            layoutCalories.setVisibility(View.VISIBLE);
             txtCalories.setText(caloriesValue);
         } else {
-            txtCalories.setVisibility(View.GONE);
+            layoutCalories.setVisibility(View.GONE);
             txtCalories.setText("");
         }
             if (AuthUtil.getInstance().isSignedIn()) {
-                Log.d("FAFA","Is favorite " + menuItem.isFavorite());
                 if (menuItem.isFavorite()) {
-                    Log.d("FAFA","Contains bai");
-                    icFavorite.setImageResource(R.drawable.ic_favorite_filled);
+                    btnFavorite.setImageResource(R.drawable.ic_favorite_filled);
                 } else {
-                    icFavorite.setImageResource(R.drawable.ic_favorite_empty);
+                    btnFavorite.setImageResource(R.drawable.ic_frequent_favourites);
                 }
-                icFavorite.setVisibility(View.VISIBLE);
+                btnFavorite.setVisibility(View.VISIBLE);
             } else {
-                icFavorite.setVisibility(View.GONE);
+                btnFavorite.setVisibility(View.GONE);
             }
 
         addToCart.setOnClickListener(new View.OnClickListener() {

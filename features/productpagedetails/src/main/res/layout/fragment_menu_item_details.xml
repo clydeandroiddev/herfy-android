@@ -458,8 +458,6 @@
                         android:id="@+id/frequently_bough_recycleview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:descendantFocusability="blocksDescendants"
-                        android:focusableInTouchMode="false"
                         android:layout_marginHorizontal="@dimen/margin_small"
                         android:clipToPadding="false"
                         tools:listitem="@layout/item_modifier_frequently_bought"
