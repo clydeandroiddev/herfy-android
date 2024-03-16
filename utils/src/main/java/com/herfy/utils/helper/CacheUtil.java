@@ -1856,9 +1856,11 @@ public class CacheUtil {
 
 
     public boolean isSeparatedMenus() {
-        return !getApplication().getAttributes().getOrderTypeMenus().isEmpty();
+        Application application = getApplication();
+        if (application == null) return false;
+        application.getAttributes();
+        return !application.getAttributes().getOrderTypeMenus().isEmpty();
     }
-
     public void setConsumerData(String data) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(CONSUMER_DATA, data);
