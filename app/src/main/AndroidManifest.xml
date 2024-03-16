@@ -313,6 +313,7 @@
         <activity
             android:name="com.herfy.auth.views.AuthActivity"
             android:screenOrientation="portrait"
+            android:exported="false"
             android:taskAffinity=""
             android:windowSoftInputMode="adjustPan" />
         <activity
