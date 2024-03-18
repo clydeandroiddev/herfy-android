@@ -72,6 +72,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun login(phoneNumber: String, result: (LoginResponse) -> Unit) {
         AuthUtil.getInstance().password = ""
+        val phoneNumberTrue = phoneNumber.replace("+", "")
         val loginBody = LoginSimpleBody(StringUtil.toEnglish(phoneNumber.replace("+", "")), "full")
         CustomersApiCall.getInstance().loginCustomer(loginBody, object : ApiRequestListener {
             override fun onSuccess(o: Any) {
@@ -93,7 +94,7 @@ class AuthRepositoryImpl @Inject constructor(
                                     )
                                 ) {
                                     verificationSend(
-                                        customer.id, customer.attributes.mobile
+                                        customer.id, phoneNumberTrue
                                     )
                                 }
                                 result(LoginResponse(true, true, customer, ""))
@@ -249,7 +250,14 @@ class AuthRepositoryImpl @Inject constructor(
                                 val token = attributes.getString("token")
                                 SoloAuth.getInstance().login(token)
                                 if (status == Values.STATUS_VERIFIED) {
-                                    result(GoogleResponse(true, false, false, customer, ""))
+                                    if (customer.attributes.mobile != null && StringUtil.isValidPhoneNumber(
+                                            customer.attributes.mobile
+                                        )
+                                    ) {
+                                        result(GoogleResponse(true, false, false, customer, ""))
+                                    } else {
+                                        result(GoogleResponse(true, false, true, customer, ""))
+                                    }
                                 } else {
                                     if (customer.attributes.mobile != null && StringUtil.isValidPhoneNumber(
                                             customer.attributes.mobile

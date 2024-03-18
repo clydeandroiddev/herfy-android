@@ -38,4 +38,6 @@
     <dimen name="search_box_bottom_padding_start_text">25dp</dimen>
     <dimen name="title_text_size">30sp</dimen>
     <dimen name="menu_item_details_image_height">238dp</dimen>
+    <dimen name="view_keyboard_regular">30dp</dimen>
+    <dimen name="view_keyboard_shown">220dp</dimen>
 </resources>

@@ -1,11 +1,13 @@
 package com.herfy.authentication.views
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.viewModels
@@ -51,9 +53,6 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
             if (otpLength == 0) {
                 otpLength = 6
             }
-            enterForDigitLabel.text = CacheUtil.getInstance().getTranslations(
-                Text.DYNAMIC_CODE_DIGIT, "Enter the (x) digit code sent to your number"
-            ).replace("(x)", otpLength.toString())
             binding.otpView.setLength(otpLength)
             binding.otpView.generate()
             binding.otpView.otpListener = object : OTPListener {
@@ -64,12 +63,15 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
             }
             val handler = Handler(Looper.getMainLooper())
             handler.postDelayed({
-                showKeyboard(dummyEdit)
+                enterForDigitLabel.text = CacheUtil.getInstance().getTranslations(
+                    Text.DYNAMIC_CODE_DIGIT, "Enter the (x) digit code sent to your number"
+                ).replace("(x)", otpLength.toString())
+                showKeyboard(requireContext(), dummyEdit)
                 binding.otpView.requestFocusOTP()
+                initTimer()
+                initArgs()
             }, 500)
         }
-        initTimer()
-        initArgs()
     }
 
     private fun verify(otp: String) {
@@ -158,11 +160,8 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
     private fun toNextPage() {
         if (args.isVerified) {
-            requireContext().applicationContext.sendBroadcast(
-                Intent(
-                    requireContext().getString(R.string.exit_to_home)
-                )
-            )
+            requireActivity().setResult(Activity.RESULT_OK)
+            requireActivity().finish()
         } else {
             findNavController().navigate(
                 LoginOTPFragmentDirections.actionOtpToInputUser(

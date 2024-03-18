@@ -97,9 +97,9 @@ abstract class BaseFragment<T : BaseViewModel, B : ViewDataBinding> : Fragment()
         imm!!.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    fun showKeyboard(view: EditText) {
+    fun showKeyboard(context: Context, view: EditText) {
         val inputMethodManager =
-            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 

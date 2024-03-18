@@ -212,6 +212,7 @@
                 tools:text="Continue as Guest" />
 
             <View
+                android:id="@+id/spacing"
                 android:layout_width="match_parent"
                 android:layout_height="30dp" />
 

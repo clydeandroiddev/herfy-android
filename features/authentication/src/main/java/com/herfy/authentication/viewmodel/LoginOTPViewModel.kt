@@ -43,8 +43,12 @@ class LoginOTPViewModel @Inject constructor(
     }
 
     fun verify(code: String, customerId: String) {
+        var otpLength = CacheUtil.getInstance().concept.otpLength
+        if (otpLength == 0) {
+            otpLength = 6
+        }
         viewModelScope.launchWithTimber(dispatchers.io) {
-            if (code.length < 6) {
+            if (code.length < otpLength) {
                 _state.emit(
                     LoginOTPPageViewState.ShowError(
                         CacheUtil.getInstance().getTranslations(Text.CODE_REQUIRED)

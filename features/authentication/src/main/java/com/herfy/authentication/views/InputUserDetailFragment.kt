@@ -1,5 +1,6 @@
 package com.herfy.authentication.views
 
+import android.app.Activity
 import android.content.Intent
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.viewModels
@@ -40,11 +41,8 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
             }
 
             skipButton.setOnClickListener {
-                requireContext().applicationContext.sendBroadcast(
-                    Intent(
-                        requireContext().getString(R.string.exit_to_home)
-                    )
-                )
+                requireActivity().setResult(Activity.RESULT_OK)
+                requireActivity().finish()
             }
 
             fullName.setOnEditorActionListener { v, actionId, event ->
