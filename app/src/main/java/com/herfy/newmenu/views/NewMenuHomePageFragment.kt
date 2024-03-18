@@ -1032,7 +1032,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                 activity.dismissDialogs()
                 Toast.makeText(
                     activity,
-                    CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART),
+                    CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
                     Toast.LENGTH_SHORT
                 ).show()
                 activity.setCartQuantity(CacheUtil.getInstance().cartQuantity)

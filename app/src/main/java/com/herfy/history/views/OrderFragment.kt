@@ -785,7 +785,7 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
                 }
                 Toast.makeText(
                     it,
-                    CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART),
+                    CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
                     Toast.LENGTH_SHORT
                 ).show()
                 it.dismissDialogs()
