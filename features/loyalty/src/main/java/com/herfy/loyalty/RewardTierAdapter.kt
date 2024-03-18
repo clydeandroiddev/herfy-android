@@ -6,7 +6,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.herfy.loyalty.databinding.ItemRewardTierBinding
+import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.Tier
+import java.util.Locale
 
 class RewardTierAdapter(private val tierList : ArrayList<Tier> = arrayListOf()) :  RecyclerView.Adapter<RewardTierAdapter.ViewHolder>(){
     inner class ViewHolder (val binding : ItemRewardTierBinding) : RecyclerView.ViewHolder(binding.root)
@@ -27,6 +29,11 @@ class RewardTierAdapter(private val tierList : ArrayList<Tier> = arrayListOf()) 
         val tierData = tierList[position]
        holder.binding.apply {
            tier = tierData
+           var loyaltyTier = tierData.name
+           if(LocaleUtil.getInstance().isEnglish) {
+               loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
+           }
+           tvRewardTier.text = loyaltyTier
            executePendingBindings()
        }
     }

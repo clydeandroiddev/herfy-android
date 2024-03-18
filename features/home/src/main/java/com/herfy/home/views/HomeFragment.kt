@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.View
+import androidx.compose.ui.text.capitalize
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -31,6 +32,7 @@ import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -160,7 +162,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     )
                     tvDescriptionEmptyState.text = cacheHelper.getTranslations(
                         Text.BECOME_ASHAB_HERFY_DESCRIPTION,
-                        "By creating an account on signing in to your existing one you get point on every order"
+                        "By creating an account or signing in to your existing one you get point on every order"
                     )
                     btnContinue.text = cacheHelper.getTranslations(Text.CONTINUE_LABEL, "Continue")
                 }
@@ -345,7 +347,10 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     rlLoyaltyContent.visible()
                     lnLoyaltyEmptyState.gone()
                     tvPoints.text = loyalty.attributes.pointsAccumulated.toString()
-                    val loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
+                    var loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
+                    if(LocaleUtil.getInstance().isEnglish) {
+                        loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
+                    }
                     if (loyaltyTier.isNotEmpty()) {
                         var tierBackground = R.drawable.background_bronze_tier
                         if (loyaltyTier.equals(

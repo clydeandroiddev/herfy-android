@@ -43,7 +43,7 @@
                 android:includeFontPadding="false"
                 android:textColor="@color/color_dark_gray_blue"
                 style="@style/Styles.Text.SmallTitle"
-                android:text="@{tier.name}"
+
                 tools:text="Diamond "/>
 
         </LinearLayout>

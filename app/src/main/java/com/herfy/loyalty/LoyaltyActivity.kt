@@ -24,6 +24,7 @@ import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.TimeUtil
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
@@ -244,9 +245,13 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         progressTextIndicator.text = "${progress.progress}/${progress.max}"
                     }
                 } else {
+                    var loyaltyTier = tier.name
+                    if(LocaleUtil.getInstance().isEnglish) {
+                        loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
+                    }
                     progress.max = startingPointsOfNextTier
                     progress.progress = totalAccumulatedPoints
-                    tvTierProgressDesc.text = cacheUtilHelper.getTranslations(Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)").replace("(x)", pointsUntilNextTier.toString()).replace("(y)", tier.name)
+                    tvTierProgressDesc.text = cacheUtilHelper.getTranslations(Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)").replace("(x)", pointsUntilNextTier.toString()).replace("(y)", loyaltyTier)
                     progressTextIndicator.text = "${progress.progress}/${progress.max}"
                 }
 
@@ -305,7 +310,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
         binding.apply {
             loyalty?.let { loyalty ->
                 layoutCard.apply {
-                    val loyaltyTier: String = when {
+                    var loyaltyTier: String = when {
                         loyalty.attributes.loyaltyTier == null
                                 && loyaltyPresenter.tiers != null &&
                                 loyaltyPresenter.tiers.size > 0 -> {
@@ -315,6 +320,9 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         else -> {
                             loyalty.attributes.loyaltyTier.name
                         }
+                    }
+                    if(LocaleUtil.getInstance().isEnglish) {
+                        loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
                     }
                     var tierBackground = com.herfy.home.R.drawable.background_bronze_tier
                     if (loyaltyTier.equals(
@@ -343,7 +351,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         StringUtil.localize(formatter.format(loyalty.attributes.currentBalanceAmount))
                     tvTotalPoints.text =
                         StringUtil.localize(loyalty.attributes.currentBalance.toLong().toString())
-                    tvProgressTier.text =loyaltyTier
+                    tvProgressTier.text = loyaltyTier
                 }
 
             }
