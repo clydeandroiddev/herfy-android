@@ -1,13 +1,14 @@
 package com.herfy.menu.viewholders;
 
 import android.content.Context;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -19,9 +20,14 @@ import com.herfy.R;
 import com.herfy.menu.MenuContract;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
+import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,7 +53,8 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
 
     @BindView(R.id.btnAdd)
     ImageButton addToCart;
-
+    @BindView(R.id.favouriteQuantityLayout)
+    ConstraintLayout favoriteQuantityLayout;
     private Context context;
 
     public FrequentBoughtViewHolder(Context context, MenuContract.Presenter menuPresenter, @NonNull View itemView) {
@@ -108,6 +115,21 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         name.setText(menuItemAttributes.getName());
         txtModifierDescription.setText(menuItem.getDescription(LocaleUtil.getInstance().getLanguage()));
         txtModifierPrice.setText(StringUtil.getFormattedPrice((menuItemAttributes.getPrice())));
+    }
+
+
+    public int getQuantityByFavorite(MenuItem menuItem) {
+
+        int quantity = 0;
+        ArrayList<MenuItem> cart = CacheUtil.getInstance().getCart();
+
+        for (MenuItem item : cart) {
+            if (Objects.equals(String.valueOf(item.getId()), menuItem.getId()) && menuItem.isFavorite()) {
+                quantity++;
+            }
+        }
+
+        return quantity;
     }
 
 }

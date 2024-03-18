@@ -224,6 +224,10 @@ public class ModifierItemViewHolderNew extends RecyclerView.ViewHolder implement
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {

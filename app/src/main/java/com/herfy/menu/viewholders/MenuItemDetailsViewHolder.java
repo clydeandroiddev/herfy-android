@@ -317,6 +317,12 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
     public void showStore(Store store) {
 
     }
+
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
+
     public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
     }

@@ -120,6 +120,11 @@ public class IngredientViewHolder extends RecyclerView.ViewHolder implements Men
     }
 
     @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
+
+    @Override
     public void showStoreOpen(boolean open, String message) {
 
     }

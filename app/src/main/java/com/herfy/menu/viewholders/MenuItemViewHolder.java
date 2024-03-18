@@ -142,6 +142,10 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {

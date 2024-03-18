@@ -190,10 +190,10 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
                 (context as MainActivity).showLoadingDialog()
                 if (CacheUtil.getInstance().favorites.contains(menuItem.id)) {
                     binding.favoriteIcon.setColorFilter(notFavoriteColor)
-                    menuPresenter.addRemoveFavorite(false,)
+                    menuPresenter.addRemoveFavorite(false)
                 } else {
                     binding.favoriteIcon.setColorFilter(favoriteColor)
-                    menuPresenter.addRemoveFavorite(true,)
+                    menuPresenter.addRemoveFavorite(true)
                 }
             } else {
                 CacheUtil.getInstance().favoriteMenuCategory = menuPresenter.menuCategory

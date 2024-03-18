@@ -4096,6 +4096,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         }
 
         if (menuItem.isMustBeCustomized() || menuItem.isCombo) {
+            menuView.navigateToMenuItemDetails(menuCategory,menuItem);
             if (menuCategory == null) {
                 for (MenuCategory category : menuCategories) {
                     for (MenuItem item : category.getMenuItems()) {

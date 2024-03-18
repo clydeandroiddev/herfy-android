@@ -84,6 +84,10 @@ public class MenuItemImageViewHolder extends RecyclerListAdapter.ViewHolder<Obje
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {

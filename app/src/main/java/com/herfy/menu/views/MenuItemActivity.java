@@ -295,6 +295,10 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {

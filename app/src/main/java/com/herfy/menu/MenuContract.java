@@ -46,6 +46,8 @@ public interface MenuContract {
 
         void showStore(Store store);
 
+        void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem);
+
         void showStoreOpen(boolean open, String message);
         void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems);
         void showAddress(String address);

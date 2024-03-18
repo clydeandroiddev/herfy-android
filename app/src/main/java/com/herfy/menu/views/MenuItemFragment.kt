@@ -21,6 +21,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -57,6 +58,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.invisible
+import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.visible
@@ -368,6 +370,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun showStore(store: Store) {}
+    override fun navigateToMenuItemDetails(menuCategory: MenuCategory?, menuItem: MenuItem?) {
+        navMenuItem(menuCategory?.id.orEmpty(), menuItemId = menuItem?.id.orEmpty())
+    }
+
     override fun showStoreOpen(open: Boolean, message: String) {}
     override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
         frequentBoughItemsAdapter?.notifyDataSetChanged()
@@ -1224,7 +1230,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuItem.attributes.image,
                         ViewUtil.dpToPx(it, 16)
                     )
-                    activity?.onBackPressed()
+
                 }
             }
         } catch (ex: Exception) {
@@ -1233,6 +1239,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun addCartItem(menuItem: MenuItem, view: ImageView) {}
+
+
     override fun updateCartItem() {
         var message = CacheUtil.getInstance().getTranslations(Text.ITEM_UPDATED, "Item updated")
         if (args.isPromo && !args.isEdit) {
@@ -1410,6 +1418,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun updateFloatingTotalPrice() {
 
+    }
+    private fun navMenuItem(menuCategoryId: String, menuItemId: String) {
+        findNavController().navigateToDeepLink("nav_menu_item/$menuCategoryId/$menuItemId")
     }
 
 }

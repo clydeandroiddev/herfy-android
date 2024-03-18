@@ -293,6 +293,10 @@ public class MenuFavoriteViewHolder extends RecyclerView.ViewHolder implements M
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {

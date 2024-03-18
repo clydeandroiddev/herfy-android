@@ -125,6 +125,10 @@ public class SearchMenuViewHolder extends RecyclerView.ViewHolder implements Men
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {

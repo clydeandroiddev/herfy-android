@@ -116,6 +116,10 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {

@@ -147,6 +147,10 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {

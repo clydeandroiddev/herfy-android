@@ -110,6 +110,10 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {
