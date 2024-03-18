@@ -2318,7 +2318,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                     if (menuItem.isCombo) {
                         menuView.showLoader();
                     }
-                    menuView.setMenuItemDetails(menuItem);
+//                    menuView.setMenuItemDetails(menuItem);
 
                     LinkedList<Allergen> allergens = new LinkedList<>();
                     for (AllergenDb allergenDb : appDatabase.allergenDao().findAllByApplicationAndIds(applicationId, menuItem.getAllergensIds().toArray(new String[menuItem.getAllergensIds().size()]))) {
@@ -4284,6 +4284,8 @@ public class MenuPresenter implements MenuContract.Presenter {
             int cartCount = CacheUtil.getInstance().getCartQuantity();
             menuItem.isSandwichOnly = false;
             removeMukafaaRedemption();
+            menuItem.setAddedToCart(true);
+            Log.d("FAFA","Menu item " + menuItem);
             CacheUtil.getInstance().addToCart(menuItem);
             if (cartCount == 0) {
                 menuView.setCartExpiry();

@@ -55,6 +55,9 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
     ImageButton addToCart;
     @BindView(R.id.favouriteQuantityLayout)
     ConstraintLayout favoriteQuantityLayout;
+
+    @BindView(R.id.txtQuantity)
+    MaterialTextView tvQuantity;
     private Context context;
 
     public FrequentBoughtViewHolder(Context context, MenuContract.Presenter menuPresenter, @NonNull View itemView) {
@@ -67,6 +70,9 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setFrequentBoughtMenuItem(MenuItem menuItem) {
+        int quantity = getQuantityByFavorite(menuItem);
+        favoriteQuantityLayout.setVisibility(quantity >= 1 ? View.VISIBLE : View.GONE);
+        tvQuantity.setText(String.valueOf(quantity));
         String imageUrl = menuItem.getAttributes().getImage();
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
@@ -124,7 +130,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         ArrayList<MenuItem> cart = CacheUtil.getInstance().getCart();
 
         for (MenuItem item : cart) {
-            if (Objects.equals(String.valueOf(item.getId()), menuItem.getId()) && menuItem.isFavorite()) {
+            if (Objects.equals(String.valueOf(item.getId()), menuItem.getId()) && menuItem.isAddedToCart()) {
                 quantity++;
             }
         }

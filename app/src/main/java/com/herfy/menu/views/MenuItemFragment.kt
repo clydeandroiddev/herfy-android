@@ -393,6 +393,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun selectMenuItem(menuCategory: MenuCategory?, menuItem: MenuItem?) {}
     override fun setMenuCategory(menuCategory: MenuCategory, selected: Boolean) {}
     override fun setMenuItemDetails(menuItem: MenuItem) {
+        Log.d("FAFA","Set menu item details");
         menuPresenter.getFrequentBoughtItemsByMenuId(1,menuItem.id)
         activity?.cast<BaseActivity> {
             it.runOnUiThread {
