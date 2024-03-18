@@ -127,10 +127,9 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     }
                     setCart()
                     setCartButtonAction { navCart() }
-                }
-
-                orderTypeToolbar.setOrderTypeAction {
-                    orderTypeClick()
+                    setOrderTypeAction {
+                        orderTypeClick()
+                    }
                 }
 
                 sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
@@ -190,6 +189,22 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     adapter = menuCategoryItemAdapter
                     addOnScrollListener(menuOnScrollListener)
                 }
+
+                layoutFooter.apply {
+                    tvViewBag.text = CacheUtil.getInstance().getTranslations(Text.VIEW_BAG, "View bag")
+                    val cartQuantity = CacheUtil.getInstance().cartQuantity
+                    if(cartQuantity > 0) {
+                        tvCartQuantity.text = "$cartQuantity"
+                        btnViewBag.setOnClickListener {
+                            findNavController().navigateToDeepLink("nav_cart")
+                        }
+                        visible()
+                    } else {
+                        btnViewBag.setOnClickListener(null)
+                        gone()
+                    }
+                }
+
             }
         }
 
