@@ -235,6 +235,30 @@ public class CacheUtil {
 
     }
 
+    public String getArabicTranslations(String key, String defaultValue) {
+
+        String translations = cacheSharedPreferences.getString(TRANSLATIONS, null);
+
+        if (translations != null) {
+            try {
+                JSONObject translationsObject = new JSONObject(translations);
+                if (translationsObject.has(key)) {
+                    JSONObject text = translationsObject.getJSONObject(key);
+                    if (text != null) {
+                        return text.getString("ar_SA");
+                    }
+                } else {
+                    return defaultValue;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return defaultValue;
+
+    }
+
     public String getTranslations(String key, String defaultValue) {
 
         String translations = cacheSharedPreferences.getString(TRANSLATIONS, null);
@@ -1341,7 +1365,8 @@ public class CacheUtil {
         String favoriteJson = cacheSharedPreferences.getString(FAVOURITE, null);
 
         if (favoriteJson != null) {
-            return GsonHelper.gsonFinal().fromJson(favoriteJson, new TypeToken<Favorite>() {}.getType());
+            return GsonHelper.gsonFinal().fromJson(favoriteJson, new TypeToken<Favorite>() {
+            }.getType());
         }
 
         return null;
@@ -1872,6 +1897,7 @@ public class CacheUtil {
         application.getAttributes();
         return !application.getAttributes().getOrderTypeMenus().isEmpty();
     }
+
     public void setConsumerData(String data) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(CONSUMER_DATA, data);
