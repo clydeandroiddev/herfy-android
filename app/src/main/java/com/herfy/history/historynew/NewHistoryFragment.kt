@@ -1,4 +1,6 @@
 package com.herfy.history.historynew
 
-class NewHistoryFragment {
+import com.herfy.base.BaseFragment
+
+class NewHistoryFragment : BaseFragment {
 }
