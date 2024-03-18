@@ -295,7 +295,11 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                         icon = ContextCompat.getDrawable(this, R.drawable.ic_delivery_small)
                         if (CacheUtil.getInstance().orderAddress != null) {
                             type = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
-                            address = CacheUtil.getInstance().orderAddress.attributes.line1
+                            address = when(CacheUtil.getInstance().orderAddress.attributes.label.trim().lowercase()) {
+                                "home" -> CacheUtil.getInstance().getTranslations(Text.HOME, "Home")
+                                "work" -> CacheUtil.getInstance().getTranslations(Text.WORK, "Work")
+                                else -> CacheUtil.getInstance().getTranslations(Text.OTHER, "Other")
+                            }
                         } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
                             type = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
                             address = CacheUtil.getInstance().orderDeliveryAddress
@@ -432,7 +436,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
             }
 
             OrderType.DELIVERY -> {
-                orderType = OrderType.PICKUP
+                orderType = OrderType.DELIVERY
             }
 
             OrderType.DINE_IN -> {

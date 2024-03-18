@@ -60,15 +60,12 @@ import com.herfy.cart.views.CartFragment
 import com.herfy.common.utils.areaJson
 import com.herfy.curbside.curbsidenew.CurbsideNewActivity
 import com.herfy.ext.cast
-import com.herfy.favorites.FavoritesContract
-import com.herfy.favorites.FavoritesFragmentDirections
 import com.herfy.font.FontHandler
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.order.OrderContract
 import com.herfy.order.OrderPresenter
 import com.herfy.order.adapters.StoresRecyclerViewAdapter
-import com.herfy.order.views.BookmarkAddressDialogFragment
 import com.herfy.order.views.DineInTableNumberDialogFragment
 import com.herfy.order.views.OrderTypeDialogFragment
 import com.herfy.order.views.ordertype.addaddress.AddNewAddressActivity
@@ -79,7 +76,6 @@ import com.herfy.util.StringUtil
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.*
 import com.herfy.utils.extensions.gone
-import com.herfy.utils.extensions.setNavigationResult
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.*
@@ -90,7 +86,6 @@ import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
-import io.shipbook.shipbooksdk.Log
 import java.util.*
 
 
@@ -125,8 +120,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     private var orderTypeSelected: OrderType? = null
     private var locationMarker: Marker? = null
     private val storeMarkers = ArrayList<Marker?>()
-    private var bookmarkAddressDialogFragment: BookmarkAddressDialogFragment? = null
-    private var dineInTableNumberDialogFragment: DineInTableNumberDialogFragment? = null
 
     private val gpsLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
@@ -884,21 +877,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun updateAddAddress(updateAddress: Address?, saveAddress: android.location.Address?) {
-        activity?.runOnUiThread {
-            bookmarkAddressDialogFragment?.dismiss()
-            activity?.cast<BaseActivity> {
-                bookmarkAddressDialogFragment = BookmarkAddressDialogFragment.newInstance(
-                    orderPresenter, updateAddress
-                ) { label ->
-                    it.showLoadingDialog()
-                    updateAddress?.attributes?.label = label
-                    orderPresenter.updateAddress(false, updateAddress, false)
-                }
-                bookmarkAddressDialogFragment?.show(
-                    it.supportFragmentManager, BookmarkAddressDialogFragment::class.java.simpleName
-                )
-            }
-        }
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -1018,32 +997,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     private fun showDineInTableNumberDialog(initialLoad: Boolean, store: Store?) {
-        try {
-            if (!initialLoad && dineInTabSelected && store != null && store.attributes.hasPromptForTableNumber == 1) {
-                dineInTableNumberDialogFragment =
-                    DineInTableNumberDialogFragment.newInstance(orderPresenter, store.id)
-                dineInTableNumberDialogFragment?.isCancelable = false
-                if (dineInTableNumberDialogFragment?.isVisible == false) {
-                    activity?.let {
-                        var currentDestination: Int? = null
-                        it.cast<MainActivity> { mainActivity ->
-                            currentDestination = mainActivity.currentDestination
-                        }
-                        it.cast<NavigationActivity> { menuItemActivity ->
-                            currentDestination = menuItemActivity.currentDestination
-                        }
-                        if (currentDestination == R.id.nav_order_type) {
-                            dineInTableNumberDialogFragment?.show(
-                                it.supportFragmentManager,
-                                DineInTableNumberDialogFragment::class.java.simpleName
-                            )
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+
     }
 
     override fun showStore(markerClicked: Boolean, position: Int) {
@@ -1353,9 +1307,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun updateAddress(address: String) {
-        if (bookmarkAddressDialogFragment != null) {
-            bookmarkAddressDialogFragment?.dismiss()
-        }
         activity?.cast<BaseActivity> {
             it.dismissDialogs()
         }
@@ -1400,9 +1351,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun showError(error: String) {
         activity?.runOnUiThread {
             activity?.cast<BaseActivity> {
-                if (bookmarkAddressDialogFragment != null) {
-                    bookmarkAddressDialogFragment?.dismiss()
-                }
                 it.showAlertDialog("", error)
             }
         }
@@ -1540,9 +1488,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     override fun showMinimumDeliveryForAreaMessage(error: String?) {
         activity?.runOnUiThread {
             activity?.cast<BaseActivity> {
-                if (bookmarkAddressDialogFragment != null) {
-                    bookmarkAddressDialogFragment?.dismiss()
-                }
                 it.showAlertDialog(
                     "", error, CacheUtil.getInstance().getTranslations(Text.OK)
                 ) { dialogInterface, which ->
