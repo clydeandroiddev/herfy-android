@@ -119,19 +119,11 @@ public class SplashPresenter implements SplashContract.Presenter {
             splashView.checkIfRooted();
         } else {
 
-            String conceptUrl = "";
-            if (CacheUtil.getInstance().getApplication() != null) {
-                conceptUrl = CacheUtil.getInstance().getApplication().getAttributes().getContentUri();
-            }
-            if (conceptUrl.isEmpty()) {
-                conceptUrl = Values.CONTENT_URL + EnvUtil.getContentUrlPrefix() + "app-" + BuildUtil.soloAppKey() + ".json";
-            }
+            long timestamp = System.currentTimeMillis() / 1000L;
+            String url = CacheUtil.getInstance().getApplication().getAttributes().getDefaultContentUri() + "?timestamp=" + timestamp;
 
-            String defaultUrl = Values.CONTENT_URL + EnvUtil.getContentUrlPrefix() + "solo-app2.json";
-
-            String finalConceptUrl = conceptUrl;
             disposables.add(
-                    getTranslationsObservable(defaultUrl)
+                    getTranslationsObservable(url)
                             .map(o -> {
                                 try {
                                     JSONObject data = new JSONObject(o.toString());
@@ -141,7 +133,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                                     throw new Exception("Cannot find translation");
                                 }
                             })
-                            .flatMap(defaultTranslations -> getTranslationsObservable(finalConceptUrl)
+                            .flatMap(defaultTranslations -> getTranslationsObservable(url)
                                     .map(newTranslation -> {
                                         JSONObject overwritingTranslations = new JSONObject(newTranslation.toString());
                                         JSONObject mergedTranslations = new JSONObject();
