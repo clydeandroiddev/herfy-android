@@ -56,7 +56,6 @@ interface HomeRepository {
 
     suspend fun getOrderTypes(response: (HomeResponse) -> Unit)
     suspend fun getLoyaltyTiers(response: (HomeResponse) -> Unit)
-    suspend fun getBottomSliders(response: (HomeResponse) -> Unit)
 }
 
 class HomeRepositoryImpl @Inject constructor(
@@ -607,30 +606,6 @@ class HomeRepositoryImpl @Inject constructor(
                 } catch (ex: JSONException) {
                     ex.printStackTrace()
                 }
-            }
-
-            override fun onError(o: Any) {
-                response(HomeResponse(false, null, o.toString()))
-            }
-        })
-    }
-
-    override suspend fun getBottomSliders(response: (HomeResponse) -> Unit) {
-        CmsApiCall.getInstance().getSlider(Values.HOME_PAGE_BOTTOM_BANNER, object : ApiRequestListener {
-            override fun onSuccess(o: Any) {
-                val slides = arrayListOf<Slide>()
-                try {
-                    val `object` = JSONObject(o.toString())
-                    val dataArray = `object`.getJSONArray("data")
-                    for (i in 0 until dataArray.length()) {
-                        val slideObject = dataArray.getJSONObject(i)
-                        val slide = Slide.parse(slideObject)
-                        slides.add(slide)
-                    }
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-                response(HomeResponse(true, slides, ""))
             }
 
             override fun onError(o: Any) {

@@ -31,6 +31,7 @@ import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.CacheUtilHelper;
 import com.herfy.utils.helper.EnvUtil;
 import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
@@ -573,15 +574,27 @@ public class SplashPresenter implements SplashContract.Presenter {
                         JSONArray data = object.getJSONArray("data");
                         for (int i = 0; i < data.length(); i++) {
                             Slider slider = Slider.parse(data.getJSONObject(i));
-                            if (slider.getLabel().equalsIgnoreCase("Mid Banner")) {
-                                CacheUtil.getInstance().setMidSliderId(slider.getId());
-                                break;
+                            String label = slider.getLabel();
+                            if(label != null) {
+                                String key = "";
+                                if(label.equalsIgnoreCase(Values.HOME_PAGE_TOP_BANNER_LABEL)) {
+                                    key = Values.HOME_PAGE_TOP_BANNER_LABEL;
+                                } else if (label.equalsIgnoreCase(Values.HOME_PAGE_BOTTOM_BANNER_LABEL)) {
+                                    key = Values.HOME_PAGE_BOTTOM_BANNER_LABEL;
+                                } else if (label.equalsIgnoreCase(Values.CATEGORY_PAGE_TOP_BANNER_LABEL)) {
+                                    key = Values.CATEGORY_PAGE_TOP_BANNER_LABEL;
+                                }
+                                if(!key.isEmpty()) {
+                                    CacheUtil.getInstance().setSliderId(key, slider.getId());
+                                }
                             }
                         }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    CacheUtil.getInstance().setMidSliderId("");
+                    CacheUtil.getInstance().setSliderId(Values.HOME_PAGE_TOP_BANNER_LABEL, "");
+                    CacheUtil.getInstance().setSliderId(Values.HOME_PAGE_BOTTOM_BANNER_LABEL, "");
+                    CacheUtil.getInstance().setSliderId(Values.CATEGORY_PAGE_TOP_BANNER_LABEL, "");
                 }
 
                 //getSlider(false);

@@ -308,6 +308,16 @@ public class CacheUtil {
         return null;
     }
 
+    public void setSliderId(String key, String id) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(key, id);
+        editor.apply();
+    }
+
+    public String getSliderId(String key) {
+        return cacheSharedPreferences.getString(key, "");
+    }
+
     public void setSliderId(String id) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(SLIDER_ID, id);

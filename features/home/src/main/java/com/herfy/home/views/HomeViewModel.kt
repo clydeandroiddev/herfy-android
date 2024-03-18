@@ -121,35 +121,44 @@ class HomeViewModel @Inject constructor(
 
     fun getSliders() {
         invoke {
-            homeRepository.getSliders(Values.HOME_PAGE_TOP_BANNER) { homeResponse ->
-                if (homeResponse.success) {
-                    homeResponse.data?.let {
-                        it.cast<ArrayList<Slide>> {
-                            _slideList.value = it
+            val sliderId = CacheUtil.getInstance().getSliderId(Values.HOME_PAGE_TOP_BANNER_LABEL)
+            if(!sliderId.isNullOrEmpty()) {
+                homeRepository.getSliders(sliderId) { homeResponse ->
+                    if (homeResponse.success) {
+                        homeResponse.data?.let {
+                            it.cast<ArrayList<Slide>> {
+                                _slideList.value = it
+                            }
+                        } ?: run {
+                            _slideList.value = arrayListOf()
                         }
-                    } ?: run {
+                    } else {
                         _slideList.value = arrayListOf()
                     }
-                } else {
-                    _slideList.value = arrayListOf()
                 }
+            } else {
+                _slideList.value = arrayListOf()
             }
         }
     }
 
     fun getBottomSliders() {
         invoke {
-            homeRepository.getBottomSliders { homeResponse ->
-                if (homeResponse.success) {
-                    homeResponse.data?.cast<ArrayList<Slide>> {
-                        _bottomSlideList.value = it
-                    } ?: run {
+            val sliderId = CacheUtil.getInstance().getSliderId(Values.HOME_PAGE_BOTTOM_BANNER_LABEL)
+            if(!sliderId.isNullOrEmpty()) {
+                homeRepository.getSliders(sliderId) { homeResponse ->
+                    if (homeResponse.success) {
+                        homeResponse.data?.cast<ArrayList<Slide>> {
+                            _bottomSlideList.value = it
+                        } ?: run {
+                            _bottomSlideList.value = arrayListOf()
+                        }
+                    } else {
                         _bottomSlideList.value = arrayListOf()
                     }
-                } else {
-                    _bottomSlideList.value = arrayListOf()
-                    _showError.value = ErrorMsgItem(true, homeResponse.message)
                 }
+            } else {
+                _bottomSlideList.value = arrayListOf()
             }
         }
     }
