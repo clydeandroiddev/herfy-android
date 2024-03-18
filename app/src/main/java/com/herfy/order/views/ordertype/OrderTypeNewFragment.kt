@@ -816,16 +816,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             try {
                 val activity: Activity? = activity
                 if (activity != null) {
-                    val bitmapDrawable = ContextCompat.getDrawable(
-                        activity, com.herfy.ordertype.R.drawable.user_current_location
-                    ) as BitmapDrawable?
-                    if (bitmapDrawable != null) {
-                        val bitmap = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 50, 50, true)
-                        val canvas = Canvas(bitmap)
-                        val paint = Paint()
-                        canvas.drawBitmap(bitmap, 0f, 0f, paint)
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                    }
+                    val icon = ViewUtil.vectorDrawableToBitmapDescriptor(
+                        activity, R.drawable.user_current_location
+                    )
+                    markerOptions.icon(icon)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -1553,8 +1547,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
-            currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN) {
