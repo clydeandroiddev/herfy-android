@@ -104,7 +104,8 @@ public class SplashPresenter implements SplashContract.Presenter {
         splashView.setupViews();
         splashView.setupFonts();
         splashView.setupTranslations();
-        checkTranslations();
+        setupRemoteConfig();
+        splashView.checkIfRooted();
     }
 
     @Override
@@ -114,57 +115,51 @@ public class SplashPresenter implements SplashContract.Presenter {
 
     @Override
     public void checkTranslations() {
-        setupRemoteConfig();
-        if (recreate && CacheUtil.getInstance().ifHasTranslations()) {
-            splashView.checkIfRooted();
-        } else {
 
-            long timestamp = System.currentTimeMillis() / 1000L;
-            String url = CacheUtil.getInstance().getApplication().getAttributes().getDefaultContentUri() + "?timestamp=" + timestamp;
+        long timestamp = System.currentTimeMillis() / 1000L;
+        String url = CacheUtil.getInstance().getApplication().getAttributes().getDefaultContentUri() + "?timestamp=" + timestamp;
 
-            disposables.add(
-                    getTranslationsObservable(url)
-                            .map(o -> {
-                                try {
-                                    JSONObject data = new JSONObject(o.toString());
-                                    return data;
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                    throw new Exception("Cannot find translation");
-                                }
-                            })
-                            .flatMap(defaultTranslations -> getTranslationsObservable(url)
-                                    .map(newTranslation -> {
-                                        JSONObject overwritingTranslations = new JSONObject(newTranslation.toString());
-                                        JSONObject mergedTranslations = new JSONObject();
-                                        JSONObject[] translations = new JSONObject[]{defaultTranslations, overwritingTranslations};
-                                        for (JSONObject translation : translations) {
-                                            Iterator it = translation.keys();
-                                            while (it.hasNext()) {
-                                                String key = (String) it.next();
-                                                mergedTranslations.put(key, translation.get(key));
-                                            }
+        disposables.add(
+                getTranslationsObservable(url)
+                        .map(o -> {
+                            try {
+                                JSONObject data = new JSONObject(o.toString());
+                                return data;
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                throw new Exception("Cannot find translation");
+                            }
+                        })
+                        .flatMap(defaultTranslations -> getTranslationsObservable(url)
+                                .map(newTranslation -> {
+                                    JSONObject overwritingTranslations = new JSONObject(newTranslation.toString());
+                                    JSONObject mergedTranslations = new JSONObject();
+                                    JSONObject[] translations = new JSONObject[]{defaultTranslations, overwritingTranslations};
+                                    for (JSONObject translation : translations) {
+                                        Iterator it = translation.keys();
+                                        while (it.hasNext()) {
+                                            String key = (String) it.next();
+                                            mergedTranslations.put(key, translation.get(key));
                                         }
-                                        return mergedTranslations;
-                                    })
-                                    .onErrorResumeNext(source -> {
-                                        source.onSuccess(defaultTranslations);
-                                    })
-                            )
-                            .subscribe(o -> {
-                                if (o != null) {
-                                    JSONObject data = new JSONObject(o.toString());
-                                    saveTranslations(data.toString());
-                                }
-                            }, error -> {
-                                AppLogger.printRetrofitError(error.toString());
-                                if (!CacheUtil.getInstance().ifHasTranslations()) {
-                                    saveTranslations(splashView.getDefaultTranslations());
-                                }
-                            })
-            );
-
-        }
+                                    }
+                                    return mergedTranslations;
+                                })
+                                .onErrorResumeNext(source -> {
+                                    source.onSuccess(defaultTranslations);
+                                })
+                        )
+                        .subscribe(o -> {
+                            if (o != null) {
+                                JSONObject data = new JSONObject(o.toString());
+                                saveTranslations(data.toString());
+                            }
+                        }, error -> {
+                            AppLogger.printRetrofitError(error.toString());
+                            if (!CacheUtil.getInstance().ifHasTranslations()) {
+                                saveTranslations(splashView.getDefaultTranslations());
+                            }
+                        })
+        );
 
     }
 
@@ -202,7 +197,6 @@ public class SplashPresenter implements SplashContract.Presenter {
     @Override
     public void saveTranslations(String translations) {
         CacheUtil.getInstance().saveTranslations(translations);
-        splashView.checkIfRooted();
     }
 
     public void setupRemoteConfig() {
@@ -418,6 +412,8 @@ public class SplashPresenter implements SplashContract.Presenter {
                     }.getType());
 
                     CacheUtil.getInstance().setApplication(application);
+
+                    checkTranslations();
 
                     getIntegrations();
                     if (AuthUtil.getInstance().isSignedIn()) {
