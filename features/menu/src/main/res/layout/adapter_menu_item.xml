@@ -3,9 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
+    android:layout_height="158dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
     app:cardPreventCornerOverlap="true"
-    app:cardUseCompatPadding="true"
+    app:cardUseCompatPadding="false"
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="20dp"
     app:strokeWidth="1dp"
@@ -15,40 +18,51 @@
         android:id="@+id/layoutMenuItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:paddingEnd="8dp"
         android:focusable="true"
         android:clickable="true"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="12dp"
         android:background="?selectableItemBackground">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ivImage"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/layoutImage"
             android:layout_width="134dp"
             android:layout_height="134dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:background="#E6F0F7"
-            android:padding="16dp"
-            android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Corner16dp"
-            app:strokeColor="#E6F0F7"
-            app:strokeWidth="1dp" />
+            android:layout_marginStart="4dp"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="false"
+            app:cardBackgroundColor="#E6F0F7"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            android:elevation="0dp">
+
+            <ImageView
+                android:id="@+id/ivImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
+        </com.google.android.material.card.MaterialCardView>
 
         <View
             android:id="@+id/viewTop"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:layout_height="12dp"
+            app:layout_constraintTop_toTopOf="@+id/layoutImage"/>
 
         <LinearLayout
             android:id="@+id/layoutCalories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintStart_toEndOf="@+id/ivImage"
+            app:layout_constraintStart_toEndOf="@+id/layoutImage"
             app:layout_constraintTop_toBottomOf="@+id/viewTop"
+            android:layout_marginStart="8dp"
             android:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -83,8 +97,9 @@
             android:id="@+id/btnFavorite"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/layoutImage"
             app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
             android:background="?selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_favorite_empty" />
 
@@ -92,10 +107,11 @@
             android:id="@+id/tvName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/ivImage"
+            app:layout_constraintStart_toEndOf="@+id/layoutImage"
             app:layout_constraintEnd_toStartOf="@+id/btnFavorite"
             app:layout_constraintTop_toBottomOf="@+id/layoutCalories"
             android:layout_marginTop="2dp"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="4dp"
             android:fontFamily="@font/inter_semi_bold"
             android:includeFontPadding="false"
@@ -108,10 +124,11 @@
             android:id="@+id/tvDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/ivImage"
+            app:layout_constraintStart_toEndOf="@+id/layoutImage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvName"
             android:layout_marginTop="2dp"
+            android:layout_marginStart="8dp"
             android:fontFamily="@font/inter_regular"
             android:ellipsize="end"
             android:maxLines="3"
@@ -124,9 +141,10 @@
             android:id="@+id/tvPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/ivImage"
+            app:layout_constraintStart_toEndOf="@+id/layoutImage"
             app:layout_constraintTop_toTopOf="@+id/btnAdd"
             app:layout_constraintBottom_toBottomOf="@+id/btnAdd"
+            android:layout_marginStart="8dp"
             android:fontFamily="@font/inter_medium"
             android:includeFontPadding="false"
             android:textStyle="bold"
