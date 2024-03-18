@@ -38,7 +38,6 @@ import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.smoothSnapToPosition
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
-import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -165,7 +164,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                                 viewSearch.gone()
                                 toolbar.layoutParams.height =
                                     resources.getDimensionPixelSize(R.dimen.toolbar_height_menu)
-                                viewModel.menuAdapterItems.value?.let { menuAdapterItems ->
+                                viewModel.menuAdapterItems.value?.peekContent()?.let { menuAdapterItems ->
                                     menuCategoryItemAdapter.addData(menuAdapterItems)
                                 }
                                 btnClear.gone()
@@ -211,192 +210,230 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     override fun observe() {
         super.observe()
-        viewModel.slides.observeNonNull(this) { slides ->
-            binding.apply {
-                if (slides.size > 0) {
-                    sliderViewPager.visible()
-                    sliderImageAdapter.updateImageList(slides)
-                    dotsIndicator.apply {
-                        if (slides.size > 1) {
-                            setViewPager2(sliderViewPager)
-                            visible()
-                        } else {
-                            gone()
+        viewModel.slides.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { slides ->
+                binding.apply {
+                    if (slides.size > 0) {
+                        sliderViewPager.visible()
+                        sliderImageAdapter.updateImageList(slides)
+                        dotsIndicator.apply {
+                            if (slides.size > 1) {
+                                setViewPager2(sliderViewPager)
+                                visible()
+                            } else {
+                                gone()
+                            }
                         }
-                    }
-                    sliderHandler?.removeCallbacksAndMessages(null)
-                    sliderHandler = Handler(Looper.getMainLooper())
-                    sliderHandler?.apply {
-                        postDelayed(object : Runnable {
-                            override fun run() {
-                                var pos = sliderViewPager.currentItem + 1
-                                if (pos >= slides.size) {
-                                    pos = 0
-                                    sliderViewPager.setCurrentItem(pos, false)
-                                } else {
-                                    sliderViewPager.currentItem = pos
+                        sliderHandler?.removeCallbacksAndMessages(null)
+                        sliderHandler = Handler(Looper.getMainLooper())
+                        sliderHandler?.apply {
+                            postDelayed(object : Runnable {
+                                override fun run() {
+                                    var pos = sliderViewPager.currentItem + 1
+                                    if (pos >= slides.size) {
+                                        pos = 0
+                                        sliderViewPager.setCurrentItem(pos, false)
+                                    } else {
+                                        sliderViewPager.currentItem = pos
+                                    }
+                                    postDelayed(this, Values.SLIDER_INTERVAL)
                                 }
-                                postDelayed(this, Values.SLIDER_INTERVAL)
+                            }, Values.SLIDER_INTERVAL)
+                        }
+                    } else {
+                        sliderViewPager.visible()
+                        dotsIndicator.gone()
+                    }
+                    shimmerSlider.root.gone()
+                }
+            }
+        }
+
+        viewModel.orderType.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { oType ->
+                activity?.apply {
+                    var type =
+                        CacheUtil.getInstance()
+                            .getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE")
+                    var address = CacheUtil.getInstance().getTranslations(
+                        Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
+                        "Please tap here to pick an order type"
+                    )
+                    var icon: Drawable? = null
+                    when (oType) {
+                        OrderType.EAT_IN -> {
+                            if (CacheUtil.getInstance().orderStore != null) {
+                                icon = ContextCompat.getDrawable(
+                                    this,
+                                    R.drawable.ic_walk_in_pickup_small
+                                )
+                                type = CacheUtil.getInstance()
+                                    .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
+                                address = CacheUtil.getInstance().orderStore.attributes.name
                             }
-                        }, Values.SLIDER_INTERVAL)
-                    }
-                } else {
-                    sliderViewPager.visible()
-                    dotsIndicator.gone()
-                }
-                shimmerSlider.root.gone()
-            }
-        }
-
-        viewModel.orderType.observeNonNull(this) { oType ->
-            activity?.apply {
-                var type =
-                    CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE, "SELECT ORDER TYPE")
-                var address = CacheUtil.getInstance().getTranslations(
-                    Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE, "Please tap here to pick an order type"
-                )
-                var icon: Drawable? = null
-                when (oType) {
-                    OrderType.EAT_IN -> {
-                        if (CacheUtil.getInstance().orderStore != null) {
-                            icon = ContextCompat.getDrawable(this, R.drawable.ic_walk_in_pickup_small)
-                            type = CacheUtil.getInstance()
-                                .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
-                            address = CacheUtil.getInstance().orderStore.attributes.name
                         }
-                    }
 
-                    OrderType.DRIVE_THRU -> {
-                        if (CacheUtil.getInstance().orderStore != null) {
-                            icon = ContextCompat.getDrawable(this, R.drawable.ic_drive_thru_small)
-                            type = CacheUtil.getInstance()
-                                .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
-                            address = CacheUtil.getInstance().orderStore.attributes.name
-                        }
-                    }
-
-                    OrderType.PICKUP -> {
-                        if (CacheUtil.getInstance().orderStore != null) {
-                            icon = ContextCompat.getDrawable(this, R.drawable.ic_pickup_small)
-                            type = CacheUtil.getInstance().getTranslations(Text.PICKUP_AT, "Pickup At")
-                            address = CacheUtil.getInstance().orderStore.attributes.name
-                        }
-                    }
-
-                    OrderType.DINE_IN -> {
-                        if (CacheUtil.getInstance().orderStore != null) {
-                            icon = ContextCompat.getDrawable(this, R.drawable.ic_dine_in_small)
-                            type = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
-                            address = CacheUtil.getInstance().orderStore.attributes.name
-                        }
-                    }
-
-                    OrderType.DELIVERY -> {
-                        icon = ContextCompat.getDrawable(this, R.drawable.ic_delivery_small)
-                        if (CacheUtil.getInstance().orderAddress != null) {
-                            type = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
-                            address = when(CacheUtil.getInstance().orderAddress.attributes.label.trim().lowercase()) {
-                                "home" -> CacheUtil.getInstance().getTranslations(Text.HOME, "Home")
-                                "work" -> CacheUtil.getInstance().getTranslations(Text.WORK, "Work")
-                                else -> CacheUtil.getInstance().getTranslations(Text.OTHER, "Other")
+                        OrderType.DRIVE_THRU -> {
+                            if (CacheUtil.getInstance().orderStore != null) {
+                                icon =
+                                    ContextCompat.getDrawable(this, R.drawable.ic_drive_thru_small)
+                                type = CacheUtil.getInstance()
+                                    .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
+                                address = CacheUtil.getInstance().orderStore.attributes.name
                             }
-                        } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
-                            type = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
-                            address = CacheUtil.getInstance().orderDeliveryAddress
                         }
-                    }
 
-                    OrderType.CURBSIDE -> {
-                        if (CacheUtil.getInstance().orderStore != null) {
-                            icon = ContextCompat.getDrawable(this, R.drawable.ic_curbside_pickup_small)
-                            type = CacheUtil.getInstance()
-                                .getTranslations(Text.CURBSIDE_PICKUP, "Curbside Pickup")
-                            address = CacheUtil.getInstance().orderStore.attributes.name
+                        OrderType.PICKUP -> {
+                            if (CacheUtil.getInstance().orderStore != null) {
+                                icon = ContextCompat.getDrawable(this, R.drawable.ic_pickup_small)
+                                type = CacheUtil.getInstance()
+                                    .getTranslations(Text.PICKUP_AT, "Pickup At")
+                                address = CacheUtil.getInstance().orderStore.attributes.name
+                            }
                         }
-                    }
 
-                    else -> { }
+                        OrderType.DINE_IN -> {
+                            if (CacheUtil.getInstance().orderStore != null) {
+                                icon = ContextCompat.getDrawable(this, R.drawable.ic_dine_in_small)
+                                type =
+                                    CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
+                                address = CacheUtil.getInstance().orderStore.attributes.name
+                            }
+                        }
+
+                        OrderType.DELIVERY -> {
+                            icon = ContextCompat.getDrawable(this, R.drawable.ic_delivery_small)
+                            if (CacheUtil.getInstance().orderAddress != null) {
+                                type = CacheUtil.getInstance()
+                                    .getTranslations(Text.DELIVERY, "Delivery")
+                                address =
+                                    when (CacheUtil.getInstance().orderAddress.attributes.label.trim()
+                                        .lowercase()) {
+                                        "home" -> CacheUtil.getInstance()
+                                            .getTranslations(Text.HOME, "Home")
+
+                                        "work" -> CacheUtil.getInstance()
+                                            .getTranslations(Text.WORK, "Work")
+
+                                        else -> CacheUtil.getInstance()
+                                            .getTranslations(Text.OTHER, "Other")
+                                    }
+                            } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
+                                type = CacheUtil.getInstance()
+                                    .getTranslations(Text.DELIVERY, "Delivery")
+                                address = CacheUtil.getInstance().orderDeliveryAddress
+                            }
+                        }
+
+                        OrderType.CURBSIDE -> {
+                            if (CacheUtil.getInstance().orderStore != null) {
+                                icon = ContextCompat.getDrawable(
+                                    this,
+                                    R.drawable.ic_curbside_pickup_small
+                                )
+                                type = CacheUtil.getInstance()
+                                    .getTranslations(Text.CURBSIDE_PICKUP, "Curbside Pickup")
+                                address = CacheUtil.getInstance().orderStore.attributes.name
+                            }
+                        }
+
+                        else -> {}
+                    }
+                    binding.orderTypeToolbar.setOrderType(type, address, icon)
                 }
-                binding.orderTypeToolbar.setOrderType(type, address, icon)
+
             }
 
         }
 
-        viewModel.showMenuCategories.observeNonNull(this) { menuCategories ->
-            binding.shimmerMenuCategories.root.gone()
-            menuCategoryAdapter.addData(menuCategories)
-            binding.layoutSearch.visible()
-        }
-
-        viewModel.menuAdapterItems.observeNonNull(this) { menuAdapterItems ->
-            binding.shimmerMenuItems.root.gone()
-            menuCategoryItemAdapter.addData(menuAdapterItems)
-            if(viewModel.initialLoad && args.menuCategoryId.isNotEmpty()) {
-                menuCategoryAdapter.getPosition(args.menuCategoryId)?.let { position ->
-                    selectMenuCategory(position, args.menuCategoryId)
-                }
+        viewModel.showMenuCategories.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { menuCategories ->
+                binding.shimmerMenuCategories.root.gone()
+                menuCategoryAdapter.addData(menuCategories)
+                binding.layoutSearch.visible()
             }
-            viewModel.initialLoad = false
         }
 
-        viewModel.searchMenuAdapterItems.observeNonNull(this) { searchMenuAdapterItems ->
-            menuCategoryItemAdapter.addData(searchMenuAdapterItems)
+        viewModel.menuAdapterItems.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { menuAdapterItems ->
+                binding.shimmerMenuItems.root.gone()
+                menuCategoryItemAdapter.addData(menuAdapterItems)
+                if (viewModel.initialLoad && args.menuCategoryId.isNotEmpty()) {
+                    menuCategoryAdapter.getPosition(args.menuCategoryId)?.let { position ->
+                        selectMenuCategory(position, args.menuCategoryId)
+                    }
+                }
+                viewModel.initialLoad = false
+            }
+        }
+
+        viewModel.searchMenuAdapterItems.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { searchMenuAdapterItems ->
+                menuCategoryItemAdapter.addData(searchMenuAdapterItems)
+            }
         }
 
         viewModel.showMenuItem.observeNonNull(this) {
-            navMenuItem(it.first, it.second)
+            it.getContentIfNotHandled()?.let { showMenuItem ->
+                navMenuItem(showMenuItem.first, showMenuItem.second)
+            }
         }
 
         viewModel.showAddToCart.observeNonNull(this) {
-            AppLogger.error("349")
-            activity?.apply {
-                runOnUiThread {
-                    AppLogger.error("352")
-                    val vibrator: Vibrator =
-                        getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        vibrator.vibrate(
-                            VibrationEffect.createOneShot(
-                                500, VibrationEffect.DEFAULT_AMPLITUDE
+            it.getContentIfNotHandled()?.let { menuItem ->
+                activity?.apply {
+                    runOnUiThread {
+                        val vibrator: Vibrator =
+                            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vibrator.vibrate(
+                                VibrationEffect.createOneShot(
+                                    500, VibrationEffect.DEFAULT_AMPLITUDE
+                                )
                             )
-                        )
-                    } else {
-                        vibrator.vibrate(100)
+                        } else {
+                            vibrator.vibrate(100)
+                        }
+                        Toast.makeText(
+                            this,
+                            CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        binding.orderTypeToolbar.setCart(CacheUtil.getInstance().cartQuantity)
                     }
-                    Toast.makeText(
-                        this,
-                        CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    AppLogger.error("368")
-                    binding.orderTypeToolbar.setCart(CacheUtil.getInstance().cartQuantity)
                 }
             }
         }
 
-        viewModel.showMessage.observeNonNull(this) { message ->
-            activity?.apply {
-                runOnUiThread {
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        viewModel.showMessage.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { message ->
+                activity?.apply {
+                    runOnUiThread {
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
 
-        viewModel.showError.observeNonNull(this) { error ->
-            activity?.apply {
-                runOnUiThread {
-                    showAlertDialog("", error)
+        viewModel.showError.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { error ->
+                activity?.apply {
+                    runOnUiThread {
+                        showAlertDialog("", error)
+                    }
                 }
             }
         }
 
-        viewModel.showLoading.observeNonNull(this) { showLoading ->
-            activity?.apply {
-                runOnUiThread {
-                    if (showLoading) {
-                        showProgressDialog(false)
-                    } else {
-                        dismissProgressDialog()
+        viewModel.showLoading.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { showLoading ->
+                activity?.apply {
+                    runOnUiThread {
+                        if (showLoading) {
+                            showProgressDialog(false)
+                        } else {
+                            dismissProgressDialog()
+                        }
                     }
                 }
             }

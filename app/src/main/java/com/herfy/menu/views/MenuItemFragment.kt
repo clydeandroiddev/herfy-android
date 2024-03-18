@@ -1279,9 +1279,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun addCartItem(menuItem: MenuItem, view: ImageView) {}
     override fun updateCartItem() {
-        var message = CacheUtil.getInstance().getTranslations(Text.ITEM_UPDATED)
+        var message = CacheUtil.getInstance().getTranslations(Text.ITEM_UPDATED, "Item updated")
         if (args.isPromo && !args.isEdit) {
-            message = CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART)
+            message = CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart")
         }
         activity?.cast<BaseActivity> {
             it.dismissDialogs()

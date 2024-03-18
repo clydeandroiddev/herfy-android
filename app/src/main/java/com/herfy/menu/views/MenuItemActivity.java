@@ -482,7 +482,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
         }
 
         dismissDialogs();
-        Toast.makeText(this, CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"), Toast.LENGTH_SHORT).show();
         if (!fromFavorite) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("order_type", true);
@@ -503,7 +503,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
     @Override
     public void updateCartItem() {
         dismissDialogs();
-        Toast.makeText(this, CacheUtil.getInstance().getTranslations(Text.ITEM_UPDATED), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, CacheUtil.getInstance().getTranslations(Text.ITEM_UPDATED, "Item updated"), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         intent.putExtra("home", false);
