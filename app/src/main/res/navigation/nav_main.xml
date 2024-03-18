@@ -28,6 +28,11 @@
             app:destination="@id/nav_promotions"
             app:popUpTo="@+id/nav_herfy_home" />
 
+        <action
+            android:id="@+id/action_home_to_order"
+            app:destination="@id/nav_order"
+            app:popUpTo="@+id/nav_herfy_home" />
+
     </fragment>
 
     <fragment
@@ -481,6 +486,8 @@
         android:name="com.herfy.history.views.OrderFragment"
         android:label="order_details_caps"
         tools:layout="@layout/fragment_order">
+
+        <deepLink app:uri="android-app://com.herfy/nav_order/{order_id}" />
 
         <argument
             android:name="order_id"

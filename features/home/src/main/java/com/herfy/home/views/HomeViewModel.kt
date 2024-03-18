@@ -24,6 +24,7 @@ import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DispatcherProvider
 import com.herfy.utils.helper.Event
+import com.herfy.utils.helper.ably.AblyUtil
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
@@ -32,11 +33,16 @@ import com.skylinedynamics.solosdk.api.models.objects.LoyaltyAttributes
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTier
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderData
+import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
+import com.skylinedynamics.solosdk.api.models.objects.Store
+import com.skylinedynamics.solosdk.api.models.objects.StorePromisedTime
 import com.skylinedynamics.solosdk.api.models.objects.Tier
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ably.lib.types.Message
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
@@ -118,6 +124,11 @@ class HomeViewModel @Inject constructor(
     private val _showCart = MutableLiveData<Event<Boolean>>()
     val showCart : LiveData<Event<Boolean>> = _showCart
 
+    private val _showOrderTrackerNotif = MutableLiveData<OrderDetails>()
+    val showOrderTrackerNotif : LiveData<OrderDetails> = _showOrderTrackerNotif
+
+    private val _updateOrderTrackerNotif = MutableLiveData<OrderData>()
+    val updateOrderTrackerNotif : LiveData<OrderData> = _updateOrderTrackerNotif
 
     fun getSliders() {
         invoke {
@@ -140,6 +151,58 @@ class HomeViewModel @Inject constructor(
                 _slideList.value = arrayListOf()
             }
         }
+    }
+
+    fun getCustomerOrder() {
+        if (AuthUtil.getInstance().isSignedIn) {
+            invoke {
+                homeRepository.getCustomerOrder(AuthUtil.getInstance().customer.id) { homeResponse ->
+                    if (homeResponse.success) {
+                        homeResponse.data?.cast<String> { orderId ->
+                            if (orderId.isNotEmpty()) {
+                                getLastOrder()
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun getLastOrder() {
+        if (AuthUtil.getInstance().isSignedIn) {
+            val lastOrder = CacheUtil.getInstance().lastOrderId
+            invoke {
+                homeRepository.getLastOrder(lastOrder) { homeResponse ->
+                    if (homeResponse.success) {
+                        homeResponse.data?.cast<OrderDetails> { orderDetails ->
+                            if (orderDetails.orderStatus.sequence < 9) {
+                                val ablyUtil: AblyUtil = AblyUtil.Companion.instance
+                                ablyUtil.subscribeToOrderStatusUpdate(orderDetails.id) { message ->
+                                    this@HomeViewModel.onOrderStatusUpdate(message)
+                                }
+                                _showOrderTrackerNotif.postValue(orderDetails)
+                            } else {
+                                CacheUtil.getInstance().promisedTime = ""
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun onOrderStatusUpdate(message: Message) {
+        try {
+            val jsonObject = JSONObject(message.data.toString())
+            val orderData = OrderData.parse(jsonObject.getJSONObject("order"))
+            _updateOrderTrackerNotif.postValue(orderData)
+
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+        return Unit
     }
 
     fun getBottomSliders() {

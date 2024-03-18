@@ -146,6 +146,7 @@ public class CacheUtil {
     private static final String VEHICLE_COLOR = "VehicleColor";
 
     private static final String FAVOURITE = "FAVOURITE";
+    private static final String PROMISED_TIME = "promised_time";
 
     private CacheUtil(Context context) {
 
@@ -1914,5 +1915,15 @@ public class CacheUtil {
 
     public int getPointsUntilNextTier() {
         return cacheSharedPreferences.getInt(POINTS_UNTIL_NEXT_TIER, 0);
+    }
+
+    public void setPromisedTime(String promisedTime) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(PROMISED_TIME, promisedTime);
+        editor.apply();
+    }
+
+    public String getPromisedTime() {
+        return cacheSharedPreferences.getString(PROMISED_TIME, "");
     }
 }

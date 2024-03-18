@@ -204,4 +204,6 @@ dependencies {
 
     //Secured Preferences
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
+
+    implementation 'io.ably:ably-android:1.1.5'
 }

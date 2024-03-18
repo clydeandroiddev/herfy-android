@@ -17,10 +17,13 @@ import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.CmsApiCall
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
+import com.skylinedynamics.solosdk.api.calls.OrdersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
+import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Promotion
 import com.skylinedynamics.solosdk.api.models.objects.Slide
@@ -56,6 +59,8 @@ interface HomeRepository {
 
     suspend fun getOrderTypes(response: (HomeResponse) -> Unit)
     suspend fun getLoyaltyTiers(response: (HomeResponse) -> Unit)
+    suspend fun getLastOrder(orderId: String, response: (HomeResponse) -> Unit)
+    suspend fun getCustomerOrder(customerId: String, response: (HomeResponse) -> Unit)
 }
 
 class HomeRepositoryImpl @Inject constructor(
@@ -614,4 +619,47 @@ class HomeRepositoryImpl @Inject constructor(
         })
     }
 
+    override suspend fun getLastOrder(orderId: String, response: (HomeResponse) -> Unit) {
+        OrdersApiCall.getInstance().getOrder(orderId, object: ApiRequestListener {
+            override fun onSuccess(obj: Any?) {
+                if (obj is JSONObject) {
+                    try {
+                        val jsonObject = obj as JSONObject
+                        val data = jsonObject.getJSONObject("data")
+                        val order = OrderDetails.parse(data)
+                        response(HomeResponse(true, order, ""))
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+            override fun onError(error: Any?) {
+                response(HomeResponse(false, null, error.toString()))
+            }
+
+        })
+    }
+
+    override suspend fun getCustomerOrder(customerId: String, response: (HomeResponse) -> Unit) {
+        CustomersApiCall.getInstance().getOrders(customerId, "1", "1", object: ApiRequestListener {
+            override fun onSuccess(obj: Any?) {
+                if (obj is JSONObject) {
+                    try {
+                        val jsonObject  = obj as JSONObject
+                        val array = jsonObject.optJSONArray("data")
+                        if (array != null && array.length() > 0) {
+                            val order = OrderHistory.parse(array.getJSONObject(0))
+                            CacheUtil.getInstance().lastOrderId = order.id
+                            response(HomeResponse(true, order.id, ""))
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+            override fun onError(error: Any?) {
+                response(HomeResponse(false, null, error.toString()))
+            }
+        })
+    }
 }

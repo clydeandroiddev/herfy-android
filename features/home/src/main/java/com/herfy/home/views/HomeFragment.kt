@@ -33,6 +33,7 @@ import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -96,6 +97,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         super.onResume()
         updateGreetings()
         updateLoyalty()
+        setupOrdertracker()
     }
 
     private fun updateLoyalty() {
@@ -538,9 +540,34 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
+        viewModel.showOrderTrackerNotif.observe(this) { orderDetails ->
+            binding.apply {
+                orderTracker.clOrderNotif.visibility = View.VISIBLE
+                orderTracker.tvStatusLabel.text = orderDetails.orderStatus.description
+                orderTracker.tvOrderTypeLabel.text =
+                    CacheUtil.getInstance().getTranslations(Text.YOUR_ORDER_FROM,
+                        "Your (x) order from Herfy").replace("(x)", orderDetails.orderType)
+                orderTracker.tvEstimateValue.text =
+                    CacheUtil.getInstance().getTranslations(Text.MIN, "(x) mins")
+                        .replace("(x)", CacheUtil.getInstance().promisedTime)
+                orderTracker.tvEstimateLabel.text = CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
+                orderTracker.ivSeeOrderDetails.setOnClickListener {
+                    MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_DETAILS)
+                    findNavController().navigateToDeepLink("nav_order/${orderDetails.id}")
+                }
+            }
+        }
 
-
-
+        viewModel.updateOrderTrackerNotif.observe(this) { orderData ->
+            binding.apply {
+                if (orderData.orderStatus.sequence < 9) {
+                    orderTracker.tvStatusLabel.text = orderData.orderStatus.description
+                } else {
+                    CacheUtil.getInstance().promisedTime = ""
+                    orderTracker.clOrderNotif.visibility = View.GONE
+                }
+            }
+        }
     }
 
 
@@ -622,6 +649,18 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     }
                 }
             }
+        }
+    }
+
+    private fun setupOrdertracker() {
+        if (AuthUtil.getInstance().isSignedIn) {
+            if(CacheUtil.getInstance().lastOrderId.isEmpty()) {
+                viewModel.getCustomerOrder()
+            } else {
+                viewModel.getLastOrder()
+            }
+        } else {
+            binding.orderTracker.clOrderNotif.visibility = View.GONE
         }
     }
 

@@ -9,7 +9,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.herfy.ably.AblyUtil;
 import com.herfy.analytics.kochava.KochavaTrackerUtil;
 import com.herfy.database.AppDatabase;
 import com.herfy.utils.constants.Text;
@@ -22,6 +21,7 @@ import com.herfy.database.entities.ModifierItemDb;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.ably.AblyUtil;
 import com.herfy.utils.menu.MenuUtil;
 import com.kochava.tracker.events.EventType;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
@@ -149,6 +149,7 @@ public class MainPresenter implements MainContract.Presenter {
 
                         if (array != null && array.length() > 0) {
                             order = OrderHistory.parse(array.getJSONObject(0));
+                            CacheUtil.getInstance().setLastOrderId(order.getId());
 
                             if (order.getSequence() <= OrderStatusType.FINISHED.getValue()) {
                                 if (order.getSequence() >= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue() && order.getSequence() <= OrderStatusType.FINISHED.getValue()) {
