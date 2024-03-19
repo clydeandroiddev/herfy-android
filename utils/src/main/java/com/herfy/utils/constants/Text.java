@@ -1054,6 +1054,10 @@ public class Text {
     public static final String GOOD_EVENING_USER = "good_evening_user";
     public static final String VIEW_BAG = "view_bag";
     public static final String CURBSIDE = "curbside";
+    public static final String SEARCH_MENU = "search_menu";
+    public static final String DELIVERY_IN_MINS = "deliver_in_mins";
+    public static final String PICKUP_IN_MINS = "pickup_in_mins";
+    public static final String DINE_IN_MINS = "dine_in_mins";
 
     public static final String MY_ORDERS = "my_orders";
 

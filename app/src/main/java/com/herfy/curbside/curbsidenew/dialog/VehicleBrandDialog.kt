@@ -19,6 +19,7 @@ import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.VehicleBrandDialogBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
@@ -53,6 +54,11 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
         super.onCreate(savedInstanceState)
         binding = VehicleBrandDialogBinding.inflate(layoutInflater)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
+        dialog?.window?.decorView?.layoutDirection = if(LocaleUtil.getInstance().isArabic) {
+            View.LAYOUT_DIRECTION_RTL
+        } else {
+            View.LAYOUT_DIRECTION_LTR
+        }
         curbsidePresenter = CurbsidePresenter(this)
         curbsidePresenter.start()
         brandList = CacheUtil.getInstance().brands

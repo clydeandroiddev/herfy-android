@@ -11,7 +11,9 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -125,7 +127,6 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     setNavButton {
                         activity?.onBackPressedDispatcher?.onBackPressed()
                     }
-                    setCart()
                     setCartButtonAction { navCart() }
                     setOrderTypeAction {
                         orderTypeClick()
@@ -138,40 +139,43 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 shimmerSlider.root.layoutParams.height = sliderHeight
                 sliderViewPager.adapter = sliderImageAdapter
 
-                etSearch.addTextChangedListener(object : TextWatcher {
-                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                etSearch.apply {
+                    hint = CacheUtil.getInstance().getTranslations(Text.SEARCH_MENU, "Search menu")
+                    addTextChangedListener(object : TextWatcher {
+                        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
-                    }
+                        }
 
-                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
-                    }
+                        }
 
-                    override fun afterTextChanged(p0: Editable?) {
-                        p0?.let {
-                            if (it.isNotEmpty()) {
-                                rvMenuCategories.gone()
-                                viewMenu.gone()
-                                viewSearch.visible()
-                                toolbar.layoutParams.height =
-                                    resources.getDimensionPixelSize(R.dimen.toolbar_height_search)
-                                viewModel.searchMenuItems(it.toString())
-                                btnClear.visible()
-                            } else {
-                                rvMenuCategories.visible()
-                                viewMenu.visible()
-                                viewSearch.gone()
-                                toolbar.layoutParams.height =
-                                    resources.getDimensionPixelSize(R.dimen.toolbar_height_menu)
-                                viewModel.menuAdapterItems.value?.peekContent()?.let { menuAdapterItems ->
-                                    menuCategoryItemAdapter.addData(menuAdapterItems)
+                        override fun afterTextChanged(p0: Editable?) {
+                            p0?.let {
+                                if (it.isNotEmpty()) {
+                                    rvMenuCategories.gone()
+                                    viewMenu.gone()
+                                    viewSearch.visible()
+                                    toolbar.layoutParams.height =
+                                        resources.getDimensionPixelSize(R.dimen.toolbar_height_search)
+                                    viewModel.searchMenuItems(it.toString())
+                                    btnClear.visible()
+                                } else {
+                                    rvMenuCategories.visible()
+                                    viewMenu.visible()
+                                    viewSearch.gone()
+                                    toolbar.layoutParams.height =
+                                        resources.getDimensionPixelSize(R.dimen.toolbar_height_menu)
+                                    viewModel.menuAdapterItems.value?.peekContent()?.let { menuAdapterItems ->
+                                        menuCategoryItemAdapter.addData(menuAdapterItems)
+                                    }
+                                    btnClear.gone()
                                 }
-                                btnClear.gone()
                             }
                         }
-                    }
 
-                })
+                    })
+                }
 
                 btnClear.setOnClickListener {
                     etSearch.setText("")
@@ -190,19 +194,10 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     addOnScrollListener(menuOnScrollListener)
                 }
 
-                layoutFooter.apply {
+                layoutFooter.rootView.apply {
+                    val tvViewBag = it.findViewById<TextView>(R.id.tvViewBag)
                     tvViewBag.text = CacheUtil.getInstance().getTranslations(Text.VIEW_BAG, "View bag")
-                    val cartQuantity = CacheUtil.getInstance().cartQuantity
-                    if(cartQuantity > 0) {
-                        tvCartQuantity.text = "$cartQuantity"
-                        btnViewBag.setOnClickListener {
-                            findNavController().navigateToDeepLink("nav_cart")
-                        }
-                        visible()
-                    } else {
-                        btnViewBag.setOnClickListener(null)
-                        gone()
-                    }
+                    setCartQuantity()
                 }
 
             }
@@ -405,7 +400,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                             CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
                             Toast.LENGTH_SHORT
                         ).show()
-                        binding.orderTypeToolbar.setCart(CacheUtil.getInstance().cartQuantity)
+                        setCartQuantity()
                     }
                 }
             }
@@ -531,6 +526,26 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 }
             }
         }
+    }
+
+    private fun setCartQuantity() {
+        binding.layoutFooter.rootView.apply {
+            val tvCartQuantity = findViewById<TextView>(R.id.tvCartQuantity)
+            val btnViewBag = findViewById<ConstraintLayout>(R.id.btnViewBag)
+            val cartQuantity = CacheUtil.getInstance().cartQuantity
+            binding.orderTypeToolbar.setCart(cartQuantity)
+            if(cartQuantity > 0) {
+                tvCartQuantity.text = "$cartQuantity"
+                btnViewBag.setOnClickListener {
+                    findNavController().navigateToDeepLink("nav_cart")
+                }
+                binding.layoutFooter.visible()
+            } else {
+                btnViewBag.setOnClickListener(null)
+                binding.layoutFooter.gone()
+            }
+        }
+
     }
 
     private fun navMenuItem(menuCategoryId: String, menuItemId: String) {

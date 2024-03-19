@@ -19,6 +19,7 @@ import com.herfy.utils.extensions.loadImage
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
 
 class NutritionInfoFragmentBottomSheet: BottomSheetDialogFragment() {
@@ -45,6 +46,11 @@ class NutritionInfoFragmentBottomSheet: BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         binding = DialogNutritionInfoBottomSheetBinding.inflate(layoutInflater)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
+        dialog?.window?.decorView?.layoutDirection = if(LocaleUtil.getInstance().isArabic) {
+            View.LAYOUT_DIRECTION_RTL
+        } else {
+            View.LAYOUT_DIRECTION_LTR
+        }
     }
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext(), theme).apply {

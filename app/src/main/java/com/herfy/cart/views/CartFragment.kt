@@ -740,54 +740,30 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         if (binding.orderTypeContainer.orderTypeText != null) {
             val store = CacheUtil.getInstance().orderStore
             val selectedOrderType = CacheUtil.getInstance().orderType
-            if (selectedOrderType == OrderType.PICKUP || selectedOrderType == OrderType.DRIVE_THRU) {
-                if (store != null) {
-                    var headerText = CacheUtil.getInstance().getTranslations(Text.PICKUP_AT)
-                    if (selectedOrderType == OrderType.PICKUP) {
-                        headerText = CacheUtil.getInstance()
-                            .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
-                    } else if (selectedOrderType == OrderType.DRIVE_THRU) {
-                        headerText = CacheUtil.getInstance()
-                            .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
-                    }
-                    binding.orderTypeContainer.orderTypeText.text = headerText
-                    binding.orderTypeContainer.branchName.text =
-                        CacheUtil.getInstance().orderStore.attributes.name
-                } else {
-                    binding.orderTypeContainer.orderTypeText.text =
-                        CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE)
-                    binding.orderTypeContainer.branchName.text =
-                        CacheUtil.getInstance().getTranslations(Text.SELECTED_ADDRESS)
-                }
-            } else if (selectedOrderType == OrderType.DINE_IN) {
-                if (store != null) {
-                    binding.orderTypeContainer.orderTypeText.text =
-                        CacheUtil.getInstance().getTranslations(Text.DINE_IN_AT)
-                    binding.orderTypeContainer.branchName.text =
-                        CacheUtil.getInstance().orderStore.attributes.name
-                } else {
-                    binding.orderTypeContainer.orderTypeText.text =
-                        CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE)
-                    binding.orderTypeContainer.branchName.text =
-                        CacheUtil.getInstance().getTranslations(Text.SELECTED_ADDRESS)
-                }
-
-            } else if (selectedOrderType == OrderType.NONE) {
+            if(selectedOrderType == OrderType.NONE || store == null) {
                 binding.orderTypeContainer.orderTypeText.text =
                     CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE)
                 binding.orderTypeContainer.branchName.text =
                     CacheUtil.getInstance().getTranslations(Text.SELECTED_ADDRESS)
-            }
-
-            if (store != null) {
-                if(selectedOrderType == OrderType.DELIVERY){
-                    val orderType =  binding.orderTypeContainer.orderTypeText.text.toString() + " ${store.attributes.promisedTimeDelta.delivery} " + CacheUtil.getInstance().getTranslations("mins", "mins")
-                    binding.orderTypeContainer.orderTypeText.text = orderType
-                }else {
-                    val orderType =  binding.orderTypeContainer.orderTypeText.text.toString() + " ${store.attributes.promisedTimeDelta.pickup} " + CacheUtil.getInstance().getTranslations("mins", "mins")
-                    binding.orderTypeContainer.orderTypeText.text = orderType
+            } else {
+                if (selectedOrderType == OrderType.PICKUP || selectedOrderType == OrderType.CURBSIDE || selectedOrderType == OrderType.DRIVE_THRU) {
+                    binding.orderTypeContainer.orderTypeText.text =
+                        CacheUtil.getInstance().getTranslations(Text.PICKUP_IN_MINS, "Pickup in (x) mins")
+                            .replace("(x)", "${store.attributes.promisedTimeDelta.delivery}")
+                    binding.orderTypeContainer.branchName.text =
+                        CacheUtil.getInstance().orderStore.attributes.name
+                } else if (selectedOrderType == OrderType.DINE_IN) {
+                    binding.orderTypeContainer.orderTypeText.text =
+                        CacheUtil.getInstance().getTranslations(Text.DINE_IN_MINS, "Dine In in (x) mins")
+                            .replace("(x)", "${store.attributes.promisedTimeDelta.delivery}")
+                    binding.orderTypeContainer.branchName.text =
+                        CacheUtil.getInstance().orderStore.attributes.name
+                } else if(selectedOrderType == OrderType.DELIVERY) {
+                    binding.orderTypeContainer.orderTypeText.text =
+                        CacheUtil.getInstance()
+                            .getTranslations(Text.DELIVERY_IN_MINS, "Delivery in (x) mins")
+                            .replace("(x)", "${store.attributes.promisedTimeDelta.delivery}")
                 }
-
             }
         }
     }
@@ -796,8 +772,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         if (binding.orderTypeContainer.orderTypeText != null) {
             val selectedOrderType = CacheUtil.getInstance().orderType
             if (selectedOrderType == OrderType.DELIVERY) {
-                binding.orderTypeContainer.orderTypeText.text =
-                    CacheUtil.getInstance().getTranslations(Text.DELIVER_TO)
                 binding.orderTypeContainer.branchName.text = address
             } else if (selectedOrderType == OrderType.NONE) {
                 binding.orderTypeContainer.orderTypeText.text =
