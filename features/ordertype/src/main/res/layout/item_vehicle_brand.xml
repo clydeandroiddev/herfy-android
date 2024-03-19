@@ -31,8 +31,9 @@
 
             <ImageView
                 android:id="@+id/curbsideBrand"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:scaleType="centerInside"
                 android:src="@drawable/ic_curbside_blank_brand"
                 app:layout_constraintBottom_toBottomOf="@id/curbsideEllipse"
                 app:layout_constraintEnd_toEndOf="@id/curbsideEllipse"

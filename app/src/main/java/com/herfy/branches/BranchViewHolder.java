@@ -155,7 +155,7 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
             nearestLabel.setText(CacheUtil.getInstance().getTranslations(Text.NEAREST_CAPS, "NEAREST"));
             pickupMethodsLabel.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP_METHODS, "Pickup Methods"));
             walkInLabel.setText(CacheUtil.getInstance().getTranslations(Text.WALK_IN, "Walk In"));
-            curbsideLabel.setText(CacheUtil.getInstance().getTranslations(Text.CURBSIDE_LABEL, "Curbside"));
+            curbsideLabel.setText(CacheUtil.getInstance().getTranslations(Text.CURBSIDE, "Curbside"));
             driveThruLabel.setText(CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU, "Drive Thru"));
 
             if (getAdapterPosition() == 0) {
