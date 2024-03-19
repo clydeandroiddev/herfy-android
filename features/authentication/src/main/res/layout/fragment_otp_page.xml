@@ -101,7 +101,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:includeFontPadding="false"
+                android:layoutDirection="ltr"
                 android:textColor="#D12928"
+                android:textDirection="ltr"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/enterForDigitLabel"
@@ -126,7 +128,8 @@
                     app:layout_constraintEnd_toEndOf="@id/otpView"
                     app:layout_constraintStart_toStartOf="@id/otpView"
                     app:layout_constraintTop_toTopOf="@id/otpView">
-                    <requestFocus/>
+
+                    <requestFocus />
                 </EditText>
 
                 <com.herfy.utils.widgets.otp.OTPTextView
@@ -134,7 +137,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layoutDirection="ltr"
                     android:textColor="#55667B"
+                    android:textDirection="ltr"
                     app:box_margin="4dp"
                     app:box_margin_horizontal="16dp"
                     app:height="43dp"
