@@ -193,8 +193,9 @@
 
                         <ImageView
                             android:id="@+id/curbsideBrand"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:scaleType="centerInside"
                             android:src="@drawable/ic_car_brand_default"
                             app:layout_constraintBottom_toBottomOf="@id/curbsideEllipseTwo"
                             app:layout_constraintEnd_toEndOf="@id/curbsideEllipseTwo"

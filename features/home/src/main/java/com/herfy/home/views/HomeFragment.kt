@@ -145,7 +145,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 }
                 layoutOrderTypeMain.apply {
                     tvHowWillYouLabel.text = cacheHelper.getTranslations(
-                        Text.HOW_WILL_YOU_ORDER_TODAY, "How will you order today?"
+                        Text.HOW_WILL_YOU_ORDER, "How will you order today?"
                     )
                 }
                 layoutBottomBanner.tvBannerBottom.text = CacheUtil.getInstance()
