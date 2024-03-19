@@ -540,20 +540,22 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.showOrderTrackerNotif.observe(this) { orderDetails ->
-            binding.apply {
-                orderTracker.clOrderNotif.visibility = View.VISIBLE
-                orderTracker.tvStatusLabel.text = orderDetails.orderStatus.description
-                orderTracker.tvOrderTypeLabel.text =
-                    CacheUtil.getInstance().getTranslations(Text.YOUR_ORDER_FROM,
-                        "Your (x) order from Herfy").replace("(x)", orderDetails.orderType)
-                orderTracker.tvEstimateValue.text =
-                    CacheUtil.getInstance().getTranslations(Text.MIN, "(x) mins")
-                        .replace("(x)", CacheUtil.getInstance().promisedTime)
-                orderTracker.tvEstimateLabel.text = CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
-                orderTracker.ivSeeOrderDetails.setOnClickListener {
-                    MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_DETAILS)
-                    findNavController().navigateToDeepLink("nav_order/${orderDetails.id}")
+        viewModel.showOrderTrackerNotif.observe(this) {
+            it.getContentIfNotHandled()?.let { orderDetails ->
+                binding.apply {
+                    orderTracker.clOrderNotif.visibility = View.VISIBLE
+                    orderTracker.tvStatusLabel.text = orderDetails.orderStatus.description
+                    orderTracker.tvOrderTypeLabel.text =
+                        CacheUtil.getInstance().getTranslations(Text.YOUR_ORDER_FROM,
+                            "Your (x) order from Herfy").replace("(x)", orderDetails.orderType)
+                    orderTracker.tvEstimateValue.text =
+                        CacheUtil.getInstance().getTranslations(Text.MIN, "(x) mins")
+                            .replace("(x)", CacheUtil.getInstance().promisedTime)
+                    orderTracker.tvEstimateLabel.text = CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
+                    orderTracker.ivSeeOrderDetails.setOnClickListener {
+                        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_DETAILS)
+                        findNavController().navigateToDeepLink("nav_order/${orderDetails.id}")
+                    }
                 }
             }
         }

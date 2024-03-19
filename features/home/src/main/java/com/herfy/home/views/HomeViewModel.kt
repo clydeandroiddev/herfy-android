@@ -124,8 +124,8 @@ class HomeViewModel @Inject constructor(
     private val _showCart = MutableLiveData<Event<Boolean>>()
     val showCart : LiveData<Event<Boolean>> = _showCart
 
-    private val _showOrderTrackerNotif = MutableLiveData<OrderDetails>()
-    val showOrderTrackerNotif : LiveData<OrderDetails> = _showOrderTrackerNotif
+    private val _showOrderTrackerNotif = MutableLiveData<Event<OrderDetails>>()
+    val showOrderTrackerNotif : LiveData<Event<OrderDetails>> = _showOrderTrackerNotif
 
     private val _updateOrderTrackerNotif = MutableLiveData<OrderData>()
     val updateOrderTrackerNotif : LiveData<OrderData> = _updateOrderTrackerNotif
@@ -162,7 +162,6 @@ class HomeViewModel @Inject constructor(
                             if (orderId.isNotEmpty()) {
                                 getLastOrder()
                             }
-
                         }
                     }
                 }
@@ -182,7 +181,7 @@ class HomeViewModel @Inject constructor(
                                 ablyUtil.subscribeToOrderStatusUpdate(orderDetails.id) { message ->
                                     this@HomeViewModel.onOrderStatusUpdate(message)
                                 }
-                                _showOrderTrackerNotif.postValue(orderDetails)
+                                _showOrderTrackerNotif.value = Event(orderDetails)
                             } else {
                                 CacheUtil.getInstance().promisedTime = ""
                             }
@@ -198,11 +197,18 @@ class HomeViewModel @Inject constructor(
             val jsonObject = JSONObject(message.data.toString())
             val orderData = OrderData.parse(jsonObject.getJSONObject("order"))
             _updateOrderTrackerNotif.postValue(orderData)
+            if (orderData.orderStatus.sequence >= 9) {
+                detachAbly()
+            }
 
         } catch (e: JSONException) {
             e.printStackTrace()
         }
         return Unit
+    }
+
+    private fun detachAbly() {
+        AblyUtil.Companion.instance.detachAll()
     }
 
     fun getBottomSliders() {
