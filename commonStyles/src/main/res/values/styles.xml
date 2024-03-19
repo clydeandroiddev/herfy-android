@@ -206,9 +206,6 @@
     </style>
 
     <style name="CustomDatePickerStyle" parent="android:Widget.Material.DatePicker">
-        <!-- Customize the header background color -->
-        <item name="android:headerBackground">#0064AC</item>
-        <!-- Customize the header text color -->
-        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:headerBackground">#E6F0F7</item>
     </style>
 </resources>
