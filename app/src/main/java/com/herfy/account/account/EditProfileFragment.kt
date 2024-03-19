@@ -12,7 +12,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
+import android.widget.TextView
 import android.widget.Toast
+import androidx.compose.ui.graphics.Color
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
@@ -266,6 +268,7 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
         }
     }
 
+    @SuppressLint("DiscouragedApi")
     override fun showDateOfBirth(birthDate: Date?, date: String?) {
         val calendar = Calendar.getInstance()
         if (!date.isNullOrEmpty()) {
@@ -277,16 +280,29 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
             checkBirthdayState()
         } else {
             calendar.time = Date()
+            calendar.add(Calendar.YEAR, -10)
         }
 
         val datePickerDialog = DatePickerDialog(
             requireActivity(),
+            com.herfy.commonstyles.R.style.CustomDatePickerDialog,
             { datePicker: DatePicker?, year: Int, month: Int, day: Int -> },
             calendar[Calendar.YEAR],
             calendar[Calendar.MONTH],
             calendar[Calendar.DAY_OF_MONTH]
         )
-        datePickerDialog.datePicker.maxDate = Date().time
+        val maxDateCalendar = Calendar.getInstance()
+        maxDateCalendar.add(Calendar.YEAR, -10)
+        val maxDate = maxDateCalendar.timeInMillis
+
+        datePickerDialog.setOnShowListener {
+            val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+            positiveButton.setTextColor(android.graphics.Color.parseColor("#0064AC"))
+            val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+            negativeButton.setTextColor(android.graphics.Color.parseColor("#0064AC"))
+        }
+
+        datePickerDialog.datePicker.maxDate = maxDate
         datePickerDialog.setButton(
             DatePickerDialog.BUTTON_POSITIVE,
             CacheUtil.getInstance().getTranslations(Text.SELECT, "SELECT")

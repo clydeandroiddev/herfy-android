@@ -116,6 +116,8 @@
                                     android:layout_marginTop="7dp"
                                     android:ellipsize="end"
                                     android:gravity="center"
+                                    android:textDirection="ltr"
+                                    android:layoutDirection="ltr"
                                     android:includeFontPadding="false"
                                     android:maxLines="1"
                                     android:textColor="#212121"

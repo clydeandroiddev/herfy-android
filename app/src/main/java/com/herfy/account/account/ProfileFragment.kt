@@ -166,18 +166,8 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
                 CacheUtil.getInstance().getTranslations(Text.COMPLETE_PROFILE, "Complete Profile")
             binding.profileName.text = CacheUtil.getInstance()
                 .getTranslations(Text.COMPLETE_YOUR_PROFILE, "Complete your profile")
-            binding.deleteAccountLabel.isVisible = false
-            binding.deleteAccountDescription.isVisible = false
-            binding.deleteMyAccountLabel.isVisible = false
-            binding.deleteAccountLayout.isVisible = false
-            binding.deleteImage.isVisible = false
         } else {
             binding.profileCard.setCardBackgroundColor(requireActivity().resources.getColor(R.color.white))
-            binding.deleteAccountLabel.isVisible = true
-            binding.deleteAccountDescription.isVisible = true
-            binding.deleteMyAccountLabel.isVisible = true
-            binding.deleteAccountLayout.isVisible = true
-            binding.deleteImage.isVisible = true
             binding.editLabel.text = CacheUtil.getInstance().getTranslations(Text.EDIT, "Edit")
         }
     }
