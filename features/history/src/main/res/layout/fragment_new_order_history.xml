@@ -68,6 +68,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
+                    android:paddingBottom="100dp"
                     android:scrollbars="none">
 
                     <LinearLayout
@@ -322,8 +323,13 @@
                             android:id="@+id/pastOrdersList"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:clipToPadding="false"
                             android:nestedScrollingEnabled="false"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                            android:paddingTop="10dp"
+                            android:paddingBottom="50dp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:itemCount="3"
+                            tools:listitem="@layout/item_new_order_history" />
 
                     </LinearLayout>
 
