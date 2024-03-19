@@ -3,7 +3,10 @@ package com.herfy.repository
 import android.content.Context
 import com.herfy.database.AppDatabase
 import com.herfy.database.entities.MenuCategoryEntity.Companion.toDomain
+import com.herfy.database.entities.MenuItemDb
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
+import com.herfy.database.entities.ModifierGroupDb
+import com.herfy.database.entities.ModifierItemDb
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
@@ -31,6 +34,13 @@ interface MenuRepository {
     suspend fun getMenuItem(menuItemId: String, result: (MenuItem) -> Unit)
 
     suspend fun getMenuItemEntityBy(id: String, applicationId: String, result: (String) -> Unit)
+    suspend fun getMenuItemDbBy(applicationId: String, name: String, result: (MenuItemDb) -> Unit)
+    suspend fun getAllModifierGroupBy(
+        applicationId: String,
+        toTypedArray: Array<String>,
+        result: (List<ModifierGroupDb>) -> Unit
+    )
+    suspend fun getModifierItemBy(applicationId: String, toTypedArray: Array<String>, result: (List<ModifierItemDb>) -> Unit)
 }
 
 class MenuRepositoryImpl @Inject constructor(
@@ -41,30 +51,32 @@ class MenuRepositoryImpl @Inject constructor(
 
     override suspend fun getMenuCategoriesItems(result: (List<MenuCategory>) -> Unit) {
         cacheUtilHelper.getApplication()?.let { application ->
-            val storeId  = CacheUtil.getOrderStoreId()
+            val storeId = CacheUtil.getOrderStoreId()
             val menuCategories = mutableListOf<MenuCategory>()
-            val menuCategoryDbs = appDatabase.menuCategoryEntityDao().getAllByApplication(application.id)
+            val menuCategoryDbs =
+                appDatabase.menuCategoryEntityDao().getAllByApplication(application.id)
             menuCategoryDbs.toDomain().forEach { menuCategory ->
-                if(menuCategory.enabled == 1 &&
+                if (menuCategory.enabled == 1 &&
                     (storeId == null ||
-                        (!menuCategory.excludedApps.contains(application.id) &&
-                            !menuCategory.excludedLocations.contains(storeId))
-                    )
+                            (!menuCategory.excludedApps.contains(application.id) &&
+                                    !menuCategory.excludedLocations.contains(storeId))
+                            )
                 ) {
-                    val menuItemDbs = appDatabase.menuItemEntityDao().findAllByMenuCategoryId(application.id, menuCategory.id)
+                    val menuItemDbs = appDatabase.menuItemEntityDao()
+                        .findAllByMenuCategoryId(application.id, menuCategory.id)
                     val filteredMenuItems = mutableListOf<MenuItem>()
                     menuItemDbs.toDomain().forEach { menuItem ->
-                        if(menuItem.enabled == 1 &&
+                        if (menuItem.enabled == 1 &&
                             (storeId == null ||
-                                (menuItem.excludedApps?.contains(application.id) == false &&
-                                menuItem.excludedLocations?.contains(storeId) == false &&
-                                menuItem.outOfStockLocations?.contains(storeId) == false)
-                            )
+                                    (menuItem.excludedApps?.contains(application.id) == false &&
+                                            menuItem.excludedLocations?.contains(storeId) == false &&
+                                            menuItem.outOfStockLocations?.contains(storeId) == false)
+                                    )
                         ) {
                             filteredMenuItems.add(menuItem)
                         }
                     }
-                    if(filteredMenuItems.isNotEmpty()) {
+                    if (filteredMenuItems.isNotEmpty()) {
                         filteredMenuItems.sortBy { it.displayOrder }
                         menuCategory.menuItems = filteredMenuItems
                         menuCategories.add(menuCategory)
@@ -78,7 +90,8 @@ class MenuRepositoryImpl @Inject constructor(
 
     override suspend fun getMenuItem(menuItemId: String, result: (MenuItem) -> Unit) {
         cacheUtilHelper.getApplication()?.let { application ->
-            val menuItemDb = appDatabase.menuItemDao().findByApplicationAndId(application.id, menuItemId)
+            val menuItemDb =
+                appDatabase.menuItemDao().findByApplicationAndId(application.id, menuItemId)
             menuItemDb?.data?.let {
                 val menuItem = MenuUtil.processMenuItemCustomObject(
                     GsonHelper.gsonFinal().fromJson(it, MenuItem::class.java)
@@ -372,8 +385,46 @@ class MenuRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMenuItemEntityBy(id : String, applicationId : String, result:(String) -> Unit){
+    override suspend fun getMenuItemEntityBy(
+        id: String,
+        applicationId: String,
+        result: (String) -> Unit
+    ) {
         result(appDatabase.menuItemEntityDao().findById(applicationId, id).menuCategoryId)
+    }
+
+    override suspend fun getMenuItemDbBy(
+        applicationId: String,
+        name: String,
+        result: (MenuItemDb) -> Unit
+    ) {
+        result(appDatabase.menuItemDao().findByApplicationAndName(applicationId, name))
+    }
+
+    override suspend fun getAllModifierGroupBy(
+        applicationId: String,
+        ids: Array<String>,
+        result: (List<ModifierGroupDb>) -> Unit
+    ) {
+        result(
+            appDatabase.modifierGroupDao()
+                .findAllByApplicationAndIds(
+                    applicationId,
+                    ids
+                )
+        )
+    }
+
+    override suspend fun getModifierItemBy(
+        applicationId: String,
+        ids: Array<String>,
+        result: (List<ModifierItemDb>) -> Unit
+    ) {
+        result(appDatabase.modifierItemDao()
+            .findAllByApplicationAndIds(
+                applicationId,
+                ids
+            ))
     }
 
 

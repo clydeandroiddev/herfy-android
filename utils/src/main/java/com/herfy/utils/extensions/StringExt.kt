@@ -1,6 +1,8 @@
 package com.herfy.utils.extensions
 
 import android.util.Patterns
+import com.herfy.utils.helper.LocaleUtil
+import com.skylinedynamics.solosdk.api.models.objects.Translated
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -28,6 +30,15 @@ fun String.formatDate(format : String): String {
         targetFormat.format(date)
     } catch (pe: ParseException) {
         this
+    }
+}
+
+fun Translated.toTranslate(): String? {
+    val language = LocaleUtil.getInstance().language
+    return if (language.equals("en-us", ignoreCase = true)) {
+        english
+    } else {
+        if (language.equals("fr", ignoreCase = true)) french else arabic
     }
 }
 

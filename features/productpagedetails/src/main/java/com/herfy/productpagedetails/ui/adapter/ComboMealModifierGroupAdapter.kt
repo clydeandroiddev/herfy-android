@@ -1,17 +1,17 @@
 package com.herfy.productpagedetails.ui.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.herfy.productpagedetails.databinding.ItemModifierGroupNewBinding
 import com.herfy.productpagedetails.ui.viewholder.ComboMealModifierGroupViewholder
-import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
+import com.herfy.productpagedetails.ui.viewmodel.ComboViewModel
+import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents
 
 class ComboMealModifierGroupAdapter(
-    private val items: List<ModifierGroup> = arrayListOf(),
-    private var showModifierItemPrice: HashMap<Int, Boolean> = hashMapOf(),
-    private var shouldShowModifierGroupCheckbox : HashMap<Int, Boolean> = hashMapOf(),
-    private var shouldShowQuantity : HashMap<Int, Boolean> = hashMapOf()
+    private var items: List<MenuItemComponents> = arrayListOf(),
+    private var viewModel : ComboViewModel
 ) : RecyclerView.Adapter<ComboMealModifierGroupViewholder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -31,24 +31,14 @@ class ComboMealModifierGroupAdapter(
     override fun onBindViewHolder(holder: ComboMealModifierGroupViewholder, position: Int) {
         holder.apply {
             val data = items[position]
-            setModifierGroup(data, showModifierItemPrice.get(position),shouldShowModifierGroupCheckbox.get(position),shouldShowQuantity)
+            setComboModifierGroup(data, position, viewModel)
         }
     }
 
-    fun showModifierItemPrice(show: Boolean, position: Int) {
-        showModifierItemPrice.put(position, show)
-        notifyItemChanged(position)
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateList(items: List<MenuItemComponents>){
+        this.items = items
+        notifyDataSetChanged()
     }
-
-    fun shouldShowCheckBox(show: Boolean, position: Int) {
-        shouldShowModifierGroupCheckbox.put(position, show)
-        notifyItemChanged(position)
-    }
-
-    fun shouldShowQuantity(show: Boolean, position: Int) {
-        shouldShowQuantity.put(position, show)
-        notifyItemChanged(position)
-    }
-
 
 }

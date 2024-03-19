@@ -87,4 +87,11 @@ object Values {
     const val FACEBOOK_LINK = "https://www.facebook.com/herfyfscksa"
     const val TIKTOK_LINK = "https://www.tiktok.com/@herfyfsc"
     const val TWITTER_LINK = "https://twitter.com/herfyfs"
+
+    const val KEY_MENU_ITEM_ID = "menu_item_id"
+    const val KEY_IS_PROMO = "is_promo"
+    const val KEY_IS_EDIT ="is_edit"
+    const val KEY_CART_MENU_ITEM_POSITION = "cart_menu_item_position"
+    const val KEY_MENU_CATEGORY_ID ="menu_category_id"
+    const val KEY_IS_UPSELL ="is_upsell"
 }

@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
-import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
 
 public class FavoritesRecyclerViewAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
 

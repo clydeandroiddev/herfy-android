@@ -215,6 +215,7 @@
                                 android:paddingTop="@dimen/padding_micro"
                                 android:paddingEnd="@dimen/padding_micro"
                                 android:paddingBottom="@dimen/padding_micro"
+                                android:text="@={viewModel.calories}"
                                 tools:text="2200 Kcal" />
                         </androidx.cardview.widget.CardView>
 
@@ -476,7 +477,8 @@
                                     android:textStyle="bold"
                                     app:layout_constraintBottom_toBottomOf="@+id/minus"
                                     app:layout_constraintEnd_toStartOf="@+id/plus"
-                                    app:layout_constraintTop_toTopOf="@+id/minus" />
+                                    app:layout_constraintTop_toTopOf="@+id/minus"
+                                   />
 
                                 <androidx.appcompat.widget.AppCompatImageButton
                                     android:id="@+id/plus"
@@ -487,7 +489,9 @@
                                     app:layout_constraintBottom_toBottomOf="@+id/minus"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="@+id/minus"
-                                    app:srcCompat="@drawable/quantity_up_blue" />
+                                    app:srcCompat="@drawable/quantity_up_blue"
+                                    android:onClick="@{() -> viewModel.changeMenuItemQuantity(true)}"
+                                    />
 
                                 <androidx.appcompat.widget.AppCompatImageButton
                                     android:id="@+id/minus"
@@ -498,7 +502,8 @@
                                     app:layout_constraintEnd_toStartOf="@+id/quantity"
                                     app:layout_constraintHorizontal_chainStyle="packed"
                                     app:layout_constraintTop_toTopOf="parent"
-                                    app:srcCompat="@drawable/ic_new_minus" />
+                                    app:srcCompat="@drawable/ic_new_minus"
+                                    android:onClick="@{() -> viewModel.changeMenuItemQuantity(false)"/>
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </LinearLayout>
 
@@ -527,7 +532,8 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/txtQuantity"
-                            app:strokeWidth="2dp" />
+                            app:strokeWidth="2dp"
+                            android:onClick="@{() -> viewModel.addToCart()}"/>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
