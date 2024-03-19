@@ -1055,4 +1055,6 @@ public class Text {
     public static final String VIEW_BAG = "view_bag";
     public static final String CURBSIDE = "curbside";
 
+    public static final String MY_ORDERS = "my_orders";
+
 }
