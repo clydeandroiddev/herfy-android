@@ -50,7 +50,7 @@ class CurbsideBrandAdapter(
             brandName.text = item.attributes.name
 
             Glide.with(curbsideBrand.context).load(item.attributes.imageUri)
-                .apply(RequestOptions().override(80, 80)).skipMemoryCache(false).diskCacheStrategy(
+                .skipMemoryCache(false).diskCacheStrategy(
                     DiskCacheStrategy.ALL
                 ).apply(RequestOptions.centerInsideTransform())
                 .listener(object : RequestListener<Drawable?> {

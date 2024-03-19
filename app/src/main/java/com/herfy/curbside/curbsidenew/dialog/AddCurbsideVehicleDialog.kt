@@ -343,7 +343,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
         carMaker?.let {
             binding.curbsideBrandName.text = it.attributes.name
             Glide.with(binding.curbsideBrand.context).load(it.attributes.imageUri)
-                .apply(RequestOptions().override(80, 80)).skipMemoryCache(false).diskCacheStrategy(
+                .skipMemoryCache(false).diskCacheStrategy(
                     DiskCacheStrategy.ALL
                 ).apply(RequestOptions.centerInsideTransform())
                 .listener(object : RequestListener<Drawable?> {

@@ -845,7 +845,7 @@ public class Text {
 
     public static final String GOOD_MORNING_LABEL = "good_morning_label";
 
-    public static final String HOW_WILL_YOU_ORDER_TODAY = "how_will_you_order_today";
+    public static final String HOW_WILL_YOU_ORDER = "how_will_you_order";
 
     public static final String CHOOSE_PICKUP_METHOD = "choose_pickup_method";
     public static final String WALK_IN_PICKUP = "walk_in_pickup";
@@ -1052,5 +1052,6 @@ public class Text {
     public static final String GOOD_AFTERNOON_USER = "good_afternoon_user";
     public static final String GOOD_EVENING_USER = "good_evening_user";
     public static final String VIEW_BAG = "view_bag";
+    public static final String CURBSIDE = "curbside";
 
 }
