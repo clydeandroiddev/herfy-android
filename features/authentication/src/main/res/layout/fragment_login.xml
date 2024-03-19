@@ -63,8 +63,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="23dp"
-                android:layoutDirection="ltr"
-                android:textDirection="ltr"
                 android:textColor="#101010"
                 android:textSize="14sp"
                 tools:text="Mobile Number" />
