@@ -1286,7 +1286,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 baseActivity.dismissDialogs()
                 Toast.makeText(
                     baseActivity,
-                    CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART),
+                    CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
                     Toast.LENGTH_SHORT
                 ).show()
                 activity?.cast<MainActivity> {

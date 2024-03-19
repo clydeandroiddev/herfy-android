@@ -1048,5 +1048,6 @@ public class Text {
     public static final String GOOD_MORNING_USER = "good_morning_user";
     public static final String GOOD_AFTERNOON_USER = "good_afternoon_user";
     public static final String GOOD_EVENING_USER = "good_evening_user";
+    public static final String VIEW_BAG = "view_bag";
 
 }
