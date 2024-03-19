@@ -68,7 +68,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
-                    android:paddingBottom="100dp"
                     android:scrollbars="none">
 
                     <LinearLayout
@@ -79,7 +78,9 @@
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/inProgressLayout"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            tools:visibility="visible">
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/inProgressLabel"
@@ -305,7 +306,7 @@
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/PastOrdersLabel"
+                            android:id="@+id/pastOrdersLabel"
                             style="@style/Styles.Text.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -326,7 +327,7 @@
                             android:clipToPadding="false"
                             android:nestedScrollingEnabled="false"
                             android:paddingTop="10dp"
-                            android:paddingBottom="50dp"
+                            android:paddingBottom="30dp"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:itemCount="3"
                             tools:listitem="@layout/item_new_order_history" />

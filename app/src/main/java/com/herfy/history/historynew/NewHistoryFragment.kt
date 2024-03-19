@@ -5,13 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.maps.model.LatLng
+import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
 import com.herfy.history.databinding.FragmentNewOrderHistoryBinding
+import com.herfy.history.historynew.adapter.HistoryListAdapter
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.DialogUtils
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -26,6 +29,8 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     private var ordersPresenter: OrdersContract.Presenter? = null
 
     private lateinit var binding: FragmentNewOrderHistoryBinding
+
+    private lateinit var historyListAdapter: HistoryListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +47,11 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ordersPresenter?.start()
+        activity?.let {
+            val baseActivity = it as BaseActivity
+            baseActivity.showLoadingDialog()
+        }
+        ordersPresenter?.getOrders()
     }
 
     override fun setPresenter(presenter: OrdersContract.Presenter) {
@@ -66,6 +76,21 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
             back.setOnClickListener {
                 navigateUp()
             }
+            historyListAdapter =
+                HistoryListAdapter(ArrayList(), object : HistoryListAdapter.HistoryListener {
+                    override fun onViewDetails(item: OrderHistory, position: Int) {
+
+                    }
+
+                    override fun onReorder(item: OrderHistory, position: Int) {
+
+                    }
+
+                    override fun onRate(item: OrderHistory, position: Int) {
+
+                    }
+                })
+            pastOrdersList.adapter = historyListAdapter
         }
     }
 
@@ -76,11 +101,16 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     override fun setupTranslations() {
         binding.apply {
             title.text = CacheUtil.getInstance().getTranslations(Text.MY_ORDERS, "My Orders")
+            pastOrdersLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.PAST_ORDERS, "Past Orders")
         }
     }
 
     override fun showOrders(newestToOldest: Boolean, orders: ArrayList<OrderHistory>?) {
-
+        dismissDialogs()
+        orders?.let {
+            historyListAdapter.updateList(orders)
+        }
     }
 
     override fun setOrder(order: OrderHistory?) {
@@ -96,7 +126,13 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showError(error: String?) {
-
+        dismissDialogs()
+        DialogUtils.showAlertDialog(context = requireContext(),
+            title = "",
+            body = error.orEmpty(),
+            dialogInterface = { dialog, which ->
+                dialog.dismiss()
+            })
     }
 
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {

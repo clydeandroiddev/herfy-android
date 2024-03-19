@@ -3,7 +3,6 @@ package com.herfy.history;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.herfy.utils.constants.Text;
 import com.herfy.database.AppDatabase;
 import com.herfy.database.entities.AllergenDb;
 import com.herfy.database.entities.IngredientDb;
@@ -13,10 +12,14 @@ import com.herfy.database.entities.ModifierItemDb;
 import com.herfy.history.viewholders.OrderMenuItemViewHolder;
 import com.herfy.history.viewholders.OrderViewHolder;
 import com.herfy.history.viewholders.TimeLineViewHolder;
+import com.herfy.util.AppLogger;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.helper.ably.AblyUtil;
 import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
@@ -60,9 +63,6 @@ import com.skylinedynamics.solosdk.api.models.objects.order.OrderIngredient;
 import com.skylinedynamics.solosdk.api.models.objects.order.OrderModifierItem;
 import com.skylinedynamics.solosdk.api.models.requestbodies.OrderFeedbackBody;
 import com.skylinedynamics.solosdk.util.GsonHelper;
-import com.herfy.util.AppLogger;
-import com.herfy.utils.handler.ErrorHandler;
-import com.herfy.utils.helper.LocaleUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -125,7 +125,7 @@ public class OrdersPresenter implements OrdersContract.Presenter {
     @Override
     public void getOrders() {
         Customer customer = AuthUtil.getInstance().getCustomer();
-        CustomersApiCall.getInstance().getOrders(customer.getId(), "1", "10", new ApiRequestListener() {
+        CustomersApiCall.getInstance().getOrdersNew(customer.getId(), "1", "10", new ApiRequestListener() {
 
             @Override
             public void onSuccess(Object o) {
@@ -136,19 +136,30 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                     ordersMap.clear();
                     orders = new ArrayList<>();
 
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject orderObject = array.getJSONObject(i);
+                    for (int x = 0; x < array.length(); x++) {
+                        JSONObject orderObject = array.getJSONObject(x);
                         OrderHistory order = OrderHistory.parse(orderObject);
-                        ordersMap.put(order.getId(), i);
+                        ArrayList<String> menItems = new ArrayList<>();
+                        if (object.has("included") && !object.isNull("included")) {
+                            JSONArray included = object.getJSONArray("included");
+                            for (int a = 0; a < included.length(); a++) {
+                                JSONObject includedObject = included.getJSONObject(a);
+                                if (includedObject.getString("type").equals("order-item")) {
+                                    MenuItem menuItem = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<MenuItem>() {
+                                    }.getType());
+                                    menItems.add(menuItem.getImage());
+                                }
+                            }
+                        }
+                        order.setMenuImages(menItems);
+                        ordersMap.put(order.getId(), x);
                         orders.add(order);
                     }
 
                     Collections.sort(orders, new Comparator<OrderHistory>() {
                         @Override
                         public int compare(OrderHistory o1, OrderHistory o2) {
-
                             try {
-
                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
                                 simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+0"));
                                 Date date1 = simpleDateFormat.parse(o1.getCreatedAt());
@@ -166,16 +177,10 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                     });
 
                     ordersView.showOrders(newestToOldest, orders);
-
                     AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
-
                     for (OrderHistory orderHistory : orders) {
-                        ablyUtil.subscribeToOrderStatusUpdate(
-                                orderHistory.getId(),
-                                OrdersPresenter.this::onOrderHistoryStatusUpdate
-                        );
+                        ablyUtil.subscribeToOrderStatusUpdate(orderHistory.getId(), OrdersPresenter.this::onOrderHistoryStatusUpdate);
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                     ordersMap.clear();
@@ -197,12 +202,10 @@ public class OrdersPresenter implements OrdersContract.Presenter {
         try {
             JSONObject jsonObject = new JSONObject(message.data.toString());
             OrderData orderData = OrderData.parse(jsonObject.getJSONObject("order"));
-
             String orderId = orderData.getId();
             if (ordersMap.containsKey(orderId) && ordersMap.get(orderId) != null) {
                 getOrder(orderId, ordersMap.get(orderId), true, false);
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -255,7 +258,7 @@ public class OrdersPresenter implements OrdersContract.Presenter {
     @Override
     public void getOrder(String id, int position, boolean statusUpdate, boolean reorder) {
 
-        OrdersApiCall.getInstance().getOrderNew(id, "items,location,customerAddress,campaign.promotion,payments,loyalty-points-transactions", new ApiRequestListener() {
+        OrdersApiCall.getInstance().getOrderNew(id, "items,location,customerAddress,campaign.promotion,payments,loyalty-points-transactions,feedbacks", new ApiRequestListener() {
 
             @Override
             public void onSuccess(Object o) {
@@ -307,20 +310,15 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                         }
 
                         if (!statusUpdate) {
-
                             if (!reorder) {
-
                                 String orderId = order.getId();
                                 subscribeToOrderStatusUpdate(orderId);
                                 subscribeToOrderDriverAssign(orderId);
-
                                 getOrderStatuses();
                                 getOrderFeedbackTopics();
-
                             }
 
                             menuItems = new ArrayList<>();
-
                             if (jsonObject.has("included") && !jsonObject.isNull("included")) {
                                 JSONArray included = jsonObject.getJSONArray("included");
                                 for (int i = 0; i < included.length(); i++) {
@@ -335,7 +333,6 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                                         address = Address.parseAddress(includedObject);
                                     }
                                 }
-
                                 for (MenuItem menuItem : menuItems) {
                                     ArrayList<ModifierGroup> modifierGroups = new ArrayList<>();
                                     for (int i = 0; i < included.length(); i++) {
@@ -1967,22 +1964,15 @@ public class OrdersPresenter implements OrdersContract.Presenter {
 
     private void subscribeToOrderStatusUpdate(String orderId) {
         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
-        ablyUtil.subscribeToOrderStatusUpdate(
-                orderId,
-                OrdersPresenter.this::onOrderDetailsStatusUpdate
-        );
+        ablyUtil.subscribeToOrderStatusUpdate(orderId, OrdersPresenter.this::onOrderDetailsStatusUpdate);
     }
 
     private void subscribeToOrderDriverAssign(String orderId) {
-        if (order.getDeliveryOption().equalsIgnoreCase("deliver") ||
-                order.getDeliveryOption().equalsIgnoreCase("ايصال")) {
+        if (order.getDeliveryOption().equalsIgnoreCase("deliver") || order.getDeliveryOption().equalsIgnoreCase("ايصال")) {
             AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
             String driverId = order.getDriverId();
             if (driverId == null || driverId.isEmpty()) {
-                ablyUtil.subscribeToOrderDriverAssign(
-                        orderId,
-                        OrdersPresenter.this::onOrderDriverAssign
-                );
+                ablyUtil.subscribeToOrderDriverAssign(orderId, OrdersPresenter.this::onOrderDriverAssign);
             } else {
                 subscribeToOrderDriverLocationUpdate(orderId);
             }
@@ -1991,10 +1981,7 @@ public class OrdersPresenter implements OrdersContract.Presenter {
 
     private void subscribeToOrderDriverLocationUpdate(String orderId) {
         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
-        ablyUtil.subscribeToOrderDriverLocationUpdate(
-                orderId,
-                OrdersPresenter.this::onOrderDriverLocationUpdate
-        );
+        ablyUtil.subscribeToOrderDriverLocationUpdate(orderId, OrdersPresenter.this::onOrderDriverLocationUpdate);
     }
 
     private Unit onOrderDetailsStatusUpdate(Message message) {
