@@ -72,13 +72,11 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/mobileNumberLabel"
                 style="@style/TextAppearance.Body"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="20dp"
-                android:layoutDirection="ltr"
                 android:textColor="#101010"
-                android:textDirection="ltr"
                 android:textSize="14sp"
                 tools:text="Mobile Number" />
 

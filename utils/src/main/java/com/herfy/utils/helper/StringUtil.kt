@@ -69,22 +69,14 @@ object StringUtil {
             number // No need for localization if the locale is English
         } else {
             // Replace English digits with their Arabic counterparts
-            number.replaceEnglishDigitsWithArabic()
-                .replaceDecimalPointWithComma()
+            number.replaceEnglishDigitsWithArabic().replaceDecimalPointWithComma()
         }
     }
 
     private fun String.replaceEnglishDigitsWithArabic(): String {
-        return this.replace("1", "١")
-            .replace("2", "٢")
-            .replace("3", "٣")
-            .replace("4", "٤")
-            .replace("5", "٥")
-            .replace("6", "٦")
-            .replace("7", "٧")
-            .replace("8", "٨")
-            .replace("9", "٩")
-            .replace("0", "٠")
+        return this.replace("1", "١").replace("2", "٢").replace("3", "٣").replace("4", "٤")
+            .replace("5", "٥").replace("6", "٦").replace("7", "٧").replace("8", "٨")
+            .replace("9", "٩").replace("0", "٠")
     }
 
     private fun String.replaceDecimalPointWithComma(): String {
@@ -92,12 +84,9 @@ object StringUtil {
     }
 
     fun isValidPhoneNumber(phone: String): Boolean {
-        val valid: Boolean = if (!CacheUtil.getInstance().concept.mobileFormat
-                .isEmpty()
-        ) {
+        val valid: Boolean = if (!CacheUtil.getInstance().concept.mobileFormat.isEmpty()) {
             val pattern = Pattern.compile(CacheUtil.getInstance().concept.mobileFormat)
-            pattern.matcher(toEnglish(phone))
-                .matches()
+            pattern.matcher(toEnglish(phone)).matches()
         } else if (CacheUtil.getInstance().concept.country.equals("sa", ignoreCase = true)) {
             val pattern =
                 Pattern.compile("([0-9\\s\\-]{7,})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$")
@@ -123,14 +112,20 @@ object StringUtil {
         return if (LocaleUtil.getInstance().isEnglish || LocaleUtil.getInstance().isFrench) {
             number
         } else {
-            number
-                .replace("١", "1").replace("٢", "2")
-                .replace("٣", "3").replace("٤", "4")
-                .replace("٥", "5").replace("٦", "6")
-                .replace("٧", "7").replace("٨", "8")
-                .replace("٩", "9").replace("٠", "0")
-                .replace(",", ".").replace("٫", ".")
+            number.replace("١", "1").replace("٢", "2").replace("٣", "3").replace("٤", "4")
+                .replace("٥", "5").replace("٦", "6").replace("٧", "7").replace("٨", "8")
+                .replace("٩", "9").replace("٠", "0").replace(",", ".").replace("٫", ".")
         }
     }
 
+    @JvmStatic
+    fun translate(number: String): String {
+        return if (LocaleUtil.getInstance().isEnglish || LocaleUtil.getInstance().isFrench) {
+            number
+        } else {
+            number.replace("1", "١").replace("2", "٢").replace("3", "٣").replace("4", "٤")
+                .replace("5", "٥").replace("6", "٦").replace("7", "٧").replace("8", "٨")
+                .replace("9", "٩").replace("0", "٠").replace(",", ".").replace("٫", ".")
+        }
+    }
 }
