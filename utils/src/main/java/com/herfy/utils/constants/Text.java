@@ -914,6 +914,7 @@ public class Text {
     public static final String NOTE_FOR_THE_DRIVER = "note_for_the_driver";
 
     public static final String NOTE_FOR_THE_DRIVER_HINT = "note_for_the_driver_hint";
+    public static final String NOTE_FOR_MENU_HINT = "notes_for_menu_hint";
 
     public static final String ADD_LABEL = "add_label";
 

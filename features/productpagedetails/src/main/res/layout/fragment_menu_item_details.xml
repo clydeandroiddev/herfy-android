@@ -461,31 +461,32 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_regular"
-                        android:ellipsize="end"
                         android:layout_marginTop="@dimen/margin_small"
                         android:gravity="start"
                         android:includeFontPadding="false"
-                        android:maxLines="1"
                         android:textAlignment="viewStart"
                         android:textAllCaps="false"
                         android:textColor="#55667B"
                         android:textStyle="bold" />
 
+
                     <EditText
                         android:id="@+id/et_item_notes"
                         style="@style/Styles.Text.Caption"
                         android:layout_width="match_parent"
-                        android:layout_height="80dp"
-                        android:layout_marginTop="@dimen/margin_xlarge"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:background="@drawable/bg_background_border"
-                        android:gravity="start"
-                        android:inputType="text"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center_vertical"
+                        android:imeOptions="actionDone"
+                        android:lineSpacingExtra="4dp"
                         android:maxLength="512"
-                        android:maxLines="4"
-                        android:textAlignment="viewStart"
+                        android:textColor="#0C0C0C"
                         android:textColorHint="#ACACAC"
-                        android:textSize="14sp" />
-
+                        android:textAlignment="viewStart"
+                        android:textSize="14sp"
+                        tools:hint="e.g. Orange door on left, white coloured building, don’t ring the bell" />
                     <View
                         android:id="@+id/notesDivider"
                         android:layout_width="match_parent"
