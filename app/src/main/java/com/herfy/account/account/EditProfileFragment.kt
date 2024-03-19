@@ -4,20 +4,18 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
-import android.widget.TextView
 import android.widget.Toast
-import androidx.compose.ui.graphics.Color
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
+import com.herfy.ext.cast
+import com.herfy.main.MainActivity
 import com.herfy.profile.R
 import com.herfy.profile.databinding.FragmentUserEditProfileBinding
 import com.herfy.utils.constants.Text
@@ -283,45 +281,47 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
             calendar.add(Calendar.YEAR, -10)
         }
 
-        val datePickerDialog = DatePickerDialog(
-            requireActivity(),
-            com.herfy.commonstyles.R.style.CustomDatePickerDialog,
-            { datePicker: DatePicker?, year: Int, month: Int, day: Int -> },
-            calendar[Calendar.YEAR],
-            calendar[Calendar.MONTH],
-            calendar[Calendar.DAY_OF_MONTH]
-        )
-        val maxDateCalendar = Calendar.getInstance()
-        maxDateCalendar.add(Calendar.YEAR, -10)
-        val maxDate = maxDateCalendar.timeInMillis
+        activity?.cast<MainActivity> {
+            val datePickerDialog = DatePickerDialog(
+                it,
+                com.herfy.commonstyles.R.style.CustomDatePickerDialog,
+                { datePicker: DatePicker?, year: Int, month: Int, day: Int -> },
+                calendar[Calendar.YEAR],
+                calendar[Calendar.MONTH],
+                calendar[Calendar.DAY_OF_MONTH]
+            )
+            val maxDateCalendar = Calendar.getInstance()
+            maxDateCalendar.add(Calendar.YEAR, -10)
+            val maxDate = maxDateCalendar.timeInMillis
 
-        datePickerDialog.setOnShowListener {
-            val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
-            positiveButton.setTextColor(android.graphics.Color.parseColor("#0064AC"))
-            val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
-            negativeButton.setTextColor(android.graphics.Color.parseColor("#0064AC"))
-        }
+            datePickerDialog.setOnShowListener {
+                val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+                positiveButton.setTextColor(android.graphics.Color.parseColor("#0064AC"))
+                val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+                negativeButton.setTextColor(android.graphics.Color.parseColor("#0064AC"))
+            }
 
-        datePickerDialog.datePicker.maxDate = maxDate
-        datePickerDialog.setButton(
-            DatePickerDialog.BUTTON_POSITIVE,
-            CacheUtil.getInstance().getTranslations(Text.SELECT, "SELECT")
-        ) { dialogInterface: DialogInterface, i: Int ->
-            val datePicker = datePickerDialog.datePicker
-            calendar[Calendar.YEAR] = datePicker.year
-            calendar[Calendar.MONTH] = datePicker.month
-            calendar[Calendar.DAY_OF_MONTH] = datePicker.dayOfMonth
-            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            binding.birthDate.setText(sdf.format(calendar.time))
-            birthdaySelected = sdf.format(calendar.time)
-            checkBirthdayState()
-            dialogInterface.dismiss()
+            datePickerDialog.datePicker.maxDate = maxDate
+            datePickerDialog.setButton(
+                DatePickerDialog.BUTTON_POSITIVE,
+                CacheUtil.getInstance().getTranslations(Text.SELECT, "SELECT")
+            ) { dialogInterface: DialogInterface, i: Int ->
+                val datePicker = datePickerDialog.datePicker
+                calendar[Calendar.YEAR] = datePicker.year
+                calendar[Calendar.MONTH] = datePicker.month
+                calendar[Calendar.DAY_OF_MONTH] = datePicker.dayOfMonth
+                val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                binding.birthDate.setText(sdf.format(calendar.time))
+                birthdaySelected = sdf.format(calendar.time)
+                checkBirthdayState()
+                dialogInterface.dismiss()
+            }
+            datePickerDialog.setButton(
+                DatePickerDialog.BUTTON_NEGATIVE,
+                CacheUtil.getInstance().getTranslations(Text.CANCEL, "CANCEL")
+            ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
+            binding.dateOfBirthView.setOnClickListener { view: View? -> datePickerDialog.show() }
         }
-        datePickerDialog.setButton(
-            DatePickerDialog.BUTTON_NEGATIVE,
-            CacheUtil.getInstance().getTranslations(Text.CANCEL, "CANCEL")
-        ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
-        binding.dateOfBirthView.setOnClickListener { view: View? -> datePickerDialog.show() }
     }
 
     override fun showEmail(show: Boolean) {
