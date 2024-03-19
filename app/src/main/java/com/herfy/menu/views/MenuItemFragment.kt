@@ -32,7 +32,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -59,7 +58,6 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.invisible
-import com.herfy.utils.extensions.loadImage
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.visible
@@ -75,6 +73,7 @@ import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.util.GsonHelper
 import io.shipbook.shipbooksdk.Log
 import java.util.*
+
 
 class MenuItemFragment : BaseFragment(), MenuContract.View {
 
@@ -381,7 +380,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         activity?.cast<BaseActivity> {
             it.runOnUiThread {
 //                binding.mealDealsContainer.visibility = View.GONE
-
                 binding.txtMoreInfo.isVisible = !menuItem.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
                 frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(),menuPresenter)
                 frequentBoughItemsAdapter?.notifyDataSetChanged()
@@ -524,7 +522,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
 
-
     override fun setMenuItem(menuCategory: MenuCategory, menuItem: MenuItem) {
         activity?.cast<BaseActivity> { baseActivity ->
             baseActivity.runOnUiThread {
@@ -542,6 +539,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     menuPresenter!!.addRemoveFavorite(false)
                 }
                 setFavorite(menuItem)
+                binding.etItemNotes
+                    .setHint(CacheUtil
+                        .getInstance()
+                        .getTranslations(Text.NOTE_FOR_MENU_HINT,"e.g. no mayo"))
                 if (!args.isPromo && AuthUtil.getInstance().isSignedIn && !menuItem.isCombo) {
                     binding.favoriteCard.visible()
                 } else {
