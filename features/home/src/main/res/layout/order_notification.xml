@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:visibility="gone"
+    android:id="@+id/cl_order_notif"
+    tools:visibility="visible">
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:background="#B0CFE5"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:strokeWidth="2dp"
+        app:strokeColor="#B0CFE5"
+        app:cardCornerRadius="8dp"
+        app:cardUseCompatPadding="false"
+        app:cardElevation="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingBottom="@dimen/_4sdp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_10sdp">
+
+
+            <ImageView
+                android:id="@+id/iv_order_notif"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/background_order_type_stroke"
+                android:src="@drawable/ic_order_notif"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_status_label"
+                style="@style/Styles.Text.Headline1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="12dp"
+                android:textColor="#0064AC"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@+id/tv_order_type_label"
+                app:layout_constraintEnd_toStartOf="@+id/iv_see_order_details"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/iv_order_notif"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="Preparing" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_order_type_label"
+                style="@style/Styles.Text.Footnote.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="12dp"
+                android:layout_marginBottom="6dp"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:textColor="#404D5C"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_estimate_label"
+                app:layout_constraintEnd_toStartOf="@+id/iv_see_order_details"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/iv_order_notif"
+                app:layout_constraintTop_toBottomOf="@+id/tv_status_label"
+                android:text="Your delivery order from Herfy" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_estimate_value"
+                style="@style/Styles.Text.Headline1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="12dp"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:textColor="#0064AC"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/iv_order_notif"
+                app:layout_constraintTop_toBottomOf="@+id/tv_order_type_label"
+                tools:text="20-40 mins" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_estimate_label"
+                style="@style/Styles.Text.Footnote.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="4dp"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:textColor="#404D5C"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iv_see_order_details"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/tv_estimate_value"
+                app:layout_constraintTop_toBottomOf="@+id/tv_order_type_label"
+                tools:text="(Estimated)" />
+
+
+            <ImageView
+                android:id="@+id/iv_see_order_details"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_arrow_blue_right"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

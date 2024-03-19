@@ -56,6 +56,7 @@
     <dimen name="margin_46">46dp</dimen>
     <dimen name="margin_113dp">113dp</dimen>
     <dimen name="margin_228dp">228dp</dimen>
+    <dimen name="margin_200dp">200dp</dimen>
 
     <dimen name="padding_micro">@dimen/_4sdp</dimen>
     <dimen name="padding_small">@dimen/_8sdp</dimen>

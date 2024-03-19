@@ -1339,6 +1339,12 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         CacheUtil.getInstance().setDineInTableNumber("");
                         CacheUtil.getInstance().setLoyaltyPointsEarnable(orderId, pointsEarnable);
 
+                        if (orderType == OrderType.DELIVERY) {
+                            CacheUtil.getInstance().setPromisedTime(CacheUtil.getInstance().getOrderStore().getAttributes().getPromisedTimeDelta().getDelivery().toString());
+                        } else {
+                            CacheUtil.getInstance().setPromisedTime(CacheUtil.getInstance().getOrderStore().getAttributes().getPromisedTimeDelta().getPickup().toString());
+                        }
+
                         paymentView.setOrderId(orderId);
                         MixpanelUtil.Companion.checkout(
                                 orderId,

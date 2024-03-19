@@ -1045,6 +1045,9 @@ public class Text {
     public static final String REMOVE_THIS_PAYMENT = "remove_this_payment";
 
     public static final String NOTE_TO_RIDER_LABEL = "note_to_rider_label";
+    public static final String YOUR_ORDER_FROM = "your_order_from";
+    public static final String ESTIMATED = "estimated";
+    public static final String MIN = "min";
 
     public static final String GOOD_MORNING_USER = "good_morning_user";
     public static final String GOOD_AFTERNOON_USER = "good_afternoon_user";

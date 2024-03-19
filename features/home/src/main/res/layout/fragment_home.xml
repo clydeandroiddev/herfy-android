@@ -8,12 +8,19 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-            android:id="@+id/layout_banner"
-            layout="@layout/banner_home"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <include
+                android:id="@+id/layout_banner"
+                layout="@layout/banner_home"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <include
+                android:id="@+id/order_tracker"
+                layout="@layout/order_notification"
+                android:layout_marginTop="@dimen/margin_200dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
