@@ -1,26 +1,39 @@
 package com.herfy.history.historynew
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.model.LatLng
+import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.common.formatOrderTime
 import com.herfy.common.orderDetailsType
+import com.herfy.ext.cast
+import com.herfy.firebase.FirebaseService
 import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
 import com.herfy.history.databinding.FragmentNewOrderDetailsBinding
 import com.herfy.history.historynew.adapter.OrderMenuItemsAdapter
+import com.herfy.history.views.OrderFragmentDirections
+import com.herfy.main.MainActivity
 import com.herfy.util.StringUtil
+import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
+import com.herfy.utils.helper.NavigationUtils
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -81,7 +94,19 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
     }
 
     private fun reOrder() {
-
+        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_REORDER)
+        if (CacheUtil.getInstance().application.attributes.menuOnly) {
+            FirebaseService.newNotification(
+                CacheUtil.getInstance().getTranslations(
+                    Text.MENU_ONLY_MESSAGE, "Sorry, ordering is not available at the moment"
+                ), binding.back.context
+            )
+            return
+        }
+        activity?.cast<BaseActivity> {
+            it.showLoadingDialog()
+        }
+        orderPresenter?.checkReorder()
     }
 
     override fun setupViews() {
@@ -250,7 +275,32 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showCart() {
-
+        activity?.cast<MainActivity> {
+            it.runOnUiThread {
+                val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                if (vibrator != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(
+                            VibrationEffect.createOneShot(
+                                500, VibrationEffect.DEFAULT_AMPLITUDE
+                            )
+                        )
+                    } else {
+                        vibrator.vibrate(100)
+                    }
+                }
+                Toast.makeText(
+                    it,
+                    CacheUtil.getInstance()
+                        .getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
+                    Toast.LENGTH_SHORT
+                ).show()
+                it.dismissDialogs()
+                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
+                it.showCartFromHerfyHome()
+                findNavController().popBackStack(R.id.new_history_fragment, true)
+            }
+        }
     }
 
     override fun updateStatus(orderDetails: OrderDetails?, orderStatus: OrderStatus?) {

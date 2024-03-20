@@ -1177,6 +1177,18 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.caloriesPageLabel.visibility = View.VISIBLE
     }
 
+    fun showCartFromHerfyHome() {
+        if (CacheUtil.getInstance().application.attributes.menuOnly) {
+            return
+        }
+        currentDestination = R.id.nav_herfy_home
+        NavigationUtils.navigateSafe(
+            navController, HomeFragmentDirections.actionHomeToCart(
+                CacheUtil.getInstance().preselectedBranch
+            )
+        )
+    }
+
     override fun showCart() {
         if (CacheUtil.getInstance().application.attributes.menuOnly) {
             return
