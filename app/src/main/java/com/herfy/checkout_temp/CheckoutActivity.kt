@@ -1081,7 +1081,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPaymentSummary.viewDeliverySeparator.setVisible(isDeliverCharge)
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.setVisible(isDeliverCharge)
         binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.setVisible(isDeliverCharge)
-        binding
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.text = deliveryChargeTotal
         if (discount != 0.0) {
             binding!!.layoutPaymentSummary.grpDiscount.visibility = View.VISIBLE
