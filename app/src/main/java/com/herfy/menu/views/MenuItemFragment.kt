@@ -357,6 +357,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun setupFonts() {}
     override fun setupTranslations() {
+        Log.d("FAFA","Txt more info")
         binding.txtMoreInfo.text = CacheUtil.getInstance()
             .getTranslations(Text.MORE_INFO, "More Info")
         val originalQuantityWithColon = CacheUtil.getInstance().getTranslations(Text.ITEM_QUANTITY,"Item quantity")
@@ -383,6 +384,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             it.runOnUiThread {
 //                binding.mealDealsContainer.visibility = View.GONE
                 binding.txtMoreInfo.isVisible = !menuItem.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
+                Log.d("FAFA","Txt more info is visible " + binding.txtMoreInfo.isVisible)
                 frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(),menuPresenter)
                 frequentBoughItemsAdapter?.notifyDataSetChanged()
                 binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(requireContext())
@@ -531,11 +533,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
                 binding.favoriteContainer.setOnClickListener {
                     baseActivity.showLoadingDialog()
-                    if (CacheUtil.getInstance().favorites.contains(menuItem.id)) {
-                        binding.favoriteIcon.setColorFilter(Color.parseColor("#DEDEDE"))
-                    } else {
-                        binding.favoriteIcon.setColorFilter(Color.parseColor("#F22424"))
-                    }
                     menuPresenter!!.addRemoveFavorite(false)
                 }
                 setFavorite(menuItem)
@@ -974,9 +971,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 menuItem.id
             )
         ) {
-            binding.favoriteIcon.setColorFilter(Color.parseColor("#F22424"))
+            binding.favoriteIcon.setImageResource(R.drawable.ic_favorite_filled)
         } else {
-            binding.favoriteIcon.setColorFilter(Color.parseColor("#DEDEDE"))
+            binding.favoriteIcon.setImageResource(R.drawable.ic_heart_unselected)
         }
     }
 

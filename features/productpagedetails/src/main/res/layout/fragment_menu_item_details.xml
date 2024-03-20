@@ -64,8 +64,8 @@
 
                     <FrameLayout
                         android:id="@+id/favorite_card"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_xlarge"
                         android:layout_marginEnd="@dimen/margin_large"
                         android:background="@drawable/background_favourite"
@@ -81,12 +81,11 @@
 
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/favorite_icon"
-                                android:layout_width="20dp"
-                                android:layout_height="18dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
-                                android:scaleType="fitXY"
-                                app:srcCompat="@drawable/ic_heart"
-                                app:tint="#DEDEDE" />
+                                android:scaleType="centerCrop"
+                                app:srcCompat="@drawable/ic_heart_unselected" />
 
                         </RelativeLayout>
 
@@ -97,7 +96,7 @@
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="130dp"
+                    android:layout_height="300dp"
                     android:layout_gravity="bottom"
                     android:background="@drawable/bg_menu_item_background"
                     app:contentInsetLeft="0dp"
@@ -144,7 +143,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/margin_large"
-                            android:layout_marginTop="@dimen/margin_small"
+                            android:layout_marginTop="16dp"
                             android:ellipsize="end"
                             android:includeFontPadding="false"
                             android:maxLines="1"
@@ -158,34 +157,34 @@
 
                         <TextView
                             android:id="@+id/total"
+
                             style="@style/Styles.Text.Headline1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="@dimen/margin_large"
                             android:layout_marginBottom="-5dp"
                             android:includeFontPadding="false"
-                            android:textColor="@color/shade_blue"
+                            android:textColor="#2266A7"
                             app:layout_constraintBottom_toBottomOf="@+id/name"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/name"
                             tools:text="SAR 44" />
-
                         <TextView
                             android:id="@+id/description"
                             style="@style/TextAppearance.Footnote.Medium_Regular"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:gravity="start"
-                            android:includeFontPadding="false"
-                            android:lineSpacingExtra="-7dp"
                             android:textAlignment="viewStart"
                             android:textColor="#969696"
+                            android:maxLines="3"
+                            android:ellipsize="end"
                             android:textSize="14sp"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="1.0"
                             app:layout_constraintStart_toStartOf="@+id/name"
                             app:layout_constraintTop_toBottomOf="@+id/name"
-                            tools:text="Grilled chicken patty, topped with a flavorful slice of cheese and shredded fresh lettuce" />
+                            app:layout_constraintBottom_toTopOf="@+id/txtMoreInfo"
+                            tools:text="Dive into a flavor-packed adventure with our New Triple Herfy! Three mouthwatering beef patties, decadent cheese, and our signature herfy sauce, all crowned with crisp lettuce, pickles, and onions. It's a triple delight that takes burger indulgence to new heights!" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/txtMoreInfo"
@@ -193,7 +192,7 @@
                             android:layout_width="wrap_content"
                             android:layout_marginBottom="@dimen/margin_small"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_large"
+
                             android:layout_marginEnd="@dimen/margin_large"
                             android:drawableEnd="@drawable/ic_question_mark"
                             android:drawablePadding="@dimen/margin_micro"
@@ -206,22 +205,22 @@
                             app:lineHeight="20sp"
                             tools:text="More Info"
                             tools:visibility="visible" />
+
                         <androidx.cardview.widget.CardView
                             android:id="@+id/btnCalories"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/margin_small"
+                            android:layout_marginBottom="@dimen/margin_small"
                             android:backgroundTint="@color/white"
                             android:gravity="center"
-                            android:layout_marginTop="@dimen/margin_large"
-                            app:layout_constraintStart_toStartOf="@+id/description"
                             android:orientation="horizontal"
-                            app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
                             app:cardCornerRadius="@dimen/_12sdp"
-                            android:layout_marginBottom="@dimen/margin_small"
                             app:cardPreventCornerOverlap="true"
                             app:cardUseCompatPadding="false"
-                            app:layout_constraintTop_toBottomOf="@+id/description"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/description"
+                            app:layout_constraintTop_toTopOf="@+id/txtMoreInfo"
                             app:strokeColor="#D9E8F3"
                             app:strokeWidth="1dp">
 

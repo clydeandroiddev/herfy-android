@@ -45,7 +45,7 @@
         android:layout_marginTop="@dimen/margin_small"
         android:textColor="@color/color_gray"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="@+id/name"
+        app:layout_constraintStart_toEndOf="@+id/modifierImage"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/name"
         tools:text="Select up to 2"
