@@ -545,8 +545,9 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
             FragmentManager manager = getSupportFragmentManager();
             //  Ensure the activity is in a valid state for fragment transactions to prevent IllegalStateException
             if (isCanProceedFragmentTransaction(manager)) {
-
+                System.out.println("Foodics online dismiss");
                 if (isDialogVisible(alertDialog)) {
+                    System.out.println("Foodics online dismiss test called");
                     dismissDialog(alertDialog);
                 }
 
@@ -555,11 +556,13 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                 }
 
                 if (isDialogVisible(loadingDialog)) {
+                    System.out.println("Foodics online loading");
                     dismissDialog(loadingDialog);
 
                 }
 
                 if (isDialogVisible(progressDialog)) {
+                    System.out.println("Foodics online progress");
                     dismissDialog(progressDialog);
 
                 }

@@ -1,5 +1,4 @@
 package com.herfy.payment;
-
 import android.location.Geocoder;
 import android.util.Pair;
 
@@ -116,6 +115,12 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
     public PaymentPresenter(PaymentContract.View paymentView) {
         this.paymentView = paymentView;
+
+        if (this.paymentView == null) {
+            System.out.println("Foodics null");
+        } else {
+            System.out.println("Foodics is initialized");
+        }
         this.paymentView.setPresenter(this);
         menuItems = CacheUtil.getInstance().getCart();
         try {
@@ -1363,11 +1368,19 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                                     return;
                                 case "checkout":
                                 case "foodics-online":
-                                    if (CacheUtil.getInstance().getCustomerCards().isEmpty())
-                                        paymentView.showCheckoutPaymentForm(orderId);
-                                    else
-                                        paymentView.showCardDialogList(orderId);
-                                    break;
+
+                                    try {
+                                        System.out.println("Foodics online called");
+                                        if (CacheUtil.getInstance().getCustomerCards().isEmpty()) {
+                                            System.out.println("Foodics online called test");
+                                            paymentView.showCheckoutPaymentForm(orderId);
+                                        } else {
+                                            paymentView.showCardDialogList(orderId);
+                                        }
+                                    } catch (Exception e) {
+                                        System.out.println("Foodics online called exception " + e);
+                                        e.printStackTrace(); // or log the exception
+                                    }
                                 case "moneyhash":
                                 case "money-hash":
                                     getMoneyHashIntent(orderId, validatedTotal);

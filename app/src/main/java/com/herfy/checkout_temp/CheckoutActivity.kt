@@ -33,6 +33,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.checkout.tokenization.model.TokenDetails
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -71,6 +72,7 @@ import com.herfy.payment.savedcards.CVVDialogAlert.OnCVVAction
 import com.herfy.payment.savedcards.SaveDialogAlert
 import com.herfy.payment.savedcards.SavedCardsDialog
 import com.herfy.payment.views.CustomCheckoutDialog
+import com.herfy.payment.views.CustomCheckoutDialog.OnActionSelectedListener
 import com.herfy.payment.views.MoyasarActivity
 import com.herfy.payment.views.OrderDialogFragment
 import com.herfy.ratings.AppRatingBroadcastReceiver
@@ -159,7 +161,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private var orderType: OrderType? = null
     private val OTP_REQUEST = 100
     private var loyaltypointsInput = 0
-    private val saveDialogAlert: SaveDialogAlert? = null
+    private var saveDialogAlert: SaveDialogAlert? = null
     private var savedCardsDialog: SavedCardsDialog? = null
     private var cvvDialogAlert: CVVDialogAlert? = null
     private var passedTotalFromCart = 0.0
@@ -916,7 +918,92 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun showValidateOrderError(errors: List<String>) {}
     override fun sendOrder() {}
     override fun initializeTap(orderId: String, total: Double) {}
-    override fun showCheckoutPaymentForm(orderId: String) {}
+    override fun showCheckoutPaymentForm(orderId: String) {
+        println("Foodics online checkout payment form")
+
+        if (isCanProceedFragmentTransaction(supportFragmentManager)) {
+            println("Foodics online checkout payment form 1")
+            dialogCheckout = CustomCheckoutDialog(this)
+            dialogCheckout!!.setOnActionSelectedListener(object : OnActionSelectedListener {
+                override fun onFormSubmit() {
+                    showProgressDialog(CacheUtil.getInstance().getTranslations(Text.LOADING))
+                }
+
+                override fun onTokenGenerated(response: TokenDetails?) {
+                    //dialogCheckout.clear();
+                    showLoadingDialog()
+                    saveDialogAlert =
+                        SaveDialogAlert.newInstance(object : SaveDialogAlert.OnSavedAction {
+                            override fun onClose() {
+                                saveDialogAlert!!.dismissAllowingStateLoss()
+                                checkTokenGenerated(response!!.token, null, false, orderId)
+                            }
+
+                            override fun onProceed() {
+                                saveDialogAlert!!.dismissAllowingStateLoss()
+                                checkTokenGenerated(response!!.token, null, true, orderId)
+                            }
+                        })
+                    saveDialogAlert?.setCancelable(false)
+                    saveDialogAlert?.show(
+                        supportFragmentManager,
+                        SaveDialogAlert::class.java.toString()
+                    )
+                }
+
+                override fun onError(error: String?) {
+                    var reason = "CardTokenisationFail"
+                    if (error != null) {
+                        reason = error
+                    }
+                    logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Failed (Reason: " + reason + ")")
+                    sendOrderLog(
+                        ApiLogLevel.ERROR, orderId, paymentPresenter!!.paymentProvider,
+                        "Card Payment Failed (Reason: $reason)"
+                    )
+                    dismissDialogs()
+                }
+
+                override fun on3DSSuccess() {
+                    logInfo(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Success")
+                    paymentPresenter!!.sendUpsells()
+                    dialogCheckout!!.dismissAllowingStateLoss()
+                }
+
+                override fun on3DSFailure(error: String?) {
+                    logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Failed (Reason: on3DSFailure " + error + ")")
+                    sendOrderLog(
+                        ApiLogLevel.ERROR, orderId, paymentPresenter!!.paymentProvider,
+                        "Card Payment Failed (Reason: on3DSFailure $error)"
+                    )
+                    showCardFailed()
+                }
+
+                override fun onBackPressed() {
+                    sendOrderLog(
+                        ApiLogLevel.INFO,
+                        orderId,
+                        paymentPresenter!!.paymentProvider,
+                        "Card Payment onBackPressed"
+                    )
+                    sendOrderLog(
+                        ApiLogLevel.WARNING,
+                        orderId,
+                        paymentPresenter!!.paymentProvider,
+                        "Card Payment onBackPressed"
+                    )
+                    dialogCheckout!!.dismissAllowingStateLoss()
+                }
+            })
+
+
+            dismissDialogs()
+            dialogCheckout!!.show(
+                supportFragmentManager,
+                CustomCheckoutDialog::class.java.simpleName
+            )
+        }
+    }
     override fun showCardFailed() {}
     override fun showMessage(message: String) {
         dismissDialogs()
@@ -1083,7 +1170,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             val color = CacheUtil.getInstance().colorMain
             val ptsRedeemed = CacheUtil.getInstance().getTranslations(Text.PTS_LABEL, "(x) pts")
                 .replace("(x)", pointsUsed.toString())
-            binding
 
 //            tvRedeemPoints.setText(HtmlCompat.fromHtml("<font color=" + color + ">" + ptsRedeemed + "</font> ", HtmlCompat.FROM_HTML_MODE_LEGACY));
             binding!!.layoutPaymentSummary.tvRedeemPointsEquiv.text = CacheUtil.getInstance()
