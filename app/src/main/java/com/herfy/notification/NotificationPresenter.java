@@ -246,6 +246,21 @@ public class NotificationPresenter implements  NotificationContract.Presenter {
     }
 
     @Override
+    public void markNotificationAsRead(String notificationId) {
+        NotificationApiCall.getInstance().markNotificationAsRead(notificationId, new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+
+            }
+
+            @Override
+            public void onError(Object o) {
+
+            }
+        });
+    }
+
+    @Override
     public void onBindNotificationViewAtPosition(int position, NotificationViewHolder notificationViewHolder) {
         notificationViewHolder.setupNotification(notifications.get(position));
     }

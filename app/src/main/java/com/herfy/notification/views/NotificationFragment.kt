@@ -74,7 +74,12 @@ class NotificationFragment : BaseFragment(), NotificationContract.View {
     }
 
     override fun setupViews() {
-
+        binding.toolbar.apply {
+            title = CacheUtil.getInstance().getTranslations(Text.NOTIFICATIONS, "Notifications")
+            setNavButtonAction{
+                findNavController().navigateUp()
+            }
+        }
     }
 
     override fun setupFonts() {}

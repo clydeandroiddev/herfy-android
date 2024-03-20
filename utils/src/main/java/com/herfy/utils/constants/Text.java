@@ -1058,6 +1058,7 @@ public class Text {
     public static final String DELIVERY_IN_MINS = "deliver_in_mins";
     public static final String PICKUP_IN_MINS = "pickup_in_mins";
     public static final String DINE_IN_MINS = "dine_in_mins";
+    public static final String NEW_CAPS = "new_caps";
 
     public static final String MY_ORDERS = "my_orders";
 

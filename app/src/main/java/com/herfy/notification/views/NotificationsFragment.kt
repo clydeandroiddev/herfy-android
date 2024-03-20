@@ -27,10 +27,8 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
-import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
-import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.viewLifecycleScope
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData
@@ -99,12 +97,18 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
                 override fun onRowClicked(position: Int) {}
                 override fun onIndependentViewClicked(independentViewID: Int, position: Int) {
                     if (independentViewID == R.id.container) {
-                        val notification = notificationPresenter?.getNotification(position);
+                        val notification = notificationPresenter?.getNotification(position)
                         val notifDeeplink = notification?.notifData?.deeplink
+                        val notificationId = notificationPresenter?.getNotification(position)?.id
+                        notificationId?.let {
+                            notificationPresenter?.markNotificationAsRead(it)
+                        }
                         if (notifDeeplink != null && notifDeeplink.type != null) {
                             processDeeplink(notifDeeplink)
-                            notificationPresenter?.getNotification(notification.id)
                         } else {
+                            notificationId?.let {
+                                findNavController().navigateToDeepLink("nav_notification/$it")
+                            }
                         }
                     }
                 }
@@ -213,16 +217,13 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
         when (type) {
             "home" -> findNavController().navigateUp()
             "categories", "category" -> findNavController().navigateToDeepLink("nav_menu/$value")
-            "item" -> NavigationUtils.navigateSafe(findNavController(), NotificationsFragmentDirections.actionNotificationsToMenuItem("", value))
-            "digital-coupon", "promotions", "promo" -> {
-                showLoadingDialog()
-                notificationPresenter?.getDigitalCoupons(value)
-            }
+            "item" -> findNavController().navigateToDeepLink("nav_menu_item/$value")
+            "digital-coupon", "promotions", "promo" -> findNavController().navigateToDeepLink("nav_promotions")
             "shoppingcart", "shopping-cart", "cart" -> {
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
-                NavigationUtils.navigateSafe(findNavController(), NotificationsFragmentDirections.actionNotificationsToCart())
+                findNavController().navigateToDeepLink("nav_cart")
             }
-            "order" -> NavigationUtils.navigateSafe(findNavController(), NotificationsFragmentDirections.actionNotificationsToOrder(value))
+            "order" -> findNavController().navigateToDeepLink("nav_order/$value")
         }
     }
 

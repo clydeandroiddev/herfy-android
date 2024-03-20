@@ -12,6 +12,8 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
 import com.herfy.notification.NotificationContract;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.DateFormatterUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData;
@@ -28,6 +30,9 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder implements N
 
     private Context context;
     private NotificationContract.Presenter notificationPresenter;
+
+    @BindView(R.id.tvNew)
+    TextView tvNew;
 
     @BindView(R.id.tvNotifTitle)
     TextView title;
@@ -86,6 +91,12 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder implements N
     @Override
     public void setupNotification(Notification notification) {
         String imageUrl = notification.getNotifData().getImageUri();
+        tvNew.setText(CacheUtil.getInstance().getTranslations(Text.NEW_CAPS, "NEW"));
+        if(notification.getNotifData().getReadAt() == null) {
+            tvNew.setVisibility(View.VISIBLE);
+        } else {
+            tvNew.setVisibility(View.GONE);
+        }
         title.setText(notification.getNotifData().getTitle().getValue(LocaleUtil.getInstance().getLanguage()));
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(notificationImage);
