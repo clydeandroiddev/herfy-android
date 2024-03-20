@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/order_type_bg_color"
+        android:isScrollContainer="false">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/topBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@color/order_type_bg_color"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="20dp"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_navigate_back"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/title"
+                        style="@style/Styles.Text.Caption"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginEnd="30dp"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:textColor="#0c0c0c"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Order Details" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E6E8EB" />
+
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="110dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="#E6F0F7"
+                                android:padding="16dp"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/dateAndTime"
+                                    style="@style/Styles.Text.Caption"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="10dp"
+                                    android:gravity="center"
+                                    android:includeFontPadding="false"
+                                    android:textColor="#212121"
+                                    android:textSize="18sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="Yesterday, 2 Feb, 07:00PM" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/orderNumber"
+                                    style="@style/Styles.Text.Caption.Semibold"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:ellipsize="end"
+                                    android:gravity="center"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="#212121"
+                                    android:textSize="12sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/dateAndTime"
+                                    tools:text="Order # 122323" />
+
+                                <ImageView
+                                    android:id="@+id/locationImage"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="24dp"
+                                    android:src="@drawable/ic_location_dot"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/orderNumber" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/locationName"
+                                    style="@style/Styles.Text.Caption"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginStart="12dp"
+                                    android:gravity="center"
+                                    android:includeFontPadding="false"
+                                    android:textColor="#212121"
+                                    android:textSize="16sp"
+                                    app:layout_constraintStart_toEndOf="@id/locationImage"
+                                    app:layout_constraintTop_toTopOf="@id/locationImage"
+                                    tools:text="Home" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/locationAddress"
+                                    style="@style/Styles.Text.Caption.Regular"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:ellipsize="end"
+                                    android:paddingEnd="16dp"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="3"
+                                    android:textColor="#212121"
+                                    android:textSize="12sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="@id/locationName"
+                                    app:layout_constraintTop_toBottomOf="@id/locationName"
+                                    tools:text="Al Batha Street, Riyadh, Saudi Arabia" />
+
+                                <ImageView
+                                    android:id="@+id/statusImage"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="16dp"
+                                    android:src="@drawable/ic_access_time"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/locationAddress" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/statusDateAndTime"
+                                    style="@style/Styles.Text.Caption"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginStart="12dp"
+                                    android:gravity="center"
+                                    android:includeFontPadding="false"
+                                    android:textColor="#212121"
+                                    android:textSize="16sp"
+                                    app:layout_constraintStart_toEndOf="@id/statusImage"
+                                    app:layout_constraintTop_toTopOf="@id/statusImage"
+                                    tools:text="Delivered, 2 Feb, 2024, 07:40 PM" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/riderName"
+                                    style="@style/Styles.Text.Caption.Regular"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="4dp"
+                                    android:ellipsize="end"
+                                    android:gravity="center"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="2"
+                                    android:textColor="#212121"
+                                    android:textSize="12sp"
+                                    android:visibility="gone"
+                                    app:layout_constraintStart_toStartOf="@id/statusDateAndTime"
+                                    app:layout_constraintTop_toBottomOf="@id/statusDateAndTime"
+                                    tools:text="by Rider Name"
+                                    tools:visibility="visible" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="24dp"
+                                    app:layout_constraintTop_toBottomOf="@id/riderName" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="24dp"
+                                android:scaleType="fitXY"
+                                android:src="@drawable/ic_union_details"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="4dp"
+                                android:background="#F7F7F7"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/orderItemsLabel"
+                            style="@style/Styles.Text.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="10dp"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:textColor="#000000"
+                            android:textSize="16sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Order Items" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/itemsList"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:itemCount="1"
+                            tools:listitem="@layout/item_order_menu" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="8dp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="#E6E8EB" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/paymentSummaryLabel"
+                            style="@style/Styles.Text.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="24dp"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:textColor="#0C0C0C"
+                            android:textSize="16sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Payment Summary" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/subtotalContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/subtotalLabel"
+                                style="@style/Styles.Text.Caption.Regular"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:textColor="#55667B"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Subtotal" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/priceSubtotal"
+                                style="@style/Styles.Text.Footnote_Bold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:textColor="#0C0C0C"
+                                android:textSize="12sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="SAR 24" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#E6E8EB"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/deliverContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/deliverLabel"
+                                style="@style/Styles.Text.Caption.Regular"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:textColor="#55667B"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Delivery" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/deliverTotal"
+                                style="@style/Styles.Text.Footnote_Bold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:textColor="#0C0C0C"
+                                android:textSize="12sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="SAR 24" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#E6E8EB"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/discountContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/discountLabel"
+                                style="@style/Styles.Text.Caption.Regular"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:textColor="#55667B"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Discount" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/discountTotal"
+                                style="@style/Styles.Text.Footnote_Bold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:textColor="#0C0C0C"
+                                android:textSize="12sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="SAR 24" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#E6E8EB"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/totalContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/totalLabel"
+                                style="@style/Styles.Text.Caption.Regular"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:textColor="#55667B"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Total" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/totalPrice"
+                                style="@style/Styles.Text.Footnote_Bold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:textColor="#0C0C0C"
+                                android:textSize="12sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="SAR 24" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="#E6E8EB"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/paymentMethodLabel"
+                            style="@style/Styles.Text.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="20dp"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:textColor="#0C0C0C"
+                            android:textSize="16sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Payment Method" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:paddingStart="16dp"
+                            android:paddingTop="6dp"
+                            android:paddingEnd="16dp"
+                            android:paddingBottom="6dp">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/chooseCurbside"
+                                android:layout_width="match_parent"
+                                android:layout_height="84dp"
+                                android:background="@drawable/background_cards"
+                                android:paddingStart="10dp"
+                                android:paddingEnd="10dp"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <ImageView
+                                    android:id="@+id/curbsideEllipse"
+                                    android:layout_width="64dp"
+                                    android:layout_height="64dp"
+                                    android:src="@drawable/ic_card_bg_new"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <ImageView
+                                    android:id="@+id/cardImage"
+                                    android:layout_width="64dp"
+                                    android:layout_height="64dp"
+                                    android:padding="16dp"
+                                    app:layout_constraintBottom_toBottomOf="@id/curbsideEllipse"
+                                    app:layout_constraintEnd_toEndOf="@id/curbsideEllipse"
+                                    app:layout_constraintStart_toStartOf="@id/curbsideEllipse"
+                                    app:layout_constraintTop_toTopOf="@id/curbsideEllipse" />
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center_vertical"
+                                    android:orientation="vertical"
+                                    android:paddingStart="10dp"
+                                    android:paddingEnd="5dp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@id/curbsideEllipse">
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        android:id="@+id/primaryLabel"
+                                        style="@style/Styles.Text.Footnote_Bold"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="#0064AC"
+                                        android:textSize="12sp"
+                                        android:visibility="gone"
+                                        tools:text="Primary" />
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        android:id="@+id/cardNumber"
+                                        style="@style/Styles.Text.Footnote.Regular_Large"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:ellipsize="end"
+                                        android:maxLines="1"
+                                        android:textColor="#000000"
+                                        android:textSize="16sp"
+                                        tools:text="Visa **** 6789" />
+
+                                </LinearLayout>
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/ratingContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:background="#FEF5E7"
+                            android:paddingStart="16dp"
+                            android:paddingTop="20dp"
+                            android:paddingEnd="16dp"
+                            android:paddingBottom="50dp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <!-- TODO -->
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </LinearLayout>
+
+                </androidx.core.widget.NestedScrollView>
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <!--                <androidx.constraintlayout.widget.ConstraintLayout-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:paddingStart="6dp"-->
+                <!--                    android:paddingTop="10dp"-->
+                <!--                    android:paddingEnd="16dp">-->
+
+                <!--                    <androidx.constraintlayout.widget.Guideline-->
+                <!--                        android:id="@+id/center"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:orientation="vertical"-->
+                <!--                        app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--                        app:layout_constraintEnd_toEndOf="parent"-->
+                <!--                        app:layout_constraintGuide_percent="0.5"-->
+                <!--                        app:layout_constraintStart_toStartOf="parent"-->
+                <!--                        app:layout_constraintTop_toTopOf="parent" />-->
+
+                <!--                    <androidx.appcompat.widget.AppCompatButton-->
+                <!--                        android:id="@+id/rateButton"-->
+                <!--                        style="@style/Styles.Text.Caption"-->
+                <!--                        android:layout_width="0dp"-->
+                <!--                        android:layout_height="48dp"-->
+                <!--                        android:layout_marginStart="10dp"-->
+                <!--                        android:layout_marginEnd="5dp"-->
+                <!--                        android:background="@drawable/background_blue_stroke"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:textColor="#1848A8"-->
+                <!--                        android:textSize="16sp"-->
+                <!--                        app:layout_constraintEnd_toStartOf="@id/center"-->
+                <!--                        app:layout_constraintStart_toStartOf="parent"-->
+                <!--                        app:layout_constraintTop_toTopOf="parent"-->
+                <!--                        tools:text="Rate" />-->
+
+                <!--                    <androidx.appcompat.widget.AppCompatButton-->
+                <!--                        android:id="@+id/reOrderButton"-->
+                <!--                        style="@style/Styles.Text.Caption"-->
+                <!--                        android:layout_width="0dp"-->
+                <!--                        android:layout_height="48dp"-->
+                <!--                        android:layout_marginStart="10dp"-->
+                <!--                        android:background="@drawable/background_button_common"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:textColor="#FFFFFF"-->
+                <!--                        android:textSize="16sp"-->
+                <!--                        app:layout_constraintEnd_toEndOf="parent"-->
+                <!--                        app:layout_constraintStart_toEndOf="@id/rateButton"-->
+                <!--                        app:layout_constraintTop_toTopOf="parent"-->
+                <!--                        tools:text="Reorder" />-->
+
+
+                <!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="6dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="16dp">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.5" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/rateButton"
+                        style="@style/Styles.Text.Caption"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/background_blue_stroke"
+                        android:gravity="center"
+                        android:textColor="#1848A8"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/center"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Rate" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/reOrderButton"
+                        style="@style/Styles.Text.Caption"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/background_button_common"
+                        android:gravity="center"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/rateButton"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Reorder" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/reOrderButtonFull"
+                        style="@style/Styles.Text.Caption"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/background_button_common"
+                        android:gravity="center"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Reorder" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/blocker"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="57dp"
+            android:background="@color/order_type_bg_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

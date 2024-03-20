@@ -12,6 +12,23 @@
 
         <deepLink app:uri="android-app://com.herfy/new_history_fragment_nav" />
 
+        <action
+            android:id="@+id/action_history_to_details"
+            app:destination="@id/new_order_details_fragment"
+            app:popUpTo="@+id/new_history_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/new_order_details_fragment"
+        android:name="com.herfy.history.historynew.NewOrderDetailsFragment"
+        tools:layout="@layout/fragment_new_order_details">
+
+        <argument
+            android:name="orderId"
+            app:argType="string"
+            app:nullable="false" />
+
     </fragment>
 
 </navigation>

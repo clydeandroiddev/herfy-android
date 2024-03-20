@@ -32,6 +32,23 @@ fun String.formatDate(): String {
 }
 
 
+fun String.orderDetailsType(): String {
+    val type = OrderType.fromString(this.toLowerCase())
+    return when (type) {
+        OrderType.DINE_IN, OrderType.EAT_IN -> {
+            CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In") + ", "
+        }
+
+        OrderType.DELIVERY -> {
+            CacheUtil.getInstance().getTranslations(Text.DELIVERED, "Delivered") + ", "
+        }
+
+        else -> {
+            CacheUtil.getInstance().getTranslations(Text.PICKED, "Picked") + ", "
+        }
+    }
+}
+
 fun String.orderTypeString(): String {
     val type = OrderType.fromString(this.toLowerCase())
     when (type) {
@@ -64,6 +81,10 @@ fun String.orderTypeString(): String {
 }
 
 fun String.formatOrderTime(): String {
+    return this.formatOrderTime(false)
+}
+
+fun String.formatOrderTime(forceIncludeYear: Boolean): String {
     return try {
         var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
@@ -83,15 +104,18 @@ fun String.formatOrderTime(): String {
         val finalYear = timeValue?.let { simpleDateFormat.format(it) }.orEmpty()
 
         val dateValues = mutableListOf<String>()
-        if (isToday(actualDate)) {
-            dateValues.add(CacheUtil.getInstance().getTranslations(Text.TODAY, "Today") + ", ")
-        } else if (isYesterday(actualDate)) {
-            dateValues.add(
-                CacheUtil.getInstance().getTranslations(Text.YESTERDAY, "Yesterday") + ", "
-            )
+        if (!forceIncludeYear) {
+            if (isToday(actualDate)) {
+                dateValues.add(CacheUtil.getInstance().getTranslations(Text.TODAY, "Today") + ", ")
+            } else if (isYesterday(actualDate)) {
+                dateValues.add(
+                    CacheUtil.getInstance().getTranslations(Text.YESTERDAY, "Yesterday") + ", "
+                )
+            }
         }
+
         dateValues.add("$finalDay, ")
-        if (!isSameYear(actualDate)) {
+        if (forceIncludeYear || !isSameYear(actualDate)) {
             dateValues.add("$finalYear, ")
         }
         dateValues.add(finalTime)

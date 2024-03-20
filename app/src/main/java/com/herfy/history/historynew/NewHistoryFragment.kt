@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.model.LatLng
+import com.herfy.authentication.views.LoginFragmentDirections
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.common.formatOrderTime
@@ -17,6 +19,7 @@ import com.herfy.history.databinding.FragmentNewOrderHistoryBinding
 import com.herfy.history.historynew.adapter.HistoryListAdapter
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
@@ -85,7 +88,9 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
             historyListAdapter =
                 HistoryListAdapter(ArrayList(), object : HistoryListAdapter.HistoryListener {
                     override fun onViewDetails(item: OrderHistory, position: Int) {
-
+                        findNavController().navigate(
+                            NewHistoryFragmentDirections.actionHistoryToDetails(item.id)
+                        )
                     }
 
                     override fun onReorder(item: OrderHistory, position: Int) {

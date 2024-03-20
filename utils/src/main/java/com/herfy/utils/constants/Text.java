@@ -1072,4 +1072,9 @@ public class Text {
     public static final String DELIVER = "deliver";
 
     public static final String ORDER_NUM = "order_num";
+
+    public static final String DELIVERED = "delivered";
+    public static final String ORDER_ITEMS = "order_items";
+    public static final String PAYMENT_SUMMARY = "payment_summary";
+    public static final String PICKED = "picked";
 }
