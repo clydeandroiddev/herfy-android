@@ -1,5 +1,7 @@
 package com.herfy.history;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -147,7 +149,9 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                                 if (includedObject.getString("type").equals("order-item")) {
                                     MenuItem menuItem = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<MenuItem>() {
                                     }.getType());
-                                    menItems.add(menuItem.getImage());
+                                    if (menuItem.getRelationships().getRelationshipOrder().links.self.contains(order.getId())) {
+                                        menItems.add(menuItem.getAttributes().getImage());
+                                    }
                                 }
                             }
                         }

@@ -34,7 +34,6 @@ fun String.formatDate(): String {
 
 fun String.orderTypeString(): String {
     val type = OrderType.fromString(this.toLowerCase())
-    Log.e("ADADADADAD", "ADADADAd:" + type)
     when (type) {
         OrderType.PICKUP, OrderType.EAT_IN, OrderType.DRIVE_THRU -> {
             val headerText: String? = if (type == OrderType.EAT_IN) {
@@ -46,86 +45,66 @@ fun String.orderTypeString(): String {
             }
             return headerText.orEmpty()
         }
+
         OrderType.DINE_IN -> {
             return CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
         }
+
         OrderType.DELIVERY -> {
             return CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
         }
+
         OrderType.CURBSIDE -> {
             return CacheUtil.getInstance().getTranslations(Text.CURBSIDE, "Curbside")
         }
+
         else -> {}
     }
     return ""
 }
 
 fun String.formatOrderTime(): String {
-    try {
+    return try {
         var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
-        val dateValue = simpleDateFormat.parse(this)
+        val timeValue = simpleDateFormat.parse(this)
+        simpleDateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getDefault()
+        val actualDate = timeValue?.let { simpleDateFormat.format(it) }.orEmpty()
 
+        simpleDateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getDefault()
+        val finalTime = timeValue?.let { simpleDateFormat.format(it) }.orEmpty()
         simpleDateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
         simpleDateFormat.timeZone = TimeZone.getDefault()
-        val dateMonth = dateValue?.let { simpleDateFormat.format(it) }
-
-        // Split the formatted date to extract date and time parts
-        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
-        var time = dateValue?.let { timeFormat.format(it) }
-
-        // Get current date and time
-        val currentDate = Date()
-        val currentCalendar = Calendar.getInstance().apply {
-            time = currentDate.toString()
-        }
-
-        // Parse the date part to check if it's today, yesterday, or in the same year
-        val parsedCalendar = Calendar.getInstance().apply {
-            if (dateValue != null) {
-                time = dateValue.toString()
-            }
-        }
+        val finalDay = timeValue?.let { simpleDateFormat.format(it) }.orEmpty()
+        simpleDateFormat = SimpleDateFormat("yyyy", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getDefault()
+        val finalYear = timeValue?.let { simpleDateFormat.format(it) }.orEmpty()
 
         val dateValues = mutableListOf<String>()
-
-        // Check if it's today
-        if (currentCalendar.get(Calendar.YEAR) == parsedCalendar.get(Calendar.YEAR) && currentCalendar.get(
-                Calendar.DAY_OF_YEAR
-            ) == parsedCalendar.get(Calendar.DAY_OF_YEAR)
-        ) {
-            dateValues.add(CacheUtil.getInstance().getTranslations(Text.TODAY, "Today"))
+        if (isToday(actualDate)) {
+            dateValues.add(CacheUtil.getInstance().getTranslations(Text.TODAY, "Today") + ", ")
+        } else if (isYesterday(actualDate)) {
+            dateValues.add(
+                CacheUtil.getInstance().getTranslations(Text.YESTERDAY, "Yesterday") + ", "
+            )
         }
-
-        // Check if it's yesterday
-        currentCalendar.add(Calendar.DAY_OF_YEAR, -1)
-        if (currentCalendar.get(Calendar.YEAR) == parsedCalendar.get(Calendar.YEAR) && currentCalendar.get(
-                Calendar.DAY_OF_YEAR
-            ) == parsedCalendar.get(Calendar.DAY_OF_YEAR)
-        ) {
-            dateValues.add(CacheUtil.getInstance().getTranslations(Text.YESTERDAY, "Yesterday"))
+        dateValues.add("$finalDay, ")
+        if (!isSameYear(actualDate)) {
+            dateValues.add("$finalYear, ")
         }
+        dateValues.add(finalTime)
 
-        // Check if it's in the same year
-        currentCalendar.time = currentDate // Reset calendar to current date
-        if (currentCalendar.get(Calendar.YEAR) != parsedCalendar.get(Calendar.YEAR)) {
-            if (dateMonth != null) {
-                dateValues.add(dateMonth)
-            }
+        var displayTime = ""
+        for (i in dateValues) {
+            displayTime += i
         }
-
-        // Combine date values with time
-        val formattedDate = if (dateValues.isNotEmpty()) {
-            "${dateValues.joinToString(", ")} $time"
-        } else {
-            "$dateMonth $time"
-        }
-
-        return formattedDate
+        displayTime
     } catch (e: ParseException) {
         e.printStackTrace()
+        return this.defaultTime()
     }
-    return this.defaultTime()
 }
 
 fun String.defaultTime(): String {
@@ -140,4 +119,57 @@ fun String.defaultTime(): String {
         e.printStackTrace()
     }
     return ""
+}
+
+fun isToday(dateString: String): Boolean {
+    return try {
+        val inputFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        val date = inputFormat.parse(dateString)
+        val calendarToday = Calendar.getInstance()
+        val calendarGiven = Calendar.getInstance().apply {
+            time = date
+        }
+        calendarToday.get(Calendar.YEAR) == calendarGiven.get(Calendar.YEAR) &&
+                calendarToday.get(Calendar.MONTH) == calendarGiven.get(Calendar.MONTH) &&
+                calendarToday.get(Calendar.DAY_OF_MONTH) == calendarGiven.get(Calendar.DAY_OF_MONTH)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+}
+
+
+fun isYesterday(dateString: String): Boolean {
+    return try {
+        val inputFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        val date = inputFormat.parse(dateString)
+        val calendarGiven = Calendar.getInstance().apply {
+            time = date
+        }
+        val calendarYesterday = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_MONTH, -1) // Subtract one day
+        }
+        calendarGiven.get(Calendar.YEAR) == calendarYesterday.get(Calendar.YEAR) &&
+                calendarGiven.get(Calendar.MONTH) == calendarYesterday.get(Calendar.MONTH) &&
+                calendarGiven.get(Calendar.DAY_OF_MONTH) == calendarYesterday.get(Calendar.DAY_OF_MONTH)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+}
+
+
+fun isSameYear(dateString: String): Boolean {
+    return try {
+        val inputFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        val date = inputFormat.parse(dateString)
+        val calendarGiven = Calendar.getInstance().apply {
+            time = date
+        }
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        calendarGiven.get(Calendar.YEAR) == currentYear
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
 }
