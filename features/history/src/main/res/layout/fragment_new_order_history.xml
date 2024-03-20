@@ -276,7 +276,7 @@
                                     </LinearLayout>
 
                                     <androidx.appcompat.widget.AppCompatButton
-                                        android:id="@+id/continueButton"
+                                        android:id="@+id/trackButton"
                                         style="@style/Styles.Text.Caption"
                                         android:layout_width="wrap_content"
                                         android:layout_height="48dp"
@@ -316,6 +316,8 @@
                             android:includeFontPadding="false"
                             android:textColor="#101010"
                             android:textSize="18sp"
+                            tools:visibility="visible"
+                            android:visibility="gone"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="Past Orders" />

@@ -107,20 +107,6 @@ fun String.formatOrderTime(): String {
     }
 }
 
-fun String.defaultTime(): String {
-    try {
-        var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
-        val dateValue = simpleDateFormat.parse(this)
-        simpleDateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
-        simpleDateFormat.timeZone = TimeZone.getDefault()
-        return dateValue?.let { simpleDateFormat.format(it) }.orEmpty()
-    } catch (e: ParseException) {
-        e.printStackTrace()
-    }
-    return ""
-}
-
 fun isToday(dateString: String): Boolean {
     return try {
         val inputFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
@@ -172,4 +158,18 @@ fun isSameYear(dateString: String): Boolean {
         e.printStackTrace()
         false
     }
+}
+
+fun String.defaultTime(): String {
+    try {
+        var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+        val dateValue = simpleDateFormat.parse(this)
+        simpleDateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getDefault()
+        return dateValue?.let { simpleDateFormat.format(it) }.orEmpty()
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
+    return ""
 }

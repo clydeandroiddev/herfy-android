@@ -1069,5 +1069,7 @@ public class Text {
 
     public static final String CART_ITEM_COUNT_LABEL = "cart_item_count_label";
     public static final String YESTERDAY = "yesterday";
-    public static final String DELIVER = "Deliver";
+    public static final String DELIVER = "deliver";
+
+    public static final String ORDER_NUM = "order_num";
 }
