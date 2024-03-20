@@ -12,6 +12,8 @@ import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -1181,12 +1183,15 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         if (CacheUtil.getInstance().application.attributes.menuOnly) {
             return
         }
-        currentDestination = R.id.nav_herfy_home
-        NavigationUtils.navigateSafe(
-            navController, HomeFragmentDirections.actionHomeToCart(
-                CacheUtil.getInstance().preselectedBranch
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            currentDestination = R.id.nav_herfy_home
+            NavigationUtils.navigateSafe(
+                navController, HomeFragmentDirections.actionHomeToCart(
+                    CacheUtil.getInstance().preselectedBranch
+                )
             )
-        )
+        }, 500)
     }
 
     override fun showCart() {
@@ -1246,21 +1251,23 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     override fun showRatings(ratings: List<Rating>) {
-        runOnUiThread {
-            try {
-                val ratingsBottomSheetDialogFragment =
-                    RatingsBottomSheetDialogFragment.newInstance({ dialog, ratings ->
-                        dialog.dismiss()
-                        showLoadingDialog()
-                        mainPresenter!!.sendOrderFeedback(ratings)
-                    }, ratings)
-                ratingsBottomSheetDialogFragment.show(
-                    supportFragmentManager, RatingsBottomSheetDialogFragment::class.java.simpleName
-                )
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
+
+        //HIDE this
+//        runOnUiThread {
+//            try {
+//                val ratingsBottomSheetDialogFragment =
+//                    RatingsBottomSheetDialogFragment.newInstance({ dialog, ratings ->
+//                        dialog.dismiss()
+//                        showLoadingDialog()
+//                        mainPresenter!!.sendOrderFeedback(ratings)
+//                    }, ratings)
+//                ratingsBottomSheetDialogFragment.show(
+//                    supportFragmentManager, RatingsBottomSheetDialogFragment::class.java.simpleName
+//                )
+//            } catch (ex: Exception) {
+//                ex.printStackTrace()
+//            }
+//        }
     }
 
     fun cartQuantityFetch() {

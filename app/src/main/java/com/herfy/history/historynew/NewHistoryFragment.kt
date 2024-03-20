@@ -121,7 +121,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                         activity?.cast<BaseActivity> {
                             it.showLoadingDialog()
                         }
-                        ordersPresenter?.checkReorder()
+                        ordersPresenter?.getOrder(item.id, -1, false, true)
                     }
 
                     override fun onRate(item: OrderHistory, position: Int) {

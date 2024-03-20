@@ -42,11 +42,11 @@ class HistoryListAdapter(
             }
 
             rate.setOnClickListener {
-                historyListener.onViewDetails(item, position)
+                historyListener.onRate(item, position)
             }
 
             reOrder.setOnClickListener {
-                historyListener.onViewDetails(item, position)
+                historyListener.onReorder(item, position)
             }
 
             itemPrice.text = StringUtil.getNewFormattedPrice(
