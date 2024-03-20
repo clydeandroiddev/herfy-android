@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.model.LatLng
 import com.herfy.base.BaseActivity
@@ -15,7 +14,6 @@ import com.herfy.common.orderDetailsType
 import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
 import com.herfy.history.databinding.FragmentNewOrderDetailsBinding
-import com.herfy.history.historynew.adapter.HistoryListAdapter
 import com.herfy.history.historynew.adapter.OrderMenuItemsAdapter
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
@@ -34,6 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
+
     private var orderPresenter: OrdersContract.Presenter? = null
 
     private val args: NewOrderDetailsFragmentArgs by navArgs()
@@ -213,6 +212,21 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 reOrderButtonFull.isVisible = item.averageRating > 0
                 rateButton.isVisible = item.averageRating <= 0
                 reOrderButton.isVisible = item.averageRating <= 0
+
+                if (order.payment != null) {
+                    if (order.payment.attributes.method.equals("cash", ignoreCase = true)) {
+                        cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_payment_type_cash_new)
+                        cardNumber.text = CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
+                    } else {
+                        if (order.payment.attributes.brand.equals("visa", ignoreCase = true)) {
+                            cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_card_visa_common)
+                        } else {
+                            cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_card_new)
+                        }
+                        cardNumber.text =
+                            order.payment.attributes.brand + " **** " + order.payment.attributes.last4Digits
+                    }
+                }
             }
         }
     }

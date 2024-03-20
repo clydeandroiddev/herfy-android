@@ -72,7 +72,7 @@ public class AccountSavedCardsAdapter extends RecyclerView.Adapter<RecyclerView.
         int res = R.drawable.ic_saved_card;
 
         if ("visa".equalsIgnoreCase(customerCard.getAttributes().getBrand()))
-            res = R.drawable.ic_card_visa;
+            res = R.drawable.ic_card_visa_common;
         else if ("mastercard".equalsIgnoreCase(customerCard.getAttributes().getBrand()))
             res = R.drawable.ic_card_mastercard;
 

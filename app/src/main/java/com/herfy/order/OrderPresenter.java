@@ -67,6 +67,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderFeedback;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
+import com.skylinedynamics.solosdk.api.models.objects.Payment;
 import com.skylinedynamics.solosdk.api.models.objects.Rating;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.Translated;
@@ -1669,6 +1670,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                         JSONObject data = jsonObject.getJSONObject("data");
 
                         order = OrderDetails.parse(data);
+
                         orderStatus = order.getOrderStatus();
 
                         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();

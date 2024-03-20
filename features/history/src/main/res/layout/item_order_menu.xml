@@ -77,7 +77,7 @@
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:textColor="#0C0C0C"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     app:layout_constraintEnd_toStartOf="@id/totalPrice"
                     app:layout_constraintStart_toEndOf="@id/imageContainer"
                     app:layout_constraintTop_toTopOf="parent"

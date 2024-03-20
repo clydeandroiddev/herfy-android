@@ -55,6 +55,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
+import com.skylinedynamics.solosdk.api.models.objects.Payment;
 import com.skylinedynamics.solosdk.api.models.objects.Payments;
 import com.skylinedynamics.solosdk.api.models.objects.Rating;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
@@ -276,6 +277,17 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                         order = OrderDetails.parse(data);
 
                         try {
+                            if (jsonObject.has("included") && !jsonObject.isNull("included")) {
+                                JSONArray included = jsonObject.getJSONArray("included");
+                                for (int a = 0; a < included.length(); a++) {
+                                    JSONObject includedObject = included.getJSONObject(a);
+                                    if (includedObject.getString("type").equals("payments")) {
+                                        order.payment = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<Payment>() {
+                                        }.getType());
+                                    }
+                                }
+                            }
+
                             if (order.getPayments().getStatusDescription().isEmpty()) {
                                 JSONArray dataArr = jsonObject.optJSONArray("included");
                                 if (dataArr != null) {
@@ -1964,6 +1976,11 @@ public class OrdersPresenter implements OrdersContract.Presenter {
     @Override
     public List<MenuItem> getOrderItems() {
         return menuItems;
+    }
+
+    @Override
+    public ArrayList<OrderHistory> getOrderHistories() {
+        return orders;
     }
 
     private void subscribeToOrderStatusUpdate(String orderId) {

@@ -56,9 +56,13 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ordersPresenter?.start()
-        activity?.let {
-            val baseActivity = it as BaseActivity
-            baseActivity.showLoadingDialog()
+        if (ordersPresenter?.orderHistories?.isEmpty() != true) {
+            showOrders(true, ordersPresenter?.orderHistories)
+        } else {
+            activity?.let {
+                val baseActivity = it as BaseActivity
+                baseActivity.showLoadingDialog()
+            }
         }
         ordersPresenter?.getOrders()
     }
