@@ -71,9 +71,6 @@ public class BrowserActivity extends BaseActivity {
             });
             webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
             webView.getSettings().setJavaScriptEnabled(true);
-            webView.getSettings().setUseWideViewPort(true);
-            webView.getSettings().setLoadWithOverviewMode(true);
-            webView.getSettings().setTextZoom(200);
             webView.loadUrl(bundle.getString("url"));
 
         } else {
