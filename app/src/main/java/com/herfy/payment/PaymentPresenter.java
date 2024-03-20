@@ -584,7 +584,6 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         double total = discountedSubtotal + deliveryCharge + vatAmount + promoPrice;
 
         if (loyaltyPointsUsed > 0) {
-            Double test =Math.min(loyaltyPointsUsed / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion()), getMenuItemsTotalPrice());
             total -= Math.min(loyaltyPointsUsed / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion()), getMenuItemsTotalPrice());
         }
 
