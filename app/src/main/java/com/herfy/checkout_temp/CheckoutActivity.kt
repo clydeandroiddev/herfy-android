@@ -121,7 +121,6 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import io.shipbook.shipbooksdk.Log
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.ParseException
@@ -131,6 +130,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 //import com.herfy.constants.Text;
 //import com.herfy.constants.Values;
@@ -676,6 +676,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         pointsLayout.setOnClickListener(v -> {
         });*/
         val loyalty = AuthUtil.getInstance().customerLoyalty
+        println("Loyalty points test "  + loyalty )
         if (loyalty.attributes != null) {
             firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener { task: Task<Boolean?> ->
                 if (task.isSuccessful) {
@@ -717,10 +718,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.layoutLoyalty.tvLoyaltyPoints.text = loyaltyBalanceLabelText
             //loyaltyLabel.setText(StringUtil.getFormattedAmount(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getCurrentBalance())+" Points ("+StringUtil.getFormattedAmount(loyalty.getAttributes().getCurrentBalanceAmount()) +")");
         }
-
-        disposable.add(textInput.debounce(300, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.io())
+        binding!!.layoutLoyalty.etPoints.addTextChangedListener(pointsInSarTextWatcher)
+        val loyaltyPoints = textInput.debounce(300, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.io())
             .subscribe(
                 { pointsText: String ->
+                    println("Points text " + pointsText)
                     runOnUiThread {
                         if (pointsText.length > 0) {
                             val userSetPoints = StringUtil.toEnglish(pointsText).toDouble()
@@ -728,9 +730,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                 AuthUtil.getInstance().customerLoyalty.attributes.currentBalanceAmount
                             val pointConversion =
                                 AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble()
+                            val sarAmountTotal = userSetPoints * pointConversion
+                            val formattedSarAmount = String.format("%.2f", sarAmountTotal)
                             val points =
                                 if (loyalty.attributes.currentBalanceAmount > paymentPresenter!!.menuItemsTotalPrice) paymentPresenter!!.menuItemsTotalPrice * pointConversion else loyalty.attributes.currentBalance
                                     .toDouble()
+                            if (sarAmountTotal > 0) {
+                                binding?.layoutLoyalty?.etSarAmount?.setText(formattedSarAmount)
+                            }
                             binding!!.layoutLoyalty.etPoints.removeTextChangedListener(
                                 pointsInSarTextWatcher
                             )
@@ -738,6 +745,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             } else {
                                 binding!!.layoutLoyalty.etPoints.setText(StringUtil.localize(binding!!.layoutLoyalty.etPoints.text.toString()))
                             }
+
                             binding!!.layoutLoyalty.etPoints.setSelection(binding!!.layoutLoyalty.etPoints.text.toString().length)
                             binding!!.layoutLoyalty.etPoints.addTextChangedListener(
                                 pointsInSarTextWatcher
@@ -757,8 +765,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             paymentPresenter!!.setLoyaltyPointsUsed(0)
                         }
                     }
-                }) { onError: Throwable? -> })
-        binding!!.layoutLoyalty.etPoints.addTextChangedListener(pointsInSarTextWatcher)
+                }) { onError: Throwable? ->
+                  onError?.printStackTrace()
+                AppLogger.printRetrofitError(onError)
+            }
+// Add the subscription to disposable for cleanup
+        disposable.add(loyaltyPoints)
 
 
         val customer = AuthUtil.getInstance().customer
@@ -1024,6 +1036,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.tvOriginalPrice.setVisible(discount >= 1)
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.setVisible(deliveryCharge >=1 && isDelivery)
         binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.setVisible(deliveryCharge >=1 && isDelivery)
+        binding
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.text = deliveryChargeTotal
         if (discount != 0.0) {
             binding!!.layoutPaymentSummary.grpDiscount.visibility = View.VISIBLE
@@ -1112,6 +1125,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             val color = CacheUtil.getInstance().colorMain
             val ptsRedeemed = CacheUtil.getInstance().getTranslations(Text.PTS_LABEL, "(x) pts")
                 .replace("(x)", pointsUsed.toString())
+            binding
 
 //            tvRedeemPoints.setText(HtmlCompat.fromHtml("<font color=" + color + ">" + ptsRedeemed + "</font> ", HtmlCompat.FROM_HTML_MODE_LEGACY));
             binding!!.layoutPaymentSummary.tvRedeemPointsEquiv.text = CacheUtil.getInstance()
