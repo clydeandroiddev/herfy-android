@@ -196,7 +196,7 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
     @Override
     public void setFavorite(MenuItem menuItem) {
         if (isSignedIn && CacheUtil.getInstance().getFavorites().contains(menuItem.getId())) {
-            favoriteIcon.setImageResource(R.drawable.ic_heart);
+            favoriteIcon.setImageResource(R.drawable.ic_heart_unselected);
             favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
             //cardFav.setImageResource(R.drawable.ic_heart);
             //cardFav.setImageTintList(ColorStateList.valueOf(Color.parseColor("#F22424")));
@@ -389,7 +389,7 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
                         //cardFav.setImageResource(R.drawable.ic_heart_empty);
                         //cardFav.setImageTintList(ColorStateList.valueOf(Color.parseColor("#CCCCCC")));
                     } else {
-                        favoriteIcon.setImageResource(R.drawable.ic_heart);
+                        favoriteIcon.setImageResource(R.drawable.ic_heart_unselected);
                         favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
                         //cardFav.setImageResource(R.drawable.ic_heart);
                         //cardFav.setImageTintList(ColorStateList.valueOf(Color.parseColor("#F22424")));
