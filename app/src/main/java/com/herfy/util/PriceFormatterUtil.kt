@@ -1,7 +1,7 @@
 package com.herfy.util
 
 import android.text.SpannedString
-import com.herfy.productpagedetails.ui.viewholder.util.ArabicUtils
+import com.herfy.utils.helper.ArabicUtils
 import com.herfy.utils.helper.LocaleUtil
 
 object PriceFormatter {

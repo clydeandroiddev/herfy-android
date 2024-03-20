@@ -5,7 +5,6 @@ plugins {
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-    id 'com.jakewharton.butterknife'
 }
 
 android {
@@ -86,9 +85,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    implementation 'com.jakewharton:butterknife:10.2.3'
-    kapt 'com.jakewharton:butterknife-compiler:10.2.3'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 
     //Modules
     implementation project(path: ':data:database')
@@ -128,5 +124,14 @@ dependencies {
 
     //FlexBox
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
+    //ImagePicker
+    implementation project(':imagepicker')
+
+    //Shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    //Gson
+    implementation 'com.google.code.gson:gson:2.10.1'
 
 }

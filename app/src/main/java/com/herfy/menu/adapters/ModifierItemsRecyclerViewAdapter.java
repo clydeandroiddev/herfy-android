@@ -1,4 +1,4 @@
-package com.herfy.menu.viewholders;
+package com.herfy.menu.adapters;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;

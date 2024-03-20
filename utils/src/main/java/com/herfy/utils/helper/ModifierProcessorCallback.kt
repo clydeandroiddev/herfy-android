@@ -1,8 +1,6 @@
-package com.herfy.util
+package com.herfy.utils.helper
 
 import android.text.SpannedString
-import com.herfy.productpagedetails.ui.viewholder.util.ArabicUtils
-import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemAttributes
 

@@ -10,9 +10,17 @@ import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
 
 class ComboMealModifierItemAdapter(
     private var items: List<ComponentModifierItem> = arrayListOf(),
-    private val menuItemComponentPos: Int,
-    private val listener: onClickListener
+    private val menuItemComponentPos: Int
 ) : RecyclerView.Adapter<ComboMealModifierItemViewHolder>() {
+
+    private var prevSelectedItemPos = 0
+
+    private var listener : ComboMealModifierItemViewHolder.onClickListener? = null
+
+    fun setListener(listener : ComboMealModifierItemViewHolder.onClickListener?){
+        this.listener = listener
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -27,8 +35,9 @@ class ComboMealModifierItemAdapter(
     override fun onBindViewHolder(holder: ComboMealModifierItemViewHolder, position: Int) {
         val data = items[position]
         holder.apply {
+            setComboComponentItem(data)
             itemView.setOnClickListener{
-                listener.onSelectComboComponentItem(item = data , menuItemComponentPos, position)
+                listener?.onSelectComboComponentItem(item = data , menuItemComponentPos, position, prevSelectedItemPos)
             }
         }
     }
@@ -39,8 +48,23 @@ class ComboMealModifierItemAdapter(
         notifyDataSetChanged()
     }
 
+    fun updateComponents(
+        previous: Int,
+        selected: Int
+    ) {
+        if(previous != selected){
+            items[previous].apply {
+                this.selected = false
+                attributes.price = 0.0
+            }
+            prevSelectedItemPos = selected
+        }
 
-    interface onClickListener {
-        fun onSelectComboComponentItem(item: ComponentModifierItem, menuItemComponentPos: Int, componentModifierItemPos : Int)
+        notifyItemChanged(previous)
+        notifyItemChanged(selected)
+
     }
+
+
+
 }

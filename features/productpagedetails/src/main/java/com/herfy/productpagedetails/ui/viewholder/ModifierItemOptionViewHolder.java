@@ -1,4 +1,4 @@
-package com.herfy.menu.viewholders;
+package com.herfy.productpagedetails.ui.viewholder;
 
 import android.content.Context;
 import android.text.Html;
@@ -16,13 +16,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.herfy.R;
-import com.herfy.menu.MenuContract;
-import com.herfy.productpagedetails.ui.viewholder.util.ArabicUtils;
-import com.herfy.util.ModifierProcessor;
-import com.herfy.util.ModifierProcessorCallback;
-import com.herfy.util.StringUtil;
+
+import com.herfy.productpagedetails.R;
+import com.herfy.productpagedetails.databinding.ItemModifierOptionTypeBinding;
+import com.herfy.utils.helper.ArabicUtils;
 import com.herfy.utils.helper.LocaleUtil;
+import com.herfy.utils.helper.ModifierProcessor;
+import com.herfy.utils.helper.ModifierProcessorCallback;
+import com.herfy.utils.helper.StringUtil;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
@@ -32,53 +33,47 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder implements ModifierProcessorCallback {
-    @BindView(R.id.checkBox)
     ImageView check;
-    private Context context;
-    @BindView(R.id.radioButton)
     ImageView radioButton;
-    @BindView(R.id.check_layout)
     FrameLayout checkLayout;
-
-    @BindView(R.id.txtModifierItemName)
     TextView modifierNameAndPrice;
-    @BindView(R.id.txtmodifierPrice)
     TextView txtModifierPrice;
-    @BindView(R.id.clickable_layout)
     LinearLayout clickableLayout;
-    @BindView(R.id.optionCardView)
     MaterialCardView modifierItemCardView;
-    private ModifierItem currentSelectedItem;
-    @BindView(R.id.quantityUp)
     ImageButton plus;
-    @BindView(R.id.image)
     ShapeableImageView modifierOptionImage;
-    private ModifierProcessor modifierProcessor;
-
-    @BindView(R.id.quantity_container)
     ConstraintLayout quantityContainer;
-
-    @BindView(R.id.quantity) TextView quantity;
-
-    @BindView(R.id.quantityDownLayout)
+    TextView quantity;
     ConstraintLayout quantityDownLayout;
-    @BindView(R.id.quantityDown)
     MaterialCardView minus;
+    private Context context;
+    private ModifierProcessor modifierProcessor;
+    private ModifierItem currentSelectedItem;
     private boolean isQuantityLayoutVisible = false;
 
     private HashMap<Integer, Boolean> showShowQuantity = new HashMap<>();
 
     private static HashMap<String, Integer> clickCountMap = new HashMap<>();
     private static HashMap<String,Integer> subtractMap = new HashMap<>();
-    public ModifierItemOptionViewHolder(Context context, MenuContract.Presenter menuPresenter, View itemView) {
-        super(itemView);
+
+    public ModifierItemOptionViewHolder(ItemModifierOptionTypeBinding binding){
+        super(binding.getRoot());
+        this.context = binding.getRoot().getContext();
+        this.check = binding.checkBox;
+        this.radioButton = binding.radioButton;
+        this.checkLayout = binding.checkLayout;
+        this.modifierNameAndPrice = binding.txtModifierItemName;
+        this.txtModifierPrice = binding.txtmodifierPrice;
+        this.clickableLayout = binding.clickableLayout;
+        this.modifierItemCardView = binding.optionCardView;
+        this.plus = binding.quantityUp;
+        this.modifierOptionImage = binding.image;
+        this.quantity = binding.quantity;
+        this.quantityDownLayout = binding.quantityDownLayout;
+        this.minus = binding.quantityDown;
+        this.quantityContainer = binding.quantityContainer;
         modifierProcessor = new ModifierProcessor(this);
-        this.context = context;
-        ButterKnife.bind(this, itemView);
     }
 
 

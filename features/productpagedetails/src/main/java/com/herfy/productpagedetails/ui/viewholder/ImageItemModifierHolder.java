@@ -1,7 +1,7 @@
-package com.herfy.menu.viewholders;
+package com.herfy.productpagedetails.ui.viewholder;
 
 
-import static com.herfy.menu.viewholders.ModifierItemOptionViewHolder.isProbablyArabic;
+import static com.herfy.productpagedetails.ui.viewholder.ModifierItemOptionViewHolder.isProbablyArabic;
 
 import android.content.Context;
 import android.text.Html;
@@ -14,38 +14,38 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.herfy.R;
-import com.herfy.menu.MenuContract;
+
+import com.herfy.productpagedetails.R;
+import com.herfy.productpagedetails.databinding.ItemModifierDrinksTypeBinding;
+import com.herfy.productpagedetails.databinding.ItemModifierOptionTypeBinding;
 import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.util.ModifierProcessor;
-import com.herfy.util.ModifierProcessorCallback;
+import com.herfy.utils.helper.ModifierProcessor;
+import com.herfy.utils.helper.ModifierProcessorCallback;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 
-import org.jetbrains.annotations.NotNull;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 public class ImageItemModifierHolder extends BaseModifierItemViewHolder implements ModifierProcessorCallback {
-    @BindView(R.id.check)
     ImageView check;
-    @BindView(R.id.check_layout)
     FrameLayout checkLayout;
-
-    @BindView(R.id.image)
     ImageView image;
 
-    @BindView(R.id.txtModifierItemName)
     TextView modifierNameAndPrice;
-    @BindView(R.id.txtmodifierPrice)
     TextView txtModifierPrice;
     private OnAction action;
     private ModifierProcessor modifierProcessor;
+    private ItemModifierDrinksTypeBinding binding;
     @Nullable
     LinearLayout clickableLayout;
-    public ImageItemModifierHolder(Context context, MenuContract.Presenter menuPresenter, View itemView) {
-        super(itemView);
-        ButterKnife.bind(this, itemView);
+    public ImageItemModifierHolder(ItemModifierDrinksTypeBinding binding){
+        super(binding.getRoot());
+        this.binding = binding;
+        check = this.binding.check;
+        checkLayout = this.binding.checkLayout;
+        image = this.binding.image;
+        modifierNameAndPrice = this.binding.txtModifierItemName;
+        txtModifierPrice = this.binding.txtmodifierPrice;
         modifierProcessor = new ModifierProcessor(this);
     }
 

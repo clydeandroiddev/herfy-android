@@ -3,11 +3,11 @@ package com.herfy.productpagedetails.ui.viewmodel
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.herfy.database.AppDatabase
 import com.herfy.model.ErrorMsgItem
-import com.herfy.productpagedetails.ui.adapter.ComboMealModifierItemAdapter
 import com.herfy.productpagedetails.ui.adapter.FrequentlyBoughtItemAdapter
 import com.herfy.productpagedetails.ui.adapter.SizesItemAdapter
+import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder
+import com.herfy.productpagedetails.ui.viewholder.ComboMealModifierItemViewHolder
 import com.herfy.repository.MenuRepository
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.extensions.runOnMain
@@ -31,10 +31,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ComboViewModel @Inject constructor(
-    private val appDatabase: AppDatabase,
     private val cacheUtilHelper: CacheUtilHelper,
     private val menuRepository: MenuRepository
-) : BaseViewModel(), SizesItemAdapter.OnClickListener, FrequentlyBoughtItemAdapter.OnClickListener, ComboMealModifierItemAdapter.onClickListener {
+) : BaseViewModel(), SizesItemAdapter.OnClickListener, FrequentlyBoughtItemAdapter.OnClickListener,
+    BaseModifierItemViewHolder.OnAction, ComboMealModifierItemViewHolder.onClickListener {
 
 
     //Objects
@@ -80,11 +80,13 @@ class ComboViewModel @Inject constructor(
     private val _showMenuItemTotal = MutableLiveData<Double>()
     val showMenuItemTotal: LiveData<Double> = _showMenuItemTotal
     private val _showMenuItemQuantity = MutableLiveData<Int>()
-    val showMenuItemQuantity : LiveData<Int> = _showMenuItemQuantity
-    private val _showComboMenuItemComponents =  MutableLiveData<List<MenuItemComponents>>()
-    val showMenuItemComponent : LiveData<List<MenuItemComponents>> = _showComboMenuItemComponents
+    val showMenuItemQuantity: LiveData<Int> = _showMenuItemQuantity
+    private val _showComboMenuItemComponents = MutableLiveData<List<MenuItemComponents>>()
+    val showMenuItemComponent: LiveData<List<MenuItemComponents>> = _showComboMenuItemComponents
     private val _showComboSizes = MutableLiveData<List<ModifierItem>>()
-    val showComboSizes : LiveData<List<ModifierItem>> = _showComboSizes
+    val showComboSizes: LiveData<List<ModifierItem>> = _showComboSizes
+    private val _updateComponentModifierList = MutableLiveData<Int>()
+    val updateComponentModifierList : LiveData<Int> = _updateComponentModifierList
 
 
 
@@ -108,7 +110,7 @@ class ComboViewModel @Inject constructor(
         }
     }
 
-    fun getMenuItemFromDbBy(addToBag: Boolean, id: String, isUpsell : Boolean) {
+    fun getMenuItemFromDbBy(addToBag: Boolean, id: String, isUpsell: Boolean) {
         invokeAtBackground {
             menuRepository.getMenuItem(id) {
                 it.attributes.isUpsell = isUpsell
@@ -180,7 +182,7 @@ class ComboViewModel @Inject constructor(
         }
     }
 
-    fun setPromoMenuItem(menuItem : MenuItem){
+    fun setPromoMenuItem(menuItem: MenuItem) {
         this.menuItem = menuItem
         setMenuCategory(menuItem)
         _showMenuItemDetails.value = menuItem
@@ -479,6 +481,7 @@ class ComboViewModel @Inject constructor(
         }
         return true
     }
+
     private fun setMenuItemCalories() {
         _calorieCount = 0
         menuItem?.let {
@@ -531,7 +534,7 @@ class ComboViewModel @Inject constructor(
     }
 
 
-    fun getMenuItemTotalPrice(item: MenuItem, modifierGroupPosition : Int) {
+    fun getMenuItemTotalPrice(item: MenuItem, modifierGroupPosition: Int) {
         var orderStoreId: String? = null
         var counter = 0
         var comboIndex = 0
@@ -589,7 +592,8 @@ class ComboViewModel @Inject constructor(
                                         modifierGroup
                                     )
                                 ) {
-                                    _showHideModifierItemPrice.value = Pair(false, modifierGroupPosition)
+                                    _showHideModifierItemPrice.value =
+                                        Pair(false, modifierGroupPosition)
                                 }
                                 selectedFreeModifier += modifierItem.attributes.quantity
                             } else {
@@ -597,7 +601,8 @@ class ComboViewModel @Inject constructor(
                                         modifierGroup
                                     )
                                 ) {
-                                    _showHideModifierItemPrice.value = Pair(true, modifierGroupPosition)
+                                    _showHideModifierItemPrice.value =
+                                        Pair(true, modifierGroupPosition)
                                 }
                                 selectedFreeModifier = modifierGroup.attributes.freeModifiersCount
                                 totalPrice += modifierItem.attributes.price * (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
@@ -653,7 +658,7 @@ class ComboViewModel @Inject constructor(
                 it.combo[comboIndex]?.components?.let {
                     _showComboMenuItemComponents.value = it
                 }
-                if(isFromCartEdit){
+                if (isFromCartEdit) {
                     it.combo[comboIndex]?.components?.forEachIndexed { index, menuItemComponents ->
                         menuItemComponentList[index] = menuItemComponents
                     }
@@ -681,7 +686,73 @@ class ComboViewModel @Inject constructor(
     override fun onSelectComboComponentItem(
         item: ComponentModifierItem,
         menuItemComponentPos: Int,
-        componentModifierItemPos: Int
+        componentModifierItemPos: Int,
+        previousSelectedIndex : Int
+    ) {
+        val showModifierDetail = checkToShowModifierDetail(item)
+
+        if(showModifierDetail){
+
+        }else {
+            if(componentModifierItemPos != previousSelectedIndex){
+                updateComponentModifierPreviousItem(menuItemComponentPos, previousSelectedIndex)
+            }
+
+            updateSelectedComponentModifierItem(menuItemComponentPos, componentModifierItemPos)
+
+        }
+    }
+
+    private fun updateComponentModifierPreviousItem(
+        componentPosition: Int,
+        prevSelectedItemPos: Int
+    ) {
+        menuItemComponentList[componentPosition]?.let {
+            val selectedComboComponentItem = it.items[prevSelectedItemPos]
+            if (selectedComboComponentItem.modifierGroups.size > 0) {
+                selectedComboComponentItem.modifierGroups.forEach {
+                    it.modifierItems.forEach {
+                        it.attributes.quantity = 0
+                        it.attributes.isSelected = false
+                    }
+                }
+            } else {
+                selectedComboComponentItem.selected = false
+            }
+            it.items[prevSelectedItemPos] = selectedComboComponentItem
+        }
+    }
+
+    private fun updateSelectedComponentModifierItem(componentPosition: Int, position: Int) {
+        menuItemComponentList[componentPosition]?.let {
+            val selectedComboComponentItem = it.items[position]
+            selectedComboComponentItem.selected = true
+            it.items[position] = selectedComboComponentItem
+        }
+    }
+
+    private fun checkToShowModifierDetail(
+        components: ComponentModifierItem,
+    ) : Boolean = components.modifierGroups.size > 1
+
+    override fun onCheckedChanged(
+        isSelected: Boolean,
+        modifierGroupPosition: Int,
+        modifierGroup: ModifierGroup?,
+        modifierItemPosition: Int,
+        modifierItem: ModifierItem?
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onQuantityChanged(
+        add: Boolean,
+        modifierGroupPosition: Int,
+        modifierGroup: ModifierGroup?,
+        modifierItemPosition: Int,
+        modifierItem: ModifierItem?,
+        isQuantityVisible: Boolean,
+        clickCount: Int?
     ) {
         TODO("Not yet implemented")
     }

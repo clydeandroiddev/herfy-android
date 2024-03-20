@@ -1,4 +1,4 @@
-package com.herfy.menu.viewholders;
+package com.herfy.productpagedetails.ui.viewholder;
 
 import android.view.View;
 import android.widget.ImageView;

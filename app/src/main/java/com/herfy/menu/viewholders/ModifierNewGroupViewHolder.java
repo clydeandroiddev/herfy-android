@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.herfy.R;
+import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.*;
 import com.herfy.menu.MenuContract;

@@ -48,12 +48,12 @@ import com.herfy.main.NavigationActivity
 import com.herfy.menu.MenuContract
 import com.herfy.menu.MenuPresenter
 import com.herfy.menu.adapters.*
-import com.herfy.menu.viewholders.BaseModifierItemViewHolder
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet
 import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet.Companion.NAV_ARGS_INFO_KEY
 import com.herfy.nutritiondetails.NutritionInfoParams
 import com.herfy.productpagedetails.databinding.FragmentMenuItemDetailsBinding
+import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder
 import com.herfy.util.*
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values

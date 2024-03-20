@@ -11,8 +11,10 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents
 
 class ComboMealModifierGroupAdapter(
     private var items: List<MenuItemComponents> = arrayListOf(),
-    private var viewModel : ComboViewModel
+    private val comboViewModel: ComboViewModel
 ) : RecyclerView.Adapter<ComboMealModifierGroupViewholder>() {
+
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -22,8 +24,9 @@ class ComboMealModifierGroupAdapter(
             parent,
             false
         )
-
-        return ComboMealModifierGroupViewholder(binding)
+        val holder = ComboMealModifierGroupViewholder(binding, comboViewModel)
+        holder.setListener(comboViewModel)
+        return holder
     }
 
     override fun getItemCount(): Int = items.size
@@ -31,7 +34,7 @@ class ComboMealModifierGroupAdapter(
     override fun onBindViewHolder(holder: ComboMealModifierGroupViewholder, position: Int) {
         holder.apply {
             val data = items[position]
-            setComboModifierGroup(data, position, viewModel)
+            setComboModifierGroup(data, position)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.herfy.productpagedetails.ui.viewholder.util
+package com.herfy.utils.helper
 
 object ModifierGroupMinimumUtil {
 

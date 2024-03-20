@@ -10,9 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
-import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
-import com.herfy.menu.viewholders.ImageItemModifierHolder;
-import com.herfy.menu.viewholders.ModifierItemOptionViewHolder;
+import com.herfy.productpagedetails.databinding.ItemModifierDrinksTypeBinding;
+import com.herfy.productpagedetails.databinding.ItemModifierOptionTypeBinding;
+import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder;
+import com.herfy.productpagedetails.ui.viewholder.ImageItemModifierHolder;
+import com.herfy.productpagedetails.ui.viewholder.ModifierItemOptionViewHolder;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
@@ -54,13 +56,15 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
     @NonNull
     @Override
     public BaseModifierItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = createViewByType(viewType, parent);
+
         if (viewType == ITEM_MODIFIER_OPTION_TYPE) {
-            ModifierItemOptionViewHolder modifierTypeOption = new  ModifierItemOptionViewHolder(mContext, menuPresenter, view);
+            ItemModifierOptionTypeBinding binding = ItemModifierOptionTypeBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
+            ModifierItemOptionViewHolder modifierTypeOption = new  ModifierItemOptionViewHolder(binding);
             modifierTypeOption.setAction(onAction);
             return modifierTypeOption;
         } else if (viewType == ITEM_WITHOUT_DESCRIPTION_VIEW_TYPE) {
-            ImageItemModifierHolder holder = new ImageItemModifierHolder(mContext, menuPresenter, view);
+            ItemModifierDrinksTypeBinding binding = ItemModifierDrinksTypeBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
+            ImageItemModifierHolder holder = new ImageItemModifierHolder(binding);
             holder.setAction(onAction);
             return holder;
         }  else {
@@ -71,27 +75,6 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
     public void onBindViewHolder(@NonNull BaseModifierItemViewHolder holder, int position) {
         menuPresenter.onBindModifierItemViewAtPosition(modifierGroupPosition, modifierGroup, showModifierItemPrice, position, holder);
     }
-
-
-    private View createViewByType(int viewType, ViewGroup parent) {
-        int layoutResourceId = getLayoutResourceIdByType(viewType);
-        return inflateView(layoutResourceId, parent);
-    }
-
-    private int getLayoutResourceIdByType(int viewType) {
-        if (viewType == ITEM_MODIFIER_OPTION_TYPE) {
-            return R.layout.item_modifier_option_type;
-        } else if (viewType == ITEM_MODIFIER_OPTIONS_VIEW_TYPE) {
-            return R.layout.item_modifier_drinks_type;
-        } else {
-            throw new UnsupportedOperationException("Invalid view type " + viewType);
-        }
-    }
-
-    private View inflateView(int layoutResourceId, ViewGroup parent) {
-        return LayoutInflater.from(parent.getContext()).inflate(layoutResourceId, parent, false);
-    }
-
 
     @Override
     public int getItemViewType(int position) {

@@ -135,4 +135,8 @@ class ComboMealModifierItemViewHolder(val binding: ItemComboComponentItemBinding
 
         return list
     }
+
+    interface onClickListener {
+        fun onSelectComboComponentItem(item: ComponentModifierItem, menuItemComponentPos: Int, componentModifierItemPos : Int, previousSelectedIndex : Int)
+    }
 }
