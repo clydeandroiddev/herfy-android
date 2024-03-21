@@ -49,13 +49,19 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
             continueButton.text =
                 CacheUtil.getInstance().getArabicTranslations(Text.CONTINUE_LABEL, "Continue")
 
-            val languages: List<String> = ArrayList(CacheUtil.getInstance().concept.languages)
+            var languages = ArrayList<String>()
+            if (CacheUtil.getInstance().concept != null) {
+                languages = ArrayList(CacheUtil.getInstance().concept.languages)
+            } else {
+                languages.add(LocaleUtil.EN_US)
+                languages.add(LocaleUtil.AR_SA)
+            }
+
             for (lng in languages) {
                 if (lng.equals(LocaleUtil.EN_US, ignoreCase = true)) {
                     chooseEnglish.visibility = View.VISIBLE
                 } else if (lng.equals(LocaleUtil.AR_SA, ignoreCase = true)) {
-                    isArabicSelected = true
-                    isLanguageSelected = true
+                    selectArabic()
                     chooseArabic.visibility = View.VISIBLE
                 }
             }
@@ -66,9 +72,11 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
                 .getTranslations(Text.CHOOSE_LANGUAGE_ENGLISH, "Choose your language to continue")
             chooseYourArabicLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.CHOOSE_LANGUAGE_ARABIC, "اختر لغتك للمتابعة")
+
             chooseArabic.setOnClickListener {
                 selectArabic()
             }
+
             chooseEnglish.setOnClickListener {
                 selectEnglish()
             }
