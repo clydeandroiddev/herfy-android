@@ -401,7 +401,8 @@ dependencies {
     implementation 'com.mixpanel.android:mixpanel-android:7.3.1'
 
     //Checkout Sdk
-    implementation 'com.github.checkout:frames-android:4.2.1'
+    implementation 'com.github.checkout:frames-android:4.1.0'
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.31.5-beta"
 
     //Moyasar SDK
     implementation 'com.moyasar:android-sdk:0.5.1'
