@@ -1077,4 +1077,7 @@ public class Text {
     public static final String ORDER_ITEMS = "order_items";
     public static final String PAYMENT_SUMMARY = "payment_summary";
     public static final String PICKED = "picked";
+
+    public static final String NO_ORDERS_FOUND = "no_orders_found";
+
 }

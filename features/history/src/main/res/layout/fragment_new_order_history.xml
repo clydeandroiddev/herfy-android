@@ -316,11 +316,11 @@
                             android:includeFontPadding="false"
                             android:textColor="#101010"
                             android:textSize="18sp"
-                            tools:visibility="visible"
                             android:visibility="gone"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:text="Past Orders" />
+                            tools:text="Past Orders"
+                            tools:visibility="visible" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/pastOrdersList"
@@ -336,14 +336,46 @@
 
                     </LinearLayout>
 
-
                 </androidx.core.widget.NestedScrollView>
-
 
             </LinearLayout>
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/emptyStatesLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="96dp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_empty_states_orders" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/noOrdersLabel"
+                style="@style/Styles.Text.Caption.Regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:includeFontPadding="false"
+                android:textColor="#1C1C1E"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="No orders found." />
+
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

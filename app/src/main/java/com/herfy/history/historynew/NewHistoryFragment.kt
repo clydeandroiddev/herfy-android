@@ -132,6 +132,14 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         }
     }
 
+    private fun checkEmptyState() {
+        if (ordersPresenter?.orderHistories?.isEmpty() != true) {
+            binding.emptyStatesLayout.isVisible = false
+        } else {
+            binding.emptyStatesLayout.isVisible = true
+        }
+    }
+
     override fun setupFonts() {
 
     }
@@ -148,6 +156,8 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                 CacheUtil.getInstance().getTranslations(Text.IN_PROGRESS, "In Progress")
             trackButton.text =
                 CacheUtil.getInstance().getTranslations(Text.TRACK_ORDER, "Track Order")
+            noOrdersLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.NO_ORDERS_FOUND, "No orders found.")
         }
     }
 
@@ -166,6 +176,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                 historyListAdapter.updateList(pastOrders)
             }
         }
+        checkEmptyState()
     }
 
     @SuppressLint("SetTextI18n")
@@ -207,6 +218,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showError(error: String?) {
+        checkEmptyState()
         dismissDialogs()
         DialogUtils.showAlertDialog(context = requireContext(),
             title = "",
