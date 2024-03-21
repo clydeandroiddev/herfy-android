@@ -96,5 +96,6 @@ dependencies {
     implementation project(path: ':utils')
     implementation project(':commonStyles')
     api project(path: ':common')
+    api project(path: ':features:menu')
 
 }

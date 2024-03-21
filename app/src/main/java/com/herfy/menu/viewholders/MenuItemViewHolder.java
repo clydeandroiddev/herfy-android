@@ -32,6 +32,7 @@ import com.herfy.menu.MenuContract;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
@@ -310,10 +311,10 @@ if (CacheUtil.getInstance().getOrderStore() != null) {
         String caloriesValue = menuItem.getCalories();
         int calorieCount = menuItem.getCalorieCount();
         if (caloriesValue != null && !caloriesValue.isEmpty() && !caloriesValue.trim().equals("null") && !caloriesValue.trim().equals("0")) {
-            calories.setText(CacheUtil.getInstance().getTranslations(Text.CALORIES) + " " + caloriesValue);
+            calories.setText(MenuUtil.getCaloriesText(caloriesValue, calorieCount));
             calories.setVisibility(View.VISIBLE);
         } else if (calorieCount != 0) {
-            calories.setText(CacheUtil.getInstance().getTranslations(Text.CALORIES) + " " + calorieCount);
+            calories.setText(MenuUtil.getCaloriesText(caloriesValue, calorieCount));
             calories.setVisibility(View.VISIBLE);
         } else {
             calories.setVisibility(View.INVISIBLE);

@@ -36,6 +36,7 @@ import com.herfy.firebase.FirebaseService;
 import com.herfy.font.FontHandler;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.menu.MenuUtil;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.FavoriteModifier;
@@ -158,11 +159,11 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
             if (calorieCount != 0) {
                 tvKCal.setVisibility(View.VISIBLE);
                 tvCalories.setVisibility(View.VISIBLE);
-                tvCalories.setText(String.valueOf(calorieCount));
+                tvCalories.setText(MenuUtil.getCaloriesText(caloriesValue, calorieCount));
             } else if (caloriesValue != null && !caloriesValue.isEmpty() && !caloriesValue.trim().equals("null") && !caloriesValue.trim().equals("0")) {
                 tvKCal.setVisibility(View.VISIBLE);
                 tvCalories.setVisibility(View.VISIBLE);
-                tvCalories.setText(caloriesValue);
+                tvCalories.setText(MenuUtil.getCaloriesText(caloriesValue, calorieCount));
             } else {
                 tvKCal.setVisibility(View.GONE);
                 tvCalories.setVisibility(View.GONE);

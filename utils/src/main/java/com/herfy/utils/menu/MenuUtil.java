@@ -1,5 +1,7 @@
 package com.herfy.utils.menu;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
@@ -379,6 +381,16 @@ public class MenuUtil {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static String getCaloriesText(@Nullable String caloriesValue, @Nullable Integer calorieCount) {
+        String caloriesText = "";
+        if (calorieCount != null && calorieCount != 0) {
+            caloriesText = calorieCount.toString();
+        } else if(caloriesValue != null && !caloriesValue.isEmpty()) {
+            caloriesText = caloriesValue;
+        }
+        return CacheUtil.getInstance().getTranslations(Text.CALORIES_KCAL, "(x) Kcal").replace("(x)", caloriesText);
     }
 
 }

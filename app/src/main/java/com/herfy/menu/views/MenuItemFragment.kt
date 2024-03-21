@@ -67,6 +67,7 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
+import com.herfy.utils.menu.MenuUtil
 import com.herfy.utils.widgets.AppBarStateChangeListener
 import com.kochava.tracker.events.EventType
 import com.skylinedynamics.solosdk.api.models.objects.*
@@ -499,12 +500,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 val caloriesValue = menuItem.calories
                 val calorieCount = menuItem.calorieCount
                 if (caloriesValue != null && !caloriesValue.isEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
-                    binding.calories.text =
-                        CacheUtil.getInstance().getTranslations(Text.CALORIES) + " " + caloriesValue
+                    binding.calories.text = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
                     binding.calories.visibility = View.VISIBLE
                 } else if (calorieCount != 0) {
-                    binding.calories.text =
-                        CacheUtil.getInstance().getTranslations(Text.CALORIES) + " " + calorieCount
+                    binding.calories.text = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
                     binding.calories.visibility = View.VISIBLE
                 } else {
                     binding.calories.visibility = View.GONE

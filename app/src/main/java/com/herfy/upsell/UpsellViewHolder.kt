@@ -9,6 +9,7 @@ import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import java.util.Locale
 
@@ -47,6 +48,21 @@ class UpsellViewHolder(val binding: ItemUpsellBinding, private val upsellPresent
             }
             image.loadImageFromUrl(imageUrl = imageUrl, requestOptions = RequestOptions.centerCropTransform())
             name.text = upsell.attributes.name
+            description.text = upsell.attributes.description
+
+            val caloriesValue = upsell.attributes.calories
+            val calorieCount = upsell.attributes.calorieCount
+            tvCalories.text = if (calorieCount != 0) {
+                layoutCalories.visibility = View.VISIBLE
+                MenuUtil.getCaloriesText(caloriesValue, calorieCount)
+            } else if (caloriesValue != null && caloriesValue.isNotEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
+                layoutCalories.visibility = View.VISIBLE
+                MenuUtil.getCaloriesText(caloriesValue, calorieCount)
+            } else {
+                layoutCalories.visibility = View.GONE
+                ""
+            }
+
             var orderStoreId: String? = null
             if (CacheUtil.getInstance().orderStore != null) {
                 orderStoreId = CacheUtil.getInstance().orderStore.id

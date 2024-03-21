@@ -1084,5 +1084,6 @@ public class Text {
     public static final String PICKED = "picked";
 
     public static final String NO_ORDERS_FOUND = "no_orders_found";
+    public static final String CALORIES_KCAL = "calories_kcal";
 
 }
