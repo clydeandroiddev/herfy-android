@@ -11,28 +11,33 @@ object FavoriteOrderTypeValidator {
     ): FavoriteOrderState {
         return when {
             isDeliveryOrder(favouriteOrderType) -> FavoriteOrderState.DeliverOrderSelected
-            isMatchingType(selectedOrderType, favouriteOrderType.type) -> FavoriteOrderState.PickUpSelected
+            isPickUpSelected(selectedOrderType, favouriteOrderType.type) -> FavoriteOrderState.PickUpSelected
             isDineInSelected(selectedOrderType, favouriteOrderType.type) -> FavoriteOrderState.DineInSelected
             else -> determineDefaultState(selectedOrderType, favouriteOrderType)
         }
     }
 
     private fun isDeliveryOrder(orderType: OrderTypeMenus): Boolean {
+        val cacheOrderType = CacheUtil.getInstance().orderType
         return orderType.type.contains("deliver", ignoreCase = true) &&
-                CacheUtil.getInstance().orderType == OrderType.NONE
+                cacheOrderType == OrderType.NONE
     }
 
-    private fun isMatchingType(selectedOrderType: OrderType, orderTypeName: String): Boolean {
-        return selectedOrderType.name.lowercase() == orderTypeName.lowercase()
+    private fun isPickUpSelected(selectedOrderType: OrderType, orderTypeName: String): Boolean {
+        val cachedSelectedOrderType = OrderType.convertOrderTypeToString(selectedOrderType)
+        return selectedOrderType.name.lowercase() == orderTypeName.lowercase() || cachedSelectedOrderType == "pickup" && cachedSelectedOrderType == orderTypeName.lowercase()
     }
 
     private fun isDineInSelected(selectedOrderType: OrderType, orderTypeName: String): Boolean {
         return selectedOrderType.name.replace("_", " ").lowercase() == orderTypeName.replace("-", " ").lowercase()
     }
 
-    private fun determineDefaultState(selectedOrderType: OrderType, favouriteOrderType: OrderTypeMenus): FavoriteOrderState {
+    private fun determineDefaultState(selectedOrderType: OrderType,favouriteOrderType: OrderTypeMenus): FavoriteOrderState {
+
         return if (selectedOrderType == OrderType.DELIVERY && favouriteOrderType.type.contains("deliver")) {
             FavoriteOrderState.DeliverOrderSelected
+        } else if (isPickUpSelected(selectedOrderType,favouriteOrderType.type)) {
+            FavoriteOrderState.PickUpSelected
         } else {
             FavoriteOrderState.UnSelected
         }
