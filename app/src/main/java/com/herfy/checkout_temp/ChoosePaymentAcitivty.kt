@@ -6,15 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.card.MaterialCardView
+import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.checkout.databinding.ActivityChoosePaymentMethodBinding
@@ -33,9 +32,8 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType
 import com.skylinedynamics.solosdk.api.models.objects.PrayerTime
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge
-import io.shipbook.shipbooksdk.Log
-import com.herfy.checkout.R as checkoutR
 import java.util.Calendar
+import com.herfy.checkout.R as checkoutR
 
 class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
 
@@ -103,7 +101,8 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
        val cards = CacheUtil.getInstance().customerCards
         binding.confirmButton
             .setText(CacheUtil.getInstance().getTranslations(Text.CONFIRM_LABEL,"Confirm"))
-       val creditCardAdapter = CardsAdapter(cards) { card, position ->
+       val creditCardAdapter =    CardsAdapter(cards) { card, position ->
+           println("Custom card selected $card")
             selectedCard = card
             if (isCashPaymentAvailable) {
                 rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
@@ -125,8 +124,15 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
         binding
             .confirmButton
             .ninjaTap(lifecycleScope) {
-                CacheUtil
-                    .getInstance().orderPayment = selectedPaymentType
+                selectedCard?.let {selectedCards->
+                    CacheUtil
+                        .getInstance()
+                        .setCustomerCards(Gson().toJson(selectedCards))
+                }
+                selectedPaymentType?.let { paymentType->
+                    CacheUtil
+                        .getInstance().orderPayment = paymentType
+                }
                 onBackPressed()
             }
 
