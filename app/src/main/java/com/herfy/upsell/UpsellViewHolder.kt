@@ -20,12 +20,7 @@ class UpsellViewHolder(val binding: ItemUpsellBinding, private val upsellPresent
     fun setUpsell(upsell: MenuItem) {
         binding.apply {
             contentMain.setOnClickListener { v: View? ->
-                if (upsell.isMustBeCustomized) {
-                    upsellPresenter.goToItemDetails(adapterPosition, upsell)
-                } else {
-                    upsell.attributes.quantity = 1
-                    upsellPresenter.addToCart(upsell)
-                }
+                upsellPresenter.goToItemDetails(adapterPosition, upsell)
             }
 
             plus.setOnClickListener {
