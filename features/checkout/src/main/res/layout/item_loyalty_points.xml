@@ -133,6 +133,7 @@
                         android:digits="0123456789"
                         android:fontFamily="@font/inter_regular"
                         android:inputType="numberDecimal"
+                        android:textColor="#55667B"
                         android:lines="1"
                         android:maxLength="12"
                         android:maxLines="1"
@@ -201,13 +202,15 @@
                     app:strokeColor="#CAD0D6"
                     app:strokeWidth="@dimen/_4sdp">
 
-                    <EditText
+                    <TextView
                         android:id="@+id/et_sar_amount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@null"
                         android:fontFamily="@font/inter_regular"
                         android:padding="14dp"
+                        android:textColor="#55667B"
+                        android:enabled="false"
                         android:textFontWeight="400"
                         android:textSize="16sp"
                         tools:text="5" />
