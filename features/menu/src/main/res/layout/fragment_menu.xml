@@ -161,10 +161,10 @@
 									android:layout_marginEnd="12dp"
 									android:background="@null"
 									android:imeOptions="actionSearch"
+									android:gravity="start"
 									android:textAlignment="viewStart"
 									android:textColorHint="#BABABA"
-									android:textColor="#0C0C0C"
-									android:hint="Search menu"/>
+									android:textColor="#0C0C0C"/>
 
 								<androidx.appcompat.widget.AppCompatImageButton
 									android:id="@+id/btnClear"

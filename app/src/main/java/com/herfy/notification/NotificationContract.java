@@ -62,6 +62,7 @@ public interface NotificationContract {
         int getTotalNotifPageCount();
 
         void getDigitalCoupons(String digitalCouponId);
+        void markNotificationAsRead(String notificationId);
 
     }
 }

@@ -640,14 +640,14 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
                 // if swiped left properly and options menu isn't already visible, animate the foreground to the left
                 if (swipeable && !swipedRight && swipedLeftProper && touchedPosition != RecyclerView.NO_POSITION
                         && !unSwipeableRows.contains(touchedPosition) && !bgVisible && appLanguage.equals(LocaleUtil.EN_US)) {
-                        final View downView = touchedView; // touchedView gets null'd before animation ends
-                        final int downPosition = touchedPosition;
-                        ++mDismissAnimationRefCount;
-                        //TODO - speed
-                        animateFG(touchedView, Animation.OPEN, ANIMATION_STANDARD);
-                        bgVisible = true;
-                        bgVisibleView = fgView;
-                        bgVisiblePosition = downPosition;
+                    final View downView = touchedView; // touchedView gets null'd before animation ends
+                    final int downPosition = touchedPosition;
+                    ++mDismissAnimationRefCount;
+                    //TODO - speed
+                    animateFG(touchedView, Animation.OPEN, ANIMATION_STANDARD);
+                    bgVisible = true;
+                    bgVisibleView = fgView;
+                    bgVisiblePosition = downPosition;
                 } else if(swipeable && !swipedLeft && swipedRightProper && touchedPosition != RecyclerView.NO_POSITION
                         && !unSwipeableRows.contains(touchedPosition) && !bgVisible && appLanguage.equals(LocaleUtil.AR_SA)){
                     final View downView = touchedView; // touchedView gets null'd before animation ends
@@ -709,11 +709,11 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
                 // really fast and the fg is stuck open - so in that case we close the fg
                 else if (swipeable && swipedRight && !bgVisible && appLanguage.equals(LocaleUtil.EN_US)) {
 //                     if(appLanguage.equals(LocaleUtil.EN_US)){
-                         // cancel
-                         animateFG(touchedView, Animation.CLOSE, ANIMATION_STANDARD);
-                         bgVisible = false;
-                         bgVisibleView = null;
-                         bgVisiblePosition = -1;
+                    // cancel
+                    animateFG(touchedView, Animation.CLOSE, ANIMATION_STANDARD);
+                    bgVisible = false;
+                    bgVisibleView = null;
+                    bgVisiblePosition = -1;
                 }
                 else if (swipeable && swipedLeft && !bgVisible) {
                     animateFG(touchedView, Animation.CLOSE, ANIMATION_STANDARD);

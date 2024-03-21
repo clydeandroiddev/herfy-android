@@ -18,6 +18,7 @@ import com.herfy.authentication.databinding.FragmentAddNumberDialogBinding
 import com.herfy.ordertype.R
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
 
 class AddNumberDialog : BottomSheetDialogFragment() {
 
@@ -35,6 +36,11 @@ class AddNumberDialog : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         binding = FragmentAddNumberDialogBinding.inflate(layoutInflater)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
+        dialog?.window?.decorView?.layoutDirection = if(LocaleUtil.getInstance().isArabic) {
+            View.LAYOUT_DIRECTION_RTL
+        } else {
+            View.LAYOUT_DIRECTION_LTR
+        }
     }
 
     override fun onCreateView(

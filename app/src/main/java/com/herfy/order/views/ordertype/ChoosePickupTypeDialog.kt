@@ -17,6 +17,7 @@ import com.herfy.ordertype.databinding.DialogOrderTypeSelectionBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Store
 
@@ -37,6 +38,11 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         binding = DialogOrderTypeSelectionBinding.inflate(layoutInflater)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
+        dialog?.window?.decorView?.layoutDirection = if(LocaleUtil.getInstance().isArabic) {
+            View.LAYOUT_DIRECTION_RTL
+        } else {
+            View.LAYOUT_DIRECTION_LTR
+        }
     }
 
     override fun onCreateView(
