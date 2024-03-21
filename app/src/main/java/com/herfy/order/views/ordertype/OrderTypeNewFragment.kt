@@ -327,15 +327,19 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         })
     }
 
-    private fun navigateUp() {
-        navigateUp(false)
-    }
 
-    private fun navigateUp(proceed: Boolean) {
-        if (args.isFromFavorites) {
-            orderPresenter.addToCartFavorite(
-                CacheUtil.getInstance().retrieveFavoriteToAddToCart()
-            )
+    private fun navigateUp(proceed: Boolean, isUserClickBack:Boolean = false) {
+        val isFromFavorites = args.isFromFavorites
+        if (isFromFavorites && !isUserClickBack) {
+            val currentFavourite=  CacheUtil.getInstance()
+                .retrieveFavoriteToAddToCart()
+            if (currentFavourite != null) {
+                orderPresenter.addToCartFavorite(
+                    currentFavourite
+                )
+            }
+        }else if (isFromFavorites) {
+            findNavController().popBackStack()
         } else if (proceed && args.fromHome) {
             findNavController().navigateToDeepLink("nav_menu")
         } else {
@@ -418,7 +422,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     override fun setupViews() {
         binding.back.setOnClickListener {
-            navigateUp()
+            navigateUp(false,true)
         }
 
         binding.deliveryLayout.userCurrentLocation.setOnClickListener {
@@ -631,10 +635,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     private fun navigateToFavourites() {
-        NavigationUtils.navigateSafe(
-            findNavController(),
-            OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true)
-        )
+        NavigationUtils
+            .navigateSafe(findNavController(), OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true))
     }
 
     private fun initialTypeState() {
@@ -1560,6 +1562,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 override fun orderType(type: OrderType) {
                     if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN) {
                         val currentFavourite = CacheUtil.getInstance().retrieveFavoriteToAddToCart()
+
                         if (currentFavourite != null) {
                             MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_ORDER_TYPE)
                             orderPresenter.addToCartFavorite(
