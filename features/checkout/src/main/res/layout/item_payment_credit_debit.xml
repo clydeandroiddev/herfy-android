@@ -50,11 +50,12 @@
             app:layout_constraintTop_toTopOf="parent"
             android:text="Master *****6789" />
 
-        <RadioButton
+        <ImageView
             android:id="@+id/rb_card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="#0064AC"
+            android:src="@drawable/ic_payment_radio_unselected"
+            android:layout_marginEnd="@dimen/margin_large"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
