@@ -785,10 +785,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         binding.sidebar.fmPromotions.setOnClickListener { view: View? ->
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            NavigationUtils.navigateSafe(
-                navController,
-                HomeFragmentDirections.actionHomeToPromotions()
-            )
+            navController.navigateToDeepLink("nav_promotions")
         }
         binding.toolbarMain.apply {
             setSideButtonAction {
