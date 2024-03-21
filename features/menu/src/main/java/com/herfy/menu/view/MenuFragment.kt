@@ -33,6 +33,7 @@ import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.event.AddToCartEvent
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.isVisible
 import com.herfy.utils.extensions.navigateToDeepLink
@@ -44,6 +45,7 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
 
 
 @AndroidEntryPoint
@@ -63,6 +65,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     override fun onResume() {
         super.onResume()
+        setCartQuantity()
         viewModel.getOrderType()
     }
 
@@ -197,7 +200,6 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 layoutFooter.rootView.apply {
                     val tvViewBag = it.findViewById<TextView>(R.id.tvViewBag)
                     tvViewBag.text = CacheUtil.getInstance().getTranslations(Text.VIEW_BAG, "View bag")
-                    setCartQuantity()
                 }
 
             }
@@ -400,6 +402,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                             CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
                             Toast.LENGTH_SHORT
                         ).show()
+                        EventBus.getDefault().post(AddToCartEvent())
                         setCartQuantity()
                     }
                 }

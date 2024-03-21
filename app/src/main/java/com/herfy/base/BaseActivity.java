@@ -53,6 +53,7 @@ import com.herfy.main.NavigationActivity;
 import com.herfy.mukafaa_otp.MukafaaOTPActivity;
 import com.herfy.payment.views.PaymentActivity;
 import com.herfy.utils.constants.Values;
+import com.herfy.utils.event.AddToCartEvent;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
@@ -68,6 +69,10 @@ import com.herfy.util.receivers.InAppRatingBroadcastReceivers;
 import com.herfy.util.receivers.NetworkConnection;
 import com.herfy.views.DynamicTheme;
 import com.herfy.views.NetworkConnectivityDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -177,6 +182,18 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                 }
             }
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     protected void initBase() {
@@ -948,6 +965,11 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(AddToCartEvent event) {
+        setCartExpiry();
     }
 
 }
