@@ -1055,4 +1055,29 @@ public class Text {
     public static final String VIEW_BAG = "view_bag";
     public static final String CURBSIDE = "curbside";
 
+    public static final String MY_ORDERS = "my_orders";
+
+    public static final String IN_PROGRESS = "in_progress";
+    public static final String PAST_ORDERS = "past_orders";
+    public static final String VIEW_DETAILS = "view_details";
+    public static final String REORDER_LABEL = "reorder_label";
+    public static final String RATE_LABEL = "rate_label";
+    public static final String RATED = "rated";
+    public static final String TAP_TRACK_ORDER = "tap_track_order";
+
+    public static final String TODAY = "today";
+
+    public static final String CART_ITEM_COUNT_LABEL = "cart_item_count_label";
+    public static final String YESTERDAY = "yesterday";
+    public static final String DELIVER = "deliver";
+
+    public static final String ORDER_NUM = "order_num";
+
+    public static final String DELIVERED = "delivered";
+    public static final String ORDER_ITEMS = "order_items";
+    public static final String PAYMENT_SUMMARY = "payment_summary";
+    public static final String PICKED = "picked";
+
+    public static final String NO_ORDERS_FOUND = "no_orders_found";
+
 }

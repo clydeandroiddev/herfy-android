@@ -5,10 +5,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.herfy.R
-import com.herfy.curbside.curbsidenew.adapter.CurbsideBrandAdapter
 import com.herfy.profile.databinding.ItemUserPaymentMethodsBinding
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard
-import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 
 class PaymentMethodsAdapter(
     val customerCards: ArrayList<CustomerCard> = arrayListOf(),
@@ -39,7 +37,7 @@ class PaymentMethodsAdapter(
             cardNumber.text = item.attributes.brand + " ****" + item.attributes.last4Digits
             var res: Int = R.drawable.ic_saved_card
             if ("visa".equals(item.attributes.brand, ignoreCase = true)) res =
-                R.drawable.ic_card_visa else if ("mastercard".equals(
+                R.drawable.ic_card_visa_common else if ("mastercard".equals(
                     item.attributes.brand, ignoreCase = true
                 )
             ) res = R.drawable.ic_card_mastercard

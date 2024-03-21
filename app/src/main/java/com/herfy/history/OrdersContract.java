@@ -140,6 +140,8 @@ public interface OrdersContract {
 
         List<MenuItem> getOrderItems();
 
+        ArrayList<OrderHistory> getOrderHistories();
+
     }
 
 }
