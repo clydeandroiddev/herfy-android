@@ -3,6 +3,7 @@ package com.herfy.productpagedetails.ui.view
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -21,6 +22,7 @@ import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.toTranslate
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
@@ -38,7 +40,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     override val viewModel: ComboViewModel by viewModels()
     override val layout: Int = R.layout.fragment_combo_meal
 
-    private var mBottomSheetBehavior: BottomSheetBehavior<View?>? = null
+    private var mBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>? = null
     private var sizesAdapter: SizesItemAdapter? = null
     private var frequentBoughItemsAdapter: FrequentlyBoughtItemAdapter? = null
     private var comboMealModifierGroupAdapter: ComboMealModifierGroupAdapter? = null
@@ -65,6 +67,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
 
     override fun initViews() {
         super.initViews()
+        binding.viewModel = this@ComboMealFragment.viewModel
         setupFrequentlyBoughtItems()
         setupSizeItems()
         setupComboMealItems()
@@ -136,7 +139,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
 
     private fun setupComboMealDetailsBottomSheet() {
         binding.apply {
-            BottomSheetBehavior.from(fmComboDetail.rootView).let { bsb->
+            BottomSheetBehavior.from(layoutBottomSheetComboDetail.clBottomSheetDetailsMain).let { bsb->
                 bsb.state = BottomSheetBehavior.STATE_HIDDEN
                 mBottomSheetBehavior = bsb
             }
@@ -267,6 +270,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
 
     private fun setupMenuItemDetails(data: MenuItem) {
         binding.apply {
+            language = LocaleUtil.getInstance().language
             menuItem = data
         }
     }

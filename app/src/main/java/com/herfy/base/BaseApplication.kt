@@ -37,7 +37,7 @@ class BaseApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
 
-
+        AppDatabase.init(this)
         FirebaseApp.initializeApp(this)
         sdkInitialize(this)
         AppEventsLogger.activateApp(this)

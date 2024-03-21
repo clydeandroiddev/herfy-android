@@ -11,6 +11,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
@@ -23,6 +24,7 @@ fun loadSliderImage(imageView: ImageView, sliderImageUri: String?){
 
         Glide.with(imageView.context).load(sliderImageUri)
             .skipMemoryCache(false)
+            .apply(RequestOptions.centerCropTransform())
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .listener(object : RequestListener<Drawable>{
                 override fun onLoadFailed(
