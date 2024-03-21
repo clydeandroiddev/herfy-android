@@ -11,10 +11,11 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents
 
 class ComboMealModifierGroupAdapter(
     private var items: List<MenuItemComponents> = arrayListOf(),
-    private val comboViewModel: ComboViewModel
+    private val comboViewModel: ComboViewModel,
+    private var showComboMealModifierGroupCheckIndicator : HashMap<Int, Boolean> = hashMapOf()
 ) : RecyclerView.Adapter<ComboMealModifierGroupViewholder>() {
 
-
+    var comboMealModifierItemAdapters: HashMap<Int, ComboMealModifierItemAdapter> = hashMapOf()
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -34,14 +35,24 @@ class ComboMealModifierGroupAdapter(
     override fun onBindViewHolder(holder: ComboMealModifierGroupViewholder, position: Int) {
         holder.apply {
             val data = items[position]
-            setComboModifierGroup(data, position)
+            setComboModifierGroup(data, position,comboMealModifierItemAdapters,showComboMealModifierGroupCheckIndicator[position]?:false)
         }
     }
 
+
+
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(items: List<MenuItemComponents>){
+    fun updateList(items: List<MenuItemComponents>, checkBoxIndicatorMap : HashMap<Int, Boolean>){
         this.items = items
+        showComboMealModifierGroupCheckIndicator = checkBoxIndicatorMap
         notifyDataSetChanged()
+    }
+
+    fun updateComboMealModifierItem(menuItemComponentIndex : Int, selectedComboMealModifierItemIndex : Int){
+        comboMealModifierItemAdapters[menuItemComponentIndex]?.apply {
+            updateComponents(prevSelectedItemPos, selectedComboMealModifierItemIndex)
+        }
+
     }
 
 }

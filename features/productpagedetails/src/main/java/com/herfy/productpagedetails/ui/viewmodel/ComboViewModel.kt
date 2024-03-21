@@ -4,6 +4,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.herfy.model.ErrorMsgItem
+import com.herfy.model.ShowComboMealItemDetails
 import com.herfy.productpagedetails.ui.adapter.FrequentlyBoughtItemAdapter
 import com.herfy.productpagedetails.ui.adapter.SizesItemAdapter
 import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder
@@ -37,6 +38,10 @@ class ComboViewModel @Inject constructor(
     BaseModifierItemViewHolder.OnAction, ComboMealModifierItemViewHolder.onClickListener {
 
 
+    init {
+        getCartMenuItemsTotalPrice()
+    }
+
     //Objects
     private var menuItem: MenuItem? = null
         get() = field
@@ -58,12 +63,20 @@ class ComboViewModel @Inject constructor(
         set(value) {
             field = value
         }
+    private var previousComboIndex: Int = 0
+        get() = field
+        set(value) {
+            field = value
+        }
+
+    internal var cartMenuItemsTotalPrice: Double = 0.0
     private var _calorieCount = 0
 
     private var excludedMenu: List<MenuCategory> = arrayListOf()
     private val excludedCategories = HashMap<String, HashSet<MenuCategory>>()
     private val menuCategories: List<MenuCategory> = arrayListOf()
     private var menuItemComponentList = HashMap<Int, MenuItemComponents>()
+    private var menuItemComboList = HashMap<Int, HashMap<Int, MenuItemComponents>>()
     private val selectedComponents = HashMap<String, Any>()
 
     //Observalbles
@@ -85,31 +98,12 @@ class ComboViewModel @Inject constructor(
     val showMenuItemComponent: LiveData<List<MenuItemComponents>> = _showComboMenuItemComponents
     private val _showComboSizes = MutableLiveData<List<ModifierItem>>()
     val showComboSizes: LiveData<List<ModifierItem>> = _showComboSizes
-    private val _updateComponentModifierList = MutableLiveData<Int>()
-    val updateComponentModifierList : LiveData<Int> = _updateComponentModifierList
+    private val _updateComponentModifierList = MutableLiveData<Pair<Int, Int>>()
+    val updateComponentModifierList: LiveData<Pair<Int, Int>> = _updateComponentModifierList
+    private val _showComboMealItemDetails = MutableLiveData<ShowComboMealItemDetails>()
+    val showComboMealItemDetails: LiveData<ShowComboMealItemDetails> = _showComboMealItemDetails
 
-
-
-    fun changeMenuItemQuantity(add: Boolean) {
-        menuItem?.let {
-            if (!add && it.attributes.quantity != 1) {
-                it.attributes.quantity = menuItem!!.attributes.quantity - 1
-            } else if (add) {
-                it.attributes.quantity = menuItem!!.attributes.quantity + 1
-            }
-            _showMenuItemQuantity.value = it.attributes.quantity
-            getMenuItemTotalPrice(it, -1)
-        }
-
-
-    }
-
-    fun addToCart() {
-        notes.get()?.let {
-
-        }
-    }
-
+    /**Function for retrieving data of menu item from db**/
     fun getMenuItemFromDbBy(addToBag: Boolean, id: String, isUpsell: Boolean) {
         invokeAtBackground {
             menuRepository.getMenuItem(id) {
@@ -143,6 +137,7 @@ class ComboViewModel @Inject constructor(
                     it.sizes.modifierItems[0].attributes.isSelected = true
                     comboIndex = 0
                 }
+                previousComboIndex = comboIndex
                 _showMenuItemDetails.value = it
                 _showMenuItemQuantity.value = it.attributes.quantity
                 _showComboSizes.value = it.sizes.modifierItems
@@ -152,6 +147,7 @@ class ComboViewModel @Inject constructor(
         }
     }
 
+    /**Function for retrieving data of menu item from cart cache**/
     fun getMenuItemFromCartBy(position: Int, isUpsell: Boolean) {
         invokeAtBackground {
             cacheUtilHelper.getCartItems { cartItems ->
@@ -171,6 +167,7 @@ class ComboViewModel @Inject constructor(
                             counter++
                         }
                     }
+                    previousComboIndex = comboIndex
                     _showMenuItemDetails.value = it
                     _showMenuItemQuantity.value = it.attributes.quantity
                     _showComboSizes.value = it.sizes.modifierItems
@@ -182,6 +179,7 @@ class ComboViewModel @Inject constructor(
         }
     }
 
+    /**Function for setting menu item from promotion menu item**/
     fun setPromoMenuItem(menuItem: MenuItem) {
         this.menuItem = menuItem
         setMenuCategory(menuItem)
@@ -193,110 +191,349 @@ class ComboViewModel @Inject constructor(
         getMenuItemTotalPrice(menuItem, -1)
     }
 
-    fun showHideModifierItemPrice(menuItem: MenuItem) {
-        for (modifierGroup in menuItem.modifierGroups) {
+    /**Function for frequent bought items api call and setting it to a recycler view**/
+    fun getFrequentBoughtItems() {
+
+    }
+
+    /**Function for setting the menu item calories this is called every time when getMenuItemTotalPrice is called**/
+    private fun setMenuItemCalories() {
+        _calorieCount = 0
+        menuItem?.let {
+            if (it.sizes.modifierItems.size <= 3) {
+                for (modifierItem in it.sizes.modifierItems) {
+                    if (modifierItem.attributes.isSelected) {
+                        _calorieCount = modifierItem.attributes.calorieCount
+                        break
+                    }
+                }
+            }
+
+            if (_calorieCount == 0) {
+                val caloriesValue = it.calories
+                val calorieCount = it.calorieCount
+                if (calorieCount != 0) {
+                    _calorieCount = calorieCount
+                } else if (caloriesValue != null && caloriesValue.isNotEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
+                    calories.set(caloriesValue)
+//
+                }
+            }
+            var caloriesFromModifiers = 0
+            for (modifierGroup in it.modifierGroups) {
+                for (modifierItem in modifierGroup.modifierItems) {
+                    var calorieCountPerModifier = 0
+
+                    if (modifierItem.attributes.isSelected && modifierItem.attributes.calorieCount > 0) {
+                        if (modifierItem.attributes.quantity > 0) {
+                            calorieCountPerModifier =
+                                modifierItem.attributes.calorieCount * modifierItem.attributes.quantity
+                        } else {
+                            calorieCountPerModifier = modifierItem.attributes.calorieCount
+                        }
+                    }
+                    if (calorieCountPerModifier > 0) {
+                        caloriesFromModifiers += calorieCountPerModifier
+                    }
+                }
+            }
+
+            if (caloriesFromModifiers > 0) {
+                _calorieCount += caloriesFromModifiers;
+            }
+
+            if (_calorieCount > 0) {
+                calories.set(_calorieCount.toString())
+            }
+        }
+    }
+
+    /**Function for calculating the menu item total price and setting it in ui view**/
+    fun getMenuItemTotalPrice(item: MenuItem, modifierGroupPosition: Int) {
+        var orderStoreId: String? = null
+        var counter = 0
+        var comboIndex = 0
+        if (CacheUtil.getInstance().orderStore != null) {
+            orderStoreId = CacheUtil.getInstance().orderStore.id
+        }
+
+        var totalPrice: Double = item.getPrice(orderStoreId)
+        if (item.sizes.modifierItems.size > 0) {
+            if (!item.isPromotion) {
+                totalPrice = 0.0
+            }
+            for (modifierItem in item.sizes.modifierItems) {
+                if (modifierItem.attributes.isSelected) {
+                    totalPrice += modifierItem.attributes.price
+                    comboIndex = counter
+                    break
+                }
+                counter++
+            }
+        }
+        for (modifierItem in item.drinks.modifierItems) {
+            if (modifierItem.attributes.isSelected) {
+                totalPrice += modifierItem.attributes.price
+                break
+            }
+        }
+        for (modifierItem in item.getFries().getModifierItems()) {
+            if (modifierItem.attributes.isSelected) {
+                totalPrice += modifierItem.attributes.price
+                break
+            }
+        }
+        for (modifierGroup in item.getModifierGroups()) {
             val visibilityConfig = modifierGroup.attributes.visibilityConfig
             if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
                     "hidden",
                     ignoreCase = true
                 )
             ) {
-                val modifierGroupPosition = menuItem.modifierGroups.indexOf(modifierGroup)
-                if (modifierGroup.attributes.freeModifiersCount == 0) {
+                if (modifierGroup.attributes.freeModifiersCount == 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                        modifierGroup
+                    )
+                ) {
                     _showHideModifierItemPrice.value = Pair(true, modifierGroupPosition)
-                } else {
-                    var selectedFreeModifier = 0
-                    for (modifierItem in modifierGroup.modifierItems) {
-                        if (modifierItem.attributes.isSelected) {
-                            if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
-                                val totalSelectedFreeModifier =
-                                    selectedFreeModifier + modifierItem.attributes.quantity
-                                if (totalSelectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
-                                    if (modifierGroupPosition >= 0) {
-                                        _showHideModifierItemPrice.value =
-                                            Pair(false, modifierGroupPosition)
+                }
+                var selectedFreeModifier = 0
+                for (modifierItem in modifierGroup.modifierItems) {
+                    if (modifierItem.attributes.isSelected) {
+                        if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                            val totalSelectedFreeModifier =
+                                selectedFreeModifier + modifierItem.attributes.quantity
+                            if (totalSelectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                                        modifierGroup
+                                    )
+                                ) {
+                                    _showHideModifierItemPrice.value =
+                                        Pair(false, modifierGroupPosition)
+                                }
+                                selectedFreeModifier += modifierItem.attributes.quantity
+                            } else {
+                                if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                                        modifierGroup
+                                    )
+                                ) {
+                                    _showHideModifierItemPrice.value =
+                                        Pair(true, modifierGroupPosition)
+                                }
+                                selectedFreeModifier = modifierGroup.attributes.freeModifiersCount
+                                totalPrice += modifierItem.attributes.price * (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
+                            }
+                        } else {
+                            totalPrice += modifierItem.attributes.price * modifierItem.attributes.quantity
+                        }
+                    }
+                }
+                if (selectedFreeModifier == 0 && modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                        modifierGroup
+                    )
+                ) {
+                    _showHideModifierItemPrice.value = Pair(false, modifierGroupPosition)
+                }
+            }
+        }
+        for (ingredient in item.getIngredients()) {
+            if (ingredient.attributes.isSelected) {
+                totalPrice += ingredient.attributes.price
+            }
+        }
+
+        try {
+            if (item.isCombo) {
+                for (components in item.combo[comboIndex].components) {
+                    for (componentModifierItem in components.items) {
+                        if (componentModifierItem.selected) {
+                            if (!item.isSandwichOnly) totalPrice += componentModifierItem.price
+                            if (!componentModifierItem.modifierGroups.isEmpty()) {
+                                for (modifierGroup in componentModifierItem.modifierGroups) {
+                                    for (i in modifierGroup.modifierItems.indices) {
+                                        if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                            totalPrice += modifierGroup.modifierItems[i].attributes.price * modifierGroup.modifierItems[i].attributes.quantity
+                                        }
                                     }
-                                    selectedFreeModifier += modifierItem.attributes.quantity
-                                } else {
-                                    if (modifierGroupPosition >= 0) {
-                                        _showHideModifierItemPrice.value =
-                                            Pair(true, modifierGroupPosition)
-                                    }
-                                    selectedFreeModifier =
-                                        modifierGroup.attributes.freeModifiersCount
                                 }
                             }
                         }
                     }
-                    if (selectedFreeModifier == 0 && modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == menuItem.modifierGroups.indexOf(
-                            modifierGroup
-                        )
-                    ) {
-                        _showHideModifierItemPrice.value = Pair(false, modifierGroupPosition)
-                    }
                 }
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+        setMenuItemCalories()
+        val itemTotalPrice = totalPrice * item.attributes.quantity
+        _showMenuItemTotal.value = itemTotalPrice
+    }
+
+    fun getCartMenuItemsTotalPrice() {
+        var cartTotal = 0.0
+        invokeAtBackground {
+            cacheUtilHelper.getCartItems {
+                for (menuItem in it) {
+                    cartTotal += getCartTotalPricePer(menuItem, -1)
+                }
+                cartMenuItemsTotalPrice
             }
         }
     }
 
-    internal fun setMenuCategory(menuCategoryId: String?) {
-        val menuCategory = MenuCategory()
-        menuCategory.id = menuCategoryId
-        this.menuCategory = menuCategory
-    }
+    private fun getCartTotalPricePer(item: MenuItem, modifierGroupPosition: Int): Double {
+        var orderStoreId: String? = null
+        var counter = 0
+        var comboIndex = 0
+        if (CacheUtil.getInstance().orderStore != null) {
+            orderStoreId = CacheUtil.getInstance().orderStore.id
+        }
 
-
-    internal fun setMenuCategory(menuItem: MenuItem) {
-        var found = false
-        for (menuCategory in excludedMenuCategories(menuCategories)) {
-            if (!found) {
-                for (menuCategoryItem in menuCategory.menuItems) {
-                    if (menuCategoryItem.id == menuItem.id) {
-                        this.menuCategory = menuCategory
-                        found = true
-                        break
-                    }
+        var totalPrice: Double = item.getPrice(orderStoreId)
+        if (item.sizes.modifierItems.size > 0) {
+            if (!item.isPromotion) {
+                totalPrice = 0.0
+            }
+            for (modifierItem in item.sizes.modifierItems) {
+                if (modifierItem.attributes.isSelected) {
+                    totalPrice += modifierItem.attributes.price
+                    comboIndex = counter
+                    break
                 }
-            } else {
+                counter++
+            }
+        }
+        for (modifierItem in item.drinks.modifierItems) {
+            if (modifierItem.attributes.isSelected) {
+                totalPrice += modifierItem.attributes.price
                 break
             }
         }
-    }
-
-    private fun excludedMenuCategories(menuCategories: List<MenuCategory>): List<MenuCategory> {
-        excludedMenu = arrayListOf()
-        if (CacheUtil.getOrderStoreId() != null && excludedCategories.isNotEmpty() && excludedCategories.containsKey(
-                CacheUtil.getOrderStoreId()
-            )
-        ) {
-            val categories: MutableList<MenuCategory> = ArrayList(menuCategories)
-            excludedCategories[CacheUtil.getOrderStoreId()]?.let { categories.removeAll(it) }
-            this.excludedMenu = categories
-        } else {
-            this.excludedMenu = menuCategories
+        for (modifierItem in item.getFries().getModifierItems()) {
+            if (modifierItem.attributes.isSelected) {
+                totalPrice += modifierItem.attributes.price
+                break
+            }
         }
-        excludedMenu.sortedWith { menuCategory1, menuCategory2 -> menuCategory1.displayOrder - menuCategory2.displayOrder }
-        return excludedMenu
+        for (modifierGroup in item.getModifierGroups()) {
+            val visibilityConfig = modifierGroup.attributes.visibilityConfig
+            if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
+                    "hidden",
+                    ignoreCase = true
+                )
+            ) {
+                var selectedFreeModifier = 0
+                for (modifierItem in modifierGroup.modifierItems) {
+                    if (modifierItem.attributes.isSelected) {
+                        if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                            val totalSelectedFreeModifier =
+                                selectedFreeModifier + modifierItem.attributes.quantity
+                            if (totalSelectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                                        modifierGroup
+                                    )
+                                ) {
+                                    _showHideModifierItemPrice.value =
+                                        Pair(false, modifierGroupPosition)
+                                }
+                                selectedFreeModifier += modifierItem.attributes.quantity
+                            } else {
+                                if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                                        modifierGroup
+                                    )
+                                ) {
+                                    _showHideModifierItemPrice.value =
+                                        Pair(true, modifierGroupPosition)
+                                }
+                                selectedFreeModifier = modifierGroup.attributes.freeModifiersCount
+                                totalPrice += modifierItem.attributes.price * (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
+                            }
+                        } else {
+                            totalPrice += modifierItem.attributes.price * modifierItem.attributes.quantity
+                        }
+                    }
+                }
+            }
+        }
+        for (ingredient in item.getIngredients()) {
+            if (ingredient.attributes.isSelected) {
+                totalPrice += ingredient.attributes.price
+            }
+        }
+
+        try {
+            if (item.isCombo) {
+                for (components in item.combo[comboIndex].components) {
+                    for (componentModifierItem in components.items) {
+                        if (componentModifierItem.selected) {
+                            if (!item.isSandwichOnly) totalPrice += componentModifierItem.price
+                            if (!componentModifierItem.modifierGroups.isEmpty()) {
+                                for (modifierGroup in componentModifierItem.modifierGroups) {
+                                    for (i in modifierGroup.modifierItems.indices) {
+                                        if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                            totalPrice += modifierGroup.modifierItems[i].attributes.price * modifierGroup.modifierItems[i].attributes.quantity
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+
+        val itemTotalPrice = totalPrice * item.attributes.quantity
+        return itemTotalPrice
     }
 
-    fun getFrequentBoughttItems() {
-
+    /**Function for fetching the combo menu item components from the current selected menu item **/
+    private fun getComboMenuItemComponents() {
+        menuItem?.let {
+            if (it.combo.size > 0) {
+                it.combo[comboIndex]?.components?.let {
+                    _showComboMenuItemComponents.value = it
+                }
+                if (isFromCartEdit) {
+                    it.combo.forEachIndexed { comboIndex, menuItemCombo ->
+                        val menuItemComponentList = hashMapOf<Int, MenuItemComponents>()
+                        menuItemCombo.components?.forEachIndexed { menuItemComponentIndex, menuItemComponents ->
+                            menuItemComponentList[menuItemComponentIndex] = menuItemComponents
+                        }
+                        menuItemComboList[comboIndex] = menuItemComponentList
+                    }
+                }
+            } else {
+                _showComboMenuItemComponents.value = ArrayList()
+            }
+        } ?: run {
+            _showComboMenuItemComponents.value = ArrayList()
+        }
     }
 
-
-    fun getMenuItemComponentPerRow(
-        componentPosition: Int,
+    /**Function for fetching the componentModifierItem per menuItemComponentIndex**/
+    fun getComponentModifierItemPer(
+        menuItemComponentIndex: Int,
         showMenuItemComponent: (MenuItemComponents) -> Unit
     ) {
-        if (menuItemComponentList.containsKey(componentPosition)) {
-            menuItemComponentList[componentPosition]?.let(showMenuItemComponent)
+        /** Created a map of menuItem combo list where the menuItemComponent
+         * data will be stored and can be retrieved
+         * by using the comboIndex and menu item component index**/
+        val isContainMenuItemComponentKey =
+            menuItemComboList[comboIndex]?.containsKey(menuItemComponentIndex) ?: false
+        if (isContainMenuItemComponentKey) {
+            menuItemComboList[comboIndex]?.get(menuItemComponentIndex)?.let {
+                showMenuItemComponent(it)
+            }
         } else {
-            menuItem?.combo?.get(comboIndex)?.components?.get(componentPosition)?.let {
-                setupComponentPerPosition(componentPosition, it, showMenuItemComponent)
+            menuItem?.combo?.get(comboIndex)?.components?.get(menuItemComponentIndex)?.let {
+                setupComponentPerPosition(menuItemComponentIndex, it, showMenuItemComponent)
             }
         }
     }
 
+    /**Function for fetching the componentModifierItem data (Modifier group, modifier item and menu item from the database),
+     * and stored it in a map of menuItemComponents and then stored to menuItemCombo map, for easy retrieval and modification of data**/
     private fun setupComponentPerPosition(
         componentPosition: Int,
         menuItemComponents: MenuItemComponents,
@@ -445,10 +682,13 @@ class ComboViewModel @Inject constructor(
                             menuItemComponents.items[compoItemIndex].modifierGroups =
                                 ArrayList(modifierGroups)
                             menuItemComponents.items = componentsSelectFirst(menuItemComponents)
-                            menuItemComponentList[componentPosition] = menuItemComponents
-                            showMenuItemComponent(menuItemComponents)
+
+
                         }
                     }
+                    menuItemComponentList[componentPosition] = menuItemComponents
+                    menuItemComboList[comboIndex] = menuItemComponentList
+                    showMenuItemComponent(menuItemComponents)
                 } catch (e: Exception) {
                     runOnMain {
                         _showError.value =
@@ -460,6 +700,96 @@ class ComboViewModel @Inject constructor(
         }
     }
 
+    /** Function for checking to show the modifier item price per menu item,
+     *  and applying it to ComboMealItemModifierItemAdapter
+     * **/
+    fun showHideModifierItemPrice(menuItem: MenuItem) {
+        for (modifierGroup in menuItem.modifierGroups) {
+            val visibilityConfig = modifierGroup.attributes.visibilityConfig
+            if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
+                    "hidden",
+                    ignoreCase = true
+                )
+            ) {
+                val modifierGroupPosition = menuItem.modifierGroups.indexOf(modifierGroup)
+                if (modifierGroup.attributes.freeModifiersCount == 0) {
+                    _showHideModifierItemPrice.value = Pair(true, modifierGroupPosition)
+                } else {
+                    var selectedFreeModifier = 0
+                    for (modifierItem in modifierGroup.modifierItems) {
+                        if (modifierItem.attributes.isSelected) {
+                            if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                val totalSelectedFreeModifier =
+                                    selectedFreeModifier + modifierItem.attributes.quantity
+                                if (totalSelectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                    if (modifierGroupPosition >= 0) {
+                                        _showHideModifierItemPrice.value =
+                                            Pair(false, modifierGroupPosition)
+                                    }
+                                    selectedFreeModifier += modifierItem.attributes.quantity
+                                } else {
+                                    if (modifierGroupPosition >= 0) {
+                                        _showHideModifierItemPrice.value =
+                                            Pair(true, modifierGroupPosition)
+                                    }
+                                    selectedFreeModifier =
+                                        modifierGroup.attributes.freeModifiersCount
+                                }
+                            }
+                        }
+                    }
+                    if (selectedFreeModifier == 0 && modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == menuItem.modifierGroups.indexOf(
+                            modifierGroup
+                        )
+                    ) {
+                        _showHideModifierItemPrice.value = Pair(false, modifierGroupPosition)
+                    }
+                }
+            }
+        }
+    }
+
+    internal fun setMenuCategory(menuCategoryId: String?) {
+        val menuCategory = MenuCategory()
+        menuCategory.id = menuCategoryId
+        this.menuCategory = menuCategory
+    }
+
+    internal fun setMenuCategory(menuItem: MenuItem) {
+        var found = false
+        for (menuCategory in excludedMenuCategories(menuCategories)) {
+            if (!found) {
+                for (menuCategoryItem in menuCategory.menuItems) {
+                    if (menuCategoryItem.id == menuItem.id) {
+                        this.menuCategory = menuCategory
+                        found = true
+                        break
+                    }
+                }
+            } else {
+                break
+            }
+        }
+    }
+
+    private fun excludedMenuCategories(menuCategories: List<MenuCategory>): List<MenuCategory> {
+        excludedMenu = arrayListOf()
+        if (CacheUtil.getOrderStoreId() != null && excludedCategories.isNotEmpty() && excludedCategories.containsKey(
+                CacheUtil.getOrderStoreId()
+            )
+        ) {
+            val categories: MutableList<MenuCategory> = ArrayList(menuCategories)
+            excludedCategories[CacheUtil.getOrderStoreId()]?.let { categories.removeAll(it) }
+            this.excludedMenu = categories
+        } else {
+            this.excludedMenu = menuCategories
+        }
+        excludedMenu.sortedWith { menuCategory1, menuCategory2 -> menuCategory1.displayOrder - menuCategory2.displayOrder }
+        return excludedMenu
+    }
+
+    /**Function for setting the value of selected to true of the first item of ComponentModifier per MenuItemComponent
+     * **/
     private fun componentsSelectFirst(components: MenuItemComponents): ArrayList<ComponentModifierItem> {
         if (!isFromCartEdit || checkIfNoItemSelected(components, components.items)) {
             components.items[0].selected = true
@@ -482,198 +812,37 @@ class ComboViewModel @Inject constructor(
         return true
     }
 
-    private fun setMenuItemCalories() {
-        _calorieCount = 0
+
+    /**Function for changing the quantity of the current menu item,
+     *after updating the quantity getMenuItemTotalPrice is always called
+     * **/
+    fun changeMenuItemQuantity(add: Boolean) {
         menuItem?.let {
-            if (it.sizes.modifierItems.size <= 3) {
-                for (modifierItem in it.sizes.modifierItems) {
-                    if (modifierItem.attributes.isSelected) {
-                        _calorieCount = modifierItem.attributes.calorieCount
-                        break
-                    }
-                }
+            if (!add && it.attributes.quantity != 1) {
+                it.attributes.quantity = menuItem!!.attributes.quantity - 1
+            } else if (add) {
+                it.attributes.quantity = menuItem!!.attributes.quantity + 1
             }
-
-            if (_calorieCount == 0) {
-                val caloriesValue = it.calories
-                val calorieCount = it.calorieCount
-                if (calorieCount != 0) {
-                    _calorieCount = calorieCount
-                } else if (caloriesValue != null && caloriesValue.isNotEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
-                    calories.set(caloriesValue)
-//
-                }
-            }
-            var caloriesFromModifiers = 0
-            for (modifierGroup in it.modifierGroups) {
-                for (modifierItem in modifierGroup.modifierItems) {
-                    var calorieCountPerModifier = 0
-
-                    if (modifierItem.attributes.isSelected && modifierItem.attributes.calorieCount > 0) {
-                        if (modifierItem.attributes.quantity > 0) {
-                            calorieCountPerModifier =
-                                modifierItem.attributes.calorieCount * modifierItem.attributes.quantity
-                        } else {
-                            calorieCountPerModifier = modifierItem.attributes.calorieCount
-                        }
-                    }
-                    if (calorieCountPerModifier > 0) {
-                        caloriesFromModifiers += calorieCountPerModifier
-                    }
-                }
-            }
-
-            if (caloriesFromModifiers > 0) {
-                _calorieCount += caloriesFromModifiers;
-            }
-
-            if (_calorieCount > 0) {
-                calories.set(_calorieCount.toString())
-            }
+            _showMenuItemQuantity.value = it.attributes.quantity
+            getMenuItemTotalPrice(it, -1)
         }
     }
 
+    /**Function adding the menu item in to cart and caching it
+     * **/
+    fun addToCart() {
+        notes.get()?.let {
 
-    fun getMenuItemTotalPrice(item: MenuItem, modifierGroupPosition: Int) {
-        var orderStoreId: String? = null
-        var counter = 0
-        var comboIndex = 0
-        if (CacheUtil.getInstance().orderStore != null) {
-            orderStoreId = CacheUtil.getInstance().orderStore.id
-        }
-
-        var totalPrice: Double = item.getPrice(orderStoreId)
-        if (item.sizes.modifierItems.size > 0) {
-            if (!item.isPromotion) {
-                totalPrice = 0.0
-            }
-            for (modifierItem in item.sizes.modifierItems) {
-                if (modifierItem.attributes.isSelected) {
-                    totalPrice += modifierItem.attributes.price
-                    comboIndex = counter
-                    break
-                }
-                counter++
-            }
-        }
-        for (modifierItem in item.drinks.modifierItems) {
-            if (modifierItem.attributes.isSelected) {
-                totalPrice += modifierItem.attributes.price
-                break
-            }
-        }
-        for (modifierItem in item.getFries().getModifierItems()) {
-            if (modifierItem.attributes.isSelected) {
-                totalPrice += modifierItem.attributes.price
-                break
-            }
-        }
-        for (modifierGroup in item.getModifierGroups()) {
-            val visibilityConfig = modifierGroup.attributes.visibilityConfig
-            if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                    "hidden",
-                    ignoreCase = true
-                )
-            ) {
-                if (modifierGroup.attributes.freeModifiersCount == 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                        modifierGroup
-                    )
-                ) {
-                    _showHideModifierItemPrice.value = Pair(true, modifierGroupPosition)
-                }
-                var selectedFreeModifier = 0
-                for (modifierItem in modifierGroup.modifierItems) {
-                    if (modifierItem.attributes.isSelected) {
-                        if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
-                            val totalSelectedFreeModifier =
-                                selectedFreeModifier + modifierItem.attributes.quantity
-                            if (totalSelectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
-                                if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                                        modifierGroup
-                                    )
-                                ) {
-                                    _showHideModifierItemPrice.value =
-                                        Pair(false, modifierGroupPosition)
-                                }
-                                selectedFreeModifier += modifierItem.attributes.quantity
-                            } else {
-                                if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                                        modifierGroup
-                                    )
-                                ) {
-                                    _showHideModifierItemPrice.value =
-                                        Pair(true, modifierGroupPosition)
-                                }
-                                selectedFreeModifier = modifierGroup.attributes.freeModifiersCount
-                                totalPrice += modifierItem.attributes.price * (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
-                            }
-                        } else {
-                            totalPrice += modifierItem.attributes.price * modifierItem.attributes.quantity
-                        }
-                    }
-                }
-                if (selectedFreeModifier == 0 && modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                        modifierGroup
-                    )
-                ) {
-                    _showHideModifierItemPrice.value = Pair(false, modifierGroupPosition)
-                }
-            }
-        }
-        for (ingredient in item.getIngredients()) {
-            if (ingredient.attributes.isSelected) {
-                totalPrice += ingredient.attributes.price
-            }
-        }
-
-        try {
-            if (item.isCombo) {
-                for (components in item.combo[comboIndex].components) {
-                    for (componentModifierItem in components.items) {
-                        if (componentModifierItem.selected) {
-                            if (!item.isSandwichOnly) totalPrice += componentModifierItem.price
-                            if (!componentModifierItem.modifierGroups.isEmpty()) {
-                                for (modifierGroup in componentModifierItem.modifierGroups) {
-                                    for (i in modifierGroup.modifierItems.indices) {
-                                        if (modifierGroup.modifierItems[i].attributes.isSelected) {
-                                            totalPrice += modifierGroup.modifierItems[i].attributes.price * modifierGroup.modifierItems[i].attributes.quantity
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        }
-        setMenuItemCalories()
-        _showMenuItemTotal.value = (totalPrice * item.attributes.quantity)
-    }
-
-    fun getComboMenuItemComponents() {
-        menuItem?.let {
-            if (it.combo.size > 0) {
-                it.combo[comboIndex]?.components?.let {
-                    _showComboMenuItemComponents.value = it
-                }
-                if (isFromCartEdit) {
-                    it.combo[comboIndex]?.components?.forEachIndexed { index, menuItemComponents ->
-                        menuItemComponentList[index] = menuItemComponents
-                    }
-                }
-            } else {
-                _showComboMenuItemComponents.value = ArrayList()
-            }
-        } ?: run {
-            _showComboMenuItemComponents.value = ArrayList()
         }
     }
 
+    /**Function updating the selected size of the combo meal menu item,
+     * update also the combo index, and update the list of combo menuItemComponents and reload it
+     * **/
     override fun onSelectSize(size: ModifierItem, pos: Int) {
-        val prevComboIndex = comboIndex
+        previousComboIndex = comboIndex
         comboIndex = pos
+        getComboMenuItemComponents()
         //TODO : Unselect Or Set To Default OldComboIndex
     }
 
@@ -682,24 +851,34 @@ class ComboViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
-
+    /**Inheriting the function from ComboMealModifierItem.onClickListener
+     * This function tells the viewModel to update the current item attributes
+     * to selected and previous item attributes to unselected,
+     * If the selected ComponentModifierItem has list of ModifierGroup and Modifier items
+     * the list will be shown into a separate view.
+     * **/
     override fun onSelectComboComponentItem(
         item: ComponentModifierItem,
         menuItemComponentPos: Int,
         componentModifierItemPos: Int,
-        previousSelectedIndex : Int
+        previousSelectedIndex: Int
     ) {
         val showModifierDetail = checkToShowModifierDetail(item)
 
-        if(showModifierDetail){
-
-        }else {
-            if(componentModifierItemPos != previousSelectedIndex){
+        if (showModifierDetail) {
+            _showComboMealItemDetails.value = ShowComboMealItemDetails(
+                item,
+                componentModifierItemPos,
+                previousSelectedIndex,
+                menuItemComponentPos
+            )
+        } else {
+            if (componentModifierItemPos != previousSelectedIndex) {
                 updateComponentModifierPreviousItem(menuItemComponentPos, previousSelectedIndex)
             }
-
             updateSelectedComponentModifierItem(menuItemComponentPos, componentModifierItemPos)
-
+            _updateComponentModifierList.value =
+                Pair(menuItemComponentPos, componentModifierItemPos)
         }
     }
 
@@ -707,7 +886,7 @@ class ComboViewModel @Inject constructor(
         componentPosition: Int,
         prevSelectedItemPos: Int
     ) {
-        menuItemComponentList[componentPosition]?.let {
+        menuItemComboList[comboIndex]?.get(componentPosition)?.let {
             val selectedComboComponentItem = it.items[prevSelectedItemPos]
             if (selectedComboComponentItem.modifierGroups.size > 0) {
                 selectedComboComponentItem.modifierGroups.forEach {
@@ -724,7 +903,7 @@ class ComboViewModel @Inject constructor(
     }
 
     private fun updateSelectedComponentModifierItem(componentPosition: Int, position: Int) {
-        menuItemComponentList[componentPosition]?.let {
+        menuItemComboList[comboIndex]?.get(componentPosition)?.let {
             val selectedComboComponentItem = it.items[position]
             selectedComboComponentItem.selected = true
             it.items[position] = selectedComboComponentItem
@@ -733,7 +912,7 @@ class ComboViewModel @Inject constructor(
 
     private fun checkToShowModifierDetail(
         components: ComponentModifierItem,
-    ) : Boolean = components.modifierGroups.size > 1
+    ): Boolean = components.modifierGroups.size > 1
 
     override fun onCheckedChanged(
         isSelected: Boolean,
@@ -757,5 +936,50 @@ class ComboViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    fun updateModifierGroupSelectionIndicator(
+        hasSelectedModifierItem: Boolean,
+        modifierGroupPosition: Int
+    ) {
+        val selectedModifierItemCount = countSelectedModifierItems(modifierGroupPosition)
+        val shouldShowIndicator = hasSelectedModifierItem || selectedModifierItemCount >= 1
+        //menuView.showModifierSelectionIndicator(shouldShowIndicator, modifierGroupPosition)
+    }
+
+    private fun countSelectedModifierItems(modifierGroupPosition: Int): Int {
+        var selectedModifierItemCount = 0
+        val group = menuItem!!.modifierGroups[modifierGroupPosition]
+        if (group != null) {
+            for (item in group.modifierItems) {
+                if (item.attributes.isSelected) {
+                    selectedModifierItemCount++
+                }
+            }
+        }
+        return selectedModifierItemCount
+    }
+
+    fun showModifierItemPricePer(componentModifierItem : ComponentModifierItem) : HashMap<Int, Boolean>{
+        val showModifierItemPrice = hashMapOf<Int, Boolean>()
+        componentModifierItem.modifierGroups.forEachIndexed { index, group ->
+            showModifierItemPrice[index] = group.attributes.freeModifiersCount == 0
+        }
+        return showModifierItemPrice
+    }
+
+    fun showModifierItemCheckBoxPer(componentModifierItem: ComponentModifierItem) : HashMap<Int,Boolean>{
+        val shouldShowModifierCheckbox = java.util.HashMap<Int, Boolean>()
+        componentModifierItem.modifierGroups.forEachIndexed { index, group ->
+            shouldShowModifierCheckbox[index] = group.modifierItems.any { it.attributes.isSelected }
+        }
+        return shouldShowModifierCheckbox
+    }
+
+    fun showComboModifierGroupCheckBox(menuItemComponentList : List<MenuItemComponents>): HashMap<Int, Boolean> {
+        val map = hashMapOf<Int, Boolean>()
+        menuItemComponentList.forEachIndexed { index, menuItemComponents ->
+            map[index] = menuItemComponents.items.any { it.selected }
+        }
+        return map
+    }
 
 }

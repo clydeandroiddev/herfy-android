@@ -356,7 +356,7 @@
                             style="@style/TextAppearance.Footnote"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_regular"
+                            android:textSize="12sp"
                             android:ellipsize="end"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:gravity="start"
@@ -364,8 +364,7 @@
                             android:maxLines="1"
                             android:textAlignment="viewStart"
                             android:textAllCaps="false"
-                            android:textColor="#55667B"
-                            android:textStyle="bold" />
+                            android:textColor="#55667B" />
 
                         <EditText
                             android:id="@+id/et_item_notes"

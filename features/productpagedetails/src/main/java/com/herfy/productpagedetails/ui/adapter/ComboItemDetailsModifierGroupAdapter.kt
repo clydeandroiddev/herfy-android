@@ -1,5 +1,6 @@
 package com.herfy.productpagedetails.ui.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -56,5 +57,16 @@ class ComboItemDetailsModifierGroupAdapter(
         shouldShowModifierGroupCheckbox[position] = show
         notifyItemChanged(position)
     }
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateList(items: ArrayList<ModifierGroup>?, showModifierItemPriceMap : HashMap<Int, Boolean>, shouldShowModifierGroupCheckboxMap : HashMap<Int,Boolean>) {
+        showModifierItemPrice = showModifierItemPriceMap
+        shouldShowModifierGroupCheckbox = shouldShowModifierGroupCheckboxMap
+        items?.let {
+            this.items = it
+            notifyDataSetChanged()
+        }
+    }
+
+
 
 }

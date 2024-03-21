@@ -133,6 +133,7 @@
                 app:layout_constraintGuide_end="181dp" />
             
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_details"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="5dp"

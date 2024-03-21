@@ -318,7 +318,7 @@
         android:label="customize_caps"
         tools:layout="@layout/fragment_combo_meal">
 
-        <deepLink app:uri="android-app://com.herfy/nav_menu_item/{menu_category_id}/{menu_item_id}" />
+        <deepLink app:uri="android-app://com.herfy/nav_combo/{menu_category_id}/{menu_item_id}" />
 
         <argument
             android:name="menu_category_id"

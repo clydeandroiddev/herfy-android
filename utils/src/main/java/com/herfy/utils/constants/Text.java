@@ -1168,4 +1168,6 @@ public class Text {
 
     public static final String BRANCH_IS_CLOSED_ERROR = "branch_is_closed_error";
 
+    public static final String SPECIAL_INSTRUCTION_DESCRIPTION="special_instruction_description";
+    public static final String FREQUENTLY_BOUGHT_TOGETHER_LABEL="frequently_bought_togehter_label";
 }

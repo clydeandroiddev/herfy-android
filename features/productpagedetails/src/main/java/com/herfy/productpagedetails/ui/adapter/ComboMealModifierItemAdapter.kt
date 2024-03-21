@@ -13,7 +13,8 @@ class ComboMealModifierItemAdapter(
     private val menuItemComponentPos: Int
 ) : RecyclerView.Adapter<ComboMealModifierItemViewHolder>() {
 
-    private var prevSelectedItemPos = 0
+    internal var prevSelectedItemPos = 0
+        get() = field
 
     private var listener : ComboMealModifierItemViewHolder.onClickListener? = null
 
