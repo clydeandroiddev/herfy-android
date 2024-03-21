@@ -374,7 +374,6 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
             boolean validDelivery = CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY && (CacheUtil.getInstance().getOrderAddress() != null || CacheUtil.getInstance().getOrderDeliveryAddress() != null);
             boolean validPickup = (
                     CacheUtil.getInstance().getOrderType() == OrderType.PICKUP
-                            || CacheUtil.getInstance().getOrderType() == OrderType.EAT_IN
                             || CacheUtil.getInstance().getOrderType() == OrderType.DRIVE_THRU
                             || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN
                             || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE)
@@ -397,7 +396,6 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
                     orderBody.addProperty("type", "drive-thru");
                     orderBody.addProperty("location", store.getId());
                     break;
-                case EAT_IN:
                 case DINE_IN:
                     deliveryCharge = 0.0;
                     orderBody.addProperty("type", "eat-in");

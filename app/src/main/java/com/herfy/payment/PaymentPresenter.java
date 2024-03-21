@@ -896,13 +896,6 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                     orderBody.addProperty("location", store.getId());
                 }
                 break;
-            case EAT_IN:
-                deliveryCharge = 0.0;
-                orderBody.addProperty("type", "eat-in");
-                if (store != null) {
-                    orderBody.addProperty("location", store.getId());
-                }
-                break;
             case DINE_IN:
                 deliveryCharge = 0.0;
                 orderBody.addProperty("type", "eat-in");

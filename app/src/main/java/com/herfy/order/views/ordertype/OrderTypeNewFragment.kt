@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.net.Uri
@@ -26,7 +25,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
@@ -66,7 +64,6 @@ import com.herfy.main.NavigationActivity
 import com.herfy.order.OrderContract
 import com.herfy.order.OrderPresenter
 import com.herfy.order.adapters.StoresRecyclerViewAdapter
-import com.herfy.order.views.DineInTableNumberDialogFragment
 import com.herfy.order.views.OrderTypeDialogFragment
 import com.herfy.order.views.ordertype.addaddress.AddNewAddressActivity
 import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
@@ -1113,11 +1110,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 }
                 val eventAttributes = HashMap<String, String>()
                 if (CacheUtil.getInstance().orderType === OrderType.PICKUP) {
-                    eventAttributes["Pickup"] = store.attributes.name
+                    eventAttributes["WalkInPickup"] = store.attributes.name
                 } else if (CacheUtil.getInstance().orderType === OrderType.DINE_IN) {
                     eventAttributes["DineIn"] = store.attributes.name
-                } else if (CacheUtil.getInstance().orderType === OrderType.EAT_IN) {
-                    eventAttributes["WalkIn"] = store.attributes.name
                 } else if (CacheUtil.getInstance().orderType === OrderType.DRIVE_THRU) {
                     eventAttributes["DriveThru"] = store.attributes.name
                 }
@@ -1502,14 +1497,12 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         if (orderTypeSelected == OrderType.PICKUP) {
             if (otPickupSelected == OrderType.DRIVE_THRU) {
                 orderTypeSelected = OrderType.DRIVE_THRU
-            } else if (otPickupSelected == OrderType.EAT_IN) {
-                orderTypeSelected = OrderType.EAT_IN
             } else if (otPickupSelected == OrderType.CURBSIDE) {
                 orderTypeSelected = OrderType.CURBSIDE
             }
         }
 
-        if (isMenuSeparate && cachedOrderType == OrderType.DELIVERY && (orderTypeSelected == OrderType.PICKUP || orderTypeSelected == OrderType.DRIVE_THRU || orderTypeSelected == OrderType.EAT_IN)) {
+        if (isMenuSeparate && cachedOrderType == OrderType.DELIVERY && (orderTypeSelected == OrderType.PICKUP || orderTypeSelected == OrderType.DRIVE_THRU)) {
             val itemsInCart = CacheUtil.getInstance().cart
             if (itemsInCart.size > 0) {
 
@@ -1547,7 +1540,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
+            currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN) {

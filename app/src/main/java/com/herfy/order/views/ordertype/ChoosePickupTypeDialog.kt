@@ -85,7 +85,7 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
             )
 
             choosePickup.setOnClickListener {
-                onSubmit?.orderType(OrderType.EAT_IN)
+                onSubmit?.orderType(OrderType.PICKUP)
             }
 
             chooseDriveThru.setOnClickListener {

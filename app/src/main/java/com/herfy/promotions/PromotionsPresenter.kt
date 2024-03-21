@@ -252,13 +252,6 @@ class PromotionsPresenter @Inject constructor(
                                 orderBody.addProperty("location", store.id)
                             }
                         }
-
-                        OrderType.EAT_IN -> {
-                            orderBody.addProperty("type", "eat-in")
-                            if (store != null) {
-                                orderBody.addProperty("location", store.id)
-                            }
-                        }
                     }
                 }
                 val vatAmount = 0.0
@@ -441,7 +434,6 @@ class PromotionsPresenter @Inject constructor(
             OrderType.DELIVERY -> "delivery"
             OrderType.CURBSIDE -> "curbside"
             OrderType.DRIVE_THRU -> "drive-thru"
-            OrderType.EAT_IN -> "eat-in"
         }
 
 

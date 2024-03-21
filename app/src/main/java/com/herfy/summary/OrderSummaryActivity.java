@@ -242,7 +242,6 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
         setPaymentMethodTextLabel();
 
         switch (CacheUtil.getInstance().getOrderType()) {
-            case EAT_IN:
             case DRIVE_THRU:
             case PICKUP:
                 type.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP));

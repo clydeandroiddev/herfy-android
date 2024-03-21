@@ -498,9 +498,7 @@ class HomeViewModel @Inject constructor(
             OrderType.DELIVERY -> "delivery"
             OrderType.CURBSIDE -> "curbside"
             OrderType.DRIVE_THRU -> "drive-thru"
-            OrderType.EAT_IN -> "eat-in"
         }
-
 
 
         allPromotionsList?.let { promos ->

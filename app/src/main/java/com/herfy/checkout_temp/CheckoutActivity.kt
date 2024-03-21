@@ -547,10 +547,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 binding!!.ivOrderType.setImageResource(com.herfy.checkout.R.drawable.ic_pickup_curbside)
             }
 
-            OrderType.EAT_IN -> {
-                binding!!.tvOrderType.text = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
-                binding!!.ivOrderType.setImageResource(com.herfy.checkout.R.drawable.ic_herfy_pickup)
-            }
             OrderType.DRIVE_THRU -> {
                 binding!!.tvOrderType.text = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
                 binding!!.ivOrderType.setImageResource(R.drawable.ic_pickup_drive_thru)

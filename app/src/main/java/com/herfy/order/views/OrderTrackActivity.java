@@ -564,7 +564,6 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
                 switch (orderType) {
                     case PICKUP:
                     case DRIVE_THRU:
-                    case EAT_IN:
                     case DINE_IN:
                         startMarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(ViewUtil.vectorDrawableToBitmap(this, R.drawable.address_home), 95, 95, true)));
                         break;
@@ -586,7 +585,6 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
                 switch (orderType) {
                     case PICKUP:
                     case DRIVE_THRU:
-                    case EAT_IN:
                     case DINE_IN:
                         endMarkerOptions.icon(ViewUtil.vectorDrawableToBitmapDescriptor(this, R.drawable.marker_start));
                         break;
