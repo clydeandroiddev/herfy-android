@@ -52,6 +52,7 @@ import com.herfy.utils.extensions.collapse
 import com.herfy.utils.extensions.expand
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.loadImageFromUrl
+import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
@@ -673,10 +674,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
 
         binding.orderDetailsContainer.addMore.setOnClickListener {
-            NavigationUtils.navigateSafe(
-                findNavController(),
-                CartFragmentDirections.actionCartToMenu()
-            )
+            findNavController().navigateToDeepLink("nav_menu")
         }
     }
 
@@ -713,7 +711,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         binding.paymentSummaryContainer.viewCoupon.text =
             CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
         binding.orderDetailsContainer.addMore.text =
-            CacheUtil.getInstance().getTranslations(Text.ADD_MORE_ITEM_LABEL, "Add more item")
+            CacheUtil.getInstance().getTranslations(Text.ADD_MORE_ITEM, "Add more item")
         binding.orderDetailsContainer.emptyCart.setTitle(
             CacheUtil.getInstance()
                 .getTranslations(Text.YOUR_CART_IS_EMPTY_LABEL, "Your cart is empty")
