@@ -42,6 +42,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.ViewUtil
 import com.herfy.views.RecyclerViewUtil.smoothSnapToPosition
 import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.Store
@@ -216,16 +217,10 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
             try {
                 val activity: Activity? = activity
                 if (activity != null) {
-                    val bitmapDrawable = ContextCompat.getDrawable(
-                        activity, R.drawable.user_current_location
-                    ) as BitmapDrawable?
-                    if (bitmapDrawable != null) {
-                        val bitmap = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 50, 50, true)
-                        val canvas = Canvas(bitmap)
-                        val paint = Paint()
-                        canvas.drawBitmap(bitmap, 0f, 0f, paint)
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                    }
+                    val icon = ViewUtil.vectorDrawableToBitmapDescriptor(
+                        activity, com.herfy.R.drawable.user_current_location
+                    )
+                    markerOptions.icon(icon)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -253,7 +248,7 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                 markerOptions.title(i.toString())
                 markerOptions.position(LatLng(store.attributes.lat, store.attributes.lng))
                 val icon = com.herfy.util.ViewUtil.vectorDrawableToBitmapDescriptor(
-                    requireActivity(), R.drawable.branch_unselected
+                    requireActivity(), R.drawable.ic_new_store_locator_store_icon
                 )
                 markerOptions.icon(icon)
                 markerOptions.anchor(0.5f, 1f)
@@ -353,7 +348,7 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                 } else {
                     branchMarker.setIcon(
                         com.herfy.util.ViewUtil.vectorDrawableToBitmapDescriptor(
-                            requireActivity(), R.drawable.branch_unselected
+                            requireActivity(), R.drawable.ic_new_store_locator_store_icon
                         )
                     )
                     branchMarker.setAnchor(0.5f, 1f)
