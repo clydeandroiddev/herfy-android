@@ -70,7 +70,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                 )
             )
         }
-        defaultOrderTypes.find { t -> t == OrderType.EAT_IN || t == OrderType.DINE_IN }?.let {
+        defaultOrderTypes.find { t -> t == OrderType.DINE_IN }?.let {
             typeList.add(
                 PromotionOrderType(
                     cacheUtil.getTranslations(Text.DINE_IN),

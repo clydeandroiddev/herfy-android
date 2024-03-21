@@ -35,7 +35,7 @@ fun String.formatDate(): String {
 fun String.orderDetailsType(): String {
     val type = OrderType.fromString(this.toLowerCase())
     return when (type) {
-        OrderType.DINE_IN, OrderType.EAT_IN -> {
+        OrderType.DINE_IN-> {
             CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In") + ", "
         }
 
@@ -52,10 +52,8 @@ fun String.orderDetailsType(): String {
 fun String.orderTypeString(): String {
     val type = OrderType.fromString(this.toLowerCase())
     when (type) {
-        OrderType.PICKUP, OrderType.EAT_IN, OrderType.DRIVE_THRU -> {
-            val headerText: String? = if (type == OrderType.EAT_IN) {
-                CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
-            } else if (type == OrderType.DRIVE_THRU) {
+        OrderType.PICKUP, OrderType.DRIVE_THRU -> {
+            val headerText: String? = if (type == OrderType.DRIVE_THRU) {
                 CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU, "Drive Thru")
             } else {
                 CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")

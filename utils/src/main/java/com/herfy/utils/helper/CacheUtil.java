@@ -1123,7 +1123,7 @@ public class CacheUtil {
     }
 
     public Boolean pickupTypes() {
-        return (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP || CacheUtil.getInstance().getOrderType() == OrderType.EAT_IN || CacheUtil.getInstance().getOrderType() == OrderType.DRIVE_THRU || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE);
+        return (CacheUtil.getInstance().getOrderType() == OrderType.PICKUP || CacheUtil.getInstance().getOrderType() == OrderType.DRIVE_THRU || CacheUtil.getInstance().getOrderType() == OrderType.DINE_IN || CacheUtil.getInstance().getOrderType() == OrderType.CURBSIDE);
     }
 
     public OrderType getOrderType() {
@@ -1138,8 +1138,6 @@ public class CacheUtil {
             case 4:
                 return OrderType.CURBSIDE;
             case 5:
-                return OrderType.EAT_IN;
-            case 6:
                 return OrderType.DRIVE_THRU;
             default:
                 return OrderType.NONE;

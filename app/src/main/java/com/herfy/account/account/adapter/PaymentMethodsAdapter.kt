@@ -9,8 +9,7 @@ import com.herfy.profile.databinding.ItemUserPaymentMethodsBinding
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard
 
 class PaymentMethodsAdapter(
-    val customerCards: ArrayList<CustomerCard> = arrayListOf(),
-    val cardListener: CardListener
+    val customerCards: ArrayList<CustomerCard> = arrayListOf(), val cardListener: CardListener
 ) : RecyclerView.Adapter<PaymentMethodsAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: ItemUserPaymentMethodsBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -35,12 +34,10 @@ class PaymentMethodsAdapter(
                 cardListener.onSelectCard(item, position)
             }
             cardNumber.text = item.attributes.brand + " ****" + item.attributes.last4Digits
-            var res: Int = R.drawable.ic_saved_card
-            if ("visa".equals(item.attributes.brand, ignoreCase = true)) res =
-                R.drawable.ic_card_visa_common else if ("mastercard".equals(
-                    item.attributes.brand, ignoreCase = true
-                )
-            ) res = R.drawable.ic_card_mastercard
+            var res: Int = R.drawable.ic_card_new
+            if ("visa".equals(item.attributes.brand, ignoreCase = true)) {
+                res = R.drawable.ic_card_visa_common
+            }
             cardImage.setImageResource(res)
         }
     }

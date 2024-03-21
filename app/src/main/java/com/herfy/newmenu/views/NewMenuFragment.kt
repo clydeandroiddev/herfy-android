@@ -438,20 +438,15 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 e.printStackTrace()
             }
             when (CacheUtil.getInstance().orderType) {
-                OrderType.PICKUP, OrderType.EAT_IN, OrderType.DRIVE_THRU -> {
+                OrderType.PICKUP, OrderType.DRIVE_THRU -> {
                     menuPresenter.getStore()
                     if (CacheUtil.getInstance().orderStore != null) {
                         val oT = CacheUtil.getInstance().orderType
                         var headerText = CacheUtil.getInstance()
-                            .getTranslations(Text.PICK_UP_FROM, "PICK UP FROM").uppercase(
+                            .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup").uppercase(
                                 Locale.getDefault()
                             )
-                        if (oT == OrderType.EAT_IN) {
-                            headerText = CacheUtil.getInstance()
-                                .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup").uppercase(
-                                    Locale.getDefault()
-                                )
-                        } else if (oT == OrderType.DRIVE_THRU) {
+                        if (oT == OrderType.DRIVE_THRU) {
                             headerText = CacheUtil.getInstance()
                                 .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
                                 .uppercase(
@@ -551,9 +546,6 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                             Locale.getDefault()
                         )
                 }
-
-                OrderType.EAT_IN -> {}
-                OrderType.DRIVE_THRU -> {}
             }
         }
         if (CacheUtil.getInstance().favoriteMenuCategory != null && CacheUtil.getInstance().favoriteMenuItem != null) {
@@ -623,8 +615,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             val intent = Intent(activity, NavigationActivity::class.java)
             intent.putExtra("navigation", R.id.nav_order_type)
             if (isDiffMenuEnabled) intent.putExtra(
-                "selectedOrderType",
-                CacheUtil.getInstance().orderType.value
+                "selectedOrderType", CacheUtil.getInstance().orderType.value
             )
             intent.putExtra("fromCart", false)
             intent.putExtra("checkout", false)
@@ -1286,7 +1277,8 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 baseActivity.dismissDialogs()
                 Toast.makeText(
                     baseActivity,
-                    CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
+                    CacheUtil.getInstance()
+                        .getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
                     Toast.LENGTH_SHORT
                 ).show()
                 activity?.cast<MainActivity> {

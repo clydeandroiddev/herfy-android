@@ -88,7 +88,7 @@ public class PaymentOrderTimeDialog extends DialogFragment {
             type.setText(CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP_FROM_CAPS, "CURBSIDE PICKUP FROM"));
         } else if (orderType != null && orderType.equals(OrderType.DRIVE_THRU)) {
             type.setText(CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup").toUpperCase());
-        } else if (orderType != null && orderType.equals(OrderType.EAT_IN)) {
+        } else if (orderType != null && orderType.equals(OrderType.PICKUP)) {
             type.setText(CacheUtil.getInstance().getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup").toUpperCase());
         } else {
             type.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP_FROM, "PICKUP FROM"));
@@ -96,7 +96,6 @@ public class PaymentOrderTimeDialog extends DialogFragment {
 
         switch (orderType) {
             case PICKUP:
-            case EAT_IN:
             case DRIVE_THRU:
             case CURBSIDE:
                 rectangleIcon.setVisibility(View.VISIBLE);

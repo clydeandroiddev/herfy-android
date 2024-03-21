@@ -353,19 +353,14 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         super.update()
         menuPresenter.getStoreOpen()
         when (val oT = CacheUtil.getInstance().orderType) {
-            OrderType.PICKUP, OrderType.EAT_IN, OrderType.DRIVE_THRU -> if (activity != null) {
+            OrderType.PICKUP, OrderType.DRIVE_THRU -> if (activity != null) {
                 menuPresenter.getStore()
                 if (CacheUtil.getInstance().orderStore != null) {
                     var headerText = CacheUtil.getInstance()
-                        .getTranslations(Text.PICK_UP_FROM, "PICK UP FROM").uppercase(
+                        .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup").uppercase(
                             Locale.getDefault()
                         ) + ":"
-                    if (oT == OrderType.EAT_IN) {
-                        headerText = CacheUtil.getInstance()
-                            .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup").uppercase(
-                                Locale.getDefault()
-                            ) + ":"
-                    } else if (oT == OrderType.DRIVE_THRU) {
+                    if (oT == OrderType.DRIVE_THRU) {
                         headerText = CacheUtil.getInstance()
                             .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
                             .uppercase(
@@ -1032,7 +1027,8 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                 activity.dismissDialogs()
                 Toast.makeText(
                     activity,
-                    CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
+                    CacheUtil.getInstance()
+                        .getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
                     Toast.LENGTH_SHORT
                 ).show()
                 activity.setCartQuantity(CacheUtil.getInstance().cartQuantity)

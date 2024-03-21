@@ -172,10 +172,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         if (binding.orderTypeContainer.orderTypeText != null) {
             //binding.main.curbsideLayout.visibility = View.GONE
             when (val oT = CacheUtil.getInstance().orderType) {
-                OrderType.PICKUP, OrderType.EAT_IN, OrderType.DRIVE_THRU -> {
+                OrderType.PICKUP, OrderType.DRIVE_THRU -> {
                     cartPresenter.getStore()
                     var headerText = CacheUtil.getInstance().getTranslations(Text.PICKUP_AT)
-                    if (oT == OrderType.EAT_IN) {
+                    if (oT == OrderType.PICKUP) {
                         headerText = CacheUtil.getInstance()
                             .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
                         binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_walkin)
@@ -740,10 +740,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         if (binding.orderTypeContainer.orderTypeText != null) {
             val store = CacheUtil.getInstance().orderStore
             val selectedOrderType = CacheUtil.getInstance().orderType
-            if (selectedOrderType == OrderType.PICKUP || selectedOrderType == OrderType.EAT_IN || selectedOrderType == OrderType.DRIVE_THRU) {
+            if (selectedOrderType == OrderType.PICKUP || selectedOrderType == OrderType.DRIVE_THRU) {
                 if (store != null) {
                     var headerText = CacheUtil.getInstance().getTranslations(Text.PICKUP_AT)
-                    if (selectedOrderType == OrderType.EAT_IN) {
+                    if (selectedOrderType == OrderType.PICKUP) {
                         headerText = CacheUtil.getInstance()
                             .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
                     } else if (selectedOrderType == OrderType.DRIVE_THRU) {

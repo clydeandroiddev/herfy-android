@@ -374,7 +374,6 @@ public class UpsellPresenter implements UpsellContract.Presenter {
                             orderBody.addProperty("location", store.getId());
                         }
                         break;
-                    case EAT_IN:
                     case DINE_IN:
                         deliveryCharge = 0.0;
                         orderBody.addProperty("type", "eat-in");
@@ -658,7 +657,6 @@ public class UpsellPresenter implements UpsellContract.Presenter {
                     orderBody.addProperty("type", "drive-thru");
                     orderBody.addProperty("location", store.getId());
                     break;
-                case EAT_IN:
                 case DINE_IN:
                     deliveryCharge = 0.0;
                     orderBody.addProperty("type", "eat-in");

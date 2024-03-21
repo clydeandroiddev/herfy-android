@@ -150,7 +150,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 CacheUtil.getInstance().getTranslations(Text.REORDER_LABEL, "Reorder")
             rateButton.text = CacheUtil.getInstance().getTranslations(Text.RATE, "Rate")
             subtotalLabel.text = CacheUtil.getInstance().getTranslations(Text.SUBTOTAL, "Subtotal")
-            deliverLabel.text = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
+            deliverLabel.text = CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
             discountLabel.text = CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
             totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
         }

@@ -561,9 +561,6 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
 
         switch (CacheUtil.getInstance().getOrderType()) {
             case PICKUP:
-                orderTypeLabel.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP));
-                break;
-            case EAT_IN:
                 orderTypeLabel.setText(CacheUtil.getInstance().getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup").toUpperCase());
                 break;
             case DRIVE_THRU:
@@ -759,7 +756,6 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         boolean isFullSignedIn = (isSignedIn && !customer.getAttributes().getAccountType().equalsIgnoreCase("guest"));
 
         switch (CacheUtil.getInstance().getOrderType()) {
-            case EAT_IN:
             case DRIVE_THRU:
             case PICKUP:
                 type.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP));

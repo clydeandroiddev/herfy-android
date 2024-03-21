@@ -94,8 +94,7 @@ class CacheUtilHelper(val context : Context) {
             2 -> OrderType.DINE_IN
             3 -> OrderType.DELIVERY
             4 -> OrderType.CURBSIDE
-            5 -> OrderType.EAT_IN
-            6 -> OrderType.DRIVE_THRU
+            5 -> OrderType.DRIVE_THRU
             else -> OrderType.NONE
         }
     }

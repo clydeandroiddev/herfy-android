@@ -339,13 +339,6 @@ class HomeRepositoryImpl @Inject constructor(
                     }
                 }
 
-                OrderType.EAT_IN -> {
-                    orderBody.addProperty("type", "eat-in")
-                    if (store != null) {
-                        orderBody.addProperty("location", store.id)
-                    }
-                }
-
                 OrderType.DINE_IN -> {
                     orderBody.addProperty("type", "eat-in")
                     if (store != null) {

@@ -370,7 +370,7 @@ class CartPresenter @Inject constructor(
                         }
                     }
 
-                    OrderType.DINE_IN, OrderType.EAT_IN -> {
+                    OrderType.DINE_IN -> {
                         deliveryCharge = 0.0
                         orderBody.addProperty("type", "eat-in")
                         if (CacheUtil.getInstance().orderStore != null) {
@@ -1100,10 +1100,11 @@ class CartPresenter @Inject constructor(
                     getMenuItemTotalPrice(menuItems[position], -1) * removeItem.attributes.quantity
                 )
                 val deletedItem = menuItems[position]
-                upsells.find { u -> u.id == deletedItem.id && deletedItem.attributes.isUpsell }?.let {
-                    currUpsells.add(it)
-                    cartView.showUpsell(currUpsells)
-                }
+                upsells.find { u -> u.id == deletedItem.id && deletedItem.attributes.isUpsell }
+                    ?.let {
+                        currUpsells.add(it)
+                        cartView.showUpsell(currUpsells)
+                    }
                 menuItems.removeAt(position)
                 removeMukafaaRedemption()
                 CacheUtil.getInstance().cart = menuItems
@@ -1705,8 +1706,8 @@ class CartPresenter @Inject constructor(
         if (CacheUtil.getInstance().cartQuantity > 0) {
             if (AuthUtil.getInstance().isSignedIn) {
                 val orderType = CacheUtil.getInstance().orderType
-                if (orderType != OrderType.NONE && ((orderType == OrderType.PICKUP || orderType == OrderType.DINE_IN || orderType == OrderType.CURBSIDE || orderType == OrderType.EAT_IN || orderType == OrderType.DRIVE_THRU) && CacheUtil.getInstance().orderStore != null || orderType == OrderType.DELIVERY && (CacheUtil.getInstance().orderAddress != null || CacheUtil.getInstance().orderDeliveryAddress != null))) {
-                    if (orderType == OrderType.PICKUP || orderType == OrderType.EAT_IN || orderType == OrderType.DRIVE_THRU || orderType == OrderType.DINE_IN || orderType == OrderType.CURBSIDE || orderType == OrderType.DELIVERY && CacheUtil.getInstance().orderAddress != null) {
+                if (orderType != OrderType.NONE && ((orderType == OrderType.PICKUP || orderType == OrderType.DINE_IN || orderType == OrderType.CURBSIDE || orderType == OrderType.DRIVE_THRU) && CacheUtil.getInstance().orderStore != null || orderType == OrderType.DELIVERY && (CacheUtil.getInstance().orderAddress != null || CacheUtil.getInstance().orderDeliveryAddress != null))) {
+                    if (orderType == OrderType.PICKUP || orderType == OrderType.DRIVE_THRU || orderType == OrderType.DINE_IN || orderType == OrderType.CURBSIDE || orderType == OrderType.DELIVERY && CacheUtil.getInstance().orderAddress != null) {
                         if (CacheUtil.getOrderStoreId() != null) {
                             if (!CacheUtil.getInstance().concept.allowAdvanceOrder) {
                                 _scheduleTime = null
@@ -1825,7 +1826,7 @@ class CartPresenter @Inject constructor(
                                     var disable = false
                                     if (CacheUtil.getInstance().orderType == OrderType.DELIVERY) {
                                         disable = menuItem.disableForDelivery == 1
-                                    } else if (CacheUtil.getInstance().orderType == OrderType.PICKUP || CacheUtil.getInstance().orderType == OrderType.DINE_IN || CacheUtil.getInstance().orderType == OrderType.CURBSIDE || CacheUtil.getInstance().orderType == OrderType.EAT_IN || CacheUtil.getInstance().orderType == OrderType.DRIVE_THRU) {
+                                    } else if (CacheUtil.getInstance().orderType == OrderType.PICKUP || CacheUtil.getInstance().orderType == OrderType.DINE_IN || CacheUtil.getInstance().orderType == OrderType.CURBSIDE || CacheUtil.getInstance().orderType == OrderType.DRIVE_THRU) {
                                         disable = menuItem.disableForPickup == 1
                                     }
                                     if (disable || menuItem.excludedLocations.contains(orderStoreId) || menuItem.outOfStockLocations.contains(
@@ -2097,9 +2098,10 @@ class CartPresenter @Inject constructor(
                         }
                         currUpsells.clear()
                         for (upsell in upsells) {
-                            val isFound = menuItems.find { m -> m.id == upsell.id && m.attributes.isUpsell } != null
+                            val isFound =
+                                menuItems.find { m -> m.id == upsell.id && m.attributes.isUpsell } != null
 
-                            if(!isFound){
+                            if (!isFound) {
                                 currUpsells.add(upsell)
                             }
                         }
@@ -2194,7 +2196,7 @@ class CartPresenter @Inject constructor(
                 }
             }
 
-            OrderType.DINE_IN, OrderType.EAT_IN -> {
+            OrderType.DINE_IN -> {
                 deliveryCharge = 0.0
                 orderBody.addProperty("type", "eat-in")
                 if (store != null) {
@@ -2223,8 +2225,6 @@ class CartPresenter @Inject constructor(
             }
 
             OrderType.NONE -> deliveryCharge = 0.0
-            OrderType.EAT_IN -> {}
-            OrderType.DRIVE_THRU -> {}
         }
         val vatAmount = 0.0
         var total =
@@ -2521,7 +2521,7 @@ class CartPresenter @Inject constructor(
             val validDelivery =
                 CacheUtil.getInstance().orderType == OrderType.DELIVERY && (CacheUtil.getInstance().orderAddress != null || CacheUtil.getInstance().orderDeliveryAddress != null)
             val validPickup =
-                (CacheUtil.getInstance().orderType == OrderType.PICKUP || CacheUtil.getInstance().orderType == OrderType.EAT_IN || CacheUtil.getInstance().orderType == OrderType.DRIVE_THRU || CacheUtil.getInstance().orderType == OrderType.DINE_IN || CacheUtil.getInstance().orderType == OrderType.CURBSIDE) && CacheUtil.getInstance().orderStore != null
+                (CacheUtil.getInstance().orderType == OrderType.PICKUP || CacheUtil.getInstance().orderType == OrderType.DRIVE_THRU || CacheUtil.getInstance().orderType == OrderType.DINE_IN || CacheUtil.getInstance().orderType == OrderType.CURBSIDE) && CacheUtil.getInstance().orderStore != null
             val customer = AuthUtil.getInstance().customer
             val concept = CacheUtil.getInstance().concept
             val store = CacheUtil.getInstance().orderStore
@@ -2586,7 +2586,7 @@ class CartPresenter @Inject constructor(
                         }
                     }
 
-                    OrderType.DINE_IN, OrderType.EAT_IN -> {
+                    OrderType.DINE_IN -> {
                         deliveryCharge = 0.0
                         orderBody.addProperty("type", "eat-in")
                         if (store != null) {
@@ -2615,8 +2615,6 @@ class CartPresenter @Inject constructor(
                     }
 
                     OrderType.NONE -> deliveryCharge = 0.0
-                    OrderType.EAT_IN -> {}
-                    OrderType.DRIVE_THRU -> {}
                 }
             }
             val vatAmount = 0.0
@@ -3165,10 +3163,10 @@ class CartPresenter @Inject constructor(
         } else {
             CacheUtil.getInstance().addToCart(upsell)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                currUpsells.removeIf { u -> u.id == upsell.id}
-            }else {
+                currUpsells.removeIf { u -> u.id == upsell.id }
+            } else {
                 val addedUpsellIndex = upsells.indexOfFirst { i -> i.id == upsell.id }
-                if(addedUpsellIndex != -1){
+                if (addedUpsellIndex != -1) {
                     currUpsells.removeAt(addedUpsellIndex)
                 }
             }
@@ -3280,7 +3278,7 @@ class CartPresenter @Inject constructor(
                 val orderBody = createValidateCouponBody(it, couponCode)
                 if (validateDigitalCouponDisposable != null) validateDigitalCouponDisposable!!.dispose()
                 validateDigitalCouponDisposable =
-                    validateDigitalCouponObservable(orderBody,result).subscribe { onNext: Any ->
+                    validateDigitalCouponObservable(orderBody, result).subscribe { onNext: Any ->
                         try {
                             val jsonObject = onNext as JSONObject
                             val itemsArray = jsonObject.getJSONArray("items")
@@ -3301,7 +3299,8 @@ class CartPresenter @Inject constructor(
                                                 menuItems[menuItems.indexOf(menuItem)], -1
                                             ) != item.total)
                                         ) {
-                                            menuItems[menuItems.indexOf(menuItem)].total = item.total
+                                            menuItems[menuItems.indexOf(menuItem)].total =
+                                                item.total
                                         } else {
                                             menuItem.price = item.getPrice(null)
                                             menuItem.attributes.price = item.getPrice(null)
@@ -3354,7 +3353,14 @@ class CartPresenter @Inject constructor(
                                 CacheUtil.getInstance().campaignPromotionMenuItem = null
                                 CacheUtil.getInstance().campaignToAdd = null
                                 removeMukafaaRedemption()
-                                result(CouponResult(false, null, jsonObject.getString("error"), true))
+                                result(
+                                    CouponResult(
+                                        false,
+                                        null,
+                                        jsonObject.getString("error"),
+                                        true
+                                    )
+                                )
                             } else {
                                 if (orderData.promotionName != null || orderData.promotionName == null && orderData.promotionName.isNotEmpty()) {
                                     trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
@@ -3409,7 +3415,7 @@ class CartPresenter @Inject constructor(
         val validDelivery =
             CacheUtil.getInstance().orderType == OrderType.DELIVERY && (CacheUtil.getInstance().orderAddress != null || CacheUtil.getInstance().orderDeliveryAddress != null)
         val validPickup =
-            (CacheUtil.getInstance().orderType == OrderType.PICKUP || CacheUtil.getInstance().orderType == OrderType.EAT_IN || CacheUtil.getInstance().orderType == OrderType.DRIVE_THRU || CacheUtil.getInstance().orderType == OrderType.DINE_IN || CacheUtil.getInstance().orderType == OrderType.CURBSIDE) && CacheUtil.getInstance().orderStore != null
+            (CacheUtil.getInstance().orderType == OrderType.PICKUP || CacheUtil.getInstance().orderType == OrderType.DRIVE_THRU || CacheUtil.getInstance().orderType == OrderType.DINE_IN || CacheUtil.getInstance().orderType == OrderType.CURBSIDE) && CacheUtil.getInstance().orderStore != null
         val customer = AuthUtil.getInstance().customer
         val concept = CacheUtil.getInstance().concept
         val store = CacheUtil.getInstance().orderStore
@@ -3473,7 +3479,7 @@ class CartPresenter @Inject constructor(
                     }
                 }
 
-                OrderType.DINE_IN, OrderType.EAT_IN -> {
+                OrderType.DINE_IN -> {
                     deliveryCharge = 0.0
                     orderBody.addProperty("type", "eat-in")
                     if (store != null) {
@@ -3678,7 +3684,7 @@ class CartPresenter @Inject constructor(
                 }
             }
 
-            OrderType.DINE_IN, OrderType.EAT_IN -> {
+            OrderType.DINE_IN -> {
                 deliveryCharge = 0.0
                 orderBody.addProperty("type", "eat-in")
                 if (store != null) {
@@ -3822,7 +3828,10 @@ class CartPresenter @Inject constructor(
         return orderBody
     }
 
-    private fun validateDigitalCouponObservable(orderBody: JsonObject?, result: (CouponResult) -> Unit): Observable<Any> {
+    private fun validateDigitalCouponObservable(
+        orderBody: JsonObject?,
+        result: (CouponResult) -> Unit
+    ): Observable<Any> {
         return Observable.create { subscriber: ObservableEmitter<Any> ->
             CouponsApiCall.getInstance().validatePromotion(orderBody, object : ApiRequestListener {
                 override fun onSuccess(o: Any) {
@@ -3857,17 +3866,23 @@ class CartPresenter @Inject constructor(
                 } catch (e: JSONException) {
                     e.printStackTrace()
                     result(
-                        CouponResult(false, null, CacheUtil.getInstance().getTranslations(
-                            Text.NO_INTERNET_ERROR,
-                            "Sorry we can't process your request at the moment. Please try again later."
-                        )))
+                        CouponResult(
+                            false, null, CacheUtil.getInstance().getTranslations(
+                                Text.NO_INTERNET_ERROR,
+                                "Sorry we can't process your request at the moment. Please try again later."
+                            )
+                        )
+                    )
                 }
             } else {
                 result(
-                    CouponResult(false, null, CacheUtil.getInstance().getTranslations(
-                        Text.NO_INTERNET_ERROR,
-                        "Sorry we can't process your request at the moment. Please try again later."
-                    )))
+                    CouponResult(
+                        false, null, CacheUtil.getInstance().getTranslations(
+                            Text.NO_INTERNET_ERROR,
+                            "Sorry we can't process your request at the moment. Please try again later."
+                        )
+                    )
+                )
             }
         }
     }

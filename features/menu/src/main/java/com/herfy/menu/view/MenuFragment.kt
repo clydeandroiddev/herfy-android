@@ -276,7 +276,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     )
                     var icon: Drawable? = null
                     when (oType) {
-                        OrderType.EAT_IN -> {
+                        OrderType.PICKUP -> {
                             if (CacheUtil.getInstance().orderStore != null) {
                                 icon = ContextCompat.getDrawable(
                                     this,
@@ -294,15 +294,6 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                                     ContextCompat.getDrawable(this, R.drawable.ic_drive_thru_small)
                                 type = CacheUtil.getInstance()
                                     .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
-                                address = CacheUtil.getInstance().orderStore.attributes.name
-                            }
-                        }
-
-                        OrderType.PICKUP -> {
-                            if (CacheUtil.getInstance().orderStore != null) {
-                                icon = ContextCompat.getDrawable(this, R.drawable.ic_pickup_small)
-                                type = CacheUtil.getInstance()
-                                    .getTranslations(Text.PICKUP_AT, "Pickup At")
                                 address = CacheUtil.getInstance().orderStore.attributes.name
                             }
                         }
@@ -483,7 +474,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         val type = CacheUtil.getInstance().orderType
         var orderType = OrderType.DELIVERY
         when (type) {
-            OrderType.PICKUP, OrderType.EAT_IN, OrderType.DRIVE_THRU, OrderType.CURBSIDE -> {
+            OrderType.PICKUP, OrderType.DRIVE_THRU, OrderType.CURBSIDE -> {
                 orderType = OrderType.PICKUP
             }
 
