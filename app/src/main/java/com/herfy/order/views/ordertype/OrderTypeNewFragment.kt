@@ -51,6 +51,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
+import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartDialogFragment
@@ -1173,10 +1174,24 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
     }
 
+    private var authLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                if (AuthUtil.getInstance().isSignedIn) {
+                    showCurbside()
+                }
+            }
+        }
+
     private fun showCurbside() {
         activity?.let {
-            val intent = Intent(it, CurbsideNewActivity::class.java)
-            curbsideLauncher.launch(intent)
+            if (AuthUtil.getInstance().isSignedIn) {
+                val intent = Intent(it, CurbsideNewActivity::class.java)
+                curbsideLauncher.launch(intent)
+            } else {
+                val intent = Intent(requireActivity(), AuthActivity::class.java)
+                authLauncher.launch(intent)
+            }
         }
     }
 
@@ -1540,8 +1555,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
-            currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN) {
