@@ -6,10 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,7 +14,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import com.google.android.gms.common.api.ApiException
@@ -35,11 +30,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.herfy.base.BaseFragment
+import com.herfy.main.MainActivity
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.StoreLocatorBinding
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.ViewUtil
@@ -162,48 +159,54 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
     }
 
     override fun initializeLocation() {
-        val locationRequest = LocationRequest.create()
-        locationRequest.setInterval(60000)
-        locationRequest.setFastestInterval(60000)
-        locationRequest.setSmallestDisplacement(0.0f)
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-        val locationSettingsRequestBuilder = LocationSettingsRequest.Builder()
-        locationSettingsRequestBuilder.addLocationRequest(locationRequest)
-        locationSettingsRequestBuilder.setAlwaysShow(true)
-        LocationServices.getSettingsClient(requireActivity())
-            .checkLocationSettings(locationSettingsRequestBuilder.build())
-            .addOnCompleteListener { task ->
-                try {
-                    task.getResult(ApiException::class.java)
-                    getLocation()
-                } catch (e: ApiException) {
-                    e.printStackTrace()
-                    if (e.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
-                        try {
-                            val resolvableApiException = e as ResolvableApiException
-                            resolvableApiException.startResolutionForResult(
-                                requireActivity(), Values.PERMISSION_LOCATION
-                            )
-                        } catch (exception: IntentSender.SendIntentException) {
-                            exception.printStackTrace()
+        activity?.cast<MainActivity> {
+            val locationRequest = LocationRequest.create()
+            locationRequest.setInterval(60000)
+            locationRequest.setFastestInterval(60000)
+            locationRequest.setSmallestDisplacement(0.0f)
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            val locationSettingsRequestBuilder = LocationSettingsRequest.Builder()
+            locationSettingsRequestBuilder.addLocationRequest(locationRequest)
+            locationSettingsRequestBuilder.setAlwaysShow(true)
+            LocationServices.getSettingsClient(it)
+                .checkLocationSettings(locationSettingsRequestBuilder.build())
+                .addOnCompleteListener { task ->
+                    try {
+                        task.getResult(ApiException::class.java)
+                        getLocation()
+                    } catch (e: ApiException) {
+                        e.printStackTrace()
+                        if (e.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+                            try {
+                                val resolvableApiException = e as ResolvableApiException
+                                resolvableApiException.startResolutionForResult(
+                                    it, Values.PERMISSION_LOCATION
+                                )
+                            } catch (exception: IntentSender.SendIntentException) {
+                                exception.printStackTrace()
+                            }
+                        } else if (e.statusCode == LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE) {
+                            com.herfy.util.AppLogger.error("Settings change unavailable")
                         }
-                    } else if (e.statusCode == LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE) {
-                        com.herfy.util.AppLogger.error("Settings change unavailable")
                     }
                 }
-            }
+        }
     }
 
     override fun getLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            branchesPresenter!!.getLocation(FusedLocationProvider(requireActivity()))
-        } else {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), Values.PERMISSION_LOCATION
-            )
+        activity?.cast<MainActivity> {
+            if (ActivityCompat.checkSelfPermission(
+                    it, Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                activity?.cast<MainActivity> {
+                    branchesPresenter!!.getLocation(FusedLocationProvider(it))
+                }
+            } else {
+                requestPermissions(
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), Values.PERMISSION_LOCATION
+                )
+            }
         }
     }
 
@@ -234,27 +237,29 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
     }
 
     override fun showBranches(branches: ArrayList<Store>) {
-        adapter?.notifyDataSetChanged()
-        if (map != null) {
-            if (!branchMarkers.isEmpty()) {
-                for (marker in branchMarkers) {
-                    marker!!.remove()
+        activity?.cast<MainActivity> {
+            adapter?.notifyDataSetChanged()
+            if (map != null) {
+                if (!branchMarkers.isEmpty()) {
+                    for (marker in branchMarkers) {
+                        marker!!.remove()
+                    }
+                    branchMarkers.clear()
                 }
-                branchMarkers.clear()
-            }
-            for (i in branches.indices) {
-                val store = branches[i]
-                val markerOptions = MarkerOptions()
-                markerOptions.title(i.toString())
-                markerOptions.position(LatLng(store.attributes.lat, store.attributes.lng))
-                val icon = com.herfy.util.ViewUtil.vectorDrawableToBitmapDescriptor(
-                    requireActivity(), R.drawable.ic_new_store_locator_store_icon
-                )
-                markerOptions.icon(icon)
-                markerOptions.anchor(0.5f, 1f)
-                val marker = map?.addMarker(markerOptions)
-                marker?.title = i.toString()
-                branchMarkers.add(marker)
+                for (i in branches.indices) {
+                    val store = branches[i]
+                    val markerOptions = MarkerOptions()
+                    markerOptions.title(i.toString())
+                    markerOptions.position(LatLng(store.attributes.lat, store.attributes.lng))
+                    val icon = com.herfy.util.ViewUtil.vectorDrawableToBitmapDescriptor(
+                        it, R.drawable.ic_new_store_locator_store_icon
+                    )
+                    markerOptions.icon(icon)
+                    markerOptions.anchor(0.5f, 1f)
+                    val marker = map?.addMarker(markerOptions)
+                    marker?.title = i.toString()
+                    branchMarkers.add(marker)
+                }
             }
         }
         dismissDialogs()
@@ -291,68 +296,74 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                         branchMarker.title!!.toInt()
                     )
                     if (branch != null) {
-                        val inflater =
-                            requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                        val view = inflater.inflate(com.herfy.R.layout.marker_store_new, null)
-                        val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
-                        val distanceValue = StringUtil.getDistance(
-                            branch.attributes.distance
-                        )
-                        textView.text =
-                            CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                .replace("(x)", distanceValue).lowercase(Locale.getDefault())
-                        view.setOnClickListener {
-                            val directionsBuilder =
-                                Uri.Builder().scheme("https").authority("www.google.com")
-                                    .appendPath("maps").appendPath("dir").appendPath("")
-                                    .appendQueryParameter("api", "1")
-                                    .appendQueryParameter("travelmode", "driving")
-                                    .appendQueryParameter(
-                                        "destination",
-                                        branch.attributes?.lat.toString() + "," + branch.attributes?.lng
-                                    )
+                        activity?.cast<MainActivity> {
+                            val inflater =
+                                it.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                            val view = inflater.inflate(com.herfy.R.layout.marker_store_new, null)
+                            val textView = view.findViewById<TextView>(R.id.kmAway)
+                            val distanceValue = StringUtil.getDistance(
+                                branch.attributes.distance
+                            )
+                            textView.text =
+                                CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                                    .replace("(x)", distanceValue).lowercase(Locale.getDefault())
+                            view.setOnClickListener {
+                                val directionsBuilder =
+                                    Uri.Builder().scheme("https").authority("www.google.com")
+                                        .appendPath("maps").appendPath("dir").appendPath("")
+                                        .appendQueryParameter("api", "1")
+                                        .appendQueryParameter("travelmode", "driving")
+                                        .appendQueryParameter(
+                                            "destination",
+                                            branch.attributes?.lat.toString() + "," + branch.attributes?.lng
+                                        )
 
-                            if (StringUtil.hasOrderLatLong()) {
-                                directionsBuilder.appendQueryParameter(
-                                    "origin",
-                                    CacheUtil.getInstance().orderLatitude + "," + CacheUtil.getInstance().orderLongitude
+                                if (StringUtil.hasOrderLatLong()) {
+                                    directionsBuilder.appendQueryParameter(
+                                        "origin",
+                                        CacheUtil.getInstance().orderLatitude + "," + CacheUtil.getInstance().orderLongitude
+                                    )
+                                }
+
+                                try {
+                                    val activity: Activity? = activity
+                                    activity?.startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW, directionsBuilder.build()
+                                        )
+                                    )
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+                            activity?.cast<MainActivity> {
+                                branchMarker.setIcon(
+                                    BitmapDescriptorFactory.fromBitmap(
+                                        com.herfy.util.ViewUtil.createDrawableFromView(
+                                            it, view
+                                        )
+                                    )
                                 )
                             }
-
-                            try {
-                                val activity: Activity? = activity
-                                activity?.startActivity(
-                                    Intent(
-                                        Intent.ACTION_VIEW, directionsBuilder.build()
-                                    )
+                            branchMarker.setAnchor(0.5f, 1f)
+                            branchMarker.title = i.toString()
+                            map!!.animateCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    branchMarker.position, 11f
                                 )
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
+                            )
                         }
+                    }
+                } else {
+                    activity?.cast<MainActivity> {
                         branchMarker.setIcon(
-                            BitmapDescriptorFactory.fromBitmap(
-                                com.herfy.util.ViewUtil.createDrawableFromView(
-                                    requireActivity(), view
-                                )
+                            com.herfy.util.ViewUtil.vectorDrawableToBitmapDescriptor(
+                                it, R.drawable.ic_new_store_locator_store_icon
                             )
                         )
                         branchMarker.setAnchor(0.5f, 1f)
                         branchMarker.title = i.toString()
-                        map!!.animateCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                branchMarker.position, 11f
-                            )
-                        )
                     }
-                } else {
-                    branchMarker.setIcon(
-                        com.herfy.util.ViewUtil.vectorDrawableToBitmapDescriptor(
-                            requireActivity(), R.drawable.ic_new_store_locator_store_icon
-                        )
-                    )
-                    branchMarker.setAnchor(0.5f, 1f)
-                    branchMarker.title = i.toString()
                 }
             }
         }
@@ -364,7 +375,9 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
 
     override fun showError(error: String) {
         dismissDialogs()
-        Toast.makeText(requireActivity(), error, Toast.LENGTH_SHORT).show()
+        activity?.cast<MainActivity> {
+            Toast.makeText(it, error, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun selectBranch(id: String) {}
