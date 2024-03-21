@@ -451,13 +451,50 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
 
     override fun setupViews() {
+        println("Called bai ")
         orderType = CacheUtil.getInstance().orderType
         requestPermissionLocation()
+        CacheUtil
+            .getInstance()
+            .customCard?.let { card->
+                println("Called bai $card")
+                var res = R.drawable.ic_saved_card
+                var cardLabel = "Visa ****"
+                if (card.attributes.brand.equals("visa", true)) {
+                    res = R.drawable.ic_visa
+                    cardLabel = "Visa ****"
+                } else if (card.attributes.brand.endsWith("mastercard", true)){
+                    res = R.drawable.ic_mastercard
+                    cardLabel = "Master ****"
+                }
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(res)
+                binding!!.layoutPayment.tvSelectedPayment.text = cardLabel+card.attributes.last4Digits
+            }
+        //        rvOrderSummary.setLayoutManager(new LinearLayoutManager(this));
+//        menuItemsRecyclerViewAdapter = new OrderSummaryItemRecyclerViewAdapter(paymentPresenter);
+//        rvOrderSummary.setAdapter(menuItemsRecyclerViewAdapter);
+
+
+//        tvChangeOrderType.setOnClickListener( new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showOrderType(true);
+//            }
+//        });
+
+        /* ivShowOrders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rvOrderSummary.getVisibility() == View.VISIBLE) {
+                    rvOrderSummary.setVisibility(View.GONE);
+                } else {
+                    rvOrderSummary.setVisibility(View.VISIBLE);
+                }
+            }*/
+
         binding!!.layoutAlraji.radionBtn
             .ninjaTap(lifecycleScope) {
                 if (binding?.layoutAlraji?.radionBtn?.isChecked == true) {
-//                    DialogAlrajiInputBottomSheet.newInstance().show(supportFragmentManager,
-//                        DialogAlrajiInputBottomSheet.TAG)
                     DialogAlrajiRequestOtpBottomSheet.newInstance().show(supportFragmentManager,
                         DialogAlrajiRequestOtpBottomSheet.TAG)
                 }
@@ -1422,7 +1459,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     override fun showSelectedPyament() {
         val selecetedPayment = CacheUtil.getInstance().orderPayment
-        val isUserNotSelectedAnyPaymentMethod = selecetedPayment == PaymentType.NONE
+        val isUserNotSelectedAnyPaymentMethod = selecetedPayment == PaymentType.NONE && CacheUtil.getInstance().customCard == null
         binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
         binding!!.layoutPayment.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found."))
         if (isUserNotSelectedAnyPaymentMethod) {
