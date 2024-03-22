@@ -124,7 +124,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
             }
 
             rateButton.setOnClickListener {
-
+                // TODO Rate here
             }
 
             orderMenuItemsAdapter = OrderMenuItemsAdapter(ArrayList())

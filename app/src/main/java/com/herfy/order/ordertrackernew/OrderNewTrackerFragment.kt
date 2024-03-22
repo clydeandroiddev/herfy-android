@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.model.LatLng
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
@@ -31,6 +32,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
 
     private lateinit var binding: FragmentOrderNewTrackerBinding
 
+    private val args: OrderNewTrackerFragmentArgs by navArgs()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         orderPresenter = OrdersPresenter(this)
@@ -50,6 +53,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
             val baseActivity = it as BaseActivity
             baseActivity.showLoadingDialog()
         }
+        orderPresenter?.getOrder(args.orderId, -1, false, false)
     }
 
     override fun setPresenter(presenter: OrdersContract.Presenter) {

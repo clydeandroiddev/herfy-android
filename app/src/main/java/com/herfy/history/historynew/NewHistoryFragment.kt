@@ -13,8 +13,6 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.model.LatLng
-import com.herfy.R
-import com.herfy.authentication.views.LoginFragmentDirections
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.common.formatOrderTime
@@ -29,7 +27,6 @@ import com.herfy.main.MainActivity
 import com.herfy.util.StringUtil
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
@@ -184,23 +181,29 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         val order = orders.firstOrNull {
             it.sequence < OrderStatusType.FINISHED.value
         }
-        order?.let {
+        order?.let { history ->
             binding.apply {
                 inProgressLayout.isVisible = true
                 itemPrice.text = StringUtil.getNewFormattedPrice(
-                    it.total, true
+                    history.total, true
                 )
-                deliveryAndStore.text = it.attrType.orderTypeString() + " - " + it.locationName
+                deliveryAndStore.text =
+                    history.attrType.orderTypeString() + " - " + history.locationName
                 itemsCount.text =
                     CacheUtil.getInstance().getTranslations(Text.CART_ITEM_COUNT_LABEL, "(x) items")
-                        .replace("(x)", it.menuImages.size.toString())
+                        .replace("(x)", history.menuImages.size.toString())
 
-                dateToday.text = it.createdAt.formatOrderTime()
-                orderNumber.text =
-                    CacheUtil.getInstance().getTranslations(Text.ORDER_NUM, "Order #") + " " + it.id
-                status.text = it.description
+                dateToday.text = history.createdAt.formatOrderTime()
+                orderNumber.text = CacheUtil.getInstance()
+                    .getTranslations(Text.ORDER_NUM, "Order #") + " " + history.id
+                status.text = history.description
+                trackButton.setOnClickListener {
+                    findNavController().navigate(
+                        NewHistoryFragmentDirections.actionHistoryToTracker(history.id)
+                    )
+                }
             }
-            return it.id
+            return history.id
         }
         return null
     }
