@@ -1006,9 +1006,9 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                                         }
                                     }
                                 }
-                                menuItem.setFavorite(true);
-                                CacheUtil.getInstance().addToCart(menuItem);
-                                orderView.addToCartFavorite(menuItem);
+                                favoriteMenuItem.setFavorite(true);
+                                CacheUtil.getInstance().addToCart(favoriteMenuItem);
+                                orderView.addToCartFavorite(favoriteMenuItem);
                             }
 
                             Store store = CacheUtil.getInstance().getOrderStore();
