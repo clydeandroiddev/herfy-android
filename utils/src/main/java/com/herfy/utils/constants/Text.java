@@ -1096,5 +1096,6 @@ public class Text {
 
     public static String REQUEST_OTP_LABEL = "request_otp_label";
     public static final String PLEASE_SELECT_PAYMENT_TYPE = "please_select_payment_type";
+    public static final String ORDER_TRACKER = "order_tracker";
 
 }
