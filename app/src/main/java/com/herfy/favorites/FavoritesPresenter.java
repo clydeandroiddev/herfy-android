@@ -1090,6 +1090,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     @Override
     public void getFavouritesByOrderTypeId(String orderTypeId, String orderTypeName) {
        OrderType type =  OrderType.Companion.fromString(orderTypeName);
+       System.out.println("Order type selected " + type);
         CacheUtil.getInstance().setOrderType(type);
 
        getFavorites(1,orderTypeId);
