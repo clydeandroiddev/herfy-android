@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import butterknife.OnClick
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
+import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
@@ -36,6 +37,7 @@ import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.*
+import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.Favorite
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -177,6 +179,10 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                         .getInstance().orderType != OrderType.NONE
                 ) {
                     MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_FAVOURITES)
+                    activity?.apply {
+                        val menuItem = MenuUtil.getFavoriteMenuItem(favorite)
+                        FacebookAppEventUtil.addToCartEvent(this, menuItem, MenuUtil.getMenuItemTotalPrice(menuItem))
+                    }
                     CacheUtil
                         .getInstance().saveFavoriteToAddToCart(favorite)
                     findNavController().navigate(FavoritesFragmentDirections.actionFavoritesToOrderType(isFromFavorites = true))

@@ -22,6 +22,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager.widget.ViewPager
 import com.daimajia.androidanimations.library.Techniques
+import com.facebook.BuildConfig
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -37,8 +38,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.herfy.R
-import com.herfy.analytics.FacebookAppEventUtil.Companion.completeRegistrationEvent
 import com.herfy.analytics.FirebaseECommerceEventUtil
+import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.auth.AuthContract
 import com.herfy.auth.AuthFragmentPagerAdapter
 import com.herfy.auth.AuthPresenter
@@ -142,8 +143,10 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
         authPresenter = AuthPresenter(this)
         signIn = args.signIn
 
-        FacebookSdk.setIsDebugEnabled(true);
-        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
+        if(BuildConfig.DEBUG) {
+            FacebookSdk.setIsDebugEnabled(true)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
+        }
     }
 
     override fun onCreateView(
@@ -561,7 +564,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     }
 
     override fun logRegistrationEvent(registrationMethod: String?) {
-        completeRegistrationEvent(requireContext(), registrationMethod!!)
+        FacebookAppEventUtil.completeRegistrationEvent(requireContext(), registrationMethod!!)
     }
 
     override fun dismissDialogs() {

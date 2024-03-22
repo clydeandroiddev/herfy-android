@@ -23,9 +23,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
-import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent
+import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
@@ -61,6 +61,7 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.TimeUtil
+import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.DynamicTheme
 import com.kochava.tracker.events.EventType
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -1273,7 +1274,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun showPayment() {
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_PLACE_ORDER)
-        trackEvent(EventType.CHECKOUT_START)
+        KochavaTrackerUtil.trackEvent(EventType.CHECKOUT_START)
         runOnMain {
             continueCheckout = false
             activity?.cast<BaseActivity> {
@@ -2069,6 +2070,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 shimmerOrderDetails.visibility = View.VISIBLE
                 shimmerOrderDetails.startShimmer()
             }
+        }
+    }
+
+    override fun sendAddToCartFacebookEvent(menuItem: MenuItem) {
+        activity?.apply {
+            FacebookAppEventUtil.addToCartEvent(this, menuItem, MenuUtil.getMenuItemTotalPrice(menuItem))
         }
     }
 

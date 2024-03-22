@@ -20,7 +20,7 @@ import com.herfy.onboarding.OnboardingContract;
 import com.herfy.onboarding.OnboardingFragmentPagerAdapter;
 import com.herfy.onboarding.OnboardingPresenter;
 import com.herfy.selection.SelectionActivity;
-import com.herfy.analytics.FacebookAppEventUtil;
+import com.herfy.analytics.facebook.FacebookAppEventUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 

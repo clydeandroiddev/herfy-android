@@ -15,8 +15,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
+import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.base.BaseFragment
 import com.herfy.utils.constants.Text

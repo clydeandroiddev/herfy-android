@@ -3161,6 +3161,7 @@ class CartPresenter @Inject constructor(
                     .replace("(x)", store.attributes.name)
             )
         } else {
+            cartView.sendAddToCartFacebookEvent(upsell)
             CacheUtil.getInstance().addToCart(upsell)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 currUpsells.removeIf { u -> u.id == upsell.id }

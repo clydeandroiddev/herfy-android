@@ -107,6 +107,7 @@ dependencies {
     implementation project(path: ':data:database')
     implementation project(path: ':data:repository')
     implementation project(path: ':common')
+    implementation project(path: ':analytics:facebook')
 
 
     //Shimmer

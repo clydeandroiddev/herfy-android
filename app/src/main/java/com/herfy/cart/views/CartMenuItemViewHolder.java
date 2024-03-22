@@ -634,6 +634,11 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
     }
 
     @Override
+    public void sendAddToCartFacebookEvent(MenuItem menuItem) {
+
+    }
+
+    @Override
     public void setSchedule(boolean showAlert, String scheduleTime) {
 
     }

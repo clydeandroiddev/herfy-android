@@ -21,6 +21,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.menu.R
 import com.herfy.menu.adapter.MenuCategoryAdapter
@@ -43,6 +44,7 @@ import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
@@ -402,6 +404,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                             CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
                             Toast.LENGTH_SHORT
                         ).show()
+                        FacebookAppEventUtil.addToCartEvent(this, menuItem, MenuUtil.getMenuItemTotalPrice(menuItem))
                         EventBus.getDefault().post(AddToCartEvent())
                         setCartQuantity()
                     }

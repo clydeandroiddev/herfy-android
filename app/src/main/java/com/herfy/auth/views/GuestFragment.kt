@@ -31,7 +31,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.herfy.analytics.FacebookAppEventUtil
+import com.herfy.BuildConfig
+import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.auth.AuthContract
 import com.herfy.auth.AuthPresenter
 import com.herfy.base.BaseActivity
@@ -147,8 +148,10 @@ class GuestFragment : BaseFragment(), AuthContract.View {
                 favoriteMenuItem = bundle.getBoolean("favorite_menu_item")
             }
         }*/
-        FacebookSdk.setIsDebugEnabled(true)
-        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
+        if(BuildConfig.DEBUG) {
+            FacebookSdk.setIsDebugEnabled(true)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
+        }
     }
 
     override fun onCreateView(
