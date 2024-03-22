@@ -206,4 +206,6 @@ dependencies {
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
 
     implementation 'io.ably:ably-android:1.1.5'
+
+    implementation("org.greenrobot:eventbus:3.3.1")
 }

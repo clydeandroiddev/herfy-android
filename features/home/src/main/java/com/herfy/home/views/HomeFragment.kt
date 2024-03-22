@@ -42,7 +42,8 @@ import java.util.Locale
 
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
+class
+HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     override val viewModel: HomeViewModel by viewModels()
     override val layout: Int = R.layout.fragment_home

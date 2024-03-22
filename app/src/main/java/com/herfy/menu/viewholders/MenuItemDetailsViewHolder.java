@@ -28,6 +28,7 @@ import com.bumptech.glide.request.target.Target;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.menu.MenuUtil;
 import com.nex3z.flowlayout.FlowLayout;
 import com.herfy.R;
 import com.herfy.utils.constants.Text;
@@ -108,10 +109,10 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
         String caloriesValue = item.getCalories();
         int calorieCount = item.getCalorieCount();
         if (caloriesValue != null && !caloriesValue.isEmpty() && !caloriesValue.trim().equals("null") && !caloriesValue.trim().equals("0")) {
-            calories.setText(CacheUtil.getInstance().getTranslations(Text.CALORIES) + " " + caloriesValue);
+            calories.setText(MenuUtil.getCaloriesText(caloriesValue, calorieCount));
             calories.setVisibility(View.VISIBLE);
         } else if(calorieCount != 0) {
-            calories.setText(CacheUtil.getInstance().getTranslations(Text.CALORIES) + " " + calorieCount);
+            calories.setText(MenuUtil.getCaloriesText(caloriesValue, calorieCount));
             calories.setVisibility(View.VISIBLE);
         } else {
             calories.setVisibility(View.GONE);

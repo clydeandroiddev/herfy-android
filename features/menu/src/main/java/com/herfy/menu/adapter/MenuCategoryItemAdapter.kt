@@ -10,10 +10,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.herfy.menu.R
 import com.herfy.menu.databinding.AdapterMenuCategoryBinding
 import com.herfy.menu.databinding.AdapterMenuItemBinding
+import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import java.util.Locale
@@ -106,10 +108,10 @@ class MenuCategoryItemAdapter(
                 val calorieCount = menuItem.calorieCount
                 tvCalories.text = if (calorieCount != 0) {
                     layoutCalories.visibility = View.VISIBLE
-                    "$calorieCount"
+                    MenuUtil.getCaloriesText(caloriesValue, calorieCount)
                 } else if (caloriesValue != null && caloriesValue.isNotEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
                     layoutCalories.visibility = View.VISIBLE
-                    caloriesValue
+                    MenuUtil.getCaloriesText(caloriesValue, calorieCount)
                 } else {
                     layoutCalories.visibility = View.GONE
                     ""

@@ -35,6 +35,7 @@ import com.herfy.utils.helper.LocaleUtil
 import com.herfy.util.StringUtil
 import com.herfy.views.SlantedTextView
 import com.herfy.utils.helper.*
+import com.herfy.utils.menu.MenuUtil
 
 /**
  * [MenuItemsAdapter] adapter for displaying all the menu categories and items
@@ -121,12 +122,9 @@ class MenuItemsAdapter(
             val calorieCount = menuItem.calorieCount
             var calorieStr = ""
             if (caloriesValue != null && !caloriesValue.isEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
-                calorieStr =
-                    CacheUtil.getInstance().getTranslations(Text.CALORIES_LABEL, "(x) cal").replace("(x)", caloriesValue)
+                calorieStr = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
             } else if (calorieCount != 0) {
-                calorieStr =
-                    CacheUtil.getInstance().getTranslations(Text.CALORIES_LABEL, "(x) cal")
-                        .replace("(x)", calorieCount.toString())
+                calorieStr = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
             }
             if(calorieStr.isNotEmpty()){
                 binding.cvCalories.visibility = View.VISIBLE

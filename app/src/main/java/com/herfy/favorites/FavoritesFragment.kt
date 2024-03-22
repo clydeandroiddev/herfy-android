@@ -131,7 +131,9 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
     }
 
     override fun setCartExpiry() {
-
+        activity?.cast<BaseActivity> {
+            it.setCartExpiry()
+        }
     }
 
     override fun setupViews() {
