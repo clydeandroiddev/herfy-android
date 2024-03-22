@@ -29,15 +29,17 @@ object FavoriteOrderTypeValidator {
     }
 
     private fun isDineInSelected(selectedOrderType: OrderType, orderTypeName: String): Boolean {
-        return selectedOrderType.name.replace("_", " ").lowercase() == orderTypeName.replace("-", " ").lowercase()
+        return selectedOrderType.name.replace("_", "").lowercase() == orderTypeName.replace("-", "").lowercase()
     }
 
     private fun determineDefaultState(selectedOrderType: OrderType,favouriteOrderType: OrderTypeMenus): FavoriteOrderState {
-
+        val orderTypeName =favouriteOrderType.type
         return if (selectedOrderType == OrderType.DELIVERY && favouriteOrderType.type.contains("deliver")) {
             FavoriteOrderState.DeliverOrderSelected
-        } else if (isPickUpSelected(selectedOrderType,favouriteOrderType.type)) {
+        } else if (isPickUpSelected(selectedOrderType,orderTypeName)) {
             FavoriteOrderState.PickUpSelected
+        }else if (isDineInSelected(selectedOrderType,orderTypeName)) {
+            FavoriteOrderState.DineInSelected
         } else {
             FavoriteOrderState.UnSelected
         }
