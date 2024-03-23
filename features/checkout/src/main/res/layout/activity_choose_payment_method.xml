@@ -45,6 +45,9 @@
                     android:textSize="14sp"
                     app:lineHeight="16dp"
                     app:fontFamily="@font/inter_semi_bold"
+                    android:layout_marginStart="4dp"
+                    tools:text ="Debit"
+                    tools:visibility="visible"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:visibility="gone"/>
@@ -52,6 +55,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_cards"
                     android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/margin_large"
                     android:layout_height="wrap_content"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="3"
@@ -60,6 +64,9 @@
                     android:id="@+id/notesDivider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="@dimen/margin_large"
                     android:layout_marginTop="@dimen/margin_large"
                     android:background="#E6E8EB" />
                 <com.google.android.material.button.MaterialButton
@@ -84,12 +91,15 @@
                 <LinearLayout
                     android:id="@+id/payment_type_container"
                     android:layout_width="match_parent"
+                    android:backgroundTint="#F7F7F7"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"/>
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="#E6E8EB"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
                     android:layout_marginTop="@dimen/margin_large"
                     android:layout_marginBottom="16dp"/>
 
