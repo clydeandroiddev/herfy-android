@@ -34,13 +34,13 @@ interface MenuRepository {
     suspend fun getMenuItem(menuItemId: String, result: (MenuItem) -> Unit)
 
     suspend fun getMenuItemEntityBy(id: String, applicationId: String, result: (String) -> Unit)
-    suspend fun getMenuItemDbBy(applicationId: String, name: String, result: (MenuItemDb) -> Unit)
-    suspend fun getAllModifierGroupBy(
+    suspend fun getMenuItemDbBy(applicationId: String, name: String, result: (MenuItemDb?) -> Unit)
+    fun getAllModifierGroupBy(
         applicationId: String,
         toTypedArray: Array<String>,
         result: (List<ModifierGroupDb>) -> Unit
     )
-    suspend fun getModifierItemBy(applicationId: String, toTypedArray: Array<String>, result: (List<ModifierItemDb>) -> Unit)
+    fun getModifierItemBy(applicationId: String, toTypedArray: Array<String>, result: (List<ModifierItemDb>) -> Unit)
 }
 
 class MenuRepositoryImpl @Inject constructor(
@@ -396,12 +396,12 @@ class MenuRepositoryImpl @Inject constructor(
     override suspend fun getMenuItemDbBy(
         applicationId: String,
         name: String,
-        result: (MenuItemDb) -> Unit
+        result: (MenuItemDb?) -> Unit
     ) {
-        result(appDatabase.menuItemDao().findByApplicationAndName(applicationId, name))
+        result(appDatabase.menuItemDao().findByApplicationAndName(applicationId, name.trim()))
     }
 
-    override suspend fun getAllModifierGroupBy(
+    override fun getAllModifierGroupBy(
         applicationId: String,
         ids: Array<String>,
         result: (List<ModifierGroupDb>) -> Unit
@@ -415,7 +415,7 @@ class MenuRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getModifierItemBy(
+    override fun getModifierItemBy(
         applicationId: String,
         ids: Array<String>,
         result: (List<ModifierItemDb>) -> Unit

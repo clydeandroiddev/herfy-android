@@ -9,11 +9,13 @@ import com.herfy.productpagedetails.ui.viewholder.SizesItemViewholder
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 
 class SizesItemAdapter (private var items : List<ModifierItem> = arrayListOf(),
-                        private val listener : OnClickListener,
                         private val itemWidth : Int) : RecyclerView.Adapter<SizesItemViewholder>() {
 
-    interface OnClickListener{
-        fun onSelectSize(size: ModifierItem, pos: Int)
+    private var prevSelectedItemPos: Int = 0
+
+    private var onAction : SizesItemViewholder.OnClickListener? = null
+    fun setOnAction(onAction : SizesItemViewholder.OnClickListener){
+        this.onAction = onAction
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SizesItemViewholder {
@@ -23,10 +25,11 @@ class SizesItemAdapter (private var items : List<ModifierItem> = arrayListOf(),
             false
         )
         val params = binding.root.layoutParams
-        params.width = itemWidth
-        params.height = itemWidth
-        binding.root.layoutParams = params
-        return SizesItemViewholder(binding)
+        /*params.height = itemWidth
+        binding.root.layoutParams = params*/
+        val holder = SizesItemViewholder(binding)
+        holder.setOnAction(onAction)
+        return holder
     }
 
     override fun getItemCount(): Int = items.size
@@ -34,10 +37,7 @@ class SizesItemAdapter (private var items : List<ModifierItem> = arrayListOf(),
     override fun onBindViewHolder(holder: SizesItemViewholder, position: Int) {
         holder.apply {
             val data = items[position]
-            setSize(data)
-            itemView.setOnClickListener {
-                listener.onSelectSize(data, position)
-            }
+            setSize(data,position)
         }
     }
 
@@ -46,5 +46,25 @@ class SizesItemAdapter (private var items : List<ModifierItem> = arrayListOf(),
         this.items = items
         notifyDataSetChanged()
     }
+
+    fun updateSelectedSize(
+        previous: Int,
+        selected: Int
+    ) {
+        if(previous != selected){
+            items[previous].apply {
+                this.attributes.isSelected = false
+            }
+            items[selected].apply {
+                attributes.isSelected = true
+            }
+            prevSelectedItemPos = selected
+        }
+
+        notifyItemChanged(previous)
+        notifyItemChanged(selected)
+
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package com.herfy.productpagedetails.ui.viewholder
 
+import android.annotation.SuppressLint
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -23,6 +24,7 @@ class ComboItemDetailModifierGroupViewHolder(val binding : ItemModifierGroupNewB
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setModifierGroup(
         data: ModifierGroup,
         modifierGroupPosition : Int,
@@ -66,8 +68,9 @@ class ComboItemDetailModifierGroupViewHolder(val binding : ItemModifierGroupNewB
             recyclerView.apply {
                 adapter = comboMealModifierItemsAdapter
                 setHasFixedSize(true)
-                isNestedScrollingEnabled = true
+                isNestedScrollingEnabled = false
             }
+            comboMealModifierItemsAdapter.notifyDataSetChanged()
             var imageUrl : String? = data.attributes.image
             if (imageUrl == null || imageUrl.equals(
                     "null",

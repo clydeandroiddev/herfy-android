@@ -10,7 +10,6 @@
         android:id="@+id/cl_bottom_sheet_details_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#BF000000"
         app:behavior_hideable="true"
         app:behavior_peekHeight="0dp"
         app:behavior_skipCollapsed="true"
@@ -77,9 +76,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_modifiers"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 app:layout_constrainedHeight="true"
-
+                android:layout_marginHorizontal="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_large"
                 app:layout_constraintTop_toBottomOf="@id/cl_top_bar"
                 app:layout_constraintStart_toStartOf="parent"

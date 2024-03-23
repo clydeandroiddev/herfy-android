@@ -10,7 +10,18 @@ import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 
 class SizesItemViewholder(val binding : ItemNewSizesFixedBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun setSize(data: ModifierItem) {
+
+    private var onAction : OnClickListener? = null
+
+    fun setOnAction(action: OnClickListener?){
+        onAction = action
+    }
+
+    interface OnClickListener{
+        fun onSelectSize(size: ModifierItem, pos: Int)
+    }
+
+    fun setSize(data: ModifierItem, position : Int) {
         binding.apply {
             val context = itemView.context
             name.text = data.attributes.name
@@ -33,6 +44,12 @@ class SizesItemViewholder(val binding : ItemNewSizesFixedBinding) : RecyclerView
                 txtSizesPrice.setTextColor(ContextCompat.getColor(context,R.color.color_gray))
                 card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.color_light_blue_shade))
                 radioButton.setImageResource(R.drawable.modifier_item_radio_unselected)
+            }
+
+            container.setOnClickListener {
+                if (!data.attributes.isSelected) {
+                   onAction?.onSelectSize(data, position)
+                }
             }
         }
 

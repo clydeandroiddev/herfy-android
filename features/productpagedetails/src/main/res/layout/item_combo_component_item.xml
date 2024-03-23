@@ -8,11 +8,12 @@
     android:background="@drawable/bg_modifier_item_selector"
     android:padding="10dp"
     app:cardPreventCornerOverlap="false"
-    android:layout_marginHorizontal="@dimen/margin_large"
     app:contentPadding="10dp"
     android:id="@+id/optionCardView"
     app:cardUseCompatPadding="false"
-    app:cardCornerRadius="20dp">
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+   >
     <LinearLayout
         android:id="@+id/clickable_layout"
         android:layout_width="match_parent"
@@ -109,11 +110,15 @@
                 android:visibility="gone"
                 tools:visibility="gone" />
 
-            <RadioButton
+            <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/radioButton"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:gravity="center"
+                android:background="@null"
                 android:button="@drawable/item_drawable_radio_state"
                 android:visibility="gone" />
 

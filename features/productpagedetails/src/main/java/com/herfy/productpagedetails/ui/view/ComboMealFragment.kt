@@ -5,6 +5,7 @@ import android.graphics.PorterDuff
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.herfy.model.ShowComboMealItemDetails
@@ -18,8 +19,11 @@ import com.herfy.productpagedetails.ui.viewmodel.ComboViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.toTranslate
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
@@ -72,6 +76,17 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
         setupSizeItems()
         setupComboMealItems()
         setupComboMealDetailsBottomSheet()
+        binding.apply {
+            cbtComboMeal.apply {
+                setNavButtonAction{
+                    navigateUp()
+                }
+                setRightButtonAction{
+
+                }
+            }
+
+        }
         if(!isPromo){
             if(menuItemId.isNotEmpty()){
                 viewModel.apply {
@@ -134,6 +149,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 tvTotalLabel.text = cacheUtilHelper.getTranslations(Text.TOTAL_IS_INCLUSIVE_OF_VAT, "Total is inclusive of VAT")
                 btnAddDetails.text = cacheUtilHelper.getTranslations(Text.ADD, "Add")
             }
+            sizesLabel.text = cacheUtilHelper.getTranslations(Text.COMBO_SIZES_LABEL, "Combo Sizes")
         }
     }
 
@@ -157,6 +173,16 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                         layoutManager = linearLayoutManager
                         setHasFixedSize(true)
                         isNestedScrollingEnabled = false
+                        setOnScrollChangeListener { view, i, i2, i3, i4 ->
+                            mBottomSheetBehavior?.let {behavior ->
+                                if (behavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                                    behavior.isDraggable = linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0
+                                } else {
+                                    behavior.isDraggable = true
+                                }
+                            }
+
+                        }
                     }
                 }
                 add.setOnClickListener {
@@ -165,6 +191,17 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
 
 
             }
+
+            mBottomSheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if(newState == BottomSheetBehavior.STATE_COLLAPSED){
+                        comboMealModifierGroupAdapter?.updateList(arrayListOf(), hashMapOf())
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                }
+            })
         }
     }
 
@@ -186,11 +223,12 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
 
     private fun setupSizeItems() {
         binding.apply {
+            ivComboSizeIcon.setImageResource(R.drawable.ic_combo_size)
             activity?.let { act ->
-                val itemWidth = ViewUtil.getScreenWidth(act) / 3
-                val linearLayoutManager =
-                    LinearLayoutManager(act, LinearLayoutManager.HORIZONTAL, false)
-                sizesAdapter = SizesItemAdapter(listener = this@ComboMealFragment.viewModel, itemWidth = itemWidth)
+                val itemWidth = (ViewUtil.getScreenWidth(act) / 3) - ViewUtil.dpToPx(act, 20)
+                val linearLayoutManager = GridLayoutManager(act,3)
+                sizesAdapter = SizesItemAdapter(itemWidth = itemWidth)
+                sizesAdapter?.setOnAction(this@ComboMealFragment.viewModel)
                 sizesRecyclerView.apply {
                     adapter = sizesAdapter
                     layoutManager = linearLayoutManager
@@ -238,7 +276,24 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 }
             }
             showComboSizes.observe(this@ComboMealFragment){
-                sizesAdapter?.updateList(it)
+                binding.apply {
+                    if(it.isNotEmpty()){
+                        sizesLayoutTextContainer.visible()
+                        sizesRecyclerView.visible()
+                        val hasSelectedSize = it.any { it.attributes.isSelected }
+                        if(hasSelectedSize){
+                            checkBox.visible()
+                        }else {
+                            checkBox.gone()
+                        }
+                        sizesAdapter?.updateList(it)
+                    }else {
+                        sizesLayoutTextContainer.gone()
+                        sizesRecyclerView.gone()
+                    }
+                }
+
+
             }
             showMenuItemComponent.observe(this@ComboMealFragment){
                 val comboMealModifierGroupCheckBoxMap = viewModel.showComboModifierGroupCheckBox(it)
@@ -251,6 +306,19 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
             showComboMealItemDetails.observe(this@ComboMealFragment){data ->
                 showComboComponentModifierItemDetails(data)
+            }
+            showMenuItemCalories.observe(this@ComboMealFragment){
+                binding.apply {
+                    if(it.isNotEmpty()){
+                        btnCalories.visible()
+                        calories.text = it
+                    }else {
+                        btnCalories.gone()
+                    }
+                }
+            }
+            updateComboSizeList.observe(this@ComboMealFragment){
+                sizesAdapter?.updateSelectedSize(it.second,it.first)
             }
         }
     }
@@ -302,4 +370,6 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
         }
     }
+
+
 }

@@ -15,9 +15,6 @@
             name="total"
             type="Double"/>
         <variable
-            name="calories"
-            type="int"/>
-        <variable
             name="viewModel"
             type="com.herfy.productpagedetails.ui.viewmodel.ComboViewModel" />
     </data>
@@ -25,7 +22,9 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:theme="@style/AppTheme">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
@@ -42,7 +41,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_collapseMode="parallax">
+                    app:layout_collapseMode="parallax"
+                    android:background="@color/white">
 
                     <ImageView
                         android:id="@+id/image"
@@ -59,6 +59,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <com.herfy.common.toolbar.CustomButtonsToolbar
+                    android:id="@+id/cbt_combo_meal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_large"
@@ -102,7 +103,7 @@
                         style="@style/TextAppearance.Headline"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
+                        android:layout_marginTop="@dimen/margin_large"
                         android:ellipsize="end"
                         android:includeFontPadding="false"
                         android:maxLines="1"
@@ -197,7 +198,7 @@
                             android:paddingTop="@dimen/padding_micro"
                             android:paddingEnd="@dimen/padding_micro"
                             android:paddingBottom="@dimen/padding_micro"
-                            android:text="@={viewModel.calories}"
+                            android:text="@{viewModel.calories}"
                             tools:text="2200 Kcal" />
                     </androidx.cardview.widget.CardView>
 
@@ -267,6 +268,7 @@
                             app:layout_constraintBottom_toBottomOf="@id/sizes_label">
 
                             <com.google.android.material.imageview.ShapeableImageView
+                                android:id="@+id/iv_combo_size_icon"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:padding="@dimen/padding_small"
@@ -529,7 +531,9 @@
         <FrameLayout
             android:id="@+id/fm_combo_detail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#BF000000"
+            >
 
             <include
                 android:id="@+id/layout_bottom_sheet_combo_detail"

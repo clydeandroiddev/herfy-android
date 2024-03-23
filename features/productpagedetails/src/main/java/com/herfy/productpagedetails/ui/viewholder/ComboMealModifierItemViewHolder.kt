@@ -30,7 +30,7 @@ class ComboMealModifierItemViewHolder(val binding: ItemComboComponentItemBinding
         binding.apply {
             val context = itemView.context
             var imageUrl: String? = componentModifierItem.image
-            var hasModifiers = componentModifierItem.modifierGroups.size > 0
+            var hasModifiers = componentModifierItem.modifierGroups.size > 1
             if (imageUrl == null || imageUrl.equals(
                     "null",
                     ignoreCase = true
@@ -78,10 +78,8 @@ class ComboMealModifierItemViewHolder(val binding: ItemComboComponentItemBinding
                 radioButton.visible()
             }
 
-
-
-
             if (componentModifierItem.selected) {
+                optionCardView.strokeWidth = 1
                 optionCardView.strokeColor = context.getColor(R.color.background_color_blue)
                 optionCardView.backgroundTintList =
                     ColorStateList.valueOf(context.getColor(R.color.card_selected_bg))
@@ -90,9 +88,10 @@ class ComboMealModifierItemViewHolder(val binding: ItemComboComponentItemBinding
                 } else {
                     radioButton.isChecked = true
                 }
-
             } else {
                 optionCardView.strokeColor = Color.WHITE
+                optionCardView.backgroundTintList =
+                    ColorStateList.valueOf(context.getColor(R.color.white))
                 if (hasModifiers) {
                     ivRightIcon.setImageResource(R.drawable.ic_arrow_right_tail_blue)
                 } else {
@@ -109,6 +108,8 @@ class ComboMealModifierItemViewHolder(val binding: ItemComboComponentItemBinding
             } else {
                 txtmodifierPrice.invisible()
             }
+
+
 
         }
     }

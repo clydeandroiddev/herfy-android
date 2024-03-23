@@ -56,7 +56,7 @@ class ComboMealModifierGroupViewholder(
             viewModel.getComponentModifierItemPer(menuItemComponentPos) {
                 comboMealModifierItemAdapter.updateList(it.items)
             }
-            comboMealModifierItemAdapters.put(menuItemComponentPos, comboMealModifierItemAdapter)
+            comboMealModifierItemAdapters[menuItemComponentPos] = comboMealModifierItemAdapter
         }
     }
 }

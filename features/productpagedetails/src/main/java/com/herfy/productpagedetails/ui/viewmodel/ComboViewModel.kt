@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.ShowComboMealItemDetails
 import com.herfy.productpagedetails.ui.adapter.FrequentlyBoughtItemAdapter
-import com.herfy.productpagedetails.ui.adapter.SizesItemAdapter
 import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder
 import com.herfy.productpagedetails.ui.viewholder.ComboMealModifierItemViewHolder
+import com.herfy.productpagedetails.ui.viewholder.SizesItemViewholder
 import com.herfy.repository.MenuRepository
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.extensions.runOnMain
@@ -34,7 +34,7 @@ import javax.inject.Inject
 class ComboViewModel @Inject constructor(
     private val cacheUtilHelper: CacheUtilHelper,
     private val menuRepository: MenuRepository
-) : BaseViewModel(), SizesItemAdapter.OnClickListener, FrequentlyBoughtItemAdapter.OnClickListener,
+) : BaseViewModel(), SizesItemViewholder.OnClickListener, FrequentlyBoughtItemAdapter.OnClickListener,
     BaseModifierItemViewHolder.OnAction, ComboMealModifierItemViewHolder.onClickListener {
 
 
@@ -81,7 +81,7 @@ class ComboViewModel @Inject constructor(
 
     //Observalbles
     val notes = ObservableField("")
-    var calories = ObservableField("")
+    var calories : String = ""
 
     //LiveData
     private val _showError = MutableLiveData<ErrorMsgItem>()
@@ -102,7 +102,10 @@ class ComboViewModel @Inject constructor(
     val updateComponentModifierList: LiveData<Pair<Int, Int>> = _updateComponentModifierList
     private val _showComboMealItemDetails = MutableLiveData<ShowComboMealItemDetails>()
     val showComboMealItemDetails: LiveData<ShowComboMealItemDetails> = _showComboMealItemDetails
-
+    private val _showMenuItemCalories = MutableLiveData<String>()
+    val showMenuItemCalories : LiveData<String> = _showMenuItemCalories
+    private val _updateComboSizeList = MutableLiveData<Pair<Int, Int>>()
+    val updateComboSizeList : LiveData<Pair<Int,Int>> = _updateComboSizeList
     /**Function for retrieving data of menu item from db**/
     fun getMenuItemFromDbBy(addToBag: Boolean, id: String, isUpsell: Boolean) {
         invokeAtBackground {
@@ -208,15 +211,13 @@ class ComboViewModel @Inject constructor(
                     }
                 }
             }
-
             if (_calorieCount == 0) {
                 val caloriesValue = it.calories
                 val calorieCount = it.calorieCount
                 if (calorieCount != 0) {
                     _calorieCount = calorieCount
                 } else if (caloriesValue != null && caloriesValue.isNotEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
-                    calories.set(caloriesValue)
-//
+                    calories = caloriesValue
                 }
             }
             var caloriesFromModifiers = 0
@@ -237,14 +238,13 @@ class ComboViewModel @Inject constructor(
                     }
                 }
             }
-
             if (caloriesFromModifiers > 0) {
                 _calorieCount += caloriesFromModifiers;
             }
-
             if (_calorieCount > 0) {
-                calories.set(_calorieCount.toString())
+                calories = _calorieCount.toString()
             }
+            _showMenuItemCalories.value = calories
         }
     }
 
@@ -555,11 +555,13 @@ class ComboViewModel @Inject constructor(
                         menuRepository.getMenuItemDbBy(
                             applicationId,
                             compoItem.name.getValue(LocaleUtil.getInstance().language)
-                        ) {
-                            val menuItemData =
-                                GsonHelper.gsonFinal().fromJson(it.data, MenuItem::class.java)
-                            menuItemData?.let {
-                                compoItem.menuItem = it
+                        ) {menuItemDb->
+                            menuItemDb?.let {
+                                val menuItemData =
+                                    GsonHelper.gsonFinal().fromJson(it.data, MenuItem::class.java)
+                                menuItemData?.let {
+                                    compoItem.menuItem = it
+                                }
                             }
                         }
                         menuRepository.getAllModifierGroupBy(
@@ -585,95 +587,93 @@ class ComboViewModel @Inject constructor(
                                     }
                                     val modifierItems = LinkedList<ModifierItem>()
                                     val modifiers = LinkedList<ModifierItem>()
-                                    invoke {
-                                        menuRepository.getModifierItemBy(
-                                            applicationId,
-                                            modifierGroupCdn.attributes.modifiers.toTypedArray()
-                                        ) { modifierItemDbs ->
-                                            for (modifierItemDb in modifierGroupDbs) {
-                                                if (!excludeModifiers.contains(modifierItemDb.id)) {
-                                                    val modifierItemCdn =
-                                                        GsonHelper.gsonFinal().fromJson(
-                                                            modifierItemDb.data,
-                                                            ModifierItemCdn::class.java
-                                                        )
-                                                    val modifierItem = ModifierItemCdn.convert(
-                                                        modifierItemCdn,
-                                                        LocaleUtil.getInstance().language
+                                    menuRepository.getModifierItemBy(
+                                        applicationId,
+                                        modifierGroupCdn.attributes.modifiers.toTypedArray()
+                                    ) { modifierItemDbs ->
+                                        for (modifierItemDb in modifierItemDbs) {
+                                            if (!excludeModifiers.contains(modifierItemDb.id)) {
+                                                val modifierItemCdn =
+                                                    GsonHelper.gsonFinal().fromJson(
+                                                        modifierItemDb.data,
+                                                        ModifierItemCdn::class.java
                                                     )
-                                                    modifierItem.attributes.isSelected =
-                                                        modifierItem.attributes.minimum == 1
-                                                    modifierItems.add(modifierItem)
-
-                                                }
-                                            }
-
-                                            modifierItems.sortWith { modifierItem1, modifierItem2 -> modifierItem1.attributes.displayOrder - modifierItem2.attributes.displayOrder }
-                                            val modifierGroup = ModifierGroupCdn.convert(
-                                                modifierGroupCdn,
-                                                LocaleUtil.getInstance().language
-                                            )
-                                            if (mapModifierGroup != null) {
-                                                modifierGroup.attributes.minimum =
-                                                    mapModifierGroup.min
-                                                modifierGroup.attributes.maximum =
-                                                    mapModifierGroup.max
-                                                modifierGroup.attributes.displayOrder =
-                                                    mapModifierGroup.displayOrder
-                                                modifierGroup.attributes.freeModifiersCount =
-                                                    mapModifierGroup.freeModifiersCount
-                                                modifierGroup.setDefaultModifiers(
-                                                    java.util.ArrayList(
-                                                        mapModifierGroup.defaultModifiers
-                                                    )
+                                                val modifierItem = ModifierItemCdn.convert(
+                                                    modifierItemCdn,
+                                                    LocaleUtil.getInstance().language
                                                 )
-                                                modifierGroup.attributes.visibilityConfig =
-                                                    mapModifierGroup.visibilityConfig
+                                                modifierItem.attributes.isSelected =
+                                                    modifierItem.attributes.minimum == 1
+                                                modifierItems.add(modifierItem)
+
                                             }
-                                            val size = modifierItems.size
-                                            val modifierItemsFinal = ArrayList<ModifierItem>()
-                                            for (i in 0 until size) {
-                                                var found = false
-                                                for (a in modifierGroup.excludeModifiers.indices) {
-                                                    if (modifierItems[i].id.equals(
-                                                            modifierGroup.excludeModifiers[a].toString(),
-                                                            ignoreCase = true
-                                                        )
-                                                    ) {
-                                                        found = true
-                                                        break
-                                                    }
-                                                }
-                                                if (!found) {
-                                                    modifierItemsFinal.add(modifierItems[i])
+                                        }
+
+                                        modifierItems.sortWith { modifierItem1, modifierItem2 -> modifierItem1.attributes.displayOrder - modifierItem2.attributes.displayOrder }
+                                        val modifierGroup = ModifierGroupCdn.convert(
+                                            modifierGroupCdn,
+                                            LocaleUtil.getInstance().language
+                                        )
+                                        if (mapModifierGroup != null) {
+                                            modifierGroup.attributes.minimum =
+                                                mapModifierGroup.min
+                                            modifierGroup.attributes.maximum =
+                                                mapModifierGroup.max
+                                            modifierGroup.attributes.displayOrder =
+                                                mapModifierGroup.displayOrder
+                                            modifierGroup.attributes.freeModifiersCount =
+                                                mapModifierGroup.freeModifiersCount
+                                            modifierGroup.setDefaultModifiers(
+                                                java.util.ArrayList(
+                                                    mapModifierGroup.defaultModifiers
+                                                )
+                                            )
+                                            modifierGroup.attributes.visibilityConfig =
+                                                mapModifierGroup.visibilityConfig
+                                        }
+                                        val size = modifierItems.size
+                                        val modifierItemsFinal = ArrayList<ModifierItem>()
+                                        for (i in 0 until size) {
+                                            var found = false
+                                            for (a in modifierGroup.excludeModifiers.indices) {
+                                                if (modifierItems[i].id.equals(
+                                                        modifierGroup.excludeModifiers[a].toString(),
+                                                        ignoreCase = true
+                                                    )
+                                                ) {
+                                                    found = true
+                                                    break
                                                 }
                                             }
-                                            if (modifierItemsFinal.size > 0) {
-                                                val defaultModifiers =
-                                                    modifierGroup.defaultModifiers
-                                                if (modifierItemsFinal.size > 0 && modifierGroup.attributes.minimum > 0) {
-                                                    if (defaultModifiers.size > 0) {
-                                                        var selected = 0
-                                                        for (i in modifierItemsFinal.indices) {
-                                                            val modifierItem = modifierItemsFinal[i]
-                                                            if (selected < modifierGroup.attributes.maximum && defaultModifiers.contains(
-                                                                    modifierItem.id
-                                                                )
-                                                            ) {
-                                                                modifierItemsFinal[i].attributes.isSelected =
-                                                                    true
-                                                                selected++
-                                                            }
+                                            if (!found) {
+                                                modifierItemsFinal.add(modifierItems[i])
+                                            }
+                                        }
+                                        if (modifierItemsFinal.size > 0) {
+                                            val defaultModifiers =
+                                                modifierGroup.defaultModifiers
+                                            if (modifierItemsFinal.size > 0 && modifierGroup.attributes.minimum > 0) {
+                                                if (defaultModifiers.size > 0) {
+                                                    var selected = 0
+                                                    for (i in modifierItemsFinal.indices) {
+                                                        val modifierItem = modifierItemsFinal[i]
+                                                        if (selected < modifierGroup.attributes.maximum && defaultModifiers.contains(
+                                                                modifierItem.id
+                                                            )
+                                                        ) {
+                                                            modifierItemsFinal[i].attributes.isSelected =
+                                                                true
+                                                            selected++
                                                         }
-                                                    } else if (modifierGroup.attributes.minimum == 1) {
-                                                        modifierItemsFinal[0].attributes.isSelected =
-                                                            true
                                                     }
+                                                } else if (modifierGroup.attributes.minimum == 1) {
+                                                    modifierItemsFinal[0].attributes.isSelected =
+                                                        true
                                                 }
-                                                modifierGroup.modifierItems = modifierItemsFinal
-                                                modifierGroup.modifiers = modifierItemsFinal
-                                                modifierGroups.add(modifierGroup)
                                             }
+                                            modifierGroup.modifierItems = modifierItemsFinal
+                                            modifierGroup.modifiers = modifierItemsFinal
+                                            modifierGroups.add(modifierGroup)
                                         }
                                     }
                                 }
@@ -842,7 +842,8 @@ class ComboViewModel @Inject constructor(
     override fun onSelectSize(size: ModifierItem, pos: Int) {
         previousComboIndex = comboIndex
         comboIndex = pos
-        getComboMenuItemComponents()
+        _updateComboSizeList.value = Pair(pos, previousComboIndex)
+        //getComboMenuItemComponents()
         //TODO : Unselect Or Set To Default OldComboIndex
     }
 
@@ -879,6 +880,10 @@ class ComboViewModel @Inject constructor(
             updateSelectedComponentModifierItem(menuItemComponentPos, componentModifierItemPos)
             _updateComponentModifierList.value =
                 Pair(menuItemComponentPos, componentModifierItemPos)
+            menuItem?.let {
+                getMenuItemTotalPrice(it, -1)
+            }
+
         }
     }
 
@@ -921,7 +926,7 @@ class ComboViewModel @Inject constructor(
         modifierItemPosition: Int,
         modifierItem: ModifierItem?
     ) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onQuantityChanged(
@@ -933,7 +938,7 @@ class ComboViewModel @Inject constructor(
         isQuantityVisible: Boolean,
         clickCount: Int?
     ) {
-        TODO("Not yet implemented")
+
     }
 
     fun updateModifierGroupSelectionIndicator(
