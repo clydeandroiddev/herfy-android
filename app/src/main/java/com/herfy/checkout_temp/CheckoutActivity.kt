@@ -939,7 +939,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun showValidateOrderError(errors: List<String>) {}
     override fun sendOrder() {}
     override fun initializeTap(orderId: String, total: Double) {}
-    override fun showCheckoutPaymentForm(orderId: String) {
+    override fun showCheckoutPaymentForm(orderId: String?) {
         println("Foodics online checkout payment form")
 
         if (isCanProceedFragmentTransaction(supportFragmentManager)) {
@@ -957,12 +957,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         SaveDialogAlert.newInstance(object : SaveDialogAlert.OnSavedAction {
                             override fun onClose() {
                                 saveDialogAlert!!.dismissAllowingStateLoss()
-                                checkTokenGenerated(response!!.token, null, false, orderId)
+                                checkTokenGenerated(response!!.token, null, false, orderId.orEmpty())
                             }
 
                             override fun onProceed() {
                                 saveDialogAlert!!.dismissAllowingStateLoss()
-                                checkTokenGenerated(response!!.token, null, true, orderId)
+                                checkTokenGenerated(response!!.token, null, true, orderId.orEmpty())
                             }
                         })
                     saveDialogAlert?.setCancelable(false)
@@ -1458,7 +1458,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             .getInstance().customCard
 
         selectedCard?.let { card->
-
+            CacheUtil
+                .getInstance()
+                .setCustomerCards(Gson().toJson(selectedCard))
+                CacheUtil
+                    .getInstance().orderPayment = PaymentType.CARD
                 var res = R.drawable.ic_saved_card
                 var cardLabel = "Visa ****"
                 if (card.attributes.brand.equals("visa", true)) {
@@ -1470,31 +1474,36 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 }
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(res)
                 binding!!.layoutPayment.tvSelectedPayment.text = cardLabel+card.attributes.last4Digits
+            } ?: run {
+            val isUserNotSelectedAnyPaymentMethod =
+                selecetedPayment == PaymentType.NONE && CacheUtil.getInstance().customCard == null
+            binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
+            binding!!.layoutPayment.emptyState.setTitle(
+                CacheUtil.getInstance()
+                    .getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found.")
+            )
+            if (isUserNotSelectedAnyPaymentMethod) {
+                binding!!.layoutPayment.tvSelectedPayment.visibility = View.GONE
+                binding!!.layoutPayment.ivSelectedPayment.visibility = View.GONE
+            } else {
+                binding!!.layoutPayment.tvSelectedPayment.visibility = View.VISIBLE
+                binding!!.layoutPayment.ivSelectedPayment.visibility = View.VISIBLE
             }
-        val isUserNotSelectedAnyPaymentMethod = selecetedPayment == PaymentType.NONE && CacheUtil.getInstance().customCard == null
-        binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
-        binding!!.layoutPayment.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found."))
-        if (isUserNotSelectedAnyPaymentMethod) {
-            binding!!.layoutPayment.tvSelectedPayment.visibility = View.GONE
-            binding!!.layoutPayment.ivSelectedPayment.visibility = View.GONE
-        } else {
-            binding!!.layoutPayment.tvSelectedPayment.visibility = View.VISIBLE
-            binding!!.layoutPayment.ivSelectedPayment.visibility = View.VISIBLE
-        }
-        if (selecetedPayment == PaymentType.CASH) {
-            binding!!.layoutPayment.tvSelectedPayment.text =
-                CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
-            binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
-        } else if (selecetedPayment == PaymentType.CARD) {
-            binding!!.layoutPayment.tvSelectedPayment.text =
-                CacheUtil.getInstance().getTranslations(
-                    Text.CARD, "Card"
-                )
-            binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card)
-        } else if (selecetedPayment == PaymentType.CARD_ON_DELIVERY || selecetedPayment == PaymentType.CARD_ON_PICKUP) {
-            binding!!.layoutPayment.tvSelectedPayment.text =
-                CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
-            binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
+            if (selecetedPayment == PaymentType.CASH) {
+                binding!!.layoutPayment.tvSelectedPayment.text =
+                    CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
+            } else if (selecetedPayment == PaymentType.CARD) {
+                binding!!.layoutPayment.tvSelectedPayment.text =
+                    CacheUtil.getInstance().getTranslations(
+                        Text.CARD, "Card"
+                    )
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card)
+            } else if (selecetedPayment == PaymentType.CARD_ON_DELIVERY || selecetedPayment == PaymentType.CARD_ON_PICKUP) {
+                binding!!.layoutPayment.tvSelectedPayment.text =
+                    CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
+            }
         }
     }
 
@@ -1728,8 +1737,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         intent.putExtra(CustomCheckoutActivity.EXTRA_3DS_DATA, data.toString());
         checkoutActivityLauncher.launch(intent);
         isFromCheckout = true;*/
-        showCheckoutPaymentForm(orderId!!)
-        Handler().postDelayed({ dialogCheckout!!.handle3ds(data) }, 400)
+            showCheckoutPaymentForm(orderId)
+
+        Handler().postDelayed({ dialogCheckout?.handle3ds(data) }, 400)
     }
 
     private fun showPanel() {
