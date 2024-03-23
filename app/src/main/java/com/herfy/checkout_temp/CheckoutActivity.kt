@@ -977,10 +977,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun sendOrder() {}
     override fun initializeTap(orderId: String, total: Double) {}
     override fun showCheckoutPaymentForm(orderId: String?) {
-        println("Foodics online checkout payment form")
-
         if (isCanProceedFragmentTransaction(supportFragmentManager)) {
-            println("Foodics online checkout payment form 1")
             dialogCheckout = CustomCheckoutDialog(this)
             dialogCheckout!!.setOnActionSelectedListener(object : OnActionSelectedListener {
                 override fun onFormSubmit() {

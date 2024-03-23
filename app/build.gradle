@@ -10,11 +10,11 @@ apply plugin: 'dagger.hilt.android.plugin'
 
 fileTree('sub').filter { it.toString().contains(".gradle") }.each { apply from: "${it}" }
 
-//java {
-//    toolchain {
-//        languageVersion.set(JavaLanguageVersion.of(18))
-//    }
-//}
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(18))
+    }
+}
 
 android {
     compileSdk 34
@@ -362,7 +362,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navigation"
     implementation "androidx.navigation:navigation-dynamic-features-fragment:$navigation"
     androidTestImplementation "androidx.navigation:navigation-testing:$navigation"
-    implementation "androidx.navigation:navigation-compose:2.7.4"
+    implementation "androidx.navigation:navigation-compose:$navigation"
 
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     implementation 'com.intuit.ssp:ssp-android:1.0.6'
