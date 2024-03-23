@@ -99,6 +99,11 @@ public class TimeLineViewHolder extends RecyclerView.ViewHolder implements Order
     }
 
     @Override
+    public void showLocation(boolean isPlace, LatLng latLng, String address) {
+
+    }
+
+    @Override
     public void showOrders(boolean newestToOldest, ArrayList<OrderHistory> orders) {
 
     }

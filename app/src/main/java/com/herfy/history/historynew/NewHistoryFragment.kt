@@ -158,6 +158,10 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         }
     }
 
+    override fun showLocation(isPlace: Boolean, latLng: LatLng?, address: String?) {
+        TODO("Not yet implemented")
+    }
+
     override fun showOrders(newestToOldest: Boolean, orders: ArrayList<OrderHistory>?) {
         dismissDialogs()
         orders?.let {

@@ -64,6 +64,91 @@
                     android:layout_height="1dp"
                     android:background="#E6E8EB" />
 
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/mapFrame"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:layout_constraintDimensionRatio="1:0.75"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <fragment
+                                android:id="@+id/order_type_map"
+                                android:name="com.google.android.gms.maps.SupportMapFragment"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/location"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:layout_marginBottom="24dp"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent">
+
+                                <ImageView
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:src="@drawable/location_button_bg"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/header"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            app:cardBackgroundColor="@color/order_type_bg_color"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="10dp"
+                            app:layout_constraintBottom_toBottomOf="@id/mapFrame"
+                            app:layout_constraintTop_toBottomOf="@id/mapFrame">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="6dp"
+                                android:background="@drawable/ic_drag" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <View
+                            android:id="@+id/cover"
+                            android:layout_width="match_parent"
+                            android:layout_height="16dp"
+                            android:background="@color/order_type_bg_color"
+                            android:elevation="10dp"
+                            app:layout_constraintBottom_toBottomOf="@id/header" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintTop_toBottomOf="@id/cover">
+
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.core.widget.NestedScrollView>
+
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

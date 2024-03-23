@@ -156,6 +156,10 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
         }
     }
 
+    override fun showLocation(isPlace: Boolean, latLng: LatLng?, address: String?) {
+
+    }
+
     override fun showOrders(newestToOldest: Boolean, orders: ArrayList<OrderHistory>?) {
 
     }

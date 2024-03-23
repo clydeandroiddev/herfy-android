@@ -1,5 +1,7 @@
 package com.herfy.history;
 
+import android.location.Geocoder;
+
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -8,6 +10,7 @@ import com.herfy.base.BaseView;
 import com.herfy.history.viewholders.OrderMenuItemViewHolder;
 import com.herfy.history.viewholders.OrderViewHolder;
 import com.herfy.history.viewholders.TimeLineViewHolder;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsTransaction;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
@@ -23,6 +26,8 @@ import java.util.List;
 public interface OrdersContract {
 
     interface View extends BaseView<Presenter> {
+
+        void showLocation(boolean isPlace, LatLng latLng, String address);
 
         void showOrders(boolean newestToOldest, ArrayList<OrderHistory> orders);
 
@@ -69,6 +74,9 @@ public interface OrdersContract {
     }
 
     interface Presenter extends BasePresenter {
+        void setGeocoder(Geocoder geocoder);
+
+        void getLocation(FusedLocationProvider fusedLocationProvider);
 
         void getOrders();
 

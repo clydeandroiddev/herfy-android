@@ -1,8 +1,10 @@
 package com.herfy.history;
 
-import android.util.Log;
+import android.location.Geocoder;
+import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.database.AppDatabase;
@@ -24,6 +26,7 @@ import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.helper.ably.AblyUtil;
 import com.herfy.utils.menu.MenuUtil;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
@@ -71,6 +74,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -92,8 +96,12 @@ import javax.annotation.Nullable;
 import io.ably.lib.types.Message;
 import kotlin.Unit;
 
-public class OrdersPresenter implements OrdersContract.Presenter {
+public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationProvider.LocationResultCallback {
 
+    public boolean hasLocation = false;
+
+    private Location location;
+    private FusedLocationProvider fusedLocationProvider;
     private final OrdersContract.View ordersView;
 
     private boolean newestToOldest = true;
@@ -123,6 +131,17 @@ public class OrdersPresenter implements OrdersContract.Presenter {
         ordersView.setupTranslations();
         ordersView.setupViews();
         ordersView.setupFonts();
+    }
+
+
+    @Override
+    public void getLocation(FusedLocationProvider fusedLocationProvider) {
+        if (this.fusedLocationProvider != null) {
+            this.fusedLocationProvider.disconnect();
+        }
+        this.fusedLocationProvider = fusedLocationProvider;
+        this.fusedLocationProvider.setLocationResultCallback(this);
+        this.fusedLocationProvider.connect();
     }
 
     @Override
@@ -2036,4 +2055,42 @@ public class OrdersPresenter implements OrdersContract.Presenter {
         return Unit.INSTANCE;
     }
 
+    @Override
+    public void getNewFusedLocation(Location location) {
+        hasLocation = true;
+        fusedLocationProvider.disconnect();
+        this.location = location;
+        CacheUtil.getInstance().setOrderLatitude(String.valueOf(location.getLatitude()));
+        CacheUtil.getInstance().setOrderLongitude(String.valueOf(location.getLongitude()));
+        CacheUtil.getInstance().setOrderDeliveryLatitude(String.valueOf(location.getLatitude()));
+        CacheUtil.getInstance().setOrderDeliveryLongitude(String.valueOf(location.getLongitude()));
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        ordersView.showLocation(false, latLng, getAddressLoc(latLng));
+    }
+
+
+    @Override
+    public void setGeocoder(Geocoder geocoder) {
+        this.geocoder = geocoder;
+    }
+    private Geocoder geocoder;
+
+    private android.location.Address addressNew;
+
+    private Place place;
+    public String getAddressLoc(LatLng latLng) {
+        if (geocoder != null) {
+            try {
+                List<android.location.Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                addressNew = (addresses.isEmpty() ? null : addresses.get(0));
+                if (addressNew != null) {
+                    place = null;
+                    return addressNew.getAddressLine(0);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
+    }
 }

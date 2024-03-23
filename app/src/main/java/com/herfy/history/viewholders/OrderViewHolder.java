@@ -122,6 +122,11 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements OrdersCo
     }
 
     @Override
+    public void showLocation(boolean isPlace, LatLng latLng, String address) {
+
+    }
+
+    @Override
     public void showOrders(boolean newestToOldest, ArrayList<OrderHistory> orders) {
 
     }
