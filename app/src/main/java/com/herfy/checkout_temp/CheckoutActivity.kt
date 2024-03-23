@@ -3,6 +3,7 @@ package com.herfy.checkout_temp
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlarmManager
+import android.app.Dialog
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Bitmap
@@ -75,6 +76,7 @@ import com.herfy.payment.views.CustomCheckoutDialog
 import com.herfy.payment.views.CustomCheckoutDialog.OnActionSelectedListener
 import com.herfy.payment.views.MoyasarActivity
 import com.herfy.payment.views.OrderDialogFragment
+import com.herfy.payment.views.PaymentDialogFragment
 import com.herfy.ratings.AppRatingBroadcastReceiver
 import com.herfy.util.ApiLogLevel
 import com.herfy.util.ApiLogUtil.Companion.sendOrderLog
@@ -329,122 +331,122 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             mMap?.uiSettings?.isCompassEnabled = false
             mMap?.uiSettings?.isZoomControlsEnabled = false
             mMap?.uiSettings?.isMapToolbarEnabled = false
-        if (orderType === OrderType.DELIVERY) {
-            val lat = CacheUtil.getInstance().orderAddress.attributes.lat.toDouble()
-            val lon = CacheUtil.getInstance().orderAddress.attributes.longt.toDouble()
-            val addressLocation = LatLng(lat, lon)
-            val bitmapDrawable = ContextCompat.getDrawable(
-                this, R.drawable.ic_address_location
-            ) as BitmapDrawable?
-            if (bitmapDrawable != null) {
-                val bitmap = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 110, 110, true)
-                val canvas = Canvas(bitmap)
+            if (orderType === OrderType.DELIVERY) {
+                val lat = CacheUtil.getInstance().orderAddress.attributes.lat.toDouble()
+                val lon = CacheUtil.getInstance().orderAddress.attributes.longt.toDouble()
+                val addressLocation = LatLng(lat, lon)
+                val bitmapDrawable = ContextCompat.getDrawable(
+                    this, R.drawable.ic_address_location
+                ) as BitmapDrawable?
+                if (bitmapDrawable != null) {
+                    val bitmap = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 110, 110, true)
+                    val canvas = Canvas(bitmap)
+                    val view = inflater.inflate(R.layout.marker_store_new, null)
+                    val textView =
+                        view.findViewById<TextView>(R.id.kmAway)
+                    val image = view.findViewById<ImageView>(R.id.icon)
+                    image.setImageResource(R.drawable.delivery_marker_selected)
+                    val paint = Paint()
+                    val filter: ColorFilter = PorterDuffColorFilter(
+                        Color.parseColor(CacheUtil.getInstance().colorMain),
+                        PorterDuff.Mode.SRC_IN
+                    )
+                    val task = fusedLocationProviderClient!!.lastLocation
+                    task.addOnSuccessListener { location ->
+                        location?.let {
+                            val currentLocation = LatLng(it.latitude, it.longitude)
+                            val currentDistance = DistanceCalculator.calculateDistance(
+                                currentLocation.latitude, currentLocation.longitude,
+                                storeLocation.latitude, storeLocation.longitude
+                            )
+
+                            val distanceValue = StringUtil.getDistance(currentDistance)
+
+                            textView.text =
+                                CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                                    .replace("(x)", distanceValue).toLowerCase()
+                            val icon = BitmapDescriptorFactory.fromBitmap(
+                                ViewUtil.createDrawableFromView(
+                                    this@CheckoutActivity, view
+                                )
+                            )
+                            markerOptions.icon(icon)
+                            markerOptions.anchor(0.5f, 1f)
+                            mMap?.addMarker(markerOptions)
+                            mMap?.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    markerOptions.position,
+                                    13f
+                                )
+                            )
+                            supportMapFragment.setListener {
+                                binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
+                                    true
+                                )
+                            }
+
+
+                        }
+                    }.addOnFailureListener {
+                        it.printStackTrace()
+                        AppLogger.printRetrofitError(it)
+                    }
+//                paint.setColorFilter(filter)
+//                canvas.drawBitmap(bitmap, 0f, 0f, paint)
+                    markerOptions.position(addressLocation)
+//                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+
+                }
+            } else {
+                markerOptions.position(storeLocation)
                 val view = inflater.inflate(R.layout.marker_store_new, null)
                 val textView =
                     view.findViewById<TextView>(R.id.kmAway)
-                val image = view.findViewById<ImageView>(R.id.icon)
-                image.setImageResource(R.drawable.delivery_marker_selected)
-                val paint = Paint()
-                val filter: ColorFilter = PorterDuffColorFilter(
-                    Color.parseColor(CacheUtil.getInstance().colorMain),
-                    PorterDuff.Mode.SRC_IN
-                )
-                val task = fusedLocationProviderClient!!.lastLocation
-                task.addOnSuccessListener { location ->
-                    location?.let {
-                        val currentLocation = LatLng(it.latitude, it.longitude)
-                        val currentDistance = DistanceCalculator.calculateDistance(
-                            currentLocation.latitude, currentLocation.longitude,
-                            storeLocation.latitude, storeLocation.longitude
-                        )
-
-                        val distanceValue = StringUtil.getDistance(currentDistance)
-
-                        textView.text =
-                            CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                .replace("(x)", distanceValue).toLowerCase()
-                        val icon = BitmapDescriptorFactory.fromBitmap(
-                            ViewUtil.createDrawableFromView(
-                                this@CheckoutActivity, view
-                            )
-                        )
-                        markerOptions.icon(icon)
-                        markerOptions.anchor(0.5f, 1f)
-                        mMap?.addMarker(markerOptions)
-                        mMap?.moveCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                markerOptions.position,
-                                13f
-                            )
-                        )
-                        supportMapFragment.setListener {
-                            binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
-                                true
-                            )
-                        }
-
-
-                    }
-                }.addOnFailureListener {
-                    it.printStackTrace()
-                    AppLogger.printRetrofitError(it)
-                }
-//                paint.setColorFilter(filter)
-//                canvas.drawBitmap(bitmap, 0f, 0f, paint)
-                markerOptions.position(addressLocation)
-//                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-
-            }
-        } else {
-            markerOptions.position(storeLocation)
-            val view = inflater.inflate(R.layout.marker_store_new, null)
-            val textView =
-                view.findViewById<TextView>(R.id.kmAway)
             val imageView =view.findViewById<AppCompatImageView>(R.id.icon)
             imageView.setImageResource(R.drawable.ic_marker_red)
-            lifecycleScope.launchWithTimber {
-                val task = fusedLocationProviderClient?.lastLocation
-                task?.addOnSuccessListener { location ->
-                    location?.let {
-                        val currentLocation = LatLng(it.latitude, it.longitude)
-                        val currentDistance = DistanceCalculator.calculateDistance(
-                            currentLocation.latitude, currentLocation.longitude,
-                            storeLocation.latitude, storeLocation.longitude
-                        )
+                lifecycleScope.launchWithTimber {
+                    val task = fusedLocationProviderClient?.lastLocation
+                    task?.addOnSuccessListener { location ->
+                        location?.let {
+                            val currentLocation = LatLng(it.latitude, it.longitude)
+                            val currentDistance = DistanceCalculator.calculateDistance(
+                                currentLocation.latitude, currentLocation.longitude,
+                                storeLocation.latitude, storeLocation.longitude
+                            )
 
-                        val distanceValue = StringUtil.getDistance(currentDistance)
+                            val distanceValue = StringUtil.getDistance(currentDistance)
 
-                        textView.text =
-                            CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                .replace("(x)", distanceValue).toLowerCase()
-                        val icon = BitmapDescriptorFactory.fromBitmap(
-                            ViewUtil.createDrawableFromView(
-                                this@CheckoutActivity, view
+                            textView.text =
+                                CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                                    .replace("(x)", distanceValue).toLowerCase()
+                            val icon = BitmapDescriptorFactory.fromBitmap(
+                                ViewUtil.createDrawableFromView(
+                                    this@CheckoutActivity, view
+                                )
                             )
-                        )
-                        markerOptions.icon(icon)
-                        markerOptions.anchor(0.5f, 1f)
-                        mMap?.addMarker(markerOptions)
-                        mMap?.moveCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                markerOptions.position,
-                                13f
+                            markerOptions.icon(icon)
+                            markerOptions.anchor(0.5f, 1f)
+                            mMap?.addMarker(markerOptions)
+                            mMap?.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    markerOptions.position,
+                                    13f
+                                )
                             )
-                        )
-                        supportMapFragment.setListener {
-                            binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
-                                true
-                            )
+                            supportMapFragment.setListener {
+                                binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
+                                    true
+                                )
+                            }
+
                         }
-
+                    }?.addOnFailureListener {
+                        it.printStackTrace()
+                        AppLogger.printRetrofitError(it)
                     }
-                }?.addOnFailureListener {
-                    it.printStackTrace()
-                    AppLogger.printRetrofitError(it)
-                }
 
+                }
             }
-        }
 
         }
     }
@@ -524,7 +526,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress.attributes.line1
             }
             binding!!.grpDeliveryNote.visibility = View.VISIBLE
-            binding!!.tvDeliveryInstruction.text = CacheUtil.getInstance().orderAddress.attributes.instructions
+            binding!!.tvDeliveryInstruction.text =
+                CacheUtil.getInstance().orderAddress.attributes.instructions
         } else {
             /*Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
             paymentPresenter.getAddresses(geocoder);*/
@@ -535,7 +538,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
         when (CacheUtil.getInstance().orderType) {
             OrderType.PICKUP -> {
-                binding!!.tvOrderType.text = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
+                binding!!.tvOrderType.text =
+                    CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
                 binding!!.ivOrderType.setImageResource(com.herfy.checkout.R.drawable.ic_herfy_pickup)
             }
 
@@ -557,7 +561,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
 
             OrderType.DRIVE_THRU -> {
-                binding!!.tvOrderType.text = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
+                binding!!.tvOrderType.text =
+                    CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
                 binding!!.ivOrderType.setImageResource(R.drawable.ic_pickup_drive_thru)
             }
 
@@ -658,7 +663,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.layoutLoyalty
                 .etPoints.debounceAfterTextChanges()
                 .map { it.toString() }
-                .collectLatest { pointsText->
+                .collectLatest { pointsText ->
                     if (pointsText.length > 0) {
                         val userSetPoints = StringUtil.toEnglish(pointsText).toDouble()
                         val currentBalance =
@@ -722,7 +727,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 }
             }
             val currentBalanceAmount = loyalty.attributes.currentBalanceAmount.toDouble()
-            val loyaltyPoints = AuthUtil.getInstance().customerLoyalty.attributes.currentBalance.toDouble()
+            val loyaltyPoints =
+                AuthUtil.getInstance().customerLoyalty.attributes.currentBalance.toDouble()
             val formattedLoyaltyPoints = StringUtil.getFormattedAmount(loyaltyPoints)
 
             val loyaltyBalanceLabelText = CacheUtil.getInstance().getTranslations(
@@ -753,7 +759,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes()
             if (CacheUtil
                     .getInstance()
-                    .orderType != OrderType.DELIVERY) {
+                    .orderType != OrderType.DELIVERY
+            ) {
                 paymentTypes =
                     CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name;
@@ -764,7 +771,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
             val isEligibleForLoyaltyDiscount =
                 isFullSignedIn && paymentTypes.contains(PaymentType.LOYALTY) && passedTotalFromCart > 0
-            binding!!.layoutLoyalty.loyaltyPointsPaymentContainer.setVisible(isEligibleForLoyaltyDiscount)
+            binding!!.layoutLoyalty.loyaltyPointsPaymentContainer.setVisible(
+                isEligibleForLoyaltyDiscount
+            )
             binding!!.ivOrderType.setVisible(isBranchImageAvailable)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -892,9 +901,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPaymentSummary.tvDiscount.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
         binding!!.layoutPaymentSummary.tvTotalLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL,"Total")
-                .replace(":","")
-        binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance().getTranslations(Text.DELIVERY_INSTRUCTION, "Delivery Instruction")
+            CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
+                .replace(":", "")
+        binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance()
+            .getTranslations(Text.DELIVERY_INSTRUCTION, "Delivery Instruction")
         binding!!.layoutPaymentSummary.tvSubtotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL)
         binding!!.layoutPaymentSummary.tvDiscount.text =
@@ -902,8 +912,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!
             .layoutPaymentSummary.tvDeliveryChargeLabel.text = CacheUtil
             .getInstance()
-            .getTranslations(Text.DELIVERY_CHARGE,"Delivery Charges")
-        binding!!.totalVatDescription.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
+            .getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
+        binding!!.totalVatDescription.text = CacheUtil.getInstance()
+            .getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
         binding!!.layoutAlraji
             .txtAlRhajiBankTitle. text =  CacheUtil
             .getInstance()
@@ -912,7 +923,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             .txtDescription.text =  CacheUtil
             .getInstance()
             .getTranslations(Text.ALRAJI_BANK_DESCRIPTION,"The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful.")
-
     }
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}
@@ -922,6 +932,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 //
 //        }
     }
+
     override fun setStartName(startName: String) {}
     override fun setStartAddress(startAddress: String) {}
     override fun setEndName(endName: String) {}
@@ -935,7 +946,33 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun updateTime(calendar: Calendar) {}
-    override fun selectPaymentTypeCash() {}
+    override fun selectPaymentTypeCash() {
+        CacheUtil.getInstance().orderPayment = PaymentType.CASH
+
+        binding!!.layoutPayment.tvSelectedPayment.text =
+            CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
+        binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
+
+
+        if (paymentPresenter!!.hasMukafaaTransactionId()) {
+        } else {
+            mukafaaSelected = false
+            binding!!.placeOrder.setVisibility(View.VISIBLE)
+        }
+        val validatedTotal = paymentPresenter?.validatedTotal?.toInt()
+        if (CacheUtil.getInstance().orderType === OrderType.DELIVERY && validatedTotal != null && validatedTotal != 0) {
+            val paymentDialogFragment: PaymentDialogFragment =
+                PaymentDialogFragment.newInstance(paymentPresenter
+                ) { dialog, cashPresented ->
+                    dialog.dismiss()
+                    paymentPresenter!!.cashPresented = cashPresented
+                }
+            paymentDialogFragment.show(
+                supportFragmentManager,
+                PaymentDialogFragment::class.java.simpleName
+            )
+        }
+    }
     override fun showValidateOrderError(errors: List<String>) {}
     override fun sendOrder() {}
     override fun initializeTap(orderId: String, total: Double) {}
@@ -957,7 +994,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         SaveDialogAlert.newInstance(object : SaveDialogAlert.OnSavedAction {
                             override fun onClose() {
                                 saveDialogAlert!!.dismissAllowingStateLoss()
-                                checkTokenGenerated(response!!.token, null, false, orderId.orEmpty())
+                                checkTokenGenerated(
+                                    response!!.token,
+                                    null,
+                                    false,
+                                    orderId.orEmpty()
+                                )
                             }
 
                             override fun onProceed() {
@@ -1025,7 +1067,29 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             )
         }
     }
-    override fun showCardFailed() {}
+
+    override fun showCardFailed() {
+        if (CacheUtil.getInstance().orderPayment == PaymentType.CASH) {
+            showAlertDialog(
+                "",
+                CacheUtil.getInstance().getTranslations(
+                    Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH,
+                    "Card payment failed. Do you want to Pay with Cash instead?"
+                ),
+                CacheUtil.getInstance().getTranslations(Text.YES_CAPS),
+                { dialog, which ->
+                    if (dialogCheckout != null) {
+                        dialogCheckout!!.dismiss()
+                    }
+                    selectPaymentTypeCash()
+                },
+                CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
+            ) { dialog, which -> dialog.dismiss() }
+        } else {
+            showError(CacheUtil.getInstance().getTranslations(Text.CARD_FAILED))
+        }
+    }
+
     override fun showMessage(message: String) {
         dismissDialogs()
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
