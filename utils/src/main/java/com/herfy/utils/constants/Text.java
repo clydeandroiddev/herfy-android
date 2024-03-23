@@ -13,7 +13,7 @@ public class Text {
     public static final String PROMO_DISCOUNT = "promo_discount";
     public static final String SUBTOTAL = "subtotal";
     public static final String PROCEED_CHECKOUT = "proceed_checkout";
-    public static final String MORE_INFO = "more_information";
+    public static final String MORE_INFO = "more_info";
     public static final String WHAT_WOULD_YOU_LIKE_TO_EAT = "what_would_you_like_to_eat";
     public static final String HOME = "home";
     public static final String HOME_CAPS = "home_caps";
