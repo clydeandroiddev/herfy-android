@@ -451,25 +451,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
 
     override fun setupViews() {
-        println("Called bai ")
+
         orderType = CacheUtil.getInstance().orderType
         requestPermissionLocation()
-        CacheUtil
-            .getInstance()
-            .customCard?.let { card->
-                println("Called bai $card")
-                var res = R.drawable.ic_saved_card
-                var cardLabel = "Visa ****"
-                if (card.attributes.brand.equals("visa", true)) {
-                    res = R.drawable.ic_visa
-                    cardLabel = "Visa ****"
-                } else if (card.attributes.brand.endsWith("mastercard", true)){
-                    res = R.drawable.ic_mastercard
-                    cardLabel = "Master ****"
-                }
-                binding!!.layoutPayment.ivSelectedPayment.setImageResource(res)
-                binding!!.layoutPayment.tvSelectedPayment.text = cardLabel+card.attributes.last4Digits
-            }
         //        rvOrderSummary.setLayoutManager(new LinearLayoutManager(this));
 //        menuItemsRecyclerViewAdapter = new OrderSummaryItemRecyclerViewAdapter(paymentPresenter);
 //        rvOrderSummary.setAdapter(menuItemsRecyclerViewAdapter);
@@ -1418,7 +1402,18 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun firebaseAddPaymentInfoEvent() {
-        FacebookAppEventUtil.addPaymentInfoEvent(this, CacheUtil.getInstance().orderPayment.value)
+        try {
+            if (this != null) {
+                addPaymentInfoEvent(this, paymentPresenter!!.menuItemsList, totalValue)
+                val orderPayment = CacheUtil
+                    .getInstance().orderPayment
+                if (orderPayment != null) {
+                    addPaymentInfoEvent(this, orderPayment.value)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun firebaseApplyPromotionEvent(
@@ -1459,6 +1454,23 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     override fun showSelectedPyament() {
         val selecetedPayment = CacheUtil.getInstance().orderPayment
+        val selectedCard = CacheUtil
+            .getInstance().customCard
+
+        selectedCard?.let { card->
+
+                var res = R.drawable.ic_saved_card
+                var cardLabel = "Visa ****"
+                if (card.attributes.brand.equals("visa", true)) {
+                    res = R.drawable.ic_visa
+                    cardLabel = "Visa ****"
+                } else if (card.attributes.brand.endsWith("mastercard", true)){
+                    res = R.drawable.ic_mastercard
+                    cardLabel = "Master ****"
+                }
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(res)
+                binding!!.layoutPayment.tvSelectedPayment.text = cardLabel+card.attributes.last4Digits
+            }
         val isUserNotSelectedAnyPaymentMethod = selecetedPayment == PaymentType.NONE && CacheUtil.getInstance().customCard == null
         binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
         binding!!.layoutPayment.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found."))
