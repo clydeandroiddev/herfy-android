@@ -96,7 +96,7 @@
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="150dp"
                     android:layout_gravity="bottom"
                     android:background="@drawable/bg_menu_item_background"
                     app:contentInsetLeft="0dp"
@@ -106,36 +106,6 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                        <!-- Todo revert this once designer change the ui -->
-<!--                        <LinearLayout-->
-<!--                            android:id="@+id/btnDriveThru"-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginStart="@dimen/margin_small"-->
-<!--                            android:background="@drawable/bg_rounded_drive_thru"-->
-<!--                            android:gravity="center"-->
-<!--                            android:orientation="horizontal"-->
-<!--                            app:layout_constraintBottom_toTopOf="@+id/name"-->
-<!--                            app:layout_constraintStart_toStartOf="parent"-->
-<!--                            app:layout_constraintTop_toTopOf="parent">-->
-
-<!--                            <com.google.android.material.textview.MaterialTextView-->
-<!--                                style="@style/Styles.Text.Caption"-->
-<!--                                android:layout_width="0dp"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:layout_gravity="center"-->
-<!--                                android:layout_weight="1"-->
-<!--                                android:drawableStart="@drawable/ic_car_drive_thru"-->
-<!--                                android:drawablePadding="@dimen/margin_small"-->
-<!--                                android:gravity="center_vertical"-->
-<!--                                android:paddingStart="@dimen/padding_micro"-->
-<!--                                android:paddingEnd="@dimen/padding_micro"-->
-<!--                                android:text="Drive thru"-->
-<!--                                android:textColor="@color/white" />-->
-
-<!--                        </LinearLayout>-->
-
-
 
                         <TextView
                             android:id="@+id/name"
@@ -192,7 +162,6 @@
                             android:layout_width="wrap_content"
                             android:layout_marginBottom="@dimen/margin_small"
                             android:layout_height="wrap_content"
-
                             android:layout_marginEnd="@dimen/margin_large"
                             android:drawableEnd="@drawable/ic_question_mark"
                             android:drawablePadding="@dimen/margin_micro"
@@ -201,6 +170,7 @@
                             android:visibility="gone"
                             app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
                             app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginTop="@dimen/margin_large"
                             app:layout_constraintTop_toBottomOf="@+id/description"
                             app:lineHeight="20sp"
                             tools:text="More Info"
@@ -279,29 +249,6 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     tools:visibility="visible">
-
-                    <!-- Commented for now might needed this when designer change the ui again -->
-                    <!--                        <LinearLayout-->
-                    <!--                            android:id="@+id/btnRequired"-->
-                    <!--                            android:layout_width="73dp"-->
-                    <!--                            android:layout_height="28dp"-->
-                    <!--                            android:background="@drawable/bg_rounded_25_radius_background"-->
-                    <!--                            android:gravity="center"-->
-                    <!--                            android:textAlignment="viewEnd"-->
-                    <!--                            app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"-->
-                    <!--                            app:layout_constraintEnd_toEndOf="parent"-->
-                    <!--                            app:layout_constraintTop_toTopOf="parent">-->
-
-                    <!--                            <com.google.android.material.textview.MaterialTextView-->
-                    <!--                                android:id="@+id/txtRequired"-->
-                    <!--                                android:layout_width="wrap_content"-->
-                    <!--                                android:layout_height="wrap_content"-->
-                    <!--                                android:gravity="center"-->
-                    <!--                                android:padding="0dp"-->
-                    <!--                                android:textColor="@color/white"-->
-                    <!--                                android:textSize="12sp"-->
-                    <!--                                tools:text="Required" />-->
-                    <!--                        </LinearLayout>-->
 
 
                     <ImageView
@@ -474,6 +421,8 @@
                         style="@style/Styles.Text.Caption"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingTop="30dp"
+                        android:paddingBottom="30dp"
                         android:layout_marginTop="4dp"
                         android:background="@drawable/bg_background_border"
                         android:fontFamily="@font/inter_regular"
