@@ -57,3 +57,4 @@
 
 # Accessed via reflection, avoid renaming or removal
 -keep class org.greenrobot.eventbus.android.AndroidComponentsImpl
+-keep class com.herfy.favorites.FavoriteOrderTypeUIModel { *; }

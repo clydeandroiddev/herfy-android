@@ -250,9 +250,12 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                    val title =  OrderType.fromString(orderTypeTitle)
                     orderTypeMenus
                         .find { it.type.replace("deliver","delivery") == title.name.lowercase() }?.let { orderType->
+                            val type = OrderType.fromString(orderType.type)
+                            val translation = CacheUtil.getInstance()
                       FavoriteOrderTypeUIModel(
                             id = orderType.id,
-                            title = OrderType.convertOrderTypeNameToDisplayName(orderType.type),
+                            title =  if (type == OrderType.DELIVERY) translation.getTranslations(Text.DELIVERY,"Delivery") else if (type == OrderType.DINE_IN) translation
+                                .getTranslations(Text.DINE_IN,"Dinein") else translation.getTranslations(Text.PICKUP, "Pickup"),
                             orderTypeName = orderType.type
                         )
                         }
