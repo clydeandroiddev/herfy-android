@@ -22,6 +22,7 @@ import com.herfy.payment.PaymentPresenter
 import com.herfy.payment.views.PaymentDialogFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.ninjaTap
+import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.CacheUtil
 import com.moneyhash.sdk.android.ResultType
 import com.moneyhash.sdk.android.payment.PaymentResultContract
@@ -99,9 +100,11 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
 
     override fun setupViews() {
        val cards = CacheUtil.getInstance().customerCards
+        println("Cards size $cards")
+        binding.chooseMethodLabel.setVisible(cards.size >= 1)
         binding.confirmButton
             .setText(CacheUtil.getInstance().getTranslations(Text.CONFIRM_LABEL,"Confirm"))
-       val creditCardAdapter =    CardsAdapter(cards) { card, position ->
+       val creditCardAdapter =  CardsAdapter(cards) { card, position ->
            println("Custom card selected $card")
             selectedCard = card
             if (isCashPaymentAvailable) {
@@ -125,11 +128,17 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
             .confirmButton
             .ninjaTap(lifecycleScope) {
                 selectedCard?.let {selectedCards->
+                    println("Payment type cards bai $selectedCards")
+                    CacheUtil
+                        .getInstance().orderPayment = PaymentType.CARD
                     CacheUtil
                         .getInstance()
-                        .setCustomerCards(Gson().toJson(selectedCards))
+                        .setCustomCard(Gson().toJson(selectedCards))
                 }
                 selectedPaymentType?.let { paymentType->
+                    CacheUtil
+                        .getInstance()
+                        .setCustomCard("")
                     CacheUtil
                         .getInstance().orderPayment = paymentType
                 }
