@@ -394,7 +394,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             val view = inflater.inflate(R.layout.marker_store_new, null)
             val textView =
                 view.findViewById<TextView>(R.id.kmAway)
-
+            val imageView =view.findViewById<AppCompatImageView>(R.id.icon)
+            imageView.setImageResource(R.drawable.ic_marker_red)
             lifecycleScope.launchWithTimber {
                 val task = fusedLocationProviderClient?.lastLocation
                 task?.addOnSuccessListener { location ->
@@ -989,8 +990,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPaymentSummary.tvSubtotal.text =
             total
         binding!!.tvOriginalPrice.setVisible(discount >= 1)
-        binding!!.layoutPaymentSummary.tvDeliveryChargeValue.setVisible(deliveryCharge >=1 && isDelivery)
-        binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.setVisible(deliveryCharge >=1 && isDelivery)
+        val isDeliverCharge = deliveryCharge >= 1 && isDelivery
+        binding!!.layoutPaymentSummary.viewDeliverySeparator.setVisible(isDeliverCharge)
+        binding!!.layoutPaymentSummary.tvDeliveryChargeValue.setVisible(isDeliverCharge)
+        binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.setVisible(isDeliverCharge)
         binding
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.text = deliveryChargeTotal
         if (discount != 0.0) {
