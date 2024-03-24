@@ -531,9 +531,14 @@
         <FrameLayout
             android:id="@+id/fm_combo_detail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#BF000000"
-            >
+            android:layout_height="match_parent">
+
+            <View
+                android:id="@+id/view_bg_transparent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#BF000000"
+                android:visibility="gone"/>
 
             <include
                 android:id="@+id/layout_bottom_sheet_combo_detail"

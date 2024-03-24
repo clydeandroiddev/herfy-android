@@ -1,13 +1,8 @@
 package com.herfy.productpagedetails.ui.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
-import com.herfy.productpagedetails.R
 import com.herfy.productpagedetails.databinding.ItemModifierDrinksTypeBinding
 import com.herfy.productpagedetails.databinding.ItemModifierOptionTypeBinding
 import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder
@@ -87,4 +82,6 @@ class ComboItemDetailsModifierItemAdapter(
            showModifierItemPrice
        )
     }
+
+
 }

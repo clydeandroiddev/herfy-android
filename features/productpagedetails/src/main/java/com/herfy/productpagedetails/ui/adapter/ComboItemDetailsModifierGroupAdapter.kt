@@ -17,6 +17,8 @@ class ComboItemDetailsModifierGroupAdapter(
 
     private var onAction: BaseModifierItemViewHolder.OnAction? = null
 
+    var comboItemModifierItemAdapters : HashMap<Int, ComboItemDetailsModifierItemAdapter> = hashMapOf()
+
     fun setOnAction(onAction: BaseModifierItemViewHolder.OnAction?) {
         this.onAction = onAction
     }
@@ -42,6 +44,7 @@ class ComboItemDetailsModifierGroupAdapter(
             setModifierGroup(
                 data,
                 position,
+                comboItemModifierItemAdapters,
                 showModifierItemPrice[position] ?: false,
                 shouldShowModifierGroupCheckbox[position] ?: false
             )
@@ -65,6 +68,11 @@ class ComboItemDetailsModifierGroupAdapter(
             this.items = it
             notifyDataSetChanged()
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateComboModifierItemsPerModifierGroup(index: Int){
+        comboItemModifierItemAdapters[index]?.notifyDataSetChanged()
     }
 
 

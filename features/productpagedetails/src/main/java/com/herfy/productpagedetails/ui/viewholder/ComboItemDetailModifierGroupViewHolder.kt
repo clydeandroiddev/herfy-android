@@ -27,9 +27,10 @@ class ComboItemDetailModifierGroupViewHolder(val binding : ItemModifierGroupNewB
     @SuppressLint("NotifyDataSetChanged")
     fun setModifierGroup(
         data: ModifierGroup,
-        modifierGroupPosition : Int,
-        showModifierItemPrice : Boolean,
-        showShowModifierCheckBox : Boolean,
+        modifierGroupPosition: Int,
+        comboItemModifierItemAdapters: HashMap<Int, ComboItemDetailsModifierItemAdapter>,
+        showModifierItemPrice: Boolean,
+        showShowModifierCheckBox: Boolean,
     ) {
         binding.apply {
             val context = itemView.context
@@ -71,6 +72,7 @@ class ComboItemDetailModifierGroupViewHolder(val binding : ItemModifierGroupNewB
                 isNestedScrollingEnabled = false
             }
             comboMealModifierItemsAdapter.notifyDataSetChanged()
+            comboItemModifierItemAdapters[modifierGroupPosition] = comboMealModifierItemsAdapter
             var imageUrl : String? = data.attributes.image
             if (imageUrl == null || imageUrl.equals(
                     "null",
@@ -93,4 +95,6 @@ class ComboItemDetailModifierGroupViewHolder(val binding : ItemModifierGroupNewB
             minimum.setText(CacheUtil.getInstance().getTranslations(Text.REQUIRED, "Required"))
         }
     }
+
+
 }

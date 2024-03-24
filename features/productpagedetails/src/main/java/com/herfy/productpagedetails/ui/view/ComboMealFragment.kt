@@ -195,7 +195,9 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             mBottomSheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     if(newState == BottomSheetBehavior.STATE_COLLAPSED){
-                        comboMealModifierGroupAdapter?.updateList(arrayListOf(), hashMapOf())
+                        binding.viewBgTransparent.gone()
+                        this@ComboMealFragment.viewModel.currentSelectedModifierItem = null
+                        comboItemDetailsModifierGroupAdapter?.updateList(arrayListOf(), hashMapOf(), hashMapOf())
                     }
                 }
 
@@ -320,6 +322,12 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             updateComboSizeList.observe(this@ComboMealFragment){
                 sizesAdapter?.updateSelectedSize(it.second,it.first)
             }
+            updateComboItemDetailModifier.observe(this@ComboMealFragment){
+                comboItemDetailsModifierGroupAdapter?.apply {
+                    shouldShowCheckBox(it.first, it.second)
+                    updateComboModifierItemsPerModifierGroup(it.second)
+                }
+            }
         }
     }
 
@@ -344,6 +352,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     }
 
     private fun expandComboItemDetails(){
+        binding.viewBgTransparent.visible()
         mBottomSheetBehavior?.let{
             it.state = BottomSheetBehavior.STATE_EXPANDED
         }
@@ -351,6 +360,8 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
 
     private fun collapseComboItemDetails(){
         mBottomSheetBehavior?.let{
+            viewModel.currentSelectedModifierItem = null
+            binding.viewBgTransparent.gone()
             if(it.state == BottomSheetBehavior.STATE_EXPANDED){
                 it.state = BottomSheetBehavior.STATE_COLLAPSED
             }
@@ -360,6 +371,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     private fun showComboComponentModifierItemDetails(data: ShowComboMealItemDetails) {
         binding.layoutBottomSheetComboDetail.apply {
             data.componentModifierItem.apply {
+                this@ComboMealFragment.viewModel.currentSelectedModifierItem = this
                 val showModifierItemPrice = viewModel.showModifierItemPricePer(this)
                 val showModifierCheckBox = viewModel.showModifierItemCheckBoxPer(this)
                 tvTitle.text = name.toTranslate()
@@ -367,7 +379,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     showModifierItemPrice,
                     showModifierCheckBox)
             }
-            mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
+            expandComboItemDetails()
         }
     }
 

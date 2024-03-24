@@ -112,11 +112,15 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         boolean isModifierItemSelected = modifierItem.getAttributes().isSelected();
         radioButton.setVisibility(modifierGroupAttributes.getMaximum() == 1 ? View.VISIBLE : View.GONE);
         check.setVisibility(modifierGroup.getAttributes().getMaximum() > 1 ? View.VISIBLE : View.GONE);
+
+
         if (isModifierItemSelected) {
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state);
             radioButton.setImageResource(R.drawable.ic_payment_radio_selected);
             check.setImageResource(R.drawable.modifier_item_checked_selected);
-
+            if(modifierItem.getAttributes().getQuantity() > 0){
+                clickCountMap.put(modifierItem.getId(), 1);
+            }
         } else {
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_unselected_state);
             radioButton.setImageResource(R.drawable.modifier_item_radio_unselected);
@@ -131,7 +135,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             }
         }
 
-        quantity.setText(StringUtil.localize(String.valueOf("0" + modifierItem.getAttributes().getQuantity())));
+        quantity.setText(StringUtil.localize("0" + modifierItem.getAttributes().getQuantity()));
         if (clickCountMap.size() >= 1) {
             Integer clickCount = clickCountMap.get(modifierItem.getId());
             if (clickCount != null) {
