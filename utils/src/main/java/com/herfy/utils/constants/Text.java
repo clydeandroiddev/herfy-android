@@ -1087,4 +1087,13 @@ public class Text {
     public static final String NO_ORDERS_FOUND = "no_orders_found";
     public static final String CALORIES_KCAL = "calories_kcal";
 
+    public static String AlRAJI_BANK_TITLE = "alraji_bank_title";
+
+    public static String ALRAJI_BANK_DESCRIPTION = "alraji_description";
+    public static String ALRAJI_ENTER_AMOUNT_ERROR = "alraji_enter_amount_error_msg";
+
+    public static String CIC_NUMBER = "cic_number";
+
+    public static String REQUEST_OTP_LABEL = "request_otp_label";
+
 }

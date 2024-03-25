@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/loyalty_points_payment_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="16dp"
+        app:cardPreventCornerOverlap="true"
+        app:contentPaddingLeft="10dp"
+        app:contentPaddingRight="10dp"
+        app:contentPaddingTop="16dp"
+        app:contentPaddingBottom="16dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="#D9E8F3"
+        app:strokeWidth="1dp"
+        tools:visibility="visible">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/icCardView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:contentPadding="6dp"
+                app:strokeColor="#E6F0F7"
+                android:layout_marginStart="2dp"
+                app:strokeWidth="1dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/txtAlRhajiBankTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/icAlRaji"
+                    android:layout_width="30dp"
+                    android:layout_height="34dp"
+                    android:src="@drawable/ic_alraji"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/txtAlRhajiBankTitle"
+                    app:layout_constraintStart_toStartOf="parent"
+
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.cardview.widget.CardView>
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                app:layout_constraintEnd_toStartOf="@+id/radionBtn"
+                app:layout_constraintStart_toEndOf="@+id/icCardView"
+                app:layout_constraintStart_toStartOf="@+id/txtAlRhajiBankTitle"
+                app:layout_constraintTop_toBottomOf="@+id/txtAlRhajiBankTitle"
+                tools:text="The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful." />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtAlRhajiBankTitle"
+                style="@style/TextAppearance.Footnote.Semi_Bold"
+                android:layout_width="192dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="#0C0C0C"
+                android:layout_marginStart="@dimen/margin_large"
+                app:layout_constraintStart_toEndOf="@+id/icCardView"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Al Rhaji Bank (Mokafa's Rewards)" />
+
+            <Switch
+                android:id="@+id/radionBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/txtDescription"
+                app:layout_constraintTop_toTopOf="@+id/txtDescription" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -53,6 +53,8 @@ import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addPaymentInfoEv
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.applyPromotionEvent
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.base.BaseActivity
+import com.herfy.checkout.DialogAlrajiInputBottomSheet
+import com.herfy.checkout.DialogAlrajiRequestOtpBottomSheet
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
 import com.herfy.decorator.BeforeDateDecorator
@@ -83,6 +85,7 @@ import com.herfy.util.ViewUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.debounceAfterTextChanges
+import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.showToast
 import com.herfy.utils.helper.AuthUtil
@@ -448,29 +451,16 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun setupViews() {
         orderType = CacheUtil.getInstance().orderType
         requestPermissionLocation()
-
-        //        rvOrderSummary.setLayoutManager(new LinearLayoutManager(this));
-//        menuItemsRecyclerViewAdapter = new OrderSummaryItemRecyclerViewAdapter(paymentPresenter);
-//        rvOrderSummary.setAdapter(menuItemsRecyclerViewAdapter);
-
-
-//        tvChangeOrderType.setOnClickListener( new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showOrderType(true);
-//            }
-//        });
-
-        /* ivShowOrders.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (rvOrderSummary.getVisibility() == View.VISIBLE) {
-                    rvOrderSummary.setVisibility(View.GONE);
-                } else {
-                    rvOrderSummary.setVisibility(View.VISIBLE);
+        binding!!.layoutAlraji.radionBtn
+            .ninjaTap(lifecycleScope) {
+                if (binding?.layoutAlraji?.radionBtn?.isChecked == true) {
+//                    DialogAlrajiInputBottomSheet.newInstance().show(supportFragmentManager,
+//                        DialogAlrajiInputBottomSheet.TAG)
+                    DialogAlrajiRequestOtpBottomSheet.newInstance().show(supportFragmentManager,
+                        DialogAlrajiRequestOtpBottomSheet.TAG)
                 }
             }
-        });*/binding!!.layoutPayment.tvEditPaymentMethod.setOnClickListener { showPaymentMethod() }
+  binding!!.layoutPayment.tvEditPaymentMethod.setOnClickListener { showPaymentMethod() }
         val orderStore = CacheUtil.getInstance().orderStore
         if (orderStore != null && orderStore.attributes != null) {
             val branchImage = orderStore.attributes.image
@@ -891,6 +881,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             .getInstance()
             .getTranslations(Text.DELIVERY_CHARGE,"Delivery Charges")
         binding!!.totalVatDescription.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
+        binding!!.layoutAlraji
+            .txtAlRhajiBankTitle. text =  CacheUtil
+            .getInstance()
+            .getTranslations(Text.AlRAJI_BANK_TITLE,"Al Rhaji Bank (Mokafa's Rewards)")
+        binding!!.layoutAlraji
+            .txtDescription.text =  CacheUtil
+            .getInstance()
+            .getTranslations(Text.ALRAJI_BANK_DESCRIPTION,"The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful.")
+
     }
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}
