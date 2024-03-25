@@ -423,7 +423,7 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="30dp"
                         android:paddingBottom="30dp"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="@dimen/margin_large"
                         android:background="@drawable/bg_background_border"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center_vertical"
