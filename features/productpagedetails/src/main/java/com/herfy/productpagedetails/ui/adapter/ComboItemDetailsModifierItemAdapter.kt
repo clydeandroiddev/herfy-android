@@ -13,7 +13,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 
 class ComboItemDetailsModifierItemAdapter(
-    private val items: List<ModifierItem> = arrayListOf(),
+    private val items: List<ModifierItem>,
     private val modifierGroup : ModifierGroup?,
     private val modifierGroupPosition: Int = -1,
     private val showModifierItemPrice : Boolean

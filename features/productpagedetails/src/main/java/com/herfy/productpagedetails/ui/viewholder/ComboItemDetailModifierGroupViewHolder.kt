@@ -9,7 +9,9 @@ import com.herfy.productpagedetails.databinding.ItemModifierGroupNewBinding
 import com.herfy.productpagedetails.ui.adapter.ComboItemDetailsModifierItemAdapter
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.loadImageFromUrl
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import java.util.Locale
@@ -90,9 +92,18 @@ class ComboItemDetailModifierGroupViewHolder(val binding : ItemModifierGroupNewB
                 requestOptions = RequestOptions.centerInsideTransform(),
                 isSkipMemoryCache = false
             )
-            btnMinimum.visibility = if (showShowModifierCheckBox && data.attributes.minimum > 1) View.GONE else View.VISIBLE
-            checkBox.visibility = if (showShowModifierCheckBox) View.VISIBLE else View.GONE
-            minimum.setText(CacheUtil.getInstance().getTranslations(Text.REQUIRED, "Required"))
+            //btnMinimum.visibility = if (showShowModifierCheckBox && data.attributes.minimum > 1) View.GONE else View.VISIBLE
+            if(showShowModifierCheckBox) {
+                checkBox.visible()
+                btnMinimum.gone()
+            }else{
+                checkBox.gone()
+                if(data.attributes.minimum >= 1){
+                    btnMinimum.visible()
+                }
+
+            }
+            minimum.text = CacheUtil.getInstance().getTranslations(Text.REQUIRED, "Required")
         }
     }
 

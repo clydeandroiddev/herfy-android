@@ -118,7 +118,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state);
             radioButton.setImageResource(R.drawable.ic_payment_radio_selected);
             check.setImageResource(R.drawable.modifier_item_checked_selected);
-            if(modifierItem.getAttributes().getQuantity() > 0){
+            if(modifierGroupAttributes.getMaximum() >= 1 && modifierItem.getAttributes().getQuantity() > 0){
                 clickCountMap.put(modifierItem.getId(), 1);
             }
         } else {

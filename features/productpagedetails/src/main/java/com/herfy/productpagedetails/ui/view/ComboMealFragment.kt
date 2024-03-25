@@ -19,6 +19,7 @@ import com.herfy.productpagedetails.ui.viewmodel.ComboViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.deepCopy
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.observeNonNull
@@ -30,6 +31,7 @@ import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -84,6 +86,40 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 setRightButtonAction{
 
                 }
+            }
+
+            add.setOnClickListener {
+                if (CacheUtil.getInstance().application.attributes.menuOnly) {
+
+                   /* FirebaseService.newNotification(
+                        CacheUtil.getInstance().getTranslations(
+                            Text.MENU_ONLY_MESSAGE,
+                            "Sorry, ordering is not available at the moment"
+                        ), add.context
+                    )*/
+                    return@setOnClickListener
+                }
+                if (!isPromo) {
+                    if (cartMenuItemPos >= 0) {
+                       this@ComboMealFragment.viewModel.updateCartItem(false, cartMenuItemPos)
+                    } else {
+                        this@ComboMealFragment.viewModel.getCartMenuItem()
+                    }
+                } else {
+                    this@ComboMealFragment.viewModel.updateCartItem(true, cartMenuItemPos)
+                }
+                /*FirebaseECommerceEventUtil.addToCartEvent(
+                    this@ComboMealFragment,
+                    comboMealPresenter?.menuItem!!,
+                    comboMealPresenter?.menuCategory,
+                    _totalPrice,
+                    Integer.parseInt(binding?.quantity?.text.toString() ?: "")
+                );
+                FacebookAppEventUtil.addToCartEvent(
+                    this@ComboMealActivity,
+                    comboMealPresenter?.menuItem!!,
+                    _totalPrice
+                )*/
             }
 
         }
@@ -194,9 +230,10 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
 
             mBottomSheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    if(newState == BottomSheetBehavior.STATE_COLLAPSED){
+                    if(newState == BottomSheetBehavior.STATE_COLLAPSED || newState == BottomSheetBehavior.STATE_HIDDEN){
                         binding.viewBgTransparent.gone()
                         this@ComboMealFragment.viewModel.currentSelectedModifierItem = null
+                        binding.layoutBottomSheetComboDetail.btnAddDetails.setOnClickListener(null)
                         comboItemDetailsModifierGroupAdapter?.updateList(arrayListOf(), hashMapOf(), hashMapOf())
                     }
                 }
@@ -324,9 +361,13 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
             updateComboItemDetailModifier.observe(this@ComboMealFragment){
                 comboItemDetailsModifierGroupAdapter?.apply {
+                    viewModel.getComponentModifierItemTotalPrice(this.getUpdateModifierGroupList())
                     shouldShowCheckBox(it.first, it.second)
                     updateComboModifierItemsPerModifierGroup(it.second)
                 }
+            }
+            showComponentModifierItemTotal.observe(this@ComboMealFragment){
+                binding.layoutBottomSheetComboDetail.tvTotalValue.text = StringUtil.getFormattedPrice(it)
             }
         }
     }
@@ -362,6 +403,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
         mBottomSheetBehavior?.let{
             viewModel.currentSelectedModifierItem = null
             binding.viewBgTransparent.gone()
+            binding.layoutBottomSheetComboDetail.btnAddDetails.setOnClickListener(null)
             if(it.state == BottomSheetBehavior.STATE_EXPANDED){
                 it.state = BottomSheetBehavior.STATE_COLLAPSED
             }
@@ -371,17 +413,25 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     private fun showComboComponentModifierItemDetails(data: ShowComboMealItemDetails) {
         binding.layoutBottomSheetComboDetail.apply {
             data.componentModifierItem.apply {
+                val modifierGroupsCopy = modifierGroups.deepCopy(ModifierGroup::class.java)
                 this@ComboMealFragment.viewModel.currentSelectedModifierItem = this
                 val showModifierItemPrice = viewModel.showModifierItemPricePer(this)
                 val showModifierCheckBox = viewModel.showModifierItemCheckBoxPer(this)
                 tvTitle.text = name.toTranslate()
-                comboItemDetailsModifierGroupAdapter?.updateList(modifierGroups,
+                this@ComboMealFragment.viewModel.getComponentModifierItemTotalPrice(modifierGroupsCopy)
+                comboItemDetailsModifierGroupAdapter?.updateList(modifierGroupsCopy,
                     showModifierItemPrice,
                     showModifierCheckBox)
+                btnAddDetails.setOnClickListener {
+                    if(data.previousComponentModifierIndex != data.componentModifierItemIndex){
+                        viewModel.updatePreviousComponentModifierItem(data.menuItemComponentIndex, data.previousComponentModifierIndex)
+                    }
+                    viewModel.updateSelectedModifierItem(data.menuItemComponentIndex, data.componentModifierItemIndex, this,comboItemDetailsModifierGroupAdapter?.getUpdateModifierGroupList())
+                    comboMealModifierGroupAdapter?.updateComboMealModifierItem(data.menuItemComponentIndex, data.componentModifierItemIndex)
+                    collapseComboItemDetails()
+                }
             }
             expandComboItemDetails()
         }
     }
-
-
 }

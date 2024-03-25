@@ -25,7 +25,6 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -327,11 +326,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         try {
             val activity: Activity? = activity
             if (activity != null) {
-                binding.sizesRecyclerView.layoutManager = LinearLayoutManager(activity)
-                binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(activity)
-                binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(activity)
-                (binding.modifierGroupsRecyclerView.itemAnimator as SimpleItemAnimator?)!!.supportsChangeAnimations =
-                    false
+                binding.sizesRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+                binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+                binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            /*    (binding.modifierGroupsRecyclerView.itemAnimator as SimpleItemAnimator?)!!.supportsChangeAnimations =
+                    false*/
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -668,14 +667,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             //Trigger calorie count
                         }
                     })
-                    if (modifierGroupsAdapter != null) {
-                        println("Modifier group test")
-                        modifierGroupsAdapter!!.notifyDataSetChanged()
-                    }
-                    println("Modifier group count ${modifierGroupsAdapter?.itemCount}")
-                    binding.modifierGroupsRecyclerView.visibility = View.VISIBLE
+                    modifierGroupsAdapter?.notifyDataSetChanged()
+                    binding.modifierGroupsRecyclerView.visible()
                     binding.modifierGroupsRecyclerView.setHasFixedSize(true)
-                    ViewCompat.setNestedScrollingEnabled(binding.modifierGroupsRecyclerView, false)
+                    binding.modifierGroupsRecyclerView.isNestedScrollingEnabled = false
                     binding.modifierGroupsRecyclerView.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                     binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapter

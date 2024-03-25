@@ -70,7 +70,7 @@ class ComboViewModel @Inject constructor(
         set(value) {
             field = value
         }
-    internal var currentSelectedModifierItem : ComponentModifierItem? = null
+    internal var currentSelectedModifierItem: ComponentModifierItem? = null
     internal var cartMenuItemsTotalPrice: Double = 0.0
     private var _calorieCount = 0
 
@@ -112,6 +112,14 @@ class ComboViewModel @Inject constructor(
     val updateComboItemDetailModifier: LiveData<Pair<Boolean, Int>> = _updateComboItemDetailModifier
     private val _showToastMessage = MutableLiveData<String>()
     val showToastMessage: LiveData<String> = _showToastMessage
+    private val _showComponentModifierItemTotal = MutableLiveData<Double>()
+    val showComponentModifierItemTotal: LiveData<Double> = _showComponentModifierItemTotal
+    private val _updateCartItem = MutableLiveData<Boolean>()
+    val updateCartItem : LiveData<Boolean> = _updateCartItem
+    private val _addCartItem = MutableLiveData<MenuItem>()
+    val addCartItem : LiveData<MenuItem> = _addCartItem
+    private val _showCartExpiry = MutableLiveData<Boolean>()
+    val showCartExpiry : LiveData<Boolean> = _showCartExpiry
 
     /**Function for retrieving data of menu item from db**/
     fun getMenuItemFromDbBy(addToBag: Boolean, id: String, isUpsell: Boolean) {
@@ -489,7 +497,6 @@ class ComboViewModel @Inject constructor(
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
-
         val itemTotalPrice = totalPrice * item.attributes.quantity
         return itemTotalPrice
     }
@@ -672,8 +679,6 @@ class ComboViewModel @Inject constructor(
                                                         ) {
                                                             modifierItemsFinal[i].attributes.isSelected =
                                                                 true
-                                                            modifierItemsFinal[i].attributes.quantity =
-                                                                1
                                                             selected++
                                                         }
                                                     }
@@ -854,6 +859,11 @@ class ComboViewModel @Inject constructor(
         previousComboIndex = comboIndex
         comboIndex = pos
         _updateComboSizeList.value = Pair(pos, previousComboIndex)
+        menuItem?.let {
+            getMenuItemTotalPrice(it, -1)
+        }
+        getComboMenuItemComponents()
+
         //getComboMenuItemComponents()
         //TODO : Unselect Or Set To Default OldComboIndex
     }
@@ -1002,10 +1012,10 @@ class ComboViewModel @Inject constructor(
                     }
                 }
                 if (currentModifierTotal < modifierGroup.attributes.maximum) {
-                    if(!modifierItem.attributes.isSelected) {
+                    if (!modifierItem.attributes.isSelected) {
                         modifierItem.attributes.isSelected = true
                     }
-                    modifierItem.attributes.quantity  += 1
+                    modifierItem.attributes.quantity += 1
                 }
             }
 
@@ -1022,7 +1032,10 @@ class ComboViewModel @Inject constructor(
                     eachItems.attributes.setModifierItemQuantityExceedsMaximum(eachItems.attributes.isShouldShowQuantity || eachItems.attributes.isSelected)
                 }
             }
-            updateModifierGroupSelectionIndicator(modifierItem.attributes.isSelected, modifierGroupPosition)
+            updateModifierGroupSelectionIndicator(
+                modifierItem.attributes.isSelected,
+                modifierGroupPosition
+            )
         } else {
             var selectedItemMinusTotal = 0
             val group = modifierGroup
@@ -1052,11 +1065,14 @@ class ComboViewModel @Inject constructor(
                         }
                     }
                 }
-                if(modifierItem.attributes.quantity == 0){
+                if (modifierItem.attributes.quantity == 0) {
                     modifierItem.attributes.isSelected = false
                 }
             }
-            updateModifierGroupSelectionIndicator(modifierItem.attributes.isSelected, modifierGroupPosition)
+            updateModifierGroupSelectionIndicator(
+                modifierItem.attributes.isSelected,
+                modifierGroupPosition
+            )
         }
     }
 
@@ -1072,7 +1088,6 @@ class ComboViewModel @Inject constructor(
         return counter
     }
 
-
     private fun updateModifierGroupSelectionIndicator(
         hasSelectedModifierItem: Boolean,
         modifierGroupPosition: Int
@@ -1080,12 +1095,12 @@ class ComboViewModel @Inject constructor(
         val selectedModifierItemCount = countSelectedModifierItems(modifierGroupPosition)
         var shouldShowIndicator = false
         currentSelectedModifierItem?.let {
-            if(it.attributes.maximum > 1){
+            if (it.attributes.minimum >= 1) {
                 shouldShowIndicator = selectedModifierItemCount >= it.attributes.maximum
-            }else {
+            } else {
                 shouldShowIndicator = hasSelectedModifierItem || selectedModifierItemCount >= 1
             }
-        }?: run {
+        } ?: run {
             shouldShowIndicator = hasSelectedModifierItem || selectedModifierItemCount >= 1
         }
         _updateComboItemDetailModifier.value = Pair(shouldShowIndicator, modifierGroupPosition)
@@ -1128,6 +1143,335 @@ class ComboViewModel @Inject constructor(
             map[index] = menuItemComponents.items.any { it.selected }
         }
         return map
+    }
+
+    fun getComponentModifierItemTotalPrice(updateModifierGroupList: List<ModifierGroup>) {
+        var totalPrice = 0.0
+        for (modifierGroup in updateModifierGroupList) {
+            for (i in modifierGroup.modifierItems.indices) {
+                if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                    totalPrice += modifierGroup.modifierItems[i].attributes.price * modifierGroup.modifierItems[i].attributes.quantity
+                }
+            }
+        }
+        _showComponentModifierItemTotal.value = totalPrice
+    }
+
+    fun updatePreviousComponentModifierItem(
+        menuItemComponentIndex: Int,
+        previousComponentModifierIndex: Int
+    ) {
+        menuItemComboList[comboIndex]?.get(menuItemComponentIndex)?.let {
+            val selectedComboComponentItem = it.items[previousComponentModifierIndex]
+            if (selectedComboComponentItem.modifierGroups.size > 0) {
+                selectedComboComponentItem.modifierGroups.forEach {
+                    it.modifierItems.forEach {
+                        it.attributes.quantity = 0
+                        it.attributes.isSelected = false
+                    }
+                }
+            } else {
+                selectedComboComponentItem.selected = false
+            }
+            it.items[menuItemComponentIndex] = selectedComboComponentItem
+        }
+
+    }
+
+    fun updateSelectedModifierItem(
+        menuItemComponentIndex: Int,
+        componentModifierItemIndex: Int,
+        component: ComponentModifierItem,
+        updatedModifierGroupList: List<ModifierGroup>?
+    ) {
+        menuItemComboList[comboIndex]?.get(menuItemComponentIndex)?.let {
+            component.apply {
+                updatedModifierGroupList?.let { selectedModifierGroup ->
+                    selected = ifHasSelected(selectedModifierGroup) > 0
+                    attributes.price = price + selectedModifierPrice(selectedModifierGroup)
+                    component.modifierGroups.clear()
+                    component.modifierGroups.addAll(selectedModifierGroup)
+                }
+            }
+            it.items[componentModifierItemIndex] = component
+            menuItem?.let { getMenuItemTotalPrice(it, -1) }
+        }
+
+    }
+
+    private fun selectedModifierPrice(selectedModifierGroup: List<ModifierGroup>): Double {
+        var modifierPrice = 0.0
+        selectedModifierGroup.forEach { mdg ->
+            mdg.modifierItems.filter { t -> t.attributes.isSelected }.forEach {
+                modifierPrice += (it.attributes.price * it.attributes.quantity.toDouble())
+            }
+        }
+
+        return modifierPrice
+    }
+
+    private fun ifHasSelected(items: List<ModifierGroup>): Int {
+        var counter = 0
+        items.forEach { mdg ->
+            mdg.modifierItems.filter { t -> t.attributes.isSelected }.let {
+                counter += it.size
+            }
+        }
+
+        return counter
+    }
+
+    fun updateCartItem(isPromo: Boolean, cartMenuItemPos: Int) {
+        if (menuItem == null) {
+            return
+        }
+        invoke {
+            var invalid = false
+            for (modifierGroup in menuItem!!.modifierGroups) {
+                var selected = 0
+                for (modifierItem in modifierGroup.modifierItems) {
+                    if (modifierItem.attributes.isSelected) {
+                        selected += modifierItem.attributes.quantity
+                    }
+                }
+                if (selected < modifierGroup.attributes.minimum) {
+                    _showToastMessage.value =  CacheUtil.getInstance().getTranslations(
+                        Text.MODIFIER_MINIMUM_LIMIT,
+                        "Minimum number of extras (x) not reached for (y)"
+                    ).replace("(x)", modifierGroup.attributes.minimum.toString())
+                        .replace("(y)", modifierGroup.attributes.name)
+                    invalid = true
+                    break
+                }
+            }
+            if (!invalid) {
+                invalid = checkComboModifiers()
+            }
+            if (!invalid) {
+                menuItem!!.attributes.notes = ""
+                if (!isPromo) {
+                    cacheUtilHelper.updateCart(cartMenuItemPos, menuItem!!){
+                        _updateCartItem.value = true
+                    }
+                } else {
+                    if (CacheUtil.getInstance().couponToAdd != null) {
+                        val (couponCode, couponName) = CacheUtil.getInstance().couponToAdd
+                        CacheUtil.getInstance().couponCode = couponCode
+                        CacheUtil.getInstance().couponName = couponName
+                        CacheUtil.getInstance().couponMenuItem = menuItem
+                        CacheUtil.getInstance().couponToAdd = null
+                    } else if (CacheUtil.getInstance().campaignToAdd != null) {
+                        val (campaign, promotion) = CacheUtil.getInstance().campaignToAdd
+                        CacheUtil.getInstance().campaign = campaign
+                        CacheUtil.getInstance().campaignPromotion = promotion
+                        CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
+                        CacheUtil.getInstance().campaignToAdd = null
+                    } else if (CacheUtil.getInstance().couponCode != null &&
+                        CacheUtil.getInstance().couponMenuItem != null
+                    ) {
+                        CacheUtil.getInstance().couponMenuItem = menuItem
+                    } else if (CacheUtil.getInstance().campaign != null &&
+                        CacheUtil.getInstance().campaignPromotionMenuItem != null
+                    ) {
+                        CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
+                    }
+                    _updateCartItem.value = true
+                }
+
+            }
+        }
+    }
+
+    private fun checkComboModifiers(): Boolean {
+        var invalid = false
+        if (menuItem!!.isCombo) {
+            var comboIndex = 0
+            var trueIndex = 0
+            for (size in menuItem!!.sizes.modifierItems) {
+                if (size.attributes.isSelected) {
+                    trueIndex = comboIndex
+                }
+                comboIndex++
+            }
+            if (menuItem!!.isCombo) {
+                for (components in menuItem!!.combo[trueIndex].components) {
+                    if (invalid) {
+                        break
+                    }
+
+                    components.items.filter { componentModifierItem -> componentModifierItem.selected && componentModifierItem.modifierGroups.isNotEmpty() }
+                        .forEach { item ->
+                            if (invalid) {
+                                return@forEach
+                            }
+
+                            for (modifierGroup in item.modifierGroups) {
+                                var selected = 0
+                                modifierGroup.modifierItems.filter { modifierItem -> modifierItem.attributes.isSelected }
+                                    .forEach {
+                                        selected += it.attributes.quantity
+                                    }
+                                if (selected < modifierGroup.attributes.minimum) {
+                                    _showToastMessage.value =  CacheUtil.getInstance().getTranslations(
+                                        Text.MODIFIER_MINIMUM_LIMIT,
+                                        "Minimum number of extras (x) not reached for (y)"
+                                    ).replace(
+                                        "(x)",
+                                        modifierGroup.attributes.minimum.toString()
+                                    ).replace("(y)", modifierGroup.attributes.name)
+                                    invalid = true
+                                    break
+                                }
+                            }
+                        }
+                }
+            }
+        }
+        return invalid
+    }
+
+    fun getCartMenuItem() {
+        invoke {
+            var invalid = false
+            val visibleModifierGroups = ArrayList<ModifierGroup>()
+            for (group in menuItem!!.modifierGroups) {
+                val visibilityConfig = group.attributes.visibilityConfig
+                if (visibilityConfig != null && visibilityConfig.initialValue != null) {
+                    if (!visibilityConfig.initialValue.equals("hidden", ignoreCase = true)) {
+                        visibleModifierGroups.add(group)
+                    }
+                } else {
+                    visibleModifierGroups.add(group)
+                }
+            }
+            for (modifierGroup in visibleModifierGroups) {
+                var selected = 0
+                modifierGroup.modifierItems.filter { item -> item.attributes.isSelected }.forEach {
+                    selected += it.attributes.quantity
+                }
+                if (selected < modifierGroup.attributes.minimum) {
+                   _showToastMessage.value =
+                        CacheUtil.getInstance().getTranslations(
+                            Text.MODIFIER_MINIMUM_LIMIT,
+                            "Minimum number of extras (x) not reached for (y)"
+                        ).replace("(x)", modifierGroup.attributes.minimum.toString())
+                            .replace("(y)", modifierGroup.attributes.name)
+
+                    invalid = true
+                    break
+                }
+            }
+            if (!invalid) {
+                invalid = checkComboModifiers()
+            }
+            if (!invalid) {
+                menuItem!!.attributes.notes = ""
+                addCartItem()
+            }
+        }
+    }
+
+    fun addCartItem() {
+        if (menuItem == null) {
+            return
+        }
+        var orderStoreId: String? = null
+        if (CacheUtil.getInstance().orderStore != null) {
+            orderStoreId = CacheUtil.getInstance().orderStore.id
+        }
+        val store = CacheUtil.getInstance().orderStore
+        if (store != null && menuItem!!.disabledStores.containsKey(store.id)) {
+            _showError.value = ErrorMsgItem(true, CacheUtil.getInstance().getTranslations(Text.LOCATION_AVAILABLE)
+                .replace("(x)", store.attributes.name))
+
+        } else {
+            //comboMealView.logFirebaseEvent("add_to_cart_event")
+            val cartCount = cacheUtilHelper.getCartQuantity()
+            menuItem!!.isSandwichOnly = false
+            menuItem?.let {
+                invoke {
+                    cacheUtilHelper.addToCart(it){
+                        if (cartCount == 0) {
+                            _showCartExpiry.value = true
+                        }
+                        _addCartItem.value = it
+                    }
+                }
+
+            }
+            val eventAttributes = java.util.HashMap<String, String>()
+            eventAttributes["Item Name"] = menuItem!!.getName(LocaleUtil.getInstance().language)
+            eventAttributes["Item Quantity"] = menuItem!!.attributes.quantity.toString()
+            var totalPrice = menuItem!!.getPrice(orderStoreId)
+
+            menuItem?.apply {
+                sizes.modifierItems.filter { size -> size.attributes.isSelected }
+                    .forEach { modifierItem ->
+                        eventAttributes["Modifier Name"] =
+                            modifierItem.attributes.translatedName.getValue(LocaleUtil.getInstance().language)
+                        eventAttributes["Modifier Quantity"] =
+                            modifierItem.attributes.quantity.toString()
+                        totalPrice += modifierItem.attributes.price
+                    }
+
+                drinks.modifierItems.filter { drink -> drink.attributes.isSelected }
+                    .forEach { modifierItem ->
+                        eventAttributes["Modifier Name"] =
+                            modifierItem.attributes.translatedName.getValue(LocaleUtil.getInstance().language)
+                        eventAttributes["Modifier Quantity"] =
+                            modifierItem.attributes.quantity.toString()
+                        totalPrice += modifierItem.attributes.price
+                    }
+
+                fries.modifierItems.filter { fries -> fries.attributes.isSelected }
+                    .forEach { modifierItem ->
+                        eventAttributes["Modifier Name"] =
+                            modifierItem.attributes.translatedName.getValue(LocaleUtil.getInstance().language)
+                        eventAttributes["Modifier Quantity"] =
+                            modifierItem.attributes.quantity.toString()
+                        totalPrice += modifierItem.attributes.price
+                    }
+
+                modifierGroups.filter { modifierGroup ->
+                    modifierGroup.attributes.visibilityConfig == null ||
+                            modifierGroup.attributes.visibilityConfig.initialValue == null ||
+                            !modifierGroup.attributes.visibilityConfig.initialValue.equals(
+                                "hidden",
+                                ignoreCase = true
+                            )
+                }.forEach {modifierGroup ->
+                    var selectedFreeModifier = 0
+                    modifierGroup.modifierItems.filter { modifierItem -> modifierItem.attributes.isSelected }.forEach {modifierItem ->
+                        eventAttributes["Modifier Name"] =
+                            modifierItem.attributes.translatedName.getValue(LocaleUtil.getInstance().language)
+                        eventAttributes["Modifier Quantity"] =
+                            modifierItem.attributes.quantity.toString()
+                        if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                            selectedFreeModifier += modifierItem.attributes.quantity
+                        } else {
+                            totalPrice += modifierItem.attributes.price * modifierItem.attributes.quantity
+                        }
+                    }
+                }
+
+                modifierItems.forEach { modifierItem ->
+                    eventAttributes["Modifier Name"] =
+                        modifierItem.attributes.translatedName.getValue(LocaleUtil.getInstance().language)
+                    eventAttributes["Modifier Quantity"] =
+                        modifierItem.attributes.quantity.toString()
+                    totalPrice += modifierItem.attributes.price
+                }
+
+                ingredients.filter { ingredient -> !ingredient.attributes.isSelected }.forEach {ingredient ->
+                    eventAttributes["Ingredient Name"] = ingredient.attributes.name
+                    eventAttributes["Ingredient Quantity"] =
+                        ingredient.attributes.quantity.toString()
+                    totalPrice += ingredient.attributes.price
+                }
+            }
+            totalPrice += totalPrice * menuItem!!.attributes.quantity.toDouble()
+            //FirebaseEventUtilHelper.logEventAttributesMetric("AddToCart", eventAttributes, "Price", totalPrice)
+        }
     }
 
 }

@@ -17,7 +17,8 @@ class ComboItemDetailsModifierGroupAdapter(
 
     private var onAction: BaseModifierItemViewHolder.OnAction? = null
 
-    var comboItemModifierItemAdapters : HashMap<Int, ComboItemDetailsModifierItemAdapter> = hashMapOf()
+    var comboItemModifierItemAdapters: HashMap<Int, ComboItemDetailsModifierItemAdapter> =
+        hashMapOf()
 
     fun setOnAction(onAction: BaseModifierItemViewHolder.OnAction?) {
         this.onAction = onAction
@@ -39,16 +40,19 @@ class ComboItemDetailsModifierGroupAdapter(
 
     override fun getItemCount(): Int = items.size
     override fun onBindViewHolder(holder: ComboItemDetailModifierGroupViewHolder, position: Int) {
-        val data = items[position]
-        holder.apply {
-            setModifierGroup(
-                data,
-                position,
-                comboItemModifierItemAdapters,
-                showModifierItemPrice[position] ?: false,
-                shouldShowModifierGroupCheckbox[position] ?: false
-            )
+
+        items[position].let { modifierGroup ->
+            holder.apply {
+                setModifierGroup(
+                    modifierGroup,
+                    position,
+                    comboItemModifierItemAdapters,
+                    showModifierItemPrice[position] ?: false,
+                    shouldShowModifierGroupCheckbox[position] ?: false
+                )
+            }
         }
+
     }
 
     fun showModifierItemPrice(show: Boolean, position: Int) {
@@ -60,8 +64,13 @@ class ComboItemDetailsModifierGroupAdapter(
         shouldShowModifierGroupCheckbox[position] = show
         notifyItemChanged(position)
     }
+
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(items: ArrayList<ModifierGroup>?, showModifierItemPriceMap : HashMap<Int, Boolean>, shouldShowModifierGroupCheckboxMap : HashMap<Int,Boolean>) {
+    fun updateList(
+        items: ArrayList<ModifierGroup>?,
+        showModifierItemPriceMap: HashMap<Int, Boolean>,
+        shouldShowModifierGroupCheckboxMap: HashMap<Int, Boolean>
+    ) {
         showModifierItemPrice = showModifierItemPriceMap
         shouldShowModifierGroupCheckbox = shouldShowModifierGroupCheckboxMap
         items?.let {
@@ -71,10 +80,11 @@ class ComboItemDetailsModifierGroupAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateComboModifierItemsPerModifierGroup(index: Int){
+    fun updateComboModifierItemsPerModifierGroup(index: Int) {
         comboItemModifierItemAdapters[index]?.notifyDataSetChanged()
     }
 
+    fun getUpdateModifierGroupList() = items
 
 
 }
