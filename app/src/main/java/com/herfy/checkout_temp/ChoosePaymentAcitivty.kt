@@ -100,12 +100,11 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
 
     override fun setupViews() {
        val cards = CacheUtil.getInstance().customerCards
-        println("Cards size $cards")
+
         binding.chooseMethodLabel.setVisible(cards.size >= 1)
         binding.confirmButton
             .setText(CacheUtil.getInstance().getTranslations(Text.CONFIRM_LABEL,"Confirm"))
        val creditCardAdapter =  CardsAdapter(cards) { card, position ->
-           println("Custom card selected $card")
             selectedCard = card
             if (isCashPaymentAvailable) {
                 rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
@@ -128,7 +127,6 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
             .confirmButton
             .ninjaTap(lifecycleScope) {
                 selectedCard?.let {selectedCards->
-                    println("Payment type cards bai $selectedCards")
                     CacheUtil
                         .getInstance().orderPayment = PaymentType.CARD
                     CacheUtil
