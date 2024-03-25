@@ -108,7 +108,7 @@
       android:paddingTop="@dimen/padding_large"
       android:visibility="gone"
       app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/orderTypeContainer"
+      app:layout_constraintTop_toBottomOf="@+id/emptyState"
       app:shimmer_duration="1000"
       tools:visibility="gone">
 

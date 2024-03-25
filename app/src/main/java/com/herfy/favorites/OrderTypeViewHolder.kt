@@ -6,12 +6,10 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.textview.MaterialTextView
 import com.herfy.R
 import com.herfy.utils.helper.CacheUtil
-import com.skylinedynamics.solosdk.api.models.objects.OrderType
-import com.skylinedynamics.solosdk.api.models.objects.OrderTypeMenus
 
 class OrderTypeViewHolder(
     private val view: View,
-    private val orderTypeMenus: OrderTypeMenus,
+    private val orderTypeUIModel: FavoriteOrderTypeUIModel,
     private val onClick: (String) -> Unit,
 ) : OrderTypeView {
 
@@ -21,7 +19,7 @@ class OrderTypeViewHolder(
     override val tag: String
         get() =  view.tag as String
     init {
-        view.tag = orderTypeMenus.type
+        view.tag = orderTypeUIModel.orderTypeName
         container.setOnClickListener { onClick(view.tag as String) }
     }
 
@@ -38,7 +36,7 @@ class OrderTypeViewHolder(
     override fun setInitialSelectedOrderType() {
         val orderType = FavoriteOrderTypeValidator.determineSelectedOrderState(
             selectedOrderType =CacheUtil.getInstance().orderType,
-            favouriteOrderType = orderTypeMenus
+            favouriteOrderType = orderTypeUIModel
         )
         when(orderType) {
             FavoriteOrderState.DeliverOrderSelected -> setOrderTypeSelected()
@@ -50,7 +48,6 @@ class OrderTypeViewHolder(
 
 
     fun bind() {
-        val formattedOrderType = OrderType.convertOrderTypeNameToDisplayName(orderTypeMenus.type)
-        txtOrder.text = formattedOrderType
+        txtOrder.text = orderTypeUIModel.title
     }
 }

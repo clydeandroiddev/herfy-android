@@ -1,24 +1,14 @@
 package com.herfy.favorites;
 
-import android.content.res.ColorStateList;
-import android.graphics.Color;
+
 import android.graphics.drawable.Drawable;
-import android.text.SpannableString;
-import android.text.SpannedString;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -36,18 +26,12 @@ import com.herfy.firebase.FirebaseService;
 import com.herfy.font.FontHandler;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.CacheUtil;
-import com.herfy.utils.menu.MenuUtil;
-import com.nguyenhoanglam.imagepicker.model.Image;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
-import com.skylinedynamics.solosdk.api.models.objects.FavoriteModifier;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
-import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
-import com.herfy.views.SlantedTextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -57,9 +41,6 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 
     private FavoritesContract.Presenter favoritesPresenter;
 
-    //@BindView(R.id.card_fav) FloatingActionButton heart;
-//    @BindView(R.id.favorite_container)
-//    RelativeLayout favoriteContainer;
     @BindView(R.id.favorite_icon)
     ImageView favoriteIcon;
 
@@ -73,10 +54,8 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
     @BindView(R.id.txtFavouriteDescription)
     MaterialTextView extras;
 
-    @BindView(R.id.txtCalories)
+    @BindView(R.id.tvCalories)
     TextView tvCalories;
-    @BindView(R.id.txtKcal)
-    TextView tvKCal;
 
     @BindView(R.id.icAdd)
     ImageView add;
@@ -86,6 +65,9 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
     @BindView(R.id.txtQuantity)
 
     MaterialTextView txtQuantity;
+
+    @BindView(R.id.layoutCalories)
+    LinearLayout layoutCalories;
 
     private FavoritesAction action;
 
@@ -153,22 +135,20 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 //            favoriteIcon.setColorFilter(Color.parseColor("#DEDEDE"));
             favoritesPresenter.deleteFavorite(favorite);
         });
-        if (favorite.getFirstItem() != null) {
-            String caloriesValue = favorite.getFirstItem().getCalories();
-            int calorieCount = favorite.getFirstItem().getCalorieCount();
-            if (calorieCount != 0) {
-                tvKCal.setVisibility(View.VISIBLE);
-                tvCalories.setVisibility(View.VISIBLE);
-                tvCalories.setText(MenuUtil.getCaloriesText(caloriesValue, calorieCount));
-            } else if (caloriesValue != null && !caloriesValue.isEmpty() && !caloriesValue.trim().equals("null") && !caloriesValue.trim().equals("0")) {
-                tvKCal.setVisibility(View.VISIBLE);
-                tvCalories.setVisibility(View.VISIBLE);
-                tvCalories.setText(MenuUtil.getCaloriesText(caloriesValue, calorieCount));
-            } else {
-                tvKCal.setVisibility(View.GONE);
-                tvCalories.setVisibility(View.GONE);
-                tvCalories.setText("");
-            }
+            String caloriesValue = favorite.getAttributes().getCalories();
+            Integer calorieCount = favorite.getAttributes().getCalorieCount();
+         if (calorieCount != null && calorieCount != 0) {
+            tvCalories.setVisibility(View.VISIBLE);
+             layoutCalories.setVisibility(View.VISIBLE);
+            tvCalories.setText(String.valueOf(calorieCount.intValue()));
+        } else if (caloriesValue != null && !caloriesValue.isEmpty() && !caloriesValue.trim().equals("null") && !caloriesValue.trim().equals("0")) {
+             layoutCalories.setVisibility(View.VISIBLE);
+            tvCalories.setVisibility(View.VISIBLE);
+            tvCalories.setText(caloriesValue);
+        } else {
+             layoutCalories.setVisibility(View.GONE);
+            tvCalories.setVisibility(View.GONE);
+            tvCalories.setText("");
         }
         String imageUrl = favorite.getAttributes().getImageUri();
         if (imageUrl == null || imageUrl.equalsIgnoreCase("null") || imageUrl.isEmpty() || imageUrl.toLowerCase().contains("default-image.png")) {
@@ -192,7 +172,7 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 
         name.setText(favorite.getAttributes().getName());
 
-        price.setText(StringUtil.getFormattedPrice(specialPrice));
+        price.setText(StringUtil.getFormattedPrice(favorite.getAttributes().getPrice()));
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,24 +181,15 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
                     FirebaseService.newNotification(CacheUtil.getInstance().getTranslations(Text.MENU_ONLY_MESSAGE, "Sorry, ordering is not available at the moment"), add.getContext());
                     return;
                 }
-                Log.d("FAFA","Click bai");
                 action.onFavouriteAddToCart(favorite);
             }
         });
-
-        StringBuilder mods = new StringBuilder();
-        List<FavoriteModifier> modifiers = favorite.getAttributes().getModifiers();
-        for (FavoriteModifier m : modifiers) {
-            if (!m.getName().isEmpty()) {
-                if (TextUtils.isEmpty(mods)) {
-                    mods.append(m.getName());
-                } else {
-                    mods.append(", ").append(m.getName());
-                }
-            }
+        String description = favorite.getAttributes().getDescription();
+        if (!description.isEmpty()) {
+            extras.setText(favorite.getAttributes().getDescription());
         }
 
-        extras.setText(mods);
+
 
     }
     public int getQuantityByFavourites(Favorite favorite) {
@@ -227,7 +198,7 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
         ArrayList<MenuItem> cart = CacheUtil.getInstance().getCart();
 
         for (MenuItem item : cart) {
-            if (Objects.equals(String.valueOf(item.getId()), favorite.getItemId()) && item.isFavorite()) {
+            if (Objects.equals(String.valueOf(item.getId()), favorite.getId()) && item.isFavorite()) {
                 quantity++;
             }
         }

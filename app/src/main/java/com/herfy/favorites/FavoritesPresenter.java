@@ -94,19 +94,23 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                     if (page == 1) {
                         favorites.clear();
                     }
+                    if (object.has("included")) {
+                        JSONArray data = object.getJSONArray("included");
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject favorite = data.getJSONObject(i);
+                            favorites.add(Favorite.parseFavorites(favorite));
+                        }
 
-                    JSONArray data = object.getJSONArray("data");
-                    for (int i = 0; i < data.length(); i++) {
-                        JSONObject favorite = data.getJSONObject(i);
-                        favorites.add(Favorite.parseFavorites(favorite));
-                    }
-
-                    if (page == pagination.getTotalPages()) {
-                        favoritesView.setIsLoading(false);
+                        if (page == pagination.getTotalPages()) {
+                            favoritesView.setIsLoading(false);
+                            favoritesView.showFavorites(favorites);
+                        } else {
+                            getFavorites(page + 1, orderTypeId);
+                        }
+                    }else {
                         favoritesView.showFavorites(favorites);
-                    } else {
-                        getFavorites(page + 1,orderTypeId);
                     }
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -162,7 +166,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
 
     @Override
     public void deleteFavorite(Favorite favorite) {
-        CustomersApiCall.getInstance().deleteItemFromFavorites(AuthUtil.getInstance().getCustomer().getId(), favorite.getItemId(), new ApiRequestListener() {
+        CustomersApiCall.getInstance().deleteItemFromFavorites(AuthUtil.getInstance().getCustomer().getId(), favorite.getId(), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
 
@@ -1086,6 +1090,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
     @Override
     public void getFavouritesByOrderTypeId(String orderTypeId, String orderTypeName) {
        OrderType type =  OrderType.Companion.fromString(orderTypeName);
+       System.out.println("Order type selected " + type);
         CacheUtil.getInstance().setOrderType(type);
 
        getFavorites(1,orderTypeId);

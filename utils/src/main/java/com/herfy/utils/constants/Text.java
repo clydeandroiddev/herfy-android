@@ -282,6 +282,7 @@ public class Text {
     public static final String FREE_CAPS = "free_caps";
     public static final String OPTIONAL_KEY = "optional_key";
 
+    public static final String VIEW_BAG = "view_bag";
     public static final String ENTER_NEW_PHONE_NUMBER = "enter_new_phone_number";
     public static final String NO_PAYMENT_METHOD_SELECTED = "no_payment_methods";
     public static final String NO_FAVORITE_FOUND = "No favourites found";
@@ -414,6 +415,7 @@ public class Text {
     public static final String YOU_ARE_CURRENTLY_NOT_SIGNED_IN = "you_are_currently_not_signed_in";
     public static final String LOYALTY = "loyalty";
     public static final String FAVORITES = "favorites";
+    public static final String FAVOURITES = "favourites";
     public static final String CLEAR_BASKET = "clear_basket";
     public static final String ADD_MORE_ITEMS = "add_more_items";
     public static final String VIEW_BASKET = "view_basket";
@@ -1052,7 +1054,6 @@ public class Text {
     public static final String GOOD_MORNING_USER = "good_morning_user";
     public static final String GOOD_AFTERNOON_USER = "good_afternoon_user";
     public static final String GOOD_EVENING_USER = "good_evening_user";
-    public static final String VIEW_BAG = "view_bag";
     public static final String CURBSIDE = "curbside";
     public static final String SEARCH_MENU = "search_menu";
     public static final String DELIVERY_IN_MINS = "deliver_in_mins";

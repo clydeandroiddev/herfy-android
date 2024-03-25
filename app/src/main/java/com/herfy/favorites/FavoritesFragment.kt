@@ -34,11 +34,11 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
-import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.*
 import com.skylinedynamics.solosdk.api.models.objects.Favorite
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
+import com.skylinedynamics.solosdk.api.models.objects.OrderType.Companion.convertOrderTypeToString
 import com.skylinedynamics.solosdk.api.models.objects.OrderTypeMenus
 
 class FavoritesFragment : BaseFragment(), FavoritesContract.View {
@@ -51,8 +51,18 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
     private val orderTypeViews = mutableListOf<OrderTypeView>()
     private val args: FavoritesFragmentArgs by navArgs()
 
+    private val applicationAttributes by lazy {
+        CacheUtil
+            .getInstance()
+            .application
+            .attributes
+    }
     private val orderTypeMenus by lazy {
-        CacheUtil.getInstance().application.attributes.orderTypeMenus
+        applicationAttributes.orderTypeMenus
+    }
+    private val allowedOrderMenus by lazy {
+        applicationAttributes
+            .allowedOrderTypes
     }
 
     private val currentOrderType by lazy {
@@ -80,9 +90,6 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         val eventAttributes = HashMap<String, String>()
         eventAttributes["User ID"] = AuthUtil.getInstance().customer.id
         logEvent("MyFavoritesView", eventAttributes, "", 0.0)
-//        binding.blocker.visibility = View.VISIBLE
-        binding.newMenuItemSearchShimmer.visible()
-        binding.orderTypeShimmering.visible()
         setUpNavigationObservers()
         getFavoritesByOrderType(
             currentOrderType,
@@ -109,13 +116,18 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
     }
 
     private fun getFavoritesByOrderType(orderType: OrderType, orderTypeMenus: List<OrderTypeMenus>) {
-        if (orderType != OrderType.NONE && orderTypeMenus.isNotEmpty()) {
-            val selectedOrderTypeMenu = orderTypeMenus.find { it.type.equals(orderType.name, ignoreCase = true) }
-
-            val selectedOrderTypeId = selectedOrderTypeMenu?.id ?: orderTypeMenus.first().id
-            favoritesPresenter.getFavorites(1, selectedOrderTypeId)
-        } else if (orderTypeMenus.isNotEmpty()) {
-            favoritesPresenter.getFavorites(1, orderTypeMenus.first().id)
+        if (orderType != OrderType.NONE) {
+            val orderTypeString = convertOrderTypeToString(orderType)
+            if (orderTypeString.isNotEmpty()) {
+                val selectedOrderTypeMenu =
+                    orderTypeMenus.find { it.type.equals(orderTypeString, ignoreCase = true) }
+                favoritesPresenter.getFavorites(1, selectedOrderTypeMenu?.id ?: CacheUtil
+                    .getInstance()
+                    .menuId)
+            }
+        } else {
+            favoritesPresenter.getFavorites(1, orderTypeMenus.firstOrNull()?.id ?: CacheUtil.getInstance()
+                .menuId)
         }
     }
     override fun logEvent(
@@ -161,14 +173,17 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             findNavController().navigateUp()
         }
 
-        if (args.isFromOrderType || CacheUtil.getInstance().cart.isNotEmpty()) {
-            val cartTotalHasFavorites = CacheUtil.getInstance()
-                .cart
-                .map { it.isFavorite }
-                .count()
-            binding.txtCartFavouriteTotal.text = cartTotalHasFavorites.toString()
-            binding.footer.setVisible(cartTotalHasFavorites >= 1 )
+        val cartItems = CacheUtil.getInstance().cart
+        val hasFavoriteItems =  cartItems.any { it.isFavorite }
+
+        val cartTotalHasFavorites = if (hasFavoriteItems) {
+            cartItems.count { it.isFavorite }
+        } else {
+            0
         }
+            binding.txtCartFavouriteTotal.text = cartTotalHasFavorites.toString()
+            binding.footer.setVisible(cartTotalHasFavorites >= 1)
+
         adapter = FavoritesRecyclerViewAdapter(favoritesPresenter)
         adapter?.setOnAction(object : FavoritesAction {
 
@@ -192,7 +207,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
     override fun setupTranslations() {
         binding.btnAddMoreItems.text = CacheUtil.getInstance().getTranslations(Text.ADD_MORE_ITEMS,"Add more items")
         binding.txtViewBasket.text = CacheUtil.getInstance().getTranslations(Text.VIEW_BASKET, "View basket")
-        binding.txtFavourites.text = CacheUtil.getInstance().getTranslations(Text.FAVORITES,"Favourites")
+        binding.txtFavourites.text = CacheUtil.getInstance().getTranslations(Text.FAVOURITES,"Favourites")
     }
 
     override fun setIsLoading(isLoading: Boolean) {
@@ -208,27 +223,53 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         }
     }
     override fun showFavorites(favorites: ArrayList<Favorite>) {
-        val orderTypeMenus = CacheUtil
-            .getInstance()
-            .application
-            .attributes.orderTypeMenus
+        val hasFavorite = CacheUtil.getInstance().cart
+            .count { it.isFavorite }
+        if (favorites.isEmpty() && hasFavorite >= 1) {
+            val updatedCart: ArrayList<MenuItem> = ArrayList<MenuItem>().apply {
+                CacheUtil.getInstance().cart.forEach { menuItem ->
+                    menuItem.isFavorite = false
+                    if (menuItem.isFavorite) {
+                        add(menuItem)
+                    }
+                }
 
+            }
+                CacheUtil.getInstance().cart = updatedCart
+                binding
+                    .footer.setVisible(true)
+            }
 
         activity?.let { activity ->
             val baseActivity = activity as BaseActivity
             baseActivity.dismissDialogs()
-            val type = CacheUtil.getInstance().orderType
-            if (type == OrderType.CURBSIDE) {
-                CacheUtil.getInstance().orderType = OrderType.DELIVERY
-            }
                     binding.orderTypeContainer.removeAllViews()
-                    orderTypeMenus.forEach { orderType ->
+            val formattedOrderTypes = allowedOrderMenus
+                ?.split(",")
+                ?.mapNotNull { orderTypeTitle ->
+                   val title =  OrderType.fromString(orderTypeTitle)
+                    orderTypeMenus
+                        .find { it.type.replace("deliver","delivery") == title.name.lowercase() }?.let { orderType->
+                            val type = OrderType.fromString(orderType.type)
+                            val translation = CacheUtil.getInstance()
+                      FavoriteOrderTypeUIModel(
+                            id = orderType.id,
+                            title =  if (type == OrderType.DELIVERY) translation.getTranslations(Text.DELIVERY,"Delivery") else if (type == OrderType.DINE_IN) translation
+                                .getTranslations(Text.DINE_IN,"Dinein") else translation.getTranslations(Text.PICKUP, "Pickup"),
+                            orderTypeName = orderType.type
+                        )
+                        }
+                    } ?: emptyList()
+
+            formattedOrderTypes.forEach { orderType ->
                         val view = LayoutInflater.from(activity)
                             .inflate(R.layout.item_favourite_order_type, binding.orderTypeContainer, false)
-                        val viewHolder = OrderTypeViewHolder(view, orderType) { clickedOrderType ->
-                            handleOrderTypeClick(clickedOrderType,orderType)
+                        val viewHolder = OrderTypeViewHolder(view = view, orderTypeUIModel = orderType
+
+                        ) { selectedOrderType ->
+                            handleOrderTypeClick(selectedOrderType, orderType)
                         }
-                        viewHolder.setInitialSelectedOrderType()
+                viewHolder.setInitialSelectedOrderType()
                         orderTypeViews.add(viewHolder)
                         viewHolder.bind()
                         binding.orderTypeContainer.addView(view)
@@ -246,13 +287,28 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             binding.favouriteRecycleView.setVisible(isFavoritesNotEmpty)
             binding.emptyState.setVisible(isFavoritesNotEmpty.not())
             binding.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_FAVORITE_FOUND, "No favourites found."))
+
         }
 
-    private fun handleOrderTypeClick(selectedOrderTypeTag: String, orderType: OrderTypeMenus) {
-        orderTypeViews.forEach { orderTypeView ->
+    private fun handleOrderTypeClick(selectedOrderTypeTag: String, orderType: FavoriteOrderTypeUIModel) {
+        val currentSelectedOrderType = CacheUtil.getInstance().orderType
+        val hasFavoriteAddedInCart = CacheUtil.getInstance().cart.count { it.isFavorite } >= 1
+            orderTypeViews.forEach { orderTypeView ->
+            if (currentSelectedOrderType.name == OrderType.DELIVERY.name && selectedOrderTypeTag == OrderType.PICKUP.name.lowercase() && hasFavoriteAddedInCart) {
+                showDialogClearCurrentBasketDialog(selectedOrderTypeTag)
+                return
+            } else if (currentSelectedOrderType.name == OrderType.PICKUP.name && selectedOrderTypeTag == OrderType.DINE_IN.name.replace("_","").lowercase() && hasFavoriteAddedInCart) {
+                showDialogClearCurrentBasketDialog(selectedOrderTypeTag)
+                return
+            }
             if (orderTypeView.tag == selectedOrderTypeTag) {
+                if (CacheUtil.getInstance().cart.count { it.isFavorite } >= 1) {
+                    showDialogClearCurrentBasketDialog(selectedOrderTypeTag)
+                    return
+                }else {
+                    CacheUtil.getInstance().orderType = OrderType.fromString(selectedOrderTypeTag)
+                }
                 orderTypeView.setOrderTypeSelected()
-                CacheUtil.getInstance().orderType = OrderType.fromString(selectedOrderTypeTag)
             } else {
                 orderTypeView.setOrderTypeUnselected()
             }
@@ -261,10 +317,8 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         if (CacheUtil.getInstance().cart.isEmpty()) {
             favoritesPresenter?.getFavouritesByOrderTypeId(
                 orderType.id,
-                orderType.type
+                orderType.orderTypeName
             )
-        } else {
-            showDialogClearCurrentBasketDialog(selectedOrderTypeTag)
         }
     }
     private fun showDialogClearCurrentBasketDialog(selectedOrderTypeTag: String) {

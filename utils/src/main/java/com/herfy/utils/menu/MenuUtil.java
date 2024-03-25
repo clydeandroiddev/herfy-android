@@ -207,7 +207,7 @@ public class MenuUtil {
 
         MenuItem menuItem = new MenuItem();
 
-        menuItem.setId(favorite.getAttributes().getItemId());
+        menuItem.setId(favorite.getId());
         menuItem.getAttributes().setName(favorite.getAttributes().getName());
         menuItem.getAttributes().setImage(favorite.getAttributes().getImageUri());
         menuItem.getAttributes().setPrice(favorite.getAttributes().getPrice());
