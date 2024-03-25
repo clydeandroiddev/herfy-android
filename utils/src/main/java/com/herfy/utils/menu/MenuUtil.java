@@ -7,18 +7,22 @@ import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.helper.StringUtil;
+import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.CustomFieldObject;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.FavoriteIngredients;
 import com.skylinedynamics.solosdk.api.models.objects.FavoriteModifier;
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents;
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupCdn;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.OrderTypeMenus;
 import com.skylinedynamics.solosdk.api.models.objects.TimedEvent;
 import com.skylinedynamics.solosdk.api.models.objects.Translated;
+import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 
 import java.text.ParseException;
@@ -391,6 +395,96 @@ public class MenuUtil {
             caloriesText = caloriesValue;
         }
         return CacheUtil.getInstance().getTranslations(Text.CALORIES_KCAL, "(x) Kcal").replace("(x)", caloriesText);
+    }
+
+    public static double getMenuItemTotalPrice(MenuItem item) {
+
+        String orderStoreId = null;
+        int counter = 0;
+        int comboIndex = 0;
+        if (CacheUtil.getInstance().getOrderStore() != null) {
+            orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
+        }
+
+        double totalPrice = item.getPrice(orderStoreId);
+        if (!item.getSizes().getModifierItems().isEmpty()) {
+            if(!item.getIsPromotion()) {
+                totalPrice = 0.0;
+            }
+            for (ModifierItem modifierItem : item.getSizes().getModifierItems()) {
+                if (modifierItem.getAttributes().isSelected()) {
+                    totalPrice += modifierItem.getAttributes().getPrice();
+                    comboIndex = counter;
+                    break;
+                }
+                counter++;
+            }
+        }
+        for (ModifierItem modifierItem : item.getDrinks().getModifierItems()) {
+            if (modifierItem.getAttributes().isSelected()) {
+                totalPrice += modifierItem.getAttributes().getPrice();
+                break;
+            }
+        }
+        for (ModifierItem modifierItem : item.getFries().getModifierItems()) {
+            if (modifierItem.getAttributes().isSelected()) {
+                totalPrice += modifierItem.getAttributes().getPrice();
+                break;
+            }
+        }
+        for (ModifierGroup modifierGroup : item.getModifierGroups()) {
+            VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
+            if (visibilityConfig == null || visibilityConfig.getInitialValue() == null || !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
+
+                int selectedFreeModifier = 0;
+                for (ModifierItem modifierItem : modifierGroup.getModifierItems()) {
+                    if (modifierItem.getAttributes().isSelected()) {
+                        if (modifierGroup.getAttributes().getFreeModifiersCount() > 0 && selectedFreeModifier < modifierGroup.getAttributes().getFreeModifiersCount()) {
+                            int totalSelectedFreeModifier = selectedFreeModifier + modifierItem.getAttributes().getQuantity();
+                            if (totalSelectedFreeModifier < modifierGroup.getAttributes().getFreeModifiersCount()) {
+                                selectedFreeModifier += modifierItem.getAttributes().getQuantity();
+                            } else {
+                                selectedFreeModifier = modifierGroup.getAttributes().getFreeModifiersCount();
+                                totalPrice += modifierItem.getAttributes().getPrice() * (totalSelectedFreeModifier - modifierGroup.getAttributes().getFreeModifiersCount());
+                            }
+                        } else {
+                            totalPrice += modifierItem.getAttributes().getPrice() * modifierItem.getAttributes().getQuantity();
+                        }
+                    }
+                }
+            }
+        }
+        for (Ingredient ingredient : item.getIngredients()) {
+            if (ingredient.getAttributes().isSelected()) {
+                totalPrice += ingredient.getAttributes().getPrice();
+            }
+        }
+
+        try {
+            if (item.isCombo) {
+                for (MenuItemComponents components : item.combo.get(comboIndex).components) {
+                    for (ComponentModifierItem componentModifierItem : components.items) {
+                        if (componentModifierItem.selected) {
+                            if (!item.isSandwichOnly)
+                                totalPrice += componentModifierItem.price;
+                            if (!componentModifierItem.modifierGroups.isEmpty()) {
+                                for (ModifierGroup modifierGroup : componentModifierItem.modifierGroups) {
+                                    for (int i = 0; i < modifierGroup.getModifierItems().size(); i++) {
+                                        if (modifierGroup.getModifierItems().get(i).getAttributes().isSelected()) {
+                                            totalPrice += (modifierGroup.getModifierItems().get(i).getAttributes().getPrice() * modifierGroup.getModifierItems().get(i).getAttributes().getQuantity());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return totalPrice;
     }
 
 }

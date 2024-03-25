@@ -253,6 +253,7 @@ dependencies {
     implementation project(path: ':features:productpagedetails')
     implementation project(path: ':data:model')
     implementation project(path: ':analytics:kochava')
+    implementation project(path: ':analytics:facebook')
     implementation project(path: ':data:repository')
     implementation(project(":features:faq"))
     implementation(project(":features:updatephonenumber"))

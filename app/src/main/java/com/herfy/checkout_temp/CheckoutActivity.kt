@@ -18,8 +18,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -49,11 +47,10 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.herfy.BuildConfig
 import com.herfy.R
-import com.herfy.analytics.FacebookAppEventUtil
-import com.herfy.analytics.FacebookAppEventUtil.Companion.addPaymentInfoEvent
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.applyPromotionEvent
+import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
@@ -118,10 +115,7 @@ import company.tap.gosellapi.open.controllers.SDKSession
 import company.tap.gosellapi.open.delegate.SessionDelegate
 import company.tap.gosellapi.open.models.CardsList
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.BackpressureStrategy
-import io.reactivex.disposables.CompositeDisposable
 
-import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import org.json.JSONException
@@ -1299,14 +1293,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun firebaseAddPaymentInfoEvent() {
-        try {
-            if (this != null) {
-                addPaymentInfoEvent(this, paymentPresenter!!.menuItemsList, totalValue)
-                addPaymentInfoEvent(this, CacheUtil.getInstance().orderPayment.value)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        FacebookAppEventUtil.addPaymentInfoEvent(this, CacheUtil.getInstance().orderPayment.value)
     }
 
     override fun firebaseApplyPromotionEvent(

@@ -8,7 +8,9 @@ import coil.ImageLoaderFactory
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
+import com.facebook.FacebookSdk
 import com.facebook.FacebookSdk.sdkInitialize
+import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.FirebaseApp
 import com.herfy.BuildConfig
@@ -39,6 +41,10 @@ class BaseApplication : Application(), ImageLoaderFactory {
         FirebaseApp.initializeApp(this)
         sdkInitialize(this)
         AppEventsLogger.activateApp(this)
+        if(BuildConfig.DEBUG) {
+            FacebookSdk.setIsDebugEnabled(true)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
+        }
         AppDatabase.init(this)
         AuthUtil.init(this)
         CacheUtil.init(this)

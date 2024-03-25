@@ -116,6 +116,8 @@ public interface CartContract {
 
         void showCartMenuItemsLoading();
 
+        void sendAddToCartFacebookEvent(MenuItem menuItem);
+
     }
 
     interface Presenter extends BasePresenter {

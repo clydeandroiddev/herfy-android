@@ -48,7 +48,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.analytics.FacebookAppEventUtil;
+import com.herfy.analytics.facebook.FacebookAppEventUtil;
 import com.herfy.analytics.FirebaseECommerceEventUtil;
 import com.herfy.util.StringUtil;
 

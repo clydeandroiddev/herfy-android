@@ -44,7 +44,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.herfy.BuildConfig;
 import com.herfy.R;
+import com.herfy.analytics.facebook.FacebookAppEventUtil;
 import com.herfy.auth.AuthContract;
 import com.herfy.auth.AuthPresenter;
 import com.herfy.base.BaseActivity;
@@ -56,7 +58,6 @@ import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries;
 import com.herfy.util.AppLogger;
-import com.herfy.analytics.FacebookAppEventUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.verification.CodeBroadcastReceiver;
 import com.herfy.verification.views.CodeDialogFragment;
@@ -212,8 +213,10 @@ public class GuestActivity extends BaseActivity implements AuthContract.View, Fa
                     }
                 });
 
-        FacebookSdk.setIsDebugEnabled(true);
-        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
+        if(BuildConfig.DEBUG) {
+            FacebookSdk.setIsDebugEnabled(true);
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
+        }
     }
 
     @Override

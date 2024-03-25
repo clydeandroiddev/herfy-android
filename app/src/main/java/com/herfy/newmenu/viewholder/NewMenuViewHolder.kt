@@ -21,7 +21,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.herfy.R
-import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.auth.views.SignInActivity
 import com.herfy.utils.constants.Text
@@ -33,6 +32,7 @@ import com.herfy.menu.MenuContract
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.herfy.util.*
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addToCartEvent
+import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.util.scroll.ScrollableViewPagerContentTouchEventDelegator
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
