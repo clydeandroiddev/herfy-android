@@ -141,14 +141,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:paddingTop="46dp"
-                            android:paddingBottom="26dp"
                             app:layout_constraintTop_toBottomOf="@id/cover">
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="100dp"
-                                android:paddingHorizontal="16dp">
+                                android:layout_marginHorizontal="16dp"
+                                android:layout_marginTop="46dp"
+                                android:layout_marginBottom="26dp">
 
                                 <FrameLayout
                                     android:id="@+id/cookingLayout"
@@ -212,10 +212,82 @@
                                         app:layout_constraintTop_toTopOf="parent"
                                         tools:text="20 - 30 mins" />
 
-
                                 </LinearLayout>
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="94dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:weightSum="4">
+
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="4dp"
+                                    android:layout_weight="0.18"
+                                    android:background="#0064AC"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:id="@+id/preparingLayout"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1.02"
+                                    tools:background="@drawable/background_past_status">
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="4dp"
+                                    android:layout_weight="0.20"
+                                    android:background="#0064AC"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:id="@+id/onWayLayout"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1.2"
+                                    tools:background="@drawable/background_current_status">
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="4dp"
+                                    android:layout_weight="0.20"
+                                    android:background="#0064AC"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:id="@+id/finishedLayout"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1.02"
+                                    android:background="@drawable/background_cards">
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="4dp"
+                                    android:layout_weight="0.18"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                            </LinearLayout>
+
 
                         </LinearLayout>
 
