@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_cards"
+            android:padding="12dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <FrameLayout
+                android:id="@+id/instructionFrame"
+                android:layout_width="41dp"
+                android:layout_height="41dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/background_warning"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent¬">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_warning_tracker" />
+
+            </FrameLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/haveATroubleLabel"
+                style="@style/Styles.Text.Caption.Semibold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="2dp"
+                android:includeFontPadding="false"
+                android:textColor="#191919"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/instructionFrame"
+                app:layout_constraintTop_toTopOf="@id/instructionFrame"
+                tools:text="Have a trouble with your order?" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/driverInstruction"
+                style="@style/Styles.Text.Caption.Semibold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:includeFontPadding="false"
+                android:textColor="#55667B"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/haveATroubleLabel"
+                app:layout_constraintTop_toBottomOf="@id/haveATroubleLabel"
+                tools:text="Herfy’s Support team is here to help you." />
+
+            <LinearLayout
+                android:id="@+id/callHelpLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/background_current_status"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                app:layout_constraintStart_toStartOf="@id/haveATroubleLabel"
+                app:layout_constraintTop_toBottomOf="@id/driverInstruction">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_tracker_phone" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/callHelpLabel"
+                    style="@style/Styles.Text.Caption.Semibold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:includeFontPadding="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    tools:text="Call" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/whatsAppHelpLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/background_whatsup_green"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                app:layout_constraintStart_toEndOf="@id/callHelpLayout"
+                app:layout_constraintTop_toBottomOf="@id/driverInstruction">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_tracker_whatsapp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/whatsAppHelpMessageLabel"
+                    style="@style/Styles.Text.Caption.Semibold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:includeFontPadding="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    tools:text="Whatsapp Message" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
