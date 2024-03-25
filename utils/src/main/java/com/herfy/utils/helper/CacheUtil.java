@@ -70,7 +70,7 @@ public class CacheUtil {
     private static final String MID_SLIDER_ID = "MidSliderId";
     private static final String SLIDES = "Slides";
     private static final String CUSTOMER_CARDS = "CustomerCards";
-    private static final String CustomerCard = "CustomerCard";
+    private static final String CUSTOMER_CARD = "CustomerCard";
     private static final String MID_SLIDES = "MidSlides";
     private static final String MENU_ID = "MenuId";
     private static final String CONCEPT_KEY = "Concept_Key";
@@ -396,12 +396,12 @@ public class CacheUtil {
 
     public void setCustomCard(String customCard) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
-        editor.putString(CustomerCard, customCard);
+        editor.putString(CUSTOMER_CARD, customCard);
         editor.apply();
     }
 
     public CustomerCard getCustomCard() {
-        String customCardJson = cacheSharedPreferences.getString(CustomerCard, null);
+        String customCardJson = cacheSharedPreferences.getString(CUSTOMER_CARD, null);
         if (customCardJson != null) {
             return GsonHelper
                     .gsonFinal()
