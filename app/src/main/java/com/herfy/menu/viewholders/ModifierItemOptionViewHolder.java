@@ -244,9 +244,9 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
     @Override
     public void onModifierProcessed(@NotNull String name, @NotNull String formattedPrice) {
-        setModifierNameAndPrice(name,formattedPrice,text);
+        setModifierNameAndPrice(name,formattedPrice);
     }
-    private void setModifierNameAndPrice(String name, String formattedPrice,String text) {
+    private void setModifierNameAndPrice(String name, String formattedPrice) {
         if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
             modifierNameAndPrice.setText(Html.fromHtml(name),  TextView.BufferType.SPANNABLE);
         } else {
