@@ -3827,7 +3827,7 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity) {
-
+        System.out.println("Modifier group position" + position + " " + menuItem.getModifierGroups().size());
        /* ModifierGroup modifierGroup = menuItemModifierGroups.get(menuItem.getModifierGroups().get(position).getId());
         if(modifierGroup != null) {*/
         modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice,showShowModifierCheckBox);
@@ -3837,6 +3837,11 @@ public class MenuPresenter implements MenuContract.Presenter {
     @Override
     public int getModifierGroupsCount() {
         return menuItem.getModifierGroups().size();
+    }
+
+    @Override
+    public List<ModifierGroup> getModifierGroupList() {
+        return  menuItem.getModifierGroups();
     }
 
     @Override

@@ -593,8 +593,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 canChangeSize = false
                 setSizes(menuItem)
                 canChangeSize = true
+
                 if (shouldReset || menuPresenter!!.modifierGroupsCount > 0) {
-                    binding.modifierGroupsRecyclerView.visibility = View.VISIBLE
                     binding.modifierGroupsRecyclerView.visibility = View.VISIBLE
                     val showModifierItemPrice = HashMap<Int, Boolean>()
                     for (group in menuItem.modifierGroups) {
@@ -612,7 +612,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             activity,
                             menuPresenter,
                             showModifierItemPrice,
-                            shouldShowModifierCheckbox
+                            shouldShowModifierCheckbox,
                         )
                     modifierGroupsAdapter!!.setOnAction(object : BaseModifierItemViewHolder.OnAction {
                         @SuppressLint("NotifyDataSetChanged")
@@ -673,10 +673,18 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             //Trigger calorie count
                         }
                     })
-                    binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapter
-                    ViewCompat.setNestedScrollingEnabled(binding.modifierGroupsRecyclerView, false)
+                    if (modifierGroupsAdapter != null) {
+                        println("Modifier group test")
+                        modifierGroupsAdapter!!.notifyDataSetChanged()
+                    }
+                    println("Modifier group count ${modifierGroupsAdapter?.itemCount}")
                     binding.modifierGroupsRecyclerView.visibility = View.VISIBLE
+                    ViewCompat.setNestedScrollingEnabled(binding.modifierGroupsRecyclerView, true)
+                    binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapter
+//
                 } else {
+                    println("Modifier gorup item count disabled")
                     binding.modifierGroupsRecyclerView.visibility = View.GONE
                     binding.modifierGroupsRecyclerView.visibility = View.GONE
                 }
@@ -1135,10 +1143,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             sizesAdapter!!.setOnAction { modifierItem: ModifierItem ->
                                 menuPresenter!!.selectSize(modifierItem.id)
                                 sizesAdapter!!.notifyDataSetChanged()
-                                if (modifierGroupsAdapter != null) {
-                                    modifierGroupsAdapter!!.notifyDataSetChanged()
-
-                                }
                             }
                             binding.sizesRecyclerView.adapter = sizesAdapter
                             ViewCompat.setNestedScrollingEnabled(binding.sizesRecyclerView, false)

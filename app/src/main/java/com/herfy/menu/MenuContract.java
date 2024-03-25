@@ -298,6 +298,8 @@ public interface MenuContract {
 
         int getModifierGroupsCount();
 
+        List<ModifierGroup> getModifierGroupList();
+
         int getModifierGroupIndex(ModifierGroup modifierGroup);
 
         int getModifierGroupSelectedModifierItemsCount(ModifierGroup modifierGroup);
