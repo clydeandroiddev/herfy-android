@@ -401,7 +401,7 @@ public class CacheUtil {
     }
 
     public CustomerCard getCustomCard() {
-        String customCardJson = cacheSharedPreferences.getString("CustomerCard", null);
+        String customCardJson = cacheSharedPreferences.getString(CustomerCard, null);
         if (customCardJson != null) {
             return GsonHelper
                     .gsonFinal()
