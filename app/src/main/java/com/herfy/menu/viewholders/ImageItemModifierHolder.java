@@ -22,6 +22,8 @@ import com.herfy.util.ModifierProcessorCallback;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 
+import org.jetbrains.annotations.NotNull;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 public class ImageItemModifierHolder extends BaseModifierItemViewHolder implements ModifierProcessorCallback {
@@ -85,18 +87,17 @@ public class ImageItemModifierHolder extends BaseModifierItemViewHolder implemen
     }
 
     @Override
-    public void onModifierProcessed(@NonNull String name, @NonNull String formattedPrice, @NonNull String text) {
-        setModifierNameAndPrice(name,formattedPrice,text);
+    public void onModifierProcessed(@NotNull String name, @NotNull String formattedPrice) {
+        setModifierNameAndPrice(name,formattedPrice);
     }
-    private void setModifierNameAndPrice(String name, String formattedPrice,String text) {
+    private void setModifierNameAndPrice(String name, String formattedPrice) {
         if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
             modifierNameAndPrice.setText(Html.fromHtml(name),  TextView.BufferType.SPANNABLE);
         } else {
             if (isProbablyArabic(name)) {
                 modifierNameAndPrice.setText(Html.fromHtml(name), TextView.BufferType.SPANNABLE);
             } else {
-                String modifiedText = text + " " + name;
-                modifierNameAndPrice.setText(Html.fromHtml(modifiedText), TextView.BufferType.SPANNABLE);
+                modifierNameAndPrice.setText(Html.fromHtml(name), TextView.BufferType.SPANNABLE);
             }
         }
 

@@ -363,6 +363,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         val formattedQuantityWithoutColon = originalQuantityWithColon.replace(":", "")
         binding.txtQuantity.text = formattedQuantityWithoutColon
         binding.txtFrequntlyBought.text = CacheUtil.getInstance().getTranslations(Text.FREQUENTLY_BOUGHT,"Frequently bought together")
+        binding.notesLabel.text = CacheUtil
+            .getInstance().getTranslations(Text.SPECIAL_INSTRUCTION,"Special Instruction")
     }
 
     override fun showStore(store: Store) {}
@@ -384,7 +386,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             it.runOnUiThread {
 //                binding.mealDealsContainer.visibility = View.GONE
                 binding.txtMoreInfo.isVisible = !menuItem.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
-                Log.d("FAFA","Txt more info is visible " + binding.txtMoreInfo.isVisible)
                 frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(),menuPresenter)
                 frequentBoughItemsAdapter?.notifyDataSetChanged()
                 binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(requireContext())

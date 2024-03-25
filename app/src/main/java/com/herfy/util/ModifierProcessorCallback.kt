@@ -7,7 +7,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemAttributes
 
 interface ModifierProcessorCallback {
-    fun onModifierProcessed(name: String, formattedPrice: String, text: String)
+    fun onModifierProcessed(name: String, formattedPrice: String)
 }
 
 class ModifierProcessor(private val callback: ModifierProcessorCallback) {
@@ -21,10 +21,8 @@ class ModifierProcessor(private val callback: ModifierProcessorCallback) {
         val translatedName = attributes.translatedName.getValue(LocaleUtil.getInstance().language)
 
         val formattedPrice = formatPriceBasedOnLocale(originalPrice, translatedName)
-
         val text = createFormattedText(originalPrice, formattedPrice)
-
-        callback.onModifierProcessed(translatedName, formattedPrice, text)
+        callback.onModifierProcessed(translatedName, formattedPrice)
     }
 
     private fun createFormattedText(originalPrice: Double, formattedPrice: String): String {

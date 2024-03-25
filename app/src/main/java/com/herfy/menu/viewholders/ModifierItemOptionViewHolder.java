@@ -28,6 +28,8 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -241,7 +243,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
     }
 
     @Override
-    public void onModifierProcessed(@NonNull String name, @NonNull String formattedPrice, @NonNull String text) {
+    public void onModifierProcessed(@NotNull String name, @NotNull String formattedPrice) {
         setModifierNameAndPrice(name,formattedPrice,text);
     }
     private void setModifierNameAndPrice(String name, String formattedPrice,String text) {
@@ -252,8 +254,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 modifierNameAndPrice.setText(Html.fromHtml(name), TextView.BufferType.SPANNABLE);
             } else {
 
-                String modifiedText = text + " " + name;
-                modifierNameAndPrice.setText(Html.fromHtml(modifiedText), TextView.BufferType.SPANNABLE);
+                modifierNameAndPrice.setText(Html.fromHtml(name), TextView.BufferType.SPANNABLE);
             }
         }
 
