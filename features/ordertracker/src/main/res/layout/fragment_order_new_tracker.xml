@@ -221,8 +221,8 @@
                                 layout="@layout/include_status_tracker_layout" />
 
                             <include
-                                android:id="@+id/status_tracker_layout"
-                                layout="@layout/include_status_tracker_layout" />
+                                android:id="@+id/status_driver_details"
+                                layout="@layout/include_status_driver_details" />
 
                         </LinearLayout>
 
