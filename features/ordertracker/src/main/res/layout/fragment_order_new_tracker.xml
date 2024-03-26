@@ -221,6 +221,10 @@
                                 layout="@layout/include_status_tracker_layout" />
 
                             <include
+                                android:id="@+id/order_curbside_details"
+                                layout="@layout/include_order_curbside_details" />
+
+                            <include
                                 android:id="@+id/status_driver_details"
                                 layout="@layout/include_status_driver_details" />
 

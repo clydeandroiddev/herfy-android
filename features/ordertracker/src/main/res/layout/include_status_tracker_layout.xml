@@ -29,7 +29,7 @@
                 android:id="@+id/preparingLayout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1.03"
+                android:layout_weight="1.02"
                 android:padding="10dp"
                 tools:background="@drawable/background_past_status">
 
@@ -94,7 +94,7 @@
                 android:id="@+id/onWayLayout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1.18"
+                android:layout_weight="1.20"
                 android:padding="10dp"
                 tools:background="@drawable/background_current_status">
 
@@ -159,7 +159,7 @@
                 android:id="@+id/finishedLayout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1.03"
+                android:layout_weight="1.02"
                 android:background="@drawable/background_cards"
                 android:padding="10dp">
 
