@@ -70,8 +70,7 @@ class SelectCityDialog : DialogFragment() {
 
     private fun setupList() {
         val list = CacheUtil.getInstance().cities
-        Log.e("ADADADADAD", "ADADADAD:" + Gson().toJson(list))
-        adapter.updateList(list)
+        adapter.updateList(ArrayList(list))
     }
 
     private fun checkButton() {

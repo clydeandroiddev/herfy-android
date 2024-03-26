@@ -2,7 +2,6 @@ package com.herfy.splash;
 
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -132,16 +131,9 @@ public class SplashPresenter implements SplashContract.Presenter {
                         City city1 = new City();
                         city1.setName(city);
                         city1.setId(city);
-                        ArrayList<Area> locations = entry.getValue();
-                        ArrayList<Area> locationsList = entry.getValue();
-                        for (Area location : locations) {
-                            location.setId(location.getName());
-                            locationsList.add(location);
-                        }
-                        city1.setAreas(locationsList);
+                        city1.setAreas(entry.getValue());
                         cities.add(city1);
                     }
-                    Log.e("ADADADADAD", "ADADADAD1:" + gson.toJson(cities));
                     CacheUtil.getInstance().setCities(gson.toJson(cities));
                 } catch (Exception e) {
                     e.printStackTrace();

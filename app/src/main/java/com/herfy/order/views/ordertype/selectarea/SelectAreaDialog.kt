@@ -93,7 +93,7 @@ class SelectAreaDialog : DialogFragment() {
                 ArrayList(), object : SelectAreaAdapter.SelectCityListener {
                     override fun onSelectedCity(city: Area, position: Int) {
                         selectedArea = city
-                        adapter.updateSelectedId(city.id)
+                        adapter.updateSelectedId(city.name)
                         checkButton()
                     }
                 }, ""

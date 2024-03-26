@@ -32,7 +32,7 @@ class SelectAreaAdapter(
         val item = cityList[position]
         holder.binding.apply {
 
-            if (selectedId != item.id) {
+            if (selectedId.toLowerCase() != item.name.toLowerCase()) {
                 chooseCurbside.setBackgroundResource(com.herfy.ordertype.R.drawable.bg_deliver)
                 selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_circle_unselected)
             } else {
@@ -51,7 +51,6 @@ class SelectAreaAdapter(
     }
 
     fun updateList(promoList: ArrayList<Area>) {
-        Log.e("ADADAAADAD","adad:" + promoList.size )
         this.cityList.clear()
         this.cityList.addAll(promoList)
         notifyDataSetChanged()

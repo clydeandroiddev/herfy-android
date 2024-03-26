@@ -388,10 +388,10 @@ public class CacheUtil {
         editor.apply();
     }
 
-    public ArrayList<City> getCities() {
+    public List<City> getCities() {
         String cities = cacheSharedPreferences.getString(CITIES, null);
         if (cities != null) {
-            return GsonHelper.gsonFinal().fromJson(cities, new TypeToken<ArrayList<City>>() {
+            return GsonHelper.gsonFinal().fromJson(cities, new TypeToken<List<City>>() {
             }.getType());
         }
         return new ArrayList<>();
