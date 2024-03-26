@@ -218,23 +218,19 @@
 
                             <include
                                 android:id="@+id/status_tracker_layout"
-                                layout="@layout/include_status_tracker_layout"
-                                tools:visibility="gone" />
+                                layout="@layout/include_status_tracker_layout" />
 
                             <include
                                 android:id="@+id/status_driver_details"
-                                layout="@layout/include_status_driver_details"
-                                tools:visibility="gone" />
+                                layout="@layout/include_status_driver_details" />
 
                             <include
                                 android:id="@+id/order_address_details"
-                                layout="@layout/include_order_address_details"
-                                tools:visibility="gone" />
+                                layout="@layout/include_order_address_details" />
 
                             <include
                                 android:id="@+id/order_help_details"
-                                layout="@layout/include_help_details"
-                                tools:visibility="gone" />
+                                layout="@layout/include_help_details" />
 
                             <View
                                 android:layout_width="match_parent"
@@ -268,6 +264,7 @@
                                     tools:text="Your Order (3)" />
 
                                 <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/orderListItem"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="4dp"
@@ -275,10 +272,101 @@
                                     android:paddingBottom="10dp"
                                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                     app:layout_constraintTop_toBottomOf="@id/yourOrderLabel"
-                                    tools:itemCount="3"
+                                    tools:itemCount="1"
                                     tools:listitem="@layout/item_order_tracker_new_list" />
 
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/totalLabel"
+                                    style="@style/Styles.Text.Caption.Regular"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="16dp"
+                                    android:layout_marginTop="10dp"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="#55667B"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/orderListItem"
+                                    tools:text="Total" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/totalPrice"
+                                    style="@style/Styles.Text.Footnote_Bold"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="16dp"
+                                    android:ellipsize="end"
+                                    android:gravity="start"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="#0C0C0C"
+                                    android:textSize="12sp"
+                                    app:layout_constraintBottom_toBottomOf="@id/totalLabel"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="@id/totalLabel"
+                                    tools:text="SAR 28.00" />
+
+                                <LinearLayout
+                                    android:id="@+id/paymentSummaryFrame"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal"
+                                    app:layout_constraintTop_toBottomOf="@id/totalLabel">
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        android:id="@+id/paymentSummaryLabel"
+                                        style="@style/Styles.Text.Caption.Regular"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="16dp"
+                                        android:ellipsize="end"
+                                        android:gravity="start"
+                                        android:includeFontPadding="false"
+                                        android:maxLines="1"
+                                        android:textColor="#0064AC"
+                                        android:textSize="11sp"
+                                        app:layout_constraintBottom_toBottomOf="@id/totalLabel"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintTop_toTopOf="@id/totalLabel"
+                                        tools:text="Payment Summary" />
+
+                                    <ImageView
+                                        android:id="@+id/imageOpenAndCloseSumamry"
+                                        android:layout_width="10dp"
+                                        android:layout_height="6dp"
+                                        android:layout_marginStart="4dp"
+                                        android:layout_marginTop="1dp"
+                                        android:src="@drawable/ic_open_summary" />
+
+                                </LinearLayout>
+
+                                <include
+                                    android:id="@+id/order_address_details"
+                                    layout="@layout/include_order_payment_summary"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    app:layout_constraintTop_toBottomOf="@id/paymentSummaryFrame" />
+
                             </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="10dp"
+                                android:background="#FFFFFF" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:scaleType="fitXY"
+                                android:src="@drawable/ic_tracker_union_down" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="20dp" />
 
                         </LinearLayout>
 
