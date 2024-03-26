@@ -47,6 +47,8 @@ public interface SplashContract {
 
         void setRecreate(boolean recreate);
 
+        void setAreas();
+
         void checkTranslations();
 
         void getTranslations(String url, ApiRequestListener listener);

@@ -205,6 +205,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                     (dialogInterface, i) -> checkIfRooted()
             );
         } else {
+            splashPresenter.setAreas();
             splashPresenter.sendLanguage();
             splashPresenter.getApplication();
         }

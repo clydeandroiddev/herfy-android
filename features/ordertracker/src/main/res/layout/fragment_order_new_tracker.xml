@@ -218,19 +218,23 @@
 
                             <include
                                 android:id="@+id/status_tracker_layout"
-                                layout="@layout/include_status_tracker_layout" />
+                                layout="@layout/include_status_tracker_layout"
+                                tools:visibility="gone" />
 
                             <include
                                 android:id="@+id/status_driver_details"
-                                layout="@layout/include_status_driver_details" />
+                                layout="@layout/include_status_driver_details"
+                                tools:visibility="gone" />
 
                             <include
                                 android:id="@+id/order_address_details"
-                                layout="@layout/include_order_address_details" />
+                                layout="@layout/include_order_address_details"
+                                tools:visibility="gone" />
 
                             <include
                                 android:id="@+id/order_help_details"
-                                layout="@layout/include_help_details" />
+                                layout="@layout/include_help_details"
+                                tools:visibility="gone" />
 
                             <View
                                 android:layout_width="match_parent"
@@ -246,6 +250,33 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="#FFFFFF">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/yourOrderLabel"
+                                    style="@style/Styles.Text.Caption"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="16dp"
+                                    android:layout_marginTop="10dp"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="#0C0C0C"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="Your Order (3)" />
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:nestedScrollingEnabled="false"
+                                    android:paddingBottom="10dp"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                    app:layout_constraintTop_toBottomOf="@id/yourOrderLabel"
+                                    tools:itemCount="3"
+                                    tools:listitem="@layout/item_order_tracker_new_list" />
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
 
