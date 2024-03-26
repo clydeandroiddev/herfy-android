@@ -1,13 +1,11 @@
-package com.herfy.util
+package com.herfy.utils.helper
 
-import com.herfy.utils.helper.AuthUtil
 import com.skylinedynamics.solosdk.api.models.objects.device.Device
 import com.skylinedynamics.solosdk.util.GsonHelper
 import org.json.JSONException
 import org.json.JSONObject
 
 object DeviceUtil {
-
     @JvmStatic
     fun save(response: String) {
         try {

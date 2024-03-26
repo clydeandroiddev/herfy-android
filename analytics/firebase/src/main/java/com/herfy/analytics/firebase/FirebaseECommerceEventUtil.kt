@@ -1,4 +1,4 @@
-package com.herfy.analytics
+package com.herfy.analytics.firebase;
 
 import android.annotation.SuppressLint
 import android.content.Context

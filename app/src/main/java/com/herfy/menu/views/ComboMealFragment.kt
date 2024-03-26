@@ -1,13 +1,21 @@
-package com.herfy.productpagedetails.ui.view
+package com.herfy.menu.views
 
-import android.graphics.Color
-import android.graphics.PorterDuff
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.View
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
+import com.herfy.analytics.firebase.FirebaseService
+import com.herfy.base.BaseActivity
 import com.herfy.model.ShowComboMealItemDetails
 import com.herfy.productpagedetails.R
 import com.herfy.productpagedetails.databinding.FragmentComboMealBinding
@@ -19,8 +27,10 @@ import com.herfy.productpagedetails.ui.viewmodel.ComboViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.deepCopy
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.invisible
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.toTranslate
@@ -46,11 +56,13 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     override val viewModel: ComboViewModel by viewModels()
     override val layout: Int = R.layout.fragment_combo_meal
 
+    private var inProgress = false
     private var mBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>? = null
     private var sizesAdapter: SizesItemAdapter? = null
     private var frequentBoughItemsAdapter: FrequentlyBoughtItemAdapter? = null
     private var comboMealModifierGroupAdapter: ComboMealModifierGroupAdapter? = null
     private var comboItemDetailsModifierGroupAdapter : ComboItemDetailsModifierGroupAdapter? = null
+    private var _totalPrice = 0.0
 
     private val isPromo : Boolean by lazy {
         args?.getBoolean(Values.KEY_IS_PROMO, false) ?: false
@@ -90,15 +102,17 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
 
             add.setOnClickListener {
                 if (CacheUtil.getInstance().application.attributes.menuOnly) {
-
-                   /* FirebaseService.newNotification(
-                        CacheUtil.getInstance().getTranslations(
-                            Text.MENU_ONLY_MESSAGE,
-                            "Sorry, ordering is not available at the moment"
-                        ), add.context
-                    )*/
+                    context?.let {
+                        FirebaseService.newNotification(
+                            CacheUtil.getInstance().getTranslations(
+                                Text.MENU_ONLY_MESSAGE,
+                                "Sorry, ordering is not available at the moment"
+                            ), it
+                        )
+                    }
                     return@setOnClickListener
                 }
+                showLoading()
                 if (!isPromo) {
                     if (cartMenuItemPos >= 0) {
                        this@ComboMealFragment.viewModel.updateCartItem(false, cartMenuItemPos)
@@ -108,20 +122,29 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 } else {
                     this@ComboMealFragment.viewModel.updateCartItem(true, cartMenuItemPos)
                 }
-                /*FirebaseECommerceEventUtil.addToCartEvent(
-                    this@ComboMealFragment,
-                    comboMealPresenter?.menuItem!!,
-                    comboMealPresenter?.menuCategory,
-                    _totalPrice,
-                    Integer.parseInt(binding?.quantity?.text.toString() ?: "")
-                );
-                FacebookAppEventUtil.addToCartEvent(
-                    this@ComboMealActivity,
-                    comboMealPresenter?.menuItem!!,
-                    _totalPrice
-                )*/
+                context?.let {
+                    FirebaseECommerceEventUtil.addToCartEvent(
+                        it,
+                        this@ComboMealFragment.viewModel.menuItem!!,
+                        this@ComboMealFragment.viewModel.menuCategory!!,
+                        _totalPrice,
+                        Integer.parseInt(binding.quantity.text.toString())
+                    );
+                    FacebookAppEventUtil.addToCartEvent(
+                        it,
+                        this@ComboMealFragment.viewModel.menuItem!!,
+                        _totalPrice
+                    )
+                }
             }
 
+            if(isPromo){
+                minus.invisible()
+                plus.invisible()
+            }else {
+                minus.visible()
+                plus.visible()
+            }
         }
         if(!isPromo){
             if(menuItemId.isNotEmpty()){
@@ -289,29 +312,16 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 binding.minus.isClickable = quantityValue != 1
 
 
-                if (quantityValue != 1) {
-                    context?.let {
-                        binding.minus.setColorFilter(
-                            it.resources.getColor(R.color.background_color_blue, null),
-                            PorterDuff.Mode.SRC_IN
-                        )
-                    }
-
-                } else {
-                    binding.minus.setColorFilter(
-                        Color.parseColor("#BEBEBE"),
-                        PorterDuff.Mode.SRC_IN
-                    )
-                }
                 binding.quantity.text = StringUtil.localize(quantityValue.toString())
             }
             showMenuItemTotal.observe(this@ComboMealFragment){totalPrice ->
                 if (totalPrice <= 0.0 && isPromo) {
-                    binding.total.text = CacheUtil.getInstance().getTranslations(
+                    binding.tvTotal.text = CacheUtil.getInstance().getTranslations(
                         Text.FREE
                     )
                 } else {
-                    binding.total.text = StringUtil.getFormattedPrice(totalPrice)
+                    _totalPrice = totalPrice
+                    binding.tvTotal.text = StringUtil.getFormattedPrice(totalPrice)
                 }
             }
             showComboSizes.observe(this@ComboMealFragment){
@@ -369,6 +379,64 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             showComponentModifierItemTotal.observe(this@ComboMealFragment){
                 binding.layoutBottomSheetComboDetail.tvTotalValue.text = StringUtil.getFormattedPrice(it)
             }
+            showToastMessage.observe(this@ComboMealFragment){
+                showToastMessage(it)
+            }
+            addCartItem.observe(this@ComboMealFragment){
+                activity?.let {
+                    it.runOnUiThread {
+                        val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vibrator.vibrate(
+                                VibrationEffect.createOneShot(
+                                    500,
+                                    VibrationEffect.DEFAULT_AMPLITUDE
+                                )
+                            )
+                        } else {
+                            vibrator.vibrate(100)
+                        }
+                        dismissLoading()
+                        showToastMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART))
+                        navigateUp()
+                    }
+                }
+
+            }
+            updateCartItem.observe(this@ComboMealFragment){
+                var message = CacheUtil.getInstance().getTranslations(Text.ITEM_UPDATED, "Item updated")
+                if (isPromo && !isEdit) {
+                    message = CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart")
+                }
+                activity?.let {
+                    navigateUp()
+                    showToastMessage(message)
+                    dismissLoading()
+                }
+            }
+            showCartExpiry.observe(this@ComboMealFragment){
+                activity?.cast<BaseActivity> {
+                    it.runOnUiThread {
+                        it.setCartExpiry()
+                    }
+                }
+            }
+
+            logFirebaseEvent.observe(this@ComboMealFragment){value ->
+                context?.let {ctx ->
+                    if (Values.sDeepLinkUtm != null) {
+                        val firebaseAnalytics = FirebaseAnalytics.getInstance(ctx)
+                        firebaseAnalytics.logEvent(value, Values.sDeepLinkUtm)
+                    }
+                }
+
+            }
+        }
+    }
+
+    private fun showToastMessage(message : String){
+        context?.let {
+            Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -376,6 +444,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
         viewModel.getFrequentBoughtItems()
         context?.let { ctx ->
             binding.apply {
+                txtFrequntlyBought.gone()
                 frequentBoughItemsAdapter = FrequentlyBoughtItemAdapter(listener = this@ComboMealFragment.viewModel)
                 frequentlyBoughRecycleview.apply {
                     layoutManager = LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
@@ -432,6 +501,23 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 }
             }
             expandComboItemDetails()
+        }
+    }
+
+
+
+
+    private fun showLoading() {
+        binding.apply {
+            inProgress = true
+            isVisible = true
+        }
+    }
+
+    private fun dismissLoading() {
+        binding.apply {
+            inProgress = false
+            isVisible = false
         }
     }
 }

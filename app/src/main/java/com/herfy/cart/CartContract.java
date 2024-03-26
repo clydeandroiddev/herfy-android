@@ -50,7 +50,7 @@ public interface CartContract {
 
         void deleteCartItem(int position);
 
-        void editCartItem(int position,MenuItem menuItem);
+        void editCartItem(int position, MenuItem menuItem);
 
         void showCoupon(String couponCode, String description);
 
@@ -151,7 +151,7 @@ public interface CartContract {
 
         void deleteCartItem(boolean delete, int position);
 
-        void editCartItem(int position,MenuItem menuItem);
+        void editCartItem(int position, MenuItem menuItem);
 
         void getCoupon(String couponCode);
 

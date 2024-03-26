@@ -443,7 +443,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cartPresenter.editCartItem(getAdapterPosition(),menuItem);
+                cartPresenter.editCartItem(getAdapterPosition(), menuItem);
             }
         });
     }

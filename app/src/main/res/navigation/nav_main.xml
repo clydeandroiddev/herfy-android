@@ -314,7 +314,7 @@
 
     <fragment
         android:id="@+id/nav_combo"
-        android:name="com.herfy.productpagedetails.ui.view.ComboMealFragment"
+        android:name="com.herfy.menu.views.ComboMealFragment"
         android:label="customize_caps"
         tools:layout="@layout/fragment_combo_meal">
 
@@ -386,6 +386,11 @@
         <action
             android:id="@+id/action_cart_to_menu_item"
             app:destination="@id/nav_menu_item"
+            app:popUpTo="@+id/nav_cart" />
+
+        <action
+            android:id="@+id/action_cart_to_combo_meal"
+            app:destination="@id/nav_combo"
             app:popUpTo="@+id/nav_cart" />
 
         <action

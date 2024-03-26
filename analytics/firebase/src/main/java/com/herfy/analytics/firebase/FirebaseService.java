@@ -1,4 +1,4 @@
-package com.herfy.firebase;
+package com.herfy.analytics.firebase;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -20,18 +20,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.herfy.BuildConfig;
-import com.herfy.R;
-import com.herfy.utils.helper.AuthUtil;
-import com.herfy.utils.helper.CacheUtil;
+
+import com.herfy.utils.constants.Navigation;
+import com.herfy.utils.helper.*;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.UtilitiesApiCall;
-import com.herfy.splash.SplashActivity;
-import com.herfy.util.AppLogger;
-import com.herfy.util.DeepLinkUtil;
-import com.herfy.util.DeviceUtil;
 import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.util.ViewUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -181,7 +175,9 @@ public class FirebaseService extends FirebaseMessagingService {
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
 
-            Intent mainIntent = new Intent(this, SplashActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            Intent mainIntent = new Intent();
+                    mainIntent.setClassName(this, Navigation.SPLASH_ACTIVITY);
+                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             String deepLink = remoteMessage.getData().get("deep-link");
             if (deepLink != null && !deepLink.isEmpty()) {
                 String[] values = deepLink.split("/");

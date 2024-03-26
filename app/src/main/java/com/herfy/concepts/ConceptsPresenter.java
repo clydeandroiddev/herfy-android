@@ -16,7 +16,7 @@ import com.skylinedynamics.solosdk.util.BooleanTypeAdapter;
 import com.herfy.util.AppLogger;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
-import com.herfy.util.DeviceUtil;
+import com.herfy.utils.helper.DeviceUtil;
 import com.herfy.utils.helper.LocaleUtil;
 
 import org.json.JSONArray;

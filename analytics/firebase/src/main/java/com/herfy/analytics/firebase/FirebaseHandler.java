@@ -1,4 +1,4 @@
-package com.herfy.firebase;
+package com.herfy.analytics.firebase;
 
 import com.google.gson.JsonObject;
 

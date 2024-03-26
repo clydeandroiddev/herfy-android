@@ -152,3 +152,12 @@ fun TextView.setRewardTierDescription(percentVal : String){
     text = CacheUtil.getInstance().getTranslations(Text.PERCENT_OF_YOUR_ORDER, "(x) of your order value converts to points.").replace("(x)", percentVal)
 }
 
+@BindingAdapter("app:isVisible")
+fun View.setVisible(value : Boolean){
+    if(value){
+        visible()
+    }else {
+        gone()
+    }
+}
+

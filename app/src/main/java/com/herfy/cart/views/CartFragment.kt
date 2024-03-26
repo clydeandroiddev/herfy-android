@@ -25,8 +25,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
-import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
@@ -1027,19 +1027,33 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun editCartItem(
-        position: Int,
-        menuItem: MenuItem
+        position: Int, menuItem : MenuItem
     ) {
         runOnMain {
             dismissDialogFragments()
-            NavigationUtils.navigateSafe(
-                findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                    menuCategoryId = "",
-                    menuItemId = menuItem.id,
-                    cartMenuItemPosition = position,
-                    isPromo = false
+            if(menuItem.isCombo){
+                val bundle = Bundle()
+                bundle.putBoolean(Values.KEY_IS_PROMO, false)
+                bundle.putString(Values.KEY_MENU_ITEM_ID, menuItem.id)
+                bundle.putBoolean(Values.KEY_IS_UPSELL, menuItem.attributes.isUpsell)
+                bundle.putBoolean(Values.KEY_IS_EDIT, true)
+                bundle.putInt(Values.KEY_CART_MENU_ITEM_POSITION, position)
+                NavigationUtils.navigateSafe(
+                    findNavController(),
+                    R.id.action_cart_to_combo_meal,
+                    bundle
                 )
-            )
+            }else {
+                NavigationUtils.navigateSafe(
+                    findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                        menuCategoryId = "",
+                        menuItemId = menuItem.id,
+                        cartMenuItemPosition = position,
+                        isPromo = false
+                    )
+                )
+            }
+
         }
 
     }

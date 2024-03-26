@@ -1137,11 +1137,10 @@ class CartPresenter @Inject constructor(
     }
 
     override fun editCartItem(
-        position: Int,
-        menuItem: MenuItem
+        position: Int, menuItem: MenuItem
     ) {
         trackEvent(MixpanelUtil.EVENT_EDIT_ITEM_FROM_CART)
-        cartView.editCartItem(position,menuItem)
+        cartView.editCartItem(position, menuItem)
     }
 
     override fun getCoupon(couponCode: String) {

@@ -17,6 +17,9 @@
         <variable
             name="viewModel"
             type="com.herfy.productpagedetails.ui.viewmodel.ComboViewModel" />
+        <variable
+            name="isVisible"
+            type="Boolean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -113,13 +116,13 @@
                         android:textStyle="bold"
                         android:text="@{menuItem.getName(language)}"
                         android:layout_marginEnd="@dimen/margin_small"
-                        app:layout_constraintEnd_toStartOf="@id/total"
+                        app:layout_constraintEnd_toStartOf="@id/tv_total"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="Grill Chicken" />
 
                     <TextView
-                        android:id="@+id/total"
+                        android:id="@+id/tv_total"
                         style="@style/Styles.Text.Headline1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -515,8 +518,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtQuantity"
-                        app:strokeWidth="2dp"
-                        android:onClick="@{() -> viewModel.addToCart()}"/>
+                        app:strokeWidth="2dp"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -547,18 +549,45 @@
 
         </FrameLayout>
 
+        <FrameLayout
+            android:id="@+id/cl_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"
+            app:isVisible="@{isVisible}"
+           >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:background="#52000000"
+                android:focusable="true" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:cardCornerRadius="20dp"
+                app:cardUseCompatPadding="true"
+                app:cardBackgroundColor="@color/white"
+                app:cardElevation="4dp"
+                android:layout_gravity="center">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </FrameLayout>
+
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-
-    <!--<androidx.constraintlayout.widget.ConstraintLayout
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-       >
-
-
-
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>-->
 </layout>

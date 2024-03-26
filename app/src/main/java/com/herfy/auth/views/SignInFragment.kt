@@ -21,19 +21,23 @@ import androidx.core.view.isVisible
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.OnPositionChangedListener
 import com.daimajia.androidanimations.library.Techniques
 import com.herfy.R
-import com.herfy.analytics.FirebaseECommerceEventUtil
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.auth.AuthContract
 import com.herfy.auth.AuthPresenter
-import com.herfy.base.*
+import com.herfy.base.BaseDialogListener
+import com.herfy.base.BaseFragment
+import com.herfy.base.BaseLogListener
+import com.herfy.base.BaseNavigationListener
+import com.herfy.base.BaseViewManipulationListener
+import com.herfy.databinding.FragmentSignInBinding
+import com.herfy.util.StringUtil
 import com.herfy.utils.constants.AUTH_ENTER_MOBILE_OR_EMAIL_ADDRESS
 import com.herfy.utils.constants.Text
-import com.herfy.databinding.FragmentSignInBinding
-import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries
-import com.skylinedynamics.solosdk.api.models.objects.LoginOption
-import com.herfy.util.*
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries
+import com.skylinedynamics.solosdk.api.models.objects.LoginOption
 
 class SignInFragment : BaseFragment(), AuthContract.View {
 

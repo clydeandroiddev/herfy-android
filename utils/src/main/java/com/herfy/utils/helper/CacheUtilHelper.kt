@@ -166,7 +166,7 @@ class CacheUtilHelper(val context : Context) {
             }
             setCartQuantity(pair.second)
             val updatedCartMenuItems = Gson().toJson(pair.second)
-            pref()[CART_MENU_ITEMS, updatedCartMenuItems]
+            pref()[CART_MENU_ITEMS] = updatedCartMenuItems
             result.invoke()
         }
     }
@@ -180,7 +180,7 @@ class CacheUtilHelper(val context : Context) {
             }
             setCartQuantity(pair.second)
             val updatedCartMenuItems = Gson().toJson(pair.second)
-            pref()[CART_MENU_ITEMS, updatedCartMenuItems]
+            pref()[CART_MENU_ITEMS] = updatedCartMenuItems
             result.invoke()
         }
 

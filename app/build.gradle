@@ -256,6 +256,8 @@ dependencies {
     implementation project(path: ':analytics:kochava')
     implementation project(path: ':analytics:facebook')
     implementation project(path: ':data:repository')
+    implementation project(path: ':analytics:firebase')
+
     implementation(project(":features:faq"))
     implementation(project(":features:updatephonenumber"))
     implementation(project(":features:notification"))

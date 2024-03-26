@@ -41,6 +41,8 @@ interface MenuRepository {
         result: (List<ModifierGroupDb>) -> Unit
     )
     fun getModifierItemBy(applicationId: String, toTypedArray: Array<String>, result: (List<ModifierItemDb>) -> Unit)
+
+    suspend fun getFrequentlyBoughtItems()
 }
 
 class MenuRepositoryImpl @Inject constructor(
@@ -425,6 +427,11 @@ class MenuRepositoryImpl @Inject constructor(
                 applicationId,
                 ids
             ))
+    }
+
+    override suspend fun getFrequentlyBoughtItems() {
+
+        TODO("Not yet implemented")
     }
 
 

@@ -45,7 +45,7 @@ import com.herfy.country.CountriesActivity;
 import com.herfy.language.LanguageNewActivity;
 import com.herfy.main.MainActivity;
 import com.herfy.utils.helper.CacheHelper;
-import com.herfy.util.DeepLinkUtil;
+import com.herfy.utils.helper.DeepLinkUtil;
 import com.herfy.util.JsonUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.Text;

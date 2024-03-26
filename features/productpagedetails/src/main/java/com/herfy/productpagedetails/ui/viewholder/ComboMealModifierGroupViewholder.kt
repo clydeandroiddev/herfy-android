@@ -28,24 +28,17 @@ class ComboMealModifierGroupViewholder(
         data: MenuItemComponents,
         menuItemComponentPos: Int,
         comboMealModifierItemAdapters: HashMap<Int, ComboMealModifierItemAdapter>,
-        checkBoxIndicator: Boolean,
+        checkBoxIndicator: HashMap<Int, Boolean>,
         ) {
         binding.apply {
             val context = itemView.context
 
             name.text = data.name.getValue(LocaleUtil.getInstance().language)
             minimum.gone()
-            if(checkBoxIndicator){
-                minimum.gone()
-                checkBox.visible()
-            }else {
-                checkBox.gone()
-                minimum.visible()
-                minimum.text = CacheUtil.getInstance().getTranslations(Text.REQUIRED, "Required")
-            }
+            minimum.text = CacheUtil.getInstance().getTranslations(Text.REQUIRED, "Required")
             select.visibility = View.VISIBLE
             select.text = CacheUtil.getInstance().getTranslations(Text.SELECT_X, "Select (x)")
-                .replace("(x)", "one")
+                    .replace("(x)", "one")
             val comboMealModifierItemAdapter =
                 ComboMealModifierItemAdapter(menuItemComponentPos = menuItemComponentPos)
             comboMealModifierItemAdapter.setListener(listener)
@@ -53,8 +46,18 @@ class ComboMealModifierGroupViewholder(
                 layoutManager = LinearLayoutManager(context)
                 adapter = comboMealModifierItemAdapter
             }
-            viewModel.getComponentModifierItemPer(menuItemComponentPos) {
-                comboMealModifierItemAdapter.updateList(it.items)
+            viewModel.getComponentModifierItemPer(menuItemComponentPos) { menuItemComponent, checkBoxIndicatorValue ->
+                checkBoxIndicator[menuItemComponentPos] = checkBoxIndicatorValue
+                comboMealModifierItemAdapter.updateList(menuItemComponent.items)
+            }
+
+            if(checkBoxIndicator[menuItemComponentPos] == true){
+                btnMinimum.gone()
+                checkBox.visible()
+            }else {
+                checkBox.gone()
+                btnMinimum.visible()
+                minimum.visible()
             }
             comboMealModifierItemAdapters[menuItemComponentPos] = comboMealModifierItemAdapter
         }

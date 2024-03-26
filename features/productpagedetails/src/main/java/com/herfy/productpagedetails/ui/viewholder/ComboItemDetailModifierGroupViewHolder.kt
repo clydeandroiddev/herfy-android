@@ -13,6 +13,7 @@ import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.StringUtil
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import java.util.Locale
 
@@ -92,6 +93,13 @@ class ComboItemDetailModifierGroupViewHolder(val binding : ItemModifierGroupNewB
                 requestOptions = RequestOptions.centerInsideTransform(),
                 isSkipMemoryCache = false
             )
+            select.visible()
+            if(data.attributes.maximum > 1){
+                select.text = CacheUtil.getInstance().getTranslations(Text.SELECT_UP_TO_X, "Select up to (x)").replace("(x)", StringUtil.localize(data.attributes.maximum.toString()))
+            }else {
+                select.text = CacheUtil.getInstance().getTranslations(Text.SELECT_X, "Select (x)").replace("(x)", StringUtil.localize(data.attributes.maximum.toString()) )
+            }
+
             //btnMinimum.visibility = if (showShowModifierCheckBox && data.attributes.minimum > 1) View.GONE else View.VISIBLE
             if(showShowModifierCheckBox) {
                 checkBox.visible()

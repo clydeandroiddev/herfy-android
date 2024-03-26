@@ -22,7 +22,7 @@ import com.herfy.common.deviceHeight
 import com.herfy.common.formatOrderTime
 import com.herfy.common.orderTypeString
 import com.herfy.ext.cast
-import com.herfy.firebase.FirebaseService
+import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
 import com.herfy.history.databinding.FragmentNewOrderHistoryBinding

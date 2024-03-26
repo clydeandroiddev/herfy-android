@@ -35,7 +35,7 @@ class ComboMealModifierGroupAdapter(
     override fun onBindViewHolder(holder: ComboMealModifierGroupViewholder, position: Int) {
         holder.apply {
             val data = items[position]
-            setComboModifierGroup(data, position,comboMealModifierItemAdapters,showComboMealModifierGroupCheckIndicator[position]?:false)
+            setComboModifierGroup(data, position,comboMealModifierItemAdapters,showComboMealModifierGroupCheckIndicator)
         }
     }
 

@@ -55,9 +55,6 @@ import com.google.gson.JsonObject
 import com.google.maps.android.SphericalUtil
 import com.herfy.BuildConfig
 import com.herfy.R
-import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
-import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.applyPromotionEvent
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.checkout.DialogAlrajiRequestOtpBottomSheet
@@ -65,7 +62,8 @@ import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.OneDayDecorator
-import com.herfy.firebase.FirebaseService
+import com.herfy.analytics.firebase.*
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
 import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
 import com.herfy.main.MainActivity
 import com.herfy.main.MainActivity.Companion.currentMainActivity
@@ -1475,7 +1473,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         promotionName: String,
         orderedItems: List<MenuItem>
     ) {
-        applyPromotionEvent(this, promotionId, promotionName, paymentPresenter!!.menuItemsList)
+        FirebaseECommerceEventUtil.applyPromotionEvent(this, promotionId, promotionName, paymentPresenter!!.menuItemsList)
     }
 
     override fun updateMenuItems() {

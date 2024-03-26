@@ -3,6 +3,7 @@ package com.herfy.productpagedetails.ui.viewmodel
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.herfy.analytics.firebase.FirebaseEventUtilHelper
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.ShowComboMealItemDetails
 import com.herfy.productpagedetails.ui.adapter.FrequentlyBoughtItemAdapter
@@ -45,17 +46,17 @@ class ComboViewModel @Inject constructor(
     }
 
     //Objects
-    private var menuItem: MenuItem? = null
+     var menuItem: MenuItem? = null
         get() = field
         set(value) {
             field = value
         }
-    private var menuCategory: MenuCategory? = null
+     var menuCategory: MenuCategory? = null
         get() = field
         set(value) {
             field = value
         }
-    internal var isFromCartEdit: Boolean = false
+     var isFromCartEdit: Boolean = false
         get() = field
         set(value) {
             field = value
@@ -70,8 +71,8 @@ class ComboViewModel @Inject constructor(
         set(value) {
             field = value
         }
-    internal var currentSelectedModifierItem: ComponentModifierItem? = null
-    internal var cartMenuItemsTotalPrice: Double = 0.0
+    var currentSelectedModifierItem: ComponentModifierItem? = null
+    var cartMenuItemsTotalPrice: Double = 0.0
     private var _calorieCount = 0
 
     private var excludedMenu: List<MenuCategory> = arrayListOf()
@@ -120,6 +121,8 @@ class ComboViewModel @Inject constructor(
     val addCartItem : LiveData<MenuItem> = _addCartItem
     private val _showCartExpiry = MutableLiveData<Boolean>()
     val showCartExpiry : LiveData<Boolean> = _showCartExpiry
+    private val _logFirebaseEvent = MutableLiveData<String>()
+    val logFirebaseEvent : LiveData<String> = _logFirebaseEvent
 
     /**Function for retrieving data of menu item from db**/
     fun getMenuItemFromDbBy(addToBag: Boolean, id: String, isUpsell: Boolean) {
@@ -528,7 +531,7 @@ class ComboViewModel @Inject constructor(
     /**Function for fetching the componentModifierItem per menuItemComponentIndex**/
     fun getComponentModifierItemPer(
         menuItemComponentIndex: Int,
-        showMenuItemComponent: (MenuItemComponents) -> Unit
+        showMenuItemComponent: (MenuItemComponents, Boolean) -> Unit
     ) {
         /** Created a map of menuItem combo list where the menuItemComponent
          * data will be stored and can be retrieved
@@ -537,7 +540,8 @@ class ComboViewModel @Inject constructor(
             menuItemComboList[comboIndex]?.containsKey(menuItemComponentIndex) ?: false
         if (isContainMenuItemComponentKey) {
             menuItemComboList[comboIndex]?.get(menuItemComponentIndex)?.let {
-                showMenuItemComponent(it)
+                val showCheckBoxIndicator = it.items.any { it.selected }
+                showMenuItemComponent(it,showCheckBoxIndicator)
             }
         } else {
             menuItem?.combo?.get(comboIndex)?.components?.get(menuItemComponentIndex)?.let {
@@ -551,7 +555,7 @@ class ComboViewModel @Inject constructor(
     private fun setupComponentPerPosition(
         componentPosition: Int,
         menuItemComponents: MenuItemComponents,
-        showMenuItemComponent: (MenuItemComponents) -> Unit
+        showMenuItemComponent: (MenuItemComponents, Boolean) -> Unit
     ) {
         invoke {
             if (menuItemComponents.items.isNotEmpty()) {
@@ -704,7 +708,8 @@ class ComboViewModel @Inject constructor(
                     }
                     menuItemComponentList[componentPosition] = menuItemComponents
                     menuItemComboList[comboIndex] = menuItemComponentList
-                    showMenuItemComponent(menuItemComponents)
+                    val showCheckBoxIndicator = menuItemComponents.items.any { it.selected }
+                    showMenuItemComponent(menuItemComponents,showCheckBoxIndicator)
                 } catch (e: Exception) {
                     runOnMain {
                         _showError.value =
@@ -765,13 +770,13 @@ class ComboViewModel @Inject constructor(
         }
     }
 
-    internal fun setMenuCategory(menuCategoryId: String?) {
+     fun setMenuCategory(menuCategoryId: String?) {
         val menuCategory = MenuCategory()
         menuCategory.id = menuCategoryId
         this.menuCategory = menuCategory
     }
 
-    internal fun setMenuCategory(menuItem: MenuItem) {
+     fun setMenuCategory(menuItem: MenuItem) {
         var found = false
         for (menuCategory in excludedMenuCategories(menuCategories)) {
             if (!found) {
@@ -841,14 +846,6 @@ class ComboViewModel @Inject constructor(
             }
             _showMenuItemQuantity.value = it.attributes.quantity
             getMenuItemTotalPrice(it, -1)
-        }
-    }
-
-    /**Function adding the menu item in to cart and caching it
-     * **/
-    fun addToCart() {
-        notes.get()?.let {
-
         }
     }
 
@@ -1145,6 +1142,12 @@ class ComboViewModel @Inject constructor(
         return map
     }
 
+    fun showComboModifierGroupCheckBoxPerComponent(index : Int, menuItemComponent: MenuItemComponents): HashMap<Int, Boolean> {
+        val map = hashMapOf<Int, Boolean>()
+        map[index] = menuItemComponent.items.any { it.selected }
+        return map
+    }
+
     fun getComponentModifierItemTotalPrice(updateModifierGroupList: List<ModifierGroup>) {
         var totalPrice = 0.0
         for (modifierGroup in updateModifierGroupList) {
@@ -1365,7 +1368,7 @@ class ComboViewModel @Inject constructor(
                 invalid = checkComboModifiers()
             }
             if (!invalid) {
-                menuItem!!.attributes.notes = ""
+                menuItem!!.attributes.notes = notes.get()
                 addCartItem()
             }
         }
@@ -1385,7 +1388,7 @@ class ComboViewModel @Inject constructor(
                 .replace("(x)", store.attributes.name))
 
         } else {
-            //comboMealView.logFirebaseEvent("add_to_cart_event")
+            _logFirebaseEvent.value = "add_to_cart_event"
             val cartCount = cacheUtilHelper.getCartQuantity()
             menuItem!!.isSandwichOnly = false
             menuItem?.let {
@@ -1470,7 +1473,7 @@ class ComboViewModel @Inject constructor(
                 }
             }
             totalPrice += totalPrice * menuItem!!.attributes.quantity.toDouble()
-            //FirebaseEventUtilHelper.logEventAttributesMetric("AddToCart", eventAttributes, "Price", totalPrice)
+            FirebaseEventUtilHelper.logEventAttributesMetric("AddToCart", eventAttributes, "Price", totalPrice)
         }
     }
 

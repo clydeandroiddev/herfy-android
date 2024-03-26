@@ -58,6 +58,7 @@ class ComboMealModifierItemViewHolder(val binding: ItemComboComponentItemBinding
                     flexLayoutManager.alignItems = AlignItems.FLEX_START
                     rvSelectedModifiers.apply {
                         visible()
+                        layoutManager = flexLayoutManager
                         adapter = selectedModifiersPerItemAdapter
                         setHasFixedSize(true)
                         isNestedScrollingEnabled = false
