@@ -332,14 +332,13 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         dismissDialogs()
         val isFromFavorites = args.isFromFavorites
         if (isFromFavorites && !isUserClickBack) {
-            val currentFavourite=  CacheUtil.getInstance()
-                .retrieveFavoriteToAddToCart()
+            val currentFavourite = CacheUtil.getInstance().retrieveFavoriteToAddToCart()
             if (currentFavourite != null) {
                 orderPresenter.addToCartFavorite(
                     currentFavourite
                 )
             }
-        }else if (isFromFavorites) {
+        } else if (isFromFavorites) {
             findNavController().popBackStack()
         } else if (proceed && args.fromHome) {
             findNavController().navigateToDeepLink("nav_menu")
@@ -423,7 +422,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     override fun setupViews() {
         binding.back.setOnClickListener {
-            navigateUp(false,true)
+            navigateUp(false, true)
         }
 
         binding.deliveryLayout.userCurrentLocation.setOnClickListener {
@@ -636,8 +635,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     private fun navigateToFavourites() {
-        NavigationUtils
-            .navigateSafe(findNavController(), OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true))
+        NavigationUtils.navigateSafe(
+                findNavController(),
+                OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true)
+            )
     }
 
     private fun initialTypeState() {
@@ -1558,7 +1559,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
+            currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN) {

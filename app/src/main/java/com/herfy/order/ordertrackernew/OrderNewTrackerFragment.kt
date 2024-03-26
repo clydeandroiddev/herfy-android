@@ -63,7 +63,13 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
 
     private var locationMarker: Marker? = null
 
+    private var driverMarker: Marker? = null
+
     private val args: OrderNewTrackerFragmentArgs by navArgs()
+
+    private var userLatLng: LatLng? = null
+
+    private var userStore: Store? = null
 
     private val gpsLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
@@ -280,6 +286,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
         order?.let { item ->
             binding.apply {
                 blocker.gone()
+
             }
         }
     }
