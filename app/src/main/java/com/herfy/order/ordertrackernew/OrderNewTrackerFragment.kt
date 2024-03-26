@@ -17,6 +17,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
@@ -54,11 +56,15 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
 import io.shipbook.shipbooksdk.Log
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 
 @AndroidEntryPoint
 class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
@@ -261,7 +267,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
             googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
             if (userLatLng == null) {
                 userStore?.let {
-                    showStore(userStore)
+                    showStoreMarker(userStore)
                 }
             }
             userLatLng = latLng
@@ -297,7 +303,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
             })
     }
 
-    private fun showStore(store: Store?) {
+    private fun showStoreMarker(store: Store?) {
         store?.let { store ->
             try {
                 userStore = store
@@ -309,6 +315,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                 var distanceValue = ""
                 try {
                     val currentLocation = userLatLng
+                    Log.e("ADADADADAD", "ADADADAD1:" + currentLocation)
+
                     val currentDistance = currentLocation?.latitude?.let {
                         currentLocation.longitude.let { it1 ->
                             store.attributes?.lat?.let { it2 ->
@@ -320,7 +328,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                             }
                         }
                     }
-                    Log.e("ADADAADDAD", "ADADADADCurrentDistance:" + currentDistance)
+
+                    Log.e("ADADADADAD", "ADADADAD2:" + currentDistance)
+
                     distanceValue = StringUtil.getDistance(
                         currentDistance ?: 0.0
                     )
@@ -330,7 +340,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                if (distanceValue.isEmpty()) {
+                if (distanceValue.isNullOrEmpty()) {
                     textView.isVisible = false
                 }
                 view.setOnClickListener {
@@ -393,12 +403,66 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
         }
     }
 
+    private fun showStoreDeliveryTime(store: Store?, order: OrderDetails?) {
+        if (order != null) {
+            store?.let {
+                val orderType = OrderType.fromString(order.orderType)
+                if (orderType == OrderType.DELIVERY) {
+                    binding.estimatedLabel.text = CacheUtil.getInstance()
+                        .getTranslations(Text.ESTIMATED_DELIVERY_TIME, "Estimated delivery time")
+                    binding.timeDuration.text = showTime(
+                        order.createdAt.orEmpty(), store.attributes.promisedTimeDelta.delivery
+                    )
+                } else if (orderType == OrderType.CURBSIDE) {
+                    binding.estimatedLabel.text = CacheUtil.getInstance()
+                        .getTranslations(Text.ESTIMATE_PICKUP_TIME, "Estimate pickup time")
+                    binding.timeDuration.text = showTime(
+                        order.createdAt.orEmpty(), store.attributes.promisedTimeDelta.pickup
+                    )
+                } else {
+                    binding.estimatedLabel.text =
+                        CacheUtil.getInstance().getTranslations(Text.ESTIMATE_TIME, "Estimate time")
+                    binding.timeDuration.text = showTime(
+                        order.createdAt.orEmpty(), store.attributes.promisedTimeDelta.pickup
+                    )
+                }
+            }
+        }
+    }
+
+    private fun showTime(timestamp: String, timeAdded: Int): String {
+        try {
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+            val timeValue = simpleDateFormat.parse(timestamp)
+            val localTimeFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+            localTimeFormat.timeZone = TimeZone.getDefault()
+            val actualDate = timeValue?.let { localTimeFormat.format(it) }.orEmpty()
+            val calendar = Calendar.getInstance().apply {
+                time =
+                    localTimeFormat.parse(actualDate)!! // Parse actualDate back into a Date object
+                add(Calendar.MINUTE, timeAdded)
+            }
+            val startTimeFormat = SimpleDateFormat("h:mm", Locale.getDefault())
+            val endTimeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+            val startTime = startTimeFormat.format(calendar.time)
+            val endTime = endTimeFormat.format(calendar.apply { add(Calendar.MINUTE, 10) }.time)
+            return "$startTime - $endTime"
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return ""
+        }
+    }
+
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {
         dismissDialogs()
         order?.let { item ->
             binding.apply {
                 blocker.gone()
-                showStore(store)
+                Glide.with(requireActivity()).asGif().load(R.drawable.cooking)
+                    .transition(DrawableTransitionOptions.withCrossFade()).into(cookingImage)
+                showStoreMarker(store)
+                showStoreDeliveryTime(store, order)
             }
         }
     }

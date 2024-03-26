@@ -1,7 +1,5 @@
 package com.herfy.utils.constants;
 
-import org.jetbrains.annotations.NotNull;
-
 public class Text {
 
     public static final String CART = "cart";
@@ -1098,4 +1096,7 @@ public class Text {
     public static final String PLEASE_SELECT_PAYMENT_TYPE = "please_select_payment_type";
     public static final String ORDER_TRACKER = "order_tracker";
 
+    public static final String ESTIMATED_DELIVERY_TIME = "estimated_delivery_time";
+    public static final String ESTIMATE_TIME = "estimate_time";
+    public static final String ESTIMATE_PICKUP_TIME = "estimate_pickup_time";
 }
