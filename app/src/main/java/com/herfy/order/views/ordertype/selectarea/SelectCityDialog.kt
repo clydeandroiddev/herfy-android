@@ -3,12 +3,14 @@ package com.herfy.order.views.ordertype.selectarea
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
+import com.google.gson.Gson
 import com.herfy.order.views.ordertype.selectarea.adapter.SelectCityAdapter
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.SelectCityDialogBinding
@@ -67,8 +69,9 @@ class SelectCityDialog : DialogFragment() {
     }
 
     private fun setupList() {
-        val list = CacheUtil.getInstance().areas
-        adapter.updateList(list.cities)
+        val list = CacheUtil.getInstance().cities
+        Log.e("ADADADADAD", "ADADADAD:" + Gson().toJson(list))
+        adapter.updateList(list)
     }
 
     private fun checkButton() {

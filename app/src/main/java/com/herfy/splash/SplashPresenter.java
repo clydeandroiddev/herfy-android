@@ -141,7 +141,8 @@ public class SplashPresenter implements SplashContract.Presenter {
                         city1.setAreas(locationsList);
                         cities.add(city1);
                     }
-                    Log.e("ADADADDADADAD", "ADADADAD:" + gson.toJson(cities));
+                    Log.e("ADADADADAD", "ADADADAD1:" + gson.toJson(cities));
+                    CacheUtil.getInstance().setCities(gson.toJson(cities));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
