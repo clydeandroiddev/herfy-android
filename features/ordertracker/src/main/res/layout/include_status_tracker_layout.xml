@@ -5,16 +5,16 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:paddingBottom="30dp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="30dp">
 
         <LinearLayout
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="94dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:weightSum="4">
+            android:weightSum="4"
+            app:layout_constraintTop_toTopOf="parent">
 
             <View
                 android:layout_width="0dp"
@@ -30,6 +30,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1.02"
+                android:background="@drawable/background_cards"
                 android:padding="10dp"
                 tools:background="@drawable/background_past_status">
 
@@ -95,6 +96,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1.20"
+                android:background="@drawable/background_cards"
                 android:padding="10dp"
                 tools:background="@drawable/background_current_status">
 

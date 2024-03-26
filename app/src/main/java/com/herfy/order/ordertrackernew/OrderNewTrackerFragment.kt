@@ -2,16 +2,20 @@ package com.herfy.order.ordertrackernew
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.os.Build
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
@@ -22,6 +26,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -33,12 +38,14 @@ import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
 import com.herfy.ordertracker.databinding.FragmentOrderNewTrackerBinding
 import com.herfy.util.AppLogger
+import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
+import com.herfy.utils.helper.DistanceCalculator
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.ViewUtil
 import com.location.FusedLocationProvider
@@ -50,6 +57,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderStatus
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
+import io.shipbook.shipbooksdk.Log
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -64,6 +72,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
     private var locationMarker: Marker? = null
 
     private var driverMarker: Marker? = null
+
+    private var storeMarker: Marker? = null
 
     private val args: OrderNewTrackerFragmentArgs by navArgs()
 
@@ -123,7 +133,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
 
     fun getLocation() {
         activity?.apply {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ActivityCompat.checkSelfPermission(
+            if (ActivityCompat.checkSelfPermission(
                     this, Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
@@ -249,6 +259,12 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
             markerOptions.anchor(0.5f, 0.5f)
             locationMarker = googleMap?.addMarker(markerOptions)
             googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
+            if (userLatLng == null) {
+                userStore?.let {
+                    showStore(userStore)
+                }
+            }
+            userLatLng = latLng
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -281,12 +297,108 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
             })
     }
 
+    private fun showStore(store: Store?) {
+        store?.let { store ->
+            try {
+                userStore = store
+                val activity: Activity? = activity
+                val inflater =
+                    activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val view = inflater.inflate(R.layout.order_store_marker, null)
+                val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
+                var distanceValue = ""
+                try {
+                    val currentLocation = userLatLng
+                    val currentDistance = currentLocation?.latitude?.let {
+                        currentLocation.longitude.let { it1 ->
+                            store.attributes?.lat?.let { it2 ->
+                                store.attributes?.lng?.let { it3 ->
+                                    DistanceCalculator.calculateDistance(
+                                        it, it1, it2, it3
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Log.e("ADADAADDAD", "ADADADADCurrentDistance:" + currentDistance)
+                    distanceValue = StringUtil.getDistance(
+                        currentDistance ?: 0.0
+                    )
+                    textView.text =
+                        CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                            .replace("(x)", distanceValue).toLowerCase()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                if (distanceValue.isEmpty()) {
+                    textView.isVisible = false
+                }
+                view.setOnClickListener {
+                    val directionsBuilder =
+                        Uri.Builder().scheme("https").authority("www.google.com").appendPath("maps")
+                            .appendPath("dir").appendPath("").appendQueryParameter("api", "1")
+                            .appendQueryParameter("travelmode", "driving").appendQueryParameter(
+                                "destination",
+                                store.attributes?.lat.toString() + "," + store.attributes?.lng
+                            )
+
+                    if (StringUtil.hasOrderLatLong()) {
+                        directionsBuilder.appendQueryParameter(
+                            "origin",
+                            CacheUtil.getInstance().orderLatitude + "," + CacheUtil.getInstance().orderLongitude
+                        )
+                    }
+
+                    try {
+                        val activity: Activity? = getActivity()
+                        activity?.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW, directionsBuilder.build()
+                            )
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
+                if (storeMarker != null) {
+                    storeMarker?.remove()
+                }
+                val markerOptions = MarkerOptions()
+                val latLng = store.attributes?.lat?.let {
+                    store.attributes?.lng?.let { it1 ->
+                        LatLng(
+                            it, it1
+                        )
+                    }
+                }
+                if (latLng != null) {
+                    markerOptions.position(latLng)
+                }
+                markerOptions.icon(
+                    BitmapDescriptorFactory.fromBitmap(
+                        ViewUtil.createDrawableFromView(
+                            activity, view
+                        )
+                    )
+                )
+                markerOptions.anchor(0.5f, 1f)
+                markerOptions.title(store.toString())
+                storeMarker = googleMap?.addMarker(markerOptions)
+                latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
+                    ?.let { googleMap?.animateCamera(it) }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {
         dismissDialogs()
         order?.let { item ->
             binding.apply {
                 blocker.gone()
-
+                showStore(store)
             }
         }
     }
