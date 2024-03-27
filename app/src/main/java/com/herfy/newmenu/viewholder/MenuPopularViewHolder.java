@@ -249,7 +249,7 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
     }
 
     @Override
-    public void setMenuItemTotalPrice(double totalPrice) {
+    public void setMenuItemTotalPrice(double totalPrice, double menuItemPrice) {
 
     }
 

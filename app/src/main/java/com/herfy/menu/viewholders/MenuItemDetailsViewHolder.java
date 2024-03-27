@@ -482,7 +482,7 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
     }
 
     @Override
-    public void setMenuItemTotalPrice(double totalPrice) {
+    public void setMenuItemTotalPrice(double totalPrice, double menuItemPrice) {
 
     }
 

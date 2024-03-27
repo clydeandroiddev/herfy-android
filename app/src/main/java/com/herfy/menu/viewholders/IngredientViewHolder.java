@@ -274,7 +274,7 @@ public class IngredientViewHolder extends RecyclerView.ViewHolder implements Men
     }
 
     @Override
-    public void setMenuItemTotalPrice(double totalPrice) {
+    public void setMenuItemTotalPrice(double totalPrice, double menuItemPrice) {
 
     }
 

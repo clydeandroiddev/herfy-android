@@ -1251,7 +1251,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     }
 
     override fun setMenuItemQuantity(quantity: Int) {}
-    override fun setMenuItemTotalPrice(totalPrice: Double) {
+    override fun setMenuItemTotalPrice(totalPrice: Double, menuItemPrice: Double) {
         binding.totalPrice.text = "" + totalPrice
     }
 

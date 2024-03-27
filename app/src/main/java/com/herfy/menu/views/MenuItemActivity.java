@@ -448,7 +448,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
     }
 
     @Override
-    public void setMenuItemTotalPrice(double totalPrice) {
+    public void setMenuItemTotalPrice(double totalPrice, double menuItemPrice) {
         total.setText(StringUtil.getFormattedPrice(totalPrice));
     }
 

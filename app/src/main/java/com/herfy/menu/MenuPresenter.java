@@ -3580,6 +3580,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
             for (ModifierItem item : group.getModifierItems()) {
                 boolean isCheckboxSelected = isSelected && item.getId().equals(modifierItem.getId());
+                System.out.println("Selected item " + isCheckboxSelected);
                 item.getAttributes().setSelected(isCheckboxSelected);
             }
         } else {
@@ -3597,6 +3598,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 } else {
                     ModifierItem item = group.getModifierItems().get(modifierItemPosition);
                     if (item.getId().equals(modifierItem.getId())) {
+                        System.out.println("Selected man bai from presenter ");
                         item.getAttributes().setSelected(isSelected);
                         if (!isSelected) {
                             item.getAttributes().setQuantity(1);
@@ -4597,7 +4599,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             e.printStackTrace();
         }
 
-        menuView.setMenuItemTotalPrice(totalPrice * item.getAttributes().getQuantity());
+        menuView.setMenuItemTotalPrice(totalPrice * item.getAttributes().getQuantity(),totalPrice);
         return totalPrice;
     }
 

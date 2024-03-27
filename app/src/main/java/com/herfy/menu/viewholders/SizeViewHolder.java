@@ -249,7 +249,7 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     }
 
     @Override
-    public void setMenuItemTotalPrice(double totalPrice) {
+    public void setMenuItemTotalPrice(double totalPrice, double menuItemPrice) {
 
     }
 

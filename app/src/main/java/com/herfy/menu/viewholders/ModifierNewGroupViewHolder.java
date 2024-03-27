@@ -223,29 +223,6 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
         modifierCheckBox.setVisibility(showShowModifierCheckBox ? View.VISIBLE : View.GONE);
         txtMinimum.setText(CacheUtil.getInstance().getTranslations(Text.REQUIRED,"Required"));
 
-        // todo might needed this once designer change the ui
-//        ModifierGroupMinimumType modifierGroupMinimumType = ModifierGroupMinimumUtil.INSTANCE.validateType(modifierGroup.getAttributes().getMinimum());
-
-//        switch (modifierGroupMinimumType) {
-//            case OPTIONAL:
-//                String optional = CacheUtil.getInstance().getTranslations(Text.OPTIONAL_KEY,"Optional");
-//                minimumLayout.setVisibility(View.VISIBLE);
-//                txtMinimum.setText(optional);
-//                break;
-//
-//            case REQUIRED:
-//                String required = CacheUtil.getInstance()
-//                        .getTranslations(Text.REQUIRED_KEY, "Required");
-//                minimumLayout.setVisibility(View.VISIBLE);
-//                txtMinimum.setText(required);
-//                break;
-//
-//
-//            default:
-//                minimumLayout.setVisibility(View.GONE);
-//                break;
-//        }
-
 
         if (visible) {
 
@@ -318,6 +295,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
 
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recyclerView.setNestedScrollingEnabled(false);
             ModifierItemsNewRecyclerViewAdapter modifierItemsNewRecyclerViewAdapter = new ModifierItemsNewRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice);
             modifierItemsNewRecyclerViewAdapter.setOnAction(onAction);
             recyclerView.setAdapter(modifierItemsNewRecyclerViewAdapter);
@@ -330,7 +308,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     }
 
     @Override
-    public void setMenuItemTotalPrice(double totalPrice) {
+    public void setMenuItemTotalPrice(double totalPrice, double menuItemPrice) {
 
     }
 

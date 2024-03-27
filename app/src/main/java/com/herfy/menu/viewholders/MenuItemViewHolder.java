@@ -199,7 +199,7 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
     }
 
     @Override
-    public void setMenuItemTotalPrice(double totalPrice) {
+    public void setMenuItemTotalPrice(double totalPrice, double menuItemPrice) {
 
     }
 
