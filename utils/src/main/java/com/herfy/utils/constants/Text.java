@@ -1099,4 +1099,6 @@ public class Text {
     public static final String ESTIMATED_DELIVERY_TIME = "estimated_delivery_time";
     public static final String ESTIMATE_TIME = "estimate_time";
     public static final String ESTIMATE_PICKUP_TIME = "estimate_pickup_time";
+
+    public static final String YOUR_ORDER_TEMPLATE = "your_order_template";
 }

@@ -265,12 +265,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
             markerOptions.anchor(0.5f, 0.5f)
             locationMarker = googleMap?.addMarker(markerOptions)
             googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
-            if (userLatLng == null) {
-                userStore?.let {
-                    showStoreMarker(userStore)
-                }
-            }
             userLatLng = latLng
+            userStore?.let {
+                showStoreMarker(userStore, false)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -304,6 +302,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
     }
 
     private fun showStoreMarker(store: Store?) {
+        showStoreMarker(store, true)
+    }
+
+    private fun showStoreMarker(store: Store?, isMoveCamera: Boolean) {
         store?.let { store ->
             try {
                 userStore = store
@@ -315,8 +317,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                 var distanceValue = ""
                 try {
                     val currentLocation = userLatLng
-                    Log.e("ADADADADAD", "ADADADAD1:" + currentLocation)
-
                     val currentDistance = currentLocation?.latitude?.let {
                         currentLocation.longitude.let { it1 ->
                             store.attributes?.lat?.let { it2 ->
@@ -328,8 +328,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                             }
                         }
                     }
-
-                    Log.e("ADADADADAD", "ADADADAD2:" + currentDistance)
 
                     distanceValue = StringUtil.getDistance(
                         currentDistance ?: 0.0
@@ -395,8 +393,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                 markerOptions.anchor(0.5f, 1f)
                 markerOptions.title(store.toString())
                 storeMarker = googleMap?.addMarker(markerOptions)
-                latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
-                    ?.let { googleMap?.animateCamera(it) }
+                if (isMoveCamera) {
+                    latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
+                        ?.let { googleMap?.animateCamera(it) }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
