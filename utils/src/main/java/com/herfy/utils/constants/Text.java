@@ -1106,4 +1106,19 @@ public class Text {
     public static final String HERFY_SUPPORT_TEAM = "herfy_support_team";
     public static final String CALL = "call";
     public static final String WHATSAPP_MESSAGE = "whatsapp_message";
+
+    public static final String PICKUP_DETAILS = "pickup_details";
+
+    public static final String DINE_IN_DETAILS = "dine_in_details";
+
+    public static final String DELIVERY_DETAILS = "delivery_details";
+
+    public static final String TELL_THE_ORDER_NUMB_DELIVER = "tell_the_order_num_deliver";
+    public static final String TELL_THE_ORDER_NUMB_CURBSIDE = "tell_the_order_number_curbside";
+    public static final String TELL_THE_ORDER_NUM_PICKUP = "tell_the_order_num_pickup";
+    public static final String GET_DIRECTION = "get_direction";
+    public static final String DINEIN_ADDRESS = "dinein_address";
+    public static final String DELIVERY_ADDRESS_LABEL = "delivery_address";
+    public static final String PICKUP_ADDRESS = "pickup_address";
+
 }

@@ -64,6 +64,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Calendar
 import java.util.Locale
 
 
@@ -414,31 +415,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                     textView.isVisible = false
                 }
                 view.setOnClickListener {
-                    val directionsBuilder =
-                        Uri.Builder().scheme("https").authority("www.google.com").appendPath("maps")
-                            .appendPath("dir").appendPath("").appendQueryParameter("api", "1")
-                            .appendQueryParameter("travelmode", "driving").appendQueryParameter(
-                                "destination",
-                                store.attributes?.lat.toString() + "," + store.attributes?.lng
-                            )
-
-                    if (StringUtil.hasOrderLatLong()) {
-                        directionsBuilder.appendQueryParameter(
-                            "origin",
-                            CacheUtil.getInstance().orderLatitude + "," + CacheUtil.getInstance().orderLongitude
-                        )
-                    }
-
-                    try {
-                        val activity: Activity? = getActivity()
-                        activity?.startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW, directionsBuilder.build()
-                            )
-                        )
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    goToStoreInMap(store)
                 }
 
                 if (storeMarker != null) {
@@ -502,6 +479,179 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
         }
     }
 
+    private fun goToStoreInMap(store: Store?) {
+        store?.let {
+            val directionsBuilder =
+                Uri.Builder().scheme("https").authority("www.google.com").appendPath("maps")
+                    .appendPath("dir").appendPath("").appendQueryParameter("api", "1")
+                    .appendQueryParameter("travelmode", "driving").appendQueryParameter(
+                        "destination",
+                        store.attributes?.lat.toString() + "," + store.attributes?.lng
+                    )
+
+            if (StringUtil.hasOrderLatLong()) {
+                directionsBuilder.appendQueryParameter(
+                    "origin",
+                    CacheUtil.getInstance().orderLatitude + "," + CacheUtil.getInstance().orderLongitude
+                )
+            }
+
+            try {
+                val activity: Activity? = getActivity()
+                activity?.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW, directionsBuilder.build()
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun getDirection(store: Store?) {
+        store?.let {
+            binding.orderAddressDetails.getDirection.text =
+                CacheUtil.getInstance().getTranslations(Text.GET_DIRECTION, "Get Direction")
+            binding.orderAddressDetails.getDirection.setOnClickListener {
+                goToStoreInMap(store)
+            }
+        }
+    }
+
+    private fun getBranchTime(store: Store?) {
+        store?.let {
+            val calendar = Calendar.getInstance()
+            var day = calendar[Calendar.DAY_OF_WEEK] - 1
+            if (day < 0) {
+                day = 0
+            }
+            val pickupHoursAvailable =
+                store.attributes.openingHoursPickup != null && day < store.attributes.openingHoursPickup.size
+            val deliverHoursAvailable =
+                store.attributes.openingHoursDeliver != null && day < store.attributes.openingHoursDeliver.size
+            val hoursAvailable =
+                store.attributes.openingHoursUtc != null && day < store.attributes.openingHoursUtc.size
+
+            binding.orderAddressDetails.addressTime.visibility = View.VISIBLE
+            if (!pickupHoursAvailable && !deliverHoursAvailable && hoursAvailable) {
+                val openingHours = StringUtil.getOpeningHours(store)
+                val openingFinal = if (!openingHours.isEmpty()) openingHours else "-"
+                binding.orderAddressDetails.addressTime.setText(openingFinal)
+            } else {
+                if (pickupHoursAvailable) {
+                    val hoursText = StringUtil.formatOpenHours(
+                        store.attributes.openingHoursPickup[day].open,
+                        store.attributes.openingHoursPickup[day].closed
+                    )
+                    binding.orderAddressDetails.addressTime.setText(hoursText)
+                } else {
+                    binding.orderAddressDetails.addressTime.setVisibility(View.GONE)
+                }
+            }
+        }
+    }
+
+    private fun getDistanceCount(store: Store?) {
+        store?.let {
+            try {
+                val currentLocation = userLatLng
+                val currentDistance = currentLocation?.latitude?.let {
+                    currentLocation.longitude.let { it1 ->
+                        store.attributes?.lat?.let { it2 ->
+                            store.attributes?.lng?.let { it3 ->
+                                DistanceCalculator.calculateDistance(
+                                    it, it1, it2, it3
+                                )
+                            }
+                        }
+                    }
+                }
+                val distanceValue = StringUtil.getDistance(
+                    currentDistance ?: 0.0
+                )
+                binding.orderAddressDetails.addressKm.text = distanceValue.toLowerCase()
+                if (distanceValue.isNullOrEmpty()) {
+                    binding.orderAddressDetails.addressKm.text = ""
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun showDeliveryDetails(order: OrderDetails?, store: Store?, address: Address?) {
+        binding.apply {
+            order?.let {
+                val orderType = OrderType.fromString(order.orderType)
+                orderAddressDetails.getDirection.isVisible = true
+                orderAddressDetails.addressKm.isVisible = true
+                orderAddressDetails.addressTime.isVisible = true
+                when (orderType) {
+                    OrderType.DELIVERY -> {
+                        orderAddressDetails.addressKm.isVisible = false
+                        orderAddressDetails.addressTime.isVisible = false
+                        orderAddressDetails.addressType.text = address?.attributes?.label
+                        orderAddressDetails.addressName.text = address?.attributes?.line1
+                        orderAddressDetails.getDirection.isVisible = false
+                        orderAddressDetails.deliveryDetailsLabel.text = CacheUtil.getInstance()
+                            .getTranslations(Text.DELIVERY_DETAILS, "Delivery Details")
+                        orderAddressDetails.tellLabel.text =
+                            CacheUtil.getInstance().getTranslations(
+                                Text.TELL_THE_ORDER_NUMB_DELIVER,
+                                "Tell the order number to the rider to receive your order"
+                            )
+                        orderAddressDetails.deliveryAddressLabel.text =
+                            CacheUtil.getInstance().getTranslations(
+                                Text.DELIVERY_ADDRESS_LABEL, "Delivery Address"
+                            )
+                    }
+
+                    OrderType.DINE_IN -> {
+                        getBranchTime(store)
+                        getDirection(store)
+                        getDistanceCount(store)
+                        orderAddressDetails.addressType.text = store?.attributes?.name
+                        orderAddressDetails.addressName.text = store?.attributes?.line1
+                        orderAddressDetails.deliveryDetailsLabel.text = CacheUtil.getInstance()
+                            .getTranslations(Text.DINE_IN_DETAILS, "Dine In Details")
+                        orderAddressDetails.tellLabel.text =
+                            CacheUtil.getInstance().getTranslations(
+                                Text.TELL_THE_ORDER_NUM_PICKUP,
+                                "Tell the order number at the counter to pick you order"
+                            )
+                        orderAddressDetails.deliveryAddressLabel.text =
+                            CacheUtil.getInstance().getTranslations(
+                                Text.DINEIN_ADDRESS, "Dine In Address"
+                            )
+                    }
+
+                    else -> {
+                        getBranchTime(store)
+                        getDirection(store)
+                        getDistanceCount(store)
+                        orderAddressDetails.tellLabel.text = when (orderType) {
+                            OrderType.CURBSIDE -> CacheUtil.getInstance().getTranslations(
+                                Text.TELL_THE_ORDER_NUMB_CURBSIDE, "Tell the order number if asked."
+                            )
+
+                            else -> CacheUtil.getInstance().getTranslations(
+                                Text.TELL_THE_ORDER_NUM_PICKUP,
+                                "Tell the order number at the counter to pick you order"
+                            )
+                        }
+                        orderAddressDetails.deliveryDetailsLabel.text = CacheUtil.getInstance()
+                            .getTranslations(Text.PICKUP_DETAILS, "Pickup Details")
+                        orderAddressDetails.deliveryAddressLabel.text =
+                            CacheUtil.getInstance().getTranslations(
+                                Text.PICKUP_ADDRESS, "Pickup Address"
+                            )
+                    }
+                }
+            }
+        }
+    }
+
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {
         dismissDialogs()
         order?.let { item ->
@@ -511,6 +661,11 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                     .transition(DrawableTransitionOptions.withCrossFade()).into(cookingImage)
                 showStoreMarker(store)
                 showStoreDeliveryTime(store, order)
+                showDeliveryDetails(order, store, address)
+
+                orderAddressDetails.orderNumberLabel.text =
+                    CacheUtil.getInstance().getTranslations(Text.ORDER_NUM, "Order #")
+                orderAddressDetails.orderNumber.text = item.id
 
                 orderPaymentDetails.priceSubtotal.text = StringUtil.getNewFormattedPrice(
                     item.subtotal, true

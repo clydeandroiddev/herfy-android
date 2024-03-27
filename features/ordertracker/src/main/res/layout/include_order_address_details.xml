@@ -59,10 +59,11 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tellLabel"
                 style="@style/Styles.Text.Caption.Regular"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/background_blue_corner_4dp"
+                android:gravity="start"
                 android:includeFontPadding="false"
                 android:padding="12dp"
                 android:textColor="#0064AC"
@@ -126,8 +127,9 @@
                 style="@style/Styles.Text.Caption.Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="7dp"
                 android:includeFontPadding="false"
+                android:paddingBottom="10dp"
                 android:textColor="#55667B"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -139,7 +141,6 @@
                 style="@style/Styles.Text.Caption.Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:includeFontPadding="false"
                 android:textColor="#212121"
                 android:textSize="14sp"
@@ -163,6 +164,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/addressTime"
                 tools:text="Get Direction" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
