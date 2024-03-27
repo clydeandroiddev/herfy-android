@@ -990,7 +990,7 @@ public class Text {
     public static final String PROMOTION_EMPTY_CONTENT = "promotion_empty_content";
     public static final String HI_LOGGED_OUT = "hi_logged_out";
     public static final String REWARDS_LABEL = "rewards_label";
-    public static final String SAR_VALUE_LABEL = "sar_value";
+    public static final String SAR_VALUE_LABEL = "sar_value_label";
     public static final String REWARD_TIER_LABEL = "reward_tiers";
     public static final String SCAN_POINTS_LABEL = "scan_points_label";
     public static final String SCAN_POINTS_DESCRIPTION = "scan_points_description";

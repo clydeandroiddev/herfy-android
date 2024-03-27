@@ -6,8 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.View
-import androidx.compose.ui.text.capitalize
-import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -33,12 +31,12 @@ import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
-import com.herfy.utils.helper.NavigationUtils
+import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
+import java.text.DecimalFormat
 
 
 @AndroidEntryPoint
@@ -70,7 +68,7 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             setupOrderType()
             setupBottomSlider()
             layoutLoyalty.apply {
-                progress.isEnabled = false
+                //progress.isEnabled = false
                 btnContinue.setOnClickListener {
                     context?.let {
                         val intent = Intent()
@@ -158,10 +156,12 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         cacheHelper.getTranslations(Text.ASHAB_HERFY, "Ashab Herfy")
                     tvLabelYourPoints.text =
                         cacheHelper.getTranslations(Text.TOTAL_POINTS, "Total Points")
+                    tvSarLabel.text =
+                        cacheHelper.getTranslations(Text.SAR_VALUE_LABEL, "SAR VALUE")
                     tvSeeRewards.text =
                         cacheHelper.getTranslations(Text.SEE_MY_REWARDS, "See my rewards")
                     tvTitleEmptyState.text = cacheHelper.getTranslations(
-                        Text.BECOME_ASHAB_HERFY, "Become an Ashab Herfy"
+                        Text.BECOME_ASHAB_HERFY, "Become an Ashab Herfy!"
                     )
                     tvDescriptionEmptyState.text = cacheHelper.getTranslations(
                         Text.BECOME_ASHAB_HERFY_DESCRIPTION,
@@ -350,6 +350,8 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     rlLoyaltyContent.visible()
                     lnLoyaltyEmptyState.gone()
                     tvPoints.text = loyalty.attributes.pointsAccumulated.toString()
+                    val formatter = DecimalFormat("#,###")
+                    tvSarValue.text = StringUtil.localize(formatter.format(loyalty.attributes.currentBalanceAmount))
                     var loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
                     if(LocaleUtil.getInstance().isEnglish) {
                         loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
@@ -375,7 +377,6 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         }
                         tvLoyaltyTier.text = loyaltyTier
                         tvLoyaltyTier.setBackgroundResource(tierBackground)
-                        tvProgressTier.text = loyaltyTier
                     }
 
                 } ?: run {
@@ -385,65 +386,25 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.pointsToNextTier.observeNonNull(this) { pointsToNextTier ->
+        /*viewModel.pointsToNextTier.observeNonNull(this) { pointsToNextTier ->
             if (pointsToNextTier <= 0) {
                 viewModel.tier.observeNonNull(this) { tier ->
                     if (tier == null) {
-                        binding.layoutLoyalty.apply {
-                            progress.max = 100
-                            progress.progress = 0
-                            progressLabel.text = "You are now a Tier member"
-                            progressTextIndicator.text = "${progress.progress}/${progress.max}"
-                            tvProgressTier.text = tier?.name?:""
-                        }
                     } else {
-                        binding.layoutLoyalty.apply {
-                            progress.max = 100
-                            progress.progress = 100
-                            progressLabel.text = CacheUtil.getInstance().getTranslations(
-                                Text.TOTAL_POINTS_MAX_OUT, "You have maxed out on our tier levels"
-                            )
-                            progressTextIndicator.text = "${progress.progress}/${progress.max}"
-                            tvProgressTier.text = tier.name
-                        }
                     }
 
                 }
             } else {
                 viewModel.startPoints.observeNonNull(this) { startPoints ->
-                    binding.layoutLoyalty.apply {
-                        progress.max = startPoints
-                    }
-
-                    viewModel.totalPointsAccumulated.observeNonNull(this) { totalPointsAccumulated ->
-                        binding.layoutLoyalty.apply {
-                            progress.progress = totalPointsAccumulated
-                            progressTextIndicator.text = "${progress.progress}/${progress.max}"
-                        }
-                    }
-
                 }
 
 
 
                 viewModel.tier.observeNonNull(this) { tier ->
-                    binding.layoutLoyalty.apply {
-                        progressLabel.text = HtmlCompat.fromHtml(
-                            CacheUtil.getInstance().getTranslations(
-                                Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)"
-                            ).replace("(x)", pointsToNextTier.toString()).replace(
-                                "(y)", "<b>" + tier!!.name.substring(0, 1).uppercase(
-                                    Locale.getDefault()
-                                ) + tier.name.substring(1).lowercase(Locale.getDefault())
-                            ) + "</b>", HtmlCompat.FROM_HTML_MODE_LEGACY
-                        )
-
-
-                    }
                 }
 
             }
-        }
+        }*/
 
         viewModel.promotionCategoryList.observeNonNull(this) { promoCategories ->
             binding.layoutPromotions.apply {
