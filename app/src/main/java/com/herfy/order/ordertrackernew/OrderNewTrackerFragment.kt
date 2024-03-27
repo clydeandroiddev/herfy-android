@@ -9,6 +9,7 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -39,6 +40,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
+import com.herfy.common.cancelTime
+import com.herfy.common.formatSecondsToMinutesAndSeconds
 import com.herfy.common.showTime
 import com.herfy.common.statusTime
 import com.herfy.ext.cast
@@ -54,6 +57,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
+import com.herfy.utils.extensions.showToast
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.DistanceCalculator
@@ -75,7 +79,8 @@ import java.util.Locale
 
 
 @AndroidEntryPoint
-class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
+class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
+    CancelOrderDialogFragment.OnAction {
 
     private var orderPresenter: OrdersContract.Presenter? = null
 
@@ -98,6 +103,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
     private var orderAddress: Address? = null
 
     private var userLatLng: LatLng? = null
+
+    private var countDownTimer: CountDownTimer? = null
+
+    private var countDownTime: Long = 60000
 
     private lateinit var orderMenuItemsAdapter: OrderMenuItemsAdapter
 
@@ -361,6 +370,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                 CacheUtil.getInstance().getTranslations(Text.CALL, "Call")
             orderHelpDetails.whatsAppHelpMessageLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.WHATSAPP_MESSAGE, "Whatsapp Message")
+            orderCancelDetails.cancelOrderLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.CANCEL_ORDER_NEW, "Cancel Order")
         }
     }
 
@@ -1009,9 +1020,45 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
 
     }
 
+    private fun initTimer() {
+        countDownTimer = object : CountDownTimer(countDownTime, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                countDownTime = millisUntilFinished
+                binding.orderCancelDetails.timerCancel.text =
+                    formatSecondsToMinutesAndSeconds((countDownTime / 1000))
+            }
+
+            override fun onFinish() {
+                binding.orderCancelFrame.isVisible = false
+            }
+        }
+        countDownTimer?.start()
+    }
+
     private fun processCancel() {
         val time = CacheUtil.getInstance().concept.orderCancellationTime
-        
+        if (time > 0) {
+            orderDetails?.let { order ->
+                val difference = cancelTime(order.createdAt)
+                val totalCancelTime = time * 60
+                if (difference >= totalCancelTime) {
+                    binding.orderCancelFrame.isVisible = false
+                } else {
+                    binding.orderCancelDetails.cancelOrder.setOnClickListener {
+                        CancelOrderDialogFragment.newInstance(onAction = this@OrderNewTrackerFragment)
+                            .show(
+                                parentFragmentManager,
+                                CancelOrderDialogFragment::class.java.toString()
+                            )
+                    }
+                    countDownTime = (totalCancelTime - difference) * 1000
+                    binding.orderCancelFrame.isVisible = true
+                    initTimer()
+                }
+            }
+        } else {
+            binding.orderCancelFrame.isVisible = false
+        }
     }
 
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {
@@ -1179,7 +1226,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun cancel() {
-
+        activity?.cast<BaseActivity> {
+            it.dismissDialogs()
+        }
+        navigateUp()
     }
 
     override fun showRatings(orderStatus: OrderStatus?, ratings: MutableList<Rating>?) {
@@ -1187,7 +1237,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showMessage(message: String?) {
-
+        activity?.cast<BaseActivity> {
+            it.showToast(message.orEmpty())
+        }
     }
 
     override fun customerArrivedSuccess() {
@@ -1208,5 +1260,18 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
 
     override fun showWhatsApp(mobileNumber: String?) {
 
+    }
+
+    override fun onClose() {
+
+    }
+
+    override fun onDelete() {
+        if (binding.orderCancelFrame.isVisible) {
+            activity?.cast<BaseActivity> {
+                it.showLoadingDialog()
+            }
+            orderPresenter?.cancel()
+        }
     }
 }
