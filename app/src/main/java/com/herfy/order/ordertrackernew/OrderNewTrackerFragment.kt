@@ -652,6 +652,46 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
         }
     }
 
+    private fun showDetailsState(order: OrderDetails?) {
+        order?.let {
+            binding.apply {
+                orderCurbsideDetailsFrame.isVisible = false
+                orderDriverDetailsFrame.isVisible = false
+                when (OrderType.fromString(order.orderType)) {
+                    OrderType.DELIVERY -> {
+                        orderDriverDetailsFrame.isVisible = true
+                    }
+
+                    OrderType.CURBSIDE -> {
+                        orderCurbsideDetailsFrame.isVisible = false
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    private fun showDriverDetails(order: OrderDetails?, address: Address?) {
+        order?.let {
+            binding.apply {
+                if (OrderType.fromString(order.orderType) == OrderType.DELIVERY) {
+                    statusDriverDetails.deliveryInstructionLabel.text = CacheUtil.getInstance()
+                        .getTranslations(Text.DELIVERY_INSTRUCTION_LABEL, "Delivery Instruction")
+                    statusDriverDetails.driverInstruction.text = address?.attributes?.instructions
+                    if (orderPresenter?.driverDetail != null) {
+                        statusDriverDetails.withDriverLayout.isVisible = true
+                        statusDriverDetails.noDriverLayout.isVisible = false
+
+                    } else {
+                        statusDriverDetails.noDriverLayout.isVisible = true
+                        statusDriverDetails.withDriverLayout.isVisible = false
+                    }
+                }
+            }
+        }
+    }
+
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {
         dismissDialogs()
         order?.let { item ->
@@ -662,7 +702,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                 showStoreMarker(store)
                 showStoreDeliveryTime(store, order)
                 showDeliveryDetails(order, store, address)
-
+                showDetailsState(order)
+                showDriverDetails(order, address)
                 orderAddressDetails.orderNumberLabel.text =
                     CacheUtil.getInstance().getTranslations(Text.ORDER_NUM, "Order #")
                 orderAddressDetails.orderNumber.text = item.id

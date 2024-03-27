@@ -12,6 +12,7 @@ import com.herfy.history.viewholders.OrderViewHolder;
 import com.herfy.history.viewholders.TimeLineViewHolder;
 import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
+import com.skylinedynamics.solosdk.api.models.objects.Employee;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsTransaction;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
@@ -79,6 +80,8 @@ public interface OrdersContract {
         void getLocation(FusedLocationProvider fusedLocationProvider);
 
         void getOrders();
+
+        Employee getDriverDetail();
 
         void onBindOrderViewAtPosition(int position, OrderViewHolder orderViewHolder);
 

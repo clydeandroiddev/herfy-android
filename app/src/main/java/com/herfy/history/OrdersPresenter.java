@@ -222,6 +222,11 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         });
     }
 
+    @Override
+    public Employee getDriverDetail() {
+        return driver;
+    }
+
     private Unit onOrderHistoryStatusUpdate(Message message) {
         try {
             JSONObject jsonObject = new JSONObject(message.data.toString());

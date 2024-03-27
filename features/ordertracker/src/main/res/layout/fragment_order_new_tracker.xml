@@ -222,13 +222,31 @@
                                 android:id="@+id/status_tracker_layout"
                                 layout="@layout/include_status_tracker_layout" />
 
-                            <include
-                                android:id="@+id/order_curbside_details"
-                                layout="@layout/include_order_curbside_details" />
+                            <FrameLayout
+                                android:id="@+id/orderCurbsideDetailsFrame"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                tools:visibility="visible">
 
-                            <include
-                                android:id="@+id/status_driver_details"
-                                layout="@layout/include_status_driver_details" />
+                                <include
+                                    android:id="@+id/order_curbside_details"
+                                    layout="@layout/include_order_curbside_details" />
+
+                            </FrameLayout>
+
+                            <FrameLayout
+                                android:id="@+id/orderDriverDetailsFrame"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                tools:visibility="visible">
+
+                                <include
+                                    android:id="@+id/status_driver_details"
+                                    layout="@layout/include_status_driver_details" />
+
+                            </FrameLayout>
 
                             <include
                                 android:id="@+id/order_address_details"
