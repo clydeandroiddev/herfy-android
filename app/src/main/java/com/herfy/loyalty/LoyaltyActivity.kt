@@ -229,31 +229,6 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 CacheUtil.getInstance().totalAccumulatedPoints = totalAccumulatedPoints
                 CacheUtil.getInstance().pointsUntilNextTier = pointsUntilNextTier
                 CacheUtil.getInstance().startingPointsOfNextTier = startingPointsOfNextTier
-                if (pointsUntilNextTier <= 0) {
-                    if (tier == null) {
-                        progress.max = 100
-                        progress.progress = 0
-                        tvTierProgressDesc.text = "You are now a Tier member"
-                        progressTextIndicator.text = "${progress.progress}/${progress.max}"
-                    } else {
-                        progress.max = 100
-                        progress.progress = 100
-                        tvTierProgressDesc.text = CacheUtil.getInstance().getTranslations(
-                            Text.TOTAL_POINTS_MAX_OUT,
-                            "You have maxed out on our tier levels"
-                        )
-                        progressTextIndicator.text = "${progress.progress}/${progress.max}"
-                    }
-                } else {
-                    var loyaltyTier = tier.name
-                    if(LocaleUtil.getInstance().isEnglish) {
-                        loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
-                    }
-                    progress.max = startingPointsOfNextTier
-                    progress.progress = totalAccumulatedPoints
-                    tvTierProgressDesc.text = cacheUtilHelper.getTranslations(Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)").replace("(x)", pointsUntilNextTier.toString()).replace("(y)", loyaltyTier)
-                    progressTextIndicator.text = "${progress.progress}/${progress.max}"
-                }
 
             }
         }
@@ -351,7 +326,6 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         StringUtil.localize(formatter.format(loyalty.attributes.currentBalanceAmount))
                     tvTotalPoints.text =
                         StringUtil.localize(loyalty.attributes.currentBalance.toLong().toString())
-                    tvProgressTier.text = loyaltyTier
                 }
 
             }
