@@ -487,4 +487,8 @@ public class MenuUtil {
         return totalPrice;
     }
 
+    public static boolean isCustomizeable(MenuItem item) {
+        return item.isCombo || item.isMustBeCustomized();
+    }
+
 }
