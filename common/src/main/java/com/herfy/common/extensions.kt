@@ -1,7 +1,6 @@
 package com.herfy.common
 
 import android.annotation.SuppressLint
-import android.util.Log
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -35,7 +34,7 @@ fun String.formatDate(): String {
 fun String.orderDetailsType(): String {
     val type = OrderType.fromString(this.toLowerCase())
     return when (type) {
-        OrderType.DINE_IN-> {
+        OrderType.DINE_IN -> {
             CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In") + ", "
         }
 
@@ -194,6 +193,26 @@ fun String.defaultTime(): String {
         e.printStackTrace()
     }
     return ""
+}
+
+fun statusTime(timestamp: String): String {
+    try {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+        val timeValue = simpleDateFormat.parse(timestamp)
+        val localTimeFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        localTimeFormat.timeZone = TimeZone.getDefault()
+        val actualDate = timeValue?.let { localTimeFormat.format(it) }.orEmpty()
+        val calendar = Calendar.getInstance().apply {
+            time =
+                localTimeFormat.parse(actualDate)!!
+        }
+        val startTimeFormat = SimpleDateFormat("h:mm", Locale.getDefault())
+        return startTimeFormat.format(calendar.time)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return "--"
+    }
 }
 
 fun showTime(timestamp: String, timeAdded: Int): String {
