@@ -12,7 +12,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.maps.model.LatLng
+import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.common.formatOrderTime
@@ -173,6 +176,9 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                 } else {
                     pastOrders = orders
                 }
+                Glide.with(requireActivity()).asGif().load(R.drawable.cooking)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(binding.cookingImage)
                 binding.pastOrdersLabel.isVisible = pastOrders.isNotEmpty()
                 historyListAdapter.updateList(pastOrders)
             }

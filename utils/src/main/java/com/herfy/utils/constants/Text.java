@@ -1126,4 +1126,10 @@ public class Text {
     public static final String A_RIDER_WILL_BE = "A rider will be assigned to you when order is ready. You will be able to track your order in real time";
     public static final String PICKUP_ADDRESS = "pickup_address";
 
+    public static final String MESSAGE = "message";
+    public static final String READY_FOR_PICKUP = "ready_for_pickup";
+    public static final String SERVED = "served";
+    public static final String READY = "ready";
+    public static final String PREPARING = "preparing";
+    public static final String ONWAY = "on_way";
 }
