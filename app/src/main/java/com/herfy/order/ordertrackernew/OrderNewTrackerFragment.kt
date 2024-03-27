@@ -660,6 +660,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                         else -> {
                             getBranchTime(store)
                             getDirection(store)
+                            orderAddressDetails.addressType.text = store?.attributes?.name
+                            orderAddressDetails.addressName.text = store?.attributes?.line1
                             orderAddressDetails.tellLabel.text = when (orderType) {
                                 OrderType.CURBSIDE -> CacheUtil.getInstance().getTranslations(
                                     Text.TELL_THE_ORDER_NUMB_CURBSIDE,
@@ -688,6 +690,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
         orderDetails?.let { order ->
             binding.orderCurbsideDetails.apply {
                 if (OrderType.fromString(order.orderType) == OrderType.CURBSIDE) {
+                    binding.orderCurbsideDetailsFrame.isVisible = true
                     serveOrder.setOnClickListener {
                         activity?.cast<BaseActivity> {
                             it.showLoadingDialog()
@@ -1186,7 +1189,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
             it.dismissDialogs()
         }
         binding.orderCurbsideDetails.servedLayout.isVisible = true
-        binding.orderCurbsideDetails.notServedLayout.isVisible = true
+        binding.orderCurbsideDetails.notServedLayout.isVisible = false
     }
 
     override fun logFirebaseEvent(event: String?) {
