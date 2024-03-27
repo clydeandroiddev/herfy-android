@@ -35,8 +35,9 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
-import com.herfy.analytics.FacebookAppEventUtil
 import com.herfy.analytics.FirebaseECommerceEventUtil
+import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
@@ -794,7 +795,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     );
                     FacebookAppEventUtil.addToCartEvent(baseActivity, menuItem, _totalPrice)
                     KochavaTrackerUtil.trackEvent(EventType.ADD_TO_CART)
-                })
+                }
                 baseActivity.dismissDialogs()
                 menuItemSelected = menuItem
                 menuCategorySelected = menuCategory
@@ -886,7 +887,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 }
             }
         }
-    }
+
 
     private fun changeMealDeal(isSandwich: Boolean) {
         val menuItem1: MenuItem? = if (previousMenuItem != null) {
