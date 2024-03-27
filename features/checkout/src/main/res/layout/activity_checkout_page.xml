@@ -311,6 +311,18 @@
                     <!--                    app:layout_constraintStart_toStartOf="parent" />-->
 
                     <include
+                        android:id="@+id/layout_alraji"
+                        layout="@layout/item_alraji_bank"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_large"
+                        android:layout_marginEnd="@dimen/margin_small"
+                        android:layout_marginBottom="@dimen/margin_large"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <include
                         android:id="@+id/layout_loyalty"
                         layout="@layout/item_loyalty_points"
                         android:layout_width="match_parent"
@@ -417,6 +429,7 @@
                 tools:text="Place Order" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

@@ -28,6 +28,7 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -52,6 +53,8 @@ import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addPaymentInfoEv
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.applyPromotionEvent
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.base.BaseActivity
+import com.herfy.checkout.DialogAlrajiInputBottomSheet
+import com.herfy.checkout.DialogAlrajiRequestOtpBottomSheet
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
 import com.herfy.decorator.BeforeDateDecorator
@@ -82,6 +85,7 @@ import com.herfy.util.ViewUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.debounceAfterTextChanges
+import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.showToast
 import com.herfy.utils.helper.AuthUtil
@@ -394,7 +398,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             val view = inflater.inflate(R.layout.marker_store_new, null)
             val textView =
                 view.findViewById<TextView>(R.id.kmAway)
-
+            val imageView =view.findViewById<AppCompatImageView>(R.id.icon)
+            imageView.setImageResource(R.drawable.ic_marker_red)
             lifecycleScope.launchWithTimber {
                 val task = fusedLocationProviderClient?.lastLocation
                 task?.addOnSuccessListener { location ->
@@ -446,29 +451,16 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun setupViews() {
         orderType = CacheUtil.getInstance().orderType
         requestPermissionLocation()
-
-        //        rvOrderSummary.setLayoutManager(new LinearLayoutManager(this));
-//        menuItemsRecyclerViewAdapter = new OrderSummaryItemRecyclerViewAdapter(paymentPresenter);
-//        rvOrderSummary.setAdapter(menuItemsRecyclerViewAdapter);
-
-
-//        tvChangeOrderType.setOnClickListener( new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showOrderType(true);
-//            }
-//        });
-
-        /* ivShowOrders.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (rvOrderSummary.getVisibility() == View.VISIBLE) {
-                    rvOrderSummary.setVisibility(View.GONE);
-                } else {
-                    rvOrderSummary.setVisibility(View.VISIBLE);
+        binding!!.layoutAlraji.radionBtn
+            .ninjaTap(lifecycleScope) {
+                if (binding?.layoutAlraji?.radionBtn?.isChecked == true) {
+//                    DialogAlrajiInputBottomSheet.newInstance().show(supportFragmentManager,
+//                        DialogAlrajiInputBottomSheet.TAG)
+                    DialogAlrajiRequestOtpBottomSheet.newInstance().show(supportFragmentManager,
+                        DialogAlrajiRequestOtpBottomSheet.TAG)
                 }
             }
-        });*/binding!!.layoutPayment.tvEditPaymentMethod.setOnClickListener { showPaymentMethod() }
+  binding!!.layoutPayment.tvEditPaymentMethod.setOnClickListener { showPaymentMethod() }
         val orderStore = CacheUtil.getInstance().orderStore
         if (orderStore != null && orderStore.attributes != null) {
             val branchImage = orderStore.attributes.image
@@ -889,6 +881,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             .getInstance()
             .getTranslations(Text.DELIVERY_CHARGE,"Delivery Charges")
         binding!!.totalVatDescription.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
+        binding!!.layoutAlraji
+            .txtAlRhajiBankTitle. text =  CacheUtil
+            .getInstance()
+            .getTranslations(Text.AlRAJI_BANK_TITLE,"Al Rhaji Bank (Mokafa's Rewards)")
+        binding!!.layoutAlraji
+            .txtDescription.text =  CacheUtil
+            .getInstance()
+            .getTranslations(Text.ALRAJI_BANK_DESCRIPTION,"The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful.")
+
     }
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}
@@ -989,8 +990,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPaymentSummary.tvSubtotal.text =
             total
         binding!!.tvOriginalPrice.setVisible(discount >= 1)
-        binding!!.layoutPaymentSummary.tvDeliveryChargeValue.setVisible(deliveryCharge >=1 && isDelivery)
-        binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.setVisible(deliveryCharge >=1 && isDelivery)
+        val isDeliverCharge = deliveryCharge >= 1 && isDelivery
+        binding!!.layoutPaymentSummary.viewDeliverySeparator.setVisible(isDeliverCharge)
+        binding!!.layoutPaymentSummary.tvDeliveryChargeValue.setVisible(isDeliverCharge)
+        binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.setVisible(isDeliverCharge)
         binding
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.text = deliveryChargeTotal
         if (discount != 0.0) {
