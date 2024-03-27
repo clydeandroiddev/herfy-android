@@ -1,6 +1,7 @@
 package com.herfy.order.ordertrackernew
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -9,6 +10,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -35,9 +37,11 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
+import com.herfy.common.showTime
 import com.herfy.ext.cast
 import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
+import com.herfy.history.historynew.adapter.OrderMenuItemsAdapter
 import com.herfy.ordertracker.databinding.FragmentOrderNewTrackerBinding
 import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
@@ -60,11 +64,8 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
-import io.shipbook.shipbooksdk.Log
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Locale
-import java.util.TimeZone
+
 
 @AndroidEntryPoint
 class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
@@ -86,6 +87,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
     private var userLatLng: LatLng? = null
 
     private var userStore: Store? = null
+
+    private lateinit var orderMenuItemsAdapter: OrderMenuItemsAdapter
+
+    private var isSummaryHidden = true
 
     private val gpsLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
@@ -193,10 +198,55 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun setupViews() {
         binding.apply {
+
+            transparentImage.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        mainScroll.requestDisallowInterceptTouchEvent(true)
+                        false
+                    }
+
+                    MotionEvent.ACTION_UP -> {
+                        mainScroll.requestDisallowInterceptTouchEvent(false)
+                        true
+                    }
+
+                    MotionEvent.ACTION_MOVE -> {
+                        mainScroll.requestDisallowInterceptTouchEvent(true)
+                        false
+                    }
+
+                    else -> true
+                }
+            }
+
+            orderMenuItemsAdapter = OrderMenuItemsAdapter(ArrayList())
+
+            orderListItem.adapter = orderMenuItemsAdapter
+
             back.setOnClickListener {
                 navigateUp()
+            }
+
+            orderHelpDetails.callHelpLayout.setOnClickListener {
+                // TODO call
+            }
+
+            orderHelpDetails.whatsAppHelpLayout.setOnClickListener {
+                // TODO whatsapp
+            }
+
+            paymentSummaryFrame.setOnClickListener {
+                if (isSummaryHidden) {
+                    orderPaymentDetailsFrame.isVisible = true
+                    isSummaryHidden = false
+                } else {
+                    isSummaryHidden = true
+                    orderPaymentDetailsFrame.isVisible = false
+                }
             }
 
             val supportMapFragment =
@@ -241,6 +291,28 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
         binding.apply {
             title.text =
                 CacheUtil.getInstance().getTranslations(Text.ORDER_TRACKER, "Order Trackre")
+            orderPaymentDetails.subtotalLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.SUBTOTAL, "Subtotal")
+            orderPaymentDetails.deliverLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
+            orderPaymentDetails.discountLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
+            totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
+            paymentSummaryLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.PAYMENT_SUMMARY, "Payment Summary")
+            orderPaymentDetails.paymentSummaryLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.PAYMENT_SUMMARY, "Payment Summary")
+            orderPaymentDetails.totalLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
+            orderHelpDetails.haveATroubleLabel.text = CacheUtil.getInstance()
+                .getTranslations(Text.HAVE_A_TROUBLE, "Have a trouble with your order?")
+            orderHelpDetails.herfySupportLabel.text = CacheUtil.getInstance().getTranslations(
+                Text.HERFY_SUPPORT_TEAM, "Herfy’s Support team is here to help you."
+            )
+            orderHelpDetails.callHelpLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.CALL, "Call")
+            orderHelpDetails.whatsAppHelpMessageLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.WHATSAPP_MESSAGE, "Whatsapp Message")
         }
     }
 
@@ -430,30 +502,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
         }
     }
 
-    private fun showTime(timestamp: String, timeAdded: Int): String {
-        try {
-            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-            simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
-            val timeValue = simpleDateFormat.parse(timestamp)
-            val localTimeFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
-            localTimeFormat.timeZone = TimeZone.getDefault()
-            val actualDate = timeValue?.let { localTimeFormat.format(it) }.orEmpty()
-            val calendar = Calendar.getInstance().apply {
-                time =
-                    localTimeFormat.parse(actualDate)!! // Parse actualDate back into a Date object
-                add(Calendar.MINUTE, timeAdded)
-            }
-            val startTimeFormat = SimpleDateFormat("h:mm", Locale.getDefault())
-            val endTimeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
-            val startTime = startTimeFormat.format(calendar.time)
-            val endTime = endTimeFormat.format(calendar.apply { add(Calendar.MINUTE, 10) }.time)
-            return "$startTime - $endTime"
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return ""
-        }
-    }
-
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {
         dismissDialogs()
         order?.let { item ->
@@ -463,6 +511,35 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                     .transition(DrawableTransitionOptions.withCrossFade()).into(cookingImage)
                 showStoreMarker(store)
                 showStoreDeliveryTime(store, order)
+
+                orderPaymentDetails.priceSubtotal.text = StringUtil.getNewFormattedPrice(
+                    item.subtotal, true
+                )
+
+                if (item.deliveryCharge > 0) {
+                    orderPaymentDetails.deliverContainer.isVisible = true
+                    orderPaymentDetails.deliverTotal.text = StringUtil.getNewFormattedPrice(
+                        item.deliveryCharge, true
+                    )
+                } else {
+                    orderPaymentDetails.deliverContainer.isVisible = false
+                }
+
+                if (item.discount > 0) {
+                    orderPaymentDetails.discountContainer.isVisible = true
+                    orderPaymentDetails.discountTotal.text = StringUtil.getNewFormattedPrice(
+                        item.discount, true
+                    )
+                } else {
+                    orderPaymentDetails.discountContainer.isVisible = false
+                }
+
+                orderPaymentDetails.totalPrice.text = StringUtil.getNewFormattedPrice(
+                    item.total, true
+                )
+                totalPrice.text = StringUtil.getNewFormattedPrice(
+                    item.total, true
+                )
             }
         }
     }
@@ -472,7 +549,14 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showMenuItems(order: OrderDetails?, menuItems: ArrayList<MenuItem>?) {
+        menuItems?.let {
+            val count = it.size
+            orderMenuItemsAdapter.updateList(it)
+            binding.yourOrderLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.YOUR_ORDER_TEMPLATE, "Your Order (x)")
+                    .replace("(x)", "$count")
 
+        }
     }
 
     override fun setTimeLine(isCancelled: Boolean, orderStatus: OrderStatus?, noDriver: Boolean) {

@@ -65,6 +65,7 @@
                     android:background="#E6E8EB" />
 
                 <androidx.core.widget.NestedScrollView
+                    android:id="@+id/mainScroll"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -86,6 +87,15 @@
                                 android:name="com.google.android.gms.maps.SupportMapFragment"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent" />
+
+                            <ImageView
+                                android:id="@+id/transparent_image"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:layout_constraintBottom_toBottomOf="@id/order_type_map"
+                                app:layout_constraintEnd_toEndOf="@id/order_type_map"
+                                app:layout_constraintStart_toStartOf="@id/order_type_map"
+                                app:layout_constraintTop_toTopOf="@id/order_type_map" />
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:id="@+id/location"
@@ -340,12 +350,21 @@
 
                                 </LinearLayout>
 
-                                <include
-                                    android:id="@+id/order_payment_details"
-                                    layout="@layout/include_order_payment_summary"
+                                <FrameLayout
+                                    android:id="@+id/orderPaymentDetailsFrame"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    app:layout_constraintTop_toBottomOf="@id/paymentSummaryFrame" />
+                                    android:visibility="gone"
+                                    app:layout_constraintTop_toBottomOf="@id/paymentSummaryFrame"
+                                    tools:visibility="visible">
+
+                                    <include
+                                        android:id="@+id/order_payment_details"
+                                        layout="@layout/include_order_payment_summary"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+
+                                </FrameLayout>
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
 

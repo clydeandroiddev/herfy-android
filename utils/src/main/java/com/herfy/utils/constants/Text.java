@@ -1101,4 +1101,9 @@ public class Text {
     public static final String ESTIMATE_PICKUP_TIME = "estimate_pickup_time";
 
     public static final String YOUR_ORDER_TEMPLATE = "your_order_template";
+
+    public static final String HAVE_A_TROUBLE = "have_a_trouble";
+    public static final String HERFY_SUPPORT_TEAM = "herfy_support_team";
+    public static final String CALL = "call";
+    public static final String WHATSAPP_MESSAGE = "whatsapp_message";
 }

@@ -195,3 +195,27 @@ fun String.defaultTime(): String {
     }
     return ""
 }
+
+fun showTime(timestamp: String, timeAdded: Int): String {
+    try {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+        val timeValue = simpleDateFormat.parse(timestamp)
+        val localTimeFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        localTimeFormat.timeZone = TimeZone.getDefault()
+        val actualDate = timeValue?.let { localTimeFormat.format(it) }.orEmpty()
+        val calendar = Calendar.getInstance().apply {
+            time =
+                localTimeFormat.parse(actualDate)!! // Parse actualDate back into a Date object
+            add(Calendar.MINUTE, timeAdded)
+        }
+        val startTimeFormat = SimpleDateFormat("h:mm", Locale.getDefault())
+        val endTimeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val startTime = startTimeFormat.format(calendar.time)
+        val endTime = endTimeFormat.format(calendar.apply { add(Calendar.MINUTE, 10) }.time)
+        return "$startTime - $endTime"
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return ""
+    }
+}

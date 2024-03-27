@@ -218,7 +218,7 @@ class OrderMenuItemsAdapter(
             itemQuantity.text = "x" + menuItem.attributes.quantity
 
             totalPrice.text = StringUtil.getNewFormattedPrice(
-                menuItem.attributes.price, true
+                (menuItem.attributes.price * menuItem.attributes.quantity), true
             )
 
             executePendingBindings()
