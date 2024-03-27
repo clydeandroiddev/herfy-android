@@ -4,254 +4,281 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinator_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/footer">
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:id="@+id/coordinator_layout"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toTopOf="@+id/footer">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appbar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:elevation="0dp"
+        android:background="@color/white"
+        android:theme="@style/AppTheme">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/main_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:fitsSystemWindows="true"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:titleEnabled="true">
 
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                android:id="@+id/main_toolbar"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="385dp"
-                android:animateLayoutChanges="true"
-                android:fitsSystemWindows="true"
-                app:contentInsetLeft="0dp"
-                app:contentInsetStart="0dp"
-                app:contentInsetStartWithNavigation="0dp"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-                app:titleEnabled="true">
+                app:layout_collapseMode="parallax"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="match_parent"
+                    android:layout_height="285dp"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="vertical"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:src="@tools:sample/avatars"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    app:layout_constraintTop_toBottomOf="@+id/image"/>
+
+                <ImageView
+                    android:id="@+id/icClose"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="@dimen/margin_large"
+                    android:layout_marginTop="@dimen/margin_xlarge"
+                    android:src="@drawable/ic_close"
+                    app:layout_constraintStart_toStartOf="@id/image"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <FrameLayout
+                    android:id="@+id/favorite_card"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginTop="@dimen/margin_xlarge"
+                    android:layout_marginEnd="@dimen/margin_large"
+                    android:background="@drawable/background_favourite"
+                    android:elevation="8dp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="@id/image"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <RelativeLayout
+                        android:id="@+id/favorite_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/favorite_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="18dp"
+                            android:layout_centerInParent="true"
+                            android:scaleType="fitXY"/>
+
+                    </RelativeLayout>
+
+                </FrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!--                <androidx.appcompat.widget.Toolbar-->
+            <!--                    android:id="@+id/toolbar"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="130dp"-->
+            <!--                    android:layout_gravity="bottom"-->
+            <!--                    android:background="@drawable/bg_menu_item_background"-->
+            <!--                    app:contentInsetLeft="0dp"-->
+            <!--                    app:contentInsetStart="0dp"-->
+            <!--                    app:contentInsetStartWithNavigation="0dp">-->
+
+            <!--             -->
+            <!--                    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+            <!--                </androidx.appcompat.widget.Toolbar>-->
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/content_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            android:layout_marginTop="-15dp"
+            android:fillViewport="true"
+            android:background="@drawable/common_background_half_corner_top"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_large"
+                android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <ImageView
-                        android:id="@+id/image"
-                        android:layout_width="match_parent"
-                        android:layout_height="285dp"
-                        android:layout_gravity="center_horizontal|center_vertical"
-                        android:orientation="vertical"
-                        android:scaleType="centerCrop"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        app:layout_constraintTop_toBottomOf="@+id/image"/>
-
-                    <ImageView
-                        android:id="@+id/icClose"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                    <TextView
+                        android:id="@+id/name"
+                        style="@style/TextAppearance.Headline"
+                        android:layout_marginEnd="@dimen/margin_large"
+                        app:layout_constraintEnd_toStartOf="@+id/total"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_large"
-                        android:layout_marginTop="@dimen/margin_xlarge"
-                        android:src="@drawable/ic_close"
-                        app:layout_constraintStart_toStartOf="@id/image"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_marginTop="@dimen/margin_large"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Super Herfy" />
 
-                    <FrameLayout
-                        android:id="@+id/favorite_card"
+                    <TextView
+                        android:id="@+id/total"
+                        style="@style/Styles.Text.Headline1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_marginEnd="@dimen/margin_large"
+
+                        android:textColor="#2266A7"
+                        app:layout_constraintBottom_toBottomOf="@+id/name"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/name"
+                        tools:text="SAR 44" />
+
+                    <TextView
+                        android:id="@+id/description"
+                        style="@style/TextAppearance.Footnote.Medium_Regular"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="-7dp"
+                        android:textAlignment="viewStart"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="@+id/name"
+                        app:layout_constraintTop_toBottomOf="@+id/name"
+                        tools:text="Grilled chicken patty, topped with a flavorful slice of cheese and shredded fresh lettuce" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtMoreInfo"
+                        style="@style/Styles.Text.Footnote.Semi.Bold"
+                        android:layout_width="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_small"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_large"
+                        android:layout_marginEnd="@dimen/margin_large"
+                        android:drawableEnd="@drawable/ic_question_mark"
+                        android:drawablePadding="@dimen/margin_micro"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/shade_blue"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/description"
+                        app:lineHeight="20sp"
+                        tools:text="More Info"
+                        tools:visibility="visible" />
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/btnCalories"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_xlarge"
-                        android:layout_marginEnd="@dimen/margin_large"
-                        android:background="@drawable/background_favourite"
-                        android:elevation="8dp"
-                        android:visibility="visible"
-                        app:layout_constraintEnd_toEndOf="@id/image"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <RelativeLayout
-                            android:id="@+id/favorite_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/favorite_icon"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerInParent="true"
-                                android:scaleType="centerCrop"
-                                app:srcCompat="@drawable/ic_heart_unselected" />
-
-                        </RelativeLayout>
-
-                    </FrameLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_gravity="bottom"
-                    android:background="@drawable/bg_menu_item_background"
-                    app:contentInsetLeft="0dp"
-                    app:contentInsetStart="0dp"
-                    app:contentInsetStartWithNavigation="0dp">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/name"
-                            style="@style/TextAppearance.Headline"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/margin_large"
-                            android:layout_marginTop="16dp"
-                            android:ellipsize="end"
-                            android:includeFontPadding="false"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/primary_text"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:text="Grill Chicken" />
-
-                        <TextView
-                            android:id="@+id/total"
-
-                            style="@style/Styles.Text.Headline1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/margin_large"
-                            android:layout_marginBottom="-5dp"
-                            android:includeFontPadding="false"
-                            android:textColor="#2266A7"
-                            app:layout_constraintBottom_toBottomOf="@+id/name"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/name"
-                            tools:text="SAR 44" />
-                        <TextView
-                            android:id="@+id/description"
-                            style="@style/TextAppearance.Footnote.Medium_Regular"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="start"
-                            android:textAlignment="viewStart"
-                            android:textColor="#969696"
-                            android:maxLines="3"
-                            android:ellipsize="end"
-                            android:textSize="14sp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="@+id/name"
-                            app:layout_constraintTop_toBottomOf="@+id/name"
-                            app:layout_constraintBottom_toTopOf="@+id/txtMoreInfo"
-                            tools:text="Dive into a flavor-packed adventure with our New Triple Herfy! Three mouthwatering beef patties, decadent cheese, and our signature herfy sauce, all crowned with crisp lettuce, pickles, and onions. It's a triple delight that takes burger indulgence to new heights!" />
+                        android:layout_marginStart="@dimen/margin_small"
+                        android:backgroundTint="@color/white"
+                        android:gravity="center"
+                        android:layout_marginTop="@dimen/margin_large"
+                        app:layout_constraintStart_toStartOf="@+id/description"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
+                        app:cardCornerRadius="@dimen/_12sdp"
+                        android:layout_marginBottom="@dimen/margin_small"
+                        app:cardPreventCornerOverlap="true"
+                        app:cardUseCompatPadding="false"
+                        app:layout_constraintTop_toBottomOf="@+id/description"
+                        app:strokeColor="#D9E8F3"
+                        app:strokeWidth="1dp">
 
                         <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/txtMoreInfo"
-                            style="@style/Styles.Text.Footnote.Semi.Bold"
+                            android:id="@+id/calories"
+                            style="@style/Styles.Text.Caption"
                             android:layout_width="wrap_content"
-                            android:layout_marginBottom="@dimen/margin_small"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/margin_large"
-                            android:drawableEnd="@drawable/ic_question_mark"
-                            android:drawablePadding="@dimen/margin_micro"
-                            android:textAlignment="viewStart"
-                            android:textColor="@color/shade_blue"
-                            android:visibility="gone"
-                            app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            android:layout_marginTop="@dimen/margin_large"
-                            app:layout_constraintTop_toBottomOf="@+id/description"
-                            app:lineHeight="20sp"
-                            tools:text="More Info"
-                            tools:visibility="visible" />
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:drawableStart="@drawable/ic_fire"
+                            android:drawablePadding="@dimen/margin_small"
+                            android:gravity="center_vertical"
+                            android:paddingStart="@dimen/padding_micro"
+                            android:paddingTop="@dimen/padding_micro"
+                            android:paddingEnd="@dimen/padding_micro"
+                            android:paddingBottom="@dimen/padding_micro"
+                            tools:text="2200 Kcal" />
+                    </androidx.cardview.widget.CardView>
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/btnCalories"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/margin_small"
-                            android:layout_marginBottom="@dimen/margin_small"
-                            android:backgroundTint="@color/white"
-                            android:gravity="center"
-                            android:orientation="horizontal"
-                            app:cardCornerRadius="@dimen/_12sdp"
-                            app:cardPreventCornerOverlap="true"
-                            app:cardUseCompatPadding="false"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="@+id/description"
-                            app:layout_constraintTop_toTopOf="@+id/txtMoreInfo"
-                            app:strokeColor="#D9E8F3"
-                            app:strokeWidth="1dp">
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/calories"
-                                style="@style/Styles.Text.Caption"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center_vertical"
-                                android:layout_weight="1"
-                                android:drawableStart="@drawable/ic_fire"
-                                android:drawablePadding="@dimen/margin_small"
-                                android:gravity="center_vertical"
-                                android:paddingStart="@dimen/padding_micro"
-                                android:paddingTop="@dimen/padding_micro"
-                                android:paddingEnd="@dimen/padding_micro"
-                                android:paddingBottom="@dimen/padding_micro"
-                                tools:text="2200 Kcal" />
-                        </androidx.cardview.widget.CardView>
-
-                        <View
-                            android:id="@+id/viewSeparator"
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginHorizontal="@dimen/margin_large"
-                            android:layout_marginTop="@dimen/margin_small"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            android:background="@color/colorSeparator" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </androidx.appcompat.widget.Toolbar>
-
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-        </com.google.android.material.appbar.AppBarLayout>
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/content_main"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#F7F7F7"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_large"
-                android:background="#F7F7F7"
-                android:orientation="vertical">
-
-
+                    <View
+                        android:id="@+id/viewSeparator"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="@dimen/margin_large"
+                        android:layout_marginTop="@dimen/margin_small"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:background="@color/colorSeparator" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/sizesLayoutTextContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:visibility="gone"
                     tools:visibility="visible">
+
+                    <!-- Commented for now might needed this when designer change the ui again -->
+                    <!--                        <LinearLayout-->
+                    <!--                            android:id="@+id/btnRequired"-->
+                    <!--                            android:layout_width="73dp"-->
+                    <!--                            android:layout_height="28dp"-->
+                    <!--                            android:background="@drawable/bg_rounded_25_radius_background"-->
+                    <!--                            android:gravity="center"-->
+                    <!--                            android:textAlignment="viewEnd"-->
+                    <!--                            app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"-->
+                    <!--                            app:layout_constraintEnd_toEndOf="parent"-->
+                    <!--                            app:layout_constraintTop_toTopOf="parent">-->
+
+                    <!--                            <com.google.android.material.textview.MaterialTextView-->
+                    <!--                                android:id="@+id/txtRequired"-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:gravity="center"-->
+                    <!--                                android:padding="0dp"-->
+                    <!--                                android:textColor="@color/white"-->
+                    <!--                                android:textSize="12sp"-->
+                    <!--                                tools:text="Required" />-->
+                    <!--                        </LinearLayout>-->
 
 
                     <ImageView
@@ -320,9 +347,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
-                    app:layout_constraintTop_toBottomOf="@+id/sizesLayoutTextContainer"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:orientation="horizontal"
                     android:layout_marginStart="@dimen/margin_large"
                     android:visibility="gone"
@@ -336,11 +360,7 @@
                     android:descendantFocusability="blocksDescendants"
                     android:focusableInTouchMode="false"
                     android:orientation="horizontal"
-                    app:layout_constraintTop_toBottomOf="@+id/sizes_container"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:visibility="gone"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:layout_marginHorizontal="@dimen/margin_small"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     tools:itemCount="2"
@@ -350,10 +370,7 @@
                 <View
                     android:id="@+id/viewSizesSeparator"
                     android:layout_width="match_parent"
-                    app:layout_constraintTop_toBottomOf="@+id/sizes_recycler_view"
                     android:layout_height="1dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="@dimen/margin_large"
                     android:background="@color/colorSeparator"
                     android:visibility="gone"/>
@@ -383,15 +400,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_small"
                     android:clipToPadding="false"
-                    app:layout_constraintTop_toBottomOf="@+id/viewSizesSeparator"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/notes_container"
+                    android:descendantFocusability="blocksDescendants"
+                    android:focusableInTouchMode="false"
                     android:paddingTop="2dp"
-                    android:paddingBottom="300dp"
                     android:visibility="gone"
-                    android:orientation="vertical"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     tools:itemCount="5"
                     tools:listitem="@layout/item_modifier_group_new"
@@ -401,9 +413,6 @@
                     android:id="@+id/notes_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/modifier_groups_recycler_view"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginHorizontal="@dimen/margin_large"
                     android:layout_marginBottom="@dimen/margin_large"
                     android:orientation="vertical">
@@ -444,7 +453,7 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="30dp"
                         android:paddingBottom="30dp"
-                        android:layout_marginTop="@dimen/margin_large"
+                        android:layout_marginTop="16dp"
                         android:background="@drawable/bg_background_border"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center_vertical"
@@ -468,9 +477,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/notes_container"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:orientation="vertical">
 
                     <com.google.android.material.textview.MaterialTextView
@@ -500,18 +506,18 @@
 
                 </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
         </androidx.core.widget.NestedScrollView>
 
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:elevation="5dp"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
@@ -527,9 +533,10 @@
             android:layout_marginTop="@dimen/margin_large"
             android:fontFamily="@font/inter_semi_bold"
             android:layout_marginBottom="@dimen/margin_large"
-                android:textColor="#0C0C0C"
+            android:textColor="#0C0C0C"
             android:textAlignment="viewStart"
             app:layout_constraintBottom_toTopOf="@+id/add"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Quantity" />
@@ -618,4 +625,6 @@
             app:strokeWidth="2dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
