@@ -554,8 +554,8 @@ public class Text {
     public static final String PROMOS = "promos";
     public static final String PROMO = "promo";
 
-    public static final String STORY = "story";
-    public static final String NUTRITION_INFO = "nutrition_info";
+    public static final String STORY = "story_label";
+    public static final String NUTRITION_INFO = "nutritional_info";
     public static final String SHOW_PROMOS = "show_promos";
     public static final String CHANGE_PROMO = "change_promo";
     public static final String YOU_CAN_CHOOSE_ONE_OF_THE_FOLLOWING_ITEMS_AT_A_DISCOUNTED_PRICE = "promo_header";
