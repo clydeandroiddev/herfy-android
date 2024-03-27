@@ -145,13 +145,12 @@
                         android:layout_marginStart="@dimen/margin_large"
                         android:layout_marginTop="@dimen/margin_large"
                         android:includeFontPadding="false"
-                        android:singleLine="true"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="Super Herfy" />
+                        tools:text="Combo Large Super Herfy - Large Size" />
 
                     <TextView
                         android:id="@+id/total"
