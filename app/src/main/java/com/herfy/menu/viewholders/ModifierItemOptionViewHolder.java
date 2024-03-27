@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
@@ -163,8 +162,10 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             public void onClick(View v) {
                 if (action != null && modifierItem.getAttributes().getMinimum() != 1) {
                     if (modifierItem.getAttributes().isSelected()) {
+                        System.out.println("Selected bai");
                         action.onCheckedChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     } else {
+                        System.out.println("Selected false bai");
                         action.onCheckedChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     }
                 }
@@ -178,19 +179,29 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             modifierOptionImage.setVisibility(View.GONE);
         }
         if (modifierItem.getAttributes().hasModifierItemExceedMaximum() && modifierItem.getAttributes().hasUserInteractedWithModifierItem() ) {
-            plus.setEnabled(true);
-            plus.setImageResource(R.drawable.quantity_up_blue);
-            modifierItemCardView.setEnabled(true);
-        } else {
-
-            if (!modifierItem.getAttributes().hasUserInteractedWithModifierItem() ) {
+            boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
+            if (shouldShowQuantityLayout) {
                 plus.setEnabled(true);
                 plus.setImageResource(R.drawable.quantity_up_blue);
                 modifierItemCardView.setEnabled(true);
+
+            }
+        } else {
+            if (!modifierItem.getAttributes().hasUserInteractedWithModifierItem() ) {
+                boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
+                if (shouldShowQuantityLayout) {
+                    plus.setEnabled(true);
+                    plus.setImageResource(R.drawable.quantity_up_blue);
+                    modifierItemCardView.setEnabled(true);
+                }
+
             } else {
-                plus.setEnabled(false);
-                plus.setImageResource(R.drawable.quantity_up_blue_gray);
-                modifierItemCardView.setEnabled(false);
+                boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
+                if (shouldShowQuantityLayout) {
+                    plus.setEnabled(false);
+                    plus.setImageResource(R.drawable.quantity_up_blue_gray);
+                    modifierItemCardView.setEnabled(false);
+                }
             }
         }
 
@@ -203,8 +214,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 String modifierItemId = modifierItem.getId();
                 if (!clickCountMap.containsKey(modifierItemId) && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum() ) {
                     clickCountMap.put(modifierItemId, 0);
-                    boolean shouldShowQuantityLayout = modifierGroup.getAttributes().getMaximum() > 1 &&
-                            modifierItem.getAttributes().getMaximum() > 1;
+                    boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
 
                     quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
 
@@ -219,7 +229,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
                 clickCountMap.put(modifierItemId, clickCount);
                 if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount > 1 && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
-
+                    action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, clickCount);
                 }
             }
         });
@@ -231,6 +241,11 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 action.onQuantityChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, 0);
             }
         });
+    }
+
+    private boolean shouldShowQuantity(ModifierGroup modifierGroup, ModifierItem modifierItem) {
+        return modifierGroup.getAttributes().getMaximum() > 1 &&
+                modifierItem.getAttributes().getMaximum() > 1;
     }
     public static boolean isProbablyArabic(String s) {
         for (int i = 0; i < s.length(); ) {
