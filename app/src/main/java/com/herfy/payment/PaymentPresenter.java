@@ -1372,6 +1372,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                                     } catch (Exception e) {
                                         e.printStackTrace(); // or log the exception
                                     }
+                                    break;
                                 case "moneyhash":
                                 case "money-hash":
                                     getMoneyHashIntent(orderId, validatedTotal);

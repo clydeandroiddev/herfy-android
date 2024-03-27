@@ -577,35 +577,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
                     paymentPresenter!!.getPrayerTime()
                     paymentPresenter!!.getStoreOpen(false, simpleDateFormat.format(Date()))
-
-//                    String branch;
-//                    LatLng latLng;
-//                    String imageUrl;
-//                    int promisedTime;
-//                    if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
-//                        promisedTime = CacheUtil.getInstance().getOrderStore().getAttributes().getPromisedTimeDelta().getDelivery();
-//                        branch = (CacheUtil.getInstance().getOrderAddress().getAttributes().getLine1());
-//                        latLng = new LatLng(Double.parseDouble(CacheUtil.getInstance().getOrderAddress().getAttributes().getLat()), Double.parseDouble(CacheUtil.getInstance().getOrderAddress().getAttributes().getLongt()));
-//                        imageUrl = null;
-//                    } else {
-//                        promisedTime = CacheUtil.getInstance().getOrderStore().getAttributes().getPromisedTimeDelta().getPickup();
-//                        branch = (CacheUtil.getInstance().getOrderStore().getAttributes().getName());
-//                        latLng = new LatLng(CacheUtil.getInstance().getOrderStore().getAttributes().getLat(), CacheUtil.getInstance().getOrderStore().getAttributes().getLng());
-//                        imageUrl = CacheUtil.getInstance().getOrderStore().getAttributes().getImage();
-//                    }
-//                    paymentOrderTimeDialog = PaymentOrderTimeDialog.newInstance(CacheUtil.getInstance().getOrderType(), promisedTime, branch, imageUrl, latLng, new PaymentOrderTimeDialog.OnAction() {
-//                        @Override
-//                        public void close() {
-//                            paymentOrderTimeDialog.dismiss();
-//                        }
-//
-//                        @Override
-//                        public void confirm() {
-
-//                        }
-//                    });
-//                    paymentOrderTimeDialog.setCancelable(false);
-//                    paymentOrderTimeDialog.show(getSupportFragmentManager(), CarMakerDialog.class.toString());
                 } else {
                     try {
                         showLoadingDialog()
@@ -1083,7 +1054,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
             ) { dialog, which -> dialog.dismiss() }
         } else {
-            showError(CacheUtil.getInstance().getTranslations(Text.CARD_FAILED))
+            showAlertDialog("",
+                CacheUtil.getInstance().getTranslations(Text.CARD_FAILED),
+                CacheUtil.getInstance().getTranslations(Text.OK)
+            ) { dialog, _ ->
+                if (dialogCheckout != null) {
+                    dialogCheckout!!.dismiss()
+                }
+                dialog.dismiss()
+            }
         }
     }
 
@@ -1469,7 +1448,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 val orderPayment = CacheUtil
                     .getInstance().orderPayment
                 if (orderPayment != null) {
-                    addPaymentInfoEvent(this, orderPayment.value)
+                    addPaymentInfoEvent(this, paymentPresenter!!.menuItemsList,totalValue)
                 }
             }
         } catch (e: Exception) {
