@@ -329,6 +329,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
 
     private fun navigateUp(proceed: Boolean, isUserClickBack:Boolean = false) {
+        dismissDialogs()
         val isFromFavorites = args.isFromFavorites
         if (isFromFavorites && !isUserClickBack) {
             val currentFavourite=  CacheUtil.getInstance()
