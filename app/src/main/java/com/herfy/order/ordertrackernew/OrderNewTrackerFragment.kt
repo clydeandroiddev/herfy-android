@@ -70,7 +70,6 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
-import io.shipbook.shipbooksdk.Log
 import java.util.Calendar
 import java.util.Locale
 
@@ -343,6 +342,21 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
             orderHelpDetails.herfySupportLabel.text = CacheUtil.getInstance().getTranslations(
                 Text.HERFY_SUPPORT_TEAM, "Herfy’s Support team is here to help you."
             )
+            orderCurbsideDetails.thankYouLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.THANK_YOU, "Thank You!")
+            orderCurbsideDetails.orderServedLabel.text = CacheUtil.getInstance().getTranslations(
+                Text.YOUR_ORDER_WILL_BE_SERVED_SHORTLY, "Your order will be served shortly"
+            )
+            orderCurbsideDetails.letUsKnowLabel.text = CacheUtil.getInstance()
+                .getTranslations(Text.LET_US_KNOW, "Let us know when you arrive.")
+            orderCurbsideDetails.curbsideVehicleLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.CURBSIDE_VEHICLE, "Curbside Vehicle")
+            orderCurbsideDetails.weWillServeLabel.text = CacheUtil.getInstance().getTranslations(
+                Text.WE_WILL_SERVE_YOUR_ORDER, "We will serve your order to you when you are here."
+            )
+            orderCurbsideDetails.serveOrder.text = CacheUtil.getInstance().getTranslations(
+                Text.ARRIVED_SERVE_ORDER, "Arrived - Serve my order"
+            )
             orderHelpDetails.callHelpLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.CALL, "Call")
             orderHelpDetails.whatsAppHelpMessageLabel.text =
@@ -442,9 +456,11 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                             .replace("(x)", distanceValue).toLowerCase()
                     if (currentDistance != null) {
                         if (currentDistance <= 0.0) {
+                            binding.orderAddressDetails.addressKm.text = ""
                             textView.isInvisible = true
                         } else {
                             textView.isVisible = true
+                            binding.orderAddressDetails.addressKm.text = distanceValue.toLowerCase()
                         }
                     }
                 } catch (e: Exception) {
@@ -589,114 +605,115 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
         }
     }
 
-    private fun getDistanceCount(store: Store?) {
-        store?.let {
-            try {
-                val currentLocation = userLatLng
-                val currentDistance = currentLocation?.latitude?.let {
-                    currentLocation.longitude.let { it1 ->
-                        store.attributes?.lat?.let { it2 ->
-                            store.attributes?.lng?.let { it3 ->
-                                DistanceCalculator.calculateDistance(
-                                    it, it1, it2, it3
-                                )
-                            }
-                        }
-                    }
-                }
-                val distanceValue = StringUtil.getDistance(
-                    currentDistance ?: 0.0
-                )
-                binding.orderAddressDetails.addressKm.text = distanceValue.toLowerCase()
-                if (distanceValue.isNullOrEmpty()) {
-                    binding.orderAddressDetails.addressKm.text = ""
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     private fun showDeliveryDetails() {
         binding.apply {
             orderDetails?.let { order ->
                 orderStore?.let { store ->
-                    orderAddress?.let { address ->
-                        order?.let {
-                            val orderType = OrderType.fromString(order.orderType)
-                            orderAddressDetails.getDirection.isVisible = true
-                            orderAddressDetails.addressKm.isVisible = true
-                            orderAddressDetails.addressTime.isVisible = true
-                            when (orderType) {
-                                OrderType.DELIVERY -> {
-                                    orderAddressDetails.addressKm.isVisible = false
-                                    orderAddressDetails.addressTime.isVisible = false
-                                    orderAddressDetails.addressType.text = address.attributes?.label
-                                    orderAddressDetails.addressName.text = address.attributes?.line1
-                                    orderAddressDetails.getDirection.isVisible = false
-                                    orderAddressDetails.deliveryDetailsLabel.text =
-                                        CacheUtil.getInstance().getTranslations(
-                                            Text.DELIVERY_DETAILS, "Delivery Details"
-                                        )
-                                    orderAddressDetails.tellLabel.text =
-                                        CacheUtil.getInstance().getTranslations(
-                                            Text.TELL_THE_ORDER_NUMB_DELIVER,
-                                            "Tell the order number to the rider to receive your order"
-                                        )
-                                    orderAddressDetails.deliveryAddressLabel.text =
-                                        CacheUtil.getInstance().getTranslations(
-                                            Text.DELIVERY_ADDRESS_LABEL, "Delivery Address"
-                                        )
-                                }
-
-                                OrderType.DINE_IN -> {
-                                    getBranchTime(store)
-                                    getDirection(store)
-                                    getDistanceCount(store)
-                                    orderAddressDetails.addressType.text = store?.attributes?.name
-                                    orderAddressDetails.addressName.text = store?.attributes?.line1
-                                    orderAddressDetails.deliveryDetailsLabel.text =
-                                        CacheUtil.getInstance().getTranslations(
-                                            Text.DINE_IN_DETAILS, "Dine In Details"
-                                        )
-                                    orderAddressDetails.tellLabel.text =
-                                        CacheUtil.getInstance().getTranslations(
-                                            Text.TELL_THE_ORDER_NUM_PICKUP,
-                                            "Tell the order number at the counter to pick you order"
-                                        )
-                                    orderAddressDetails.deliveryAddressLabel.text =
-                                        CacheUtil.getInstance().getTranslations(
-                                            Text.DINEIN_ADDRESS, "Dine In Address"
-                                        )
-                                }
-
-                                else -> {
-                                    getBranchTime(store)
-                                    getDirection(store)
-                                    getDistanceCount(store)
-                                    orderAddressDetails.tellLabel.text = when (orderType) {
-                                        OrderType.CURBSIDE -> CacheUtil.getInstance()
-                                            .getTranslations(
-                                                Text.TELL_THE_ORDER_NUMB_CURBSIDE,
-                                                "Tell the order number if asked."
-                                            )
-
-                                        else -> CacheUtil.getInstance().getTranslations(
-                                            Text.TELL_THE_ORDER_NUM_PICKUP,
-                                            "Tell the order number at the counter to pick you order"
-                                        )
-                                    }
-                                    orderAddressDetails.deliveryDetailsLabel.text =
-                                        CacheUtil.getInstance()
-                                            .getTranslations(Text.PICKUP_DETAILS, "Pickup Details")
-                                    orderAddressDetails.deliveryAddressLabel.text =
-                                        CacheUtil.getInstance().getTranslations(
-                                            Text.PICKUP_ADDRESS, "Pickup Address"
-                                        )
-                                }
+                    val orderType = OrderType.fromString(order.orderType)
+                    orderAddressDetails.getDirection.isVisible = true
+                    orderAddressDetails.addressKm.isVisible = true
+                    orderAddressDetails.addressTime.isVisible = true
+                    when (orderType) {
+                        OrderType.DELIVERY -> {
+                            orderAddress?.let { address ->
+                                orderAddressDetails.addressKm.isVisible = false
+                                orderAddressDetails.addressTime.isVisible = false
+                                orderAddressDetails.addressType.text = address.attributes?.label
+                                orderAddressDetails.addressName.text = address.attributes?.line1
+                                orderAddressDetails.getDirection.isVisible = false
+                                orderAddressDetails.deliveryDetailsLabel.text =
+                                    CacheUtil.getInstance().getTranslations(
+                                        Text.DELIVERY_DETAILS, "Delivery Details"
+                                    )
+                                orderAddressDetails.tellLabel.text =
+                                    CacheUtil.getInstance().getTranslations(
+                                        Text.TELL_THE_ORDER_NUMB_DELIVER,
+                                        "Tell the order number to the rider to receive your order"
+                                    )
+                                orderAddressDetails.deliveryAddressLabel.text =
+                                    CacheUtil.getInstance().getTranslations(
+                                        Text.DELIVERY_ADDRESS_LABEL, "Delivery Address"
+                                    )
                             }
                         }
+
+                        OrderType.DINE_IN -> {
+                            getBranchTime(store)
+                            getDirection(store)
+                            orderAddressDetails.addressType.text = store?.attributes?.name
+                            orderAddressDetails.addressName.text = store?.attributes?.line1
+                            orderAddressDetails.deliveryDetailsLabel.text =
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.DINE_IN_DETAILS, "Dine In Details"
+                                )
+                            orderAddressDetails.tellLabel.text =
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.TELL_THE_ORDER_NUM_PICKUP,
+                                    "Tell the order number at the counter to pick you order"
+                                )
+                            orderAddressDetails.deliveryAddressLabel.text =
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.DINEIN_ADDRESS, "Dine In Address"
+                                )
+                        }
+
+                        else -> {
+                            getBranchTime(store)
+                            getDirection(store)
+                            orderAddressDetails.tellLabel.text = when (orderType) {
+                                OrderType.CURBSIDE -> CacheUtil.getInstance().getTranslations(
+                                    Text.TELL_THE_ORDER_NUMB_CURBSIDE,
+                                    "Tell the order number if asked."
+                                )
+
+                                else -> CacheUtil.getInstance().getTranslations(
+                                    Text.TELL_THE_ORDER_NUM_PICKUP,
+                                    "Tell the order number at the counter to pick you order"
+                                )
+                            }
+                            orderAddressDetails.deliveryDetailsLabel.text = CacheUtil.getInstance()
+                                .getTranslations(Text.PICKUP_DETAILS, "Pickup Details")
+                            orderAddressDetails.deliveryAddressLabel.text =
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.PICKUP_ADDRESS, "Pickup Address"
+                                )
+                        }
                     }
+                }
+            }
+        }
+    }
+
+    private fun processCurbside() {
+        orderDetails?.let { order ->
+            binding.orderCurbsideDetails.apply {
+                if (OrderType.fromString(order.orderType) == OrderType.CURBSIDE) {
+                    serveOrder.setOnClickListener {
+                        activity?.cast<BaseActivity> {
+                            it.showLoadingDialog()
+                        }
+                        orderPresenter?.customerArrived(order.id)
+                    }
+                    if (order.curbsideStatus != null) {
+                        if (order.curbsideStatus.code.equals(
+                                "customer-arrived", ignoreCase = true
+                            )
+                        ) {
+                            notServedLayout.visibility = View.GONE
+                            servedLayout.visibility = View.VISIBLE
+                        }
+                    } else {
+                        notServedLayout.visibility = View.VISIBLE
+                        servedLayout.visibility = View.GONE
+                    }
+                    curbsideBrandName.text = order.carMakerName
+                    if (!order.carColor.isNullOrEmpty()) {
+                        curbsideVehicleColor.text = "- " + order.carColor
+                    }
+                    if (!order.carPlateNumber.isNullOrEmpty()) {
+                        curbsidePlateNumber.text = "- " + order.carPlateNumber
+                    }
+
                 }
             }
         }
@@ -936,7 +953,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                             onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             onWayTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
-                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
+                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
                             finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
                             finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
@@ -969,7 +986,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                             preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             preparingTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
-                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready_done)
                             onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
                             onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
@@ -1004,6 +1021,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                 showDeliveryDetails()
                 showDetailsState()
                 showDriverDetails()
+                processCurbside()
                 orderAddressDetails.orderNumberLabel.text =
                     CacheUtil.getInstance().getTranslations(Text.ORDER_NUM, "Order #")
                 orderAddressDetails.orderNumber.text = item.id
@@ -1060,15 +1078,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                 showOrderStatus(order.orderStatus)
                 val ot = OrderType.fromString(order.orderType)
                 if (ot == OrderType.DELIVERY) {
-                    Log.e(
-                        "ADADADAD",
-                        "ADADAD1:" + getLastStatus(orderStatuses, OrderStatusType.DISPATCHED.value)
-                    )
-                    Log.e(
-                        "ADADADAD", "ADADAD2:" + getLastStatus(
-                            orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value
-                        )
-                    )
                     preparingTime.text =
                         getLastStatus(orderStatuses, OrderStatusType.DISPATCHED.value)
                     if (order.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
@@ -1173,7 +1182,11 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun customerArrivedSuccess() {
-
+        activity?.cast<BaseActivity> {
+            it.dismissDialogs()
+        }
+        binding.orderCurbsideDetails.servedLayout.isVisible = true
+        binding.orderCurbsideDetails.notServedLayout.isVisible = true
     }
 
     override fun logFirebaseEvent(event: String?) {

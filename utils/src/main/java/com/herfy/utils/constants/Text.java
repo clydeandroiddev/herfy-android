@@ -1132,4 +1132,11 @@ public class Text {
     public static final String READY = "ready";
     public static final String PREPARING = "preparing";
     public static final String ONWAY = "on_way";
+
+    public static final String LET_US_KNOW = "let_us_know";
+    public static final String WE_WILL_SERVE_YOUR_ORDER = "we_will_serve_your_order";
+    public static final String CURBSIDE_VEHICLE = "curbside_vehicle";
+    public static final String THANK_YOU = "thank_you";
+    public static final String YOUR_ORDER_WILL_BE_SERVED_SHORTLY = "your_order_will_be_served_shortly";
+    public static final String ARRIVED_SERVE_ORDER = "arrived_serve_order";
 }

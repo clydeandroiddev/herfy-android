@@ -60,7 +60,7 @@
                 android:layout_marginStart="6dp"
                 android:ellipsize="end"
                 android:includeFontPadding="false"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:textColor="#191919"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -111,7 +111,7 @@
                 tools:text="Let us know when you arrive." />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/driverInstruction"
+                android:id="@+id/weWillServeLabel"
                 style="@style/Styles.Text.Caption.Semibold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -124,6 +124,23 @@
                 app:layout_constraintStart_toStartOf="@id/letUsKnowLabel"
                 app:layout_constraintTop_toBottomOf="@id/letUsKnowLabel"
                 tools:text="We will serve your order to you when you are here." />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/serveOrder"
+                style="@style/Styles.Text.Caption.Semibold"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/background_current_status"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@id/weWillServeLabel"
+                app:layout_constraintTop_toBottomOf="@id/weWillServeLabel"
+                tools:text="Arrived - Serve my order" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -153,6 +170,7 @@
                 android:layout_height="24dp"
                 android:gravity="center"
                 android:orientation="horizontal"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -218,23 +236,11 @@
                     tools:text="BMW" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Styles.Text.Caption.Regular"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:includeFontPadding="false"
-                    android:text="-"
-                    android:textColor="#000000"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/curbsideVehicleColor"
                     style="@style/Styles.Text.Caption.Regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:includeFontPadding="false"
                     android:textColor="#000000"
                     android:textSize="16sp"
@@ -243,24 +249,11 @@
                     tools:text="Black" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Styles.Text.Caption.Regular"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:includeFontPadding="false"
-                    android:text="-"
-                    android:textColor="#000000"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/curbsidePlateNumber"
                     style="@style/Styles.Text.Caption.Regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:includeFontPadding="false"
                     android:textColor="#000000"
                     android:textSize="16sp"
