@@ -777,28 +777,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     baseActivity.dismissDialogs()
                     menuItemSelected = menuItem
                     menuCategorySelected = menuCategory
-                    if (!args.isPromo) {
-                        if (cartMenuItem >= 0) {
-                            menuPresenter.updateCartItem(false, cartMenuItem)
-                        } else {
-                            menuPresenter.getCartMenuItem()
-                        }
-                    } else {
-                        menuPresenter.updateCartItem(true, cartMenuItem)
-                    }
-                    FirebaseECommerceEventUtil.addToCartEvent(
-                        activity,
-                        menuItem,
-                        menuCategory,
-                        _totalPrice,
-                        Integer.parseInt(binding.quantity.text.toString())
-                    );
-                    FacebookAppEventUtil.addToCartEvent(baseActivity, menuItem, _totalPrice)
-                    KochavaTrackerUtil.trackEvent(EventType.ADD_TO_CART)
-                }
-                baseActivity.dismissDialogs()
-                menuItemSelected = menuItem
-                menuCategorySelected = menuCategory
+                    baseActivity.dismissDialogs()
+                    menuItemSelected = menuItem
+                    menuCategorySelected = menuCategory
 //                setupCombos(menuItem)
                     menuPresenter!!.getMenuItemTotalPrice(menuPresenter!!.menuItem, -1)
                     if (!menuItem.isSandwichOnly) {
@@ -887,6 +868,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 }
             }
         }
+    }
 
 
     private fun changeMealDeal(isSandwich: Boolean) {

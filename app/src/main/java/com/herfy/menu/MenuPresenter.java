@@ -2220,7 +2220,6 @@ public class MenuPresenter implements MenuContract.Presenter {
 
 
                     menuItem.setModifierGroups(modifierGroups);
-
                     prepareMenuItem(addToBag);
 
                 } else {
@@ -2610,7 +2609,6 @@ public class MenuPresenter implements MenuContract.Presenter {
             if (!invalid) {
                 invalid = checkComboModifiers();
             }
-
             if (!invalid) {
                 addCartItem(false, false);
             } else {
@@ -3580,7 +3578,6 @@ public class MenuPresenter implements MenuContract.Presenter {
             ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
             for (ModifierItem item : group.getModifierItems()) {
                 boolean isCheckboxSelected = isSelected && item.getId().equals(modifierItem.getId());
-                System.out.println("Selected item " + isCheckboxSelected);
                 item.getAttributes().setSelected(isCheckboxSelected);
             }
         } else {
@@ -3598,7 +3595,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                 } else {
                     ModifierItem item = group.getModifierItems().get(modifierItemPosition);
                     if (item.getId().equals(modifierItem.getId())) {
-                        System.out.println("Selected man bai from presenter ");
                         item.getAttributes().setSelected(isSelected);
                         if (!isSelected) {
                             item.getAttributes().setQuantity(1);
@@ -3829,7 +3825,6 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity) {
-        System.out.println("Modifier group position" + position + " " + menuItem.getModifierGroups().size());
        /* ModifierGroup modifierGroup = menuItemModifierGroups.get(menuItem.getModifierGroups().get(position).getId());
         if(modifierGroup != null) {*/
         modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice,showShowModifierCheckBox);
@@ -4143,6 +4138,7 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void addCartItem(boolean add, boolean skip) {
+
         String orderStoreId = null;
         if (CacheUtil.getInstance().getOrderStore() != null) {
             orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
@@ -4229,6 +4225,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 menuView.addCartItem(menuItem, currentImageViewToAnimate);
                 currentImageViewToAnimate = null;
             } else {
+
                 menuView.addCartItem(menuItem);
             }
         }
