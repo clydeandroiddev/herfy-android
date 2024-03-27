@@ -1139,4 +1139,12 @@ public class Text {
     public static final String THANK_YOU = "thank_you";
     public static final String YOUR_ORDER_WILL_BE_SERVED_SHORTLY = "your_order_will_be_served_shortly";
     public static final String ARRIVED_SERVE_ORDER = "arrived_serve_order";
+
+    public static final String CANCEL_YOUR_ORDER_LABEL = "cancel_your_order_label";
+    public static final String CANCEL_YOUR_ORDER_MESSAGE = "cancel_your_order_message";
+
+    public static final String NO_LABEL = "no_label";
+
+    public static final String CANCEL_ORDER_NEW = "cancel_order_new";
+
 }

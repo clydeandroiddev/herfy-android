@@ -1009,6 +1009,11 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
 
     }
 
+    private fun processCancel() {
+        val time = CacheUtil.getInstance().concept.orderCancellationTime
+        
+    }
+
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {
         dismissDialogs()
         order?.let { item ->
@@ -1025,6 +1030,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                 showDetailsState()
                 showDriverDetails()
                 processCurbside()
+                processCancel()
                 orderAddressDetails.orderNumberLabel.text =
                     CacheUtil.getInstance().getTranslations(Text.ORDER_NUM, "Order #")
                 orderAddressDetails.orderNumber.text = item.id

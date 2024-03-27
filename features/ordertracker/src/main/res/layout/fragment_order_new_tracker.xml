@@ -256,6 +256,19 @@
                                 android:id="@+id/order_help_details"
                                 layout="@layout/include_help_details" />
 
+                            <FrameLayout
+                                android:id="@+id/orderCancelFrame"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                tools:visibility="visible">
+
+                                <include
+                                    android:id="@+id/order_cancel_details"
+                                    layout="@layout/include_order_cancel" />
+
+                            </FrameLayout>
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="12dp" />
