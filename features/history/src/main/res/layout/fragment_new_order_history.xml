@@ -140,9 +140,8 @@
 
                                             <ImageView
                                                 android:id="@+id/cookingImage"
-                                                android:padding="10dp"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
+                                                android:layout_width="50dp"
+                                                android:layout_height="50dp"
                                                 android:layout_gravity="center"
                                                 tools:src="@drawable/cooking" />
 
@@ -350,8 +349,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="96dp"
             android:gravity="center"
-            android:visibility="gone"
             android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">

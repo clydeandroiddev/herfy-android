@@ -196,11 +196,11 @@ fun String.defaultTime(): String {
 }
 
 fun statusTime(timestamp: String): String {
-    try {
+    return try {
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
         val timeValue = simpleDateFormat.parse(timestamp)
-        val localTimeFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        val localTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         localTimeFormat.timeZone = TimeZone.getDefault()
         val actualDate = timeValue?.let { localTimeFormat.format(it) }.orEmpty()
         val calendar = Calendar.getInstance().apply {
@@ -211,7 +211,7 @@ fun statusTime(timestamp: String): String {
         return startTimeFormat.format(calendar.time)
     } catch (e: Exception) {
         e.printStackTrace()
-        return "--"
+        "--"
     }
 }
 

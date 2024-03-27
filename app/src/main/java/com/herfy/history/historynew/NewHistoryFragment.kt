@@ -96,6 +96,9 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
 
     override fun setupViews() {
         binding.apply {
+            Glide.with(requireActivity()).asGif().load(R.drawable.cooking)
+                .transition(DrawableTransitionOptions.withCrossFade()).into(cookingImage)
+
             back.setOnClickListener {
                 navigateUp()
             }
@@ -176,9 +179,6 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                 } else {
                     pastOrders = orders
                 }
-                Glide.with(requireActivity()).asGif().load(R.drawable.cooking)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(binding.cookingImage)
                 binding.pastOrdersLabel.isVisible = pastOrders.isNotEmpty()
                 historyListAdapter.updateList(pastOrders)
             }

@@ -18,6 +18,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -69,6 +70,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
+import io.shipbook.shipbooksdk.Log
 import java.util.Calendar
 import java.util.Locale
 
@@ -438,12 +440,17 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                     textView.text =
                         CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
                             .replace("(x)", distanceValue).toLowerCase()
+                    if (currentDistance != null) {
+                        if (currentDistance <= 0.0) {
+                            textView.isInvisible = true
+                        } else {
+                            textView.isVisible = true
+                        }
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                if (distanceValue.isNullOrEmpty()) {
-                    textView.isVisible = false
-                }
+
                 view.setOnClickListener {
                     goToStoreInMap(store)
                 }
@@ -757,7 +764,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                 statusDriverDetails.noDriverLayout.isVisible = false
                 statusDriverDetails.riderName.text = "${driver.firstName} ${driver.lastName}"
                 statusDriverDetails.driverInitial.text =
-                    "${driver.firstName.first() ?: ""} ${driver.lastName.first() ?: ""}"
+                    "${driver.firstName.first() ?: ""}${driver.lastName.first() ?: ""}"
                 statusDriverDetails.callRider.setOnClickListener {
                     if (StringUtil.isValidPhoneNumber(driver.mobile)) {
                         numberToCall = driver.mobile
@@ -854,16 +861,19 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                             statusViewSecond.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
                             statusViewThird.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
 
+                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_not_yet)
                             preparingLayout.setBackgroundResource(R.drawable.background_current_status)
                             preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
                             preparingTime.setTextColor(resources.getColor(R.color.time_status_color_current))
 
+                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready_done)
                             onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
                             onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             onWayTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
+                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
                             finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
                             finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
@@ -871,32 +881,38 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
 
                         } else if (status.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && status.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
 
+                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
                             preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
                             preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             preparingTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
+                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
                             imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_delivery_not_yet)
                             onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
                             onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
                             onWayTime.setTextColor(resources.getColor(R.color.time_status_color_current))
 
+                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
                             finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
                             finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
                         } else {
+                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
                             preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
                             preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             preparingTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
+                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready_done)
                             onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
                             onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             onWayTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
+                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
                             imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_done)
                             finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
                             finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
@@ -908,16 +924,19 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                             statusViewSecond.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
                             statusViewThird.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
 
+                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_not_yet)
                             preparingLayout.setBackgroundResource(R.drawable.background_current_status)
                             preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
                             preparingTime.setTextColor(resources.getColor(R.color.time_status_color_current))
 
+                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready_done)
                             onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
                             onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             onWayTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
+                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
                             imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
                             finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
                             finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
@@ -925,32 +944,38 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
 
                         } else if (status.sequence >= OrderStatusType.READY.value && status.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
 
+                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
                             preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
                             preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             preparingTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
+                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
                             imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready)
                             onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
                             onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
                             onWayTime.setTextColor(resources.getColor(R.color.time_status_color_current))
 
+                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
                             finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
                             finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
                         } else {
+                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
                             preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
                             preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             preparingTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
+                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready_done)
                             onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
                             onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             onWayTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
+                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
                             imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_done)
                             finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
                             finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
@@ -1016,16 +1041,17 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
     }
 
     private fun getLastStatus(orderStatuses: ArrayList<OrderStatus>?, sequence: Int): String {
+        var time = "--"
         orderStatuses?.let { statuses ->
             for (status in statuses) {
                 if (status.sequence <= sequence) {
-                    if (status.isCurrent) {
-                        return statusTime(status.time)
+                    if (status.isDone && status.time.isNotEmpty()) {
+                        time = (status.time)
                     }
                 }
             }
         }
-        return "--"
+        return statusTime(time)
     }
 
     override fun showOrderStatuses(orderStatuses: ArrayList<OrderStatus>?, isDone: Boolean) {
@@ -1034,60 +1060,45 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View {
                 showOrderStatus(order.orderStatus)
                 val ot = OrderType.fromString(order.orderType)
                 if (ot == OrderType.DELIVERY) {
-                    preparingTime.text = statusTime(
-                        getLastStatus(
-                            orderStatuses, OrderStatusType.DISPATCHED.value
+                    Log.e(
+                        "ADADADAD",
+                        "ADADAD1:" + getLastStatus(orderStatuses, OrderStatusType.DISPATCHED.value)
+                    )
+                    Log.e(
+                        "ADADADAD", "ADADAD2:" + getLastStatus(
+                            orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value
                         )
                     )
+                    preparingTime.text =
+                        getLastStatus(orderStatuses, OrderStatusType.DISPATCHED.value)
                     if (order.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
                         onWayTime.text = "--"
                         finishedTime.text = "--"
                     } else if (order.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && order.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                        onWayTime.text = statusTime(
-                            getLastStatus(
-                                orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value
-                            )
-                        )
+                        onWayTime.text =
+                            getLastStatus(orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value)
                         finishedTime.text = "--"
                     } else {
-                        onWayTime.text = statusTime(
-                            getLastStatus(
-                                orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value
-                            )
-                        )
-                        finishedTime.text = statusTime(
-                            getLastStatus(
-                                orderStatuses, OrderStatusType.FINISHED.value
-                            )
-                        )
+                        onWayTime.text =
+                            getLastStatus(orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value)
+                        finishedTime.text =
+                            getLastStatus(orderStatuses, OrderStatusType.FINISHED.value)
                     }
                 } else {
-                    preparingTime.text = statusTime(
-                        getLastStatus(
-                            orderStatuses, OrderStatusType.IN_KITCHEN.value
-                        )
-                    )
+                    preparingTime.text =
+                        getLastStatus(orderStatuses, OrderStatusType.IN_KITCHEN.value)
                     if (order.orderStatus.sequence <= OrderStatusType.IN_KITCHEN.value) {
                         onWayTime.text = "--"
                         finishedTime.text = "--"
                     } else if (order.orderStatus.sequence >= OrderStatusType.READY.value && order.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                        onWayTime.text = statusTime(
-                            getLastStatus(
-                                orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value
-                            )
-                        )
+                        onWayTime.text =
+                            getLastStatus(orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value)
                         finishedTime.text = "--"
                     } else {
-                        onWayTime.text = statusTime(
-                            getLastStatus(
-                                orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value
-                            )
-                        )
-                        finishedTime.text = statusTime(
-                            getLastStatus(
-                                orderStatuses, OrderStatusType.FINISHED.value
-                            )
-                        )
+                        onWayTime.text =
+                            getLastStatus(orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value)
+                        finishedTime.text =
+                            getLastStatus(orderStatuses, OrderStatusType.FINISHED.value)
                     }
                 }
             }
