@@ -424,7 +424,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     override fun updateOrder(position: Int) {
-
+        orderPresenter?.getOrderStatuses()
     }
 
     override fun selectOrder(order: OrderHistory?) {
@@ -1138,18 +1138,34 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         return statusTime(time)
     }
 
+    private fun getCurrentStatus(orderStatuses: ArrayList<OrderStatus>?): OrderStatus? {
+        orderStatuses?.let {
+            for (status in orderStatuses) {
+                if (status.isCurrent && status.isDone) {
+                    return status
+                }
+            }
+        }
+        return null
+    }
+
     override fun showOrderStatuses(orderStatuses: ArrayList<OrderStatus>?, isDone: Boolean) {
         binding.statusTrackerLayout.apply {
             orderDetails?.let { order ->
-                showOrderStatus(order.orderStatus)
+                var currentStatus = getCurrentStatus(orderStatuses)
+                if (currentStatus == null) {
+                    currentStatus = order.orderStatus
+                }
+                showOrderStatus(currentStatus)
+                val sequence = currentStatus?.sequence ?: -1
                 val ot = OrderType.fromString(order.orderType)
                 if (ot == OrderType.DELIVERY) {
                     preparingTime.text =
                         getLastStatus(orderStatuses, OrderStatusType.DISPATCHED.value)
-                    if (order.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
+                    if (sequence <= OrderStatusType.DISPATCHED.value) {
                         onWayTime.text = "--"
                         finishedTime.text = "--"
-                    } else if (order.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && order.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                    } else if (sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
                         onWayTime.text =
                             getLastStatus(orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value)
                         finishedTime.text = "--"
@@ -1162,10 +1178,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 } else {
                     preparingTime.text =
                         getLastStatus(orderStatuses, OrderStatusType.IN_KITCHEN.value)
-                    if (order.orderStatus.sequence <= OrderStatusType.IN_KITCHEN.value) {
+                    if (sequence <= OrderStatusType.IN_KITCHEN.value) {
                         onWayTime.text = "--"
                         finishedTime.text = "--"
-                    } else if (order.orderStatus.sequence >= OrderStatusType.READY.value && order.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                    } else if (sequence >= OrderStatusType.READY.value && sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
                         onWayTime.text =
                             getLastStatus(orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value)
                         finishedTime.text = "--"
@@ -1204,7 +1220,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     override fun updateStatus(orderDetails: OrderDetails?, orderStatus: OrderStatus?) {
-
+        this.orderDetails = orderDetails
+        orderPresenter?.getOrderStatuses()
     }
 
     override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?) {

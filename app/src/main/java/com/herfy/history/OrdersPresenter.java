@@ -2039,6 +2039,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
         ablyUtil.detachToOrderDriverAssign(order.getId());
         subscribeToOrderDriverLocationUpdate(order.getId());
+        getDriver();
         return Unit.INSTANCE;
     }
 
@@ -2078,11 +2079,13 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     public void setGeocoder(Geocoder geocoder) {
         this.geocoder = geocoder;
     }
+
     private Geocoder geocoder;
 
     private android.location.Address addressNew;
 
     private Place place;
+
     public String getAddressLoc(LatLng latLng) {
         if (geocoder != null) {
             try {

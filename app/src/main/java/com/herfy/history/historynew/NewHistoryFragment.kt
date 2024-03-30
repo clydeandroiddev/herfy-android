@@ -223,7 +223,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun updateOrder(position: Int) {
-
+        showOrders(true, ordersPresenter?.orderHistories)
     }
 
     override fun selectOrder(order: OrderHistory?) {
@@ -291,7 +291,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun updateStatus(orderDetails: OrderDetails?, orderStatus: OrderStatus?) {
-
+        showOrders(true, ordersPresenter?.orderHistories)
     }
 
     override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?) {
