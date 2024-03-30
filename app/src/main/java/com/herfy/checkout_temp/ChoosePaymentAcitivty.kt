@@ -263,7 +263,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
 
     }
 
-    override fun showSelectedPyament() {
+    override fun showSelectedPayment() {
     }
 
     override fun setStartName(startName: String?) {

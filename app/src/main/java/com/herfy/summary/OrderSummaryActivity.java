@@ -609,7 +609,7 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
     }
 
     @Override
-    public void showSelectedPyament() {
+    public void showSelectedPayment() {
 
     }
 

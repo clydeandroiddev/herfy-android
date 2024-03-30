@@ -404,7 +404,7 @@ public class PaymentDialogFragment extends BaseDialogFragment implements Payment
     }
 
     @Override
-    public void showSelectedPyament() {
+    public void showSelectedPayment() {
 
     }
 

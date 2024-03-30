@@ -424,7 +424,7 @@ public class OrderSummaryMenuItemViewHolder extends RecyclerView.ViewHolder impl
     }
 
     @Override
-    public void showSelectedPyament() {
+    public void showSelectedPayment() {
 
     }
 

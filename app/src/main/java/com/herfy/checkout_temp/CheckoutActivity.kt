@@ -51,11 +51,9 @@ import com.google.gson.JsonObject
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.applyPromotionEvent
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.base.BaseActivity
-import com.herfy.checkout.DialogAlrajiInputBottomSheet
 import com.herfy.checkout.DialogAlrajiRequestOtpBottomSheet
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
@@ -89,9 +87,11 @@ import com.herfy.util.ViewUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.debounceAfterTextChanges
+import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.showToast
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
@@ -292,7 +292,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             isShowCardFailed
         )
         paymentPresenter!!.fetchCustomerCards()
-        showSelectedPyament()
+        showSelectedPayment()
         isShowCardFailed = false
     }
 
@@ -1137,7 +1137,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         val deliveryChargeTotal = updateCurrency(deliveryCharge,withSpace = true).toString()
         binding!!.layoutPaymentSummary.tvSubtotal.text =
             total
-        binding!!.tvOriginalPrice.setVisible(discount >= 1)
         val isDeliverCharge = deliveryCharge >= 1 && isDelivery
         binding!!.layoutPaymentSummary.viewDeliverySeparator.setVisible(isDeliverCharge)
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.setVisible(isDeliverCharge)
@@ -1207,10 +1206,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
 
         /*   double mukafaaAmount = paymentPresenter.getMukafaaTransactionAmount();
-        discount = discount - mukafaaAmount;*/binding!!.layoutPaymentSummary.tvDiscount.text =
-            updateCurrency(discount, true, hasPromotion, discount > 0)
-        binding!!.layoutPaymentSummary.grpDiscount.visibility =
-            if (discount != 0.0) View.VISIBLE else View.GONE
+        discount = discount - mukafaaAmount;*/
+        binding!!.layoutPaymentSummary.tvDiscount.text = updateCurrency(discount, true, hasPromotion, discount > 0)
+        binding!!.layoutPaymentSummary.grpDiscount.visibility = if (discount != 0.0) View.VISIBLE else View.GONE
 
         /*if (mukafaaAmount > 0) {
             if (paymentPresenter.hasMukafaaTransactionId() && paymentPresenter.isMukafaaEnabled()) {
@@ -1225,16 +1223,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         } else {
             grpMukafaa.setVisibility(View.GONE);
             selectMukafaa(false, false);
-        }*/if (pointsUsed != 0) {
+        }*/
+        if (pointsUsed > 0) {
             binding!!.layoutPaymentSummary.grpRedeemedPoints.visibility = View.VISIBLE
-            val redeemedText = CacheUtil.getInstance().getTranslations(Text.REDEEMED, "redeemed")
-            val color = CacheUtil.getInstance().colorMain
-            val ptsRedeemed = CacheUtil.getInstance().getTranslations(Text.PTS_LABEL, "(x) pts")
-                .replace("(x)", pointsUsed.toString())
-            binding
-
-//            tvRedeemPoints.setText(HtmlCompat.fromHtml("<font color=" + color + ">" + ptsRedeemed + "</font> ", HtmlCompat.FROM_HTML_MODE_LEGACY));
-            binding!!.layoutPaymentSummary.tvRedeemPointsEquiv.text = CacheUtil.getInstance()
+            binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.LOYALTY_POINTS, "Loyalty poinst (x)")
                 .replace("x", pointsUsed.toString())
             binding!!.layoutPaymentSummary.tvRedeemPointsEquiv.text =
@@ -1249,31 +1241,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
         if (totalPrice == 0.0 && pointsUsed > 0) {
             if (deliveryCharge <= 0) {
-//                chooseMethodLabel.setVisibility(View.GONE);
-                /* if (cardOrderTypePayment != null) cardOrderTypePayment.setVisibility(View.GONE);
-                if (cardPayment != null) cardPayment.setVisibility(View.GONE);
-//                mukafaaPayment.setVisibility(View.GONE);
-                if (cashPayment != null) cashPayment.setVisibility(View.GONE);*/
                 binding!!.layoutLoyalty.loyaltyPointsPaymentContainer.visibility = View.VISIBLE
-                //                useLoyaltyPointsLabel.setVisibility(View.VISIBLE);
-//                loyaltyPointsAdditionalInfo.setVisibility(View.VISIBLE);
-                /* if (mukafaaAmount > 0) {
-                    mukafaaPayment.setVisibility(View.VISIBLE);
-                }*/selectPaymentTypeCash()
+                selectPaymentTypeCash()
             } else if (subtotalPrice == pointsSarValue && deliveryCharge > 0) {
-//                if (cardOrderTypePayment != null) cardOrderTypePayment.setVisibility(View.VISIBLE);
-//                if (cardPayment != null) cardPayment.setVisibility(View.VISIBLE);
-////                mukafaaPayment.setVisibility(View.VISIBLE);
-//                if (cashPayment != null) cashPayment.setVisibility(View.VISIBLE);
+                CacheUtil.getInstance().orderPayment = PaymentType.NONE
+                showSelectedPayment()
             }
         } else {
             paymentPresenter!!.getPaymentTypes()
-            /* if (totalPrice == deliveryCharge && mukafaaAmount == 0) {
-                mukafaaPayment.setVisibility(View.GONE);
-            }*/
-//            if (cardOrderTypePayment != null) cardOrderTypePayment.setVisibility(View.VISIBLE);
-//            if (cardPayment != null) cardPayment.setVisibility(View.VISIBLE);
-//            if (cashPayment != null) cashPayment.setVisibility(View.VISIBLE);
         }
 
         val formattedTotal = updateCurrency(
@@ -1284,15 +1259,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.tvDiscountedPrice.text = formattedTotal
         binding!!.layoutPaymentSummary.tvTotal.text = formattedTotal
         totalValue = totalPrice
-        binding!!.tvOriginalPrice.text = formattedTotal
-        val loyalty = AuthUtil.getInstance().customerLoyalty
-        /*double finalDiscount = discount;
-        double finalTotal;
-        if (mukafaaAmount > 0) {
-            finalTotal = subtotalPrice - mukafaaAmount;
-        } else {
-            finalTotal = subtotalPrice;
-        }*/
+
+        val currSubTotal = if(isDelivery) subtotalPrice + deliveryCharge else subtotalPrice
+        val formattedCurrentSubtotal = updateCurrency(currSubTotal, true, CacheUtil.getInstance().hasPromotion())
+        if(totalPrice != currSubTotal){
+            binding?.tvOriginalPrice?.visible()
+            binding?.tvOriginalPrice?.text = formattedCurrentSubtotal
+        }else {
+            binding?.tvOriginalPrice?.gone()
+        }
 
     }
 
@@ -1494,7 +1469,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         startActivity(intent)
     }
 
-    override fun showSelectedPyament() {
+    override fun showSelectedPayment() {
         val selecetedPayment = CacheUtil.getInstance().orderPayment
         val selectedCard = CacheUtil
             .getInstance().customCard
