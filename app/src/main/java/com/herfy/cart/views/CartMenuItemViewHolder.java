@@ -25,6 +25,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
@@ -185,6 +186,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
 
     @Override
     public void setMenuItem(MenuItem menuItem) {
+        MenuItemAttributes itemAttributes = menuItem.getAttributes();
         double menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1);
         quantityLayout.setVisibility(menuItem.isPromo() || menuItemTotalPrice == 0 ? View.INVISIBLE : View.VISIBLE);
 
@@ -230,7 +232,11 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
             }
         }
 
-        name.setText(menuItem.getName(LocaleUtil.getInstance().getLanguage()));
+        String itemName = menuItem.getName(LocaleUtil.getInstance().getLanguage());
+        if (itemName == null || itemName.isEmpty()) {
+            itemName = itemAttributes.getName();
+        }
+        name.setText(itemName);
 
         boolean first = true;
 
