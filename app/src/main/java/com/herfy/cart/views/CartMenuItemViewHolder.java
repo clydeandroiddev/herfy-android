@@ -188,6 +188,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
     public void setMenuItem(MenuItem menuItem) {
         MenuItemAttributes itemAttributes = menuItem.getAttributes();
         double menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1);
+        System.out.println("Get cart menu " + menuItem.getAttributes().getName() + " Total price " + menuItemTotalPrice+ " Promo " + menuItem.isPromo());
         quantityLayout.setVisibility(menuItem.isPromo() || menuItemTotalPrice == 0 ? View.INVISIBLE : View.VISIBLE);
 
         if (!menuItem.isPromo() && menuItem.getAttributes().getQuantity() > 1) {

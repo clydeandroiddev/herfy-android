@@ -166,7 +166,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
 
                 if (bundle.containsKey("order_type") && bundle.getBoolean("order_type")) {
 
-                    menuPresenter.addCartItem(true, true, false);
+                    menuPresenter.addCartItem(true, true);
 
                 } else if (bundle.containsKey("menu_category_id") && bundle.containsKey("menu_item_id")) {
 

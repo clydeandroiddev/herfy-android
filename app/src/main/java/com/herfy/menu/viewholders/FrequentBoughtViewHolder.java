@@ -111,7 +111,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                menuPresenter.addMenuItemToCart(menuItem.getId());
+                menuPresenter.addMenuItemToCart(menuItem);
             }
         });
         clickableLayout.setOnClickListener(new View.OnClickListener() {

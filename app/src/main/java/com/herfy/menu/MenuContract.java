@@ -329,9 +329,9 @@ public interface MenuContract {
 
         void getConcept(TimedEvent timedEvent);
 
-        void addCartItem(boolean add, boolean skip, boolean isFrequentAddToCart);
+        void addCartItem(boolean add, boolean skip);
 
-        void addMenuItemToCart(String menuItemId);
+        void addMenuItemToCart(MenuItem menuItem);
 
         void addMenuItemToCartWithAnalytics(MenuItem menuItem, double price, int quantity);
 
