@@ -255,7 +255,7 @@ public class CartAvailablePromoDialogFragment extends DialogFragment implements 
     }
 
     @Override
-    public void editCartItem(int position) {
+    public void editCartItem(int position, MenuItem menuItem) {
 
     }
 

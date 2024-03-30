@@ -998,13 +998,16 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     }
 
-    override fun editCartItem(position: Int) {
+    override fun editCartItem(
+        position: Int,
+        menuItem: MenuItem
+    ) {
         runOnMain {
             dismissDialogFragments()
             NavigationUtils.navigateSafe(
                 findNavController(), CartFragmentDirections.actionCartToMenuItem(
                     menuCategoryId = "",
-                    menuItemId = "",
+                    menuItemId = menuItem.id,
                     cartMenuItemPosition = position,
                     isPromo = false
                 )

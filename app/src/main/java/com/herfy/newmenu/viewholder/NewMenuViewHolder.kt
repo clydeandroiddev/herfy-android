@@ -78,6 +78,10 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
     }
 
     override fun showStore(store: Store) {}
+    override fun navigateToMenuItemDetails(menuCategory: MenuCategory?, menuItem: MenuItem?) {
+
+    }
+
     override fun showStoreOpen(open: Boolean, message: String) {}
     override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
         TODO("Not yet implemented")
@@ -108,8 +112,15 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
     override fun setMenuItemTotalPrice(totalPrice: Double, menuItemPrice: Double) {}
     override fun selectSize() {}
     override fun showOrderType() {}
-    override fun addCartItem(menuItem: MenuItem) {}
-    override fun addCartItem(menuItem: MenuItem, view: ImageView) {}
+    override fun addCartItem(
+        menuItem: MenuItem,
+        isShouldBackPressed: Boolean
+    ) {}
+    override fun addCartItem(
+        menuItem: MenuItem,
+        view: ImageView,
+        isShouldBackPressed: Boolean
+    ) {}
     override fun updateCartItem() {}
     override fun showMessage(message: String) {
         /*((HomeActivity) context).dismissDialogs();

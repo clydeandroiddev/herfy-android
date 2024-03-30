@@ -91,9 +91,9 @@ public interface MenuContract {
 
         void showOrderType();
 
-        void addCartItem(MenuItem menuItem);
+        void addCartItem(MenuItem menuItem, boolean isShouldBackPressed);
 
-        void addCartItem(MenuItem menuItem, ImageView view);
+        void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed);
 
         void updateCartItem();
 
@@ -268,6 +268,8 @@ public interface MenuContract {
 
         void selectMenuItem(MenuCategory menuCategory, MenuItem menuItem);
 
+        void navigateToMenuItemDetails(MenuItem menuItem);
+
         void clearSearchedMenuItems();
 
         void hideSearchedMenuItems();
@@ -327,7 +329,7 @@ public interface MenuContract {
 
         void getConcept(TimedEvent timedEvent);
 
-        void addCartItem(boolean add, boolean skip);
+        void addCartItem(boolean add, boolean skip, boolean isFrequentAddToCart);
 
         void addMenuItemToCart(String menuItemId);
 

@@ -1015,7 +1015,10 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     override fun setMenuItemTotalPrice(totalPrice: Double, menuItemPrice: Double) {}
     override fun selectSize() {}
     override fun showOrderType() {}
-    override fun addCartItem(menuItem: MenuItem) {
+    override fun addCartItem(
+        menuItem: MenuItem,
+        isShouldBackPressed: Boolean
+    ) {
         try {
             val activity = activity as MainActivity?
             activity?.runOnUiThread {
@@ -1046,8 +1049,12 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         }
     }
 
-    override fun addCartItem(menuItem: MenuItem, view: ImageView) {
-        addCartItem(menuItem)
+    override fun addCartItem(
+        menuItem: MenuItem,
+        view: ImageView,
+        isShouldBackPressed: Boolean
+    ) {
+        addCartItem(menuItem, isShouldBackPressed,)
         listener?.animateViewToCart(view, menuItem.attributes.image, 0)
     }
 

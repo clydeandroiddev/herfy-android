@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,8 +38,6 @@ import com.herfy.util.StringUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -439,7 +436,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cartPresenter.editCartItem(getAdapterPosition());
+                cartPresenter.editCartItem(getAdapterPosition(),menuItem);
             }
         });
     }
@@ -483,7 +480,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
     }
 
     @Override
-    public void editCartItem(int position) {
+    public void editCartItem(int position, MenuItem menuItem) {
 
     }
 

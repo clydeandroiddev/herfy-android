@@ -2129,7 +2129,9 @@ public class MenuPresenter implements MenuContract.Presenter {
                         menuView.showLoader();
                     }
                     menuItem.getAttributes().setUpsell(isUpsell);
-                    menuView.setMenuItemDetails(menuItem);
+                    if (!addToBag) {
+                        menuView.setMenuItemDetails(menuItem);
+                    }
 
                     LinkedList<Allergen> allergens = new LinkedList<>();
                     for (AllergenDb allergenDb : appDatabase.allergenDao().findAllByApplicationAndIds(applicationId, menuItem.getAllergensIds().toArray(new String[menuItem.getAllergensIds().size()]))) {
@@ -2318,7 +2320,9 @@ public class MenuPresenter implements MenuContract.Presenter {
                     if (menuItem.isCombo) {
                         menuView.showLoader();
                     }
-//                    menuView.setMenuItemDetails(menuItem);
+                    if (!addToBag) {
+                        menuView.setMenuItemDetails(menuItem);
+                    }
 
                     LinkedList<Allergen> allergens = new LinkedList<>();
                     for (AllergenDb allergenDb : appDatabase.allergenDao().findAllByApplicationAndIds(applicationId, menuItem.getAllergensIds().toArray(new String[menuItem.getAllergensIds().size()]))) {
@@ -2675,8 +2679,9 @@ public class MenuPresenter implements MenuContract.Presenter {
             if (!invalid) {
                 invalid = checkComboModifiers();
             }
+
             if (!invalid) {
-                addCartItem(false, false);
+                addCartItem(false, false,true );
             } else {
                 menuView.selectMenuItem(menuCategory, menuItem);
             }
@@ -3178,6 +3183,28 @@ public class MenuPresenter implements MenuContract.Presenter {
             }
         }
         menuView.selectMenuItem(menuCategory, menuItem);
+    }
+
+    @Override
+    public void navigateToMenuItemDetails(MenuItem menuItem) {
+        AppDatabase appDatabase = AppDatabase.getInstance();
+        String applicationId = CacheUtil.getInstance().getApplication().getId();
+        MenuItemEntity menuItemEntity = appDatabase.menuItemEntityDao().findById(applicationId, menuItem.getId());
+        if (menuItemEntity != null) {
+            MenuCategoryEntity menuCategoryEntity = appDatabase.menuCategoryEntityDao().findById(applicationId, menuItemEntity.getMenuCategoryId());
+            if (menuCategoryEntity != null) {
+                menuCategory = MenuCategoryEntity.Companion.toDomain(menuCategoryEntity);
+            }
+            MenuItemDb menuItemDb = appDatabase.menuItemDao().findByApplicationAndId(applicationId, menuItem.getId());
+            if (menuItemDb != null) {
+                menuItem = GsonHelper.gsonFinal().fromJson(menuItemDb.data, MenuItem.class);
+            }
+        }
+
+        if (menuCategory != null && menuItem != null) {
+            menuView.navigateToMenuItemDetails(menuCategory,menuItem);
+        }
+
     }
 
     @Override
@@ -3903,11 +3930,6 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public List<ModifierGroup> getModifierGroupList() {
-        return  menuItem.getModifierGroups();
-    }
-
-    @Override
     public int getModifierGroupIndex(ModifierGroup modifierGroup) {
 
         ArrayList<ModifierGroup> visibleModifierGroups = new ArrayList<>();
@@ -4080,7 +4102,8 @@ public class MenuPresenter implements MenuContract.Presenter {
 
         if (!invalid) {
             menuItem.getAttributes().setNotes(itemNote);
-            addCartItem(false, false);
+            System.out.println("Get cart items invalid");
+            addCartItem(false, false, false );
         }
     }
 
@@ -4134,7 +4157,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                     if (dataArray.length() > 0) {
                         getConcept(TimedEvent.parse(dataArray.getJSONObject(0)));
                     } else {
-                        addCartItem(true, false);
+                        addCartItem(true, false,false );
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -4146,7 +4169,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                addCartItem(true, false);
+                addCartItem(true, false,false );
             }
         }, menuItem.getId());
     }
@@ -4175,7 +4198,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                                     Concept concept = gson.fromJson(included.getJSONObject(i).getJSONObject("attributes").toString(), Concept.class);
                                     concept.setId(included.getJSONObject(i).getString("id"));
                                     if (MenuUtil.isItemAvailable(timedEvent, concept.getCurrentTime())) {
-                                        addCartItem(true, false);
+                                        addCartItem(true, false,false );
                                     } else {
                                         menuView.showError(MenuUtil.getTimedEventError(timedEvent));
                                     }
@@ -4204,8 +4227,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void addCartItem(boolean add, boolean skip) {
-
+    public void addCartItem(boolean add, boolean skip, boolean isFrequentAddToCart) {
         String orderStoreId = null;
         if (CacheUtil.getInstance().getOrderStore() != null) {
             orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
@@ -4284,19 +4306,32 @@ public class MenuPresenter implements MenuContract.Presenter {
             int cartCount = CacheUtil.getInstance().getCartQuantity();
             menuItem.isSandwichOnly = false;
             removeMukafaaRedemption();
-            menuItem.setAddedToCart(true);
-            Log.d("FAFA","Menu item " + menuItem);
-            CacheUtil.getInstance().addToCart(menuItem);
-            if (cartCount == 0) {
-                menuView.setCartExpiry();
-            }
-            if (currentImageViewToAnimate != null) {
-                menuView.addCartItem(menuItem, currentImageViewToAnimate);
-                currentImageViewToAnimate = null;
+            if (isFrequentAddToCart) {
+                System.out.println("Get cart menu frequent  " + menuItem);
+                menuItem.setAddedToCart(true);
+                CacheUtil.getInstance().addToCart(menuItem);
+                if (currentImageViewToAnimate != null) {
+                    menuView.addCartItem(menuItem, currentImageViewToAnimate,false );
+                    currentImageViewToAnimate = null;
+                } else {
+                    menuView.addCartItem(menuItem, false);
+                }
             } else {
-
-                menuView.addCartItem(menuItem);
+                System.out.println("Get cart menu frequent bai " + menuItem);
+                CacheUtil.getInstance().addToCart(menuItem);
+                System.out.println("Is already added cart" + CacheUtil.getInstance().getCart());
+                if (cartCount == 0) {
+                    menuView.setCartExpiry();
+                }
+                if (currentImageViewToAnimate != null) {
+                    menuView.addCartItem(menuItem, currentImageViewToAnimate, true);
+                    currentImageViewToAnimate = null;
+                } else {
+                    menuView.addCartItem(menuItem, true);
+                }
             }
+
+
         }
 
     }
@@ -4665,7 +4700,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             e.printStackTrace();
         }
 
-        menuView.setMenuItemTotalPrice(totalPrice * item.getAttributes().getQuantity(),totalPrice);
+        menuView.setMenuItemTotalPrice(totalPrice * item.getAttributes().getQuantity());
         return totalPrice;
     }
 
@@ -4738,6 +4773,7 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void getFrequentBoughtItemsByMenuId(int page, String menuId) {
+
         MenuApiCall
                 .getInstance()
                 .getFrequentlyBoughtMenuItems(CacheUtil
@@ -4747,28 +4783,25 @@ public class MenuPresenter implements MenuContract.Presenter {
                     @Override
                     public void onSuccess(Object obj) {
                         try {
-                            Log.d("FAFA","Obj " + obj.toString());
                             JSONObject object = new JSONObject(obj.toString());
                             Pagination pagination = Pagination.parse(object);
                             if (page == 1) {
-                                favorites.clear();
+                                frequentBoughtMenuItems.clear();
                             }
 
                             JSONArray response = object.getJSONArray("data");
-                            Log.d("FAFA","Response bai  " + response + " "  + menuId + "Per page " + page) ;
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 MenuItem frequentBoughtMenu = GsonHelper.gsonFinal().fromJson(jsonObject.toString(), MenuItem.class);
                                 frequentBoughtMenuItems.add(frequentBoughtMenu);
                             }
-                            Log.d("FAFA","Total page " + pagination.getTotalPages());
+
                             if (page == pagination.getTotalPages()) {
                                 menuView.showFrequentBoughtItems(frequentBoughtMenuItems);
                             } else {
                                 getFrequentBoughtItemsByMenuId(page + 1,menuId);
                             }
                         }catch (Exception e) {
-                            Log.d("FAFA","Error bai e " + e.getLocalizedMessage());
                             e.printStackTrace();
                             this.onError(e);
                         }

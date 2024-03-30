@@ -1,7 +1,6 @@
 package com.herfy.menu.viewholders;
 
 import android.content.Context;
-import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,13 +21,10 @@ import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
-import com.herfy.utils.helper.LocaleUtil;
-import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
