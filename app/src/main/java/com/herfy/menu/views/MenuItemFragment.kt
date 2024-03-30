@@ -160,6 +160,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 }else {
                     menuPresenter.getMenuItem(false, args.menuItemId)
                 }
+                menuPresenter.getFrequentBoughtItemsByMenuId(1,args.menuItemId)
             } else if (args.cartMenuItemPosition != -1) {
                 cartMenuItem = args.cartMenuItemPosition
                 val menuItems: List<MenuItem>? = CacheUtil.getInstance().cart
@@ -376,6 +377,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun showStoreOpen(open: Boolean, message: String) {}
     override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
+        frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(),menuPresenter)
+        binding.frequentlyBoughRecycleview.adapter = frequentBoughItemsAdapter
         frequentBoughItemsAdapter?.notifyDataSetChanged()
         binding.frequentlyBoughtShimmering.setVisible(false)
     }
@@ -393,15 +396,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun selectMenuItem(menuCategory: MenuCategory?, menuItem: MenuItem?) {}
     override fun setMenuCategory(menuCategory: MenuCategory, selected: Boolean) {}
     override fun setMenuItemDetails(menuItem: MenuItem) {
-        Log.d("FAFA","Set menu item details");
-        menuPresenter.getFrequentBoughtItemsByMenuId(1,menuItem.id)
         activity?.cast<BaseActivity> {
             it.runOnUiThread {
 //                binding.mealDealsContainer.visibility = View.GONE
                 binding.txtMoreInfo.isVisible = !menuItem.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
-                frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(),menuPresenter)
-                binding.frequentlyBoughRecycleview.adapter = frequentBoughItemsAdapter
-                frequentBoughItemsAdapter?.notifyDataSetChanged()
                 binding.txtMoreInfo.ninjaTap(viewLifecycleScope) {
                     val bundle = Bundle()
                     bundle.putParcelable(NAV_ARGS_INFO_KEY,  NutritionInfoParams(
@@ -415,7 +413,32 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 if (menuItem.attributes.notes.isNotEmpty()) {
                     binding.etItemNotes.setText(menuItem.attributes.notes)
                 }
+                binding.name.text = menuItem.getName(LocaleUtil.getInstance().language)
+                val test =  CacheUtil
+                    .getInstance()
+                    .getTranslations(Text.FREQUETLY_BOUGHT_TOGETHER,"Frequently bought together")
+                binding.txtFrequntlyBought
+                    .text = test
+                val caloriesValue = menuItem.calories
+                val calorieCount = menuItem.calorieCount
 
+                System.out.println("Frequent bought $test and $caloriesValue and count $calorieCount and Name ${menuItem.getName(LocaleUtil.getInstance().language)}")
+                if (caloriesValue != null && !caloriesValue.isEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
+                    binding.calories.text = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
+                    binding.calories.visibility = View.VISIBLE
+                } else if (calorieCount != 0) {
+                    binding.calories.text = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
+                    binding.calories.visibility = View.VISIBLE
+                } else {
+                    binding.calories.visibility = View.GONE
+                }
+                val descriptionValue = menuItem.getDescription(LocaleUtil.getInstance().language)
+                if (descriptionValue == null || descriptionValue.isEmpty() || descriptionValue == "null") {
+                    binding.description.visibility = View.GONE
+                } else {
+                    binding.description.text = descriptionValue
+                    binding.description.visibility = View.VISIBLE
+                }
                 canChange = false
                 var imageUrl = menuItem.image
                 if (imageUrl == null || imageUrl.equals(
@@ -1161,15 +1184,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         binding.minus.isFocusable = quantityValue != 1
         binding.minus.isClickable = quantityValue != 1
 
-        // todo revert this once needed
-//        if (quantityValue != 1) {
-//            binding.minus.setColorFilter(
-//                Color.parseColor(CacheUtil.getInstance().colorMain),
-//                PorterDuff.Mode.SRC_IN
-//            )
-//        } else {
-//            binding.minus.setColorFilter(Color.parseColor("#BEBEBE"), PorterDuff.Mode.SRC_IN)
-//        }
         binding.quantity.text = StringUtil.localize(quantityValue.toString())
     }
 
@@ -1197,7 +1211,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun showOrderType() {}
-    override fun addCartItem(menuItem: MenuItem) {
+    override fun addCartItem(
+        menuItem: MenuItem,
+        isShouldBackPressed: Boolean
+    ) {
         try {
             activity?.cast<MainActivity> {
                 it.setCartQuantity(CacheUtil.getInstance().cartQuantity)
@@ -1207,6 +1224,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             }
             activity?.cast<BaseActivity> {
                 it.runOnUiThread {
+                    frequentBoughItemsAdapter?.notifyDataSetChanged()
                     val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                     if (vibrator != null) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -1231,6 +1249,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuItem.attributes.image,
                         ViewUtil.dpToPx(it, 16)
                     )
+                    if (isShouldBackPressed) {
+                        activity?.onBackPressed()
+                    }
 
                 }
             }
@@ -1239,7 +1260,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         }
     }
 
-    override fun addCartItem(menuItem: MenuItem, view: ImageView) {}
+    override fun addCartItem(
+        menuItem: MenuItem,
+        view: ImageView,
+        isShouldBackPressed: Boolean
+    ) {}
 
 
     override fun updateCartItem() {
@@ -1421,6 +1446,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     }
     private fun navMenuItem(menuCategoryId: String, menuItemId: String) {
+        val navController = findNavController()
+        navController.popBackStack() // Clear the back stack
         findNavController().navigateToDeepLink("nav_menu_item/$menuCategoryId/$menuItemId")
     }
 
