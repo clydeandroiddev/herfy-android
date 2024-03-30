@@ -114,6 +114,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     private var numberToCall = ""
 
+    private var orderId = ""
+
     private val gpsLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
             initializeLocation()
@@ -200,7 +202,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             val baseActivity = it as BaseActivity
             baseActivity.showLoadingDialog()
         }
-        orderPresenter?.getOrder(args.orderId, -1, false, false)
+        getOrderId()
+        orderPresenter?.getOrder(orderId, -1, false, false)
     }
 
     override fun setPresenter(presenter: OrdersContract.Presenter) {
@@ -315,6 +318,13 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             }
 
             binding.location.setOnClickListener { initializeLocation() }
+        }
+    }
+
+    private fun getOrderId() {
+        orderId = args.orderId
+        if (orderId.isNullOrEmpty()) {
+            orderId = CacheUtil.getInstance().lastOrderId
         }
     }
 
@@ -795,7 +805,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 statusDriverDetails.noDriverLayout.isVisible = false
                 statusDriverDetails.riderName.text = "${driver.firstName} ${driver.lastName}"
                 statusDriverDetails.driverInitial.text =
-                    "${driver.firstName.first() ?: ""}${driver.lastName.first() ?: ""}"
+                    "${driver.firstName.first()}${driver.lastName.first()}"
                 statusDriverDetails.callRider.setOnClickListener {
                     if (StringUtil.isValidPhoneNumber(driver.mobile)) {
                         numberToCall = driver.mobile

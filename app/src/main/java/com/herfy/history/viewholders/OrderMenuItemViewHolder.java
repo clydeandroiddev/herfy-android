@@ -12,9 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.herfy.R;
-import com.herfy.utils.constants.Text;
 import com.herfy.history.OrdersContract;
 import com.herfy.history.adapters.OrderModifierPriceAdapter;
+import com.herfy.util.AppLogger;
+import com.herfy.util.StringUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
@@ -26,8 +28,6 @@ import com.skylinedynamics.solosdk.api.models.objects.Rating;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.order.OrderIngredient;
 import com.skylinedynamics.solosdk.api.models.objects.order.OrderModifierItem;
-import com.herfy.util.AppLogger;
-import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -174,7 +174,7 @@ public class OrderMenuItemViewHolder extends RecyclerView.ViewHolder implements 
         final Boolean[] isShouldShowModifierItems = {false};
         String color = "#" + CacheUtil.getInstance().getColorMain().replace("#", "");
         MenuItemAttributes menuItemAttributes = menuItem.getAttributes();
-        name.setText(context.getString(R.string.modifier_name_with_quantity_text,menuItemAttributes.getName(),String.valueOf(menuItemAttributes.getQuantity())));
+        name.setText(context.getString(R.string.modifier_name_with_quantity_text, menuItemAttributes.getName(), String.valueOf(menuItemAttributes.getQuantity())));
 
         double tPrice = menuItem.getAttributes().getPrice(null);
 
@@ -185,29 +185,29 @@ public class OrderMenuItemViewHolder extends RecyclerView.ViewHolder implements 
         double modifierTotalPrice = 0;
         int orderModifierItemSize = menuItem.getOrderModifierItems().size();
         if (orderModifierItemSize > 1) {
-            txtAddOn.setText(CacheUtil.getInstance().getTranslations(Text.ADD_ONS_CAPS,context.getString(R.string.add_on)));
+            txtAddOn.setText(CacheUtil.getInstance().getTranslations(Text.ADD_ONS_CAPS, context.getString(R.string.add_on)));
             txtAddOn.setVisibility(View.VISIBLE);
             txtAddOnTotal.setVisibility(View.VISIBLE);
             txtAddOnTotal.setText(String.valueOf(orderModifierItemSize));
             icModifierItemsDropDown.setVisibility(View.VISIBLE);
             modifierLineSeparator.setVisibility(View.VISIBLE);
             icModifierItemsDropDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isShouldShowModifierItems[0] = !isShouldShowModifierItems[0];
-                modifierItems.setVisibility(isShouldShowModifierItems[0] ? View.VISIBLE : View.GONE);
-                modifierLineSeparator.setVisibility(isShouldShowModifierItems[0] ? View.VISIBLE : View.GONE);
-                icModifierItemsDropDown.setImageResource(isShouldShowModifierItems[0] ? R.drawable.ic_chevron_up : R.drawable.ic_chevron_down);
+                @Override
+                public void onClick(View v) {
+                    isShouldShowModifierItems[0] = !isShouldShowModifierItems[0];
+                    modifierItems.setVisibility(isShouldShowModifierItems[0] ? View.VISIBLE : View.GONE);
+                    modifierLineSeparator.setVisibility(isShouldShowModifierItems[0] ? View.VISIBLE : View.GONE);
+                    icModifierItemsDropDown.setImageResource(isShouldShowModifierItems[0] ? R.drawable.ic_chevron_up : R.drawable.ic_chevron_down);
 
-            }
-        });
-            OrderModifierPriceAdapter adapter = new OrderModifierPriceAdapter(context,menuItem.getOrderModifierItems());
+                }
+            });
+            OrderModifierPriceAdapter adapter = new OrderModifierPriceAdapter(context, menuItem.getOrderModifierItems());
             modifierItems.setVisibility(isShouldShowModifierItems[0] ? View.VISIBLE : View.GONE);
             adapter.notifyDataSetChanged();
             modifierItems.setAdapter(adapter);
 
             for (OrderModifierItem modifierItem : menuItem.getOrderModifierItems()) {
-                if(menuItem.getAttributes().getIsPromotion()) {
+                if (menuItem.getAttributes().getIsPromotion()) {
                     modifierTotalPrice += (modifierItem.getAttributes().getPrice() * modifierItem.getAttributes().getQuantity());
                 }
                 if (!first) {
@@ -217,7 +217,7 @@ public class OrderMenuItemViewHolder extends RecyclerView.ViewHolder implements 
                 }
             }
         } else {
-            for (OrderModifierItem modifierItem: menuItem.getOrderModifierItems()) {
+            for (OrderModifierItem modifierItem : menuItem.getOrderModifierItems()) {
                 if (!modifierItem.getAttributes().getName().isEmpty()) {
                     txtModifieritemName.setVisibility(View.VISIBLE);
                     txtModifieritemPrice.setVisibility(View.VISIBLE);
@@ -249,7 +249,7 @@ public class OrderMenuItemViewHolder extends RecyclerView.ViewHolder implements 
             ingredients.setVisibility(View.GONE);
         }
 
-        if(menuItem.getAttributes().getIsPromotion()) {
+        if (menuItem.getAttributes().getIsPromotion()) {
             AppLogger.error("menuItem.getAttributes().getIsPromotion() modifierTotalPrice " + modifierTotalPrice);
             tPrice += modifierTotalPrice;
         }
@@ -261,13 +261,14 @@ public class OrderMenuItemViewHolder extends RecyclerView.ViewHolder implements 
         }
 
     }
+
     public void setDrawable(
             @DrawableRes Integer left,
             @DrawableRes Integer top,
             @DrawableRes Integer right,
             @DrawableRes Integer bottom
     ) {
-       txtAddOn.setCompoundDrawablesWithIntrinsicBounds(
+        txtAddOn.setCompoundDrawablesWithIntrinsicBounds(
                 left != null ? left : DEFAULT_POSITION_VALUE,
                 top != null ? top : DEFAULT_POSITION_VALUE,
                 right != null ? right : DEFAULT_POSITION_VALUE,

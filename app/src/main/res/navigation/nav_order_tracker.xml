@@ -10,7 +10,7 @@
         android:name="com.herfy.order.ordertrackernew.OrderNewTrackerFragment"
         tools:layout="@layout/fragment_order_new_tracker">
 
-        <deepLink app:uri="android-app://com.herfy/nav_new_order_tracker" />
+        <deepLink app:uri="android-app://com.herfy/nav_new_order_tracker/{orderId}" />
 
         <argument
             android:name="orderId"

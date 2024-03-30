@@ -27,6 +27,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:id="@+id/otherDetails"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/_2sdp"
             android:paddingBottom="@dimen/_4sdp"

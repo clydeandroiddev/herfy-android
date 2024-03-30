@@ -8,6 +8,8 @@
 
     <include app:graph="@navigation/nav_history"/>
 
+    <include app:graph="@navigation/nav_order_tracker" />
+
     <fragment
         android:id="@+id/nav_herfy_home"
         android:name="com.herfy.home.views.HomeFragment"
@@ -34,6 +36,19 @@
             android:id="@+id/action_home_to_order"
             app:destination="@id/nav_order"
             app:popUpTo="@+id/nav_herfy_home" />
+
+        <action
+            android:id="@+id/action_home_to_tracker"
+            app:destination="@id/nav_order_tracker"
+            app:popUpTo="@+id/nav_herfy_home">
+
+            <argument
+                android:name="orderId"
+                app:argType="string"
+                app:nullable="false" />
+
+
+        </action>
 
     </fragment>
 

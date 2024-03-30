@@ -32,6 +32,7 @@ import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -66,7 +67,6 @@ import com.herfy.menu.views.MenuItemFragmentDirections
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.newmenu.views.*
 import com.herfy.promotions.views.PromotionsFragmentDirections
-import com.herfy.ratings.views.RatingsBottomSheetDialogFragment
 import com.herfy.splash.SplashActivity
 import com.herfy.util.*
 import com.herfy.util.obfuscator.Keychain
@@ -342,8 +342,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                                 Intent(this@MainActivity, SplashActivity::class.java)
                             intent.putExtra("fromChangeLanguage", true)
                             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                            ActivitySwitcher.animationOut(
-                                this@MainActivity.findViewById(R.id.drawer_layout),
+                            ActivitySwitcher.animationOut(this@MainActivity.findViewById(R.id.drawer_layout),
                                 windowManager,
                                 object : ActivitySwitcher.AnimationListener {
                                     override fun onAnimationStarted() {
@@ -380,18 +379,13 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     override fun preloadImage(imageUrl: String, requestOptions: RequestOptions) {
         runOnUiThread {
             if (!isDestroyed && !isFinishing) {
-                Glide.with(this)
-                    .downloadOnly()
-                    .load(imageUrl)
-                    .apply(requestOptions)
-                    .submit()
+                Glide.with(this).downloadOnly().load(imageUrl).apply(requestOptions).submit()
             }
         }
     }
 
     override fun showDigitalCoupon(digitalCoupon: Campaign) {
-        dismissDialogs()
-        /*if (isDefaultHomeScreenDesign) {
+        dismissDialogs()/*if (isDefaultHomeScreenDesign) {
             NavigationUtils.navigateSafe(
                 navController, NewMenuFragmentDirections.actionMenuToDigitalCoupon(
                     Gson().toJson(digitalCoupon)
@@ -407,8 +401,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     fun upsellEvent(menuItem: MenuItem, menuCategory: MenuCategory) {
-        dismissDialogs()
-        /*if (isDefaultHomeScreenDesign) {
+        dismissDialogs()/*if (isDefaultHomeScreenDesign) {
             NavigationUtils.navigateSafe(
                 navController, NewMenuFragmentDirections.actionMenuToItem(
                     menuCategory.id, menuItem.id
@@ -455,8 +448,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         } catch (e: ActivityNotFoundException) {
             e.printStackTrace()
             navCmsPage(
-                CacheUtil.getInstance().getTranslations(Text.SOCIAL_MEDIA_LABEL, "Follow Us On Social Media"),
-                url
+                CacheUtil.getInstance()
+                    .getTranslations(Text.SOCIAL_MEDIA_LABEL, "Follow Us On Social Media"), url
             )
         }
     }
@@ -517,10 +510,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_DETAILS)
                     val fragment =
                         supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
+                    showOrderDetails(orderId)
                     fragment?.cast<HomeFragment> {
                         setCartQuantity(CacheUtil.getInstance().cartQuantity)
                     }
-                    fragment?.cast<NewMenuFragment> {
+                    /*fragment?.cast<NewMenuFragment> {
                         it.showOrder(orderId)
                     }
                     fragment?.cast<NewMenuHomePageFragment> {
@@ -528,10 +522,9 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     }
                     fragment?.cast<CartFragment> {
                         it.showOrder(orderId)
-                    }
+                    }*/
                 }
-            } else if (forceLocation) {
-                /*if (!isDefaultHomeScreenDesign) {
+            } else if (forceLocation) {/*if (!isDefaultHomeScreenDesign) {
                     NavigationUtils.navigateSafe(
                         navController,
                         NewMenuHomePageFragmentDirections.actionHomeToOrderType()
@@ -628,10 +621,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         eventMetricValue: Double
     ) {
         logEventAttributesMetric(
-            eventName ?: "",
-            eventAttributes ?: HashMap(),
-            eventMetricName ?: "",
-            eventMetricValue
+            eventName ?: "", eventAttributes ?: HashMap(), eventMetricName ?: "", eventMetricValue
         )
     }
 
@@ -670,13 +660,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             intent.putExtra("checkout", false)
             authLauncher.launch(intent)
         }
-        binding
-            .sidebar
-            .notification
-            .ninjaTap(lifecycleScope) {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                navController.navigateToDeepLink("nav_notifications")
-            }
+        binding.sidebar.notification.ninjaTap(lifecycleScope) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            navController.navigateToDeepLink("nav_notifications")
+        }
         binding.sidebar.fmHistory.setOnClickListener { showHistory() }
         binding.sidebar.fmLoyalty.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -803,8 +790,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     private fun showNotifications() {
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_NOTIFICATIONS)
-        /*if (isDefaultHomeScreenDesign || currentDestination == R.id.nav_menu) {
+        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_NOTIFICATIONS)/*if (isDefaultHomeScreenDesign || currentDestination == R.id.nav_menu) {
             NavigationUtils.navigateSafe(
                 navController,
                 NewMenuFragmentDirections.actionMenuToNotifications()
@@ -877,8 +863,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             )
             val env = envList.find { s ->
                 s.url.equals(
-                    EnvUtil.getEnvironmentUrl(),
-                    ignoreCase = true
+                    EnvUtil.getEnvironmentUrl(), ignoreCase = true
                 )
             }?.displayName ?: ""
             val envMessage = "App is currently pointed to $env."
@@ -943,9 +928,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private fun logoutUser() {
         LoginManager.getInstance().logOut()
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(BuildUtil.googleInClient(this@MainActivity))
-            .requestEmail()
-            .build()
+            .requestIdToken(BuildUtil.googleInClient(this@MainActivity)).requestEmail().build()
         val googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
         googleSignInClient.signOut()
         SoloAuth.getInstance().logout()
@@ -990,8 +973,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             navCmsPage(
                 title = CacheUtil.getInstance()
-                    .getTranslations(Text.TERMS_LABEL, "Terms & Condition"),
-                content = content
+                    .getTranslations(Text.TERMS_LABEL, "Terms & Condition"), content = content
             )
         }
     }
@@ -1030,8 +1012,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             LoginManager.getInstance().logOut()
             val googleSignInOptions =
                 GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(BuildUtil.googleInClient(this@MainActivity))
-                    .requestEmail()
+                    .requestIdToken(BuildUtil.googleInClient(this@MainActivity)).requestEmail()
                     .build()
             val googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
             googleSignInClient.signOut()
@@ -1073,8 +1054,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
     }
 
-    fun showNotifIcon() {
-        /*if (!AuthUtil.getInstance().isSignedIn || !CacheUtil.getInstance().concept.isNotificationCenterEnabled) {
+    fun showNotifIcon() {/*if (!AuthUtil.getInstance().isSignedIn || !CacheUtil.getInstance().concept.isNotificationCenterEnabled) {
             binding.mainToolbar.notif.visibility = View.GONE
             binding.mainToolbar.notifCounter.visibility = View.GONE
             return
@@ -1114,8 +1094,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             Color.parseColor(CacheUtil.getInstance().colorMain)
         binding.sidebar.subscriptionsLabel.setTextColor(Color.parseColor(CacheUtil.getInstance().colorMain))
         goToSubs = true
-        goToMenu = false
-        /*binding.mainToolbar.cartIcon.visibility = View.GONE
+        goToMenu = false/*binding.mainToolbar.cartIcon.visibility = View.GONE
         binding.mainToolbar.cartQuantity.visibility = View.GONE
         binding.mainToolbar.scheduleIcon.visibility =
             if (CacheUtil.getInstance().concept.allowAdvanceOrder) View.VISIBLE else View.GONE
@@ -1140,17 +1119,15 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
     override fun setupTranslations() {
         //binding.mainToolbar.close.text = CacheUtil.getInstance().getTranslations(Text.CLOSE)
-        binding.sidebar.brands.text =
-            CacheUtil.getInstance().getTranslations(Text.BRANDS, "Brands")
+        binding.sidebar.brands.text = CacheUtil.getInstance().getTranslations(Text.BRANDS, "Brands")
         binding.sidebar.promotions.text =
             CacheUtil.getInstance().getTranslations(Text.PROMOTIONS, "Promotions")
-        binding.sidebar.liveChat.text = CacheUtil.getInstance()
-            .getTranslations(Text.LIVE_CHAT, "Live Chat")
+        binding.sidebar.liveChat.text =
+            CacheUtil.getInstance().getTranslations(Text.LIVE_CHAT, "Live Chat")
         binding.sidebar.signin.text = CacheUtil.getInstance()
             .getTranslations(Text.GET_STARTED_LABEL, "Get Started with Herfy")
         binding.scheduleOrderLabel.text = CacheUtil.getInstance().getTranslations(
-            Text.TAP_HERE_TO_SCHEDULE_YOUR_ORDER,
-            "Tap here to schedule your order"
+            Text.TAP_HERE_TO_SCHEDULE_YOUR_ORDER, "Tap here to schedule your order"
         )
         binding.sidebar.history.text =
             CacheUtil.getInstance().getTranslations(Text.YOUR_ORDERS_LABEL, "Your Orders")
@@ -1163,8 +1140,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding.sidebar.favorites.text =
             CacheUtil.getInstance().getTranslations(Text.FAVOURITES_LABEL, "Favourites")
         binding.sidebar.activeSubscription.text = CacheUtil.getInstance().getTranslations(
-            Text.ACTIVE_SUBSCRIPTION,
-            "Active Subscription"
+            Text.ACTIVE_SUBSCRIPTION, "Active Subscription"
         )
         binding.sidebar.quickOrderLabel.text =
             CacheUtil.getInstance().getTranslations(Text.QUICK_ORDER, "Quick Order")
@@ -1224,53 +1200,45 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
         when (currentDestination) {
             R.id.nav_herfy_home -> NavigationUtils.navigateSafe(
-                navController,
-                HomeFragmentDirections.actionHomeToCart(
+                navController, HomeFragmentDirections.actionHomeToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
 
             R.id.nav_home -> NavigationUtils.navigateSafe(
-                navController,
-                NewMenuHomePageFragmentDirections.actionHomeToCart(
+                navController, NewMenuHomePageFragmentDirections.actionHomeToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
 
             R.id.nav_menu_item -> NavigationUtils.navigateSafe(
-                navController,
-                MenuItemFragmentDirections.actionMenuItemToCart(
+                navController, MenuItemFragmentDirections.actionMenuItemToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
 
             R.id.nav_favorites -> NavigationUtils.navigateSafe(
-                navController,
-                FavoritesFragmentDirections.actionFavoritesToCart(
+                navController, FavoritesFragmentDirections.actionFavoritesToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
 
             R.id.nav_popular_now -> NavigationUtils.navigateSafe(
-                navController,
-                PopularNowFragmentDirections.actionPopularNowToCart(
+                navController, PopularNowFragmentDirections.actionPopularNowToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
 
             R.id.nav_digital_coupons -> NavigationUtils.navigateSafe(
-                navController,
-                DigitalCouponsFragmentDirections.actionDigitalCouponsToCart()
+                navController, DigitalCouponsFragmentDirections.actionDigitalCouponsToCart()
             )
 
             R.id.nav_digital_coupon -> NavigationUtils.navigateSafe(
-                navController,
-                DigitalCouponFragmentDirections.actionDigitalCouponToCart()
+                navController, DigitalCouponFragmentDirections.actionDigitalCouponToCart()
             )
 
             R.id.nav_promotions -> NavigationUtils.navigateSafe(
-                navController,
-                PromotionsFragmentDirections.actionPromotionsToCart()
+                navController, PromotionsFragmentDirections.actionPromotionsToCart()
             )
         }
     }
@@ -1320,8 +1288,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
     }
 
-    override fun showNewNotifIndicator(count: Int) {
-        /*if (count > 0 && CacheUtil.getInstance().concept.isNotificationCenterEnabled && (currentDestination == R.id.nav_home || currentDestination == R.id.nav_menu) && binding.mainToolbar.notif.visibility == View.VISIBLE && Values.sDeepLink.isEmpty()) {
+    override fun showNewNotifIndicator(count: Int) {/*if (count > 0 && CacheUtil.getInstance().concept.isNotificationCenterEnabled && (currentDestination == R.id.nav_home || currentDestination == R.id.nav_menu) && binding.mainToolbar.notif.visibility == View.VISIBLE && Values.sDeepLink.isEmpty()) {
             notifCount = count
             binding.mainToolbar.notifCounter.text = "" + count
             binding.sidebar.ivNewNotifIndicator.visibility = View.VISIBLE
@@ -1349,8 +1316,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
     override fun animateViewToCart(itemView: View, imageUrl: String, offset: Int) {}
 
-    fun showScheduleButton(onClick: View.OnClickListener) {
-        /*if (currentDestination == R.id.nav_cart) {
+    fun showScheduleButton(onClick: View.OnClickListener) {/*if (currentDestination == R.id.nav_cart) {
             try {
                 binding.mainToolbar.cart.visibility = View.GONE
                 binding.mainToolbar.schedule.visibility =
@@ -1362,8 +1328,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }*/
     }
 
-    fun showScheduleBubble() {
-        /*if (CacheUtil.getInstance().concept.allowAdvanceOrder && currentDestination == R.id.nav_cart && binding.mainToolbar.schedule.visibility == View.VISIBLE) {
+    fun showScheduleBubble() {/*if (CacheUtil.getInstance().concept.allowAdvanceOrder && currentDestination == R.id.nav_cart && binding.mainToolbar.schedule.visibility == View.VISIBLE) {
             try {
                 binding.bubbleOrderLayout.visibility = View.VISIBLE
                 binding.bubbleOrderLayout.postDelayed({
@@ -1394,6 +1359,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             Values.sDeepLink = ""
             Values.sDeepLinkId = ""
         }
+    }
+
+    fun showOrderDetails(orderId: String) {
+        navController.navigateToDeepLink("nav_new_order_tracker/${orderId}")
     }
 
     fun showHistory() {

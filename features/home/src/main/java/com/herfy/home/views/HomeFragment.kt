@@ -121,7 +121,8 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 tvHomeGreetingsEmoji.visible()
                 tvHomeGreetingsEmoji.text = resources.getString(TimeUtil.getGreetingsIcon())
             } else {
-                tvHomeGreetings.text = CacheUtil.getInstance().getTranslations(Text.WELCOME_TO_HERFY, "Welcome to Herfy!")
+                tvHomeGreetings.text = CacheUtil.getInstance()
+                    .getTranslations(Text.WELCOME_TO_HERFY, "Welcome to Herfy!")
                 tvHomeGreetingsEmoji.gone()
             }
         }
@@ -352,9 +353,10 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     lnLoyaltyEmptyState.gone()
                     tvPoints.text = loyalty.attributes.pointsAccumulated.toString()
                     val formatter = DecimalFormat("#,###")
-                    tvSarValue.text = StringUtil.localize(formatter.format(loyalty.attributes.currentBalanceAmount))
+                    tvSarValue.text =
+                        StringUtil.localize(formatter.format(loyalty.attributes.currentBalanceAmount))
                     var loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
-                    if(LocaleUtil.getInstance().isEnglish) {
+                    if (LocaleUtil.getInstance().isEnglish) {
                         loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
                     }
                     if (loyaltyTier.isNotEmpty()) {
@@ -509,15 +511,18 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     orderTracker.clOrderNotif.visibility = View.VISIBLE
                     orderTracker.tvStatusLabel.text = orderDetails.orderStatus.description
                     orderTracker.tvOrderTypeLabel.text =
-                        CacheUtil.getInstance().getTranslations(Text.YOUR_ORDER_FROM,
-                            "Your (x) order from Herfy").replace("(x)", orderDetails.orderType)
+                        CacheUtil.getInstance().getTranslations(
+                            Text.YOUR_ORDER_FROM,
+                            "Your (x) order from Herfy"
+                        ).replace("(x)", orderDetails.orderType)
                     orderTracker.tvEstimateValue.text =
                         CacheUtil.getInstance().getTranslations(Text.MIN, "(x) mins")
                             .replace("(x)", CacheUtil.getInstance().promisedTime)
-                    orderTracker.tvEstimateLabel.text = CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
-                    orderTracker.ivSeeOrderDetails.setOnClickListener {
+                    orderTracker.tvEstimateLabel.text =
+                        CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
+                    orderTracker.otherDetails.setOnClickListener {
                         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_DETAILS)
-                        findNavController().navigateToDeepLink("nav_order/${orderDetails.id}")
+                        findNavController().navigateToDeepLink("nav_new_order_tracker/${orderDetails.id}")
                     }
                 }
             }
@@ -619,7 +624,7 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     private fun setupOrdertracker() {
         if (AuthUtil.getInstance().isSignedIn) {
-            if(CacheUtil.getInstance().lastOrderId.isEmpty()) {
+            if (CacheUtil.getInstance().lastOrderId.isEmpty()) {
                 viewModel.getCustomerOrder()
             } else {
                 viewModel.getLastOrder()
