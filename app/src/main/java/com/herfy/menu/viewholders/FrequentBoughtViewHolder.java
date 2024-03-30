@@ -19,6 +19,7 @@ import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
 import com.herfy.util.StringUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
@@ -27,6 +28,7 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -53,11 +55,10 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
 
     @BindView(R.id.btnAdd)
     ImageButton addToCart;
-    @BindView(R.id.favouriteQuantityLayout)
-    ConstraintLayout favoriteQuantityLayout;
 
-    @BindView(R.id.txtQuantity)
-    MaterialTextView tvQuantity;
+    @BindView(R.id.frequentlyParentLayout)
+    ConstraintLayout clickableLayout;
+
     private Context context;
 
     public FrequentBoughtViewHolder(Context context, MenuContract.Presenter menuPresenter, @NonNull View itemView) {
@@ -70,10 +71,11 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setFrequentBoughtMenuItem(MenuItem menuItem) {
-        int quantity = getQuantityByFavorite(menuItem);
-        favoriteQuantityLayout.setVisibility(quantity >= 1 ? View.VISIBLE : View.GONE);
-        tvQuantity.setText(String.valueOf(quantity));
-        String imageUrl = menuItem.getAttributes().getImage();
+        MenuItemAttributes menuItemAttributes = menuItem.getAttributes();
+        String imageUrl = menuItemAttributes.getImage();
+
+        boolean isAlreadyAddedToCart = isFavoriteItemInCart(menuItem);
+        addToCart.setVisibility(isAlreadyAddedToCart ? View.GONE : View.VISIBLE);
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
             image.setVisibility(View.VISIBLE);
@@ -87,14 +89,14 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
                     }
                 });
 
-        String caloriesValue = menuItem.getCalories();
-        int calorieCount = menuItem.getCalorieCount();
+        String caloriesValue = menuItemAttributes.getCalories();
+        int calorieCount = menuItemAttributes.getCalorieCount();
         if (calorieCount != 0) {
             layoutCalories.setVisibility(View.VISIBLE);
-            txtCalories.setText(String.valueOf(calorieCount));
+            txtCalories.setText(CacheUtil.getInstance().getTranslations(Text.CALORIES_KCAL).replace("(x)",String.valueOf(calorieCount)));
         } else if (caloriesValue != null && !caloriesValue.isEmpty() && !caloriesValue.trim().equals("null") && !caloriesValue.trim().equals("0")) {
             layoutCalories.setVisibility(View.VISIBLE);
-            txtCalories.setText(caloriesValue);
+            txtCalories.setText(CacheUtil.getInstance().getTranslations(Text.CALORIES_KCAL).replace("(x)",caloriesValue));
         } else {
             layoutCalories.setVisibility(View.GONE);
             txtCalories.setText("");
@@ -116,26 +118,31 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
                 menuPresenter.addMenuItemToCart(menuItem.getId());
             }
         });
+        clickableLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menuPresenter.navigateToMenuItemDetails(menuItem);
+            }
+        });
 
-      MenuItemAttributes menuItemAttributes = menuItem.getAttributes();
+
         name.setText(menuItemAttributes.getName());
-        txtModifierDescription.setText(menuItem.getDescription(LocaleUtil.getInstance().getLanguage()));
+        txtModifierDescription.setText(menuItemAttributes.getDescription());
         txtModifierPrice.setText(StringUtil.getFormattedPrice((menuItemAttributes.getPrice())));
     }
 
-
-    public int getQuantityByFavorite(MenuItem menuItem) {
-
-        int quantity = 0;
-        ArrayList<MenuItem> cart = CacheUtil.getInstance().getCart();
-
-        for (MenuItem item : cart) {
-            if (Objects.equals(String.valueOf(item.getId()), menuItem.getId()) && menuItem.isAddedToCart()) {
-                quantity++;
+    public boolean isFavoriteItemInCart(MenuItem menuItem) {
+        ArrayList<MenuItem> cartItems = CacheUtil.getInstance().getCart();
+        for (MenuItem cartItem : cartItems) {
+            if (isSameMenuItem(cartItem, menuItem) && cartItem.isAddedToCart()) {
+                return true;
             }
         }
 
-        return quantity;
+        return false;
     }
 
+    private boolean isSameMenuItem(MenuItem item1, MenuItem item2) {
+        return Objects.equals(String.valueOf(item1.getId()), item2.getId());
+    }
 }
