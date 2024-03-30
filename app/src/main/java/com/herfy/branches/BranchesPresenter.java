@@ -57,13 +57,9 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
         if (this.fusedLocationProvider != null) {
             this.fusedLocationProvider.disconnect();
         }
-
         this.fusedLocationProvider = fusedLocationProvider;
-
         this.fusedLocationProvider.setLocationResultCallback(this);
-
         this.fusedLocationProvider.connect();
-
     }
 
     @Override
