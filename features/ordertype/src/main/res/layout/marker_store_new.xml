@@ -27,10 +27,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/kmAway"
         app:layout_constraintStart_toStartOf="@id/kmAway"
         app:layout_constraintTop_toBottomOf="@id/kmAway"
         app:srcCompat="@drawable/branch_selected" />
+
+    <ImageView
+        android:id="@+id/iv_marker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-3dp"
+        android:src="@drawable/ic_store_blue_location"
+        app:layout_constraintTop_toBottomOf="@id/icon"
+        app:layout_constraintStart_toStartOf="@id/icon"
+        app:layout_constraintEnd_toEndOf="@id/icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
