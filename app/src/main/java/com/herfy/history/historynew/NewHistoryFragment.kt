@@ -43,7 +43,6 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
-import io.shipbook.shipbooksdk.Log
 
 @AndroidEntryPoint
 class NewHistoryFragment : BaseFragment(), OrdersContract.View {
@@ -115,7 +114,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                 navigateUp()
             }
             historyListAdapter =
-                HistoryListAdapter(historyList, object : HistoryListAdapter.HistoryListener {
+                HistoryListAdapter(ArrayList(), object : HistoryListAdapter.HistoryListener {
                     override fun onViewDetails(item: OrderHistory, position: Int) {
                         findNavController().navigate(
                             NewHistoryFragmentDirections.actionHistoryToDetails(item.id)
@@ -196,7 +195,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                 }
                 binding.pastOrdersLabel.isVisible = pastOrders.isNotEmpty()
                 historyList = pastOrders
-                historyListAdapter.updateList(historyList)
+                historyListAdapter.updateList(pastOrders)
             }
         }
     }
