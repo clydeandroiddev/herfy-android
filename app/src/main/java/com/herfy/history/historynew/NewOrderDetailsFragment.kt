@@ -24,7 +24,7 @@ import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
 import com.herfy.history.databinding.FragmentNewOrderDetailsBinding
 import com.herfy.history.historynew.adapter.OrderMenuItemsAdapter
-import com.herfy.history.views.OrderFragmentDirections
+import com.herfy.history.historynew.adapter.RatingOrderAdapter
 import com.herfy.main.MainActivity
 import com.herfy.util.StringUtil
 import com.herfy.utils.analytics.MixpanelUtil
@@ -33,12 +33,12 @@ import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
-import com.herfy.utils.helper.NavigationUtils
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus
+import com.skylinedynamics.solosdk.api.models.objects.PaymentType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,6 +51,10 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
     private val args: NewOrderDetailsFragmentArgs by navArgs()
 
     private lateinit var binding: FragmentNewOrderDetailsBinding
+
+    private lateinit var ratingOrderAdapter: RatingOrderAdapter
+
+    private var orderDetails: OrderDetails? = null
 
     private lateinit var orderMenuItemsAdapter: OrderMenuItemsAdapter
 
@@ -138,6 +142,8 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
 
     override fun setupTranslations() {
         binding.apply {
+            youRatedThisOrderLabel.text = CacheUtil.getInstance()
+                .getTranslations(Text.YOU_RATED_THIS_ORDER, "Your rates this order.")
             title.text =
                 CacheUtil.getInstance().getTranslations(Text.ORDER_DETAILS, "Order Details")
             orderItemsLabel.text =
@@ -148,9 +154,12 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 CacheUtil.getInstance().getTranslations(Text.PAYMENT_METHOD, "Payment Method")
             reOrderButton.text =
                 CacheUtil.getInstance().getTranslations(Text.REORDER_LABEL, "Reorder")
+            reOrderButtonFull.text =
+                CacheUtil.getInstance().getTranslations(Text.REORDER_LABEL, "Reorder")
             rateButton.text = CacheUtil.getInstance().getTranslations(Text.RATE, "Rate")
             subtotalLabel.text = CacheUtil.getInstance().getTranslations(Text.SUBTOTAL, "Subtotal")
-            deliverLabel.text = CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
+            deliverLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
             discountLabel.text = CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
             totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
         }
@@ -191,6 +200,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
         dismissDialogs()
         order?.let { item ->
             binding.apply {
+                orderDetails = item
                 blocker.gone()
                 dateAndTime.text = item.createdAt.formatOrderTime()
                 orderNumber.text = CacheUtil.getInstance()
@@ -243,9 +253,33 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 reOrderButton.isVisible = item.averageRating <= 0
 
                 if (order.payment != null) {
-                    if (order.payment.attributes.method.equals("cash", ignoreCase = true)) {
+                    if (order.payment.attributes.method.equals(
+                            PaymentType.CASH.value, ignoreCase = true
+                        )
+                    ) {
                         cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_payment_type_cash_new)
                         cardNumber.text = CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
+                    } else if (order.payment.attributes.method.equals(
+                            PaymentType.CARD_ON_DELIVERY.value, ignoreCase = true
+                        )
+                    ) {
+                        cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_card_new)
+                        cardNumber.text = CacheUtil.getInstance()
+                            .getTranslations(Text.CARD_ON_DELIVERY, "Card on Delivery")
+                    } else if (order.payment.attributes.method.equals(
+                            PaymentType.CARD_ON_PICKUP.value, ignoreCase = true
+                        )
+                    ) {
+                        cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_card_new)
+                        cardNumber.text = CacheUtil.getInstance()
+                            .getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
+                    } else if (order.payment.attributes.method.equals(
+                            PaymentType.APPLE_PAY.value, ignoreCase = true
+                        )
+                    ) {
+                        cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_card_new)
+                        cardNumber.text =
+                            CacheUtil.getInstance().getTranslations(Text.APPLE_PAY, "Apple Pay")
                     } else {
                         if (order.payment.attributes.brand.equals("visa", ignoreCase = true)) {
                             cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_card_visa_common)
@@ -324,7 +358,15 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showRatings(orderStatus: OrderStatus?, ratings: MutableList<Rating>?) {
-
+        orderDetails?.let { order ->
+            ratings?.let {
+                if (order.averageRating > 0) {
+                    ratingOrderAdapter = RatingOrderAdapter(it.toList())
+                    binding.ratingsList.adapter = ratingOrderAdapter
+                    binding.ratingContainer.isVisible = true
+                }
+            }
+        }
     }
 
     override fun showMessage(message: String?) {

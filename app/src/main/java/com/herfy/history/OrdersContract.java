@@ -68,7 +68,8 @@ public interface OrdersContract {
 
         void logFirebaseEvent(String event);
 
-        @Nullable String getFromCache(String key);
+        @Nullable
+        String getFromCache(String key);
 
         void showWhatsApp(String mobileNumber);
 
@@ -126,6 +127,7 @@ public interface OrdersContract {
         void getOrderFeedbackTopics(String orderId);
 
         void getOrderFeedbacks(String orderId);
+
         void getOrderFeedbacks();
 
         List<Rating> getRatings();
@@ -158,6 +160,7 @@ public interface OrdersContract {
 
         ArrayList<OrderHistory> getOrderHistories();
 
+        void setOrders(ArrayList<OrderHistory> orders);
     }
 
 }

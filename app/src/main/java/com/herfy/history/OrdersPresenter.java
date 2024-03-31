@@ -2122,6 +2122,11 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         return orders;
     }
 
+    @Override
+    public void setOrders(ArrayList<OrderHistory> orders) {
+        this.orders = orders;
+    }
+
     private void subscribeToOrderStatusUpdate(String orderId) {
         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
         ablyUtil.subscribeToOrderStatusUpdate(orderId, OrdersPresenter.this::onOrderDetailsStatusUpdate);

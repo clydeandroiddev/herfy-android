@@ -1149,4 +1149,6 @@ public class Text {
 
     public static final String HOW_WAS_YOUR_ORDER = "how_was_your_order";
 
+    public static final String YOU_RATED_THIS_ORDER = "you_rated_this_order";
+
 }

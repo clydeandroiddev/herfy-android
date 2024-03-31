@@ -35,7 +35,7 @@ class RatingBarAdapter(
         holder.binding.apply {
             executePendingBindings()
             ratingName.text = item.attributes.name
-            separator.isVisible = (position != (items.size - 1))
+            separator.isVisible = (position < (items.size - 1))
             ratingStar.setOnRatingChangeListener { _, rating, _ ->
                 run {
                     items[position].attributes.rating = rating.toInt()

@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -108,6 +109,7 @@ class RatingBarDialog : BottomSheetDialogFragment() {
             if (todayLabel.text.toString().isNotEmpty()) {
                 timeLabel.text = time.formatOrderTime().replace(todayLabel.text.toString(), "")
             } else {
+                todayLabel.isVisible = false
                 timeLabel.text = time.formatOrderTime()
             }
             howWasYourOrderLabel.text = CacheUtil.getInstance()

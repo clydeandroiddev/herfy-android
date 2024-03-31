@@ -43,6 +43,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
+import io.shipbook.shipbooksdk.Log
 
 @AndroidEntryPoint
 class NewHistoryFragment : BaseFragment(), OrdersContract.View {
@@ -77,7 +78,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ordersPresenter?.start()
-        if (ordersPresenter?.orderHistories?.isEmpty() != true) {
+        if (ordersPresenter?.orderHistories?.size != 0) {
             showOrders(true, ordersPresenter?.orderHistories)
         } else {
             activity?.let {
@@ -153,11 +154,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     private fun checkEmptyState() {
-        if (ordersPresenter?.orderHistories?.isEmpty() != true) {
-            binding.emptyStatesLayout.isVisible = false
-        } else {
-            binding.emptyStatesLayout.isVisible = true
-        }
+        binding.emptyStatesLayout.isVisible = ordersPresenter?.orderHistories?.size == 0
     }
 
     override fun setupFonts() {
@@ -182,11 +179,12 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showLocation(isPlace: Boolean, latLng: LatLng?, address: String?) {
-        TODO("Not yet implemented")
+
     }
 
     override fun showOrders(newestToOldest: Boolean, orders: ArrayList<OrderHistory>?) {
         dismissDialogs()
+        checkEmptyState()
         orders?.let {
             if (orders.isNotEmpty()) {
                 val orderProgressId = processInProgress(orders)
@@ -197,12 +195,10 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                     pastOrders = orders
                 }
                 binding.pastOrdersLabel.isVisible = pastOrders.isNotEmpty()
-                historyList.clear()
                 historyList = pastOrders
                 historyListAdapter.updateList(historyList)
             }
         }
-        checkEmptyState()
     }
 
     @SuppressLint("SetTextI18n")
@@ -381,6 +377,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
             fromRate = false
             dismissRatingBarDialog()
             historyList[ratePosition].averageRating = 1.0
+            ordersPresenter?.setOrders(historyList)
             historyListAdapter.updateList(historyList)
         }
         activity?.let {

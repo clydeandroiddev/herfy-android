@@ -151,9 +151,9 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="4dp"
                                     android:ellipsize="end"
-                                    android:paddingEnd="16dp"
                                     android:includeFontPadding="false"
                                     android:maxLines="3"
+                                    android:paddingEnd="16dp"
                                     android:textColor="#212121"
                                     android:textSize="12sp"
                                     app:layout_constraintEnd_toEndOf="parent"
@@ -566,7 +566,42 @@
                             android:visibility="gone"
                             tools:visibility="visible">
 
-                            <!-- TODO -->
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/youRatedThisOrderLabel"
+                                style="@style/Styles.Text.Caption"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="start"
+                                android:includeFontPadding="false"
+                                android:textColor="#000000"
+                                android:textSize="20sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="You rated this order." />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/ratingsList"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:clipToPadding="false"
+                                android:nestedScrollingEnabled="false"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/youRatedThisOrderLabel"
+                                tools:itemCount="4"
+                                tools:listitem="@layout/item_rating_star_order" />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:clickable="true"
+                                android:focusable="true"
+                                app:layout_constraintBottom_toBottomOf="@id/ratingsList"
+                                app:layout_constraintEnd_toEndOf="@id/ratingsList"
+                                app:layout_constraintStart_toStartOf="@id/ratingsList"
+                                app:layout_constraintTop_toTopOf="@id/ratingsList" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
