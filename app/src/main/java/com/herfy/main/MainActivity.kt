@@ -32,7 +32,6 @@ import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -67,7 +66,6 @@ import com.herfy.menu.views.MenuItemFragmentDirections
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.newmenu.views.*
 import com.herfy.promotions.views.PromotionsFragmentDirections
-import com.herfy.ratings.views.RatingsBottomSheetDialogFragment
 import com.herfy.splash.SplashActivity
 import com.herfy.util.*
 import com.herfy.util.obfuscator.Keychain

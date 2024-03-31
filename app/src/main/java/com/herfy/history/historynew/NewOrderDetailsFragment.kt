@@ -16,8 +16,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
+import com.herfy.common.deviceHeight
 import com.herfy.common.formatOrderTime
 import com.herfy.common.orderDetailsType
+import com.herfy.common.orderTypeString
 import com.herfy.ext.cast
 import com.herfy.firebase.FirebaseService
 import com.herfy.history.OrdersContract
@@ -55,6 +57,16 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
     private lateinit var ratingOrderAdapter: RatingOrderAdapter
 
     private var orderDetails: OrderDetails? = null
+
+    private var orderAddress: Address? = null
+
+    private var orderStore: Store? = null
+
+    private var fromRate = false
+
+    private var isRateButtonClicked = false
+
+    private lateinit var ratingBarDialog: RatingBarDialog
 
     private lateinit var orderMenuItemsAdapter: OrderMenuItemsAdapter
 
@@ -128,7 +140,13 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
             }
 
             rateButton.setOnClickListener {
-                // TODO Rate here
+                orderDetails?.let {
+                    activity?.cast<BaseActivity> {
+                        it.showLoadingDialog()
+                    }
+                    isRateButtonClicked = true
+                    orderPresenter?.getOrderFeedbackTopics(it.id)
+                }
             }
 
             orderMenuItemsAdapter = OrderMenuItemsAdapter(ArrayList())
@@ -143,7 +161,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
     override fun setupTranslations() {
         binding.apply {
             youRatedThisOrderLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.YOU_RATED_THIS_ORDER, "Your rates this order.")
+                .getTranslations(Text.YOU_RATED_THIS_ORDER, "Your rated this order.")
             title.text =
                 CacheUtil.getInstance().getTranslations(Text.ORDER_DETAILS, "Order Details")
             orderItemsLabel.text =
@@ -201,6 +219,8 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
         order?.let { item ->
             binding.apply {
                 orderDetails = item
+                orderAddress = address
+                orderStore = store
                 blocker.gone()
                 dateAndTime.text = item.createdAt.formatOrderTime()
                 orderNumber.text = CacheUtil.getInstance()
@@ -358,19 +378,103 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showRatings(orderStatus: OrderStatus?, ratings: MutableList<Rating>?) {
-        orderDetails?.let { order ->
-            ratings?.let {
-                if (order.averageRating > 0) {
-                    ratingOrderAdapter = RatingOrderAdapter(it.toList())
-                    binding.ratingsList.adapter = ratingOrderAdapter
-                    binding.ratingContainer.isVisible = true
+        binding.apply {
+            orderDetails?.let { order ->
+                ratings?.let {
+                    if (order.averageRating > 0) {
+                        ratingOrderAdapter = RatingOrderAdapter(it.toList())
+                        ratingsList.adapter = ratingOrderAdapter
+                        ratingContainer.isVisible = true
+                        reOrderButtonFull.isVisible = true
+                        rateButton.isVisible = false
+                        reOrderButton.isVisible = false
+                    } else {
+                        if (isRateButtonClicked) {
+                            showRatingDialog(ratings)
+                        }
+                        isRateButtonClicked = false
+                    }
                 }
             }
         }
     }
 
-    override fun showMessage(message: String?) {
+    private fun getLocationName(): String {
+        val name = ""
+        orderDetails?.let { order ->
+            if (order.orderType.equals("deliver") || order.orderType.equals("delivery")) {
+                orderAddress?.let {
+                    return it.attributes.line1
+                }
+            } else {
+                orderStore?.let {
+                    return it.attributes.line1
+                }
+            }
+        }
+        return name
+    }
 
+    private fun checkRatings(ratings: List<Rating>): Boolean {
+        return ratings.all { it.attributes.rating != 0 }
+    }
+
+    private fun showRatingDialog(ratings: MutableList<Rating>?) {
+        dismissRatingBarDialog()
+        activity?.let {
+            orderDetails?.let { order ->
+                ratingBarDialog = RatingBarDialog.newInstance(order.createdAt,
+                    order.orderType.orderTypeString(),
+                    getLocationName(),
+                    deviceHeight(it),
+                    ratings!!.toList(),
+                    object : RatingBarDialog.OnRatingListener {
+                        override fun orderRatings(ratings: List<Rating>) {
+                            if (checkRatings(ratings)) {
+                                fromRate = true
+                                activity?.cast<BaseActivity> {
+                                    it.showLoadingDialog()
+                                }
+                                orderPresenter?.sendOrderFeedback(ratings, order.id)
+                            }
+                        }
+
+                        override fun exit() {
+                            dismissRatingBarDialog()
+                        }
+
+                    })
+                ratingBarDialog.show(
+                    it.supportFragmentManager, RatingBarDialog::class.java.simpleName
+                )
+            }
+        }
+    }
+
+    private fun dismissRatingBarDialog() {
+        try {
+            ratingBarDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun showMessage(message: String?) {
+        dismissDialogs()
+        if (fromRate) {
+            orderDetails?.let {
+                binding.reOrderButtonFull.isVisible = true
+                binding.rateButton.isVisible = false
+                binding.reOrderButton.isVisible = false
+                fromRate = false
+                dismissRatingBarDialog()
+                it.averageRating = 1.0
+                orderPresenter?.getOrderFeedbackTopics(it.id)
+            }
+        }
+        activity?.let {
+            Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun customerArrivedSuccess() {
