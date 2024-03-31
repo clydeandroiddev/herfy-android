@@ -969,7 +969,26 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         OrdersApiCall.getInstance().sendOrderFeedback(order.getId(), orderFeedbackBody, null, new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
-                ordersView.showMessage(CacheUtil.getInstance().getTranslations(Text.ORDER_RATING_SENT));
+                ordersView.showMessage(CacheUtil.getInstance().getTranslations(Text.ORDER_RATING_SENT, "Order ratings sent"));
+            }
+
+            @Override
+            public void onError(Object o) {
+                AppLogger.printRetrofitError(o);
+                ordersView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.RETRIEVING_ORDER_DETAILS_ERROR), null));
+            }
+        });
+    }
+
+    @Override
+    public void sendOrderFeedback(List<Rating> ratings, String orderId) {
+        this.ratings = ratings;
+        Customer customer = AuthUtil.getInstance().getCustomer();
+        OrderFeedbackBody orderFeedbackBody = new OrderFeedbackBody(customer.getAttributes().getFirstName() + " " + customer.getAttributes().getLastName(), customer.getAttributes().getEmail(), customer.getAttributes().getMobile(), "Order Feedback", "Order Feedback", this.ratings);
+        OrdersApiCall.getInstance().sendOrderFeedback(orderId, orderFeedbackBody, null, new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                ordersView.showMessage(CacheUtil.getInstance().getTranslations(Text.ORDER_RATING_SENT, "Order ratings sent"));
             }
 
             @Override

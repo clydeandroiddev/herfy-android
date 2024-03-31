@@ -49,6 +49,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:id="@+id/separator"
             android:background="#E6E8EB"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

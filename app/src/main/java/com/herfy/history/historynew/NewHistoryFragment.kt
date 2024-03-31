@@ -54,7 +54,13 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
 
     private lateinit var ratingBarDialog: RatingBarDialog
 
+    private var historyList: ArrayList<OrderHistory> = ArrayList()
+
     private var orderHistoryRate: OrderHistory? = null
+
+    private var ratePosition = -1
+
+    private var fromRate = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,7 +114,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                 navigateUp()
             }
             historyListAdapter =
-                HistoryListAdapter(ArrayList(), object : HistoryListAdapter.HistoryListener {
+                HistoryListAdapter(historyList, object : HistoryListAdapter.HistoryListener {
                     override fun onViewDetails(item: OrderHistory, position: Int) {
                         findNavController().navigate(
                             NewHistoryFragmentDirections.actionHistoryToDetails(item.id)
@@ -135,6 +141,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                     override fun onRate(item: OrderHistory, position: Int) {
                         activity?.let {
                             orderHistoryRate = item
+                            ratePosition = position
                             val baseActivity = it as BaseActivity
                             baseActivity.showLoadingDialog()
                             ordersPresenter?.getOrderFeedbackTopics(item.id)
@@ -190,7 +197,9 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                     pastOrders = orders
                 }
                 binding.pastOrdersLabel.isVisible = pastOrders.isNotEmpty()
-                historyListAdapter.updateList(pastOrders)
+                historyList.clear()
+                historyList = pastOrders
+                historyListAdapter.updateList(historyList)
             }
         }
         checkEmptyState()
@@ -322,8 +331,12 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
 
     }
 
+    private fun checkRatings(ratings: List<Rating>): Boolean {
+        return ratings.all { it.attributes.rating != 0 }
+    }
+
     private fun showRatingDialog(ratings: MutableList<Rating>?) {
-        dismissPickupTypeDialog()
+        dismissRatingBarDialog()
         activity?.let {
             orderHistoryRate?.let { order ->
                 ratingBarDialog = RatingBarDialog.newInstance(order.createdAt,
@@ -333,11 +346,17 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                     ratings!!.toList(),
                     object : RatingBarDialog.OnRatingListener {
                         override fun orderRatings(ratings: List<Rating>) {
-
+                            if (checkRatings(ratings)) {
+                                fromRate = true
+                                activity?.cast<BaseActivity> {
+                                    it.showLoadingDialog()
+                                }
+                                ordersPresenter?.sendOrderFeedback(ratings, order.id)
+                            }
                         }
 
                         override fun exit() {
-                            dismissPickupTypeDialog()
+                            dismissRatingBarDialog()
                         }
 
                     })
@@ -348,7 +367,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         }
     }
 
-    private fun dismissPickupTypeDialog() {
+    private fun dismissRatingBarDialog() {
         try {
             ratingBarDialog.dismiss()
         } catch (e: java.lang.Exception) {
@@ -357,7 +376,16 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showMessage(message: String?) {
-
+        dismissDialogs()
+        if (fromRate && ratePosition != -1) {
+            fromRate = false
+            dismissRatingBarDialog()
+            historyList[ratePosition].averageRating = 1.0
+            historyListAdapter.updateList(historyList)
+        }
+        activity?.let {
+            Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun customerArrivedSuccess() {

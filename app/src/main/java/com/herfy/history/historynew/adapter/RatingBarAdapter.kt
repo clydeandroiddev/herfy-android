@@ -2,6 +2,7 @@ package com.herfy.history.historynew.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.herfy.history.databinding.ItemRatingStarOrderBinding
@@ -34,7 +35,8 @@ class RatingBarAdapter(
         holder.binding.apply {
             executePendingBindings()
             ratingName.text = item.attributes.name
-            ratingStar.setOnRatingChangeListener { ratingBar, rating, fromUser ->
+            separator.isVisible = (position != (items.size - 1))
+            ratingStar.setOnRatingChangeListener { _, rating, _ ->
                 run {
                     items[position].attributes.rating = rating.toInt()
                 }
