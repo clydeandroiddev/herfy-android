@@ -21,12 +21,10 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.herfy.base.BaseActivity
 import com.herfy.curbside.CurbsideContract
 import com.herfy.curbside.CurbsidePresenter
-import com.herfy.order.views.ordertype.ChoosePickupTypeDialog
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.AddCurbsideVehicleDialogBinding
 import com.herfy.utils.constants.Text
@@ -37,7 +35,6 @@ import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColorAttribute
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMakerAttributes
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
-import io.shipbook.shipbooksdk.Log
 
 class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 

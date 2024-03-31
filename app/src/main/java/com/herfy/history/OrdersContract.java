@@ -123,6 +123,9 @@ public interface OrdersContract {
 
         void getOrderFeedbackTopics();
 
+        void getOrderFeedbackTopics(String orderId);
+
+        void getOrderFeedbacks(String orderId);
         void getOrderFeedbacks();
 
         List<Rating> getRatings();

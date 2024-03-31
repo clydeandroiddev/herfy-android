@@ -1,6 +1,10 @@
 package com.herfy.common
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.res.Resources
+import android.util.DisplayMetrics
+import android.util.TypedValue
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -80,6 +84,25 @@ fun String.orderTypeString(): String {
 
 fun String.formatOrderTime(): String {
     return this.formatOrderTime(false)
+}
+
+fun String.todayOrYesterday(): String {
+    try {
+        var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+        val timeValue = simpleDateFormat.parse(this)
+        simpleDateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getDefault()
+        val actualDate = timeValue?.let { simpleDateFormat.format(it) }.orEmpty()
+        if (isToday(actualDate)) {
+            return (CacheUtil.getInstance().getTranslations(Text.TODAY, "Today") + ", ")
+        } else if (isYesterday(actualDate)) {
+            return (CacheUtil.getInstance().getTranslations(Text.YESTERDAY, "Yesterday") + ", ")
+        }
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
+    return ""
 }
 
 fun String.formatOrderTime(forceIncludeYear: Boolean): String {
@@ -205,6 +228,7 @@ fun formatSecondsToMinutesAndSeconds(seconds: Long): String {
     val remainingSeconds = seconds % 60
     return String.format("%02d:%02d", minutes, remainingSeconds)
 }
+
 fun cancelTime(timestamp: String): Long {
     return try {
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
@@ -265,4 +289,16 @@ fun showTime(timestamp: String, timeAdded: Int): String {
         e.printStackTrace()
         return ""
     }
+}
+
+fun dpToPx(dp: Float): Int {
+    return TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP, dp, Resources.getSystem().displayMetrics
+    ).toInt()
+}
+
+fun deviceHeight(context: Activity): Int {
+    val displayMetrics = DisplayMetrics()
+    context.windowManager.defaultDisplay.getMetrics(displayMetrics)
+    return displayMetrics.heightPixels - dpToPx(300f)
 }

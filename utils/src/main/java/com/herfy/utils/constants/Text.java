@@ -1147,4 +1147,6 @@ public class Text {
 
     public static final String CANCEL_ORDER_NEW = "cancel_order_new";
 
+    public static final String HOW_WAS_YOUR_ORDER = "how_was_your_order";
+
 }

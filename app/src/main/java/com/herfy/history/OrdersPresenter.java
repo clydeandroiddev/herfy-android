@@ -172,6 +172,12 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                                     if (menuItem.getRelationships().getRelationshipOrder().links.self.contains(order.getId())) {
                                         menItems.add(menuItem.getAttributes().getImage());
                                     }
+                                } else if (includedObject.getString("type").equals("customer-address")) {
+                                    Address orderItem = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<Address>() {
+                                    }.getType());
+                                    if (orderItem.getId().equals(String.valueOf(order.getCustomerAddressId()))) {
+                                        order.setLocationName(orderItem.getAttributes().getLine1());
+                                    }
                                 }
                             }
                         }
@@ -801,6 +807,96 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                 }
             });
         }
+    }
+
+    @Override
+    public void getOrderFeedbackTopics(String orderId) {
+        OrdersApiCall.getInstance().getOrderFeedbackTopics(orderId, new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                ratings.clear();
+                try {
+                    JSONObject jsonObject = new JSONObject(o.toString());
+                    JSONArray dataArray = jsonObject.optJSONArray("data");
+
+                    if (dataArray != null) {
+                        ratings.addAll(GsonHelper.gsonFinal().fromJson(dataArray.toString(), new TypeToken<List<Rating>>() {
+                        }.getType()));
+                    }
+
+                    getOrderFeedbacks(orderId);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    this.onError(e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onError(Object o) {
+                AppLogger.printRetrofitError(o);
+                ratings.clear();
+                ordersView.showRatings(null, ratings);
+            }
+        });
+    }
+
+    @Override
+    public void getOrderFeedbacks(String orderId) {
+        OrdersApiCall.getInstance().getOrderFeedbacks(orderId, new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                try {
+                    JSONObject jsonObject = new JSONObject(o.toString());
+                    JSONArray dataArray = jsonObject.optJSONArray("data");
+                    JSONArray includedArray = jsonObject.optJSONArray("included");
+
+                    List<OrderFeedback> orderFeedbacks = new ArrayList<>();
+
+                    if (dataArray != null) {
+                        orderFeedbacks.addAll(GsonHelper.gsonFinal().fromJson(dataArray.toString(), new TypeToken<List<OrderFeedback>>() {
+                        }.getType()));
+                    }
+
+                    if (orderFeedbacks.size() > 0) {
+
+                        OrderFeedback orderFeedback = orderFeedbacks.get(orderFeedbacks.size() - 1);
+
+                        if (includedArray != null) {
+
+                            for (int i = 0; i < includedArray.length(); i++) {
+                                Rating rating = GsonHelper.gsonFinal().fromJson(includedArray.getJSONObject(i).toString(), new TypeToken<Rating>() {
+                                }.getType());
+                                if (orderFeedback.getRatingIds().contains(rating.getId())) {
+                                    for (Rating ratingTopic : ratings) {
+                                        if (rating.getAttributes().getTopic().equalsIgnoreCase(ratingTopic.getAttributes().getName())) {
+                                            ratingTopic.getAttributes().setRating(rating.getAttributes().getRating());
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    ordersView.showRatings(null, ratings);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    this.onError(e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onError(Object o) {
+                AppLogger.printRetrofitError(o);
+                ordersView.showRatings(null, ratings);
+            }
+        });
     }
 
     @Override

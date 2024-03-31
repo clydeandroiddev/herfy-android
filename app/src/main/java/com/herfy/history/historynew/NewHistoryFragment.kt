@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
+import com.herfy.common.deviceHeight
 import com.herfy.common.formatOrderTime
 import com.herfy.common.orderTypeString
 import com.herfy.ext.cast
@@ -50,6 +51,10 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     private lateinit var binding: FragmentNewOrderHistoryBinding
 
     private lateinit var historyListAdapter: HistoryListAdapter
+
+    private lateinit var ratingBarDialog: RatingBarDialog
+
+    private var orderHistoryRate: OrderHistory? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,7 +133,12 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                     }
 
                     override fun onRate(item: OrderHistory, position: Int) {
-
+                        activity?.let {
+                            orderHistoryRate = item
+                            val baseActivity = it as BaseActivity
+                            baseActivity.showLoadingDialog()
+                            ordersPresenter?.getOrderFeedbackTopics(item.id)
+                        }
                     }
                 })
             pastOrdersList.adapter = historyListAdapter
@@ -265,16 +275,14 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         activity?.cast<MainActivity> {
             it.runOnUiThread {
                 val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                if (vibrator != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        vibrator.vibrate(
-                            VibrationEffect.createOneShot(
-                                500, VibrationEffect.DEFAULT_AMPLITUDE
-                            )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(
+                        VibrationEffect.createOneShot(
+                            500, VibrationEffect.DEFAULT_AMPLITUDE
                         )
-                    } else {
-                        vibrator.vibrate(100)
-                    }
+                    )
+                } else {
+                    vibrator.vibrate(100)
                 }
                 Toast.makeText(
                     it,
@@ -307,7 +315,45 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showRatings(orderStatus: OrderStatus?, ratings: MutableList<Rating>?) {
+        dismissDialogs()
+        ratings?.let {
+            showRatingDialog(it)
+        }
 
+    }
+
+    private fun showRatingDialog(ratings: MutableList<Rating>?) {
+        dismissPickupTypeDialog()
+        activity?.let {
+            orderHistoryRate?.let { order ->
+                ratingBarDialog = RatingBarDialog.newInstance(order.createdAt,
+                    order.attrType.orderTypeString(),
+                    order.locationName,
+                    deviceHeight(it),
+                    ratings!!.toList(),
+                    object : RatingBarDialog.OnRatingListener {
+                        override fun orderRatings(ratings: List<Rating>) {
+
+                        }
+
+                        override fun exit() {
+                            dismissPickupTypeDialog()
+                        }
+
+                    })
+                ratingBarDialog.show(
+                    it.supportFragmentManager, RatingBarDialog::class.java.simpleName
+                )
+            }
+        }
+    }
+
+    private fun dismissPickupTypeDialog() {
+        try {
+            ratingBarDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun showMessage(message: String?) {

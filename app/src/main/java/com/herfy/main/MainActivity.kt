@@ -67,6 +67,7 @@ import com.herfy.menu.views.MenuItemFragmentDirections
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.newmenu.views.*
 import com.herfy.promotions.views.PromotionsFragmentDirections
+import com.herfy.ratings.views.RatingsBottomSheetDialogFragment
 import com.herfy.splash.SplashActivity
 import com.herfy.util.*
 import com.herfy.util.obfuscator.Keychain
