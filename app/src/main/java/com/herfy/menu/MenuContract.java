@@ -254,10 +254,14 @@ public interface MenuContract {
         MenuItem getMenuItem();
 
         void getMenuItem(boolean addToBag, String menuItemId);
+        void getMenuItemFromFrequent(String menuItemId,boolean addToBag);
+
+        void addFrequentBoughtItem(boolean addToBag);
 
         void getMenuItem(boolean addToBag, String menuItemId, boolean isUpsell);
 
         void prepareMenuItem(boolean addToBag);
+        void prepareMenuItemByMenu(MenuItem menuItem, boolean addToBag);
 
         void setMenuItem(MenuItem menuItem);
 
@@ -331,7 +335,7 @@ public interface MenuContract {
 
         void addCartItem(boolean add, boolean skip);
 
-        void addMenuItemToCart(MenuItem menuItem);
+        void addMenuItemToCart(String menuItemId);
 
         void addMenuItemToCartWithAnalytics(MenuItem menuItem, double price, int quantity);
 

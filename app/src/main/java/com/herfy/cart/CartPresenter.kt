@@ -957,7 +957,8 @@ class CartPresenter @Inject constructor(
         if (CacheUtil.getInstance().orderStore != null) {
             orderStoreId = CacheUtil.getInstance().orderStore.id
         }
-        var totalPrice = item.getPrice(orderStoreId)
+        val price = item.getPrice(orderStoreId)
+        var totalPrice = if(price == 0.0) item.attributes.price else price
         if (BuildUtil.isEkfc() && item.total != 0.0) {
             totalPrice = item.total
         } else {

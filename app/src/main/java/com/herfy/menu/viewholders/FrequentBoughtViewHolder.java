@@ -21,6 +21,7 @@ import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 
@@ -111,7 +112,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                menuPresenter.addMenuItemToCart(menuItem);
+                menuPresenter.addMenuItemToCart(menuItem.getId());
             }
         });
         clickableLayout.setOnClickListener(new View.OnClickListener() {
