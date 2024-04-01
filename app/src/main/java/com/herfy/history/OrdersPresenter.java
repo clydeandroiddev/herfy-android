@@ -100,6 +100,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
 
     public boolean hasLocation = false;
 
+    private boolean fromAbly;
     private Location location;
     private FusedLocationProvider fusedLocationProvider;
     private final OrdersContract.View ordersView;
@@ -606,9 +607,11 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                             orderStatuses = filterOrderStatuses(orderStatuses);
                         }
                         ordersView.showOrderStatuses(orderStatuses, isDone);
+                        fromAbly = false;
                     } catch (JSONException e) {
                         e.printStackTrace();
                         this.onError(e);
+                        fromAbly = false;
                     }
                 }
             }
@@ -618,6 +621,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                 AppLogger.printRetrofitError(o.toString());
                 orderStatuses.clear();
                 ordersView.showOrderStatuses(orderStatuses, isDone);
+                fromAbly = false;
             }
         });
     }
@@ -753,9 +757,8 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
 
                     LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
                     LatLng driverLatLng = new LatLng(attributesObject.getDouble("lat"), attributesObject.getDouble("long"));
-
                     ordersView.showDriver(customerLatLng, driverLatLng);
-
+                    fromAbly = false;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -2081,6 +2084,11 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         }
     }
 
+    @Override
+    public boolean getFromAbly() {
+        return fromAbly;
+    }
+
     private ArrayList<LoyaltyPointsTransaction> transactions;
 
     @Override
@@ -2150,12 +2158,14 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     }
 
     private Unit onOrderDetailsStatusUpdate(Message message) {
+        fromAbly = true;
         getOrderStatuses();
         getOrder(order.getId(), -1, true, false);
         return Unit.INSTANCE;
     }
 
     private Unit onOrderDriverAssign(Message message) {
+        fromAbly = true;
         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
         ablyUtil.detachToOrderDriverAssign(order.getId());
         subscribeToOrderDriverLocationUpdate(order.getId());

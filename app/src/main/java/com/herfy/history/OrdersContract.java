@@ -150,6 +150,8 @@ public interface OrdersContract {
 
         void removeMukafaaRedemption();
 
+        boolean getFromAbly();
+
         LoyaltyPointsTransaction getMukafaaTransaction();
 
         ArrayList<LoyaltyPointsTransaction> getLoyaltyPointsTransaction();

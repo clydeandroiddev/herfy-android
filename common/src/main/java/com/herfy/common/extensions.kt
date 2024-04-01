@@ -86,6 +86,16 @@ fun String.formatOrderTime(): String {
     return this.formatOrderTime(false)
 }
 
+fun getCurrentTime(): String {
+    return try {
+        val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val currentTime = Date()
+        dateFormat.format(currentTime)
+    } catch (e: Exception) {
+        ""
+    }
+}
+
 fun String.todayOrYesterday(): String {
     try {
         var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())

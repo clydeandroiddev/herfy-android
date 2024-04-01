@@ -116,7 +116,6 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
     private Address address;
     private Place place;
-
     private ArrayList<Store> dineInStores = new ArrayList<>();
     private ArrayList<Store> pickupCurbsideStores = new ArrayList<>();
 

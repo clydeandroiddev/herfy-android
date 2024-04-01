@@ -10,6 +10,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -42,6 +44,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.common.cancelTime
 import com.herfy.common.formatSecondsToMinutesAndSeconds
+import com.herfy.common.getCurrentTime
 import com.herfy.common.showTime
 import com.herfy.common.statusTime
 import com.herfy.ext.cast
@@ -115,6 +118,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     private var numberToCall = ""
 
     private var orderId = ""
+
+    private var isOverHeadFrameShows = false
 
     private val gpsLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
@@ -531,18 +536,39 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             orderStore?.let { store ->
                 val orderType = OrderType.fromString(order.orderType)
                 if (orderType == OrderType.DELIVERY) {
+                    binding.orderStatusOverhead.readyForPickupLabel.text = CacheUtil.getInstance()
+                        .getTranslations(Text.RIDER_ASSIGNED, "Rider assigned.")
+                    binding.orderStatusOverhead.readyForPickupDescription.text =
+                        CacheUtil.getInstance().getTranslations(
+                            Text.RIDER_ASSIGNED_DESCRIPTION,
+                            "A rider is assigned and is taking your order to you."
+                        )
                     binding.estimatedLabel.text = CacheUtil.getInstance()
                         .getTranslations(Text.ESTIMATED_DELIVERY_TIME, "Estimated delivery time")
                     binding.timeDuration.text = showTime(
                         order.createdAt.orEmpty(), store.attributes.promisedTimeDelta.delivery
                     )
                 } else if (orderType == OrderType.CURBSIDE) {
+                    binding.orderStatusOverhead.readyForPickupLabel.text = CacheUtil.getInstance()
+                        .getTranslations(Text.READY_FOR_PICKUP, "Ready for pickup")
+                    binding.orderStatusOverhead.readyForPickupDescription.text =
+                        CacheUtil.getInstance().getTranslations(
+                            Text.YOUR_ORDER_IS_READY,
+                            "Your order is ready. Pick it up from the counter"
+                        )
                     binding.estimatedLabel.text = CacheUtil.getInstance()
                         .getTranslations(Text.ESTIMATE_PICKUP_TIME, "Estimate pickup time")
                     binding.timeDuration.text = showTime(
                         order.createdAt.orEmpty(), store.attributes.promisedTimeDelta.pickup
                     )
                 } else {
+                    binding.orderStatusOverhead.readyForPickupLabel.text = CacheUtil.getInstance()
+                        .getTranslations(Text.READY_FOR_PICKUP, "Ready for pickup")
+                    binding.orderStatusOverhead.readyForPickupDescription.text =
+                        CacheUtil.getInstance().getTranslations(
+                            Text.YOUR_ORDER_IS_READY,
+                            "Your order is ready. Pick it up from the counter"
+                        )
                     binding.estimatedLabel.text =
                         CacheUtil.getInstance().getTranslations(Text.ESTIMATE_TIME, "Estimate time")
                     binding.timeDuration.text = showTime(
@@ -801,6 +827,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         binding.apply {
             val driver = orderPresenter?.driverDetail
             if (driver != null) {
+                if (!isOverHeadFrameShows && orderPresenter?.fromAbly == true) {
+                    showOverHeadFrame()
+                }
                 statusDriverDetails.withDriverLayout.isVisible = true
                 statusDriverDetails.noDriverLayout.isVisible = false
                 statusDriverDetails.riderName.text = "${driver.firstName} ${driver.lastName}"
@@ -1182,6 +1211,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         onWayTime.text = "--"
                         finishedTime.text = "--"
                     } else if (sequence >= OrderStatusType.READY.value && sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                        if (!isOverHeadFrameShows && orderPresenter?.fromAbly == true) {
+                            showOverHeadFrame()
+                        }
                         onWayTime.text =
                             getLastStatus(orderStatuses, OrderStatusType.ARRIVED_AT_CUSTOMER.value)
                         finishedTime.text = "--"
@@ -1194,6 +1226,15 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 }
             }
         }
+    }
+
+    private fun showOverHeadFrame() {
+        isOverHeadFrameShows = true
+        binding.overHeadFrame.isVisible = true
+        binding.orderStatusOverhead.pickupTime.text = getCurrentTime()
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.overHeadFrame.isVisible = false
+        }, 2000)
     }
 
     override fun showMenuItems(order: OrderDetails?, menuItems: ArrayList<MenuItem>?) {

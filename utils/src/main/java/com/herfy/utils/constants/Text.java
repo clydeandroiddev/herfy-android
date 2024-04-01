@@ -1151,4 +1151,10 @@ public class Text {
 
     public static final String YOU_RATED_THIS_ORDER = "you_rated_this_order";
 
+    public static final String RIDER_ASSIGNED = "rider_assigned";
+
+    public static final String RIDER_ASSIGNED_DESCRIPTION = "rider_assigned_description";
+
+    public static final String YOUR_ORDER_IS_READY = "Your order is ready. Pick it up from the counter";
+
 }
