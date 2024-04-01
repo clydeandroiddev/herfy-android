@@ -12,13 +12,15 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.ItemVehicleBrandBinding
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 
 class CurbsideBrandAdapter(
     val curbsideList: ArrayList<CarMaker> = arrayListOf(),
     val curbsideListener: CurbsideListener,
-    var selectedId: String
+    var selectedId: String,
+    var otherString: String
 ) : RecyclerView.Adapter<CurbsideBrandAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: ItemVehicleBrandBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -26,7 +28,7 @@ class CurbsideBrandAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemVehicleBrandBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
-            com.herfy.ordertype.R.layout.item_vehicle_brand,
+            R.layout.item_vehicle_brand,
             parent,
             false
         )
@@ -40,39 +42,43 @@ class CurbsideBrandAdapter(
         holder.binding.apply {
 
             if (selectedId != item.id) {
-                chooseCurbside.setBackgroundResource(com.herfy.ordertype.R.drawable.bg_deliver)
-                selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_circle_unselected)
+                chooseCurbside.setBackgroundResource(R.drawable.bg_deliver)
+                selectedIdentifier.setImageResource(R.drawable.ic_circle_unselected)
             } else {
-                chooseCurbside.setBackgroundResource(com.herfy.ordertype.R.drawable.bg_deliver_selected)
-                selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_store_selected)
+                chooseCurbside.setBackgroundResource(R.drawable.bg_deliver_selected)
+                selectedIdentifier.setImageResource(R.drawable.ic_store_selected)
             }
 
             brandName.text = item.attributes.name
 
-            Glide.with(curbsideBrand.context).load(item.attributes.imageUri)
-                .skipMemoryCache(false).diskCacheStrategy(
-                    DiskCacheStrategy.ALL
-                ).apply(RequestOptions.centerInsideTransform())
-                .listener(object : RequestListener<Drawable?> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
+            if (position == curbsideList.size - 1) {
+                curbsideBrand.setImageResource(R.drawable.ic_curbside_other)
+            } else {
+                Glide.with(curbsideBrand.context).load(item.attributes.imageUri)
+                    .skipMemoryCache(false).diskCacheStrategy(
+                        DiskCacheStrategy.ALL
+                    ).apply(RequestOptions.centerInsideTransform())
+                    .listener(object : RequestListener<Drawable?> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any,
+                            target: Target<Drawable?>,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+                        }
 
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
-                }).into(curbsideBrand)
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any,
+                            target: Target<Drawable?>,
+                            dataSource: DataSource,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+                        }
+                    }).into(curbsideBrand)
+            }
 
             chooseCurbside.setOnClickListener {
                 curbsideListener.onSelectedCar(item, position)
@@ -80,6 +86,12 @@ class CurbsideBrandAdapter(
 
             executePendingBindings()
         }
+    }
+
+    fun setupOther(other: String) {
+        this.otherString = other
+        this.curbsideList[curbsideList.size - 1].attributes.name = other
+        notifyDataSetChanged()
     }
 
     fun updateList(promoList: ArrayList<CarMaker>) {

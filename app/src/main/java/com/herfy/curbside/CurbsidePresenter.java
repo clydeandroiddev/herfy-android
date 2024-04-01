@@ -16,6 +16,7 @@ import com.skylinedynamics.solosdk.api.calls.CurbsideApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMakerAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 
@@ -74,8 +75,13 @@ public class CurbsidePresenter implements CurbsideContract.Presenter {
                     String items = object.isNull("data") ? "" : object.optString("data");
                     carMakerList = GsonHelper.gsonFinal().fromJson(items, new TypeToken<List<CarMaker>>() {
                     }.getType());
+                    CarMakerAttributes carMakerAttributes = new CarMakerAttributes();
+                    carMakerAttributes.name = (CacheUtil.getInstance().getTranslations(Text.OTHER, "Other"));
+                    CarMaker car = new CarMaker();
+                    car.id = "0";
+                    car.attributes = carMakerAttributes;
+                    carMakerList.add(car);
                     CacheUtil.getInstance().setBrands(new ArrayList<>(carMakerList));
-                    carMakerList.add(new CarMaker());
                     if (showCarMaker) {
                         view.showCarMakers(carMakerList);
                     }
