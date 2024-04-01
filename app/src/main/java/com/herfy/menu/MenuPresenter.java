@@ -5315,7 +5315,6 @@ public class MenuPresenter implements MenuContract.Presenter {
 
                     @Override
                     public void onError(Object error) {
-                        Log.d("FAFA","Error ");
                         AppLogger.printRetrofitError(error);
                     }
                 });
