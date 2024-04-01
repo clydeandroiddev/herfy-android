@@ -176,33 +176,34 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         }
 
         val cartItems = CacheUtil.getInstance().cart
-        val hasFavoriteItems =  cartItems.any { it.isFavorite }
+        val quantityTotal =  cartItems.filter { it.isFavorite }
+            .sumOf { it.attributes.quantity }
 
-        val cartTotalHasFavorites = if (hasFavoriteItems) {
-            cartItems.count { it.isFavorite }
-        } else {
-            0
-        }
-            binding.txtCartFavouriteTotal.text = cartTotalHasFavorites.toString()
-            binding.footer.setVisible(cartTotalHasFavorites >= 1)
+
+            binding.txtCartFavouriteTotal.text = quantityTotal.toString()
+            binding.footer.setVisible(quantityTotal >= 1)
 
         adapter = FavoritesRecyclerViewAdapter(favoritesPresenter)
         adapter?.setOnAction(object : FavoritesAction {
 
             override fun onFavouriteAddToCart(favorite: Favorite) {
                 if (CacheUtil
-                        .getInstance().orderType != OrderType.NONE
+                        .getInstance().orderType != OrderType.NONE && args.isFromOrderType || CacheUtil.getInstance().cart
+                        .count { it.isFavorite } >= 1
                 ) {
                     MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_FAVOURITES)
                     activity?.apply {
                         val menuItem = MenuUtil.getFavoriteMenuItem(favorite)
                         FacebookAppEventUtil.addToCartEvent(this, menuItem, MenuUtil.getMenuItemTotalPrice(menuItem))
                     }
+                    findNavController().navigate(FavoritesFragmentDirections.actionFavoritesToMenuItem(favorite.id, isFavorite = true))
+                } else {
                     CacheUtil
                         .getInstance().saveFavoriteToAddToCart(favorite)
                     findNavController().navigate(FavoritesFragmentDirections.actionFavoritesToOrderType(isFromFavorites = true))
                 }
             }
+
 
         })
         binding.favouriteRecycleView.layoutManager = LinearLayoutManager(context)
@@ -320,7 +321,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             }
         }
 
-        if (CacheUtil.getInstance().cart.isEmpty()) {
+        if (CacheUtil.getInstance().cart.isEmpty() || !CacheUtil.getInstance().cart.isEmpty()) {
             favoritesPresenter?.getFavouritesByOrderTypeId(
                 orderType.id,
                 orderType.orderTypeName
