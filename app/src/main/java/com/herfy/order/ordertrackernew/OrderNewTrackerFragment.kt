@@ -744,6 +744,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         }
                         orderPresenter?.customerArrived(order.id)
                     }
+
                     if (order.curbsideStatus != null) {
                         if (order.curbsideStatus.code.equals(
                                 "customer-arrived", ignoreCase = true
@@ -756,10 +757,15 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         notServedLayout.visibility = View.VISIBLE
                         servedLayout.visibility = View.GONE
                     }
+
+                    curbsideBrandImage.setImageResource(com.herfy.ordertype.R.drawable.ic_curbside_other)
+
                     curbsideBrandName.text = order.carMakerName
+
                     if (!order.carColor.isNullOrEmpty()) {
                         curbsideVehicleColor.text = "- " + order.carColor
                     }
+
                     if (!order.carPlateNumber.isNullOrEmpty()) {
                         curbsidePlateNumber.text = "- " + order.carPlateNumber
                     }
@@ -1234,7 +1240,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         binding.orderStatusOverhead.pickupTime.text = getCurrentTime()
         Handler(Looper.getMainLooper()).postDelayed({
             binding.overHeadFrame.isVisible = false
-        }, 2000)
+        }, 3000)
     }
 
     override fun showMenuItems(order: OrderDetails?, menuItems: ArrayList<MenuItem>?) {
