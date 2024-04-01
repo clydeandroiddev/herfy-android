@@ -37,8 +37,6 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderData
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
-import com.skylinedynamics.solosdk.api.models.objects.Store
-import com.skylinedynamics.solosdk.api.models.objects.StorePromisedTime
 import com.skylinedynamics.solosdk.api.models.objects.Tier
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,7 +48,6 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.Arrays
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -204,7 +201,6 @@ class HomeViewModel @Inject constructor(
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-        return Unit
     }
 
     private fun detachAbly() {
@@ -504,25 +500,19 @@ class HomeViewModel @Inject constructor(
         allPromotionsList?.let { promos ->
             val filteredList = arrayListOf<Campaign>()
             if (promos.isNotEmpty() && category.isNotEmpty()) {
+
                 promos.filter { promo ->
                     promo.promotion.attributes.rules.isNotEmpty() && promo.promotion.attributes.rules.find { rule ->
                         rule.ruleKey.equals(
                             "order-type",
                             true
-                        ) && rule.text.split(Pattern.compile(","), 0).contains(category)
+                        ) && rule.text?.split(",")?.find { t-> t.trim().equals(category, true) } != null
                     } != null
-                }.let {
-                    if (it.isNotEmpty()) {
-                        filteredList.addAll(it)
-                    }
+                }.let {promosWithRules ->
+                    filteredList.addAll(promosWithRules)
                 }
-                promos.forEach {
-                    if (it.promotion.attributes.rules.isEmpty()) {
-                        filteredList.add(it)
-                    } else if (it.promotion.attributes.rules.find { rules -> rules.ruleKey.equals("order-type") } == null) {
-                        filteredList.add(it)
-                    }
-                }
+
+
                 _promoFilteredList.value = filteredList
             } else {
                 _promoFilteredList.value = null
@@ -574,7 +564,16 @@ class HomeViewModel @Inject constructor(
                         promocateglist.add(
                             PromotionCategory(
                                 cacheUtil.getTranslations(
-                                    Text.CURBSIDE_PICKUP, "Curbside"
+                                    Text.CURBSIDE_PICKUP_LABEL, "Curbside"
+                                ), false, it
+                            )
+                        )
+                    }
+                    orderTypes.find { type -> type == OrderType.DRIVE_THRU }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.DRIVE_THRU, "Drive Thru"
                                 ), false, it
                             )
                         )

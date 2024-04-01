@@ -29,7 +29,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
 import java.util.Locale
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 class PromotionsPresenter @Inject constructor(
@@ -445,19 +444,10 @@ class PromotionsPresenter @Inject constructor(
                         rule.ruleKey.equals(
                             "order-type",
                             true
-                        ) && rule.text.split(Pattern.compile(","), 0).contains(category)
+                        ) && rule.text?.split(",")?.find { t-> t.trim().equals(category, true) } != null
                     } != null
-                }.let {
-                    if (it.isNotEmpty()) {
-                        filteredList.addAll(it)
-                    }
-                }
-                promos.forEach {
-                    if (it.promotion.attributes.rules.isEmpty()) {
-                        filteredList.add(it)
-                    } else if (it.promotion.attributes.rules.find { rules -> rules.ruleKey.equals("order-type") } == null) {
-                        filteredList.add(it)
-                    }
+                }.let {promosWithRules ->
+                    filteredList.addAll(promosWithRules)
                 }
                 view.showPromotions(filteredList)
             } else {
@@ -510,7 +500,7 @@ class PromotionsPresenter @Inject constructor(
                         promocateglist.add(
                             PromotionCategory(
                                 cacheUtil.getTranslations(
-                                    Text.CURBSIDE_PICKUP, "Curbside"
+                                    Text.CURBSIDE_LABEL, "Curbside"
                                 ), false, it
                             )
                         )

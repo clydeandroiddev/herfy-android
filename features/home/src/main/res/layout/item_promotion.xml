@@ -90,23 +90,28 @@
 
                 <TextView
                     android:id="@+id/tv_item_title"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textColor="#000"
                     style="@style/Styles.Text.Footnote.Medium"
                     tools:text="Promotion Name"
+                    android:maxLines="1"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:text="@{promo.attributes.name}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_item_description"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textColor="#55667B"
                     style="@style/Styles.Text.Caption.Regular"
                     tools:text="Details of the promotion"
                     android:text="@{promo.attributes.description}"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/tv_item_title"
                     app:layout_constraintTop_toBottomOf="@id/tv_item_title"
                     app:layout_constraintVertical_bias="0"/>
