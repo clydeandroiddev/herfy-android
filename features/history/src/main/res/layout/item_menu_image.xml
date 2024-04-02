@@ -24,6 +24,7 @@
                 android:layout_height="32dp"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
+                tools:src="@tools:sample/backgrounds/scenic"
                 android:src="@color/placeholder_color" />
 
         </androidx.cardview.widget.CardView>

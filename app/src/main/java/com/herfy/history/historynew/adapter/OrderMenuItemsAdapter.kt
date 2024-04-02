@@ -13,12 +13,13 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.gson.Gson
 import com.herfy.history.databinding.ItemOrderMenuBinding
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Values
-import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.Translated
+import io.shipbook.shipbooksdk.Log
 import java.util.Locale
 
 class OrderMenuItemsAdapter(
@@ -78,137 +79,24 @@ class OrderMenuItemsAdapter(
 
             var first = true
             val stringBuilder = StringBuilder()
-
-            var modifierItemsCounter = 0
-            var comboIndex = 0
-            var trueIndex = 0
-            for (size in menuItem.sizes.modifierItems) {
-                if (size.attributes.isSelected) {
-                    if (!first) {
-                        stringBuilder.append("\n")
-                    } else {
-                        first = false
-                    }
-                    modifierItemsCounter++
-                    trueIndex = comboIndex
-                    stringBuilder.append(
-                        size.attributes.translatedName.getValue(LocaleUtil.getInstance().language)
-                    )
+            for (modifierItem in menuItem.orderModifierItems) {
+                if (!first) {
+                    stringBuilder.append(", ")
+                } else {
+                    first = false
                 }
-                comboIndex++
+                stringBuilder.append(modifierItem.attributes.name)
+            }
+            for (ingredient in menuItem.orderIngredients) {
+                if (!first) {
+                    stringBuilder.append(", ")
+                } else {
+                    first = false
+                }
+                stringBuilder.append(ingredient.attributes.name)
             }
 
-            for (drink in menuItem.getDrinks().getModifierItems()) {
-                if (drink.attributes.isSelected) {
-                    if (!first) {
-                        stringBuilder.append(", ")
-                    } else {
-                        first = false
-                    }
-                    modifierItemsCounter++
-                    stringBuilder.append(
-                        drink.attributes.translatedName.getValue(LocaleUtil.getInstance().language)
-                    )
-                }
-            }
-
-            for (fries in menuItem.getFries().getModifierItems()) {
-                if (fries.attributes.isSelected) {
-                    if (!first) {
-                        stringBuilder.append(", ")
-                    } else {
-                        first = false
-                    }
-                    modifierItemsCounter++
-                    stringBuilder.append(
-                        fries.attributes.translatedName.getValue(LocaleUtil.getInstance().language)
-                    )
-                }
-            }
-
-            for (modifierGroup in menuItem.getModifierGroups()) {
-                val visibilityConfig = modifierGroup.attributes.visibilityConfig
-                if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                        "hidden", ignoreCase = true
-                    )
-                ) {
-                    for (modifierItem in modifierGroup.modifierItems) {
-                        if (modifierItem.attributes.isSelected) {
-                            if (!first) {
-                                stringBuilder.append(", ")
-                            } else {
-                                first = false
-                            }
-                            modifierItemsCounter++
-                            stringBuilder.append(
-                                modifierItem.attributes.translatedName.getValue(
-                                    LocaleUtil.getInstance().language
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-
-            for (modifierItem in menuItem.getModifierItems()) {
-                if (modifierItem.attributes.isSelected) {
-                    if (!first) {
-                        stringBuilder.append(", ")
-                    } else {
-                        first = false
-                    }
-                    modifierItemsCounter++
-                    stringBuilder.append(
-                        modifierItem.attributes.translatedName.getValue(LocaleUtil.getInstance().language)
-                    )
-                }
-            }
-
-            try {
-                if (menuItem.isCombo) {
-                    for (components in menuItem.combo.get(trueIndex).components) {
-                        for (item in components.items) {
-                            if (item.selected) {
-                                if (!menuItem.isSandwichOnly) {
-                                    if (!first) {
-                                        stringBuilder.append(", ")
-                                    } else {
-                                        first = false
-                                    }
-                                    modifierItemsCounter++
-                                    stringBuilder.append(
-                                        translated(
-                                            LocaleUtil.getInstance().language, item.name
-                                        )
-                                    )
-                                }
-                                if (!item.modifierGroups.isEmpty()) {
-                                    for (modifierGroup in item.modifierGroups) {
-                                        for (i in modifierGroup.modifierItems.indices) {
-                                            if (modifierGroup.modifierItems[i].attributes.isSelected) {
-                                                if (!first) {
-                                                    stringBuilder.append(", ")
-                                                } else {
-                                                    first = false
-                                                }
-                                                stringBuilder.append(
-                                                    modifierGroup.modifierItems[i].attributes.translatedName.getValue(
-                                                        LocaleUtil.getInstance().language
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
-            if (modifierItemsCounter > 0) {
+            if (stringBuilder.isNotEmpty()) {
                 itemModifiers.visibility = View.VISIBLE
                 itemModifiers.text = stringBuilder
             } else {
@@ -218,7 +106,7 @@ class OrderMenuItemsAdapter(
             itemQuantity.text = "x" + menuItem.attributes.quantity
 
             totalPrice.text = StringUtil.getNewFormattedPrice(
-                menuItem.attributes.price, true
+                (menuItem.attributes.price * menuItem.attributes.quantity), true
             )
 
             executePendingBindings()

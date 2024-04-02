@@ -12,8 +12,7 @@ class SelectCityAdapter(
     val listener: SelectCityListener,
     var selectedId: String
 ) : RecyclerView.Adapter<SelectCityAdapter.ViewHolder>() {
-    inner class ViewHolder(val binding: ItemCityBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: ItemCityBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemCityBinding = DataBindingUtil.inflate(
@@ -31,7 +30,7 @@ class SelectCityAdapter(
         val item = cityList[position]
         holder.binding.apply {
 
-            if (selectedId != item.id) {
+            if (selectedId.toLowerCase() != item.id.toLowerCase()) {
                 chooseCurbside.setBackgroundResource(com.herfy.ordertype.R.drawable.bg_deliver)
                 selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_circle_unselected)
             } else {

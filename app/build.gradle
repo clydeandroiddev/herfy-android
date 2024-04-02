@@ -247,6 +247,7 @@ dependencies {
     implementation project(path: ':features:upsell')
     implementation project(path: ':features:checkout')
     implementation project(path: ':features:history')
+    implementation project(path: ':features:ordertracker')
     implementation project(path: ':utils')
     implementation project(path: ':data:database')
     implementation project(path: ':features:nutritiondetails')
@@ -429,6 +430,10 @@ dependencies {
     implementation 'jp.wasabeef:blurry:4.0.1'
 
     implementation("org.greenrobot:eventbus:3.3.1")
+
+
+    //Rating bar
+    implementation 'com.github.ome450901:SimpleRatingBar:1.5.1'
 }
 
 

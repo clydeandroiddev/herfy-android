@@ -61,6 +61,8 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
 
     private var locationMarker: Marker? = null
 
+    private var dontAnimate = false
+
     private val branchMarkers = ArrayList<Marker?>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -145,7 +147,10 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
             storesRecyclerView.layoutManager = layoutManager
             adapter = BranchesRecyclerViewAdapter(branchesPresenter)
             storesRecyclerView.adapter = adapter
-            pickupLayout.location.setOnClickListener { initializeLocation() }
+            pickupLayout.location.setOnClickListener {
+                dontAnimate = true
+                initializeLocation()
+            }
         }
     }
 
@@ -260,6 +265,15 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                     marker?.title = i.toString()
                     branchMarkers.add(marker)
                 }
+
+                try {
+                    if (adapter!!.selected > -1 && dontAnimate) {
+                        selectBranch(false, adapter!!.selected)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
             }
         }
         dismissDialogs()
@@ -347,11 +361,14 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                             }
                             branchMarker.setAnchor(0.5f, 1f)
                             branchMarker.title = i.toString()
-                            map!!.animateCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    branchMarker.position, 11f
+                            if (!dontAnimate) {
+                                map!!.animateCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        branchMarker.position, 11f
+                                    )
                                 )
-                            )
+                            }
+                            dontAnimate = false
                         }
                     }
                 } else {

@@ -105,6 +105,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         splashPresenter = new SplashPresenter(this);
+        splashPresenter.setAreas();
         proceesDeeplink();
         isAuthCredentialMigrated();
     }

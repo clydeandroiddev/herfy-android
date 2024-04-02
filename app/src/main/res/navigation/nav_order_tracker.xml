@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_order_tracker"
+    app:startDestination="@id/nav_new_order_tracker">
+
+    <fragment
+        android:id="@+id/nav_new_order_tracker"
+        android:name="com.herfy.order.ordertrackernew.OrderNewTrackerFragment"
+        tools:layout="@layout/fragment_order_new_tracker">
+
+        <deepLink app:uri="android-app://com.herfy/nav_new_order_tracker/{orderId}" />
+
+        <argument
+            android:name="orderId"
+            app:argType="string"
+            app:nullable="false" />
+
+    </fragment>
+
+</navigation>

@@ -34,6 +34,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Promotion;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
+import com.skylinedynamics.solosdk.api.models.objects.area.City;
 import com.skylinedynamics.solosdk.api.models.objects.area.CityList;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
@@ -69,6 +70,8 @@ public class CacheUtil {
     private static final String SLIDER_ID = "SliderId";
     private static final String MID_SLIDER_ID = "MidSliderId";
     private static final String SLIDES = "Slides";
+
+    private static final String CITIES = "CitiesList";
     private static final String CUSTOMER_CARDS = "CustomerCards";
     private static final String CUSTOMER_CARD = "CustomerCard";
     private static final String MID_SLIDES = "MidSlides";
@@ -374,6 +377,21 @@ public class CacheUtil {
         String slides = cacheSharedPreferences.getString(SLIDES, null);
         if (slides != null) {
             return GsonHelper.gsonFinal().fromJson(slides, new TypeToken<ArrayList<Slide>>() {
+            }.getType());
+        }
+        return new ArrayList<>();
+    }
+
+    public void setCities(String cities) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(CITIES, cities);
+        editor.apply();
+    }
+
+    public List<City> getCities() {
+        String cities = cacheSharedPreferences.getString(CITIES, null);
+        if (cities != null) {
+            return GsonHelper.gsonFinal().fromJson(cities, new TypeToken<List<City>>() {
             }.getType());
         }
         return new ArrayList<>();

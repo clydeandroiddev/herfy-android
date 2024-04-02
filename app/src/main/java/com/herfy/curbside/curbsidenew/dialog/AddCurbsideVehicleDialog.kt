@@ -21,12 +21,10 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.herfy.base.BaseActivity
 import com.herfy.curbside.CurbsideContract
 import com.herfy.curbside.CurbsidePresenter
-import com.herfy.order.views.ordertype.ChoosePickupTypeDialog
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.AddCurbsideVehicleDialogBinding
 import com.herfy.utils.constants.Text
@@ -37,7 +35,6 @@ import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColorAttribute
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMakerAttributes
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
-import io.shipbook.shipbooksdk.Log
 
 class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
@@ -113,7 +110,11 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 try {
                     val carMake = CarMaker()
                     val carAtt = CarMakerAttributes()
-                    carMake.id = it.attributes.carMakerId
+                    if (it.attributes.carMakerId.isNullOrEmpty()) {
+                        carMake.id = "0"
+                    } else {
+                        carMake.id = it.attributes.carMakerId
+                    }
                     carAtt.imageUri = it.attributes.carMakerImageUri
                     carAtt.name = it.attributes.carMakerName
                     carMake.attributes = carAtt
@@ -230,9 +231,11 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                     editBody.addProperty("color", carColor?.attributes?.color)
                 }
                 carMaker?.let {
-                    editBody.addProperty(
-                        "car-maker-id", carMaker?.id?.toInt()
-                    )
+                    if (it.id != "0") {
+                        editBody.addProperty(
+                            "car-maker-id", it.id?.toInt()
+                        )
+                    }
                     if (!it.attributes.name.isNullOrEmpty()) {
                         editBody.addProperty(
                             "car-maker-name", it.attributes.name
@@ -342,30 +345,34 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
     private fun setupBrand() {
         carMaker?.let {
             binding.curbsideBrandName.text = it.attributes.name
-            Glide.with(binding.curbsideBrand.context).load(it.attributes.imageUri)
-                .skipMemoryCache(false).diskCacheStrategy(
-                    DiskCacheStrategy.ALL
-                ).apply(RequestOptions.centerInsideTransform())
-                .listener(object : RequestListener<Drawable?> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
+            if (it.attributes.imageUri.isNullOrEmpty()) {
+                binding.curbsideBrand.setImageResource(R.drawable.ic_curbside_other)
+            } else {
+                Glide.with(binding.curbsideBrand.context).load(it.attributes.imageUri)
+                    .skipMemoryCache(false).diskCacheStrategy(
+                        DiskCacheStrategy.ALL
+                    ).apply(RequestOptions.centerInsideTransform())
+                    .listener(object : RequestListener<Drawable?> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any,
+                            target: Target<Drawable?>,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+                        }
 
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
-                }).into(binding.curbsideBrand)
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any,
+                            target: Target<Drawable?>,
+                            dataSource: DataSource,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+                        }
+                    }).into(binding.curbsideBrand)
+            }
         }
     }
 

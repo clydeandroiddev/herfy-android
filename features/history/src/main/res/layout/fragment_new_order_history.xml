@@ -139,10 +139,11 @@
                                             tools:ignore="TooDeepLayout">
 
                                             <ImageView
-                                                android:layout_width="42dp"
-                                                android:layout_height="37dp"
+                                                android:id="@+id/cookingImage"
+                                                android:layout_width="50dp"
+                                                android:layout_height="50dp"
                                                 android:layout_gravity="center"
-                                                android:src="@drawable/hat" />
+                                                tools:src="@drawable/cooking" />
 
                                         </androidx.cardview.widget.CardView>
 
@@ -348,8 +349,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="96dp"
             android:gravity="center"
-            android:visibility="gone"
             android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">

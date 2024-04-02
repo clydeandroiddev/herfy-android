@@ -154,4 +154,7 @@ dependencies {
 
     //Flexbox
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
+    //Rating bar
+    implementation 'com.github.ome450901:SimpleRatingBar:1.5.1'
 }

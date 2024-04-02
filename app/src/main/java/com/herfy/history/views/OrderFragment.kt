@@ -275,6 +275,10 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
             .getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
     }
 
+    override fun showLocation(isPlace: Boolean, latLng: LatLng?, address: String?) {
+        TODO("Not yet implemented")
+    }
+
     override fun showOrders(newestToOldest: Boolean, orders: ArrayList<OrderHistory>) {}
     override fun setOrder(order: OrderHistory) {}
     override fun updateOrder(position: Int) {}

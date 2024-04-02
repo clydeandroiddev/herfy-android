@@ -22,9 +22,11 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMakerAttributes
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
 
-class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
+class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View,
+    CurbsideOtherDialog.OnCurbsideOtherListener {
 
     private lateinit var curbsidePresenter: CurbsideContract.Presenter
 
@@ -33,6 +35,8 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
     private var onSubmit: OnSubmit? = null
 
     private var carMaker: CarMaker? = null
+
+    private var otherString = ""
 
     private lateinit var binding: VehicleBrandDialogBinding
 
@@ -54,7 +58,7 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
         super.onCreate(savedInstanceState)
         binding = VehicleBrandDialogBinding.inflate(layoutInflater)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
-        dialog?.window?.decorView?.layoutDirection = if(LocaleUtil.getInstance().isArabic) {
+        dialog?.window?.decorView?.layoutDirection = if (LocaleUtil.getInstance().isArabic) {
             View.LAYOUT_DIRECTION_RTL
         } else {
             View.LAYOUT_DIRECTION_LTR
@@ -131,16 +135,28 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
             carMaker?.let {
                 enableButton()
                 carId = it.id
+                if (carId == "0") {
+                    otherString = it.attributes.name
+                }
             }
 
             curbsideVehicleAdapter = CurbsideBrandAdapter(
                 ArrayList(), object : CurbsideBrandAdapter.CurbsideListener {
                     override fun onSelectedCar(car: CarMaker, position: Int) {
-                        carMaker = car
-                        curbsideVehicleAdapter.updateSelectedId(car.id)
-                        enableButton()
+                        if (car.id == "0") {
+                            CurbsideOtherDialog.newInstance(
+                                otherString, onAction = this@VehicleBrandDialog
+                            ).show(
+                                requireActivity().supportFragmentManager,
+                                CurbsideOtherDialog::class.java.toString()
+                            )
+                        } else {
+                            carMaker = car
+                            curbsideVehicleAdapter.updateSelectedId(car.id)
+                            enableButton()
+                        }
                     }
-                }, carId
+                }, carId, otherString
             )
             binding.vehicleBrandList.adapter = curbsideVehicleAdapter
         }
@@ -197,5 +213,22 @@ class VehicleBrandDialog : BottomSheetDialogFragment(), CurbsideContract.View {
             choosePickupTypeDialogFragment.carMaker = carMaker
             return choosePickupTypeDialogFragment
         }
+    }
+
+    override fun onCancel() {
+
+    }
+
+    override fun onOther(other: String) {
+        otherString = other
+        val carMakerAttributes = CarMakerAttributes()
+        carMakerAttributes.name = other
+        val car = CarMaker()
+        car.id = "0"
+        car.attributes = carMakerAttributes
+        carMaker = car
+        curbsideVehicleAdapter.updateSelectedId(car.id)
+        curbsideVehicleAdapter.setupOther(other)
+        enableButton()
     }
 }

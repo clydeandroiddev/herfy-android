@@ -89,30 +89,35 @@ class CurbsideVehicleAdapter(
                 curbsideListener.onDeleteItem(item, position)
             }
 
-            Glide.with(curbsideBrand.context).load(item.attributes.carMakerImageUri)
-                .apply(RequestOptions().override(80, 80)).skipMemoryCache(false).diskCacheStrategy(
-                    DiskCacheStrategy.ALL
-                ).apply(RequestOptions.centerInsideTransform())
-                .listener(object : RequestListener<Drawable?> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
+            if (item.attributes.carMakerImageUri.isNullOrEmpty()) {
+                curbsideBrand.setImageResource(com.herfy.ordertype.R.drawable.ic_curbside_other)
+            } else {
+                Glide.with(curbsideBrand.context).load(item.attributes.carMakerImageUri)
+                    .apply(RequestOptions().override(80, 80)).skipMemoryCache(false)
+                    .diskCacheStrategy(
+                        DiskCacheStrategy.ALL
+                    ).apply(RequestOptions.centerInsideTransform())
+                    .listener(object : RequestListener<Drawable?> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any,
+                            target: Target<Drawable?>,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+                        }
 
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
-                }).into(curbsideBrand)
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any,
+                            target: Target<Drawable?>,
+                            dataSource: DataSource,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+                        }
+                    }).into(curbsideBrand)
+            }
 
             curbsideAdded.text =
                 CacheUtil.getInstance().getTranslations(Text.ADDED_CURBSIDE, "Added: (x)")
@@ -131,6 +136,7 @@ class CurbsideVehicleAdapter(
     fun getCar(position: Int): CustomerCar {
         return this.curbsideList[position]
     }
+
     fun removeItem(position: Int) {
         this.curbsideList.removeAt(position)
         notifyDataSetChanged()

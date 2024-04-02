@@ -12,11 +12,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
-import com.herfy.authentication.views.LoginFragmentDirections
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
+import com.herfy.common.deviceHeight
 import com.herfy.common.formatOrderTime
 import com.herfy.common.orderTypeString
 import com.herfy.ext.cast
@@ -29,7 +31,6 @@ import com.herfy.main.MainActivity
 import com.herfy.util.StringUtil
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
@@ -51,6 +52,16 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
 
     private lateinit var historyListAdapter: HistoryListAdapter
 
+    private lateinit var ratingBarDialog: RatingBarDialog
+
+    private var historyList: ArrayList<OrderHistory> = ArrayList()
+
+    private var orderHistoryRate: OrderHistory? = null
+
+    private var ratePosition = -1
+
+    private var fromRate = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ordersPresenter = OrdersPresenter(this)
@@ -66,7 +77,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ordersPresenter?.start()
-        if (ordersPresenter?.orderHistories?.isEmpty() != true) {
+        if (ordersPresenter?.orderHistories?.size != 0) {
             showOrders(true, ordersPresenter?.orderHistories)
         } else {
             activity?.let {
@@ -96,6 +107,9 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
 
     override fun setupViews() {
         binding.apply {
+            Glide.with(requireActivity()).asGif().load(R.drawable.cooking)
+                .transition(DrawableTransitionOptions.withCrossFade()).into(cookingImage)
+
             back.setOnClickListener {
                 navigateUp()
             }
@@ -125,7 +139,13 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                     }
 
                     override fun onRate(item: OrderHistory, position: Int) {
-
+                        activity?.let {
+                            orderHistoryRate = item
+                            ratePosition = position
+                            val baseActivity = it as BaseActivity
+                            baseActivity.showLoadingDialog()
+                            ordersPresenter?.getOrderFeedbackTopics(item.id)
+                        }
                     }
                 })
             pastOrdersList.adapter = historyListAdapter
@@ -133,11 +153,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     private fun checkEmptyState() {
-        if (ordersPresenter?.orderHistories?.isEmpty() != true) {
-            binding.emptyStatesLayout.isVisible = false
-        } else {
-            binding.emptyStatesLayout.isVisible = true
-        }
+        binding.emptyStatesLayout.isVisible = ordersPresenter?.orderHistories?.size == 0
     }
 
     override fun setupFonts() {
@@ -161,8 +177,13 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         }
     }
 
+    override fun showLocation(isPlace: Boolean, latLng: LatLng?, address: String?) {
+
+    }
+
     override fun showOrders(newestToOldest: Boolean, orders: ArrayList<OrderHistory>?) {
         dismissDialogs()
+        checkEmptyState()
         orders?.let {
             if (orders.isNotEmpty()) {
                 val orderProgressId = processInProgress(orders)
@@ -173,10 +194,10 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                     pastOrders = orders
                 }
                 binding.pastOrdersLabel.isVisible = pastOrders.isNotEmpty()
+                historyList = pastOrders
                 historyListAdapter.updateList(pastOrders)
             }
         }
-        checkEmptyState()
     }
 
     @SuppressLint("SetTextI18n")
@@ -184,23 +205,29 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         val order = orders.firstOrNull {
             it.sequence < OrderStatusType.FINISHED.value
         }
-        order?.let {
+        order?.let { history ->
             binding.apply {
                 inProgressLayout.isVisible = true
                 itemPrice.text = StringUtil.getNewFormattedPrice(
-                    it.total, true
+                    history.total, true
                 )
-                deliveryAndStore.text = it.attrType.orderTypeString() + " - " + it.locationName
+                deliveryAndStore.text =
+                    history.attrType.orderTypeString() + " - " + history.locationName
                 itemsCount.text =
                     CacheUtil.getInstance().getTranslations(Text.CART_ITEM_COUNT_LABEL, "(x) items")
-                        .replace("(x)", it.menuImages.size.toString())
+                        .replace("(x)", history.menuImages.size.toString())
 
-                dateToday.text = it.createdAt.formatOrderTime()
-                orderNumber.text =
-                    CacheUtil.getInstance().getTranslations(Text.ORDER_NUM, "Order #") + " " + it.id
-                status.text = it.description
+                dateToday.text = history.createdAt.formatOrderTime()
+                orderNumber.text = CacheUtil.getInstance()
+                    .getTranslations(Text.ORDER_NUM, "Order #") + " " + history.id
+                status.text = history.description
+                trackButton.setOnClickListener {
+                    findNavController().navigate(
+                        NewHistoryFragmentDirections.actionHistoryToTracker(history.id)
+                    )
+                }
             }
-            return it.id
+            return history.id
         }
         return null
     }
@@ -210,7 +237,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun updateOrder(position: Int) {
-
+        showOrders(true, ordersPresenter?.orderHistories)
     }
 
     override fun selectOrder(order: OrderHistory?) {
@@ -252,16 +279,14 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         activity?.cast<MainActivity> {
             it.runOnUiThread {
                 val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                if (vibrator != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        vibrator.vibrate(
-                            VibrationEffect.createOneShot(
-                                500, VibrationEffect.DEFAULT_AMPLITUDE
-                            )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(
+                        VibrationEffect.createOneShot(
+                            500, VibrationEffect.DEFAULT_AMPLITUDE
                         )
-                    } else {
-                        vibrator.vibrate(100)
-                    }
+                    )
+                } else {
+                    vibrator.vibrate(100)
                 }
                 Toast.makeText(
                     it,
@@ -278,7 +303,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun updateStatus(orderDetails: OrderDetails?, orderStatus: OrderStatus?) {
-
+        showOrders(true, ordersPresenter?.orderHistories)
     }
 
     override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?) {
@@ -294,11 +319,69 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showRatings(orderStatus: OrderStatus?, ratings: MutableList<Rating>?) {
+        dismissDialogs()
+        ratings?.let {
+            showRatingDialog(it)
+        }
 
     }
 
-    override fun showMessage(message: String?) {
+    private fun checkRatings(ratings: List<Rating>): Boolean {
+        return ratings.all { it.attributes.rating != 0 }
+    }
 
+    private fun showRatingDialog(ratings: MutableList<Rating>?) {
+        dismissRatingBarDialog()
+        activity?.let {
+            orderHistoryRate?.let { order ->
+                ratingBarDialog = RatingBarDialog.newInstance(order.createdAt,
+                    order.attrType.orderTypeString(),
+                    order.locationName,
+                    deviceHeight(it),
+                    ratings!!.toList(),
+                    object : RatingBarDialog.OnRatingListener {
+                        override fun orderRatings(ratings: List<Rating>) {
+                            if (checkRatings(ratings)) {
+                                fromRate = true
+                                activity?.cast<BaseActivity> {
+                                    it.showLoadingDialog()
+                                }
+                                ordersPresenter?.sendOrderFeedback(ratings, order.id)
+                            }
+                        }
+
+                        override fun exit() {
+                            dismissRatingBarDialog()
+                        }
+
+                    })
+                ratingBarDialog.show(
+                    it.supportFragmentManager, RatingBarDialog::class.java.simpleName
+                )
+            }
+        }
+    }
+
+    private fun dismissRatingBarDialog() {
+        try {
+            ratingBarDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun showMessage(message: String?) {
+        dismissDialogs()
+        if (fromRate && ratePosition != -1) {
+            fromRate = false
+            dismissRatingBarDialog()
+            historyList[ratePosition].averageRating = 1.0
+            ordersPresenter?.setOrders(historyList)
+            historyListAdapter.updateList(historyList)
+        }
+        activity?.let {
+            Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun customerArrivedSuccess() {

@@ -16,8 +16,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.BuildConfig;
-import com.herfy.model.SupportedCountry;
-import com.herfy.utils.constants.Text;
 import com.herfy.database.AppDatabase;
 import com.herfy.database.entities.AllergenDb;
 import com.herfy.database.entities.IngredientDb;
@@ -27,12 +25,18 @@ import com.herfy.database.entities.MenuItemEntity;
 import com.herfy.database.entities.ModifierGroupDb;
 import com.herfy.database.entities.ModifierItemDb;
 import com.herfy.database.responses.MenuCategoryItemResponse;
+import com.herfy.model.SupportedCountry;
+import com.herfy.util.AppLogger;
+import com.herfy.util.DeviceUtil;
+import com.herfy.util.StringUtil;
+import com.herfy.utils.analytics.MixpanelUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
-import com.herfy.utils.helper.CacheUtilHelper;
-import com.herfy.utils.helper.EnvUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.ApiRequestWithHeadersListener;
@@ -55,22 +59,20 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Slider;
+import com.skylinedynamics.solosdk.api.models.objects.area.Area;
+import com.skylinedynamics.solosdk.api.models.objects.area.City;
 import com.skylinedynamics.solosdk.util.GsonHelper;
-import com.herfy.util.AppLogger;
-import com.herfy.util.DeviceUtil;
-import com.herfy.utils.handler.ErrorHandler;
-import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.utils.analytics.MixpanelUtil;
-import com.herfy.util.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -114,52 +116,75 @@ public class SplashPresenter implements SplashContract.Presenter {
     }
 
     @Override
+    public void setAreas() {
+        UtilitiesApiCall.getInstance().getTranslations("https://cdn.getsolo.io/content/herfycityandarea.json", new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                try {
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<Map<String, ArrayList<Area>>>() {
+                    }.getType();
+                    Map<String, ArrayList<Area>> cityMap = gson.fromJson(o.toString(), type);
+                    ArrayList<City> cities = new ArrayList<>();
+                    for (Map.Entry<String, ArrayList<Area>> entry : cityMap.entrySet()) {
+                        String city = entry.getKey();
+                        City city1 = new City();
+                        city1.setName(city);
+                        city1.setId(city);
+                        city1.setAreas(entry.getValue());
+                        cities.add(city1);
+                    }
+                    CacheUtil.getInstance().setCities(gson.toJson(cities));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Object o) {
+            }
+        });
+    }
+
+    @Override
     public void checkTranslations() {
 
         long timestamp = System.currentTimeMillis() / 1000L;
         String url = CacheUtil.getInstance().getApplication().getAttributes().getDefaultContentUri() + "?timestamp=" + timestamp;
 
-        disposables.add(
-                getTranslationsObservable(url)
-                        .map(o -> {
-                            try {
-                                JSONObject data = new JSONObject(o.toString());
-                                return data;
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                throw new Exception("Cannot find translation");
-                            }
-                        })
-                        .flatMap(defaultTranslations -> getTranslationsObservable(url)
-                                .map(newTranslation -> {
-                                    JSONObject overwritingTranslations = new JSONObject(newTranslation.toString());
-                                    JSONObject mergedTranslations = new JSONObject();
-                                    JSONObject[] translations = new JSONObject[]{defaultTranslations, overwritingTranslations};
-                                    for (JSONObject translation : translations) {
-                                        Iterator it = translation.keys();
-                                        while (it.hasNext()) {
-                                            String key = (String) it.next();
-                                            mergedTranslations.put(key, translation.get(key));
-                                        }
-                                    }
-                                    return mergedTranslations;
-                                })
-                                .onErrorResumeNext(source -> {
-                                    source.onSuccess(defaultTranslations);
-                                })
-                        )
-                        .subscribe(o -> {
-                            if (o != null) {
-                                JSONObject data = new JSONObject(o.toString());
-                                saveTranslations(data.toString());
-                            }
-                        }, error -> {
-                            AppLogger.printRetrofitError(error.toString());
-                            if (!CacheUtil.getInstance().ifHasTranslations()) {
-                                saveTranslations(splashView.getDefaultTranslations());
-                            }
-                        })
-        );
+        disposables.add(getTranslationsObservable(url).map(o -> {
+            try {
+                JSONObject data = new JSONObject(o.toString());
+                return data;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                throw new Exception("Cannot find translation");
+            }
+        }).flatMap(defaultTranslations -> getTranslationsObservable(url).map(newTranslation -> {
+            JSONObject overwritingTranslations = new JSONObject(newTranslation.toString());
+            JSONObject mergedTranslations = new JSONObject();
+            JSONObject[] translations = new JSONObject[]{defaultTranslations, overwritingTranslations};
+            for (JSONObject translation : translations) {
+                Iterator it = translation.keys();
+                while (it.hasNext()) {
+                    String key = (String) it.next();
+                    mergedTranslations.put(key, translation.get(key));
+                }
+            }
+            return mergedTranslations;
+        }).onErrorResumeNext(source -> {
+            source.onSuccess(defaultTranslations);
+        })).subscribe(o -> {
+            if (o != null) {
+                JSONObject data = new JSONObject(o.toString());
+                saveTranslations(data.toString());
+            }
+        }, error -> {
+            AppLogger.printRetrofitError(error.toString());
+            if (!CacheUtil.getInstance().ifHasTranslations()) {
+                saveTranslations(splashView.getDefaultTranslations());
+            }
+        }));
 
     }
 
@@ -200,14 +225,12 @@ public class SplashPresenter implements SplashContract.Presenter {
     }
 
     public void setupRemoteConfig() {
-        if(!BuildConfig.DISABLE_SPLASH_ANIMATION) {
+        if (!BuildConfig.DISABLE_SPLASH_ANIMATION) {
             splashView.animateLogo(true, null);
         }
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
-        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setMinimumFetchIntervalInSeconds(0L)
-                .build();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(0L).build();
         firebaseRemoteConfig.setConfigSettingsAsync(configSettings);
         getRemoteConfig();
     }
@@ -249,9 +272,7 @@ public class SplashPresenter implements SplashContract.Presenter {
 
         FirebaseRemoteConfig soloDriverFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance(soloDriver);
 
-        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setMinimumFetchIntervalInSeconds(0L)
-                .build();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(0L).build();
         soloDriverFirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
 
         soloDriverFirebaseRemoteConfig.fetchAndActivate().addOnCompleteListener(new OnCompleteListener<Boolean>() {
@@ -330,33 +351,32 @@ public class SplashPresenter implements SplashContract.Presenter {
                 customerMobileNumber = AuthUtil.getInstance().getCustomer().getAttributes().getMobile();
             }
 
-            UtilitiesApiCall.getInstance().postIdentify(AuthUtil.getInstance().getFirebase(), uniqueID, customerMobileNumber, customerId,
-                    new ApiRequestListener() {
-                        @Override
-                        public void onSuccess(Object object) {
-                            DeviceUtil.save(object.toString());
-                            if (AuthUtil.getInstance().isSignedIn() && !AuthUtil.getInstance().getDeviceId().isEmpty()) {
+            UtilitiesApiCall.getInstance().postIdentify(AuthUtil.getInstance().getFirebase(), uniqueID, customerMobileNumber, customerId, new ApiRequestListener() {
+                @Override
+                public void onSuccess(Object object) {
+                    DeviceUtil.save(object.toString());
+                    if (AuthUtil.getInstance().isSignedIn() && !AuthUtil.getInstance().getDeviceId().isEmpty()) {
 
-                                UtilitiesApiCall.getInstance().changeLanguage(AuthUtil.getInstance().getDeviceId(), LocaleUtil.getInstance().getLanguage(), new ApiRequestListener() {
-                                    @Override
-                                    public void onSuccess(Object obj) {
-                                        DeviceUtil.save(obj.toString());
-                                    }
-
-                                    @Override
-                                    public void onError(Object error) {
-                                        AppLogger.printRetrofitError(error);
-                                    }
-                                });
-
+                        UtilitiesApiCall.getInstance().changeLanguage(AuthUtil.getInstance().getDeviceId(), LocaleUtil.getInstance().getLanguage(), new ApiRequestListener() {
+                            @Override
+                            public void onSuccess(Object obj) {
+                                DeviceUtil.save(obj.toString());
                             }
-                        }
 
-                        @Override
-                        public void onError(Object error) {
-                            AppLogger.printRetrofitError(error);
-                        }
-                    });
+                            @Override
+                            public void onError(Object error) {
+                                AppLogger.printRetrofitError(error);
+                            }
+                        });
+
+                    }
+                }
+
+                @Override
+                public void onError(Object error) {
+                    AppLogger.printRetrofitError(error);
+                }
+            });
 
         }
 
@@ -480,7 +500,7 @@ public class SplashPresenter implements SplashContract.Presenter {
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o.toString());
                 if (errorCounter >= 3) {
-                    splashView.showError(ErrorHandler.getErrorMessage(o,CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                    splashView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
                 } else {
                     //splashView.getSoloDriver();
                     getApplication();
@@ -489,19 +509,20 @@ public class SplashPresenter implements SplashContract.Presenter {
         });
     }
 
-    public void getConsumerData(){
+    public void getConsumerData() {
         Customer customer = AuthUtil.getInstance().getCustomer();
-        if(customer != null){
+        if (customer != null) {
             CacheUtil.getInstance().setConsumerData(null);
-            CustomersApiCall.getInstance().getConsumerData(customer.getId(), "desc",1, new ApiRequestListener() {
+            CustomersApiCall.getInstance().getConsumerData(customer.getId(), "desc", 1, new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object obj) {
-                    if(obj instanceof JSONObject){
-                        try{
-                            ConsumerData data = GsonHelper.gsonFinal().fromJson(obj.toString(), new TypeToken<ConsumerData>(){}.getType());
+                    if (obj instanceof JSONObject) {
+                        try {
+                            ConsumerData data = GsonHelper.gsonFinal().fromJson(obj.toString(), new TypeToken<ConsumerData>() {
+                            }.getType());
                             CacheUtil.getInstance().setConsumerData(obj.toString());
                             MixpanelUtil.Companion.registerSuperProperties();
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                             MixpanelUtil.Companion.registerSuperProperties();
                         }
@@ -509,13 +530,14 @@ public class SplashPresenter implements SplashContract.Presenter {
 
                     }
                 }
+
                 @Override
                 public void onError(Object o) {
                     AppLogger.printRetrofitError(o);
                     MixpanelUtil.Companion.registerSuperProperties();
                 }
             });
-        }else {
+        } else {
             MixpanelUtil.Companion.registerSuperProperties();
         }
 
@@ -523,7 +545,7 @@ public class SplashPresenter implements SplashContract.Presenter {
 
     @Override
     public void getIntegrations() {
-        if(AuthUtil.getInstance().isSignedIn()) {
+        if (AuthUtil.getInstance().isSignedIn()) {
             String paymentGateway = CacheUtil.getInstance().getApplication().getAttributes().getPaymentGateway();
             if (paymentGateway.equalsIgnoreCase("checkout") || paymentGateway.equalsIgnoreCase("foodics-online")) {
                 IntegrationsApiCall.getInstance().getKeys(paymentGateway, new ApiRequestListener() {
@@ -563,16 +585,16 @@ public class SplashPresenter implements SplashContract.Presenter {
                         for (int i = 0; i < data.length(); i++) {
                             Slider slider = Slider.parse(data.getJSONObject(i));
                             String label = slider.getLabel();
-                            if(label != null) {
+                            if (label != null) {
                                 String key = "";
-                                if(label.equalsIgnoreCase(Values.HOME_PAGE_TOP_BANNER_LABEL)) {
+                                if (label.equalsIgnoreCase(Values.HOME_PAGE_TOP_BANNER_LABEL)) {
                                     key = Values.HOME_PAGE_TOP_BANNER_LABEL;
                                 } else if (label.equalsIgnoreCase(Values.HOME_PAGE_BOTTOM_BANNER_LABEL)) {
                                     key = Values.HOME_PAGE_BOTTOM_BANNER_LABEL;
                                 } else if (label.equalsIgnoreCase(Values.CATEGORY_PAGE_TOP_BANNER_LABEL)) {
                                     key = Values.CATEGORY_PAGE_TOP_BANNER_LABEL;
                                 }
-                                if(!key.isEmpty()) {
+                                if (!key.isEmpty()) {
                                     CacheUtil.getInstance().setSliderId(key, slider.getId());
                                 }
                             }
@@ -691,7 +713,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                         @Override
                         public void onSuccess(Headers headers, Object o) {
                             try {
-                                if(headers.names().contains("last-modified")) {
+                                if (headers.names().contains("last-modified")) {
                                     CacheUtil.getInstance().setMenuCdnLastModified(headers.get("last-modified"));
                                 }
                                 String objectString = o.toString();
@@ -923,8 +945,7 @@ public class SplashPresenter implements SplashContract.Presenter {
 
         CacheUtil.getInstance().setUpsell(true);
         CacheUtil.getInstance().setDifferentMenuId("");
-        if(!CacheUtil.getInstance().isSeparatedMenus() ||
-                CacheUtil.getInstance().getCartQuantity() == 0) {
+        if (!CacheUtil.getInstance().isSeparatedMenus() || CacheUtil.getInstance().getCartQuantity() == 0) {
             CacheUtil.getInstance().setOrderType(OrderType.NONE);
             CacheUtil.getInstance().setOrderStore(null);
             CacheUtil.getInstance().setCurbsideCar(null);
@@ -957,8 +978,7 @@ public class SplashPresenter implements SplashContract.Presenter {
             forceLocation = true;
         }
 
-        if(CacheUtil.getInstance().isSeparatedMenus() &&
-                CacheUtil.getInstance().getCartQuantity() == 0) {
+        if (CacheUtil.getInstance().isSeparatedMenus() && CacheUtil.getInstance().getCartQuantity() == 0) {
             forceLocation = false;
         }
 
@@ -1045,40 +1065,40 @@ public class SplashPresenter implements SplashContract.Presenter {
                 }
             }
 
-            UtilitiesApiCall.getInstance().postIdentify(AuthUtil.getInstance().getFirebase(), uniqueID, customerMobileNumber, customerId,
-                    new ApiRequestListener() {
-                        @Override
-                        public void onSuccess(Object object) {
-                            DeviceUtil.save(object.toString());
-                            if (AuthUtil.getInstance().isSignedIn() && !AuthUtil.getInstance().getDeviceId().isEmpty()) {
-                                UtilitiesApiCall.getInstance().changeLanguage(AuthUtil.getInstance().getDeviceId(), LocaleUtil.getInstance().getLanguage(), new ApiRequestListener() {
-                                    @Override
-                                    public void onSuccess(Object obj) {
-                                        DeviceUtil.save(obj.toString());
-                                        splashView.proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0);
-                                    }
-
-                                    @Override
-                                    public void onError(Object error) {
-                                        splashView.proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0);
-                                        AppLogger.printRetrofitError(error);
-                                    }
-                                });
-                            } else {
+            UtilitiesApiCall.getInstance().postIdentify(AuthUtil.getInstance().getFirebase(), uniqueID, customerMobileNumber, customerId, new ApiRequestListener() {
+                @Override
+                public void onSuccess(Object object) {
+                    DeviceUtil.save(object.toString());
+                    if (AuthUtil.getInstance().isSignedIn() && !AuthUtil.getInstance().getDeviceId().isEmpty()) {
+                        UtilitiesApiCall.getInstance().changeLanguage(AuthUtil.getInstance().getDeviceId(), LocaleUtil.getInstance().getLanguage(), new ApiRequestListener() {
+                            @Override
+                            public void onSuccess(Object obj) {
+                                DeviceUtil.save(obj.toString());
                                 splashView.proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0);
                             }
-                        }
 
-                        @Override
-                        public void onError(Object error) {
-                            splashView.proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0);
-                            AppLogger.printRetrofitError(error);
-                        }
-                    });
+                            @Override
+                            public void onError(Object error) {
+                                splashView.proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0);
+                                AppLogger.printRetrofitError(error);
+                            }
+                        });
+                    } else {
+                        splashView.proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0);
+                    }
+                }
+
+                @Override
+                public void onError(Object error) {
+                    splashView.proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0);
+                    AppLogger.printRetrofitError(error);
+                }
+            });
 
         }
 
     }
+
     @Override
     public void removeMukafaaRedemption() {
         String transactionId = CacheUtil.getInstance().getMukafaaTransactionId();

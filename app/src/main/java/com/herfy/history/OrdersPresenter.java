@@ -1,8 +1,10 @@
 package com.herfy.history;
 
-import android.util.Log;
+import android.location.Geocoder;
+import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.database.AppDatabase;
@@ -24,6 +26,7 @@ import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.helper.ably.AblyUtil;
 import com.herfy.utils.menu.MenuUtil;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
@@ -71,6 +74,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -92,8 +96,13 @@ import javax.annotation.Nullable;
 import io.ably.lib.types.Message;
 import kotlin.Unit;
 
-public class OrdersPresenter implements OrdersContract.Presenter {
+public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationProvider.LocationResultCallback {
 
+    public boolean hasLocation = false;
+
+    private boolean fromAbly;
+    private Location location;
+    private FusedLocationProvider fusedLocationProvider;
     private final OrdersContract.View ordersView;
 
     private boolean newestToOldest = true;
@@ -125,6 +134,17 @@ public class OrdersPresenter implements OrdersContract.Presenter {
         ordersView.setupFonts();
     }
 
+
+    @Override
+    public void getLocation(FusedLocationProvider fusedLocationProvider) {
+        if (this.fusedLocationProvider != null) {
+            this.fusedLocationProvider.disconnect();
+        }
+        this.fusedLocationProvider = fusedLocationProvider;
+        this.fusedLocationProvider.setLocationResultCallback(this);
+        this.fusedLocationProvider.connect();
+    }
+
     @Override
     public void getOrders() {
         Customer customer = AuthUtil.getInstance().getCustomer();
@@ -152,6 +172,12 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                                     }.getType());
                                     if (menuItem.getRelationships().getRelationshipOrder().links.self.contains(order.getId())) {
                                         menItems.add(menuItem.getAttributes().getImage());
+                                    }
+                                } else if (includedObject.getString("type").equals("customer-address")) {
+                                    Address orderItem = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<Address>() {
+                                    }.getType());
+                                    if (orderItem.getId().equals(String.valueOf(order.getCustomerAddressId()))) {
+                                        order.setLocationName(orderItem.getAttributes().getLine1());
                                     }
                                 }
                             }
@@ -201,6 +227,11 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                 ordersView.showOrders(newestToOldest, orders);
             }
         });
+    }
+
+    @Override
+    public Employee getDriverDetail() {
+        return driver;
     }
 
     private Unit onOrderHistoryStatusUpdate(Message message) {
@@ -576,9 +607,11 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                             orderStatuses = filterOrderStatuses(orderStatuses);
                         }
                         ordersView.showOrderStatuses(orderStatuses, isDone);
+                        fromAbly = false;
                     } catch (JSONException e) {
                         e.printStackTrace();
                         this.onError(e);
+                        fromAbly = false;
                     }
                 }
             }
@@ -588,6 +621,7 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                 AppLogger.printRetrofitError(o.toString());
                 orderStatuses.clear();
                 ordersView.showOrderStatuses(orderStatuses, isDone);
+                fromAbly = false;
             }
         });
     }
@@ -723,9 +757,8 @@ public class OrdersPresenter implements OrdersContract.Presenter {
 
                     LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
                     LatLng driverLatLng = new LatLng(attributesObject.getDouble("lat"), attributesObject.getDouble("long"));
-
                     ordersView.showDriver(customerLatLng, driverLatLng);
-
+                    fromAbly = false;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -777,6 +810,96 @@ public class OrdersPresenter implements OrdersContract.Presenter {
                 }
             });
         }
+    }
+
+    @Override
+    public void getOrderFeedbackTopics(String orderId) {
+        OrdersApiCall.getInstance().getOrderFeedbackTopics(orderId, new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                ratings.clear();
+                try {
+                    JSONObject jsonObject = new JSONObject(o.toString());
+                    JSONArray dataArray = jsonObject.optJSONArray("data");
+
+                    if (dataArray != null) {
+                        ratings.addAll(GsonHelper.gsonFinal().fromJson(dataArray.toString(), new TypeToken<List<Rating>>() {
+                        }.getType()));
+                    }
+
+                    getOrderFeedbacks(orderId);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    this.onError(e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onError(Object o) {
+                AppLogger.printRetrofitError(o);
+                ratings.clear();
+                ordersView.showRatings(null, ratings);
+            }
+        });
+    }
+
+    @Override
+    public void getOrderFeedbacks(String orderId) {
+        OrdersApiCall.getInstance().getOrderFeedbacks(orderId, new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                try {
+                    JSONObject jsonObject = new JSONObject(o.toString());
+                    JSONArray dataArray = jsonObject.optJSONArray("data");
+                    JSONArray includedArray = jsonObject.optJSONArray("included");
+
+                    List<OrderFeedback> orderFeedbacks = new ArrayList<>();
+
+                    if (dataArray != null) {
+                        orderFeedbacks.addAll(GsonHelper.gsonFinal().fromJson(dataArray.toString(), new TypeToken<List<OrderFeedback>>() {
+                        }.getType()));
+                    }
+
+                    if (orderFeedbacks.size() > 0) {
+
+                        OrderFeedback orderFeedback = orderFeedbacks.get(orderFeedbacks.size() - 1);
+
+                        if (includedArray != null) {
+
+                            for (int i = 0; i < includedArray.length(); i++) {
+                                Rating rating = GsonHelper.gsonFinal().fromJson(includedArray.getJSONObject(i).toString(), new TypeToken<Rating>() {
+                                }.getType());
+                                if (orderFeedback.getRatingIds().contains(rating.getId())) {
+                                    for (Rating ratingTopic : ratings) {
+                                        if (rating.getAttributes().getTopic().equalsIgnoreCase(ratingTopic.getAttributes().getName())) {
+                                            ratingTopic.getAttributes().setRating(rating.getAttributes().getRating());
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    ordersView.showRatings(null, ratings);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    this.onError(e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onError(Object o) {
+                AppLogger.printRetrofitError(o);
+                ordersView.showRatings(null, ratings);
+            }
+        });
     }
 
     @Override
@@ -849,7 +972,26 @@ public class OrdersPresenter implements OrdersContract.Presenter {
         OrdersApiCall.getInstance().sendOrderFeedback(order.getId(), orderFeedbackBody, null, new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
-                ordersView.showMessage(CacheUtil.getInstance().getTranslations(Text.ORDER_RATING_SENT));
+                ordersView.showMessage(CacheUtil.getInstance().getTranslations(Text.ORDER_RATING_SENT, "Order ratings sent"));
+            }
+
+            @Override
+            public void onError(Object o) {
+                AppLogger.printRetrofitError(o);
+                ordersView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.RETRIEVING_ORDER_DETAILS_ERROR), null));
+            }
+        });
+    }
+
+    @Override
+    public void sendOrderFeedback(List<Rating> ratings, String orderId) {
+        this.ratings = ratings;
+        Customer customer = AuthUtil.getInstance().getCustomer();
+        OrderFeedbackBody orderFeedbackBody = new OrderFeedbackBody(customer.getAttributes().getFirstName() + " " + customer.getAttributes().getLastName(), customer.getAttributes().getEmail(), customer.getAttributes().getMobile(), "Order Feedback", "Order Feedback", this.ratings);
+        OrdersApiCall.getInstance().sendOrderFeedback(orderId, orderFeedbackBody, null, new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                ordersView.showMessage(CacheUtil.getInstance().getTranslations(Text.ORDER_RATING_SENT, "Order ratings sent"));
             }
 
             @Override
@@ -1942,6 +2084,11 @@ public class OrdersPresenter implements OrdersContract.Presenter {
         }
     }
 
+    @Override
+    public boolean getFromAbly() {
+        return fromAbly;
+    }
+
     private ArrayList<LoyaltyPointsTransaction> transactions;
 
     @Override
@@ -1983,6 +2130,11 @@ public class OrdersPresenter implements OrdersContract.Presenter {
         return orders;
     }
 
+    @Override
+    public void setOrders(ArrayList<OrderHistory> orders) {
+        this.orders = orders;
+    }
+
     private void subscribeToOrderStatusUpdate(String orderId) {
         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
         ablyUtil.subscribeToOrderStatusUpdate(orderId, OrdersPresenter.this::onOrderDetailsStatusUpdate);
@@ -2006,15 +2158,18 @@ public class OrdersPresenter implements OrdersContract.Presenter {
     }
 
     private Unit onOrderDetailsStatusUpdate(Message message) {
+        fromAbly = true;
         getOrderStatuses();
         getOrder(order.getId(), -1, true, false);
         return Unit.INSTANCE;
     }
 
     private Unit onOrderDriverAssign(Message message) {
+        fromAbly = true;
         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
         ablyUtil.detachToOrderDriverAssign(order.getId());
         subscribeToOrderDriverLocationUpdate(order.getId());
+        getDriver();
         return Unit.INSTANCE;
     }
 
@@ -2036,4 +2191,44 @@ public class OrdersPresenter implements OrdersContract.Presenter {
         return Unit.INSTANCE;
     }
 
+    @Override
+    public void getNewFusedLocation(Location location) {
+        hasLocation = true;
+        fusedLocationProvider.disconnect();
+        this.location = location;
+        CacheUtil.getInstance().setOrderLatitude(String.valueOf(location.getLatitude()));
+        CacheUtil.getInstance().setOrderLongitude(String.valueOf(location.getLongitude()));
+        CacheUtil.getInstance().setOrderDeliveryLatitude(String.valueOf(location.getLatitude()));
+        CacheUtil.getInstance().setOrderDeliveryLongitude(String.valueOf(location.getLongitude()));
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        ordersView.showLocation(false, latLng, getAddressLoc(latLng));
+    }
+
+
+    @Override
+    public void setGeocoder(Geocoder geocoder) {
+        this.geocoder = geocoder;
+    }
+
+    private Geocoder geocoder;
+
+    private android.location.Address addressNew;
+
+    private Place place;
+
+    public String getAddressLoc(LatLng latLng) {
+        if (geocoder != null) {
+            try {
+                List<android.location.Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                addressNew = (addresses.isEmpty() ? null : addresses.get(0));
+                if (addressNew != null) {
+                    place = null;
+                    return addressNew.getAddressLine(0);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
+    }
 }

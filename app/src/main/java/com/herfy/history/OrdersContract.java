@@ -1,5 +1,7 @@
 package com.herfy.history;
 
+import android.location.Geocoder;
+
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -8,7 +10,9 @@ import com.herfy.base.BaseView;
 import com.herfy.history.viewholders.OrderMenuItemViewHolder;
 import com.herfy.history.viewholders.OrderViewHolder;
 import com.herfy.history.viewholders.TimeLineViewHolder;
+import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
+import com.skylinedynamics.solosdk.api.models.objects.Employee;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsTransaction;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
@@ -23,6 +27,8 @@ import java.util.List;
 public interface OrdersContract {
 
     interface View extends BaseView<Presenter> {
+
+        void showLocation(boolean isPlace, LatLng latLng, String address);
 
         void showOrders(boolean newestToOldest, ArrayList<OrderHistory> orders);
 
@@ -62,15 +68,21 @@ public interface OrdersContract {
 
         void logFirebaseEvent(String event);
 
-        @Nullable String getFromCache(String key);
+        @Nullable
+        String getFromCache(String key);
 
         void showWhatsApp(String mobileNumber);
 
     }
 
     interface Presenter extends BasePresenter {
+        void setGeocoder(Geocoder geocoder);
+
+        void getLocation(FusedLocationProvider fusedLocationProvider);
 
         void getOrders();
+
+        Employee getDriverDetail();
 
         void onBindOrderViewAtPosition(int position, OrderViewHolder orderViewHolder);
 
@@ -112,11 +124,17 @@ public interface OrdersContract {
 
         void getOrderFeedbackTopics();
 
+        void getOrderFeedbackTopics(String orderId);
+
+        void getOrderFeedbacks(String orderId);
+
         void getOrderFeedbacks();
 
         List<Rating> getRatings();
 
         void sendOrderFeedback(List<Rating> ratings);
+
+        void sendOrderFeedback(List<Rating> ratings, String orderId);
 
         void cancel();
 
@@ -132,6 +150,8 @@ public interface OrdersContract {
 
         void removeMukafaaRedemption();
 
+        boolean getFromAbly();
+
         LoyaltyPointsTransaction getMukafaaTransaction();
 
         ArrayList<LoyaltyPointsTransaction> getLoyaltyPointsTransaction();
@@ -142,6 +162,7 @@ public interface OrdersContract {
 
         ArrayList<OrderHistory> getOrderHistories();
 
+        void setOrders(ArrayList<OrderHistory> orders);
     }
 
 }

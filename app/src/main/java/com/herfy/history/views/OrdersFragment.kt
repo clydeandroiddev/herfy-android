@@ -137,6 +137,10 @@ class OrdersFragment : BaseFragment(), OrdersContract.View {
             .getTranslations(Text.GO_TO_MENU, "GO TO MENU")
     }
 
+    override fun showLocation(isPlace: Boolean, latLng: LatLng?, address: String?) {
+        TODO("Not yet implemented")
+    }
+
     override fun showOrders(newestToOldest: Boolean, orders: ArrayList<OrderHistory>) {
         if (newestToOldest) {
             binding.sortLabel.text = CacheUtil.getInstance()

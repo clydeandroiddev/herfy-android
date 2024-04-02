@@ -1,7 +1,5 @@
 package com.herfy.utils.constants;
 
-import org.jetbrains.annotations.NotNull;
-
 public class Text {
 
     public static final String CART = "cart";
@@ -217,7 +215,7 @@ public class Text {
     public static final String ORDER_HISTORY = "order_history";
     public static final String ORDER_ID = "order_id";
     public static final String REORDER = "reorder";
-    public static final String RATE = "rate";
+    public static final String RATE = "rate_label";
     public static final String OPTIONS = "options";
     public static final String QUANTITY = "quantity";
     public static final String ITEM_QUANTITY = "item_quantity";
@@ -1096,5 +1094,71 @@ public class Text {
 
     public static String REQUEST_OTP_LABEL = "request_otp_label";
     public static final String PLEASE_SELECT_PAYMENT_TYPE = "please_select_payment_type";
+    public static final String ORDER_TRACKER = "order_tracker";
+
+    public static final String ESTIMATED_DELIVERY_TIME = "estimated_delivery_time";
+    public static final String ESTIMATE_TIME = "estimate_time";
+    public static final String ESTIMATE_PICKUP_TIME = "estimate_pickup_time";
+
+    public static final String YOUR_ORDER_TEMPLATE = "your_order_template";
+
+    public static final String HAVE_A_TROUBLE = "have_a_trouble";
+    public static final String HERFY_SUPPORT_TEAM = "herfy_support_team";
+    public static final String CALL = "call";
+    public static final String WHATSAPP_MESSAGE = "whatsapp_message";
+
+    public static final String PICKUP_DETAILS = "pickup_details";
+
+    public static final String DINE_IN_DETAILS = "dine_in_details";
+
+    public static final String DELIVERY_DETAILS = "delivery_details";
+
+    public static final String TELL_THE_ORDER_NUMB_DELIVER = "tell_the_order_num_deliver";
+    public static final String TELL_THE_ORDER_NUMB_CURBSIDE = "tell_the_order_number_curbside";
+    public static final String TELL_THE_ORDER_NUM_PICKUP = "tell_the_order_num_pickup";
+    public static final String GET_DIRECTION = "get_direction";
+    public static final String DINEIN_ADDRESS = "dinein_address";
+    public static final String DELIVERY_ADDRESS_LABEL = "delivery_address";
+
+    public static final String DELIVERY_INSTRUCTION_LABEL = "delivery_instruction";
+
+    public static final String YOUR_RIDER = "your_rider";
+    public static final String A_RIDER_WILL_BE = "A rider will be assigned to you when order is ready. You will be able to track your order in real time";
+    public static final String PICKUP_ADDRESS = "pickup_address";
+
+    public static final String MESSAGE = "message";
+    public static final String READY_FOR_PICKUP = "ready_for_pickup";
+    public static final String SERVED = "served";
+    public static final String READY = "ready";
+    public static final String PREPARING = "preparing";
+    public static final String ONWAY = "on_way";
+
+    public static final String LET_US_KNOW = "let_us_know";
+    public static final String WE_WILL_SERVE_YOUR_ORDER = "we_will_serve_your_order";
+    public static final String CURBSIDE_VEHICLE = "curbside_vehicle";
+    public static final String THANK_YOU = "thank_you";
+    public static final String YOUR_ORDER_WILL_BE_SERVED_SHORTLY = "your_order_will_be_served_shortly";
+    public static final String ARRIVED_SERVE_ORDER = "arrived_serve_order";
+
+    public static final String CANCEL_YOUR_ORDER_LABEL = "cancel_your_order_label";
+    public static final String CANCEL_YOUR_ORDER_MESSAGE = "cancel_your_order_message";
+
+    public static final String NO_LABEL = "no_label";
+
+    public static final String CANCEL_ORDER_NEW = "cancel_order_new";
+
+    public static final String HOW_WAS_YOUR_ORDER = "how_was_your_order";
+
+    public static final String ORDER_DETAILS_LABEL = "order_details";
+
+    public static final String YOU_RATED_THIS_ORDER = "you_rated_this_order";
+
+    public static final String RIDER_ASSIGNED = "rider_assigned";
+
+    public static final String RIDER_ASSIGNED_DESCRIPTION = "rider_assigned_description";
+
+    public static final String YOUR_ORDER_IS_READY = "Your order is ready. Pick it up from the counter";
+
+    public static final String ENTER_CAR_BRAND_NAME = "enter_car_brand_name";
 
 }

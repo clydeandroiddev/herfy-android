@@ -292,11 +292,9 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         val markerOptions = MarkerOptions()
         markerOptions.position(latLng!!)
         try {
-            val bitmapDrawable =
-                ContextCompat.getDrawable(
-                    this,
-                    com.herfy.ordertype.R.drawable.ic_location_add_address
-                ) as BitmapDrawable?
+            val bitmapDrawable = ContextCompat.getDrawable(
+                this, com.herfy.ordertype.R.drawable.ic_location_add_address
+            ) as BitmapDrawable?
             val bitmap = Bitmap.createScaledBitmap(
                 bitmapDrawable!!.bitmap, 50, 50, true
             )
@@ -330,8 +328,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     private fun proceedToAddAddress() {
         dismissAddressDialog()
-        addAddressDialog = AddAddressDialog.newInstance(
-            null,
+        addAddressDialog = AddAddressDialog.newInstance(null,
             orderPresenter.currentAddress,
             false,
             object : AddAddressDialog.OnSubmit {
@@ -348,13 +345,9 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
                     addressLabel = labelValue
                     orderPresenter.address = address
                     showLoadingDialog()
-                    if (AuthUtil.getInstance().isSignedIn) {
-                        orderPresenter.addAddress(
-                            phoneNumber, addressLabel, driverNote, addressLabel2
-                        )
-                    } else {
-                        dismissDialogs()
-                    }
+                    orderPresenter.addAddress(
+                        phoneNumber, addressLabel, driverNote, addressLabel2
+                    )
                 }
 
                 override fun error(text: String) {
@@ -481,8 +474,8 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun updateAddress(address: String?) {
-        dismissAddressDialog()
         dismissDialogs()
+        dismissAddressDialog()
         val eventAttributes = java.util.HashMap<String, String>()
         eventAttributes["Delivery"] = address!!
         logEvent("OrderTypeSelection", eventAttributes, null, 0.0)

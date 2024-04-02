@@ -1,7 +1,10 @@
 package com.herfy.common
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.app.Activity
+import android.content.res.Resources
+import android.util.DisplayMetrics
+import android.util.TypedValue
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -11,6 +14,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.math.abs
 
 @SuppressLint("SimpleDateFormat")
 fun String.formatDate(): String {
@@ -35,7 +39,7 @@ fun String.formatDate(): String {
 fun String.orderDetailsType(): String {
     val type = OrderType.fromString(this.toLowerCase())
     return when (type) {
-        OrderType.DINE_IN-> {
+        OrderType.DINE_IN -> {
             CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In") + ", "
         }
 
@@ -80,6 +84,35 @@ fun String.orderTypeString(): String {
 
 fun String.formatOrderTime(): String {
     return this.formatOrderTime(false)
+}
+
+fun getCurrentTime(): String {
+    return try {
+        val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val currentTime = Date()
+        dateFormat.format(currentTime)
+    } catch (e: Exception) {
+        ""
+    }
+}
+
+fun String.todayOrYesterday(): String {
+    try {
+        var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+        val timeValue = simpleDateFormat.parse(this)
+        simpleDateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getDefault()
+        val actualDate = timeValue?.let { simpleDateFormat.format(it) }.orEmpty()
+        if (isToday(actualDate)) {
+            return (CacheUtil.getInstance().getTranslations(Text.TODAY, "Today") + ", ")
+        } else if (isYesterday(actualDate)) {
+            return (CacheUtil.getInstance().getTranslations(Text.YESTERDAY, "Yesterday") + ", ")
+        }
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
+    return ""
 }
 
 fun String.formatOrderTime(forceIncludeYear: Boolean): String {
@@ -137,9 +170,11 @@ fun isToday(dateString: String): Boolean {
         val calendarGiven = Calendar.getInstance().apply {
             time = date
         }
-        calendarToday.get(Calendar.YEAR) == calendarGiven.get(Calendar.YEAR) &&
-                calendarToday.get(Calendar.MONTH) == calendarGiven.get(Calendar.MONTH) &&
-                calendarToday.get(Calendar.DAY_OF_MONTH) == calendarGiven.get(Calendar.DAY_OF_MONTH)
+        calendarToday.get(Calendar.YEAR) == calendarGiven.get(Calendar.YEAR) && calendarToday.get(
+            Calendar.MONTH
+        ) == calendarGiven.get(Calendar.MONTH) && calendarToday.get(Calendar.DAY_OF_MONTH) == calendarGiven.get(
+            Calendar.DAY_OF_MONTH
+        )
     } catch (e: Exception) {
         e.printStackTrace()
         false
@@ -157,9 +192,11 @@ fun isYesterday(dateString: String): Boolean {
         val calendarYesterday = Calendar.getInstance().apply {
             add(Calendar.DAY_OF_MONTH, -1) // Subtract one day
         }
-        calendarGiven.get(Calendar.YEAR) == calendarYesterday.get(Calendar.YEAR) &&
-                calendarGiven.get(Calendar.MONTH) == calendarYesterday.get(Calendar.MONTH) &&
-                calendarGiven.get(Calendar.DAY_OF_MONTH) == calendarYesterday.get(Calendar.DAY_OF_MONTH)
+        calendarGiven.get(Calendar.YEAR) == calendarYesterday.get(Calendar.YEAR) && calendarGiven.get(
+            Calendar.MONTH
+        ) == calendarYesterday.get(Calendar.MONTH) && calendarGiven.get(Calendar.DAY_OF_MONTH) == calendarYesterday.get(
+            Calendar.DAY_OF_MONTH
+        )
     } catch (e: Exception) {
         e.printStackTrace()
         false
@@ -194,4 +231,84 @@ fun String.defaultTime(): String {
         e.printStackTrace()
     }
     return ""
+}
+
+fun formatSecondsToMinutesAndSeconds(seconds: Long): String {
+    val minutes = seconds / 60
+    val remainingSeconds = seconds % 60
+    return String.format("%02d:%02d", minutes, remainingSeconds)
+}
+
+fun cancelTime(timestamp: String): Long {
+    return try {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+        val timeValue = simpleDateFormat.parse(timestamp)
+        val localTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        localTimeFormat.timeZone = TimeZone.getDefault()
+        val actualDate = timeValue?.let { localTimeFormat.format(it) }.orEmpty()
+        val calendar1 = Calendar.getInstance().apply {
+            time = localTimeFormat.parse(actualDate)!!
+        }
+        val calendar2 = Calendar.getInstance()
+        val differenceInMillis = abs(calendar2.timeInMillis - calendar1.timeInMillis)
+        differenceInMillis / 1000
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return 0
+    }
+}
+
+fun statusTime(timestamp: String): String {
+    return try {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+        val timeValue = simpleDateFormat.parse(timestamp)
+        val localTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        localTimeFormat.timeZone = TimeZone.getDefault()
+        val actualDate = timeValue?.let { localTimeFormat.format(it) }.orEmpty()
+        val calendar = Calendar.getInstance().apply {
+            time = localTimeFormat.parse(actualDate)!!
+        }
+        val startTimeFormat = SimpleDateFormat("h:mm", Locale.getDefault())
+        return startTimeFormat.format(calendar.time)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        "--"
+    }
+}
+
+fun showTime(timestamp: String, timeAdded: Int): String {
+    try {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+        val timeValue = simpleDateFormat.parse(timestamp)
+        val localTimeFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        localTimeFormat.timeZone = TimeZone.getDefault()
+        val actualDate = timeValue?.let { localTimeFormat.format(it) }.orEmpty()
+        val calendar = Calendar.getInstance().apply {
+            time = localTimeFormat.parse(actualDate)!! // Parse actualDate back into a Date object
+            add(Calendar.MINUTE, timeAdded)
+        }
+        val startTimeFormat = SimpleDateFormat("h:mm", Locale.getDefault())
+        val endTimeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val startTime = startTimeFormat.format(calendar.time)
+        val endTime = endTimeFormat.format(calendar.apply { add(Calendar.MINUTE, 10) }.time)
+        return "$startTime - $endTime"
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return ""
+    }
+}
+
+fun dpToPx(dp: Float): Int {
+    return TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP, dp, Resources.getSystem().displayMetrics
+    ).toInt()
+}
+
+fun deviceHeight(context: Activity): Int {
+    val displayMetrics = DisplayMetrics()
+    context.windowManager.defaultDisplay.getMetrics(displayMetrics)
+    return displayMetrics.heightPixels - dpToPx(300f)
 }
