@@ -405,6 +405,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     }
 
+    override fun navigateMenuItemDetails(menuItem: MenuItem?) {
+
+    }
+
     override fun selectAddressWork(position: Int) {
 
     }
