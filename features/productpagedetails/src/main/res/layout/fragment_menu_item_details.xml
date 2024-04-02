@@ -254,29 +254,6 @@
                     android:visibility="gone"
                     tools:visibility="visible">
 
-                    <!-- Commented for now might needed this when designer change the ui again -->
-                    <!--                        <LinearLayout-->
-                    <!--                            android:id="@+id/btnRequired"-->
-                    <!--                            android:layout_width="73dp"-->
-                    <!--                            android:layout_height="28dp"-->
-                    <!--                            android:background="@drawable/bg_rounded_25_radius_background"-->
-                    <!--                            android:gravity="center"-->
-                    <!--                            android:textAlignment="viewEnd"-->
-                    <!--                            app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"-->
-                    <!--                            app:layout_constraintEnd_toEndOf="parent"-->
-                    <!--                            app:layout_constraintTop_toTopOf="parent">-->
-
-                    <!--                            <com.google.android.material.textview.MaterialTextView-->
-                    <!--                                android:id="@+id/txtRequired"-->
-                    <!--                                android:layout_width="wrap_content"-->
-                    <!--                                android:layout_height="wrap_content"-->
-                    <!--                                android:gravity="center"-->
-                    <!--                                android:padding="0dp"-->
-                    <!--                                android:textColor="@color/white"-->
-                    <!--                                android:textSize="12sp"-->
-                    <!--                                tools:text="Required" />-->
-                    <!--                        </LinearLayout>-->
-
 
                     <ImageView
                         android:id="@+id/checkBox"
