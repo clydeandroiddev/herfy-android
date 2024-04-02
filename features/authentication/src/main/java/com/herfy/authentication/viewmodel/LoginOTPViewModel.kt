@@ -77,7 +77,8 @@ class LoginOTPViewModel @Inject constructor(
     fun updateName(name: String, customerId: String) {
         viewModelScope.launchWithTimber(dispatchers.io) {
             if (name.isEmpty()) {
-                val error = CacheUtil.getInstance().getTranslations(Text.FIRST_NAME_EMPTY)
+                val error = CacheUtil.getInstance()
+                    .getTranslations(Text.FIRST_NAME_EMPTY, "First name cannot be empty")
                 _state.emit(
                     LoginOTPPageViewState.ShowError(
                         error

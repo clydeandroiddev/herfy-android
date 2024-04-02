@@ -851,7 +851,7 @@ public class Text {
     public static final String WALK_IN_PICKUP = "walk_in_pickup";
     public static final String DRIVE_THRU_PICKUP = "drive_thru_pickup";
     public static final String PICKUP_DESCRIPTION = "pickup_description";
-    public static final String CURBSIDE_PICKUP_LABEL = "curbside_pickup_label";
+    public static final String CURBSIDE_PICKUP_LABEL = "curbside_pickup";
     public static final String CURBSIDE_DESCRIPTION = "curbside_description";
 
     public static final String DRIVE_THRU = "drive_thru";

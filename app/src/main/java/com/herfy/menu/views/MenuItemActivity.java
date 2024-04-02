@@ -234,7 +234,6 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
                 } else {
                     CacheUtil.getInstance().setFavoriteMenuCategory(menuPresenter.getMenuCategory());
                     CacheUtil.getInstance().setFavoriteMenuItem(menuPresenter.getMenuItem());
-                    //Intent intent = new Intent(MenuItemActivity.this, SignInActivity.class);
                     Intent intent = new Intent(MenuItemActivity.this, AuthActivity.class);
                     intent.putExtra("favorite_menu_item", true);
                     startActivity(intent);
