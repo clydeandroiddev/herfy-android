@@ -162,10 +162,8 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             public void onClick(View v) {
                 if (action != null && modifierItem.getAttributes().getMinimum() != 1) {
                     if (modifierItem.getAttributes().isSelected()) {
-                        System.out.println("Selected bai");
                         action.onCheckedChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     } else {
-                        System.out.println("Selected false bai");
                         action.onCheckedChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     }
                 }
