@@ -1,6 +1,7 @@
 package com.herfy.menu.views
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -35,6 +36,7 @@ import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.toTranslate
 import com.herfy.utils.extensions.visible
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
@@ -85,6 +87,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
 
     override fun initViews() {
         super.initViews()
+        showLoading()
         binding.viewModel = this@ComboMealFragment.viewModel
         setupFrequentlyBoughtItems()
         setupSizeItems()
@@ -96,10 +99,15 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     navigateUp()
                 }
                 setRightButtonAction{
-
+                    showLoading()
+                    if (CacheUtil.getInstance().favorites.contains(menuItem.id)) {
+                       setRightButtonColor(Color.parseColor("#DEDEDE"))
+                    } else {
+                        setRightButtonColor(Color.parseColor("#F22424"))
+                    }
+                    this@ComboMealFragment.viewModel.addRemoveFavorite(false)
                 }
             }
-
             add.setOnClickListener {
                 if (CacheUtil.getInstance().application.attributes.menuOnly) {
                     context?.let {
@@ -321,7 +329,10 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     )
                 } else {
                     _totalPrice = totalPrice
-                    binding.tvTotal.text = StringUtil.getFormattedPrice(totalPrice)
+                    val formattedPrice = StringUtil.getFormattedPrice(totalPrice)
+                    binding.tvTotal.text = formattedPrice
+                    binding.add.text = cacheUtilHelper.getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
+                        .replace("(x)",formattedPrice.toString())
                 }
             }
             showComboSizes.observe(this@ComboMealFragment){
@@ -458,7 +469,22 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
         binding.apply {
             language = LocaleUtil.getInstance().language
             menuItem = data
+            setFavorite(data)
         }
+    }
+
+    private fun setFavorite(menuItem: MenuItem) {
+        binding.cbtComboMeal.apply {
+            if (!isPromo && AuthUtil.getInstance().isSignedIn && CacheUtil.getInstance().favorites.contains(
+                    menuItem.id
+                )
+            ) {
+                setRightButtonColor(Color.parseColor("#F22424"))
+            } else {
+                setRightButtonColor(Color.parseColor("#DEDEDE"))
+            }
+        }
+
     }
 
     private fun expandComboItemDetails(){
@@ -515,9 +541,9 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     }
 
     private fun dismissLoading() {
-        binding.apply {
+       /* binding.apply {
             inProgress = false
             isVisible = false
-        }
+        }*/
     }
 }

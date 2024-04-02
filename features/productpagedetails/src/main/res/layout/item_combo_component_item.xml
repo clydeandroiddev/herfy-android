@@ -119,6 +119,8 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:background="@null"
+                android:clickable="false"
+                android:focusable="false"
                 android:button="@drawable/item_drawable_radio_state"
                 android:visibility="gone" />
 

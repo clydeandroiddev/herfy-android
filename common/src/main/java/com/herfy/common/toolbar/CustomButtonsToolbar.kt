@@ -73,5 +73,9 @@ class CustomButtonsToolbar @JvmOverloads constructor(
         visibility = if (toolbar) View.GONE else View.VISIBLE
     }
 
+    fun setRightButtonColor(color : Int){
+        rightButton?.setColorFilter(color)
+    }
+
 
 }

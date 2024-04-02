@@ -32,7 +32,6 @@ interface MenuRepository {
     suspend fun getMenuCategoriesItems(result: (List<MenuCategory>) -> Unit)
 
     suspend fun getMenuItem(menuItemId: String, result: (MenuItem) -> Unit)
-
     suspend fun getMenuItemEntityBy(id: String, applicationId: String, result: (String) -> Unit)
     suspend fun getMenuItemDbBy(applicationId: String, name: String, result: (MenuItemDb?) -> Unit)
     fun getAllModifierGroupBy(
@@ -185,6 +184,8 @@ class MenuRepositoryImpl @Inject constructor(
                             modifierItemCdn,
                             LocaleUtil.getInstance().language
                         )
+
+
                         modifierItem.attributes.isSelected = modifierItem.attributes.minimum == 1
                         if (modifierGroupModifierItemDisplayOrders.containsKey(modifierItem.id) && modifierGroupModifierItemDisplayOrders[modifierItem.id] != null) {
                             modifierItem.attributes.displayOrder =
@@ -211,6 +212,8 @@ class MenuRepositoryImpl @Inject constructor(
                     modifierGroup.modifierItems = modifierItems
 
                     if (modifierGroupDb.type == ModifierGroupType.SIZES.value) {
+                        modifierGroup.modifierItems.map { item -> item.attributes.isSelected = false }
+                        modifierGroup.modifierItems[0].attributes.isSelected = true
                         sizes = modifierGroup
                     } else {
                         modifierGroups.add(modifierGroup)
