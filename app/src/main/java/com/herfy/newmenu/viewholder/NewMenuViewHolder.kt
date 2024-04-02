@@ -101,7 +101,7 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
         showShowModifierCheckBox: Boolean
     ) {}
     override fun setMenuItemQuantity(quantity: Int) {}
-    override fun setMenuItemTotalPrice(totalPrice: Double) {}
+    override fun setMenuItemTotalPrice(totalPrice: Double, menuItemPrice: Double) {}
     override fun selectSize() {}
     override fun showOrderType() {}
     override fun addCartItem(menuItem: MenuItem) {}

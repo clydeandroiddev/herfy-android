@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
@@ -28,7 +27,10 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -113,11 +115,11 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         modifierProcessor.processModifier(modifierItem);
         ModifierGroupAttributes modifierGroupAttributes = modifierGroup.getAttributes();
         boolean isModifierItemSelected = modifierItem.getAttributes().isSelected();
-        radioButton.setVisibility(modifierGroupAttributes.getMaximum() == 1 && modifierGroupAttributes.getMinimum() == 1 ? View.VISIBLE : View.GONE);
+        radioButton.setVisibility(modifierGroupAttributes.getMaximum() == 1 ? View.VISIBLE : View.GONE);
         check.setVisibility(modifierGroup.getAttributes().getMaximum() > 1 ? View.VISIBLE : View.GONE);
         if (isModifierItemSelected) {
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state);
-            radioButton.setImageResource(R.drawable.modifier_radio_item_selected);
+            radioButton.setImageResource(R.drawable.ic_payment_radio_selected);
             check.setImageResource(R.drawable.modifier_item_checked_selected);
 
         } else {
@@ -175,19 +177,29 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             modifierOptionImage.setVisibility(View.GONE);
         }
         if (modifierItem.getAttributes().hasModifierItemExceedMaximum() && modifierItem.getAttributes().hasUserInteractedWithModifierItem() ) {
-            plus.setEnabled(true);
-            plus.setImageResource(R.drawable.quantity_up_blue);
-            modifierItemCardView.setEnabled(true);
-        } else {
-
-            if (!modifierItem.getAttributes().hasUserInteractedWithModifierItem() ) {
+            boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
+            if (shouldShowQuantityLayout) {
                 plus.setEnabled(true);
                 plus.setImageResource(R.drawable.quantity_up_blue);
                 modifierItemCardView.setEnabled(true);
+
+            }
+        } else {
+            if (!modifierItem.getAttributes().hasUserInteractedWithModifierItem() ) {
+                boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
+                if (shouldShowQuantityLayout) {
+                    plus.setEnabled(true);
+                    plus.setImageResource(R.drawable.quantity_up_blue);
+                    modifierItemCardView.setEnabled(true);
+                }
+
             } else {
-                plus.setEnabled(false);
-                plus.setImageResource(R.drawable.quantity_up_blue_gray);
-                modifierItemCardView.setEnabled(false);
+                boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
+                if (shouldShowQuantityLayout) {
+                    plus.setEnabled(false);
+                    plus.setImageResource(R.drawable.quantity_up_blue_gray);
+                    modifierItemCardView.setEnabled(false);
+                }
             }
         }
 
@@ -200,8 +212,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 String modifierItemId = modifierItem.getId();
                 if (!clickCountMap.containsKey(modifierItemId) && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum() ) {
                     clickCountMap.put(modifierItemId, 0);
-                    boolean shouldShowQuantityLayout = modifierGroup.getAttributes().getMaximum() > 1 &&
-                            modifierItem.getAttributes().getMaximum() > 1;
+                    boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
 
                     quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
 
@@ -216,7 +227,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
                 clickCountMap.put(modifierItemId, clickCount);
                 if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount > 1 && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
-
+                    action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, clickCount);
                 }
             }
         });
@@ -229,6 +240,11 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             }
         });
     }
+
+    private boolean shouldShowQuantity(ModifierGroup modifierGroup, ModifierItem modifierItem) {
+        return modifierGroup.getAttributes().getMaximum() > 1 &&
+                modifierItem.getAttributes().getMaximum() > 1;
+    }
     public static boolean isProbablyArabic(String s) {
         for (int i = 0; i < s.length(); ) {
             int c = s.codePointAt(i);
@@ -240,10 +256,10 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
     }
 
     @Override
-    public void onModifierProcessed(@NonNull String name, @NonNull String formattedPrice, @NonNull String text) {
-        setModifierNameAndPrice(name,formattedPrice,text);
+    public void onModifierProcessed(@NotNull String name, @NotNull String formattedPrice) {
+        setModifierNameAndPrice(name,formattedPrice);
     }
-    private void setModifierNameAndPrice(String name, String formattedPrice,String text) {
+    private void setModifierNameAndPrice(String name, String formattedPrice) {
         if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
             modifierNameAndPrice.setText(Html.fromHtml(name),  TextView.BufferType.SPANNABLE);
         } else {
@@ -251,8 +267,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 modifierNameAndPrice.setText(Html.fromHtml(name), TextView.BufferType.SPANNABLE);
             } else {
 
-                String modifiedText = text + " " + name;
-                modifierNameAndPrice.setText(Html.fromHtml(modifiedText), TextView.BufferType.SPANNABLE);
+                modifierNameAndPrice.setText(Html.fromHtml(name), TextView.BufferType.SPANNABLE);
             }
         }
 

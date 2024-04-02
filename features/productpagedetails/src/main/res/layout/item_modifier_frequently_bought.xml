@@ -65,6 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_fire"
+            android:visibility="gone"
             style="@style/TextAppearance.Caption"
             android:fontFamily="@font/inter_regular"
             app:layout_constraintStart_toStartOf="parent"
@@ -95,10 +96,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtCalories"
             android:layout_marginStart="@dimen/margin_large"
-
             android:layout_gravity="center_vertical"
             android:gravity="start|center_vertical"
-            android:paddingStart="10dp"
+
             android:paddingEnd="4dp"
             android:textAlignment="viewStart"
             android:textColor="#0C0C0C"
@@ -115,7 +115,7 @@
             android:ellipsize="end"
             android:fontFamily="@font/inter_regular"
             android:gravity="start|center_vertical"
-            android:paddingStart="10dp"
+
             android:paddingEnd="4dp"
             android:textAlignment="viewStart"
             android:textColor="#1e1e1e"

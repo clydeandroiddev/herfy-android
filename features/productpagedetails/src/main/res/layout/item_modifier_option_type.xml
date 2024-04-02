@@ -2,7 +2,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="84dp"
+    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginBottom="@dimen/margin_large"
     android:background="@drawable/bg_modifier_item_selector"
@@ -42,6 +42,7 @@
                 style="@style/Styles.Text.Footnote.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_semi_bold"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="@dimen/margin_large"
                 android:gravity="start|center_vertical"
@@ -62,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_small"
                 android:layout_marginBottom="@dimen/margin_large"
-                android:textColor="@color/color_light_blue"
+                android:textColor="#0064AC"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
                 app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
@@ -103,10 +104,11 @@
 
             <FrameLayout
                 android:id="@+id/check_layout"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView

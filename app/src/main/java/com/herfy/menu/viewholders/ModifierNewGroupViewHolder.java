@@ -219,33 +219,10 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(modifierImage);
         }
-        requiredCardView.setVisibility(showShowModifierCheckBox && modifierGroup.getAttributes().getMinimum() > 1 ? View.GONE : View.VISIBLE);
+        boolean isModifierGroupRequired  = modifierGroup.getAttributes().getMinimum() >= 1;
+        requiredCardView.setVisibility(isModifierGroupRequired ? View.VISIBLE : View.GONE);
         modifierCheckBox.setVisibility(showShowModifierCheckBox ? View.VISIBLE : View.GONE);
         txtMinimum.setText(CacheUtil.getInstance().getTranslations(Text.REQUIRED,"Required"));
-
-        // todo might needed this once designer change the ui
-//        ModifierGroupMinimumType modifierGroupMinimumType = ModifierGroupMinimumUtil.INSTANCE.validateType(modifierGroup.getAttributes().getMinimum());
-
-//        switch (modifierGroupMinimumType) {
-//            case OPTIONAL:
-//                String optional = CacheUtil.getInstance().getTranslations(Text.OPTIONAL_KEY,"Optional");
-//                minimumLayout.setVisibility(View.VISIBLE);
-//                txtMinimum.setText(optional);
-//                break;
-//
-//            case REQUIRED:
-//                String required = CacheUtil.getInstance()
-//                        .getTranslations(Text.REQUIRED_KEY, "Required");
-//                minimumLayout.setVisibility(View.VISIBLE);
-//                txtMinimum.setText(required);
-//                break;
-//
-//
-//            default:
-//                minimumLayout.setVisibility(View.GONE);
-//                break;
-//        }
-
 
         if (visible) {
 
@@ -318,6 +295,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
 
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recyclerView.setNestedScrollingEnabled(false);
             ModifierItemsNewRecyclerViewAdapter modifierItemsNewRecyclerViewAdapter = new ModifierItemsNewRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice);
             modifierItemsNewRecyclerViewAdapter.setOnAction(onAction);
             recyclerView.setAdapter(modifierItemsNewRecyclerViewAdapter);
@@ -330,7 +308,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     }
 
     @Override
-    public void setMenuItemTotalPrice(double totalPrice) {
+    public void setMenuItemTotalPrice(double totalPrice, double menuItemPrice) {
 
     }
 

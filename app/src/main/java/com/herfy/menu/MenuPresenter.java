@@ -2220,7 +2220,6 @@ public class MenuPresenter implements MenuContract.Presenter {
 
 
                     menuItem.setModifierGroups(modifierGroups);
-
                     prepareMenuItem(addToBag);
 
                 } else {
@@ -2610,7 +2609,6 @@ public class MenuPresenter implements MenuContract.Presenter {
             if (!invalid) {
                 invalid = checkComboModifiers();
             }
-
             if (!invalid) {
                 addCartItem(false, false);
             } else {
@@ -3827,7 +3825,6 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity) {
-
        /* ModifierGroup modifierGroup = menuItemModifierGroups.get(menuItem.getModifierGroups().get(position).getId());
         if(modifierGroup != null) {*/
         modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice,showShowModifierCheckBox);
@@ -3837,6 +3834,11 @@ public class MenuPresenter implements MenuContract.Presenter {
     @Override
     public int getModifierGroupsCount() {
         return menuItem.getModifierGroups().size();
+    }
+
+    @Override
+    public List<ModifierGroup> getModifierGroupList() {
+        return  menuItem.getModifierGroups();
     }
 
     @Override
@@ -4136,6 +4138,7 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void addCartItem(boolean add, boolean skip) {
+
         String orderStoreId = null;
         if (CacheUtil.getInstance().getOrderStore() != null) {
             orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
@@ -4222,6 +4225,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 menuView.addCartItem(menuItem, currentImageViewToAnimate);
                 currentImageViewToAnimate = null;
             } else {
+
                 menuView.addCartItem(menuItem);
             }
         }
@@ -4592,7 +4596,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             e.printStackTrace();
         }
 
-        menuView.setMenuItemTotalPrice(totalPrice * item.getAttributes().getQuantity());
+        menuView.setMenuItemTotalPrice(totalPrice * item.getAttributes().getQuantity(),totalPrice);
         return totalPrice;
     }
 

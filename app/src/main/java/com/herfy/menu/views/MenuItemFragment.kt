@@ -3,12 +3,12 @@ package com.herfy.menu.views
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,14 +31,12 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.facebook.FacebookAppEventUtil
-import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
@@ -69,7 +67,6 @@ import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
 import com.herfy.utils.menu.MenuUtil
-import com.herfy.utils.widgets.AppBarStateChangeListener
 import com.kochava.tracker.events.EventType
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.util.GsonHelper
@@ -130,13 +127,17 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         return binding.root
     }
 
-    private fun checkBackground() {
-        binding.contentMain.setBackgroundResource(R.color.page_background_color)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkBackground()
+        activity?.let { act ->
+            val displayMetrics = DisplayMetrics()
+            act.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            val toolbarHeight = (displayMetrics.widthPixels / 1.1).toInt()
+            binding.mainToolbar.layoutParams.height = toolbarHeight
+            binding.image.layoutParams.height = toolbarHeight
+            binding.mainToolbar.invalidate()
+            binding.image.invalidate()
+        }
         menuPresenter.start()
         menuPresenter.getFrequentBoughtItems();
 
@@ -291,19 +292,19 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun setupViews() {
-        binding.appbar.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
-            override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
-                binding.toolbar.apply {
-                    when(state) {
-                        State.EXPANDED ->
-                            setBackgroundResource(R.drawable.bg_menu_item_background)
-                        State.COLLAPSED ->
-                            setBackgroundColor(Color.parseColor("#F7F7F7"))
-                        else -> {}
-                    }
-                }
-            }
-        })
+//        binding.appbar.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
+//            override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
+//                binding.toolbar.apply {
+//                    when(state) {
+//                        State.EXPANDED ->
+//                            setBackgroundResource(R.drawable.bg_menu_item_background)
+//                        State.COLLAPSED ->
+//                            setBackgroundColor(Color.parseColor("#F7F7F7"))
+//                        else -> {}
+//                    }
+//                }
+//            }
+//        })
 
         try {
             val activity: Activity? = activity
@@ -362,6 +363,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         val originalQuantityWithColon = CacheUtil.getInstance().getTranslations(Text.ITEM_QUANTITY,"Item quantity")
         val formattedQuantityWithoutColon = originalQuantityWithColon.replace(":", "")
         binding.txtQuantity.text = formattedQuantityWithoutColon
+        binding.txtFrequntlyBought.text = CacheUtil.getInstance().getTranslations(Text.FREQUENTLY_BOUGHT,"Frequently bought together")
+        binding.notesLabel.text = CacheUtil
+            .getInstance().getTranslations(Text.SPECIAL_INSTRUCTION,"Special Instruction")
     }
 
     override fun showStore(store: Store) {}
@@ -449,54 +453,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         }
                     })
                     .into(binding.image)
-//                binding.allergensContainer.isRtl = LocaleUtil.getInstance().isArabic
-//                binding.allergensContainer.removeAllViews()
-//                for (allergen in menuItem.allergens) {
-//                    val allergenView = LayoutInflater.from(activity)
-//                        .inflate(R.layout.item_allergen, binding.allergensContainer, false)
-//                    val allergenIcon = allergenView.findViewById<ImageView>(R.id.icon)
-//                    val iconValue = allergen.attributes.icon.getValue(LocaleUtil.getInstance().language)
-//                    //iconValue = StringUtil.getCloudinaryUrl(100, 100, iconValue);
-//                    if (iconValue == null || iconValue.equals(
-//                            "null",
-//                            ignoreCase = true
-//                        ) || iconValue.isEmpty() || iconValue.lowercase(
-//                            Locale.getDefault()
-//                        ).contains("default-image.png")
-//                    ) {
-//                        allergenIcon.visibility = View.GONE
-//                    } else {
-//                        Glide.with(it).load(iconValue)
-//                            .apply(RequestOptions.centerCropTransform()).diskCacheStrategy(
-//                                DiskCacheStrategy.ALL
-//                            ).listener(object : RequestListener<Drawable?> {
-//                                override fun onLoadFailed(
-//                                    e: GlideException?,
-//                                    model: Any,
-//                                    target: Target<Drawable?>,
-//                                    isFirstResource: Boolean
-//                                ): Boolean {
-//                                    allergenIcon.visibility = View.GONE
-//                                    return false
-//                                }
-//
-//                                override fun onResourceReady(
-//                                    resource: Drawable?,
-//                                    model: Any,
-//                                    target: Target<Drawable?>,
-//                                    dataSource: DataSource,
-//                                    isFirstResource: Boolean
-//                                ): Boolean {
-//                                    allergenIcon.visibility = View.VISIBLE
-//                                    return false
-//                                }
-//                            }).into(allergenIcon)
-//                    }
-////                    val allergenName = allergenView.findViewById<TextView>(R.id.value)
-////                    allergenName.typeface = FontHandler.getRegularTypeface()
-////                    allergenName.text = allergen.attributes.name.getValue(LocaleUtil.getInstance().language)
-////                    binding.allergensContainer.addView(allergenView)
-//                }
+
                 binding.name.text = menuItem.getName(LocaleUtil.getInstance().language)
                 val caloriesValue = menuItem.calories
                 val calorieCount = menuItem.calorieCount
@@ -531,18 +488,15 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
                 binding.favoriteContainer.setOnClickListener {
                     baseActivity.showLoadingDialog()
-                    if (CacheUtil.getInstance().favorites.contains(menuItem.id)) {
-                        binding.favoriteIcon.setColorFilter(Color.parseColor("#DEDEDE"))
-                    } else {
-                        binding.favoriteIcon.setColorFilter(Color.parseColor("#F22424"))
-                    }
                     menuPresenter!!.addRemoveFavorite(false)
                 }
                 setFavorite(menuItem)
                 binding.etItemNotes
-                    .setHint(CacheUtil
-                        .getInstance()
-                        .getTranslations(Text.NOTE_FOR_MENU_HINT,"e.g. no mayo"))
+                    .setHint(
+                        CacheUtil
+                            .getInstance()
+                            .getTranslations(Text.NOTE_FOR_MENU_HINT, "e.g. no mayo")
+                    )
                 if (!args.isPromo && AuthUtil.getInstance().isSignedIn && !menuItem.isCombo) {
                     binding.favoriteCard.visible()
                 } else {
@@ -595,8 +549,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 canChangeSize = false
                 setSizes(menuItem)
                 canChangeSize = true
+
                 if (shouldReset || menuPresenter!!.modifierGroupsCount > 0) {
-                    binding.modifierGroupsRecyclerView.visibility = View.VISIBLE
                     binding.modifierGroupsRecyclerView.visibility = View.VISIBLE
                     val showModifierItemPrice = HashMap<Int, Boolean>()
                     for (group in menuItem.modifierGroups) {
@@ -606,7 +560,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     }
                     val shouldShowModifierCheckbox = HashMap<Int, Boolean>()
                     menuItem.modifierGroups.forEachIndexed { index, group ->
-                        shouldShowModifierCheckbox[index] = group.modifierItems.any { it.attributes.isSelected }
+                        shouldShowModifierCheckbox[index] =
+                            group.modifierItems.any { it.attributes.isSelected }
                     }
                     shouldReset = false
                     modifierGroupsAdapter =
@@ -614,9 +569,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             activity,
                             menuPresenter,
                             showModifierItemPrice,
-                            shouldShowModifierCheckbox
+                            shouldShowModifierCheckbox,
                         )
-                    modifierGroupsAdapter!!.setOnAction(object : BaseModifierItemViewHolder.OnAction {
+                    modifierGroupsAdapter!!.setOnAction(object :
+                        BaseModifierItemViewHolder.OnAction {
                         @SuppressLint("NotifyDataSetChanged")
                         override fun onCheckedChanged(
                             isSelected: Boolean,
@@ -626,11 +582,13 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             modifierItem: ModifierItem
                         ) {
 
-                            Log.d("OnAction", "onCheckedChanged - isSelected: " + isSelected +
-                                    ", modifierGroupPosition: " + modifierGroupPosition +
-                                    ", modifierGroup: " + modifierGroup +
-                                    ", modifierItemPosition: " + modifierItemPosition +
-                                    ", modifierItem: " + modifierItem.name);
+                            Log.d(
+                                "OnAction", "onCheckedChanged - isSelected: " + isSelected +
+                                        ", modifierGroupPosition: " + modifierGroupPosition +
+                                        ", modifierGroup: " + modifierGroup +
+                                        ", modifierItemPosition: " + modifierItemPosition +
+                                        ", modifierItem: " + modifierItem.name
+                            );
 
                             menuPresenter!!.selectModifierItem(
                                 isSelected,
@@ -675,10 +633,20 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             //Trigger calorie count
                         }
                     })
-                    binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapter
-                    ViewCompat.setNestedScrollingEnabled(binding.modifierGroupsRecyclerView, false)
+                    if (modifierGroupsAdapter != null) {
+                        println("Modifier group test")
+                        modifierGroupsAdapter!!.notifyDataSetChanged()
+                    }
+                    println("Modifier group count ${modifierGroupsAdapter?.itemCount}")
                     binding.modifierGroupsRecyclerView.visibility = View.VISIBLE
+                    binding.modifierGroupsRecyclerView.setHasFixedSize(true)
+                    ViewCompat.setNestedScrollingEnabled(binding.modifierGroupsRecyclerView, false)
+                    binding.modifierGroupsRecyclerView.layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapter
+//
                 } else {
+                    println("Modifier gorup item count disabled")
                     binding.modifierGroupsRecyclerView.visibility = View.GONE
                     binding.modifierGroupsRecyclerView.visibility = View.GONE
                 }
@@ -701,22 +669,19 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 if (cartMenuItem >= 0 || args.isEdit) {
                     binding.add.text = CacheUtil.getInstance().getTranslations(Text.UPDATE)
                 } else {
-                    binding.add.text = CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
-                        .replace("(x)","${StringUtil.getFormattedPrice(menuPresenter.menuItemsTotalPrice)}")
 
-                    }
 
-                menuPresenter!!.getMenuItemTotalPrice(menuPresenter!!.menuItem, -1)
-                binding.coordinatorLayout.visibility = View.VISIBLE
-                binding.footer.visibility = View.VISIBLE
-                if (CacheUtil.getInstance().application.attributes.menuOnly) {
+                    menuPresenter!!.getMenuItemTotalPrice(menuPresenter!!.menuItem, -1)
+                    binding.coordinatorLayout.visibility = View.VISIBLE
+                    binding.footer.visibility = View.VISIBLE
+                    if (CacheUtil.getInstance().application.attributes.menuOnly) {
 //                    binding.add.backgroundTintList = ColorStateList.valueOf(
 //                        ContextCompat.getColor(
 //                            requireContext(),
 //                            R.color.disabled_tint
 //                        )
 //                    )
-                } else {
+                    } else {
 //                    binding.add.backgroundTintList = ColorStateList.valueOf(
 //                        ContextCompat.getColor(
 //                            requireContext(),
@@ -724,72 +689,75 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 //                        )
 //                    )
 //                }
-                }
-                binding.add.setOnClickListener(View.OnClickListener {
-                    if (CacheUtil.getInstance().application.attributes.menuOnly) {
-                        FirebaseService.newNotification(
-                            CacheUtil.getInstance().getTranslations(
-                                Text.MENU_ONLY_MESSAGE,
-                                "Sorry, ordering is not available at the moment"
-                            ), binding.add.context
-                        )
-                        return@OnClickListener
                     }
-                    var itemNote = binding.etItemNotes.text.toString() ?: ""
-                    if (itemNote.isEmpty()) {
-                        menuPresenter.setItemNote("")
-                    } else {
-                        menuPresenter.setItemNote(itemNote)
-                    }
-
-                    if (!args.isPromo) {
-                        if (cartMenuItem >= 0) {
-                            menuPresenter.updateCartItem(false, cartMenuItem)
-                        } else {
-                            menuPresenter.getCartMenuItem()
+                    binding.add.setOnClickListener(View.OnClickListener {
+                        if (CacheUtil.getInstance().application.attributes.menuOnly) {
+                            FirebaseService.newNotification(
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.MENU_ONLY_MESSAGE,
+                                    "Sorry, ordering is not available at the moment"
+                                ), binding.add.context
+                            )
+                            return@OnClickListener
                         }
-                    } else {
-                        menuPresenter.updateCartItem(true, cartMenuItem)
-                    }
-                    FirebaseECommerceEventUtil.addToCartEvent(
-                        activity,
-                        menuItem,
-                        menuCategory,
-                        _totalPrice,
-                        Integer.parseInt(binding.quantity.text.toString())
-                    );
-                    FacebookAppEventUtil.addToCartEvent(baseActivity, menuItem, _totalPrice)
-                    KochavaTrackerUtil.trackEvent(EventType.ADD_TO_CART)
-                })
-                baseActivity.dismissDialogs()
-                menuItemSelected = menuItem
-                menuCategorySelected = menuCategory
+                        var itemNote = binding.etItemNotes.text.toString() ?: ""
+                        if (itemNote.isEmpty()) {
+                            menuPresenter.setItemNote("")
+                        } else {
+                            menuPresenter.setItemNote(itemNote)
+                        }
+
+                        if (!args.isPromo) {
+                            if (cartMenuItem >= 0) {
+                                menuPresenter.updateCartItem(false, cartMenuItem)
+                            } else {
+                                menuPresenter.getCartMenuItem()
+                            }
+                        } else {
+                            menuPresenter.updateCartItem(true, cartMenuItem)
+                        }
+                        FirebaseECommerceEventUtil.addToCartEvent(
+                            activity,
+                            menuItem,
+                            menuCategory,
+                            _totalPrice,
+                            Integer.parseInt(binding.quantity.text.toString())
+                        );
+                        FacebookAppEventUtil.addToCartEvent(baseActivity, menuItem, _totalPrice)
+                        com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent(EventType.ADD_TO_CART)
+                    })
+                    baseActivity.dismissDialogs()
+                    menuItemSelected = menuItem
+                    menuCategorySelected = menuCategory
+                    baseActivity.dismissDialogs()
+                    menuItemSelected = menuItem
+                    menuCategorySelected = menuCategory
 //                setupCombos(menuItem)
-                menuPresenter!!.getMenuItemTotalPrice(menuPresenter!!.menuItem, -1)
-                if (!menuItem.isSandwichOnly) {
-                    previousMenuItem = menuItem
-                }
-                if (CacheUtil.getOrderStoreId() != null && menuItem.outOfStockLocations.contains(
-                        CacheUtil.getOrderStoreId()
-                    )
-                ) {
+                    menuPresenter!!.getMenuItemTotalPrice(menuPresenter!!.menuItem, -1)
+                    if (!menuItem.isSandwichOnly) {
+                        previousMenuItem = menuItem
+                    }
+                    if (CacheUtil.getOrderStoreId() != null && menuItem.outOfStockLocations.contains(
+                            CacheUtil.getOrderStoreId()
+                        )
+                    ) {
 //                    binding.soldout.text =
 //                        CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
 //                    binding.soldout.visibility = View.VISIBLE
-                    binding.image.setColorFilter(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.soldout
+                        binding.image.setColorFilter(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.soldout
+                            )
                         )
-                    )
 //                    binding.add.backgroundTintList = ColorStateList.valueOf(
 //                        ContextCompat.getColor(
 //                            requireContext(),
 //                            R.color.disabled_tint
 //                        )
 //                    )
-                    binding.add.isEnabled = false
-                }
+                        binding.add.isEnabled = false
+                    }
 //                if (menuItem.listPrice > 0.0) {
 //                    binding.discountIndicator.visibility = View.VISIBLE
 //                } else {
@@ -797,61 +765,63 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 //                }
 
 //                binding.componentsShimmer.visibility = View.GONE
-                var imageUrl = menuItem.image
-                if (imageUrl == null || imageUrl.equals(
-                        "null",
-                        ignoreCase = true
-                    ) || imageUrl.isEmpty() || imageUrl.lowercase(
-                        Locale.getDefault()
-                    ).contains("default-image.png")
-                ) {
-                    imageUrl = Values.DEFAULT_IMAGE_URL
-                }
-                val requestOptions: RequestOptions
-                if (BuildUtil.soloAppKey().equals("kExl05bOT4ttFEO2", ignoreCase = true)) {
-                    requestOptions = RequestOptions.centerInsideTransform()
-                    binding.image.scaleType = ImageView.ScaleType.CENTER_INSIDE
-                } else {
-                    requestOptions = RequestOptions.centerCropTransform()
-                    binding.image.scaleType = ImageView.ScaleType.CENTER_CROP
-                }
-                Glide.with(baseActivity)
-                    .load(imageUrl)
-                    .skipMemoryCache(false)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .apply(requestOptions)
-                    .listener(object : RequestListener<Drawable?> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any,
-                            target: Target<Drawable?>,
-                            isFirstResource: Boolean
-                        ): Boolean {
+                    var imageUrl = menuItem.image
+                    if (imageUrl == null || imageUrl.equals(
+                            "null",
+                            ignoreCase = true
+                        ) || imageUrl.isEmpty() || imageUrl.lowercase(
+                            Locale.getDefault()
+                        ).contains("default-image.png")
+                    ) {
+                        imageUrl = Values.DEFAULT_IMAGE_URL
+                    }
+                    val requestOptions: RequestOptions
+                    if (BuildUtil.soloAppKey().equals("kExl05bOT4ttFEO2", ignoreCase = true)) {
+                        requestOptions = RequestOptions.centerInsideTransform()
+                        binding.image.scaleType = ImageView.ScaleType.CENTER_INSIDE
+                    } else {
+                        requestOptions = RequestOptions.centerCropTransform()
+                        binding.image.scaleType = ImageView.ScaleType.CENTER_CROP
+                    }
+                    Glide.with(baseActivity)
+                        .load(imageUrl)
+                        .skipMemoryCache(false)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .apply(requestOptions)
+                        .listener(object : RequestListener<Drawable?> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any,
+                                target: Target<Drawable?>,
+                                isFirstResource: Boolean
+                            ): Boolean {
 //                            binding.imageShimmer.visibility = View.GONE
-                            return false
-                        }
+                                return false
+                            }
 
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any,
-                            target: Target<Drawable?>,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
-                        ): Boolean {
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any,
+                                target: Target<Drawable?>,
+                                dataSource: DataSource,
+                                isFirstResource: Boolean
+                            ): Boolean {
 //                            binding.imageShimmer.visibility = View.GONE
-                            return false
-                        }
-                    })
-                    .into(binding.image)
+                                return false
+                            }
+                        })
+                        .into(binding.image)
 
-                if (!viewEventSent) {
-                    viewEventSent = true
-                    FirebaseECommerceEventUtil.viewItemEvent(activity, menuItem, menuCategory)
-                    FacebookAppEventUtil.viewMenuItemEvent(activity, menuItem)
+                    if (!viewEventSent) {
+                        viewEventSent = true
+                        FirebaseECommerceEventUtil.viewItemEvent(activity, menuItem, menuCategory)
+                        FacebookAppEventUtil.viewMenuItemEvent(activity, menuItem)
+                    }
                 }
             }
         }
     }
+
 
     private fun changeMealDeal(isSandwich: Boolean) {
         val menuItem1: MenuItem? = if (previousMenuItem != null) {
@@ -974,9 +944,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 menuItem.id
             )
         ) {
-            binding.favoriteIcon.setColorFilter(Color.parseColor("#F22424"))
+            binding.favoriteIcon.setImageResource(R.drawable.ic_favorite_filled)
         } else {
-            binding.favoriteIcon.setColorFilter(Color.parseColor("#DEDEDE"))
+            binding.favoriteIcon.setImageResource(R.drawable.ic_heart_unselected)
         }
     }
 
@@ -1002,9 +972,22 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             binding.sizesContainer.removeAllViews()
             if (menuItem.sizes.modifierItems.size > 1) {
                 binding.sizesLabel.visible()
-                binding.txtSelectOne.visible()
+
                 binding.checkBox.setVisible(true)
                 binding.sizesLabel.text = menuItem.sizes.attributes.name
+                val imageUrl = menuItem.sizes.attributes.image
+                if (imageUrl != null && !imageUrl.equals(
+                        "null",
+                        ignoreCase = true
+                    ) && !imageUrl.isEmpty() && !imageUrl.lowercase(
+                        Locale.getDefault()
+                    ).contains("default-image.png")
+                ) {
+                    Glide.with(requireContext()).load(imageUrl).apply(RequestOptions.centerCropTransform())
+                        .placeholder(R.drawable.imagepicker_image_placeholder)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).into(binding.sizesImage)
+                }
+
                 if (menuItem.sizes.modifierItems.size <= 3) {
                     menuItem.sizes.modifierItems.forEach { modifierItem ->
                         val view = LayoutInflater.from(activity)
@@ -1028,21 +1011,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 sizesRadiButton.setImageResource(R.drawable.ic_size_drawable_checked)
                                 initialSelectedEncountered =true
                             } else {
-//                                card.strokeWidth =
-//                                    ViewUtil.dpToPx(requireActivity(), 1)
-//                                card.strokeColor = ContextCompat.getColor(
-//                                    requireContext(),
-//                                    R.color.color_light_blue_shade
-//                                )
-//                                card.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
-//                                txtSizesName.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-//                                card.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.color_light_blue_shade))
-//                                txtPrice.setTextColor(
-//                                    ContextCompat.getColor(
-//                                        requireContext(),
-//                                        R.color.color_gray
-//                                    )
-//                                )
                                 card.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade)
                                 card.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
                                 card.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
@@ -1073,25 +1041,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 val txtModifierPrice = childView.findViewById<MaterialTextView>(R.id.txtSizesPrice)
                                 val sizesRadioBtn = childView.findViewById<ImageView>(R.id.radioButton)
                                 if (childView.tag == view1.tag) {
-//                                    childCard.setContentPadding(0, 0, 0, 0)
-//                                    childCard.strokeWidth =
-//                                        ViewUtil.dpToPx(requireActivity(), 1)
-//                                        txtModifierSizes.setTextColor(
-//                                            ContextCompat.getColor(
-//                                                requireContext(),
-//                                                R.color.white
-//                                            )
-//                                        )
-//                                    childCard.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_blue)
-//                                    childCard.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
-//                                    childCard.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_blue))
-//                                    txtModifierPrice.setTextColor(
-//                                            ContextCompat.getColor(
-//                                                requireContext(),
-//                                                R.color.color_light_blue_shade
-//                                            )
-//                                        )
-//                                    sizesRadioBtn.setImageResource(R.drawable.ic_size_drawable_checked)
                                     childCard.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_blue)
                                     childCard.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
                                     childCard.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
@@ -1137,10 +1086,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             sizesAdapter!!.setOnAction { modifierItem: ModifierItem ->
                                 menuPresenter!!.selectSize(modifierItem.id)
                                 sizesAdapter!!.notifyDataSetChanged()
-                                if (modifierGroupsAdapter != null) {
-                                    modifierGroupsAdapter!!.notifyDataSetChanged()
-
-                                }
                             }
                             binding.sizesRecyclerView.adapter = sizesAdapter
                             ViewCompat.setNestedScrollingEnabled(binding.sizesRecyclerView, false)
@@ -1214,17 +1159,19 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         binding.quantity.text = StringUtil.localize(quantityValue.toString())
     }
 
-    override fun setMenuItemTotalPrice(totalPrice: Double) {
+    override fun setMenuItemTotalPrice(totalPrice: Double, menuItemPrice: Double) {
         setMenuItemCalorieCount(menuPresenter.menuItem)
         if (totalPrice <= 0.0 && args.isPromo) {
             binding.total.text = CacheUtil.getInstance().getTranslations(
                 Text.FREE
             )
         } else {
-            binding.total.text = StringUtil.getFormattedPrice(totalPrice)
+            binding.total.text = StringUtil.getFormattedPrice(menuItemPrice)
+            binding.add.text = CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
+                .replace("(x)","${StringUtil.getFormattedPrice(totalPrice)}")
+
         }
         _totalPrice = totalPrice
-
     }
 
     override fun selectSize() {

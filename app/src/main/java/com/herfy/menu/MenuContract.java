@@ -83,7 +83,7 @@ public interface MenuContract {
 
         void setMenuItemQuantity(int quantity);
 
-        void setMenuItemTotalPrice(double totalPrice);
+        void setMenuItemTotalPrice(double totalPrice,double menuItemPrice);
 
         void selectSize();
 
@@ -297,6 +297,8 @@ public interface MenuContract {
         void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity);
 
         int getModifierGroupsCount();
+
+        List<ModifierGroup> getModifierGroupList();
 
         int getModifierGroupIndex(ModifierGroup modifierGroup);
 

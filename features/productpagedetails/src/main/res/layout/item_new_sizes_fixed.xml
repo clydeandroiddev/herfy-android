@@ -8,7 +8,7 @@
     android:layout_weight="1"
     app:cardPreventCornerOverlap="false"
     app:cardUseCompatPadding="false"
-    app:cardCornerRadius="16dp"
+    app:cardCornerRadius="20dp"
     app:strokeWidth="1dp"
     android:layout_margin="4dp">
 
@@ -29,7 +29,10 @@
             style="@style/Styles.Text.Footnote.Semi.Bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
             android:textColor="@color/colorPrimaryDark"
             tools:text="Small" />
 
@@ -38,27 +41,23 @@
             android:layout_width="match_parent"
             style="@style/Styles.Text.Footnote"
             android:gravity="center"
+            android:layout_marginTop="4dp"
             android:visibility="gone"
             tools:visibility="visible"
             tools:text="Sar 2"
             android:textColor="@color/colorPrimaryDark"
             android:layout_height="wrap_content"/>
 
-        <FrameLayout
-            android:id="@+id/check_layout"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:layout_gravity="center">
 
             <ImageView
                 android:id="@+id/radioButton"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+
                 android:layout_gravity="center"
+                android:layout_marginTop="10dp"
                 android:visibility="visible"
                 android:button="@drawable/item_drawable_radio_state"/>
-
-        </FrameLayout>
 
     </LinearLayout>
 

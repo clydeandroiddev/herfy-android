@@ -367,7 +367,7 @@ public class ModifierItemViewHolder extends RecyclerView.ViewHolder implements M
     }
 
     @Override
-    public void setMenuItemTotalPrice(double totalPrice) {
+    public void setMenuItemTotalPrice(double totalPrice, double menuItemPrice) {
 
     }
 
