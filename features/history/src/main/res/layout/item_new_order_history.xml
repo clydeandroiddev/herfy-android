@@ -42,6 +42,7 @@
                         android:gravity="start"
                         android:includeFontPadding="false"
                         android:maxLines="1"
+                        android:textAlignment="viewStart"
                         android:textColor="#212121"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toStartOf="@id/rated"
