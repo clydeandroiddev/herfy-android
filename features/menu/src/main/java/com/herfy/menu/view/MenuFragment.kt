@@ -64,6 +64,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
             CacheUtilHelper(it)
         }
     }
+    private var isCartEmpty = true
 
     override fun onResume() {
         super.onResume()
@@ -174,6 +175,22 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                                     viewModel.menuAdapterItems.value?.peekContent()?.let { menuAdapterItems ->
                                         menuCategoryItemAdapter.addData(menuAdapterItems)
                                     }
+                                    activity?.apply {
+                                        runOnUiThread {
+                                            binding.apply {
+                                                appBarLayout.setExpanded(true, false)
+                                                rvMenuCategoriesItems.isNestedScrollingEnabled = true
+                                                layoutSearchEmptyStateView.gone()
+                                                layoutFooter.apply {
+                                                    if(isCartEmpty) {
+                                                        layoutFooter.gone()
+                                                    } else {
+                                                        layoutFooter.visible()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                     btnClear.gone()
                                 }
                             }
@@ -198,6 +215,8 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     adapter = menuCategoryItemAdapter
                     addOnScrollListener(menuOnScrollListener)
                 }
+
+                searchEmptyStateView.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_RESULTS_FOUND, "No results found."))
 
                 layoutFooter.rootView.apply {
                     val tvViewBag = it.findViewById<TextView>(R.id.tvViewBag)
@@ -375,6 +394,22 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         viewModel.searchMenuAdapterItems.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { searchMenuAdapterItems ->
                 menuCategoryItemAdapter.addData(searchMenuAdapterItems)
+                activity?.apply {
+                    runOnUiThread {
+                        binding.apply {
+                            appBarLayout.setExpanded(false, false)
+                            rvMenuCategoriesItems.isNestedScrollingEnabled = false
+                            layoutSearchEmptyStateView.apply {
+                                if(searchMenuAdapterItems.isEmpty()) {
+                                    visible()
+                                } else {
+                                    gone()
+                                }
+                            }
+                            layoutFooter.gone()
+                        }
+                    }
+                }
             }
         }
 
@@ -545,9 +580,11 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 btnViewBag.setOnClickListener {
                     findNavController().navigateToDeepLink("nav_cart")
                 }
+                isCartEmpty = false
                 binding.layoutFooter.visible()
             } else {
                 btnViewBag.setOnClickListener(null)
+                isCartEmpty = true
                 binding.layoutFooter.gone()
             }
         }
