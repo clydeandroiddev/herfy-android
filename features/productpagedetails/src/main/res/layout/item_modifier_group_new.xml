@@ -7,11 +7,10 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/modifierImage"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginStart="@dimen/margin_small"
         android:background="@color/white"
-        android:padding="@dimen/padding_small"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="@+id/select"
         app:layout_constraintStart_toStartOf="parent"
