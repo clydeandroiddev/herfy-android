@@ -99,7 +99,7 @@ public interface PaymentContract {
 
         void showOrderType(Boolean checkout);
 
-        void showSelectedPyament();
+        void showSelectedPayment();
     }
 
     interface Presenter extends BasePresenter {

@@ -1895,7 +1895,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
     }
 
     @Override
-    public void showSelectedPyament() {
+    public void showSelectedPayment() {
 
     }
 

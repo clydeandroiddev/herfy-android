@@ -584,7 +584,6 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         double total = discountedSubtotal + deliveryCharge + vatAmount + promoPrice;
 
         if (loyaltyPointsUsed > 0) {
-            Double test =Math.min(loyaltyPointsUsed / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion()), getMenuItemsTotalPrice());
             total -= Math.min(loyaltyPointsUsed / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion()), getMenuItemsTotalPrice());
         }
 
@@ -905,6 +904,9 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                 break;
             case DELIVERY:
                 orderBody.addProperty("type", "deliver");
+                if(validate){
+                    orderBody.addProperty("delivery-charge", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", deliveryCharge)));
+                }
                 //orderBody.addProperty("delivery-charge", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", deliveryCharge)));
                 Address address = CacheUtil.getInstance().getOrderAddress();
                 if (address != null) {
@@ -1232,10 +1234,14 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                     double pointsSarValue = 0.0;
 
                     if (loyaltyPoints > 0) {
-                        pointsSarValue = loyaltyPoints;// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
+                        pointsSarValue = loyaltyPoints / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
                     }
 
-                    paymentView.setPriceDetails(getValidatedSubtotal(), orderData.getDiscountDisplay(), getValidatedTotal(), validatedDeliveryCharge, pointsSarValue, pointsEarnable, (int) (loyaltyPoints * Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion())), orderData.getCharges());
+                    paymentView.setPriceDetails(getValidatedSubtotal(),
+                            orderData.getDiscountDisplay(),
+                            getValidatedTotal(),
+                            validatedDeliveryCharge,
+                            pointsSarValue, pointsEarnable, loyaltyPointsUsed, orderData.getCharges());
 
                     boolean hasPromoItem = CacheUtil.getInstance().getCouponMenuItem() != null ||
                             CacheUtil.getInstance().getCampaignPromotionMenuItem() != null;
