@@ -290,11 +290,11 @@
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/sizesImage"
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_marginStart="@dimen/margin_large"
                         android:background="@color/white"
-                        android:padding="@dimen/padding_small"
+
                         android:scaleType="centerInside"
                         android:layout_marginTop="@dimen/margin_large"
                         app:layout_constraintBottom_toBottomOf="parent"
