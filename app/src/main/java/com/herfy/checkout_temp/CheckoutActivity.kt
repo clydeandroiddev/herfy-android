@@ -1286,11 +1286,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     @SuppressLint("MissingPermission")
     private fun continueOrder() {
         try {
-            val fragmentManager = supportFragmentManager
-            if (!fragmentManager.isDestroyed) {
-                val fragment = OrderDialogFragment.newInstance(false)
-                fragment.show(fragmentManager, OrderDialogFragment::class.java.simpleName)
-            }
             Handler().postDelayed({
                 runOnUiThread {
                     val concept = CacheUtil.getInstance().concept
