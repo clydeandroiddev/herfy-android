@@ -56,6 +56,7 @@ import com.google.maps.android.SphericalUtil
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.FirebaseECommerceEventUtil
+import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.applyPromotionEvent
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.base.BaseActivity
