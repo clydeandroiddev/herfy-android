@@ -201,7 +201,12 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_orderType_to_menu_item"
+            app:destination="@id/nav_menu_item"
+            app:popUpTo="@+id/nav_favorites">
 
+        </action>
         <action
             android:id="@+id/action_order_type_fragment_to_dialog"
             app:destination="@id/nav_dialog_order_type"
@@ -222,7 +227,7 @@
             android:id="@+id/action_order_type_to_favourites"
             app:destination="@id/nav_favorites"
             app:popUpTo="@+id/nav_order_type"
-            app:popUpToInclusive="false">
+            app:popUpToInclusive="true">
             <argument
                 android:name="isFromOrderType"
                 android:defaultValue="false"
@@ -261,6 +266,8 @@
 
         <argument
             android:name="menu_category_id"
+            android:defaultValue=""
+            app:nullable="true"
             app:argType="string" />
 
         <argument
@@ -281,7 +288,14 @@
             android:name="is_edit"
             android:defaultValue="false"
             app:argType="boolean" />
-
+        <argument
+            android:name="is_favorite"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="isFromOrderType"
+            android:defaultValue="false"
+            app:argType="boolean" />
         <argument
             android:name="is_upsell"
             android:defaultValue="false"
@@ -291,7 +305,11 @@
             android:id="@+id/action_menu_item_to_cart"
             app:destination="@id/nav_cart"
             app:popUpTo="@+id/nav_menu_item" />
-
+        <action
+            android:id="@+id/action_menu_item_to_favorite"
+            app:destination="@id/nav_favorites"
+            app:popUpTo="@+id/nav_menu_item"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -537,10 +555,18 @@
             app:destination="@id/nav_cart"
             app:popUpTo="@+id/nav_favorites" />
 
+
+        <action
+            android:id="@+id/action_favorites_to_home"
+            app:destination="@id/nav_herfy_home"
+            app:popUpTo="@+id/nav_favorites"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_favorites_to_menu_item"
             app:destination="@id/nav_menu_item"
-            app:popUpTo="@+id/nav_favorites" />
+            app:popUpTo="@+id/nav_favorites">
+
+        </action>
         <action
             android:id="@+id/action_favorites_to_order_type"
             app:destination="@id/nav_order_type"
