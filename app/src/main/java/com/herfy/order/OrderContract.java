@@ -54,6 +54,8 @@ public interface OrderContract {
 
         void selectAddressHome(Address address, boolean redownloadMenu);
 
+        void navigateMenuItemDetails(MenuItem menuItem);
+
         void selectAddressWork(int position);
 
         void selectAddressOther(Address address, boolean redownloadMenu);

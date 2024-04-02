@@ -141,6 +141,10 @@ public class TimeLineViewHolder extends RecyclerView.ViewHolder implements Order
     public void selectAddressHome(Address address, boolean redownloadMenu) {
 
     }
+    @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
+
+    }
 
     @Override
     public void selectAddressWork(int position) {
