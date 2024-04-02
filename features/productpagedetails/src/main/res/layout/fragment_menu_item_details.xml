@@ -263,9 +263,9 @@
                         android:layout_marginEnd="@dimen/margin_large"
                         android:src="@drawable/ic_modifier_group_checked_selected"
                         android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"
+                        app:layout_constraintBottom_toBottomOf="@+id/sizesImage"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/sizesImage"
                         tools:visibility="visible" />
 
 
@@ -275,45 +275,35 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_large"
-                        android:layout_marginTop="@dimen/margin_large"
                         android:gravity="start"
                         android:includeFontPadding="false"
                         android:text="Choose size"
                         android:textAlignment="viewStart"
                         android:textColor="@color/black"
                         android:textSize="14sp"
-                        app:layout_constraintStart_toEndOf="@+id/imageCardView"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/sizesImage"
+                        app:layout_constraintTop_toTopOf="@+id/sizesImage" />
 
 
-                    <LinearLayout
-                        android:id="@+id/imageCardView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/background_modifier_group_image"
-                        android:orientation="vertical"
+
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/sizesImage"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
                         android:layout_marginStart="@dimen/margin_large"
-                        app:layout_constraintTop_toTopOf="@+id/sizes_label"
-                        app:layout_constraintBottom_toBottomOf="@+id/txtSelectOne"
-                        app:layout_constraintStart_toStartOf="parent">
-
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="@dimen/padding_small"
-                            tools:src="@drawable/ic_car_drive_thru" />
-                    </LinearLayout>
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/txtSelectOne"
-                        style="@style/Styles.Text.Footnote"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="@+id/sizes_label"
-                        app:layout_constraintTop_toBottomOf="@+id/sizes_label"
-                        tools:text="Select up to 2" />
+                        android:background="@color/white"
+                        android:padding="@dimen/padding_small"
+                        android:scaleType="centerInside"
+                        android:layout_marginTop="@dimen/margin_large"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Circle"
+                        app:strokeColor="@color/background_color_light_blue"
+                        app:strokeWidth="2dp"
+                        tools:src="@tools:sample/avatars" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
@@ -322,6 +312,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
                     android:orientation="horizontal"
+                    android:layout_marginTop="16dp"
                     android:layout_marginStart="@dimen/margin_large"
                     android:visibility="gone"
                     tools:visibility="visible" />

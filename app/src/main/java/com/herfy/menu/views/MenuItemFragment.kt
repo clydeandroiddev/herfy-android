@@ -37,7 +37,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
 import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.facebook.FacebookAppEventUtil
-import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
@@ -454,54 +453,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         }
                     })
                     .into(binding.image)
-//                binding.allergensContainer.isRtl = LocaleUtil.getInstance().isArabic
-//                binding.allergensContainer.removeAllViews()
-//                for (allergen in menuItem.allergens) {
-//                    val allergenView = LayoutInflater.from(activity)
-//                        .inflate(R.layout.item_allergen, binding.allergensContainer, false)
-//                    val allergenIcon = allergenView.findViewById<ImageView>(R.id.icon)
-//                    val iconValue = allergen.attributes.icon.getValue(LocaleUtil.getInstance().language)
-//                    //iconValue = StringUtil.getCloudinaryUrl(100, 100, iconValue);
-//                    if (iconValue == null || iconValue.equals(
-//                            "null",
-//                            ignoreCase = true
-//                        ) || iconValue.isEmpty() || iconValue.lowercase(
-//                            Locale.getDefault()
-//                        ).contains("default-image.png")
-//                    ) {
-//                        allergenIcon.visibility = View.GONE
-//                    } else {
-//                        Glide.with(it).load(iconValue)
-//                            .apply(RequestOptions.centerCropTransform()).diskCacheStrategy(
-//                                DiskCacheStrategy.ALL
-//                            ).listener(object : RequestListener<Drawable?> {
-//                                override fun onLoadFailed(
-//                                    e: GlideException?,
-//                                    model: Any,
-//                                    target: Target<Drawable?>,
-//                                    isFirstResource: Boolean
-//                                ): Boolean {
-//                                    allergenIcon.visibility = View.GONE
-//                                    return false
-//                                }
-//
-//                                override fun onResourceReady(
-//                                    resource: Drawable?,
-//                                    model: Any,
-//                                    target: Target<Drawable?>,
-//                                    dataSource: DataSource,
-//                                    isFirstResource: Boolean
-//                                ): Boolean {
-//                                    allergenIcon.visibility = View.VISIBLE
-//                                    return false
-//                                }
-//                            }).into(allergenIcon)
-//                    }
-////                    val allergenName = allergenView.findViewById<TextView>(R.id.value)
-////                    allergenName.typeface = FontHandler.getRegularTypeface()
-////                    allergenName.text = allergen.attributes.name.getValue(LocaleUtil.getInstance().language)
-////                    binding.allergensContainer.addView(allergenView)
-//                }
+
                 binding.name.text = menuItem.getName(LocaleUtil.getInstance().language)
                 val caloriesValue = menuItem.calories
                 val calorieCount = menuItem.calorieCount
@@ -1020,9 +972,22 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             binding.sizesContainer.removeAllViews()
             if (menuItem.sizes.modifierItems.size > 1) {
                 binding.sizesLabel.visible()
-                binding.txtSelectOne.visible()
+
                 binding.checkBox.setVisible(true)
                 binding.sizesLabel.text = menuItem.sizes.attributes.name
+                val imageUrl = menuItem.sizes.attributes.image
+                if (imageUrl != null && !imageUrl.equals(
+                        "null",
+                        ignoreCase = true
+                    ) && !imageUrl.isEmpty() && !imageUrl.lowercase(
+                        Locale.getDefault()
+                    ).contains("default-image.png")
+                ) {
+                    Glide.with(requireContext()).load(imageUrl).apply(RequestOptions.centerCropTransform())
+                        .placeholder(R.drawable.imagepicker_image_placeholder)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).into(binding.sizesImage)
+                }
+
                 if (menuItem.sizes.modifierItems.size <= 3) {
                     menuItem.sizes.modifierItems.forEach { modifierItem ->
                         val view = LayoutInflater.from(activity)
