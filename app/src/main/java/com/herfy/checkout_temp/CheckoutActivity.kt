@@ -39,19 +39,23 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.CancelableCallback
+import com.google.android.gms.maps.Projection
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolygonOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.firestore.model.mutation.Overlay
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.maps.android.SphericalUtil
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
 import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.applyPromotionEvent
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.base.BaseActivity
@@ -124,7 +128,6 @@ import company.tap.gosellapi.open.controllers.SDKSession
 import company.tap.gosellapi.open.delegate.SessionDelegate
 import company.tap.gosellapi.open.models.CardsList
 import dagger.hilt.android.AndroidEntryPoint
-
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import org.json.JSONException
@@ -135,6 +138,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+
 
 @AndroidEntryPoint
 class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
@@ -181,6 +185,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private var isShowCardFailed = false
 
     private val permissionManager: PermissionManager by permissionProvider()
+    private val markerOptionsList = arrayListOf<MarkerOptions>()
+
+    private val mapOverlays: List<Overlay> = arrayListOf()
+    private val projection: Projection? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCheckoutPageBinding.inflate(layoutInflater)
@@ -320,6 +328,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
 
     private fun showMap() {
+        markerOptionsList.clear()
+        val currentMarkerIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_address_location)
         val storeLat = CacheUtil.getInstance().orderStore.attributes.lat
         val storeLon = CacheUtil.getInstance().orderStore.attributes.lng
         val storeLocation = LatLng(storeLat, storeLon)
@@ -327,39 +337,42 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         val markerOptions = MarkerOptions()
         val supportMapFragment =
             supportFragmentManager.findFragmentById(R.id.checkout_map) as OrderSupportMapFragment?
+        supportMapFragment?.setListener { binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(true) }
         supportMapFragment?.getMapAsync { googleMap ->
             mMap = googleMap
             mMap?.uiSettings?.isCompassEnabled = false
             mMap?.uiSettings?.isZoomControlsEnabled = false
             mMap?.uiSettings?.isMapToolbarEnabled = false
-            if (orderType === OrderType.DELIVERY) {
-                val lat = CacheUtil.getInstance().orderAddress.attributes.lat.toDouble()
-                val lon = CacheUtil.getInstance().orderAddress.attributes.longt.toDouble()
-                val addressLocation = LatLng(lat, lon)
-                val bitmapDrawable = ContextCompat.getDrawable(
-                    this, R.drawable.ic_address_location
-                ) as BitmapDrawable?
-                if (bitmapDrawable != null) {
-                    val bitmap = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 110, 110, true)
-                    val canvas = Canvas(bitmap)
-                    val view = inflater.inflate(R.layout.marker_store_new, null)
-                    val textView =
-                        view.findViewById<TextView>(R.id.kmAway)
-                    val image = view.findViewById<ImageView>(R.id.icon)
-                    image.setImageResource(R.drawable.delivery_marker_selected)
-                    val paint = Paint()
-                    val filter: ColorFilter = PorterDuffColorFilter(
-                        Color.parseColor(CacheUtil.getInstance().colorMain),
-                        PorterDuff.Mode.SRC_IN
-                    )
-                    val task = fusedLocationProviderClient!!.lastLocation
-                    task.addOnSuccessListener { location ->
-                        location?.let {
-                            val currentLocation = LatLng(it.latitude, it.longitude)
-                            val currentDistance = DistanceCalculator.calculateDistance(
-                                currentLocation.latitude, currentLocation.longitude,
-                                storeLocation.latitude, storeLocation.longitude
-                            )
+
+        if (orderType == OrderType.DELIVERY) {
+            val lat = CacheUtil.getInstance().orderAddress.attributes.lat.toDouble()
+            val lon = CacheUtil.getInstance().orderAddress.attributes.longt.toDouble()
+            val addressLocation = LatLng(lat, lon)
+            val bitmapDrawable = ContextCompat.getDrawable(
+                this, R.drawable.ic_address_location
+            ) as BitmapDrawable?
+
+            if (bitmapDrawable != null) {
+                val bitmap = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 110, 110, true)
+                val canvas = Canvas(bitmap)
+                val view = inflater.inflate(R.layout.marker_store_new, null)
+                val textView =
+                    view.findViewById<TextView>(R.id.kmAway)
+                val image = view.findViewById<ImageView>(R.id.icon)
+                image.setImageResource(R.drawable.delivery_marker_selected)
+                val paint = Paint()
+                val filter: ColorFilter = PorterDuffColorFilter(
+                    Color.parseColor(CacheUtil.getInstance().colorMain),
+                    PorterDuff.Mode.SRC_IN
+                )
+                val task = fusedLocationProviderClient!!.lastLocation
+                task.addOnSuccessListener { location ->
+                    location?.let {
+                        val currentLocation = LatLng(it.latitude, it.longitude)
+                        val currentDistance = DistanceCalculator.calculateDistance(
+                            currentLocation.latitude, currentLocation.longitude,
+                            storeLocation.latitude, storeLocation.longitude
+                        )
 
                             val distanceValue = StringUtil.getDistance(currentDistance)
 
@@ -371,32 +384,42 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                     this@CheckoutActivity, view
                                 )
                             )
-                            markerOptions.icon(icon)
-                            markerOptions.anchor(0.5f, 1f)
-                            mMap?.addMarker(markerOptions)
-                            mMap?.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    markerOptions.position,
-                                    13f
-                                )
-                            )
-                            supportMapFragment.setListener {
-                                binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
-                                    true
-                                )
-                            }
+                            val currentLocationMarker = MarkerOptions()
+                        currentLocationMarker.icon(currentMarkerIcon)
+                        currentLocationMarker.position(addressLocation)
+                        currentLocationMarker.anchor(0.5f, 1f)
+                        markerOptionsList.add(currentLocationMarker)
+                        mMap?.addMarker(currentLocationMarker)
 
+                        val storeLocationMarker = MarkerOptions()
+                        storeLocationMarker.icon(icon)
+                        storeLocationMarker.position(storeLocation)
+                            storeLocationMarker.anchor(0.5f, 1f)
+                            markerOptionsList.add(storeLocationMarker)
+                        mMap?.addMarker(storeLocationMarker)
 
-                        }
-                    }.addOnFailureListener {
-                        it.printStackTrace()
-                        AppLogger.printRetrofitError(it)
+                        val builder = LatLngBounds.Builder()
+                        builder.include(addressLocation)
+                        builder.include(storeLocation)
+                        val bounds = builder.build()
+                        val cu =  CameraUpdateFactory.newLatLngBounds(
+                           bounds,
+                            50
+                        )
+                        mMap?.animateCamera(cu, object : CancelableCallback {
+                            override fun onCancel() {}
+                                override fun onFinish() {
+                                    val zout = CameraUpdateFactory.zoomBy(-1.0f)
+                                mMap?.animateCamera(zout)
+                                }
+                            })
+
+                        drawCurveOnMap(addressLocation, storeLocation)
                     }
-//                paint.setColorFilter(filter)
-//                canvas.drawBitmap(bitmap, 0f, 0f, paint)
-                    markerOptions.position(addressLocation)
-//                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-
+                }.addOnFailureListener {
+                    it.printStackTrace()
+                    AppLogger.printRetrofitError(it)
+                }
                 }
             } else {
                 markerOptions.position(storeLocation)
@@ -425,20 +448,38 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                     this@CheckoutActivity, view
                                 )
                             )
-                            markerOptions.icon(icon)
-                            markerOptions.anchor(0.5f, 1f)
-                            mMap?.addMarker(markerOptions)
-                            mMap?.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    markerOptions.position,
-                                    13f
-                                )
-                            )
-                            supportMapFragment.setListener {
-                                binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
-                                    true
-                                )
-                            }
+                            val currentLocationMarker = MarkerOptions()
+                        currentLocationMarker.icon(currentMarkerIcon)
+                        currentLocationMarker.position(currentLocation)
+                            currentLocationMarker.anchor(0.5f, 1f)
+                        markerOptionsList.add(currentLocationMarker)
+                            mMap?.addMarker(currentLocationMarker)
+
+
+                        val storeLocationMarker = MarkerOptions()
+                        storeLocationMarker.icon(icon)
+                        storeLocationMarker.position(storeLocation)
+                        storeLocationMarker.anchor(0.5f, 1f)
+                        markerOptionsList.add(storeLocationMarker)
+                            mMap?.addMarker(storeLocationMarker)
+
+                        val builder = LatLngBounds.Builder()
+                        builder.include(currentLocation)
+                        builder.include(storeLocation)
+                        val bounds = builder.build()
+                        val cu =  CameraUpdateFactory.newLatLngBounds(
+                            bounds,
+                            50
+                        )
+                        mMap?.animateCamera(cu, object : CancelableCallback {
+                            override fun onCancel() {}
+                                override fun onFinish() {
+                                val zout = CameraUpdateFactory.zoomBy(-1.0f)
+                                mMap?.animateCamera(zout)
+                                }
+                        })
+
+                            drawCurveOnMap(currentLocation, storeLocation)
 
                         }
                     }?.addOnFailureListener {
@@ -450,6 +491,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
 
         }
+
+
+
     }
 
 
@@ -1780,5 +1824,65 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
     fun setUpdatedPhoneNumber(phoneNumber:String) {
         binding?.tvMobileNumber?.text = phoneNumber
+    }
+
+    fun drawCurveOnMap(currentLocation: LatLng, storeLocation: LatLng){
+        val k = 0.5 //curve radius
+        var h = SphericalUtil.computeHeading(currentLocation, storeLocation)
+        var d = 0.0
+        val p: LatLng?
+
+        //The if..else block is for swapping the heading, offset and distance
+        //to draw curve always in the upward direction
+        if (h < 0) {
+            d = SphericalUtil.computeDistanceBetween(storeLocation, currentLocation)
+            h = SphericalUtil.computeHeading(storeLocation, currentLocation)
+            //Midpoint position
+            p = SphericalUtil.computeOffset(storeLocation, d * 0.5, h)
+        } else {
+            d = SphericalUtil.computeDistanceBetween(currentLocation, storeLocation)
+
+            //Midpoint position
+            p = SphericalUtil.computeOffset(currentLocation, d * 0.5, h)
+        }
+
+        //Apply some mathematics to calculate position of the circle center
+        val x = (1 - k * k) * d * 0.5 / (2 * k)
+        val r = (1 + k * k) * d * 0.5 / (2 * k)
+
+        val c = SphericalUtil.computeOffset(p, x, h + 90.0)
+
+        //Calculate heading between circle center and two points
+        val h1 = SphericalUtil.computeHeading(c, currentLocation)
+        val h2 = SphericalUtil.computeHeading(c, storeLocation)
+
+        //Calculate positions of points on circle border and add them to polyline options
+        val numberOfPoints = 1000 //more numberOfPoints more smooth curve you will get
+        val step = (h2 - h1) / numberOfPoints
+
+        //Create PolygonOptions object to draw on map
+        val polygon = PolygonOptions()
+
+        //Create a temporary list of LatLng to store the points that's being drawn on map for curve
+        val temp = arrayListOf<LatLng>()
+
+        //iterate the numberOfPoints and add the LatLng to PolygonOptions to draw curve
+        //and save in temp list to add again reversely in PolygonOptions
+        for (i in 0 until numberOfPoints) {
+            val latlng = SphericalUtil.computeOffset(c, r, h1 + i * step)
+            polygon.add(latlng) //Adding in PolygonOptions
+            temp.add(latlng)    //Storing in temp list to add again in reverse order
+        }
+
+        //iterate the temp list in reverse order and add in PolygonOptions
+        for (i in (temp.size - 1) downTo 1) {
+            polygon.add(temp[i])
+        }
+        val lineColor = getColor(R.color.background_color_blue)
+        polygon.strokeColor(lineColor)
+        polygon.strokeWidth(12f)
+        mMap?.addPolygon(polygon)
+
+        temp.clear()
     }
 }
