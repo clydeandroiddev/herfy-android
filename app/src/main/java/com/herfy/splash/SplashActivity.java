@@ -146,7 +146,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                     Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                     intent.putExtra("fromChangeLanguage", true);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    if(!BuildUtil.splashVideoApp()) {
+                    if (!BuildUtil.splashVideoApp()) {
                         ActivitySwitcher.animationOut(findViewById(R.id.container), getWindowManager(), new ActivitySwitcher.AnimationListener() {
                             @Override
                             public void onAnimationStarted() {
@@ -338,7 +338,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             startActivity(intent, bundle);
             finish();
         } else {
-            if(BuildConfig.DISABLE_SPLASH_ANIMATION || BuildUtil.splashBackgroundApp() || videoCompleted) {
+            if (BuildConfig.DISABLE_SPLASH_ANIMATION || BuildUtil.splashBackgroundApp() || videoCompleted) {
                 proceedNext(false, finalIntent);
             } else {
                 animateLogo(false, finalIntent);
@@ -394,10 +394,9 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                 if (CacheUtil.getInstance().getApplication() != null && CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0) {
                     forceLocation = true;
                 }
-                if(CacheUtil.getInstance().isSeparatedMenus() && CacheUtil.getInstance().getCartQuantity() == 0) {
+                if (CacheUtil.getInstance().isSeparatedMenus() && CacheUtil.getInstance().getCartQuantity() == 0) {
                     forceLocation = false;
                 }
-                proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), forceLocation);
             });
         } else {
             image.setImageResource(BuildUtil.splashImage());

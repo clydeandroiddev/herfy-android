@@ -2,6 +2,7 @@ package com.herfy.splash;
 
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
