@@ -6,7 +6,6 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.ActivityResultLauncher
@@ -225,7 +224,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
                 is LoginViewState.ShowError -> {
                     showAlertDialog(
-                        title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
+                        title = "",
                         message = it.error
                     )
                 }

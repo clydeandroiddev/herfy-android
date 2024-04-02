@@ -38,7 +38,7 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         binding = DialogOrderTypeSelectionBinding.inflate(layoutInflater)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
-        dialog?.window?.decorView?.layoutDirection = if(LocaleUtil.getInstance().isArabic) {
+        dialog?.window?.decorView?.layoutDirection = if (LocaleUtil.getInstance().isArabic) {
             View.LAYOUT_DIRECTION_RTL
         } else {
             View.LAYOUT_DIRECTION_LTR
@@ -79,8 +79,8 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
                 CacheUtil.getInstance().getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
             descriptionPickup.text = CacheUtil.getInstance()
                 .getTranslations(Text.PICKUP_DESCRIPTION, "Pickup your order inside the restaurant")
-            curbside.text = CacheUtil.getInstance()
-                .getTranslations(Text.CURBSIDE_PICKUP_LABEL, "Curbside pickup")
+            curbside.text =
+                CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP_LABEL, "Curbside pickup")
             descriptionCurbside.text = CacheUtil.getInstance().getTranslations(
                 Text.CURBSIDE_DESCRIPTION,
                 "Park at the restaurant and your order will be served in your car"

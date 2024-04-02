@@ -335,7 +335,6 @@ if (CacheUtil.getInstance().getOrderStore() != null) {
                 } else {
                     CacheUtil.getInstance().setFavoriteMenuCategory(menuPresenter.getMenuCategory());
                     CacheUtil.getInstance().setFavoriteMenuItem(menuPresenter.getMenuItem());
-                    //Intent intent = new Intent(context, SignInActivity.class);
                     Intent intent = new Intent(context, AuthActivity.class);
                     intent.putExtra("favorite_home", true);
                     context.startActivity(intent);

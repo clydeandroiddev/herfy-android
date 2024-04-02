@@ -1,21 +1,15 @@
 package com.herfy.authentication.views
 
 import android.app.Activity
-import android.content.Intent
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.herfy.authentication.R
 import com.herfy.authentication.databinding.FragmentAddNewNameBinding
 import com.herfy.authentication.state.LoginOTPPageViewState
-import com.herfy.authentication.viewmodel.InputUserDetailViewModel
 import com.herfy.authentication.viewmodel.LoginOTPViewModel
-import com.herfy.authentication.viewmodel.LoginViewModel
-import com.herfy.utils.base.mvvm.BaseActivity
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
-import com.herfy.utils.extensions.cast
-import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.collectViewModelState
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,8 +79,7 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
 
                 is LoginOTPPageViewState.ShowError -> {
                     showAlertDialog(
-                        title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
-                        message = it.error
+                        title = "", message = it.error
                     )
                 }
 

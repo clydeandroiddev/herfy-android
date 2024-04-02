@@ -784,6 +784,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
 
         if (intent.getBooleanExtra("autoLogin", false)) {
+            intent.removeExtra("autoLogin")
             binding.sidebar.signin.performClick()
         }
     }
