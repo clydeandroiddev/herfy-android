@@ -606,7 +606,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             } else {
                 Toast.makeText(
                     this@CheckoutActivity,
-                    CacheUtil.getInstance().getTranslations(Text.SELECT_PAYMENT_METHOD),
+                    CacheUtil.getInstance().getTranslations(Text.PLEASE_SELECT_PAYMENT_TYPE, "Please select payment type"),
                     Toast.LENGTH_SHORT
                 ).show()
             }
