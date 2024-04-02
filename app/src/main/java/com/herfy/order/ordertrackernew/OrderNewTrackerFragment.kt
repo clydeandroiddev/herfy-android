@@ -354,13 +354,13 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
             orderPaymentDetails.discountLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
-            totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
+            totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL, "Total")
             paymentSummaryLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.PAYMENT_SUMMARY, "Payment Summary")
             orderPaymentDetails.paymentSummaryLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.PAYMENT_SUMMARY, "Payment Summary")
             orderPaymentDetails.totalLabel.text =
-                CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
+                CacheUtil.getInstance().getTranslations(Text.TOTAL, "Total")
             orderHelpDetails.haveATroubleLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.HAVE_A_TROUBLE, "Have a trouble with your order?")
             orderHelpDetails.herfySupportLabel.text = CacheUtil.getInstance().getTranslations(

@@ -163,7 +163,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
             youRatedThisOrderLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.YOU_RATED_THIS_ORDER, "Your rated this order.")
             title.text =
-                CacheUtil.getInstance().getTranslations(Text.ORDER_DETAILS, "Order Details")
+                CacheUtil.getInstance().getTranslations(Text.ORDER_DETAILS_LABEL, "Order Details")
             orderItemsLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.ORDER_ITEMS, "Order Items")
             paymentSummaryLabel.text =
@@ -179,7 +179,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
             deliverLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
             discountLabel.text = CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
-            totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
+            totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL, "Total")
         }
     }
 

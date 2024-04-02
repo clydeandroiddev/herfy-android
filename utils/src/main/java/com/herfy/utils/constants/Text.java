@@ -215,7 +215,7 @@ public class Text {
     public static final String ORDER_HISTORY = "order_history";
     public static final String ORDER_ID = "order_id";
     public static final String REORDER = "reorder";
-    public static final String RATE = "rate";
+    public static final String RATE = "rate_label";
     public static final String OPTIONS = "options";
     public static final String QUANTITY = "quantity";
     public static final String ITEM_QUANTITY = "item_quantity";
@@ -1148,6 +1148,8 @@ public class Text {
     public static final String CANCEL_ORDER_NEW = "cancel_order_new";
 
     public static final String HOW_WAS_YOUR_ORDER = "how_was_your_order";
+
+    public static final String ORDER_DETAILS_LABEL = "order_details";
 
     public static final String YOU_RATED_THIS_ORDER = "you_rated_this_order";
 

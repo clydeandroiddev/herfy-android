@@ -112,6 +112,7 @@
                     android:maxLines="2"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
+                    android:textAlignment="viewStart"
                     android:textColor="#0C0C0C"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
