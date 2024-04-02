@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.DisplayMetrics
@@ -131,6 +132,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        checkBackground()
+        resetFrequentlyAddedFavoritesInCart()
         activity?.let { act ->
             val displayMetrics = DisplayMetrics()
             act.windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -291,6 +294,19 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         activity?.cast<BaseActivity> {
             it.setCartExpiry()
         }
+    }
+
+    private fun resetFrequentlyAddedFavoritesInCart() {
+        val updatedCart: ArrayList<MenuItem> = ArrayList<MenuItem>().apply {
+            CacheUtil.getInstance().cart.forEach { menuItem ->
+                menuItem.isAddedToCart = false
+                add(menuItem)
+            }
+
+        }
+        CacheUtil.getInstance().setFrequentlyQuantityShouldShow(false,"")
+        System.out.println("Updated cart " + updatedCart)
+        CacheUtil.getInstance().cart = updatedCart
     }
 
     override fun setupViews() {
@@ -1249,8 +1265,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuItem.attributes.image,
                         ViewUtil.dpToPx(it, 16)
                     )
+
+                    // Post a delayed action to execute back press after a delay
                     if (isShouldBackPressed) {
-                        activity?.onBackPressed()
+                        Handler().postDelayed({
+                            activity?.onBackPressed()
+                        }, 300) // Adjust the delay time as needed
                     }
 
                 }

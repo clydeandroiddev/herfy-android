@@ -2758,6 +2758,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             int cartCount = CacheUtil.getInstance().getCartQuantity();
             frequentlyMenuItem.isSandwichOnly = false;
             frequentlyMenuItem.setAddedToCart(true);
+            CacheUtil.getInstance().setFrequentlyQuantityShouldShow(frequentlyMenuItem.isAddedToCart(),frequentlyMenuItem.getId());
             removeMukafaaRedemption();
             CacheUtil.getInstance().addToCart(frequentlyMenuItem);
             if (cartCount == 0) {
@@ -4831,6 +4832,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 frequentlyMenuItem = GsonHelper.gsonFinal().fromJson(menuItemDb.data, MenuItem.class);
             }
         }
+        System.out.println("Cart menu presenter item hash code " + frequentlyMenuItem.hashCode());
         if (menuCategory == null) {
             for (String menuCategoryId : CacheUtil.getInstance().getMenuCategories().keySet()) {
                 if (CacheUtil.getInstance().getMenuCategories().get(menuCategoryId) != null && CacheUtil.getInstance().getMenuCategories().get(menuCategoryId).second.contains(menuItem.getId())) {

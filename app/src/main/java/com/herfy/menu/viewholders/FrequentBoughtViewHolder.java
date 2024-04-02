@@ -1,6 +1,7 @@
 package com.herfy.menu.viewholders;
 
 import android.content.Context;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -112,6 +114,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                System.out.println("Cart menu position " + getAbsoluteAdapterPosition());
                 menuPresenter.addMenuItemToCart(menuItem.getId());
             }
         });
@@ -130,15 +133,22 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
 
     public boolean isFavoriteItemInCart(MenuItem menuItem) {
         ArrayList<MenuItem> cartItems = CacheUtil.getInstance().getCart();
+        Pair<Boolean, String> frequentlyMenuAdded = CacheUtil.getInstance().getFrequentlyQuantityShouldShow();
+
+        boolean isFrequentMenuAdded = frequentlyMenuAdded.first;
+        String frequentMenuId = frequentlyMenuAdded.second;
+
         for (MenuItem cartItem : cartItems) {
             if (isSameMenuItem(cartItem, menuItem) && cartItem.isAddedToCart()) {
+                return true;
+            }
+            if (isFrequentMenuAdded && !frequentMenuId.isEmpty() && Objects.equals(String.valueOf(cartItem.getId()), frequentMenuId)) {
                 return true;
             }
         }
 
         return false;
     }
-
     private boolean isSameMenuItem(MenuItem item1, MenuItem item2) {
         return Objects.equals(String.valueOf(item1.getId()), item2.getId());
     }
