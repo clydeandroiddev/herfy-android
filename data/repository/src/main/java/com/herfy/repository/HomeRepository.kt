@@ -7,7 +7,6 @@ import com.herfy.database.AppDatabase
 import com.herfy.database.entities.MenuCategoryEntity.Companion.toDomain
 import com.herfy.database.entities.MenuItemEntity
 import com.herfy.model.HomeResponse
-import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
@@ -61,6 +60,7 @@ interface HomeRepository {
     suspend fun getLoyaltyTiers(response: (HomeResponse) -> Unit)
     suspend fun getLastOrder(orderId: String, response: (HomeResponse) -> Unit)
     suspend fun getCustomerOrder(customerId: String, response: (HomeResponse) -> Unit)
+    suspend fun getMenuCartItems(menuItems: (ArrayList<MenuItem>) -> Unit)
 }
 
 class HomeRepositoryImpl @Inject constructor(
@@ -654,5 +654,11 @@ class HomeRepositoryImpl @Inject constructor(
                 response(HomeResponse(false, null, error.toString()))
             }
         })
+    }
+
+    override suspend fun getMenuCartItems(menuItems : (ArrayList<MenuItem>) -> Unit) {
+        cacheUtilHelper.getCartItems {
+            menuItems(it)
+        }
     }
 }

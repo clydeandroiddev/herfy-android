@@ -491,8 +491,9 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.showCart.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { isAvail ->
+                promotionDetailBottomSheet?.dismissAllowingStateLoss()
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
-                findNavController().navigate("nav_cart/$isAvail")
+                findNavController().navigateToDeepLink("nav_cart/$isAvail")
             }
         }
 
