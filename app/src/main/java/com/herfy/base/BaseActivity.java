@@ -545,7 +545,6 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
             FragmentManager manager = getSupportFragmentManager();
             //  Ensure the activity is in a valid state for fragment transactions to prevent IllegalStateException
             if (isCanProceedFragmentTransaction(manager)) {
-
                 if (isDialogVisible(alertDialog)) {
                     dismissDialog(alertDialog);
                 }

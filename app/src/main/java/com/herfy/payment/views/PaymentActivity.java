@@ -45,6 +45,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+
 import com.checkout.tokenization.model.TokenDetails;
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
 import com.google.android.gms.maps.model.LatLng;
@@ -656,7 +657,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                 firebaseAddPaymentInfoEvent();
 
             } else {
-                Toast.makeText(PaymentActivity.this, CacheUtil.getInstance().getTranslations(Text.SELECT_PAYMENT_METHOD), Toast.LENGTH_SHORT).show();
+                Toast.makeText(PaymentActivity.this, CacheUtil.getInstance().getTranslations(Text.PLEASE_SELECT_PAYMENT_TYPE, "Please select payment type"), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -942,7 +943,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
 
     private void showPanel() {
         if (CacheUtil.getInstance().getOrderPayment() == PaymentType.NONE) {
-            Toast.makeText(PaymentActivity.this, CacheUtil.getInstance().getTranslations(Text.SELECT_PAYMENT_METHOD), Toast.LENGTH_SHORT).show();
+            Toast.makeText(PaymentActivity.this, CacheUtil.getInstance().getTranslations(Text.PLEASE_SELECT_PAYMENT_TYPE, "Please select payment type"), Toast.LENGTH_SHORT).show();
         } else {
             if (isRemove) {
                 widget.setSelectedDate(LocalDate.now());

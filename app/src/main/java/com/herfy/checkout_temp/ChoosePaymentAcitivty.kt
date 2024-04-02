@@ -6,15 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.card.MaterialCardView
+import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.checkout.databinding.ActivityChoosePaymentMethodBinding
@@ -23,6 +22,7 @@ import com.herfy.payment.PaymentPresenter
 import com.herfy.payment.views.PaymentDialogFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.ninjaTap
+import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.CacheUtil
 import com.moneyhash.sdk.android.ResultType
 import com.moneyhash.sdk.android.payment.PaymentResultContract
@@ -33,9 +33,8 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType
 import com.skylinedynamics.solosdk.api.models.objects.PrayerTime
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge
-import io.shipbook.shipbooksdk.Log
-import com.herfy.checkout.R as checkoutR
 import java.util.Calendar
+import com.herfy.checkout.R as checkoutR
 
 class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
 
@@ -101,9 +100,11 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
 
     override fun setupViews() {
        val cards = CacheUtil.getInstance().customerCards
+
+        binding.chooseMethodLabel.setVisible(cards.size >= 1)
         binding.confirmButton
             .setText(CacheUtil.getInstance().getTranslations(Text.CONFIRM_LABEL,"Confirm"))
-       val creditCardAdapter = CardsAdapter(cards) { card, position ->
+       val creditCardAdapter =  CardsAdapter(cards) { card, position ->
             selectedCard = card
             if (isCashPaymentAvailable) {
                 rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
@@ -125,8 +126,20 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
         binding
             .confirmButton
             .ninjaTap(lifecycleScope) {
-                CacheUtil
-                    .getInstance().orderPayment = selectedPaymentType
+                selectedCard?.let {selectedCards->
+                    CacheUtil
+                        .getInstance().orderPayment = PaymentType.CARD
+                    CacheUtil
+                        .getInstance()
+                        .setCustomCard(Gson().toJson(selectedCards))
+                }
+                selectedPaymentType?.let { paymentType->
+                    CacheUtil
+                        .getInstance()
+                        .setCustomCard("")
+                    CacheUtil
+                        .getInstance().orderPayment = paymentType
+                }
                 onBackPressed()
             }
 

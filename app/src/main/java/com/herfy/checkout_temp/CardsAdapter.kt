@@ -1,5 +1,6 @@
 package com.herfy.checkout_temp
 
+import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
@@ -31,14 +32,14 @@ class CardsAdapter(private val cards: List<CustomerCard>, private var selectedPo
 
 
             if (selectedPos == position) {
-                Log.e("Selected", "selectedPos "+selectedPos+"---"+position)
-                binding.rbCard.isChecked = true
-                binding.cardsContainer.strokeColor = Color.parseColor(CacheUtil.getInstance().colorMain)
-                binding.cardsContainer.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.card_selected_bg))
+                Log.e("Selected", "selectedPos bai  "+selectedPos+"---"+position)
+                binding.rbCard.setImageResource(R.drawable.ic_payment_radio_selected)
+                binding.cardsContainer.strokeColor = ContextCompat.getColor(binding.root.context,R.color.border_color_light)
+                binding.cardsContainer.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.border_color_light))
 
             } else {
                 Log.e("Selected22222", "selectedPos "+selectedPos+"---"+position)
-                binding.rbCard.isChecked = false
+                binding.rbCard.setImageResource(R.drawable.ic_payment_radio_unselected)
                 binding.cardsContainer.strokeColor = ContextCompat.getColor(binding.root.context, R.color.card_stroke_color)
                 binding.cardsContainer.setCardBackgroundColor(Color.WHITE)
             }

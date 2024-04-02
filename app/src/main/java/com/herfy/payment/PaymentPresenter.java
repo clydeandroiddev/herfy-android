@@ -1,5 +1,4 @@
 package com.herfy.payment;
-
 import android.location.Geocoder;
 import android.util.Pair;
 
@@ -116,6 +115,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
     public PaymentPresenter(PaymentContract.View paymentView) {
         this.paymentView = paymentView;
+
         this.paymentView.setPresenter(this);
         menuItems = CacheUtil.getInstance().getCart();
         try {
@@ -585,7 +585,6 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
         if (loyaltyPointsUsed > 0) {
             Double test =Math.min(loyaltyPointsUsed / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion()), getMenuItemsTotalPrice());
-            System.out.println("Loyalty points used " + test);
             total -= Math.min(loyaltyPointsUsed / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion()), getMenuItemsTotalPrice());
         }
 
@@ -1363,10 +1362,16 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                                     return;
                                 case "checkout":
                                 case "foodics-online":
-                                    if (CacheUtil.getInstance().getCustomerCards().isEmpty())
-                                        paymentView.showCheckoutPaymentForm(orderId);
-                                    else
-                                        paymentView.showCardDialogList(orderId);
+
+                                    try {
+                                        if (CacheUtil.getInstance().getCustomerCards().isEmpty()) {
+                                            paymentView.showCheckoutPaymentForm(orderId);
+                                        } else {
+                                            paymentView.showCardDialogList(orderId);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace(); // or log the exception
+                                    }
                                     break;
                                 case "moneyhash":
                                 case "money-hash":
