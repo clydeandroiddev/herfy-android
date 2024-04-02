@@ -29,7 +29,10 @@
             style="@style/Styles.Text.Footnote.Semi.Bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
             android:textColor="@color/colorPrimaryDark"
             tools:text="Small" />
 
