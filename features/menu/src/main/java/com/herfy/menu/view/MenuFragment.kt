@@ -534,7 +534,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }
     }
 
-    private fun setCartQuantity() {
+    fun setCartQuantity() {
         binding.layoutFooter.rootView.apply {
             val tvCartQuantity = findViewById<TextView>(R.id.tvCartQuantity)
             val btnViewBag = findViewById<ConstraintLayout>(R.id.btnViewBag)

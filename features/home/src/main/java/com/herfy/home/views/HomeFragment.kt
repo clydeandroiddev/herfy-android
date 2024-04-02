@@ -22,6 +22,7 @@ import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.observeNonNull

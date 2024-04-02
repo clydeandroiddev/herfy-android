@@ -488,7 +488,7 @@ public class MenuUtil {
     }
 
     public static boolean isCustomizeable(MenuItem item) {
-        return item.isCombo || item.isMustBeCustomized();
+        return item.isCustomizable() || item.isMustBeCustomized() || item.isCombo;
     }
 
 }
