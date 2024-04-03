@@ -488,6 +488,40 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 dismissLoading()
                 setFavorite(it)
             }
+            showFrequentBoughtItems.observe(this@ComboMealFragment){
+                binding.apply {
+                    if(it.size > 0){
+                        txtFrequntlyBought.visible()
+                        frequentlyBoughRecycleview.visible()
+                        frequentBoughItemsAdapter?.updateList(it)
+                    }else {
+                        txtFrequntlyBought.gone()
+                        frequentlyBoughRecycleview.gone()
+                    }
+                }
+            }
+
+            addFrequentlyBoughtItem.observe(this@ComboMealFragment){
+                activity?.let {
+                    it.runOnUiThread {
+                        val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vibrator.vibrate(
+                                VibrationEffect.createOneShot(
+                                    500,
+                                    VibrationEffect.DEFAULT_AMPLITUDE
+                                )
+                            )
+                        } else {
+                            vibrator.vibrate(100)
+                        }
+                        dismissLoading()
+                        showToastMessage(
+                            CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART)
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -498,18 +532,21 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     }
 
     private fun setupFrequentlyBoughtItems() {
-        viewModel.getFrequentBoughtItems()
-        context?.let { ctx ->
-            binding.apply {
-                txtFrequntlyBought.gone()
-                frequentBoughItemsAdapter =
-                    FrequentlyBoughtItemAdapter(listener = this@ComboMealFragment.viewModel)
-                frequentlyBoughRecycleview.apply {
-                    layoutManager = LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
-                    adapter = frequentBoughItemsAdapter
+        if(!isPromo && menuItemId.isNotEmpty()){
+            viewModel.getFrequentBoughtItems(1, menuItemId)
+            context?.let { ctx ->
+                binding.apply {
+                    txtFrequntlyBought.gone()
+                    frequentBoughItemsAdapter =
+                        FrequentlyBoughtItemAdapter(listener = this@ComboMealFragment.viewModel)
+                    frequentlyBoughRecycleview.apply {
+                        layoutManager = LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
+                        adapter = frequentBoughItemsAdapter
+                    }
                 }
             }
         }
+
     }
 
     private fun setupMenuItemDetails(data: MenuItem) {

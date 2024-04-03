@@ -7,10 +7,14 @@ import com.herfy.database.entities.MenuItemDb
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.database.entities.ModifierGroupDb
 import com.herfy.database.entities.ModifierItemDb
+import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.menu.MenuUtil
+import com.skylinedynamics.solosdk.api.ApiRequestListener
+import com.skylinedynamics.solosdk.api.calls.MenuApiCall
+import com.skylinedynamics.solosdk.api.models.Pagination
 import com.skylinedynamics.solosdk.api.models.objects.Allergen
 import com.skylinedynamics.solosdk.api.models.objects.AllergenCdn
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient
@@ -23,6 +27,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemCdn
 import com.skylinedynamics.solosdk.util.GsonHelper
+import org.json.JSONObject
 import java.util.LinkedList
 import javax.inject.Inject
 
@@ -41,7 +46,7 @@ interface MenuRepository {
     )
     fun getModifierItemBy(applicationId: String, toTypedArray: Array<String>, result: (List<ModifierItemDb>) -> Unit)
 
-    suspend fun getFrequentlyBoughtItems()
+    suspend fun getFrequentlyBoughtItems(page : Int, menuId: String, result: (ArrayList<MenuItem>, Int ) -> Unit)
 }
 
 class MenuRepositoryImpl @Inject constructor(
@@ -432,9 +437,35 @@ class MenuRepositoryImpl @Inject constructor(
             ))
     }
 
-    override suspend fun getFrequentlyBoughtItems() {
+    override suspend fun getFrequentlyBoughtItems(page : Int, menuId : String, result: (ArrayList<MenuItem>, Int) -> Unit) {
+        MenuApiCall.getInstance().getFrequentlyBoughtMenuItems(CacheUtil.getInstance().menuId, menuId, page.toString(), object : ApiRequestListener{
+            override fun onSuccess(obj: Any?) {
+               try {
+                   val list = arrayListOf<MenuItem>()
+                   val `object` = JSONObject(obj.toString())
+                   val pagination = Pagination.parse(`object`)
+                   val response = `object`.getJSONArray("data")
+                   for (i in 0 until response.length()) {
+                       val jsonObject = response.getJSONObject(i)
+                       val frequentBoughtMenu = GsonHelper.gsonFinal().fromJson(
+                           jsonObject.toString(),
+                           MenuItem::class.java
+                       )
+                       list.add(frequentBoughtMenu)
+                   }
 
-        TODO("Not yet implemented")
+                   result(list, pagination.totalPages)
+               }catch(e:Exception) {
+                   e.printStackTrace()
+                   this.onError(e)
+               }
+            }
+
+            override fun onError(error: Any?) {
+                AppLogger.printRetrofitError(error)
+            }
+
+        })
     }
 
 

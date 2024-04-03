@@ -1,5 +1,6 @@
 package com.herfy.productpagedetails.ui.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,26 +8,20 @@ import com.herfy.productpagedetails.databinding.ItemModifierFrequentlyBoughtBind
 import com.herfy.productpagedetails.ui.viewholder.FrequentlyBoughtItemViewholder
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 
-class FrequentlyBoughtItemAdapter(private val items : List<MenuItem> = arrayListOf(), private val listener : OnClickListener ) : RecyclerView.Adapter<FrequentlyBoughtItemViewholder>(){
+class FrequentlyBoughtItemAdapter(private var items : List<MenuItem> = arrayListOf(), private val listener : FrequentlyBoughtItemViewholder.OnClickListener ) : RecyclerView.Adapter<FrequentlyBoughtItemViewholder>(){
 
-
-
-
-    interface OnClickListener{
-        fun onSelectItem(menuItem : MenuItem)
-    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): FrequentlyBoughtItemViewholder {
-        val binding :ItemModifierFrequentlyBoughtBinding = ItemModifierFrequentlyBoughtBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-
-        return FrequentlyBoughtItemViewholder(binding)
+        val binding: ItemModifierFrequentlyBoughtBinding =
+            ItemModifierFrequentlyBoughtBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        return FrequentlyBoughtItemViewholder(binding, listener)
     }
 
     override fun getItemCount(): Int = items.size
@@ -35,10 +30,13 @@ class FrequentlyBoughtItemAdapter(private val items : List<MenuItem> = arrayList
         holder.apply {
             val data = items[position]
             setItems(data)
-            itemView.setOnClickListener{
-                listener.onSelectItem(data)
-            }
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateList(items: ArrayList<MenuItem>){
+        this.items = items
+        notifyDataSetChanged()
     }
 
 

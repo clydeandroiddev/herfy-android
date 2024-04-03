@@ -8,15 +8,16 @@ import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.EventAttributesMetric
 import com.herfy.model.ShowComboMealItemDetails
-import com.herfy.productpagedetails.ui.adapter.FrequentlyBoughtItemAdapter
 import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder
 import com.herfy.productpagedetails.ui.viewholder.ComboMealModifierItemViewHolder
+import com.herfy.productpagedetails.ui.viewholder.FrequentlyBoughtItemViewholder
 import com.herfy.productpagedetails.ui.viewholder.SizesItemViewholder
 import com.herfy.repository.MenuRepository
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.handler.ErrorHandler.getErrorMessage
 import com.herfy.utils.helper.AppLogger
@@ -43,18 +44,22 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.LinkedList
 import javax.inject.Inject
 
+
 @HiltViewModel
 class ComboViewModel @Inject constructor(
     private val cacheUtilHelper: CacheUtilHelper,
     private val menuRepository: MenuRepository
 ) : BaseViewModel(), SizesItemViewholder.OnClickListener,
-    FrequentlyBoughtItemAdapter.OnClickListener,
+    FrequentlyBoughtItemViewholder.OnClickListener,
     BaseModifierItemViewHolder.OnAction, ComboMealModifierItemViewHolder.onClickListener {
 
 
     init {
         getCartMenuItemsTotalPrice()
     }
+
+
+
 
     //Objects
      var menuItem: MenuItem? = null
@@ -82,6 +87,8 @@ class ComboViewModel @Inject constructor(
         set(value) {
             field = value
         }
+
+    private val frequentlyMenuItem = MenuItem()
     var currentSelectedModifierItem: ComponentModifierItem? = null
     var cartMenuItemsTotalPrice: Double = 0.0
     private var _calorieCount = 0
@@ -92,6 +99,8 @@ class ComboViewModel @Inject constructor(
     private var menuItemComponentList = HashMap<Int, MenuItemComponents>()
     private var menuItemComboList = HashMap<Int, HashMap<Int, MenuItemComponents>>()
     private val selectedComponents = HashMap<String, Any>()
+    private val frequentBoughtItemList = arrayListOf<MenuItem>()
+
 
     //Observalbles
     val notes = ObservableField("")
@@ -140,6 +149,10 @@ class ComboViewModel @Inject constructor(
     val logEvent : LiveData<EventAttributesMetric> = _logEvent
     private val _logAddToWishlistEvent = MutableLiveData<MenuItem>()
     val logAddToWishlistEvent : LiveData<MenuItem> = _logAddToWishlistEvent
+    private val _showFrequentBoughtItems = MutableLiveData<ArrayList<MenuItem>>()
+    val showFrequentBoughtItems : LiveData<ArrayList<MenuItem>> = _showFrequentBoughtItems
+    private val _addFrequentlyBoughtItem = MutableLiveData<Pair<MenuItem, Int>>()
+    val addFrequentlyBoughtItem : LiveData<Pair<MenuItem, Int>> = _addFrequentlyBoughtItem
 
     /**Function for retrieving data of menu item from db**/
     fun getMenuItemFromDbBy(addToBag: Boolean, id: String, isUpsell: Boolean) {
@@ -230,8 +243,21 @@ class ComboViewModel @Inject constructor(
     }
 
     /**Function for frequent bought items api call and setting it to a recycler view**/
-    fun getFrequentBoughtItems() {
+    fun getFrequentBoughtItems(page: Int,  menuId: String) {
+        invoke {
+            menuRepository.getFrequentlyBoughtItems(page, menuId){ items, totalPages ->
+                if(page == 1){
+                    frequentBoughtItemList.clear()
+                }
 
+                frequentBoughtItemList.addAll(items)
+                if(page == totalPages){
+                    _showFrequentBoughtItems.value = frequentBoughtItemList
+                }else {
+                    getFrequentBoughtItems(page +1 , menuId)
+                }
+            }
+        }
     }
 
     /**Function for setting the menu item calories this is called every time when getMenuItemTotalPrice is called**/
@@ -285,6 +311,7 @@ class ComboViewModel @Inject constructor(
 
     /**Function for calculating the menu item total price and setting it in ui view**/
     fun getMenuItemTotalPrice(item: MenuItem, modifierGroupPosition: Int) {
+        setMenuItemCalories()
         var orderStoreId: String? = null
         var counter = 0
         var comboIndex = 0
@@ -398,7 +425,7 @@ class ComboViewModel @Inject constructor(
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
-        setMenuItemCalories()
+
         val itemTotalPrice = totalPrice * item.attributes.quantity
         _showMenuItemTotal.value = itemTotalPrice
     }
@@ -882,8 +909,11 @@ class ComboViewModel @Inject constructor(
         //TODO : Unselect Or Set To Default OldComboIndex
     }
 
-
-    override fun onSelectItem(menuItem: MenuItem) {
+    /**
+     * Inherit the function from FrequentlyBoughtItemViewholder
+     * This function tells the viewModel what frequently bought item is selected
+     */
+    override fun onSelectFrequentlyBoughtItem(menuItem: MenuItem, position: Int) {
         TODO("Not yet implemented")
     }
 
@@ -1558,5 +1588,130 @@ class ComboViewModel @Inject constructor(
             }
         }
 
+    }
+
+    fun addFrequentBoughtItem(addToBag: Boolean, menuAddedToCartPosition: Int) {
+        var orderStoreId: String? = null
+        if (CacheUtil.getInstance().getOrderStore() != null) {
+            orderStoreId = CacheUtil.getInstance().getOrderStore().id
+        }
+        val store = CacheUtil.getInstance().getOrderStore()
+        if (store != null && frequentlyMenuItem.disabledStores.containsKey(store.id)) {
+            _showError.value = ErrorMsgItem(true, CacheUtil.getInstance().getTranslations(Text.LOCATION_AVAILABLE)
+                .replace("(x)", store.attributes.name))
+        } else {
+            val eventAttributes = HashMap<String, String>()
+            eventAttributes["Item Name"] =
+                frequentlyMenuItem.getName(LocaleUtil.getInstance().getLanguage())
+            eventAttributes["Item Quantity"] =
+                java.lang.String.valueOf(frequentlyMenuItem.attributes.quantity)
+            var totalPrice: Double = frequentlyMenuItem.getPrice(orderStoreId)
+            for (modifierItem in frequentlyMenuItem.sizes.modifierItems) {
+                if (modifierItem.attributes.isSelected) {
+                    eventAttributes["Modifier Name"] =
+                        modifierItem.attributes.translatedName.getValue(
+                            LocaleUtil.getInstance().getLanguage()
+                        )
+                    eventAttributes["Modifier Quantity"] =
+                        modifierItem.attributes.quantity.toString()
+                    totalPrice += modifierItem.attributes.price
+                }
+            }
+            for (modifierItem in frequentlyMenuItem.drinks.modifierItems) {
+                if (modifierItem.attributes.isSelected) {
+                    eventAttributes["Modifier Name"] =
+                        modifierItem.attributes.translatedName.getValue(
+                            LocaleUtil.getInstance().getLanguage()
+                        )
+                    eventAttributes["Modifier Quantity"] =
+                        modifierItem.attributes.quantity.toString()
+                    totalPrice += modifierItem.attributes.price
+                }
+            }
+            for (modifierItem in frequentlyMenuItem.fries.modifierItems) {
+                if (modifierItem.attributes.isSelected) {
+                    eventAttributes["Modifier Name"] =
+                        modifierItem.attributes.translatedName.getValue(
+                            LocaleUtil.getInstance().getLanguage()
+                        )
+                    eventAttributes["Modifier Quantity"] =
+                        modifierItem.attributes.quantity.toString()
+                    totalPrice += modifierItem.attributes.price
+                }
+            }
+            for (modifierGroup in frequentlyMenuItem.getModifierGroups()) {
+                val visibilityConfig = modifierGroup.attributes.visibilityConfig
+                if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
+                        "hidden",
+                        ignoreCase = true
+                    )
+                ) {
+                    var selectedFreeModifier = 0
+                    for (modifierItem in modifierGroup.modifierItems) {
+                        if (modifierItem.attributes.isSelected) {
+                            eventAttributes["Modifier Name"] =
+                                modifierItem.attributes.translatedName.getValue(
+                                    LocaleUtil.getInstance().getLanguage()
+                                )
+                            eventAttributes["Modifier Quantity"] =
+                                modifierItem.attributes.quantity.toString()
+                            if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                selectedFreeModifier += modifierItem.attributes.quantity
+                            } else {
+                                totalPrice += modifierItem.attributes.price * modifierItem.attributes.quantity
+                            }
+                        }
+                    }
+                }
+            }
+            for (modifierItem in frequentlyMenuItem.getModifierItems()) {
+                eventAttributes["Modifier Name"] =
+                    modifierItem.attributes.translatedName.getValue(
+                        LocaleUtil.getInstance().getLanguage()
+                    )
+                eventAttributes["Modifier Quantity"] = modifierItem.attributes.quantity.toString()
+                totalPrice += modifierItem.attributes.price
+            }
+            for (ingredient in frequentlyMenuItem.getIngredients()) {
+                if (!ingredient.attributes.isSelected) {
+                    eventAttributes["Ingredient Name"] = ingredient.attributes.name
+                    eventAttributes["Ingredient Quantity"] =
+                        ingredient.attributes.quantity.toString()
+                    totalPrice += ingredient.attributes.price
+                }
+            }
+            totalPrice += frequentlyMenuItem.getAttributes().getQuantity()
+            _logEvent.value = EventAttributesMetric(
+                "AddToCart", eventAttributes, "Price", totalPrice
+            )
+            _logFirebaseEvent.value = "add_to_cart_event"
+            val cartCount = cacheUtilHelper.getCartQuantity()
+            frequentlyMenuItem.isSandwichOnly = false
+            frequentlyMenuItem.isAddedToCart = true
+           /* CacheUtil.getInstance().setFrequentlyQuantityShouldShow(
+                frequentlyMenuItem.isAddedToCart(),
+                frequentlyMenuItem.getId()
+            )*/
+            removeMukafaaRedemption()
+            CacheUtil.getInstance().addToCart(frequentlyMenuItem)
+            if (cartCount == 0) {
+                _showCartExpiry.value = true
+            }
+            _addFrequentlyBoughtItem.value = Pair(frequentlyMenuItem, menuAddedToCartPosition)
+        }
+    }
+
+    private fun removeMukafaaRedemption() {
+        val transactionId = CacheUtil.getInstance().mukafaaTransactionId
+        if (transactionId != null && transactionId.isNotEmpty()) {
+            CacheUtil.getInstance().clearMukafaa()
+            CustomersApiCall.getInstance().deleteRedemption(
+                Values.MUKAFAA_PROVIDER,
+                transactionId,
+                object : ApiRequestListener {
+                    override fun onSuccess(o: Any) {}
+                    override fun onError(o: Any) {}
+                })
+        }
     }
 }
