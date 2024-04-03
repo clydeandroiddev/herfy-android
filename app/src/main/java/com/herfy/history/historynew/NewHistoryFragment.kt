@@ -80,12 +80,14 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         if (ordersPresenter?.orderHistories?.size != 0) {
             showOrders(true, ordersPresenter?.orderHistories)
         } else {
-            activity?.let {
-                val baseActivity = it as BaseActivity
-                baseActivity.showLoadingDialog()
-            }
+            showListLoading(true)
         }
         ordersPresenter?.getOrders()
+    }
+
+    private fun showListLoading(loading: Boolean) {
+        binding.blocker.isVisible = loading
+        binding.newMenuItemShimmer.isVisible = loading
     }
 
     override fun setPresenter(presenter: OrdersContract.Presenter) {
@@ -182,6 +184,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun showOrders(newestToOldest: Boolean, orders: ArrayList<OrderHistory>?) {
+        showListLoading(false)
         dismissDialogs()
         checkEmptyState()
         orders?.let {
