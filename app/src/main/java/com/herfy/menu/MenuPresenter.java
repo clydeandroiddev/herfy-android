@@ -1,7 +1,6 @@
 package com.herfy.menu;
 
 
-import android.util.Log;
 import android.util.Pair;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
@@ -2491,7 +2490,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void getMenuItemFromFrequent(String menuItemId, boolean addToBag) {
+    public void getMenuItemFromFrequent(String menuItemId, boolean addToBag, int menuAddedToCartPosition) {
         Executor executor = Executors.newSingleThreadExecutor();
 
         AppDatabase appDatabase = AppDatabase.getInstance();
@@ -2668,7 +2667,7 @@ public class MenuPresenter implements MenuContract.Presenter {
 
 
                     frequentlyMenuItem.setModifierGroups(modifierGroups);
-                    prepareMenuItemByMenu(frequentlyMenuItem,addToBag);
+                    prepareMenuItemByMenu(frequentlyMenuItem,addToBag, menuAddedToCartPosition);
                 }
             }
 
@@ -2676,7 +2675,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void addFrequentBoughtItem(boolean addToBag) {
+    public void addFrequentBoughtItem(boolean addToBag, int menuAddedToCartPosition) {
         String orderStoreId = null;
         if (CacheUtil.getInstance().getOrderStore() != null) {
             orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
@@ -2717,9 +2716,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                 }
             }
 
-            System.out.println("Fries bai " + frequentlyMenuItem.getFries().getModifierItems());
-            System.out.println("Sizes bai " + frequentlyMenuItem.getSizes().getModifierItems());
-            System.out.println("Drinks bai " + frequentlyMenuItem.getDrinks().getModifierItems());
             for (ModifierGroup modifierGroup : frequentlyMenuItem.getModifierGroups()) {
                 VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
                 if (visibilityConfig == null || visibilityConfig.getInitialValue() == null || !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
@@ -2743,7 +2739,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                 eventAttributes.put("Modifier Quantity", String.valueOf(modifierItem.getAttributes().getQuantity()));
                 totalPrice += modifierItem.getAttributes().getPrice();
             }
-            System.out.println("Ingredients bai " + frequentlyMenuItem.getIngredients());
             for (Ingredient ingredient : frequentlyMenuItem.getIngredients()) {
                 if (!ingredient.getAttributes().isSelected()) {
                     eventAttributes.put("Ingredient Name", ingredient.getAttributes().getName());
@@ -2765,10 +2760,10 @@ public class MenuPresenter implements MenuContract.Presenter {
                 menuView.setCartExpiry();
             }
             if (currentImageViewToAnimate != null) {
-                menuView.addCartItem(menuItem, currentImageViewToAnimate, true);
+                menuView.addCartItem(menuItem, currentImageViewToAnimate, false);
                 currentImageViewToAnimate = null;
             } else {
-                menuView.addCartItem(frequentlyMenuItem, true);
+                menuView.addCartItem(frequentlyMenuItem, false, menuAddedToCartPosition);
             }
         }
     }
@@ -2973,7 +2968,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void prepareMenuItemByMenu(MenuItem menuItem, boolean addToBag) {
+    public void prepareMenuItemByMenu(MenuItem menuItem, boolean addToBag, int menuAddedToCartPosition) {
         LinkedList<ModifierGroup> filteredModifierGroups = new LinkedList<>();
 
         for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
@@ -3162,7 +3157,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             }
 
             if (!invalid) {
-                addFrequentBoughtItem(addToBag);
+                addFrequentBoughtItem(addToBag,menuAddedToCartPosition );
             } else {
                 menuView.selectMenuItem(menuCategory, menuItem);
             }
@@ -4411,6 +4406,12 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
+    public List<ModifierGroup> getModifierGroupList() {
+        return  menuItem.getModifierGroups();
+
+    }
+
+    @Override
     public int getModifierGroupIndex(ModifierGroup modifierGroup) {
 
         ArrayList<ModifierGroup> visibleModifierGroups = new ArrayList<>();
@@ -4583,7 +4584,6 @@ public class MenuPresenter implements MenuContract.Presenter {
 
         if (!invalid) {
             menuItem.getAttributes().setNotes(itemNote);
-            System.out.println("Get cart items invalid");
             addCartItem(false, false);
         }
     }
@@ -4811,14 +4811,14 @@ public class MenuPresenter implements MenuContract.Presenter {
                     menuView.addCartItem(menuItem, currentImageViewToAnimate, true);
                     currentImageViewToAnimate = null;
                 } else {
-                    menuView.addCartItem(menuItem, true);
+                    menuView.addCartItem(menuItem, true,0);
                 }
             }
         }
 
 
     @Override
-    public void addMenuItemToCart(String menuItemId) {
+    public void addMenuItemToCart(String menuItemId, int menuAddedToCartPosition) {
         AppDatabase appDatabase = AppDatabase.getInstance();
         String applicationId = CacheUtil.getInstance().getApplication().getId();
         MenuItemEntity menuItemEntity = appDatabase.menuItemEntityDao().findById(applicationId, menuItemId);
@@ -4832,7 +4832,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                 frequentlyMenuItem = GsonHelper.gsonFinal().fromJson(menuItemDb.data, MenuItem.class);
             }
         }
-        System.out.println("Cart menu presenter item hash code " + frequentlyMenuItem.hashCode());
         if (menuCategory == null) {
             for (String menuCategoryId : CacheUtil.getInstance().getMenuCategories().keySet()) {
                 if (CacheUtil.getInstance().getMenuCategories().get(menuCategoryId) != null && CacheUtil.getInstance().getMenuCategories().get(menuCategoryId).second.contains(menuItem.getId())) {
@@ -4860,7 +4859,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 menuView.selectMenuItem(menuCategory, frequentlyMenuItem);
 
             } else {
-                getMenuItemFromFrequent(menuItemId,true);
+                getMenuItemFromFrequent(menuItemId,true, menuAddedToCartPosition);
             }
         }
     }
@@ -5208,7 +5207,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             e.printStackTrace();
         }
 
-        menuView.setMenuItemTotalPrice(totalPrice * item.getAttributes().getQuantity());
+        menuView.setMenuItemTotalPrice(totalPrice * item.getAttributes().getQuantity(),totalPrice);
         return totalPrice;
     }
 

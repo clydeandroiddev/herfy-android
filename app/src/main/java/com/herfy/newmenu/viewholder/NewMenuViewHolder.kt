@@ -114,7 +114,8 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
     override fun showOrderType() {}
     override fun addCartItem(
         menuItem: MenuItem,
-        isShouldBackPressed: Boolean
+        isShouldBackPressed: Boolean,
+        menuAddedToCartPosition: Int
     ) {}
     override fun addCartItem(
         menuItem: MenuItem,

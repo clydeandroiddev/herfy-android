@@ -273,7 +273,7 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 

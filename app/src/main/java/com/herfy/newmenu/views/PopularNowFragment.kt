@@ -142,7 +142,8 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
     override fun showOrderType() {}
     override fun addCartItem(
         menuItem: MenuItem,
-        isShouldBackPressed: Boolean
+        isShouldBackPressed: Boolean,
+        menuAddedToCartPosition: Int
     ) {
         try {
             activity?.cast<MainActivity> {
@@ -180,7 +181,7 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
         view: ImageView,
         isShouldBackPressed: Boolean
     ) {
-        addCartItem(menuItem, isShouldBackPressed,)
+        addCartItem(menuItem, isShouldBackPressed,0)
     }
 
     override fun updateCartItem() {}

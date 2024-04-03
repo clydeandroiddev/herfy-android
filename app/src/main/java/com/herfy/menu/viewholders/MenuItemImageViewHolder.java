@@ -198,7 +198,7 @@ public class MenuItemImageViewHolder extends RecyclerListAdapter.ViewHolder<Obje
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 

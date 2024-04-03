@@ -91,7 +91,7 @@ public interface MenuContract {
 
         void showOrderType();
 
-        void addCartItem(MenuItem menuItem, boolean isShouldBackPressed);
+        void addCartItem(MenuItem menuItem, boolean isShouldBackPressed,int menuAddedToCartPosition);
 
         void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed);
 
@@ -254,14 +254,14 @@ public interface MenuContract {
         MenuItem getMenuItem();
 
         void getMenuItem(boolean addToBag, String menuItemId);
-        void getMenuItemFromFrequent(String menuItemId,boolean addToBag);
+        void getMenuItemFromFrequent(String menuItemId,boolean addToBag, int menuAddedToCartPosition);
 
-        void addFrequentBoughtItem(boolean addToBag);
+        void addFrequentBoughtItem(boolean addToBag,int menuAddedToCartPosition);
 
         void getMenuItem(boolean addToBag, String menuItemId, boolean isUpsell);
 
         void prepareMenuItem(boolean addToBag);
-        void prepareMenuItemByMenu(MenuItem menuItem, boolean addToBag);
+        void prepareMenuItemByMenu(MenuItem menuItem, boolean addToBag, int menuAddedToCartPosition);
 
         void setMenuItem(MenuItem menuItem);
 
@@ -335,7 +335,7 @@ public interface MenuContract {
 
         void addCartItem(boolean add, boolean skip);
 
-        void addMenuItemToCart(String menuItemId);
+        void addMenuItemToCart(String menuItemId, int menuAddedToCartPosition);
 
         void addMenuItemToCartWithAnalytics(MenuItem menuItem, double price, int quantity);
 

@@ -270,7 +270,7 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 

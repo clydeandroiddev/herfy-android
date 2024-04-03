@@ -1017,7 +1017,8 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     override fun showOrderType() {}
     override fun addCartItem(
         menuItem: MenuItem,
-        isShouldBackPressed: Boolean
+        isShouldBackPressed: Boolean,
+        menuAddedToCartPosition: Int
     ) {
         try {
             val activity = activity as MainActivity?
@@ -1054,7 +1055,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         view: ImageView,
         isShouldBackPressed: Boolean
     ) {
-        addCartItem(menuItem, isShouldBackPressed,)
+        addCartItem(menuItem, isShouldBackPressed,0)
         listener?.animateViewToCart(view, menuItem.attributes.image, 0)
     }
 
