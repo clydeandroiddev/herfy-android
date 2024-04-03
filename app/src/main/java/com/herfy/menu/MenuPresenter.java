@@ -4748,10 +4748,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                     totalPrice += modifierItem.getAttributes().getPrice();
                 }
             }
-
-            System.out.println("Fries bai " + menuItem.getFries().getModifierItems());
-            System.out.println("Sizes bai " + menuItem.getSizes().getModifierItems());
-            System.out.println("Drinks bai " + menuItem.getDrinks().getModifierItems());
+            
             for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
                 VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
                 if (visibilityConfig == null || visibilityConfig.getInitialValue() == null || !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
@@ -4775,7 +4772,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                 eventAttributes.put("Modifier Quantity", String.valueOf(modifierItem.getAttributes().getQuantity()));
                 totalPrice += modifierItem.getAttributes().getPrice();
             }
-            System.out.println("Ingredients bai " + menuItem.getIngredients());
             for (Ingredient ingredient : menuItem.getIngredients()) {
                 if (!ingredient.getAttributes().isSelected()) {
                     eventAttributes.put("Ingredient Name", ingredient.getAttributes().getName());
@@ -4790,20 +4786,8 @@ public class MenuPresenter implements MenuContract.Presenter {
             int cartCount = CacheUtil.getInstance().getCartQuantity();
             menuItem.isSandwichOnly = false;
             removeMukafaaRedemption();
-//            if (isFrequentAddToCart) {
-//                System.out.println("Get cart menu frequent  " + menuItem);
-//                menuItem.setAddedToCart(true);
-//                CacheUtil.getInstance().addToCart(menuItem);
-//                if (currentImageViewToAnimate != null) {
-//                    menuView.addCartItem(menuItem, currentImageViewToAnimate,false );
-//                    currentImageViewToAnimate = null;
-//                } else {
-//                    menuView.addCartItem(menuItem, false);
-//                }
-//            } else {
-                System.out.println("Get cart menu frequent bai " + menuItem);
                 CacheUtil.getInstance().addToCart(menuItem);
-                System.out.println("Is already added cart" + CacheUtil.getInstance().getCart());
+
                 if (cartCount == 0) {
                     menuView.setCartExpiry();
                 }

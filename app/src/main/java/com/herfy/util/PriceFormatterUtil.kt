@@ -10,7 +10,7 @@ object PriceFormatter {
         return when {
             isEnglishOrFrench() -> "+${formatPrice(originalPrice)}"
             ArabicUtils.isArabic(translatedName) -> convertFormattedPriceToString(StringUtil.getFormattedPriceWithText(originalPrice))
-            else -> convertFormattedPriceToString(formatPrice(originalPrice))
+            else -> convertFormattedPriceToString(StringUtil.getFormattedPriceWithText(originalPrice))
         }
     }
 

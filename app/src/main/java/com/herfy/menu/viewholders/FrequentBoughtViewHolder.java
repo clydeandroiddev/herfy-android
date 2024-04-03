@@ -18,6 +18,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
+import com.herfy.util.PriceFormatter;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.AuthUtil;
@@ -114,7 +115,6 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Cart menu position " + getAbsoluteAdapterPosition());
                 menuPresenter.addMenuItemToCart(menuItem.getId(), getAbsoluteAdapterPosition());
             }
         });
@@ -128,7 +128,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
 
         name.setText(menuItemAttributes.getName());
         txtModifierDescription.setText(menuItemAttributes.getDescription());
-        txtModifierPrice.setText(StringUtil.getFormattedPrice((menuItemAttributes.getPrice())));
+        txtModifierPrice.setText(PriceFormatter.INSTANCE.formatPriceWithLocale(menuItemAttributes.getPrice(),menuItemAttributes.getName()));
     }
 
     public boolean isFavoriteItemInCart(MenuItem menuItem) {
@@ -143,7 +143,6 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
                 return true;
             }
             if (isFrequentMenuAdded && !frequentMenuId.isEmpty() && Objects.equals(String.valueOf(cartItem.getId()), frequentMenuId)) {
-                System.out.println("Cart item name " + cartItem.getName(LocaleUtil.getInstance().getLanguage()));
                 return true;
             }
         }
