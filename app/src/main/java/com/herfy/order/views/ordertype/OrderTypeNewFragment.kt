@@ -856,6 +856,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             diffMenuSaved(address)
         }
     }
+    override fun navigateMenuItemDetails(menuItem: MenuItem?) {
+        findNavController().navigate(OrderTypeNewFragmentDirections.actionOrderTypeToMenuItem(menuItemId = menuItem
+            ?.id.orEmpty(), isFavorite = true, isFromOrderType = true))
+    }
 
     override fun selectAddressWork(position: Int) {
 
