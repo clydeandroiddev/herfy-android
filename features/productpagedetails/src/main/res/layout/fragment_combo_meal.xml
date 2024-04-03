@@ -69,7 +69,7 @@
                     android:layout_marginTop="@dimen/margin_xlarge"
                     android:layout_marginEnd="@dimen/margin_large"
                     app:navButton="@drawable/ic_close_circle_white"
-                    app:rightButtonIcon="@drawable/ic_favorites_circle_white"
+                    app:rightButtonIcon="@drawable/ic_favorite_empty"
                     app:layout_collapseMode="pin"/>
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>

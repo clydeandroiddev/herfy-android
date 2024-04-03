@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.herfy.analytics.firebase.FirebaseEventUtilHelper
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.model.ErrorMsgItem
+import com.herfy.model.EventAttributesMetric
 import com.herfy.model.ShowComboMealItemDetails
 import com.herfy.productpagedetails.ui.adapter.FrequentlyBoughtItemAdapter
 import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder
@@ -27,9 +28,7 @@ import com.herfy.utils.menu.MenuUtil
 import com.kochava.tracker.events.EventType
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
-import com.skylinedynamics.solosdk.api.models.Pagination
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
-import com.skylinedynamics.solosdk.api.models.objects.Favorite
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents
@@ -41,8 +40,6 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItemCdn
 import com.skylinedynamics.solosdk.api.models.requestbodies.AddFavoriteItemBody
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.json.JSONException
-import org.json.JSONObject
 import java.util.LinkedList
 import javax.inject.Inject
 
@@ -137,6 +134,12 @@ class ComboViewModel @Inject constructor(
     val showCartExpiry : LiveData<Boolean> = _showCartExpiry
     private val _logFirebaseEvent = MutableLiveData<String>()
     val logFirebaseEvent : LiveData<String> = _logFirebaseEvent
+    private val _setFavoriteItem = MutableLiveData<MenuItem>()
+    val setFavoriteItem : LiveData<MenuItem> = _setFavoriteItem
+    private val _logEvent = MutableLiveData<EventAttributesMetric>()
+    val logEvent : LiveData<EventAttributesMetric> = _logEvent
+    private val _logAddToWishlistEvent = MutableLiveData<MenuItem>()
+    val logAddToWishlistEvent : LiveData<MenuItem> = _logAddToWishlistEvent
 
     /**Function for retrieving data of menu item from db**/
     fun getMenuItemFromDbBy(addToBag: Boolean, id: String, isUpsell: Boolean) {
@@ -1501,16 +1504,15 @@ class ComboViewModel @Inject constructor(
                         override fun onSuccess(o: Any) {
                             trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM)
                             KochavaTrackerUtil.trackEvent(EventType.ADD_TO_WISH_LIST)
-                            getFavorites(true, 1)
                             val favorites = CacheUtil.getInstance().getFavorites()
                             favorites.add(item.id)
                             CacheUtil.getInstance().setFavorites(favorites)
                             val eventAttributes = java.util.HashMap<String, String>()
                             eventAttributes["Item ID"] = item.id
                             eventAttributes["Item Name"] = item.attributes.name
-                            menuView.logEvent("AddToFavorites", eventAttributes, null, 0.0)
-                            menuView.logAddToWishlistEvent(item)
-                            menuView.setFavorite(item)
+                            _logEvent.value = EventAttributesMetric(eventName = "AddToFavorites",eventAttributes = eventAttributes, eventMetricValue =  0.0)
+                            _logAddToWishlistEvent.value = item
+                            _setFavoriteItem.value = item
                             _showToastMessage.value = CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_FAVORITES)
 
                         }
@@ -1531,11 +1533,10 @@ class ComboViewModel @Inject constructor(
                     item.id,
                     object : ApiRequestListener {
                         override fun onSuccess(o: Any) {
-                            getFavorites(true, 1)
                             val favorites = CacheUtil.getInstance().getFavorites()
                             favorites.remove(item.id)
                             CacheUtil.getInstance().setFavorites(favorites)
-                            menuView.setFavorite(menuItem)
+                            _setFavoriteItem.value = item
                             _showToastMessage.value =
                                 CacheUtil.getInstance()
                                     .getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES)
@@ -1558,56 +1559,4 @@ class ComboViewModel @Inject constructor(
         }
 
     }
-
-    fun getFavorites(fromAddRemove: Boolean, page: Int) {
-        CustomersApiCall.getInstance().getAllCustomerFavoriteItems(
-            AuthUtil.getInstance().getCustomer().id,
-            page.toString(),
-            object : ApiRequestListener {
-                override fun onSuccess(o: Any) {
-                    try {
-                        val `object` = JSONObject(o.toString())
-                        val pagination = Pagination.parse(`object`)
-                        if (page == 1) {
-                            favorites.clear()
-                        }
-                        val data = `object`.getJSONArray("data")
-                        val favoriteIds = CacheUtil.getInstance().getFavorites()
-                        for (i in 0 until data.length()) {
-                            val favoriteObject = data.getJSONObject(i)
-                            val favorite = Favorite.parseFavorites(favoriteObject)
-                            fave.add(favorite)
-                            favoriteIds.add(favorite.attributes.itemId)
-                        }
-                        CacheUtil.getInstance().setFavorites(favoriteIds)
-                        if (page == pagination.totalPages) {
-                            favorites.clear()
-                            favorites.addAll(fave)
-                            fave.clear()
-                            excludedFavorites()
-                            if (CacheUtil.getOrderStoreId() == null) {
-                                menuView.showFavorites(fromAddRemove, favorites)
-                            } else {
-                                menuView.showFavorites(fromAddRemove, excludedFavorites())
-                            }
-                        } else {
-                            getFavorites(fromAddRemove, page + 1)
-                        }
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                        onError(e)
-                    }
-                }
-
-                override fun onError(o: Any) {
-                    com.herfy.util.AppLogger.printRetrofitError(o)
-                    if (CacheUtil.getOrderStoreId() == null) {
-                        menuView.showFavorites(fromAddRemove, favorites)
-                    } else {
-                        menuView.showFavorites(fromAddRemove, excludedFavorites())
-                    }
-                }
-            })
-    }
-
 }
