@@ -132,7 +132,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkBackground()
         resetFrequentlyAddedFavoritesInCart()
         activity?.let { act ->
             val displayMetrics = DisplayMetrics()
@@ -508,24 +507,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     .text = CacheUtil
                     .getInstance()
                     .getTranslations(Text.FREQUETLY_BOUGHT_TOGETHER,"Frequently bought together")
-                val caloriesValue = menuItem.calories
-                val calorieCount = menuItem.calorieCount
-                if (caloriesValue != null && !caloriesValue.isEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
-                    binding.calories.text = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
-                    binding.calories.visibility = View.VISIBLE
-                } else if (calorieCount != 0) {
-                    binding.calories.text = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
-                    binding.calories.visibility = View.VISIBLE
-                } else {
-                    binding.calories.visibility = View.GONE
-                }
-                val descriptionValue = menuItem.getDescription(LocaleUtil.getInstance().language)
-                if (descriptionValue == null || descriptionValue.isEmpty() || descriptionValue == "null") {
-                    binding.description.visibility = View.GONE
-                } else {
-                    binding.description.text = descriptionValue
-                    binding.description.visibility = View.VISIBLE
-                }
 //                binding.detailsShimmer.visibility = View.GONE
             }
         }
@@ -1229,7 +1210,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun showOrderType() {}
     override fun addCartItem(
         menuItem: MenuItem,
-        isShouldBackPressed: Boolean
+        isShouldBackPressed: Boolean,
+        menuAddedToCartPosition: Int
     ) {
         try {
             activity?.cast<MainActivity> {
@@ -1240,7 +1222,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             }
             activity?.cast<BaseActivity> {
                 it.runOnUiThread {
-                    frequentBoughItemsAdapter?.notifyDataSetChanged()
+                    if (!isShouldBackPressed) {
+                        frequentBoughItemsAdapter?.notifyItemChanged(menuAddedToCartPosition, menuItem)
+                    }
                     val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                     if (vibrator != null) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -1266,11 +1250,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         ViewUtil.dpToPx(it, 16)
                     )
 
-                    // Post a delayed action to execute back press after a delay
                     if (isShouldBackPressed) {
-                        Handler().postDelayed({
-                            activity?.onBackPressed()
-                        }, 300) // Adjust the delay time as needed
+                        activity?.onBackPressed()
                     }
 
                 }
