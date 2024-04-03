@@ -113,6 +113,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
             android:layout_marginTop="2dp"
+            android:layout_marginEnd="10dp"
             android:fontFamily="@font/inter_regular"
             android:ellipsize="end"
             tools:text = "Dive into a flavor-packed adventure with our New Triple Herfy!"
@@ -139,9 +140,11 @@
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btnAdd"
             android:layout_width="wrap_content"
+            android:layout_marginEnd="4dp"
             android:layout_height="wrap_content"
             android:background="?selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="parent"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_add" />
 
