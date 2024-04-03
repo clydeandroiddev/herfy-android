@@ -28,7 +28,7 @@ object FavoriteOrderTypeValidator {
     }
 
     private fun isDineInSelected(selectedOrderType: OrderType, orderTypeName: String): Boolean {
-        return selectedOrderType.name.replace("_", "").lowercase() == orderTypeName.replace("-", "").lowercase()
+        return selectedOrderType.name.replace("_", "").lowercase() == orderTypeName.replace(" ", "").lowercase()
     }
 
     private fun determineDefaultState(selectedOrderType: OrderType,favouriteOrderType: FavoriteOrderTypeUIModel): FavoriteOrderState {
