@@ -81,18 +81,25 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
 
     }
 
+    private fun closeAndClear() {
+        binding.nameEdit.apply {
+            closeKeyboard(this)
+            clearFocus()
+        }
+    }
+
     override fun setupViews() {
         binding.apply {
             back.setOnClickListener {
                 navigateUp()
             }
             maleSelection.setOnClickListener {
-                closeKeyboard(binding.nameEdit)
+                closeAndClear()
                 processGender("Male")
                 checkGenderState()
             }
             femaleSelection.setOnClickListener {
-                closeKeyboard(binding.nameEdit)
+                closeAndClear()
                 processGender("Female")
                 checkGenderState()
             }
@@ -324,7 +331,7 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
             ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
 
             binding.dateOfBirthView.setOnClickListener { view: View? ->
-                closeKeyboard(binding.nameEdit)
+                closeAndClear()
                 datePickerDialog.show()
             }
         }

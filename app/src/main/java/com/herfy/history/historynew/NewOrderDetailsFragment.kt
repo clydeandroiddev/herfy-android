@@ -301,13 +301,19 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                         cardNumber.text =
                             CacheUtil.getInstance().getTranslations(Text.APPLE_PAY, "Apple Pay")
                     } else {
-                        if (order.payment.attributes.brand.equals("visa", ignoreCase = true)) {
-                            cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_card_visa_common)
+                        if (order.payment.attributes.brand != null && order.payment.attributes.last4Digits != null) {
+                            if (order.payment.attributes.brand.equals("visa", ignoreCase = true)) {
+                                cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_card_visa_common)
+                            } else {
+                                cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_card_new)
+                            }
+                            cardNumber.text =
+                                order.payment.attributes.brand + " **** " + order.payment.attributes.last4Digits
                         } else {
                             cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_card_new)
+                            cardNumber.text =
+                                CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
                         }
-                        cardNumber.text =
-                            order.payment.attributes.brand + " **** " + order.payment.attributes.last4Digits
                     }
                 }
             }
