@@ -172,7 +172,13 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             }
 
         binding.icBack.ninjaTap(viewLifecycleScope) {
-            findNavController().navigateUp()
+            if (args.isFromOrderType && CacheUtil
+                    .getInstance().orderType != OrderType.NONE) {
+                findNavController().popBackStack()
+                findNavController().navigate(FavoritesFragmentDirections.actionFavoritesToHome())
+            }else {
+                findNavController().navigateUp()
+            }
         }
 
         val cartItems = CacheUtil.getInstance().cart
@@ -251,23 +257,11 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             val baseActivity = activity as BaseActivity
             baseActivity.dismissDialogs()
                     binding.orderTypeContainer.removeAllViews()
-            val formattedOrderTypes = allowedOrderMenus
-                ?.split(",")
-                ?.mapNotNull { orderTypeTitle ->
-                   val title =  OrderType.fromString(orderTypeTitle)
-                    orderTypeMenus
-                        .find { it.type.replace("deliver","delivery") == title.name.lowercase() }?.let { orderType->
-                            val type = OrderType.fromString(orderType.type)
-                            val translation = CacheUtil.getInstance()
-                      FavoriteOrderTypeUIModel(
-                            id = orderType.id,
-                            title =  if (type == OrderType.DELIVERY) translation.getTranslations(Text.DELIVERY,"Delivery") else if (type == OrderType.DINE_IN) translation
-                                .getTranslations(Text.DINE_IN,"Dinein") else translation.getTranslations(Text.PICKUP, "Pickup"),
-                            orderTypeName = orderType.type
-                        )
-                        }
-                    } ?: emptyList()
-
+            System.out.println("Order type menus $allowedOrderMenus")
+            val orderTypeTitles = allowedOrderMenus?.split(",") ?: emptyList()
+            val translatedTitles = mapOrderTypeTitlesToTranslations(orderTypeTitles)
+            val formattedOrderTypes = createFavoriteOrderTypeUIModels(translatedTitles, orderTypeMenus)
+            val cacheUtil = CacheUtil.getInstance()
             formattedOrderTypes.forEach { orderType ->
                         val view = LayoutInflater.from(activity)
                             .inflate(R.layout.item_favourite_order_type, binding.orderTypeContainer, false)
@@ -297,6 +291,52 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
 
         }
 
+    // Function to map order type titles to translated titles
+   private fun mapOrderTypeTitlesToTranslations(orderTypeTitles: List<String>?): List<String> {
+        return orderTypeTitles?.mapNotNull { orderTypeTitle ->
+            val type = OrderType.fromString(orderTypeTitle)
+            val translation = CacheUtil.getInstance()
+            when (type) {
+                OrderType.DELIVERY -> translation.getTranslations(Text.DELIVERY, "Delivery")
+                OrderType.DINE_IN -> translation.getTranslations(Text.DINE_IN, "Dinein")
+                OrderType.PICKUP -> translation.getTranslations(Text.PICKUP, "Pickup")
+                else -> null
+            }
+        } ?: emptyList()
+    }
+
+    private fun createFavoriteOrderTypeUIModels(translatedTitles: List<String>, orderTypeMenus: List<OrderTypeMenus>): List<FavoriteOrderTypeUIModel> {
+        val cacheUtil = CacheUtil.getInstance()
+        val deliveryTranslated = cacheUtil.getTranslations(Text.DELIVERY, "Delivery")
+        val pickUpTranslated = cacheUtil.getTranslations(Text.PICKUP, "Pickup")
+        val dineInTranslated = cacheUtil.getTranslations(Text.DINE_IN, "Dine In")
+
+        return translatedTitles.mapNotNull { title ->
+            val translation = CacheUtil.getInstance()
+
+            when (title) {
+                deliveryTranslated -> {
+                    val orderTypeMenu = orderTypeMenus.find { it.type == "deliver" }
+                    orderTypeMenu?.let { FavoriteOrderTypeUIModel(it.id, title, orderTypeName = it.type) }
+                }
+                pickUpTranslated -> {
+                    val orderTypeMenu = orderTypeMenus.find { it.type == "pickup" || it.type == "dinein" }
+                    orderTypeMenu?.let { FavoriteOrderTypeUIModel(it.id, title, orderTypeName = it.type) }
+                }
+                dineInTranslated -> {
+                    val orderTypeMenu = orderTypeMenus.find { it.type == "pickup" || it.type == "dinein" }
+                    orderTypeMenu?.let { FavoriteOrderTypeUIModel(it.id, title, orderTypeName = "dinein") }
+                }
+                else -> null
+            }
+        }.sortedWith(compareBy(
+            { it.title != deliveryTranslated },  // Ensure "Delivery" is first
+            { it.title != pickUpTranslated },    // Ensure "Pickup" is second
+            { it.title != dineInTranslated }     // Ensure "Dine In" is third
+        ))
+    }
+
+
     private fun handleOrderTypeClick(selectedOrderTypeTag: String, orderType: FavoriteOrderTypeUIModel) {
         val currentSelectedOrderType = CacheUtil.getInstance().orderType
         val hasFavoriteAddedInCart = CacheUtil.getInstance().cart.count { it.isFavorite } >= 1
@@ -304,7 +344,10 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             if (currentSelectedOrderType.name == OrderType.DELIVERY.name && selectedOrderTypeTag == OrderType.PICKUP.name.lowercase() && hasFavoriteAddedInCart) {
                 showDialogClearCurrentBasketDialog(selectedOrderTypeTag)
                 return
-            } else if (currentSelectedOrderType.name == OrderType.PICKUP.name && selectedOrderTypeTag == OrderType.DINE_IN.name.replace("_","").lowercase() && hasFavoriteAddedInCart) {
+            } else if (currentSelectedOrderType.name == OrderType.PICKUP.name && selectedOrderTypeTag == OrderType.DINE_IN.name.replace("_","").lowercase() || selectedOrderTypeTag == "deliver" && hasFavoriteAddedInCart) {
+                showDialogClearCurrentBasketDialog(selectedOrderTypeTag)
+                return
+            }else if (currentSelectedOrderType.name == OrderType.DELIVERY.name && selectedOrderTypeTag == OrderType.DINE_IN.name.replace("_","").lowercase()  && hasFavoriteAddedInCart) {
                 showDialogClearCurrentBasketDialog(selectedOrderTypeTag)
                 return
             }
