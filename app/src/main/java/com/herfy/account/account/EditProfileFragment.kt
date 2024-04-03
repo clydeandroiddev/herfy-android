@@ -87,10 +87,12 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
                 navigateUp()
             }
             maleSelection.setOnClickListener {
+                closeKeyboard(binding.nameEdit)
                 processGender("Male")
                 checkGenderState()
             }
             femaleSelection.setOnClickListener {
+                closeKeyboard(binding.nameEdit)
                 processGender("Female")
                 checkGenderState()
             }
@@ -320,7 +322,11 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
                 DatePickerDialog.BUTTON_NEGATIVE,
                 CacheUtil.getInstance().getTranslations(Text.CANCEL, "CANCEL")
             ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
-            binding.dateOfBirthView.setOnClickListener { view: View? -> datePickerDialog.show() }
+
+            binding.dateOfBirthView.setOnClickListener { view: View? ->
+                closeKeyboard(binding.nameEdit)
+                datePickerDialog.show()
+            }
         }
     }
 
