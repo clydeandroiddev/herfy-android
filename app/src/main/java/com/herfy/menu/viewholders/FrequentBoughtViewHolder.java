@@ -27,7 +27,6 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -74,6 +73,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         String imageUrl = menuItemAttributes.getImage();
 
         boolean isAlreadyAddedToCart = isFavoriteItemInCart(menuItem);
+        System.out.println("Cart item " + isAlreadyAddedToCart);
         addToCart.setVisibility(isAlreadyAddedToCart ? View.GONE : View.VISIBLE);
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
@@ -115,7 +115,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
             @Override
             public void onClick(View v) {
                 System.out.println("Cart menu position " + getAbsoluteAdapterPosition());
-                menuPresenter.addMenuItemToCart(menuItem.getId());
+                menuPresenter.addMenuItemToCart(menuItem.getId(), getAbsoluteAdapterPosition());
             }
         });
         clickableLayout.setOnClickListener(new View.OnClickListener() {
@@ -143,6 +143,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
                 return true;
             }
             if (isFrequentMenuAdded && !frequentMenuId.isEmpty() && Objects.equals(String.valueOf(cartItem.getId()), frequentMenuId)) {
+                System.out.println("Cart item name " + cartItem.getName(LocaleUtil.getInstance().getLanguage()));
                 return true;
             }
         }

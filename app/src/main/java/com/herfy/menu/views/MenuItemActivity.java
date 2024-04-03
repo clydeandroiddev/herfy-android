@@ -475,7 +475,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator != null) {
