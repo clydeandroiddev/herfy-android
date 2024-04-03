@@ -87,7 +87,7 @@ public class ImageItemModifierHolder extends BaseModifierItemViewHolder implemen
     }
 
     @Override
-    public void onModifierProcessed(@NotNull String name, @NotNull String formattedPrice) {
+    public void onModifierProcessed(@NonNull String name, @NonNull String formattedPrice) {
         setModifierNameAndPrice(name,formattedPrice);
     }
     private void setModifierNameAndPrice(String name, String formattedPrice) {

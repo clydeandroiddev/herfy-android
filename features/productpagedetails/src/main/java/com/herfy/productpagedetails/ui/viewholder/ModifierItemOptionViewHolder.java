@@ -116,7 +116,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
         if (isModifierItemSelected) {
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state);
-            radioButton.setImageResource(R.drawable.ic_payment_radio_selected);
+            radioButton.setImageResource(R.drawable.modifier_radio_item_selected);
             check.setImageResource(R.drawable.modifier_item_checked_selected);
         } else {
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_unselected_state);
