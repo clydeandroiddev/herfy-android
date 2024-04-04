@@ -211,6 +211,22 @@
 				android:layout_marginStart="8dp"
 				android:layout_marginEnd="8dp"/>
 
+			<androidx.constraintlayout.widget.ConstraintLayout
+				android:id="@+id/layoutSearchEmptyStateView"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:visibility="gone">
+
+				<com.herfy.common.component.EmptyStateView
+					android:id="@+id/searchEmptyStateView"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					app:layout_constraintTop_toTopOf="parent"
+					android:layout_marginTop="108dp"
+					app:emptyStateDrawable="@drawable/ic_empty_search"/>
+
+			</androidx.constraintlayout.widget.ConstraintLayout>
+
 		</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 		<RelativeLayout

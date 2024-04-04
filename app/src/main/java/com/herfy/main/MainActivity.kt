@@ -62,6 +62,7 @@ import com.herfy.home.views.HomeFragmentDirections
 import com.herfy.loyalty.LoyaltyActivity
 import com.herfy.main.adapter.LanguageAdapter
 import com.herfy.main.adapter.SwitchServerAdapter
+import com.herfy.menu.view.MenuFragment
 import com.herfy.menu.views.MenuItemFragmentDirections
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.newmenu.views.*
@@ -224,7 +225,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             binding.toolbarMain.apply {
                 if (currentDestination == R.id.nav_herfy_home) {
                     hide(false)
-                    setCart(cacheUtilHelper.getCartQuantity())
+                    setCartQuantity()
                     setupSideBar()
                 } else {
                     hide(true)
@@ -1051,6 +1052,15 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         fragment?.cast<NewMenuHomePageFragment> {
             it.updateFloatingTotalPrice()
             it.updateFloatingBag()
+        }
+        fragment?.cast<HomeFragment> {
+            setCartQuantity()
+        }
+        fragment?.cast<MenuFragment> {
+            it.setCartQuantity()
+        }
+        fragment?.cast<CartFragment> {
+            it.cartExpired()
         }
     }
 

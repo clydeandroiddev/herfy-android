@@ -1161,5 +1161,6 @@ public class Text {
     public static final String YOUR_ORDER_IS_READY = "Your order is ready. Pick it up from the counter";
 
     public static final String ENTER_CAR_BRAND_NAME = "enter_car_brand_name";
+    public static final String NO_RESULTS_FOUND = "no_results_found";
 
 }
