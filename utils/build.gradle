@@ -163,9 +163,12 @@ dependencies {
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.navigation:navigation-common-ktx:2.7.6'
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
+    implementation 'com.google.firebase:firebase-config-ktx:21.6.0'
+
+    //Modules
+    implementation project(':imagepicker')
     implementation project(path: ':solosdk')
     implementation project(path: ':data:model')
-    implementation 'com.google.firebase:firebase-config-ktx:21.6.0'
 
     def flowBindingVersion = "1.2.0"
     implementation "io.github.reactivecircus.flowbinding:flowbinding-android:$flowBindingVersion"

@@ -46,8 +46,6 @@ import com.herfy.payment.dialog.PaymentOrderTimeDialog
 import com.herfy.payment.views.OrderDialogFragment
 import com.herfy.phonenumber.EnterNewPhoneNumberFragment
 import com.herfy.upsell.UpsellRecyclerViewAdapter
-import com.herfy.util.CacheHelper
-import com.herfy.util.CurrencyUtils
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.herfy.utils.analytics.MixpanelUtil
@@ -1503,7 +1501,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             it.showLoadingDialog()
                         }
                         if (removeCoupon) {
-                            cartPresenter!!.removeCoupon()
+                            cartPresenter.removeCoupon()
                         }
                         cartPresenter!!.availDigitalCouponCampaign(digitalCoupons[position])
                     }

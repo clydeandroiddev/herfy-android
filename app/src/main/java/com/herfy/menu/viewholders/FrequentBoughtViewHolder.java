@@ -18,12 +18,10 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
-import com.herfy.util.PriceFormatter;
-import com.herfy.util.StringUtil;
+import com.herfy.utils.helper.PriceFormatter;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
-import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 

@@ -205,7 +205,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_vertical"
                                 android:layout_weight="1"
-                                android:drawableStart="@drawable/ic_fire"
+                                android:drawableStart="@drawable/ic_common_calories"
                                 android:drawablePadding="@dimen/margin_small"
                                 android:gravity="center_vertical"
                                 android:paddingStart="@dimen/padding_micro"

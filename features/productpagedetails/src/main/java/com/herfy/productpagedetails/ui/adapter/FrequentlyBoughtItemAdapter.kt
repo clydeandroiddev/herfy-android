@@ -29,13 +29,19 @@ class FrequentlyBoughtItemAdapter(private var items : List<MenuItem> = arrayList
     override fun onBindViewHolder(holder: FrequentlyBoughtItemViewholder, position: Int) {
         holder.apply {
             val data = items[position]
-            setItems(data)
+            setItems(data, position)
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateList(items: ArrayList<MenuItem>){
         this.items = items
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateFavorite(position: Int, menuItem: MenuItem) {
+        this.items[position].isFavorite = menuItem.isFavorite
         notifyDataSetChanged()
     }
 

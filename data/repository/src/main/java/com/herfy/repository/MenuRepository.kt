@@ -8,11 +8,13 @@ import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.database.entities.ModifierGroupDb
 import com.herfy.database.entities.ModifierItemDb
 import com.herfy.utils.helper.AppLogger
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.ApiRequestListener
+import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall
 import com.skylinedynamics.solosdk.api.models.Pagination
 import com.skylinedynamics.solosdk.api.models.objects.Allergen
@@ -26,6 +28,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupCdn
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemCdn
+import com.skylinedynamics.solosdk.api.models.requestbodies.AddFavoriteItemBody
 import com.skylinedynamics.solosdk.util.GsonHelper
 import org.json.JSONObject
 import java.util.LinkedList
@@ -37,7 +40,7 @@ interface MenuRepository {
     suspend fun getMenuCategoriesItems(result: (List<MenuCategory>) -> Unit)
 
     suspend fun getMenuItem(menuItemId: String, result: (MenuItem) -> Unit)
-    suspend fun getMenuItemEntityBy(id: String, applicationId: String, result: (String) -> Unit)
+    suspend fun getMenuCategoryIdFromMenuItemEntityBy(id: String, applicationId: String, result: (String) -> Unit)
     suspend fun getMenuItemDbBy(applicationId: String, name: String, result: (MenuItemDb?) -> Unit)
     fun getAllModifierGroupBy(
         applicationId: String,
@@ -47,6 +50,12 @@ interface MenuRepository {
     fun getModifierItemBy(applicationId: String, toTypedArray: Array<String>, result: (List<ModifierItemDb>) -> Unit)
 
     suspend fun getFrequentlyBoughtItems(page : Int, menuId: String, result: (ArrayList<MenuItem>, Int ) -> Unit)
+
+    suspend fun getMenuCategory(menuCategoryId : String, applicationId : String, result: (MenuCategory) -> Unit)
+
+    suspend fun addItemToFavorite(menuItem : MenuItem, result: (Boolean, Any?) -> Unit)
+
+    suspend fun deleteItemFromFavorites(menuItemId : String, result: (Boolean, Any?) -> Unit)
 }
 
 class MenuRepositoryImpl @Inject constructor(
@@ -395,12 +404,13 @@ class MenuRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMenuItemEntityBy(
+    override suspend fun getMenuCategoryIdFromMenuItemEntityBy(
         id: String,
         applicationId: String,
         result: (String) -> Unit
     ) {
-        result(appDatabase.menuItemEntityDao().findById(applicationId, id).menuCategoryId)
+        val menuCategoryId = appDatabase.menuItemEntityDao().findById(applicationId, id).menuCategoryId
+        result(menuCategoryId)
     }
 
     override suspend fun getMenuItemDbBy(
@@ -463,6 +473,46 @@ class MenuRepositoryImpl @Inject constructor(
 
             override fun onError(error: Any?) {
                 AppLogger.printRetrofitError(error)
+            }
+
+        })
+    }
+
+    override suspend fun getMenuCategory(
+        menuCategoryId: String,
+        applicationId: String,
+        result: (MenuCategory) -> Unit
+    ) {
+        result(appDatabase.menuCategoryEntityDao().findById(applicationId, menuCategoryId).toDomain())
+    }
+
+    override suspend fun addItemToFavorite(menuItem: MenuItem, result: (Boolean, Any?) -> Unit) {
+        val customerId = AuthUtil.getInstance().customer.id
+        val addFavoriteItemBody = AddFavoriteItemBody.getCdn(LocaleUtil.getInstance().language, menuItem)
+        CustomersApiCall.getInstance().addItemToFavorite(customerId, addFavoriteItemBody, object : ApiRequestListener{
+            override fun onSuccess(obj: Any?) {
+                result(true, null)
+            }
+
+            override fun onError(error: Any?) {
+                result(true, error)
+            }
+
+        })
+    }
+
+    override suspend fun deleteItemFromFavorites(
+        menuItemId: String,
+        result: (Boolean, Any?) -> Unit
+    ) {
+        val customerId = AuthUtil.getInstance().customer.id
+        CustomersApiCall.getInstance().deleteItemFromFavorites(customerId, menuItemId, object : ApiRequestListener{
+            override fun onSuccess(obj: Any?) {
+                result(true, null)
+            }
+
+            override fun onError(error: Any?) {
+               result(false, error)
             }
 
         })
