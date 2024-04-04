@@ -257,7 +257,6 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             val baseActivity = activity as BaseActivity
             baseActivity.dismissDialogs()
                     binding.orderTypeContainer.removeAllViews()
-            System.out.println("Order type menus $allowedOrderMenus")
             val orderTypeTitles = allowedOrderMenus?.split(",") ?: emptyList()
             val translatedTitles = mapOrderTypeTitlesToTranslations(orderTypeTitles)
             val formattedOrderTypes = createFavoriteOrderTypeUIModels(translatedTitles, orderTypeMenus)
@@ -340,14 +339,16 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
     private fun handleOrderTypeClick(selectedOrderTypeTag: String, orderType: FavoriteOrderTypeUIModel) {
         val currentSelectedOrderType = CacheUtil.getInstance().orderType
         val hasFavoriteAddedInCart = CacheUtil.getInstance().cart.count { it.isFavorite } >= 1
+
             orderTypeViews.forEach { orderTypeView ->
             if (currentSelectedOrderType.name == OrderType.DELIVERY.name && selectedOrderTypeTag == OrderType.PICKUP.name.lowercase() && hasFavoriteAddedInCart) {
                 showDialogClearCurrentBasketDialog(selectedOrderTypeTag)
                 return
-            } else if (currentSelectedOrderType.name == OrderType.PICKUP.name && selectedOrderTypeTag == OrderType.DINE_IN.name.replace("_","").lowercase() || selectedOrderTypeTag == "deliver" && hasFavoriteAddedInCart) {
+            } else if (currentSelectedOrderType.name == OrderType.PICKUP.name && selectedOrderTypeTag == OrderType.DINE_IN.name.replace("_","").lowercase() && hasFavoriteAddedInCart) {
                 showDialogClearCurrentBasketDialog(selectedOrderTypeTag)
                 return
             }else if (currentSelectedOrderType.name == OrderType.DELIVERY.name && selectedOrderTypeTag == OrderType.DINE_IN.name.replace("_","").lowercase()  && hasFavoriteAddedInCart) {
+
                 showDialogClearCurrentBasketDialog(selectedOrderTypeTag)
                 return
             }
