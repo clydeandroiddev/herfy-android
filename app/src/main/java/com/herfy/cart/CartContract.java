@@ -213,6 +213,12 @@ public interface CartContract {
         void addToCart(MenuItem upsell);
         void getCouponFrom(String code, Function1<CouponResult, Unit> result);
         void validateDigitalCoupon(String couponCode, Function1<CouponResult, Unit> result);
+
+        void getDigitalCouponsWith(
+                ArrayList<MenuItem> menuItems,
+                Boolean show ,
+                Boolean fromButtonClick
+        );
     }
 
 }

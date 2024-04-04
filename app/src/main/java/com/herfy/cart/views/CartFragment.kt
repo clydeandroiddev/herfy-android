@@ -7,7 +7,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -43,7 +45,10 @@ import com.herfy.order.views.ordertype.OrderTypeNewFragment
 import com.herfy.payment.dialog.PaymentOrderTimeDialog
 import com.herfy.payment.views.OrderDialogFragment
 import com.herfy.upsell.UpsellRecyclerViewAdapter
-import com.herfy.util.*
+import com.herfy.util.CacheHelper
+import com.herfy.util.CurrencyUtils
+import com.herfy.util.StringUtil
+import com.herfy.util.ViewUtil
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
@@ -67,10 +72,18 @@ import com.kochava.tracker.events.EventType
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
-import com.skylinedynamics.solosdk.api.models.objects.*
+import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
+import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge
+import com.skylinedynamics.solosdk.api.models.objects.Store
+import com.skylinedynamics.solosdk.api.models.objects.Translated
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.GregorianCalendar
+import java.util.Locale
+import java.util.Objects
 import javax.inject.Inject
 
 
@@ -790,6 +803,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showMenuItems(
         menuItems: List<MenuItem>, fromPromo: Boolean, fromRemoveCoupon: Boolean
     ) {
+        val menuItemsCopy = arrayListOf<MenuItem>()
+        menuItemsCopy.addAll(menuItems)
+        if (!Values.NO_PROMOTIONS && !fromPromo && !dontShowDigitalCoupons) {
+            showProgressDialog()
+            cartPresenter!!.getDigitalCouponsWith(menuItemsCopy,false, false)
+        }
         dontShowDigitalCoupons = false
         cartPresenter!!.getTotalPrice(false, false)
         binding.paymentSummaryContainer.placeOrder.isEnabled = menuItems.size > 0
@@ -850,12 +869,18 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             adapter?.notifyDataSetChanged()
         }
         if (!fromChangeQuantity) update()
+
+        showProgressDialog()
+        cartPresenter.getDigitalCouponsWith(cartPresenter.menuItemsList, false ,false)
+
         setCartQuantity(cartPresenter.menuItemsList)
     }
 
     override fun updateMenuItems(menuItems: List<MenuItem>) {
         runOnMain {
+            setCartQuantity(menuItems)
             adapter?.notifyDataSetChanged()
+
         }
     }
 
@@ -1306,6 +1331,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
 
     override fun refreshDigitalCoupons() {
+        dismissProgressDialog()
         if (cartPresenter != null && cartPresenter!!.menuItemsCount > 0) {
             //binding.main.campaignLayout.visibility = View.VISIBLE
         }
@@ -2124,5 +2150,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
 
     }
+
+
 
 }
