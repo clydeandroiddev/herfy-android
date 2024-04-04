@@ -126,7 +126,6 @@ public class StringUtil {
             try {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
                 Date openDate = simpleDateFormat.parse(store.getAttributes().getOpeningHours().get(day).getOpen());
-                System.out.println("AAAAAopenDate:" + openDate.toString());
                 simpleDateFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
                 return localize(simpleDateFormat.format(openDate).replace("AM", CacheUtil.getInstance().getTranslations(Text.AM)).replace("PM", CacheUtil.getInstance().getTranslations(Text.PM)));
             } catch (ParseException e) {

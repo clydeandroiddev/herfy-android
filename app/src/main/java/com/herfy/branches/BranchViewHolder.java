@@ -219,48 +219,35 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
             boolean hoursAvailable = store.getAttributes().openingHoursUtc != null && day < store.getAttributes().openingHoursUtc.size();
 
             branchTime.setVisibility(View.VISIBLE);
+            closeContainer.setVisibility(View.GONE);
+            
             if (!pickupHoursAvailable && !deliverHoursAvailable && hoursAvailable) {
                 String openingHours = StringUtil.getOpeningHours(store);
                 String openingFinal = (!openingHours.isEmpty() ? openingHours : "-");
                 branchTime.setText(openingFinal);
+                if (!store.getAttributes().getOpen()) {
+                    try {
+                        closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.getOpeningDayOnly(store)));
+                        closeContainer.setVisibility(View.VISIBLE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             } else {
                 if (pickupHoursAvailable) {
                     String hoursText = StringUtil.formatOpenHours(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed());
                     branchTime.setText(hoursText);
+                    if (!store.getAttributes().getOpenPickup()) {
+                        try {
+                            closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed())));
+                            closeContainer.setVisibility(View.VISIBLE);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 } else {
                     branchTime.setVisibility(View.GONE);
                 }
-            }
-
-            boolean isOpen = false;
-            if (!pickupHoursAvailable && !deliverHoursAvailable && hoursAvailable) {
-                if (store.getAttributes().getOpen()) {
-                    isOpen = true;
-                }
-            } else {
-                if (pickupHoursAvailable) {
-                    if (store.getAttributes().getOpenPickup()) {
-                        isOpen = true;
-                    }
-                }
-            }
-
-            if (!isOpen) {
-                closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed())));
-                closeContainer.setVisibility(View.VISIBLE);
-//                container.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        if (pickupHoursAvailable) {
-//                            Calendar calendar = Calendar.getInstance();
-//                            int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-//                            if (day < 0) {
-//                                day = 0;
-//                            }
-//                            branchesPresenter.setCloseTime(StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed()));
-//                        }
-//                    }
-//                });
             }
 
             if (selected) {

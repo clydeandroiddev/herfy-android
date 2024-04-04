@@ -302,43 +302,51 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
                 }
             }
 
-            boolean isOpen = false;
+            closeContainer.setVisibility(View.GONE);
+            container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    orderPresenter.selectStore(isDineIn, getAdapterPosition());
+                }
+            });
+
             if (!pickupHoursAvailable && !deliverHoursAvailable && hoursAvailable) {
-                if (store.getAttributes().getOpen()) {
-                    isOpen = true;
+                if (!store.getAttributes().getOpen()) {
+                    try {
+                        closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.getOpeningDayOnly(store)));
+                        closeContainer.setVisibility(View.VISIBLE);
+                        container.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                orderPresenter.setCloseTime(StringUtil.getOpeningDayOnly(store));
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 if (pickupHoursAvailable) {
-                    if (store.getAttributes().getOpenPickup()) {
-                        isOpen = true;
-                    }
-                }
-            }
-
-            if (!isOpen) {
-                closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed())));
-                closeContainer.setVisibility(View.VISIBLE);
-                container.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (pickupHoursAvailable) {
-                            Calendar calendar = Calendar.getInstance();
-                            int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-                            if (day < 0) {
-                                day = 0;
-                            }
-                            orderPresenter.setCloseTime(StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed()));
+                    if (!store.getAttributes().getOpenPickup()) {
+                        try {
+                            closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed())));
+                            closeContainer.setVisibility(View.VISIBLE);
+                            container.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Calendar calendar = Calendar.getInstance();
+                                    int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+                                    if (day < 0) {
+                                        day = 0;
+                                    }
+                                    orderPresenter.setCloseTime(StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed()));
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-                });
-            } else {
-                closeContainer.setVisibility(View.GONE);
-                container.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        orderPresenter.selectStore(isDineIn, getAdapterPosition());
-                    }
-                });
+                }
             }
 
             if (selected) {
