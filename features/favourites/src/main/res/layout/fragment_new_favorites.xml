@@ -98,16 +98,18 @@
       android:paddingBottom="@dimen/_150sdp"
       app:layout_constraintBottom_toTopOf="@+id/footer"
       tools:listitem="@layout/item_new_favourite"
-      tools:visibility="visible" />
+      />
 
   <com.facebook.shimmer.ShimmerFrameLayout
       android:id="@+id/new_menu_item_search_shimmer"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="0dp"
       android:clipToPadding="false"
       android:paddingTop="@dimen/padding_large"
       android:visibility="gone"
       app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/emptyState"
       app:shimmer_duration="1000"
       tools:visibility="gone">
