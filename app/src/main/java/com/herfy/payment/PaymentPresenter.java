@@ -1370,11 +1370,11 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                                 case "foodics-online":
 
                                     try {
-                                        if (CacheUtil.getInstance().getCustomerCards().isEmpty()) {
+//                                        if (CacheUtil.getInstance().getCustomerCards().isEmpty()) {
                                             paymentView.showCheckoutPaymentForm(orderId);
-                                        } else {
-                                            paymentView.showCardDialogList(orderId);
-                                        }
+//                                        } else {
+//                                            paymentView.showCardDialogList(orderId);
+//                                        }
                                     } catch (Exception e) {
                                         e.printStackTrace(); // or log the exception
                                     }
