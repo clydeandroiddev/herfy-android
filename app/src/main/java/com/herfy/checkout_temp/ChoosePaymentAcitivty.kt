@@ -369,7 +369,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
                 rbCash = view.findViewById(R.id.rb_cash)
                 cashLabel = view.findViewById(R.id.cash_label)
                 cashImage = view.findViewById(R.id.cash_image)
-                rbCash.setOnClickListener { selectPaymentTypeCash() }
+                cashContainer.setOnClickListener { selectPaymentTypeCash() }
                 binding.paymentTypeContainer.addView(view)
             } else if (paymentType == PaymentType.CARD) {
                 isCardPaymentAvailable = true
@@ -380,7 +380,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
                 cardImage = view.findViewById(R.id.card_image)
                 cardPayment = view.findViewById(R.id.cards_layout)
                 binding.paymentTypeContainer.addView(view)
-                rbCard.setOnClickListener {
+                cardContainer.setOnClickListener {
                     selectedPaymentType = PaymentType.CARD
                     if (isCashPaymentAvailable) unselectedView(rbCash, cashImage, cashContainer, cashPayment)
                     if (isCODPaymentAvailable) unselectedView(rbCod, codImage, codContainer, codPayment)
