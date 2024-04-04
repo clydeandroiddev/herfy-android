@@ -4785,9 +4785,16 @@ public class MenuPresenter implements MenuContract.Presenter {
             menuView.logFirebaseEvent("add_to_cart_event");
             int cartCount = CacheUtil.getInstance().getCartQuantity();
             menuItem.isSandwichOnly = false;
-            removeMukafaaRedemption();
-                CacheUtil.getInstance().addToCart(menuItem);
 
+            if (isFromFavorite) {
+                removeMukafaaRedemption();
+                menuItem.setFavorite(true);
+                System.out.println("Cart items " +menuItem);
+                CacheUtil.getInstance().addToCart(menuItem);
+            }else {
+                removeMukafaaRedemption();
+                CacheUtil.getInstance().addToCart(menuItem);
+            }
                 if (cartCount == 0) {
                     menuView.setCartExpiry();
                 }
