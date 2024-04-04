@@ -2960,7 +2960,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             }
 
             if (!invalid) {
-                addCartItem(false, false);
+                addCartItem(false, false,false );
             } else {
                 menuView.selectMenuItem(menuCategory, menuItem);
             }
@@ -4545,7 +4545,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void getCartMenuItem() {
+    public void getCartMenuItem(boolean isFromFavorite) {
 
         boolean invalid = false;
 
@@ -4584,7 +4584,7 @@ public class MenuPresenter implements MenuContract.Presenter {
 
         if (!invalid) {
             menuItem.getAttributes().setNotes(itemNote);
-            addCartItem(false, false);
+            addCartItem(false, false, isFromFavorite);
         }
     }
 
@@ -4638,7 +4638,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                     if (dataArray.length() > 0) {
                         getConcept(TimedEvent.parse(dataArray.getJSONObject(0)));
                     } else {
-                        addCartItem(true, false);
+                        addCartItem(true, false, false);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -4650,7 +4650,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                addCartItem(true, false);
+                addCartItem(true, false,false );
             }
         }, menuItem.getId());
     }
@@ -4679,7 +4679,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                                     Concept concept = gson.fromJson(included.getJSONObject(i).getJSONObject("attributes").toString(), Concept.class);
                                     concept.setId(included.getJSONObject(i).getString("id"));
                                     if (MenuUtil.isItemAvailable(timedEvent, concept.getCurrentTime())) {
-                                        addCartItem(true, false);
+                                        addCartItem(true, false, false);
                                     } else {
                                         menuView.showError(MenuUtil.getTimedEventError(timedEvent));
                                     }
@@ -4708,7 +4708,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void addCartItem(boolean add, boolean skip) {
+    public void addCartItem(boolean add, boolean skip, boolean isFromFavorite) {
         String orderStoreId = null;
         if (CacheUtil.getInstance().getOrderStore() != null) {
             orderStoreId = CacheUtil.getInstance().getOrderStore().getId();

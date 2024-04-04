@@ -309,22 +309,22 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         val deliveryTranslated = cacheUtil.getTranslations(Text.DELIVERY, "Delivery")
         val pickUpTranslated = cacheUtil.getTranslations(Text.PICKUP, "Pickup")
         val dineInTranslated = cacheUtil.getTranslations(Text.DINE_IN, "Dine In")
-
+        val defaultMenuIds = applicationAttributes.defaultMenuId
         return translatedTitles.mapNotNull { title ->
             val translation = CacheUtil.getInstance()
 
             when (title) {
                 deliveryTranslated -> {
                     val orderTypeMenu = orderTypeMenus.find { it.type == "deliver" }
-                    orderTypeMenu?.let { FavoriteOrderTypeUIModel(it.id, title, orderTypeName = it.type) }
+                    orderTypeMenu?.let { FavoriteOrderTypeUIModel(it.id, title, orderTypeName = it.type) }?: FavoriteOrderTypeUIModel(defaultMenuIds.toString(), title = title,"deliver")
                 }
                 pickUpTranslated -> {
                     val orderTypeMenu = orderTypeMenus.find { it.type == "pickup" || it.type == "dinein" }
-                    orderTypeMenu?.let { FavoriteOrderTypeUIModel(it.id, title, orderTypeName = it.type) }
+                    orderTypeMenu?.let { FavoriteOrderTypeUIModel(it.id, title, orderTypeName = it.type) } ?: FavoriteOrderTypeUIModel(defaultMenuIds.toString(), title = title,"pickup")
                 }
                 dineInTranslated -> {
                     val orderTypeMenu = orderTypeMenus.find { it.type == "pickup" || it.type == "dinein" }
-                    orderTypeMenu?.let { FavoriteOrderTypeUIModel(it.id, title, orderTypeName = "dinein") }
+                    orderTypeMenu?.let { FavoriteOrderTypeUIModel(it.id, title, orderTypeName = "dinein") } ?: FavoriteOrderTypeUIModel(defaultMenuIds.toString(), title = title,"dinein")
                 }
                 else -> null
             }
