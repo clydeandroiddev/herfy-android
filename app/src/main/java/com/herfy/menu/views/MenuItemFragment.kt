@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.DisplayMetrics
@@ -21,6 +22,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -57,6 +59,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.invisible
+import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.visible
@@ -129,6 +132,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        resetFrequentlyAddedFavoritesInCart()
         activity?.let { act ->
             val displayMetrics = DisplayMetrics()
             act.windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -139,8 +143,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             binding.image.invalidate()
         }
         menuPresenter.start()
-        menuPresenter.getFrequentBoughtItems();
-
+        binding.frequentlyBoughtShimmering.setVisible(true)
         initialModifierId = ""
         activity?.cast<BaseActivity> {
             if (BuildUtil.soloAppKey().equals("SpeWD37HZx9Uqora", ignoreCase = true)) {
@@ -159,6 +162,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 }else {
                     menuPresenter.getMenuItem(false, args.menuItemId)
                 }
+                menuPresenter.getFrequentBoughtItemsByMenuId(1,args.menuItemId)
             } else if (args.cartMenuItemPosition != -1) {
                 cartMenuItem = args.cartMenuItemPosition
                 val menuItems: List<MenuItem>? = CacheUtil.getInstance().cart
@@ -291,6 +295,19 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         }
     }
 
+    private fun resetFrequentlyAddedFavoritesInCart() {
+        val updatedCart: ArrayList<MenuItem> = ArrayList<MenuItem>().apply {
+            CacheUtil.getInstance().cart.forEach { menuItem ->
+                menuItem.isAddedToCart = false
+                add(menuItem)
+            }
+
+        }
+        CacheUtil.getInstance().setFrequentlyQuantityShouldShow(false,"")
+        System.out.println("Updated cart " + updatedCart)
+        CacheUtil.getInstance().cart = updatedCart
+    }
+
     override fun setupViews() {
 //        binding.appbar.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
 //            override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
@@ -369,7 +386,18 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun showStore(store: Store) {}
+    override fun navigateToMenuItemDetails(menuCategory: MenuCategory?, menuItem: MenuItem?) {
+        navMenuItem(menuCategory?.id.orEmpty(), menuItemId = menuItem?.id.orEmpty())
+    }
+
     override fun showStoreOpen(open: Boolean, message: String) {}
+    override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
+        frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(),menuPresenter)
+        binding.frequentlyBoughRecycleview.adapter = frequentBoughItemsAdapter
+        frequentBoughItemsAdapter?.notifyDataSetChanged()
+        binding.frequentlyBoughtShimmering.setVisible(false)
+    }
+
     override fun showAddress(address: String) {}
     override fun reloadMenu() {}
     override fun showMenuCategories(
@@ -387,11 +415,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             it.runOnUiThread {
 //                binding.mealDealsContainer.visibility = View.GONE
                 binding.txtMoreInfo.isVisible = !menuItem.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
-                frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(),menuPresenter)
-                frequentBoughItemsAdapter?.notifyDataSetChanged()
-                binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(requireContext())
-
-                binding.frequentlyBoughRecycleview.adapter = frequentBoughItemsAdapter
                 binding.txtMoreInfo.ninjaTap(viewLifecycleScope) {
                     val bundle = Bundle()
                     bundle.putParcelable(NAV_ARGS_INFO_KEY,  NutritionInfoParams(
@@ -405,7 +428,32 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 if (menuItem.attributes.notes.isNotEmpty()) {
                     binding.etItemNotes.setText(menuItem.attributes.notes)
                 }
+                binding.name.text = menuItem.getName(LocaleUtil.getInstance().language)
+                val test =  CacheUtil
+                    .getInstance()
+                    .getTranslations(Text.FREQUETLY_BOUGHT_TOGETHER,"Frequently bought together")
+                binding.txtFrequntlyBought
+                    .text = test
+                val caloriesValue = menuItem.calories
+                val calorieCount = menuItem.calorieCount
 
+                System.out.println("Frequent bought $test and $caloriesValue and count $calorieCount and Name ${menuItem.getName(LocaleUtil.getInstance().language)}")
+                if (caloriesValue != null && !caloriesValue.isEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
+                    binding.calories.text = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
+                    binding.calories.visibility = View.VISIBLE
+                } else if (calorieCount != 0) {
+                    binding.calories.text = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
+                    binding.calories.visibility = View.VISIBLE
+                } else {
+                    binding.calories.visibility = View.GONE
+                }
+                val descriptionValue = menuItem.getDescription(LocaleUtil.getInstance().language)
+                if (descriptionValue == null || descriptionValue.isEmpty() || descriptionValue == "null") {
+                    binding.description.visibility = View.GONE
+                } else {
+                    binding.description.text = descriptionValue
+                    binding.description.visibility = View.VISIBLE
+                }
                 canChange = false
                 var imageUrl = menuItem.image
                 if (imageUrl == null || imageUrl.equals(
@@ -455,24 +503,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     .into(binding.image)
 
                 binding.name.text = menuItem.getName(LocaleUtil.getInstance().language)
-                val caloriesValue = menuItem.calories
-                val calorieCount = menuItem.calorieCount
-                if (caloriesValue != null && !caloriesValue.isEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
-                    binding.calories.text = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
-                    binding.calories.visibility = View.VISIBLE
-                } else if (calorieCount != 0) {
-                    binding.calories.text = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
-                    binding.calories.visibility = View.VISIBLE
-                } else {
-                    binding.calories.visibility = View.GONE
-                }
-                val descriptionValue = menuItem.getDescription(LocaleUtil.getInstance().language)
-                if (descriptionValue == null || descriptionValue.isEmpty() || descriptionValue == "null") {
-                    binding.description.visibility = View.GONE
-                } else {
-                    binding.description.text = descriptionValue
-                    binding.description.visibility = View.VISIBLE
-                }
+                binding.txtFrequntlyBought
+                    .text = CacheUtil
+                    .getInstance()
+                    .getTranslations(Text.FREQUETLY_BOUGHT_TOGETHER,"Frequently bought together")
 //                binding.detailsShimmer.visibility = View.GONE
             }
         }
@@ -1147,15 +1181,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         binding.minus.isFocusable = quantityValue != 1
         binding.minus.isClickable = quantityValue != 1
 
-        // todo revert this once needed
-//        if (quantityValue != 1) {
-//            binding.minus.setColorFilter(
-//                Color.parseColor(CacheUtil.getInstance().colorMain),
-//                PorterDuff.Mode.SRC_IN
-//            )
-//        } else {
-//            binding.minus.setColorFilter(Color.parseColor("#BEBEBE"), PorterDuff.Mode.SRC_IN)
-//        }
         binding.quantity.text = StringUtil.localize(quantityValue.toString())
     }
 
@@ -1183,7 +1208,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun showOrderType() {}
-    override fun addCartItem(menuItem: MenuItem) {
+    override fun addCartItem(
+        menuItem: MenuItem,
+        isShouldBackPressed: Boolean,
+        menuAddedToCartPosition: Int
+    ) {
         try {
             activity?.cast<MainActivity> {
                 it.setCartQuantity(CacheUtil.getInstance().cartQuantity)
@@ -1193,6 +1222,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             }
             activity?.cast<BaseActivity> {
                 it.runOnUiThread {
+                    if (!isShouldBackPressed) {
+                        frequentBoughItemsAdapter?.notifyItemChanged(menuAddedToCartPosition, menuItem)
+                    }
                     val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                     if (vibrator != null) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -1217,7 +1249,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuItem.attributes.image,
                         ViewUtil.dpToPx(it, 16)
                     )
-                    activity?.onBackPressed()
+
+                    if (isShouldBackPressed) {
+                        activity?.onBackPressed()
+                    }
+
                 }
             }
         } catch (ex: Exception) {
@@ -1225,7 +1261,13 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         }
     }
 
-    override fun addCartItem(menuItem: MenuItem, view: ImageView) {}
+    override fun addCartItem(
+        menuItem: MenuItem,
+        view: ImageView,
+        isShouldBackPressed: Boolean
+    ) {}
+
+
     override fun updateCartItem() {
         var message = CacheUtil.getInstance().getTranslations(Text.ITEM_UPDATED, "Item updated")
         if (args.isPromo && !args.isEdit) {
@@ -1257,7 +1299,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             }
         }
     }
-
+    override fun updateFavoriteByPosition(
+        position: Int,
+        menuItem: MenuItem?
+    ) {
+        frequentBoughItemsAdapter?.notifyItemChanged(position,menuItem)
+    }
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {
         modifierGroupsAdapter!!.showModifierItemPrice(show, modifierGroupPosition)
     }
@@ -1398,6 +1445,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun updateFloatingTotalPrice() {
 
+    }
+    private fun navMenuItem(menuCategoryId: String, menuItemId: String) {
+        val navController = findNavController()
+        navController.popBackStack() // Clear the back stack
+        findNavController().navigateToDeepLink("nav_menu_item/$menuCategoryId/$menuItemId")
     }
 
 }

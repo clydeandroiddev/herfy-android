@@ -150,6 +150,14 @@ public class MenuRecentViewHolder extends RecyclerView.ViewHolder implements Men
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
+
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {
@@ -267,12 +275,12 @@ public class MenuRecentViewHolder extends RecyclerView.ViewHolder implements Men
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, ImageView view) {
+    public void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed) {
 
     }
 
@@ -290,7 +298,9 @@ public class MenuRecentViewHolder extends RecyclerView.ViewHolder implements Men
     public void showError(String error) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
 

@@ -73,6 +73,9 @@ public class CacheUtil {
 
     private static final String CITIES = "CitiesList";
     private static final String CUSTOMER_CARDS = "CustomerCards";
+
+    private static final String IS_FREQUENTLY_QUANTITY_SHOW = "FrequentlyQuantity";
+    private static final String FREQUENTLY_QUANTITY_ID = "FrequentlyID";
     private static final String CUSTOMER_CARD = "CustomerCard";
     private static final String MID_SLIDES = "MidSlides";
     private static final String MENU_ID = "MenuId";
@@ -403,6 +406,17 @@ public class CacheUtil {
         editor.apply();
     }
 
+    public void setFrequentlyQuantityShouldShow(boolean isQuantityShouldShow, String menuId) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putBoolean(IS_FREQUENTLY_QUANTITY_SHOW, isQuantityShouldShow);
+        editor.putString(FREQUENTLY_QUANTITY_ID,menuId);
+        editor.apply();
+    }
+    public Pair<Boolean, String> getFrequentlyQuantityShouldShow() {
+        boolean isQuantityShouldShow = cacheSharedPreferences.getBoolean(IS_FREQUENTLY_QUANTITY_SHOW, false);
+        String menuId = cacheSharedPreferences.getString(FREQUENTLY_QUANTITY_ID, "");
+        return new Pair<>(isQuantityShouldShow, menuId);
+    }
     public List<CustomerCard> getCustomerCards() {
         String cards = cacheSharedPreferences.getString(CUSTOMER_CARDS, null);
         if (cards != null) {

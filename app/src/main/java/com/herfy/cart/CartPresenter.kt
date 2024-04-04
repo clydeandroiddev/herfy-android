@@ -957,7 +957,8 @@ class CartPresenter @Inject constructor(
         if (CacheUtil.getInstance().orderStore != null) {
             orderStoreId = CacheUtil.getInstance().orderStore.id
         }
-        var totalPrice = item.getPrice(orderStoreId)
+        val price = item.getPrice(orderStoreId)
+        var totalPrice = if(price == 0.0) item.attributes.price else price
         if (BuildUtil.isEkfc() && item.total != 0.0) {
             totalPrice = item.total
         } else {
@@ -1135,9 +1136,12 @@ class CartPresenter @Inject constructor(
         }
     }
 
-    override fun editCartItem(position: Int) {
+    override fun editCartItem(
+        position: Int,
+        menuItem: MenuItem
+    ) {
         trackEvent(MixpanelUtil.EVENT_EDIT_ITEM_FROM_CART)
-        cartView.editCartItem(position)
+        cartView.editCartItem(position,menuItem)
     }
 
     override fun getCoupon(couponCode: String) {

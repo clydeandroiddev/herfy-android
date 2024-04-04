@@ -319,6 +319,15 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
     }
 
     @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
+
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
+
+    }
+
+    @Override
     public void showStoreOpen(boolean open, String messag) {
 
     }
@@ -497,12 +506,12 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, ImageView view) {
+    public void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed) {
 
     }
 
@@ -520,7 +529,9 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
     public void showError(String error) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
 

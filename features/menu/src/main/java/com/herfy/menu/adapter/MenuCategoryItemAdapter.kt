@@ -1,5 +1,6 @@
 package com.herfy.menu.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -190,8 +191,10 @@ class MenuCategoryItemAdapter(
                             onFavorite(item.menuItem)
                             setImageResource(
                                 if (CacheUtil.getInstance().favorites.contains(item.menuItem.id)) {
+                                    Log.d("FAFA","Empty")
                                     R.drawable.ic_favorite_empty
                                 } else {
+                                    Log.d("FAFA","Contains")
                                     R.drawable.ic_favorite_filled
                                 }
                             )

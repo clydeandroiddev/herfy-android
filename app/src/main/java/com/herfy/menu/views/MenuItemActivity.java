@@ -288,9 +288,15 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
     public void setupTranslations() {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     @Override
     public void showStore(Store store) {
+
+    }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
 
     }
 
@@ -469,7 +475,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator != null) {
@@ -495,7 +501,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, ImageView view) {
+    public void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed) {
 
     }
 
@@ -517,7 +523,9 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
         dismissDialogs();
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showError(String error) {
         dismissDialogs();

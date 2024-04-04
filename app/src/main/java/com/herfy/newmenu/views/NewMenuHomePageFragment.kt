@@ -903,7 +903,14 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     }
 
     override fun showStore(store: Store) {}
+
+    override fun navigateToMenuItemDetails(menuCategory: MenuCategory?, menuItem: MenuItem?) {}
+
     override fun showStoreOpen(open: Boolean, message: String) {}
+    override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
+        TODO("Not yet implemented")
+    }
+
     override fun showAddress(address: String) {}
     override fun reloadMenu() {
         menuPresenter!!.reloadMenu()
@@ -1008,7 +1015,11 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     override fun setMenuItemTotalPrice(totalPrice: Double, menuItemPrice: Double) {}
     override fun selectSize() {}
     override fun showOrderType() {}
-    override fun addCartItem(menuItem: MenuItem) {
+    override fun addCartItem(
+        menuItem: MenuItem,
+        isShouldBackPressed: Boolean,
+        menuAddedToCartPosition: Int
+    ) {
         try {
             val activity = activity as MainActivity?
             activity?.runOnUiThread {
@@ -1039,8 +1050,12 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         }
     }
 
-    override fun addCartItem(menuItem: MenuItem, view: ImageView) {
-        addCartItem(menuItem)
+    override fun addCartItem(
+        menuItem: MenuItem,
+        view: ImageView,
+        isShouldBackPressed: Boolean
+    ) {
+        addCartItem(menuItem, isShouldBackPressed,0)
         listener?.animateViewToCart(view, menuItem.attributes.image, 0)
     }
 
@@ -1115,7 +1130,10 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             e.printStackTrace()
         }
     }
-
+    override fun updateFavoriteByPosition(
+        position: Int,
+        menuItem: MenuItem?
+    ) {}
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean, modifierGroupPosition: Int

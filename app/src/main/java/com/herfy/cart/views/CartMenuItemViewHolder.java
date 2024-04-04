@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,6 +25,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
@@ -39,8 +39,6 @@ import com.herfy.util.StringUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -188,7 +186,9 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
 
     @Override
     public void setMenuItem(MenuItem menuItem) {
+        MenuItemAttributes itemAttributes = menuItem.getAttributes();
         double menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1);
+        System.out.println("Get cart menu " + menuItem.getAttributes().getName() + " Total price " + menuItemTotalPrice+ " Promo " + menuItem.isPromo());
         quantityLayout.setVisibility(menuItem.isPromo() || menuItemTotalPrice == 0 ? View.INVISIBLE : View.VISIBLE);
 
         if (!menuItem.isPromo() && menuItem.getAttributes().getQuantity() > 1) {
@@ -233,7 +233,11 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
             }
         }
 
-        name.setText(menuItem.getName(LocaleUtil.getInstance().getLanguage()));
+        String itemName = menuItem.getName(LocaleUtil.getInstance().getLanguage());
+        if (itemName == null || itemName.isEmpty()) {
+            itemName = itemAttributes.getName();
+        }
+        name.setText(itemName);
 
         boolean first = true;
 
@@ -439,7 +443,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cartPresenter.editCartItem(getAdapterPosition());
+                cartPresenter.editCartItem(getAdapterPosition(),menuItem);
             }
         });
     }
@@ -483,7 +487,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
     }
 
     @Override
-    public void editCartItem(int position) {
+    public void editCartItem(int position, MenuItem menuItem) {
 
     }
 

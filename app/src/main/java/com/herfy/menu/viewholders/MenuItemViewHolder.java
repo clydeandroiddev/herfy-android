@@ -142,9 +142,18 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {
+
+    }
+
+    @Override
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
     }
 
@@ -214,12 +223,12 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, ImageView view) {
+    public void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed) {
 
     }
 
@@ -232,6 +241,11 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
     public void showMessage(String message) {
         /*((HomeActivity) context).dismissDialogs();
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();*/
+    }
+
+    @Override
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
+
     }
 
     @Override

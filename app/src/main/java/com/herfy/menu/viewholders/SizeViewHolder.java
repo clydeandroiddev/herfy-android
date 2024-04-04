@@ -110,6 +110,10 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {
@@ -180,7 +184,9 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     public void setModifierItem(ModifierGroup modifierGroup, ModifierItem modifierItem, int position) {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     @Override
     public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
 
@@ -264,12 +270,12 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, ImageView view) {
+    public void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed) {
 
     }
 
@@ -280,6 +286,11 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
 
     @Override
     public void showMessage(String message) {
+
+    }
+
+    @Override
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
     }
 

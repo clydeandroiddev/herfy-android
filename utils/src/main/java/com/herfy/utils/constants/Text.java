@@ -1003,6 +1003,7 @@ public class Text {
     public static final String FULL_NAME_LABEL = "full_name_label";
 
     public static final String DYNAMIC_CODE_DIGIT = "dyamic_code_digit";
+    public static final String FREQUETLY_BOUGHT_TOGETHER = "frequently_bought";
     public static final String DELIVERY_ADDRESSES = "delivery_addresses";
     public static final String CURBSIDE_VEHICLES = "curbside_vehicles";
     public static final String LOGOUT = "logout";
