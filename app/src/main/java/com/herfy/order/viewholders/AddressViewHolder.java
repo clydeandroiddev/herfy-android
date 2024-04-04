@@ -460,6 +460,11 @@ public class AddressViewHolder extends RecyclerView.ViewHolder implements OrderC
 
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
     private int getIconLabel(String label) {
         if (label.equalsIgnoreCase("Home") || label.equalsIgnoreCase("البيت")) {
             return R.drawable.ic_house;

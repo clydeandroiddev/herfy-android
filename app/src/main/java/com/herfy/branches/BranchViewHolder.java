@@ -323,5 +323,10 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
 
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
 
 }

@@ -8,12 +8,15 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import com.google.android.gms.common.api.ApiException
@@ -395,6 +398,16 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
         activity?.cast<MainActivity> {
             Toast.makeText(it, error, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun setCloseTime(time: String) {
+        binding.branchClosedLabel.text = CacheUtil.getInstance()
+            .getTranslations(Text.BRANCH_IS_CLOSED_ERROR, "This branch is closed. It opens (x).")
+            .replace("(x)", time)
+        binding.branchCloseLayout.isVisible = true
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.branchCloseLayout.isVisible = false
+        }, 2000)
     }
 
     override fun selectBranch(id: String) {}

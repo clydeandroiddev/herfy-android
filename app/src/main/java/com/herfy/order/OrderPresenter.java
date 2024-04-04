@@ -648,6 +648,11 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     }
 
     @Override
+    public void setCloseTime(String time) {
+        orderView.setCloseTime(time);
+    }
+
+    @Override
     public void continueStore(boolean isDineIn, int position, Store store) {
 
         selectedAddress = null;

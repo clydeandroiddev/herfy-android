@@ -127,6 +127,7 @@ public interface OrderContract {
 
         void showMinimumDeliveryForAreaMessage(String error);
 
+        void setCloseTime(String time);
     }
 
     interface Presenter extends BasePresenter {

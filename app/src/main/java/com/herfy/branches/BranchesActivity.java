@@ -470,4 +470,9 @@ public class BranchesActivity extends BaseActivity implements BranchesContract.V
 
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
 }

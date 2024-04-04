@@ -29,6 +29,8 @@ public interface BranchesContract {
         void showError(String error);
 
         void selectBranch(String id);
+
+        void setCloseTime(String time);
     }
 
     interface Presenter extends BasePresenter {

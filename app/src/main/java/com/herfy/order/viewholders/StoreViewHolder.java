@@ -535,4 +535,9 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
 
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
 }
