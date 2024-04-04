@@ -126,6 +126,7 @@ public class StringUtil {
             try {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
                 Date openDate = simpleDateFormat.parse(store.getAttributes().getOpeningHours().get(day).getOpen());
+                System.out.println("AAAAAopenDate:" + openDate.toString());
                 simpleDateFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
                 return localize(simpleDateFormat.format(openDate).replace("AM", CacheUtil.getInstance().getTranslations(Text.AM)).replace("PM", CacheUtil.getInstance().getTranslations(Text.PM)));
             } catch (ParseException e) {
@@ -165,6 +166,57 @@ public class StringUtil {
 
         return "";
 
+    }
+
+    public static String formatOpenHoursOnly(String open, String close) {
+        String formattedOpenHours = null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date nowDate = new Date();
+            String currentDate = sdf.format(nowDate);
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+            Date openDate = simpleDateFormat.parse(open);
+            Date closedDate = simpleDateFormat.parse(close);
+
+            SimpleDateFormat timeSdf = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+            TimeZone localTimeZone = TimeZone.getDefault();
+            timeSdf.setTimeZone(localTimeZone);
+
+            if (openDate != null && closedDate != null) {
+                if (localTimeZone.inDaylightTime(nowDate)) {
+                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
+                    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    openDate = simpleDateFormat.parse(currentDate + " " + open);
+                    closedDate = simpleDateFormat.parse(currentDate + " " + close);
+                    if (openDate != null && closedDate != null) {
+                        boolean isCloseNextDay = closedDate.getTime() < openDate.getTime();
+                        if (isCloseNextDay) {
+                            Calendar closedCalendar = Calendar.getInstance();
+                            closedCalendar.setTime(closedDate);
+                            closedCalendar.add(Calendar.DATE, 1);
+                            String tomorrowDate = sdf.format(closedCalendar.getTime());
+                            closedDate = simpleDateFormat.parse(tomorrowDate + " " + close);
+                        }
+                        if (closedDate != null) {
+                            long openTime = openDate.getTime();
+                            long closedTime = closedDate.getTime();
+                            Date openDateWithOffset = new Date(openTime);
+                            Date closedDateWithOffset = new Date(closedTime);
+                            formattedOpenHours = timeSdf.format(openDateWithOffset);
+                        }
+                    }
+                } else {
+                    formattedOpenHours = timeSdf.format(openDate);
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return formattedOpenHours;
     }
 
     public static String formatOpenHours(String open, String close) {

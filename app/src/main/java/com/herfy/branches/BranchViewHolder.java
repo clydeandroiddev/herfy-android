@@ -246,22 +246,21 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
             }
 
             if (!isOpen) {
-                closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.getOpeningDayOnly(store)));
+                closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed())));
                 closeContainer.setVisibility(View.VISIBLE);
-                container.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        branchesPresenter.setCloseTime(StringUtil.getOpeningDayOnly(store));
-                    }
-                });
-            } else {
-                closeContainer.setVisibility(View.GONE);
-                container.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        branchesPresenter.selectBranch(getAdapterPosition());
-                    }
-                });
+//                container.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        if (pickupHoursAvailable) {
+//                            Calendar calendar = Calendar.getInstance();
+//                            int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+//                            if (day < 0) {
+//                                day = 0;
+//                            }
+//                            branchesPresenter.setCloseTime(StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed()));
+//                        }
+//                    }
+//                });
             }
 
             if (selected) {
