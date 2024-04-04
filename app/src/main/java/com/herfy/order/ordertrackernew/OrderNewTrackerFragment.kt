@@ -1235,6 +1235,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     private fun showOverHeadFrame() {
+        orderPresenter?.setFromAblyToFalse()
         isOverHeadFrameShows = true
         binding.overHeadFrame.isVisible = true
         binding.orderStatusOverhead.pickupTime.text = getCurrentTime()

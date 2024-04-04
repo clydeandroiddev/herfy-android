@@ -220,7 +220,7 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
 
             branchTime.setVisibility(View.VISIBLE);
             closeContainer.setVisibility(View.GONE);
-            
+
             if (!pickupHoursAvailable && !deliverHoursAvailable && hoursAvailable) {
                 String openingHours = StringUtil.getOpeningHours(store);
                 String openingFinal = (!openingHours.isEmpty() ? openingHours : "-");

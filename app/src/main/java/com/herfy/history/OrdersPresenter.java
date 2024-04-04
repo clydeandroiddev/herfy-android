@@ -607,11 +607,9 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                             orderStatuses = filterOrderStatuses(orderStatuses);
                         }
                         ordersView.showOrderStatuses(orderStatuses, isDone);
-                        fromAbly = false;
                     } catch (JSONException e) {
                         e.printStackTrace();
                         this.onError(e);
-                        fromAbly = false;
                     }
                 }
             }
@@ -621,7 +619,6 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                 AppLogger.printRetrofitError(o.toString());
                 orderStatuses.clear();
                 ordersView.showOrderStatuses(orderStatuses, isDone);
-                fromAbly = false;
             }
         });
     }
@@ -758,7 +755,6 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                     LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
                     LatLng driverLatLng = new LatLng(attributesObject.getDouble("lat"), attributesObject.getDouble("long"));
                     ordersView.showDriver(customerLatLng, driverLatLng);
-                    fromAbly = false;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -2087,6 +2083,11 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     @Override
     public boolean getFromAbly() {
         return fromAbly;
+    }
+
+    @Override
+    public void setFromAblyToFalse() {
+        fromAbly = false;
     }
 
     private ArrayList<LoyaltyPointsTransaction> transactions;
