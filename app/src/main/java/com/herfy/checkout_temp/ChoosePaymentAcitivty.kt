@@ -99,28 +99,8 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
     }
 
     override fun setupViews() {
-       val cards = CacheUtil.getInstance().customerCards
-
-        binding.chooseMethodLabel.setVisible(cards.size >= 1)
         binding.confirmButton
-            .setText(CacheUtil.getInstance().getTranslations(Text.CONFIRM_LABEL,"Confirm"))
-       val creditCardAdapter =  CardsAdapter(cards) { card, position ->
-            selectedCard = card
-            if (isCashPaymentAvailable) {
-                rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
-                cashPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
-                cashPayment.setBackgroundColor(Color.WHITE)
-            }
-
-             if (isCashPaymentAvailable) {
-                rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
-                 cardPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
-                 cardPayment.setBackgroundColor(Color.WHITE)
-             }
-        }
-
-        binding.rvCards.adapter = creditCardAdapter
-        creditCardAdapter.notifyDataSetChanged()
+            .setText(CacheUtil.getInstance().getTranslations(Text.CONFIRM,"Confirm"))
 
         binding.toolbarContainer.btnBack.setOnClickListener { onBackPressed() }
         binding
@@ -373,6 +353,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
                 binding.paymentTypeContainer.addView(view)
             } else if (paymentType == PaymentType.CARD) {
                 isCardPaymentAvailable = true
+                setupSavedCards()
                 val view: View = inflater.inflate(R.layout.item_card_payment, null)
                 rbCard = view.findViewById(R.id.rb_card)
                 cardLabel = view.findViewById(R.id.card_label)
@@ -452,6 +433,28 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
             }
             else -> showCardFailed()
         }
+    }
+
+    private fun setupSavedCards() {
+        val cards = CacheUtil.getInstance().customerCards
+        binding.chooseMethodLabel.setVisible(cards.size >= 1)
+        creditCardAdapter =  CardsAdapter(cards) { card, position ->
+            selectedCard = card
+            if (isCashPaymentAvailable) {
+                rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
+                cashPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
+                cashPayment.setBackgroundColor(Color.WHITE)
+            }
+
+            if (isCashPaymentAvailable) {
+                rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
+                cardPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
+                cardPayment.setBackgroundColor(Color.WHITE)
+            }
+        }
+
+        binding.rvCards.adapter = creditCardAdapter
+        creditCardAdapter.notifyDataSetChanged()
     }
 
     override fun onDestroy() {
