@@ -32,7 +32,6 @@ import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.deepCopy
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.invisible
-import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.toTranslate
@@ -503,7 +502,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 }
             }
 
-            addFrequentlyBoughtItem.observe(this@ComboMealFragment){
+            addFrequentlyBoughtItem.observe(this@ComboMealFragment){pair->
                 activity?.let {
                     it.runOnUiThread {
                         val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -517,6 +516,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                         } else {
                             vibrator.vibrate(100)
                         }
+                        frequentBoughItemsAdapter?.updateAddToCartItem(pair.second, pair.first)
                         dismissLoading()
                         showToastMessage(
                             CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART)
@@ -526,13 +526,25 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
             navigateToMenuItemDetails.observe(this@ComboMealFragment){ pair->
                 val isCombo = pair.second.isCombo
-                val destinationLink = if(isCombo) "nav_combo" else "nav_menu_item"
                 val navController = findNavController()
-                if(isCombo) navController.popBackStack()
-                findNavController().navigateToDeepLink("$destinationLink/${pair.first.id}/${pair.second.id}")
+                if(isCombo){
+                    navController.navigate(ComboMealFragmentDirections.actionComboToCombo(
+                        pair.first.id,
+                        pair.second.id
+                    ))
+                }else {
+                    navController.navigate(ComboMealFragmentDirections.actionComboToMenuItem(
+                        pair.first.id,
+                        pair.second.id
+                    ))
+                }
+
             }
             updateFavoriteByPosition.observe(this@ComboMealFragment){ pair ->
                 frequentBoughItemsAdapter?.updateFavorite(pair.first, pair.second)
+            }
+            showLoading.observe(this@ComboMealFragment){
+                if(it) showLoading() else dismissLoading()
             }
 
         }

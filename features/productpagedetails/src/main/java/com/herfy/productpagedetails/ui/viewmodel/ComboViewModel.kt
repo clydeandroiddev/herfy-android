@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.herfy.analytics.firebase.FirebaseEventUtilHelper
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent
+import com.herfy.database.entities.MenuItemDb
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.EventAttributesMetric
 import com.herfy.model.ShowComboMealItemDetails
@@ -156,6 +157,8 @@ class ComboViewModel @Inject constructor(
     val navigateToMenuItemDetails : LiveData<Pair<MenuCategory,MenuItem>> = _navigateToMenuItemDetails
     private val _updateFavoriteByPosition = MutableLiveData<Pair<Int, MenuItem>>()
     val updateFavoriteByPosition : LiveData<Pair<Int, MenuItem>> = _updateFavoriteByPosition
+    private val _showLoading = MutableLiveData<Boolean>()
+    val showLoading : LiveData<Boolean> = _showLoading
 
     /**Function for retrieving data of menu item from db**/
     fun getMenuItemFromDbBy(addToBag: Boolean, id: String, isUpsell: Boolean) {
@@ -255,7 +258,14 @@ class ComboViewModel @Inject constructor(
 
                 frequentBoughtItemList.addAll(items)
                 if (page == totalPages) {
-                    _showFrequentBoughtItems.value = frequentBoughtItemList
+                    val favorites = CacheUtil.getInstance().favorites
+                    frequentBoughtItemList.map { item -> item.isFavorite = favorites.contains(item.id) }
+                    invoke {
+                        cacheUtilHelper.getCartItems {cartItems ->
+                            frequentBoughtItemList.map { item-> item.isAddedToCart = cartItems.find { cartItem -> item.id == cartItem.id } != null }
+                            _showFrequentBoughtItems.value = frequentBoughtItemList
+                        }
+                    }
                 } else {
                     getFrequentBoughtItems(page + 1, menuId)
                 }
@@ -1613,6 +1623,7 @@ class ComboViewModel @Inject constructor(
         }
         val store = CacheUtil.getInstance().getOrderStore()
         if (store != null && frequentlyMenuItem.disabledStores.containsKey(store.id)) {
+            _showLoading.value = false
             _showError.value = ErrorMsgItem(
                 true, CacheUtil.getInstance().getTranslations(Text.LOCATION_AVAILABLE)
                     .replace("(x)", store.attributes.name)
@@ -1698,7 +1709,7 @@ class ComboViewModel @Inject constructor(
                     totalPrice += ingredient.attributes.price
                 }
             }
-            totalPrice += frequentlyMenuItem.getAttributes().getQuantity()
+            totalPrice += frequentlyMenuItem.attributes.quantity
             _logEvent.value = EventAttributesMetric(
                 "AddToCart", eventAttributes, "Price", totalPrice
             )
@@ -1716,6 +1727,7 @@ class ComboViewModel @Inject constructor(
                 _showCartExpiry.value = true
             }
             _addFrequentlyBoughtItem.value = Pair(frequentlyMenuItem, menuAddedToCartPosition)
+            _showLoading.value = false
         }
     }
 
@@ -1739,51 +1751,56 @@ class ComboViewModel @Inject constructor(
      */
     override fun addFrequentlyBoughtItemToCart(menuItemId: String, position: Int) {
         invoke {
+            _showLoading.value = true
             val applicationId = CacheUtil.getInstance().getApplication().id
             var menuCategory : MenuCategory? = null
-            menuRepository.getMenuItemDbBy(applicationId, menuItemId) {result ->
-                result?.let {menuItemDb ->
-                    invoke {
-                        menuRepository.getMenuCategory(menuItemDb.menuCategoryId, applicationId){
-                            menuCategory = it
-                        }
-                    }
-                    frequentlyMenuItem = GsonHelper.gsonFinal().fromJson(menuItemDb.data, MenuItem::class.java)
+            var menuItemDb : MenuItemDb? = null
+            menuRepository.getMenuItemDbById(menuItemId,applicationId) {result ->
+                result?.let {itemDb ->
+                    menuItemDb = itemDb
+                    frequentlyMenuItem = GsonHelper.gsonFinal().fromJson(itemDb.data, MenuItem::class.java)
                 }
+            }
 
-                if (menuCategory == null) {
-                    for (menuCategoryId in CacheUtil.getInstance().getMenuCategories().keys) {
-                        if (CacheUtil.getInstance()
-                                .getMenuCategories()[menuCategoryId] != null && CacheUtil.getInstance()
-                                .getMenuCategories()[menuCategoryId]!!.second.contains(menuItemId)
-                        ) {
-                            menuCategory =
-                                CacheUtil.getInstance().getMenuCategories()[menuCategoryId]!!.first
-                        }
+            menuRepository.getMenuCategory(menuItemDb?.menuCategoryId?:"", applicationId){
+                menuCategory = it
+            }
+
+            if (menuCategory == null) {
+                for (menuCategoryId in CacheUtil.getInstance().getMenuCategories().keys) {
+                    if (CacheUtil.getInstance()
+                            .getMenuCategories()[menuCategoryId] != null && CacheUtil.getInstance()
+                            .getMenuCategories()[menuCategoryId]!!.second.contains(menuItemId)
+                    ) {
+                        menuCategory =
+                            CacheUtil.getInstance().getMenuCategories()[menuCategoryId]!!.first
                     }
                 }
+            }
 
-                if (menuCategory != null && frequentlyMenuItem != null) {
-                    if (frequentlyMenuItem.isMustBeCustomized || frequentlyMenuItem.isCombo) {
-                        _navigateToMenuItemDetails.value = Pair(menuCategory!!, frequentlyMenuItem)
-                        if (menuCategory == null) {
-                            for (category in menuCategories) {
-                                for (item in category.getMenuItems()) {
-                                    if (item.id == frequentlyMenuItem.id) {
-                                        menuCategory = category
-                                        break
-                                    }
-                                }
-                                if (menuCategory != null) {
+            if (menuCategory != null && frequentlyMenuItem != null) {
+                if (frequentlyMenuItem.isMustBeCustomized || frequentlyMenuItem.isCombo) {
+                    _navigateToMenuItemDetails.value = Pair(menuCategory!!, frequentlyMenuItem)
+                    if (menuCategory == null) {
+                        for (category in menuCategories) {
+                            for (item in category.getMenuItems()) {
+                                if (item.id == frequentlyMenuItem.id) {
+                                    menuCategory = category
                                     break
                                 }
                             }
+                            if (menuCategory != null) {
+                                break
+                            }
                         }
-                        _navigateToMenuItemDetails.value = Pair(menuCategory!!, frequentlyMenuItem)
-                    } else {
-                        getMenuItemFromFrequent(menuItemId, true, position, menuCategory!!)
                     }
+                    _showLoading.value = false
+                    _navigateToMenuItemDetails.value = Pair(menuCategory!!, frequentlyMenuItem)
+                } else {
+                    getMenuItemFromFrequent(menuItemId, true, position, menuCategory!!)
                 }
+            }else {
+                _showLoading.value = false
             }
         }
     }
@@ -1845,14 +1862,17 @@ class ComboViewModel @Inject constructor(
         invoke {
             val appId = CacheUtil.getInstance().application.id
             var menuItem : MenuItem? = null
+            var menuCategoryId : String = ""
             menuRepository.getMenuItem(menuItemId){item ->
                 menuItem = item
             }
-            menuRepository.getMenuCategory(appId, menuItemId){menuCategoryId ->
+            menuRepository.getMenuCategoryIdFromMenuItemEntityBy(menuItemId, appId){
+                menuCategoryId = it
+            }
+            menuRepository.getMenuCategory(menuCategoryId, appId){menuCategory ->
                 menuItem?.let {
-                    _navigateToMenuItemDetails.value = Pair(menuCategoryId, it)
+                    _navigateToMenuItemDetails.value = Pair(menuCategory, it)
                 }
-
             }
         }
     }
@@ -1892,6 +1912,7 @@ class ComboViewModel @Inject constructor(
                 }
             }
             if (selected < modifierGroup.attributes.minimum) {
+                _showLoading.value = false
                 _showToastMessage.value =
                     CacheUtil.getInstance().getTranslations(
                         Text.MODIFIER_MINIMUM_LIMIT,
@@ -1909,6 +1930,7 @@ class ComboViewModel @Inject constructor(
         if (!invalid) {
             addFrequentBoughtItem(addToBag, position)
         } else {
+            _showLoading.value = false
             _navigateToMenuItemDetails.value = Pair(menuCategory, frequentlyMenuItem)
         }
     }

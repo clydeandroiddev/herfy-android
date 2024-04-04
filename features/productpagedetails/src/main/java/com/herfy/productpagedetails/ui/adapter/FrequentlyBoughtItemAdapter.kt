@@ -39,10 +39,14 @@ class FrequentlyBoughtItemAdapter(private var items : List<MenuItem> = arrayList
         notifyDataSetChanged()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun updateFavorite(position: Int, menuItem: MenuItem) {
         this.items[position].isFavorite = menuItem.isFavorite
-        notifyDataSetChanged()
+        notifyItemChanged(position)
+    }
+
+    fun updateAddToCartItem(second: Int, first: MenuItem) {
+        this.items[second].isAddedToCart = first.isAddedToCart
+        notifyItemChanged(second)
     }
 
 

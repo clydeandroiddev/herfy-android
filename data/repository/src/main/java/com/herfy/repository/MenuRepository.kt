@@ -56,6 +56,8 @@ interface MenuRepository {
     suspend fun addItemToFavorite(menuItem : MenuItem, result: (Boolean, Any?) -> Unit)
 
     suspend fun deleteItemFromFavorites(menuItemId : String, result: (Boolean, Any?) -> Unit)
+
+    suspend fun getMenuItemDbById(id: String, applicationId: String, result: (MenuItemDb?) -> Unit)
 }
 
 class MenuRepositoryImpl @Inject constructor(
@@ -483,7 +485,9 @@ class MenuRepositoryImpl @Inject constructor(
         applicationId: String,
         result: (MenuCategory) -> Unit
     ) {
-        result(appDatabase.menuCategoryEntityDao().findById(applicationId, menuCategoryId).toDomain())
+        val menuCategoryDb = appDatabase.menuCategoryEntityDao().findById(applicationId, menuCategoryId)
+        val menuCategory = menuCategoryDb.toDomain()
+        result(menuCategory)
     }
 
     override suspend fun addItemToFavorite(menuItem: MenuItem, result: (Boolean, Any?) -> Unit) {
@@ -516,6 +520,14 @@ class MenuRepositoryImpl @Inject constructor(
             }
 
         })
+    }
+
+    override suspend fun getMenuItemDbById(
+        id: String,
+        applicationId: String,
+        result: (MenuItemDb?) -> Unit
+    ) {
+        result(appDatabase.menuItemDao().findByApplicationAndId(applicationId, id))
     }
 
 

@@ -23,8 +23,7 @@ class FrequentlyBoughtItemViewholder(val binding : ItemModifierFrequentlyBoughtB
             val menuItemAttributes = menuItem.attributes
             val imageUrl = menuItemAttributes.image
 
-            val isAlreadyAddedToCart: Boolean = isFavoriteItemInCart(menuItem)
-            btnAdd.visibility = if (isAlreadyAddedToCart) View.GONE else View.VISIBLE
+            btnAdd.visibility = if (menuItem.isAddedToCart) View.GONE else View.VISIBLE
             if (imageUrl != null && !imageUrl.equals(
                     "null",
                     ignoreCase = true
@@ -93,26 +92,6 @@ class FrequentlyBoughtItemViewholder(val binding : ItemModifierFrequentlyBoughtB
                 menuItemAttributes.name
             )
         }
-    }
-
-    private fun isFavoriteItemInCart(menuItem: MenuItem): Boolean {
-        val cartItems = CacheUtil.getInstance().getCart()
-        val frequentlyMenuAdded = CacheUtil.getInstance().getFrequentlyQuantityShouldShow()
-        val isFrequentMenuAdded = frequentlyMenuAdded.first
-        val frequentMenuId = frequentlyMenuAdded.second
-        for (cartItem in cartItems) {
-            if (isSameMenuItem(cartItem, menuItem) && cartItem.isAddedToCart) {
-                return true
-            }
-            if (isFrequentMenuAdded && frequentMenuId.isNotEmpty() && cartItem.id.toString() == frequentMenuId) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun isSameMenuItem(item1: MenuItem, item2: MenuItem): Boolean {
-        return item1.id.toString() == item2.id
     }
 
     interface OnClickListener{
