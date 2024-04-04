@@ -29,6 +29,7 @@ import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.viewLifecycleScope
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData
@@ -128,8 +129,6 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!isLoadingHistory && page <= notificationPresenter!!.totalNotifPageCount && linearLayoutManager.findLastCompletelyVisibleItemPosition() >= linearLayoutManager.itemCount - 1) {
                     isLoadingHistory = true
-                    binding.notificationShimmer.setVisible(true)
-                    binding.notificationShimmer.startShimmer()
                     notificationPresenter!!.getNotifications(page)
                 }
             }
@@ -217,7 +216,7 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
         when (type) {
             "home" -> findNavController().navigateUp()
             "categories", "category" -> findNavController().navigateToDeepLink("nav_menu/$value")
-            "item" -> findNavController().navigateToDeepLink("nav_menu_item/$value")
+            "item" -> NavigationUtils.navigateSafe(findNavController(), NotificationsFragmentDirections.actionNotificationsToMenuItem("", value))
             "digital-coupon", "promotions", "promo" -> findNavController().navigateToDeepLink("nav_promotions")
             "shoppingcart", "shopping-cart", "cart" -> {
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)

@@ -49,7 +49,9 @@ public class NotificationPresenter implements  NotificationContract.Presenter {
 
     @Override
     public void getNotifications(int page) {
-        notificationView.setIsLoading(true);
+        if(page == 1) {
+            notificationView.setIsLoading(true);
+        }
         NotificationApiCall.getInstance().getNotifications(String.valueOf(page), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
