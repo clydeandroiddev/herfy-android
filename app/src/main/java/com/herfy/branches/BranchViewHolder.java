@@ -1,10 +1,8 @@
 package com.herfy.branches;
 
-import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -14,11 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
+import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.StringUtil;
-import com.herfy.util.ViewUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,6 +41,19 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
 
     @BindView(R.id.nearestLabel)
     AppCompatTextView nearestLabel;
+
+    @BindView(R.id.nearestContainer)
+    MaterialCardView nearestContainer;
+
+    @BindView(R.id.closeContainer)
+    MaterialCardView closeContainer;
+
+    @BindView(R.id.closedLabel)
+    AppCompatTextView closedLabel;
+
+    @BindView(R.id.spaceNearest)
+    View spaceNearest;
+
     @BindView(R.id.directionsImage)
     ImageView directionsImage;
 
@@ -159,9 +169,11 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
             driveThruLabel.setText(CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU, "Drive Thru"));
 
             if (getAdapterPosition() == 0) {
-                nearestLabel.setVisibility(View.VISIBLE);
+                spaceNearest.setVisibility(View.VISIBLE);
+                nearestContainer.setVisibility(View.VISIBLE);
             } else {
-                nearestLabel.setVisibility(View.GONE);
+                spaceNearest.setVisibility(View.GONE);
+                nearestContainer.setVisibility(View.GONE);
             }
 
             if (store.getAttributes().getIsDriveThruEnabled()) {
@@ -218,6 +230,38 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
                 } else {
                     branchTime.setVisibility(View.GONE);
                 }
+            }
+
+            boolean isOpen = false;
+            if (!pickupHoursAvailable && !deliverHoursAvailable && hoursAvailable) {
+                if (store.getAttributes().getOpen()) {
+                    isOpen = true;
+                }
+            } else {
+                if (pickupHoursAvailable) {
+                    if (store.getAttributes().getOpenPickup()) {
+                        isOpen = true;
+                    }
+                }
+            }
+
+            if (!isOpen) {
+                closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.getOpeningDayOnly(store)));
+                closeContainer.setVisibility(View.VISIBLE);
+                container.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        branchesPresenter.setCloseTime(StringUtil.getOpeningDayOnly(store));
+                    }
+                });
+            } else {
+                closeContainer.setVisibility(View.GONE);
+                container.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        branchesPresenter.selectBranch(getAdapterPosition());
+                    }
+                });
             }
 
             if (selected) {

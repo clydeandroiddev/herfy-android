@@ -171,6 +171,8 @@ public interface OrderContract {
 
         void selectStore(boolean isDineIn, int position);
 
+        void setCloseTime(String time);
+
         void continueStore(boolean isDineIn, int position, Store store);
 
         void setOrderType(OrderType orderType);

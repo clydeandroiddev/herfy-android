@@ -166,6 +166,11 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
         branchesView.selectBranch(false, position);
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
 
     @Override
     public void selectBranch(String id) {

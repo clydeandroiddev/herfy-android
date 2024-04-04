@@ -31,7 +31,7 @@ public class StringUtil {
 
     public static boolean isValidPhoneNumber(String phone, int mobileFormatIndex) {
         boolean valid;
-        if (CacheUtil.getInstance().getConcept().getAllowedCountries() != null && !CacheUtil.getInstance().getConcept().getAllowedCountries().isEmpty() && CacheUtil.getInstance().getConcept().getAllowedCountries().size() >= mobileFormatIndex ) {
+        if (CacheUtil.getInstance().getConcept().getAllowedCountries() != null && !CacheUtil.getInstance().getConcept().getAllowedCountries().isEmpty() && CacheUtil.getInstance().getConcept().getAllowedCountries().size() >= mobileFormatIndex) {
             Pattern pattern = Pattern.compile(CacheUtil.getInstance().getConcept().getAllowedCountries().get(mobileFormatIndex).getMobileFormat());
             valid = pattern.matcher(toEnglish(phone)).matches();
         } else {
@@ -64,7 +64,8 @@ public class StringUtil {
         try {
             long mobileValue = Long.parseLong(mobileNumber);
             return true;
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+        }
         return false;
     }
 
@@ -76,13 +77,7 @@ public class StringUtil {
         if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
             return number;
         } else {
-            return number
-                    .replace("١", "1").replace("٢", "2")
-                    .replace("٣", "3").replace("٤", "4")
-                    .replace("٥", "5").replace("٦", "6")
-                    .replace("٧", "7").replace("٨", "8")
-                    .replace("٩", "9").replace("٠", "0")
-                    .replace(",", ".").replace("٫", ".");
+            return number.replace("١", "1").replace("٢", "2").replace("٣", "3").replace("٤", "4").replace("٥", "5").replace("٦", "6").replace("٧", "7").replace("٨", "8").replace("٩", "9").replace("٠", "0").replace(",", ".").replace("٫", ".");
         }
     }
 
@@ -90,13 +85,7 @@ public class StringUtil {
         if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
             return number;
         } else {
-            return number
-                    .replace("1", "١" ).replace("2","٢")
-                    .replace("3", "٣").replace("4","٤")
-                    .replace("5", "٥").replace("6", "٦")
-                    .replace("7", "٧").replace("8", "٨")
-                    .replace("9", "٩").replace("0", "٠")
-                    .replace(".", ",").replace(".", "٫");
+            return number.replace("1", "١").replace("2", "٢").replace("3", "٣").replace("4", "٤").replace("5", "٥").replace("6", "٦").replace("7", "٧").replace("8", "٨").replace("9", "٩").replace("0", "٠").replace(".", ",").replace(".", "٫");
         }
     }
 
@@ -104,13 +93,7 @@ public class StringUtil {
         if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
             return number;
         } else {
-            return number
-                    .replace("١", "1").replace("٢", "2")
-                    .replace("٣", "3").replace("٤", "4")
-                    .replace("٥", "5").replace("٦", "6")
-                    .replace("٧", "7").replace("٨", "8")
-                    .replace("٩", "9").replace("٠", "0")
-                    .replace(",", ".").replace("٫", ".");
+            return number.replace("١", "1").replace("٢", "2").replace("٣", "3").replace("٤", "4").replace("٥", "5").replace("٦", "6").replace("٧", "7").replace("٨", "8").replace("٩", "9").replace("٠", "0").replace(",", ".").replace("٫", ".");
         }
     }
 
@@ -134,6 +117,23 @@ public class StringUtil {
 
         return "";
 
+    }
+
+    public static String getOpeningDayOnly(Store store) {
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        if (store.getAttributes().getOpeningHours() != null && day < store.getAttributes().getOpeningHours().size()) {
+            try {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                Date openDate = simpleDateFormat.parse(store.getAttributes().getOpeningHours().get(day).getOpen());
+                simpleDateFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
+                return localize(simpleDateFormat.format(openDate).replace("AM", CacheUtil.getInstance().getTranslations(Text.AM)).replace("PM", CacheUtil.getInstance().getTranslations(Text.PM)));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return localize(store.getAttributes().getOpeningHours().get(day).getOpen());
+        }
+        return "";
     }
 
     public static String getOpeningHours(Store store) {
@@ -185,13 +185,13 @@ public class StringUtil {
             TimeZone localTimeZone = TimeZone.getDefault();
             timeSdf.setTimeZone(localTimeZone);
 
-            if(openDate != null && closedDate != null) {
+            if (openDate != null && closedDate != null) {
                 if (localTimeZone.inDaylightTime(nowDate)) {
                     simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
                     simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
                     openDate = simpleDateFormat.parse(currentDate + " " + open);
                     closedDate = simpleDateFormat.parse(currentDate + " " + close);
-                    if(openDate != null && closedDate != null) {
+                    if (openDate != null && closedDate != null) {
                         boolean isCloseNextDay = closedDate.getTime() < openDate.getTime();
                         if (isCloseNextDay) {
                             Calendar closedCalendar = Calendar.getInstance();
@@ -336,35 +336,26 @@ public class StringUtil {
     public static String getCountDownTime(long timeLeft) {
         if (timeLeft > 0) {
             String m = String.format(Locale.getDefault(), "%d", TimeUnit.MILLISECONDS.toMinutes(timeLeft));
-            String s = String.format(Locale.getDefault(), "%d", TimeUnit.MILLISECONDS.toSeconds(timeLeft) - TimeUnit.MINUTES.toSeconds(
-                            TimeUnit.MILLISECONDS.toMinutes(
-                                    timeLeft
-                            )
-                    ));
+            String s = String.format(Locale.getDefault(), "%d", TimeUnit.MILLISECONDS.toSeconds(timeLeft) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeLeft)));
 
-            if(s.length() == 1){
-                s = "0"+s;
+            if (s.length() == 1) {
+                s = "0" + s;
             }
 
-            if(m.length() == 1){
-                m = "0"+m;
+            if (m.length() == 1) {
+                m = "0" + m;
             }
 
-            return toArabic(m)+":"+toArabic(s);
+            return toArabic(m) + ":" + toArabic(s);
         } else {
-            return toArabic("00")+":"+toArabic("00");
+            return toArabic("00") + ":" + toArabic("00");
         }
     }
 
     public static String getTimeLeft(long timeLeft) {
         if (timeLeft > 0) {
             String m = localize(String.format(Locale.getDefault(), "%d", TimeUnit.MILLISECONDS.toMinutes(timeLeft)));
-            String s = localize(String.format(Locale.getDefault(), "%d", TimeUnit.MILLISECONDS.toSeconds(timeLeft) -
-                    TimeUnit.MINUTES.toSeconds(
-                            TimeUnit.MILLISECONDS.toMinutes(
-                                    timeLeft
-                            )
-                    )));
+            String s = localize(String.format(Locale.getDefault(), "%d", TimeUnit.MILLISECONDS.toSeconds(timeLeft) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeLeft))));
 
             return CacheUtil.getInstance().getTranslations(Text.MINUTES_SECONDS_LEFT, "(x)m (y)s left").replace("(x)", m).replace("(y)", localize(s));
         } else {
@@ -393,7 +384,7 @@ public class StringUtil {
     public static String getAppName(Context context) {
         String appName = context.getResources().getString(R.string.app_name);
 
-        if(CacheUtil.getInstance().getCountry() != null) {
+        if (CacheUtil.getInstance().getCountry() != null) {
             return CacheUtil.getInstance().getCountry().applicationName;
         } else {
             return appName;

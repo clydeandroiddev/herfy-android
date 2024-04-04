@@ -1164,4 +1164,8 @@ public class Text {
     public static final String ENTER_CAR_BRAND_NAME = "enter_car_brand_name";
     public static final String NO_RESULTS_FOUND = "no_results_found";
 
+    public static final String CLOSED_OPEN_STORE = "closed_open_store";
+
+    public static final String BRANCH_IS_CLOSED_ERROR = "branch_is_closed_error";
+
 }

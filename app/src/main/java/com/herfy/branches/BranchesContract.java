@@ -47,6 +47,8 @@ public interface BranchesContract {
 
         void selectBranch(int position);
 
+        void setCloseTime(String time);
+
         void selectBranch(String id);
 
         void callBranch(int position);
