@@ -513,13 +513,11 @@ class HomeViewModel @Inject constructor(
                             "order-type",
                             true
                         ) && rule.text?.split(",")
-                            ?.find { t -> t.trim().equals(category, true) } != null
+                            ?.find { t -> if(category.equals("pickup", ignoreCase = true)) (t.trim() == "pickup" || t.trim() == "to-go")else t.trim().equals(category, true) } != null
                     } != null
                 }.let { promosWithRules ->
                     filteredList.addAll(promosWithRules)
                 }
-
-
                 _promoFilteredList.value = filteredList
             } else {
                 _promoFilteredList.value = null
@@ -540,51 +538,41 @@ class HomeViewModel @Inject constructor(
                             ), true, OrderType.NONE
                         )
                     )
-                    orderTypes.find { type -> type == OrderType.DELIVERY }?.let {
-                        promocateglist.add(
-                            PromotionCategory(
-                                cacheUtil.getTranslations(
-                                    Text.DELIVERY, "Delivery"
-                                ), false, it
-                            )
+                    promocateglist.add(
+                        PromotionCategory(
+                            cacheUtil.getTranslations(
+                                Text.PICKUP, "Pickup"
+                            ), false, OrderType.PICKUP
                         )
-                    }
-                    orderTypes.find { type -> type == OrderType.PICKUP }?.let {
-                        promocateglist.add(
-                            PromotionCategory(
-                                cacheUtil.getTranslations(
-                                    Text.PICKUP, "Pickup"
-                                ), false, it
-                            )
+                    )
+                    promocateglist.add(
+                        PromotionCategory(
+                            cacheUtil.getTranslations(
+                                Text.CURBSIDE_LABEL, "Curbside"
+                            ), false, OrderType.CURBSIDE
                         )
-                    }
-                    orderTypes.find { type -> type == OrderType.DINE_IN }?.let {
-                        promocateglist.add(
-                            PromotionCategory(
-                                cacheUtil.getTranslations(
-                                    Text.DINE_IN, "Dine In"
-                                ), false, it
-                            )
+                    )
+                    promocateglist.add(
+                        PromotionCategory(
+                            cacheUtil.getTranslations(
+                                Text.DRIVE_THRU, "Drive Thru"
+                            ), false, OrderType.DRIVE_THRU
                         )
-                    }
-                    orderTypes.find { type -> type == OrderType.CURBSIDE }?.let {
-                        promocateglist.add(
-                            PromotionCategory(
-                                cacheUtil.getTranslations(
-                                    Text.CURBSIDE_PICKUP_LABEL, "Curbside"
-                                ), false, it
-                            )
+                    )
+                    promocateglist.add(
+                        PromotionCategory(
+                            cacheUtil.getTranslations(
+                                Text.DINE_IN, "Dine In"
+                            ), false, OrderType.DINE_IN
                         )
-                    }
-                    orderTypes.find { type -> type == OrderType.DRIVE_THRU }?.let {
-                        promocateglist.add(
-                            PromotionCategory(
-                                cacheUtil.getTranslations(
-                                    Text.DRIVE_THRU, "Drive Thru"
-                                ), false, it
-                            )
+                    )
+                    promocateglist.add(
+                        PromotionCategory(
+                            cacheUtil.getTranslations(
+                                Text.DELIVERY, "Delivery"
+                            ), false, OrderType.DELIVERY
                         )
-                    }
+                    )
                     _promotionCategoryList.value = promocateglist
                 }
             }
@@ -592,7 +580,7 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun onClickClaimPromo(promo: Campaign) {
-       validateDigitalCoupon(promo)
+        validateDigitalCoupon(promo)
     }
 
     private fun getCampaignPromotionItem(digitalCoupon: Campaign?) {
@@ -684,7 +672,7 @@ class HomeViewModel @Inject constructor(
 
     }
 
-    fun validateDigitalCoupon(digitalCoupon : Campaign?) {
+    fun validateDigitalCoupon(digitalCoupon: Campaign?) {
         if (digitalCoupon != null && CacheUtil.getInstance().getCartQuantity() > 0) {
 
             invoke {
@@ -732,7 +720,8 @@ class HomeViewModel @Inject constructor(
                                         hideDiscount = true
                                     } else {
                                         deliveryCharge =
-                                            deliveryCharge * (digitalCoupon.getPromotion().getAttributes()
+                                            deliveryCharge * (digitalCoupon.getPromotion()
+                                                .getAttributes()
                                                 .getDiscountValue() / 100)
                                     }
                                 } else {
@@ -742,7 +731,8 @@ class HomeViewModel @Inject constructor(
                                         hideDiscount = true
                                     } else {
                                         deliveryCharge =
-                                            deliveryCharge - digitalCoupon.getPromotion().getAttributes()
+                                            deliveryCharge - digitalCoupon.getPromotion()
+                                                .getAttributes()
                                                 .getDiscountValue()
                                     }
                                 }
@@ -802,9 +792,17 @@ class HomeViewModel @Inject constructor(
                             }
                         }
 
-                        OrderType.CURBSIDE -> if (CacheUtil.getInstance().getCurbsideCar() != null) {
-                            orderBody.addProperty("location", CacheUtil.getInstance().getOrderStore().id)
-                            orderBody.addProperty("car-id", CacheUtil.getInstance().getCurbsideCar().id)
+                        OrderType.CURBSIDE -> if (CacheUtil.getInstance()
+                                .getCurbsideCar() != null
+                        ) {
+                            orderBody.addProperty(
+                                "location",
+                                CacheUtil.getInstance().getOrderStore().id
+                            )
+                            orderBody.addProperty(
+                                "car-id",
+                                CacheUtil.getInstance().getCurbsideCar().id
+                            )
                             orderBody.addProperty("type", "curbside")
                         }
 
@@ -855,7 +853,8 @@ class HomeViewModel @Inject constructor(
                                 modifier.addProperty("id", size.id)
                                 modifier.addProperty(
                                     "price",
-                                    String.format(Locale.ENGLISH, "%.2f", size.attributes.price).toDouble()
+                                    String.format(Locale.ENGLISH, "%.2f", size.attributes.price)
+                                        .toDouble()
                                 )
                                 modifier.addProperty("quantity", size.attributes.quantity)
                                 modifiers.add(modifier)
@@ -867,7 +866,8 @@ class HomeViewModel @Inject constructor(
                                 modifier.addProperty("id", drink.id)
                                 modifier.addProperty(
                                     "price",
-                                    String.format(Locale.ENGLISH, "%.2f", drink.attributes.price).toDouble()
+                                    String.format(Locale.ENGLISH, "%.2f", drink.attributes.price)
+                                        .toDouble()
                                 )
                                 modifier.addProperty("quantity", drink.attributes.quantity)
                                 modifiers.add(modifier)
@@ -879,7 +879,8 @@ class HomeViewModel @Inject constructor(
                                 modifier.addProperty("id", fries.id)
                                 modifier.addProperty(
                                     "price",
-                                    String.format(Locale.ENGLISH, "%.2f", fries.attributes.price).toDouble()
+                                    String.format(Locale.ENGLISH, "%.2f", fries.attributes.price)
+                                        .toDouble()
                                 )
                                 modifier.addProperty("quantity", fries.attributes.quantity)
                                 modifiers.add(modifier)
@@ -904,7 +905,10 @@ class HomeViewModel @Inject constructor(
                                                 modifierItem.attributes.price
                                             ).toDouble()
                                         )
-                                        modifier.addProperty("quantity", modifierItem.attributes.quantity)
+                                        modifier.addProperty(
+                                            "quantity",
+                                            modifierItem.attributes.quantity
+                                        )
                                         modifiers.add(modifier)
                                     }
                                 }
@@ -927,10 +931,17 @@ class HomeViewModel @Inject constructor(
                                 ingredientObject.addProperty("id", ingredient.id)
                                 ingredientObject.addProperty(
                                     "price",
-                                    String.format(Locale.ENGLISH, "%.2f", ingredient.attributes.price)
+                                    String.format(
+                                        Locale.ENGLISH,
+                                        "%.2f",
+                                        ingredient.attributes.price
+                                    )
                                         .toDouble()
                                 )
-                                ingredientObject.addProperty("quantity", ingredient.attributes.quantity)
+                                ingredientObject.addProperty(
+                                    "quantity",
+                                    ingredient.attributes.quantity
+                                )
                                 ingredients.add(ingredientObject)
                             }
                         }
@@ -939,48 +950,52 @@ class HomeViewModel @Inject constructor(
                         items.add(item)
                     }
                     orderBody.add("items", items)
-                    CouponsApiCall.getInstance().validatePromotion(orderBody, object : ApiRequestListener {
-                        override fun onSuccess(o: Any) {
-                            try {
-                                val jsonObject = JSONObject(o.toString())
-                                if (jsonObject.has("error") && !jsonObject.isNull("error")) {
-                                    _showError.value = ErrorMsgItem(true,jsonObject.getString("error"))
-                                } else {
-                                    if (digitalCoupon.getPromotion() != null && digitalCoupon.getPromotion()
-                                            .getAttributes().getType().equals("item", ignoreCase = true)
-                                    ) {
-                                        getCampaignPromotionItem(digitalCoupon)
+                    CouponsApiCall.getInstance()
+                        .validatePromotion(orderBody, object : ApiRequestListener {
+                            override fun onSuccess(o: Any) {
+                                try {
+                                    val jsonObject = JSONObject(o.toString())
+                                    if (jsonObject.has("error") && !jsonObject.isNull("error")) {
+                                        _showError.value =
+                                            ErrorMsgItem(true, jsonObject.getString("error"))
                                     } else {
-                                        trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
-                                        CacheUtil.getInstance().setCampaign(digitalCoupon)
-                                        CacheUtil.getInstance()
-                                            .setCampaignPromotion(digitalCoupon.promotion)
-                                        CacheUtil.getInstance().setCampaignPromotionMenuItem(null)
-                                        CacheUtil.getInstance().setCampaignToAdd(null)
-                                        _showCart.value = Event(true)
+                                        if (digitalCoupon.getPromotion() != null && digitalCoupon.getPromotion()
+                                                .getAttributes().getType()
+                                                .equals("item", ignoreCase = true)
+                                        ) {
+                                            getCampaignPromotionItem(digitalCoupon)
+                                        } else {
+                                            trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
+                                            CacheUtil.getInstance().setCampaign(digitalCoupon)
+                                            CacheUtil.getInstance()
+                                                .setCampaignPromotion(digitalCoupon.promotion)
+                                            CacheUtil.getInstance()
+                                                .setCampaignPromotionMenuItem(null)
+                                            CacheUtil.getInstance().setCampaignToAdd(null)
+                                            _showCart.value = Event(true)
+                                        }
                                     }
+                                } catch (ex: JSONException) {
+                                    ex.printStackTrace()
+                                    onError("")
                                 }
-                            } catch (ex: JSONException) {
-                                ex.printStackTrace()
-                                onError("")
                             }
-                        }
 
-                        override fun onError(o: Any) {
-                            AppLogger.printRetrofitError(o)
-                            _showError.value = ErrorMsgItem(
-                                true,
-                                ErrorHandler.getErrorMessage(
-                                    o,
-                                    CacheUtil.getInstance().getTranslations(
-                                        Text.YOU_ARE_NOT_ELIGIBLE_TO_CLAIM_THE_PROMOTION,
-                                        "You are not eligible to claim the promotion."
-                                    ),
-                                    null
+                            override fun onError(o: Any) {
+                                AppLogger.printRetrofitError(o)
+                                _showError.value = ErrorMsgItem(
+                                    true,
+                                    ErrorHandler.getErrorMessage(
+                                        o,
+                                        CacheUtil.getInstance().getTranslations(
+                                            Text.YOU_ARE_NOT_ELIGIBLE_TO_CLAIM_THE_PROMOTION,
+                                            "You are not eligible to claim the promotion."
+                                        ),
+                                        null
+                                    )
                                 )
-                            )
-                        }
-                    })
+                            }
+                        })
                 }
             }
 
