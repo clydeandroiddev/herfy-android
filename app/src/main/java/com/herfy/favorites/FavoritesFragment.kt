@@ -226,6 +226,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
     override fun setIsLoading(isLoading: Boolean) {
         binding.favouriteRecycleView.setVisible(!isLoading)
         binding.newMenuItemSearchShimmer.setVisible(isLoading)
+        binding.emptyState.setVisible(!isLoading)
         binding.newMenuItemSearchShimmer.startShimmer()
     }
 
