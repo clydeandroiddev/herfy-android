@@ -1845,4 +1845,9 @@ public class OrderTypeActivity extends BaseActivity implements OrderContract.Vie
 
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
 }

@@ -347,4 +347,9 @@ public class OrderCompleteActivity extends BaseActivity implements OrderContract
 
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
 }

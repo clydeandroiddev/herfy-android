@@ -252,9 +252,18 @@
                                 android:id="@+id/order_address_details"
                                 layout="@layout/include_order_address_details" />
 
-                            <include
-                                android:id="@+id/order_help_details"
-                                layout="@layout/include_help_details" />
+                            <FrameLayout
+                                android:id="@+id/orderHelpDetailsFrame"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                tools:visibility="visible">
+
+                                <include
+                                    android:id="@+id/order_help_details"
+                                    layout="@layout/include_help_details" />
+
+                            </FrameLayout>
 
                             <FrameLayout
                                 android:id="@+id/orderCancelFrame"

@@ -81,16 +81,25 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
 
     }
 
+    private fun closeAndClear() {
+        binding.nameEdit.apply {
+            closeKeyboard(this)
+            clearFocus()
+        }
+    }
+
     override fun setupViews() {
         binding.apply {
             back.setOnClickListener {
                 navigateUp()
             }
             maleSelection.setOnClickListener {
+                closeAndClear()
                 processGender("Male")
                 checkGenderState()
             }
             femaleSelection.setOnClickListener {
+                closeAndClear()
                 processGender("Female")
                 checkGenderState()
             }
@@ -320,7 +329,11 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
                 DatePickerDialog.BUTTON_NEGATIVE,
                 CacheUtil.getInstance().getTranslations(Text.CANCEL, "CANCEL")
             ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
-            binding.dateOfBirthView.setOnClickListener { view: View? -> datePickerDialog.show() }
+
+            binding.dateOfBirthView.setOnClickListener { view: View? ->
+                closeAndClear()
+                datePickerDialog.show()
+            }
         }
     }
 

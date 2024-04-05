@@ -580,4 +580,8 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         }
     }
 
+    override fun setCloseTime(time: String?) {
+
+    }
+
 }

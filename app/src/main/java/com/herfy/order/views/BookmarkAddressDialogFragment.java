@@ -580,4 +580,9 @@ public class BookmarkAddressDialogFragment extends BaseDialogFragment implements
 
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
 }

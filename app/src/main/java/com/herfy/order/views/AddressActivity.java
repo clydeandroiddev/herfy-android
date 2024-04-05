@@ -710,4 +710,9 @@ public class AddressActivity extends BaseActivity implements OrderContract.View 
         );
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
 }

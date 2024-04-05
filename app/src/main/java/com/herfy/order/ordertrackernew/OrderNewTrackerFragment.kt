@@ -230,6 +230,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     @SuppressLint("ClickableViewAccessibility")
     override fun setupViews() {
+        showOrderHelpDetails()
 
         requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -269,24 +270,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
             back.setOnClickListener {
                 navigateUp()
-            }
-
-            orderHelpDetails.callHelpLayout.setOnClickListener {
-                val mobile = CacheUtil.getInstance().concept.callCenterNumber
-                if (StringUtil.isValidPhoneNumber(mobile)) {
-                    numberToCall = mobile
-                    requestCallPermission(numberToCall)
-                }
-            }
-
-            orderHelpDetails.whatsAppHelpLayout.setOnClickListener {
-                var mobile = CacheUtil.getInstance().concept.whatsappNumber
-                if (mobile.isEmpty()) {
-                    mobile = CacheUtil.getInstance().concept.callCenterNumber
-                }
-                if (StringUtil.isValidPhoneNumber(mobile)) {
-                    callWhatsApp(mobile)
-                }
             }
 
             paymentSummaryFrame.setOnClickListener {
@@ -1106,6 +1089,23 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         }
     }
 
+    private fun showOrderHelpDetails() {
+        binding.apply {
+            val mobile = CacheUtil.getInstance().concept.whatsappNumber
+            if (StringUtil.isValidPhoneNumber(mobile)) {
+                orderHelpDetails.callHelpLayout.setOnClickListener {
+                    numberToCall = mobile
+                    requestCallPermission(numberToCall)
+                }
+                orderHelpDetails.whatsAppHelpLayout.setOnClickListener {
+                    callWhatsApp(mobile)
+                }
+            } else {
+                binding.orderHelpDetailsFrame.isVisible = false
+            }
+        }
+    }
+
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {
         dismissDialogs()
         order?.let { item ->
@@ -1235,6 +1235,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     private fun showOverHeadFrame() {
+        orderPresenter?.setFromAblyToFalse()
         isOverHeadFrameShows = true
         binding.overHeadFrame.isVisible = true
         binding.orderStatusOverhead.pickupTime.text = getCurrentTime()

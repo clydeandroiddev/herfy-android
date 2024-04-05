@@ -722,4 +722,9 @@ public class UpdateAddAddressDialogFragment extends BaseDialogFragment implement
 
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
 }

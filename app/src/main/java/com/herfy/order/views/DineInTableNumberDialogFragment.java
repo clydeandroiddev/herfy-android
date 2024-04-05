@@ -498,4 +498,9 @@ public class DineInTableNumberDialogFragment extends BaseDialogFragment implemen
 
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
 }

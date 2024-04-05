@@ -51,7 +51,7 @@ import java.io.IOException
 import java.util.Locale
 
 @AndroidEntryPoint
-class StoreLocatorFragmentNew : BaseFragment<StoreLocatorViewModel, StoreLocatorBinding>(),
+class LocatorSample : BaseFragment<StoreLocatorViewModel, StoreLocatorBinding>(),
     FusedLocationProvider.LocationResultCallback {
 
     override val viewModel: StoreLocatorViewModel by viewModels()

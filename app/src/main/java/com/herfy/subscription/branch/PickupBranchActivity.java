@@ -603,6 +603,11 @@ public class PickupBranchActivity extends BaseActivity implements OrderContract.
     }
 
     @Override
+    public void setCloseTime(String time) {
+
+    }
+
+    @Override
     public void setPresenter(OrderContract.Presenter presenter) {
 
     }

@@ -4,7 +4,9 @@ import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.reflect.TypeToken;
+import com.herfy.util.AppLogger;
 import com.herfy.utils.constants.Text;
+import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.CacheUtil;
 import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
@@ -13,8 +15,6 @@ import com.skylinedynamics.solosdk.api.models.Pagination;
 import com.skylinedynamics.solosdk.api.models.objects.Facility;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.util.GsonHelper;
-import com.herfy.util.AppLogger;
-import com.herfy.utils.handler.ErrorHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -164,6 +164,11 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
     @Override
     public void selectBranch(int position) {
         branchesView.selectBranch(false, position);
+    }
+
+    @Override
+    public void setCloseTime(String time) {
+        branchesView.setCloseTime(time);
     }
 
 

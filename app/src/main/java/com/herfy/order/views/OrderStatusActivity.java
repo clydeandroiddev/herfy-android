@@ -658,6 +658,11 @@ public class OrderStatusActivity extends BaseActivity implements OrderContract.V
 
     }
 
+    @Override
+    public void setCloseTime(String time) {
+
+    }
+
 
     @Override
     public void addToCartFavorite(MenuItem menuItem) {

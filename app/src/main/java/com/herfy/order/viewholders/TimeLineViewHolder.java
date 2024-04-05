@@ -358,6 +358,11 @@ public class TimeLineViewHolder extends RecyclerView.ViewHolder implements Order
     }
 
     @Override
+    public void setCloseTime(String time) {
+
+    }
+
+    @Override
     public void showMessage(String message) {
 
     }
