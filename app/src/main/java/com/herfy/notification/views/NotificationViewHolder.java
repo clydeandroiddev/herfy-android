@@ -34,6 +34,9 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder implements N
     @BindView(R.id.tvNew)
     TextView tvNew;
 
+    @BindView(R.id.viewTop)
+    View viewTop;
+
     @BindView(R.id.tvNotifTitle)
     TextView title;
 
@@ -97,12 +100,14 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder implements N
         } else {
             tvNew.setVisibility(View.GONE);
         }
-        title.setText(notification.getNotifData().getTitle().getValue(LocaleUtil.getInstance().getLanguage()));
+        title.setText(notification.getNotifData().getMessage().getValue(LocaleUtil.getInstance().getLanguage()));
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(notificationImage);
             notificationImage.setVisibility(View.VISIBLE);
+            viewTop.setVisibility(View.GONE);
         } else {
             notificationImage.setVisibility(View.GONE);
+            viewTop.setVisibility(View.VISIBLE);
         }
         txtMinutes.setText(DateFormatterUtil.INSTANCE.formatTimeAgo(notification
                 .getNotifData().getCreatedAt()));
