@@ -444,17 +444,9 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
         binding.notesDivider.setVisible(true)
         creditCardAdapter =  CardsAdapter(cards) { card, position ->
             selectedCard = card
-            if (isCashPaymentAvailable) {
-                rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
-                cashPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
-                cashPayment.setBackgroundColor(Color.WHITE)
-            }
-
-            if (isCashPaymentAvailable) {
-                rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
-                cardPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
-                cardPayment.setBackgroundColor(Color.WHITE)
-            }
+            if (isCashPaymentAvailable) unselectedView(rbCash, cashImage, cashContainer, cashPayment)
+            if (isCardPaymentAvailable) unselectedView(rbCard, cardImage, cardContainer, cardPayment)
+            if (isCODPaymentAvailable) unselectedView(rbCod, codImage, codContainer, codPayment)
         }
 
         binding.rvCards.adapter = creditCardAdapter
