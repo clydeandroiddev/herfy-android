@@ -337,8 +337,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
     }
 
     override fun showPaymentTypes(paymentTypes: ArrayList<PaymentType>) {
-        val type = CacheUtil
-            .getInstance().orderType
+        val type = CacheUtil.getInstance().orderType
         val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         paymentTypes.forEach { paymentType ->
             if (paymentType == PaymentType.CASH && type != OrderType.DELIVERY) {
@@ -369,7 +368,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
                     selectedView(rbCard, cardImage, cardContainer, cardPayment)
                     checkoutPresenter.cashPresented = 0.0
                 }
-            } else if (paymentType == PaymentType.CARD_ON_DELIVERY || paymentType == PaymentType.CARD_ON_PICKUP && type == OrderType.DELIVERY) {
+            } else if (paymentType == PaymentType.CARD_ON_DELIVERY || paymentType == PaymentType.CARD_ON_PICKUP) {
                 isCODPaymentAvailable = true
                 val view: View = inflater.inflate(R.layout.item_payment_cod_cop, null)
                 codPayment = view.findViewById(R.id.cod_layout)
@@ -378,17 +377,21 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
                 rbCod = view.findViewById(R.id.rb_cod)
                 codImage = view.findViewById(R.id.cod_image)
                 binding.cashOnDeliveryContainer.addView(view)
-                rbCod.setOnClickListener {
-                    if (this::creditCardAdapter.isInitialized)  creditCardAdapter.setSelectedPosition(-1)
-                    if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
-                        selectedPaymentType = PaymentType.CARD_ON_DELIVERY
+                codLabel.text = if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
+                    CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
+                } else CacheUtil.getInstance().getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
+
+                codContainer.setOnClickListener {
+                    selectedPaymentType = if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
+                        PaymentType.CARD_ON_DELIVERY
                     } else {
-                        selectedPaymentType = PaymentType.CARD_ON_PICKUP
+                        PaymentType.CARD_ON_PICKUP
                     }
                     selectedView(rbCod, codImage, codContainer, codPayment)
 
                     if (isCashPaymentAvailable) unselectedView(rbCash, cashImage, cashContainer, cashPayment)
                     if (isCardPaymentAvailable) unselectedView(rbCard, cardImage, cardContainer, cardPayment)
+                    if (this::creditCardAdapter.isInitialized)  creditCardAdapter.setSelectedPosition(-1)
                     checkoutPresenter.cashPresented = 0.0
 
                    /* if (paymentPresenter.hasMukafaaTransactionId()) {
@@ -438,6 +441,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
     private fun setupSavedCards() {
         val cards = CacheUtil.getInstance().customerCards
         binding.chooseMethodLabel.setVisible(cards.size >= 1)
+        binding.notesDivider.setVisible(true)
         creditCardAdapter =  CardsAdapter(cards) { card, position ->
             selectedCard = card
             if (isCashPaymentAvailable) {

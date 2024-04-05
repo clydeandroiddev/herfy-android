@@ -47,7 +47,7 @@ class CardsAdapter(private val cards: List<CustomerCard>, private var selectedPo
             binding.cardImage.setImageResource(res)
             binding.cardLabel.text = cardLabel+card.attributes.last4Digits
 
-            binding.rbCard.setOnClickListener {
+            binding.cardsContainer.setOnClickListener {
                 selectedPos = position
                 callback.invoke(card, selectedPos)
                 notifyDataSetChanged()
