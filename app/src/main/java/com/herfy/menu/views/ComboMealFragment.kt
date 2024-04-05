@@ -524,21 +524,22 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     }
                 }
             }
-            navigateToMenuItemDetails.observe(this@ComboMealFragment){ pair->
-                val isCombo = pair.second.isCombo
-                val navController = findNavController()
-                if(isCombo){
-                    navController.navigate(ComboMealFragmentDirections.actionComboToCombo(
-                        pair.first.id,
-                        pair.second.id
-                    ))
-                }else {
-                    navController.navigate(ComboMealFragmentDirections.actionComboToMenuItem(
-                        pair.first.id,
-                        pair.second.id
-                    ))
-                }
-
+            navigateToMenuItemDetails.observe(this@ComboMealFragment){
+               it.getContentIfNotHandled()?.let { pair->
+                   val isCombo = pair.second.isCombo
+                   val navController = findNavController()
+                   if(isCombo){
+                       navController.navigate(ComboMealFragmentDirections.actionComboToCombo(
+                           pair.first.id,
+                           pair.second.id
+                       ))
+                   }else {
+                       navController.navigate(ComboMealFragmentDirections.actionComboToMenuItem(
+                           pair.first.id,
+                           pair.second.id
+                       ))
+                   }
+               }
             }
             updateFavoriteByPosition.observe(this@ComboMealFragment){ pair ->
                 frequentBoughItemsAdapter?.updateFavorite(pair.first, pair.second)

@@ -355,9 +355,7 @@
 
         <action
             android:id="@+id/action_combo_to_menu_item"
-            app:destination="@+id/nav_menu_item"
-            app:popUpTo="@id/nav_combo"
-            app:popUpToInclusive="true"/>
+            app:destination="@+id/nav_menu_item"/>
 
         <action
             android:id="@+id/action_combo_to_combo"

@@ -26,6 +26,7 @@ import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.helper.Event
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.menu.MenuUtil
 import com.kochava.tracker.events.EventType
@@ -153,8 +154,8 @@ class ComboViewModel @Inject constructor(
     val showFrequentBoughtItems: LiveData<ArrayList<MenuItem>> = _showFrequentBoughtItems
     private val _addFrequentlyBoughtItem = MutableLiveData<Pair<MenuItem, Int>>()
     val addFrequentlyBoughtItem: LiveData<Pair<MenuItem, Int>> = _addFrequentlyBoughtItem
-    private val _navigateToMenuItemDetails = MutableLiveData<Pair<MenuCategory, MenuItem>>()
-    val navigateToMenuItemDetails : LiveData<Pair<MenuCategory,MenuItem>> = _navigateToMenuItemDetails
+    private val _navigateToMenuItemDetails = MutableLiveData<Event<Pair<MenuCategory, MenuItem>>>()
+    val navigateToMenuItemDetails : LiveData<Event<Pair<MenuCategory, MenuItem>>> = _navigateToMenuItemDetails
     private val _updateFavoriteByPosition = MutableLiveData<Pair<Int, MenuItem>>()
     val updateFavoriteByPosition : LiveData<Pair<Int, MenuItem>> = _updateFavoriteByPosition
     private val _showLoading = MutableLiveData<Boolean>()
@@ -1049,42 +1050,69 @@ class ComboViewModel @Inject constructor(
         clickCount: Int?
     ) {
         if (add) {
-            val group = modifierGroup
-            val item = group.modifierItems[modifierItemPosition]
-            var modifierTotal = 0
-            var currentModifierTotal = 0
-            if (item.id == modifierItem.id) {
-                modifierItem.attributes.isShouldShowQuantity = true
+
+            var proceed = true
+            var quantity = modifierItem.attributes.quantity
+            if(modifierItem.attributes.quantity < modifierItem.attributes.maximum){
+                quantity += 1
+                if(isAboveMax(modifierGroup, modifierItemQuantityCount(modifierGroup.modifierItems))){
+                    proceed = false
+                    _showToastMessage.value =  modifierGroup.attributes.name + " " + CacheUtil.getInstance()
+                        .getTranslations(
+                            Text.MODIFIER_LIMIT_REACHED, "Options limit reached"
+                        )
+                }else {
+                    if (modifierItem.attributes.maximum < modifierItem.attributes.quantity + 1) {
+                        proceed = false
+                        _showToastMessage.value = modifierGroup.attributes.name + " " + CacheUtil.getInstance()
+                            .getTranslations(
+                                Text.MODIFIER_LIMIT_REACHED, "Options limit reached"
+                            )
+                    }
+                }
+            }else {
+                proceed = false
+                _showToastMessage.value =  CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT)
+            }
+
+            if(proceed){
+                val group = modifierGroup
+                val item = group.modifierItems[modifierItemPosition]
+                var modifierTotal = 0
+                var currentModifierTotal = 0
+                if (item.id == modifierItem.id) {
+                    modifierItem.attributes.isShouldShowQuantity = true
+                    for (eachModifierItem in group.modifierItems) {
+                        if (eachModifierItem.attributes.isShouldShowQuantity) {
+                            currentModifierTotal += eachModifierItem.attributes.quantity
+                        }
+                    }
+                    if (currentModifierTotal < modifierGroup.attributes.maximum) {
+                        if (!modifierItem.attributes.isSelected) {
+                            modifierItem.attributes.isSelected = true
+                        }
+                        modifierItem.attributes.quantity += 1
+                    }
+                }
+
+
                 for (eachModifierItem in group.modifierItems) {
                     if (eachModifierItem.attributes.isShouldShowQuantity) {
-                        currentModifierTotal += eachModifierItem.attributes.quantity
+                        modifierTotal += eachModifierItem.attributes.quantity
                     }
                 }
-                if (currentModifierTotal < modifierGroup.attributes.maximum) {
-                    if (!modifierItem.attributes.isSelected) {
-                        modifierItem.attributes.isSelected = true
+
+                if (modifierTotal >= modifierGroup.attributes.maximum) {
+                    for (eachItems in group.modifierItems) {
+                        eachItems.attributes.setModifierItemInteraction(true)
+                        eachItems.attributes.setModifierItemQuantityExceedsMaximum(eachItems.attributes.isShouldShowQuantity || eachItems.attributes.isSelected)
                     }
-                    modifierItem.attributes.quantity += 1
                 }
+                updateModifierGroupSelectionIndicator(
+                    modifierItem.attributes.isSelected,
+                    modifierGroupPosition
+                )
             }
-
-
-            for (eachModifierItem in group.modifierItems) {
-                if (eachModifierItem.attributes.isShouldShowQuantity) {
-                    modifierTotal += eachModifierItem.attributes.quantity
-                }
-            }
-
-            if (modifierTotal >= modifierGroup.attributes.maximum) {
-                for (eachItems in group.modifierItems) {
-                    eachItems.attributes.setModifierItemInteraction(true)
-                    eachItems.attributes.setModifierItemQuantityExceedsMaximum(eachItems.attributes.isShouldShowQuantity || eachItems.attributes.isSelected)
-                }
-            }
-            updateModifierGroupSelectionIndicator(
-                modifierItem.attributes.isSelected,
-                modifierGroupPosition
-            )
         } else {
             var selectedItemMinusTotal = 0
             val group = modifierGroup
@@ -1780,7 +1808,7 @@ class ComboViewModel @Inject constructor(
 
             if (menuCategory != null && frequentlyMenuItem != null) {
                 if (frequentlyMenuItem.isMustBeCustomized || frequentlyMenuItem.isCombo) {
-                    _navigateToMenuItemDetails.value = Pair(menuCategory!!, frequentlyMenuItem)
+                    _navigateToMenuItemDetails.value = Event(Pair(menuCategory!!, frequentlyMenuItem))
                     if (menuCategory == null) {
                         for (category in menuCategories) {
                             for (item in category.getMenuItems()) {
@@ -1795,7 +1823,7 @@ class ComboViewModel @Inject constructor(
                         }
                     }
                     _showLoading.value = false
-                    _navigateToMenuItemDetails.value = Pair(menuCategory!!, frequentlyMenuItem)
+                    _navigateToMenuItemDetails.value = Event(Pair(menuCategory!!, frequentlyMenuItem))
                 } else {
                     getMenuItemFromFrequent(menuItemId, true, position, menuCategory!!)
                 }
@@ -1871,7 +1899,7 @@ class ComboViewModel @Inject constructor(
             }
             menuRepository.getMenuCategory(menuCategoryId, appId){menuCategory ->
                 menuItem?.let {
-                    _navigateToMenuItemDetails.value = Pair(menuCategory, it)
+                    _navigateToMenuItemDetails.value = Event(Pair(menuCategory, it))
                 }
             }
         }
@@ -1931,7 +1959,7 @@ class ComboViewModel @Inject constructor(
             addFrequentBoughtItem(addToBag, position)
         } else {
             _showLoading.value = false
-            _navigateToMenuItemDetails.value = Pair(menuCategory, frequentlyMenuItem)
+            _navigateToMenuItemDetails.value = Event(Pair(menuCategory, frequentlyMenuItem))
         }
     }
 }
