@@ -68,6 +68,7 @@
                     android:layout_marginEnd="4dp"
                     android:layout_marginBottom="@dimen/margin_large"
                     android:layout_marginTop="@dimen/margin_large"
+                    android:visibility="gone"
                     android:background="#E6E8EB" />
                 <com.google.android.material.button.MaterialButton
                     android:layout_width="match_parent"
@@ -94,14 +95,14 @@
                     android:backgroundTint="#F7F7F7"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E6E8EB"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginTop="@dimen/margin_large"
-                    android:layout_marginBottom="16dp"/>
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="1dp"-->
+<!--                    android:background="#E6E8EB"-->
+<!--                    android:layout_marginStart="4dp"-->
+<!--                    android:layout_marginEnd="4dp"-->
+<!--                    android:layout_marginTop="@dimen/margin_large"-->
+<!--                    android:layout_marginBottom="16dp"/>-->
 
 
                 <LinearLayout

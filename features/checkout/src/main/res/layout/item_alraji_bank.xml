@@ -42,7 +42,6 @@
                 android:layout_marginStart="2dp"
                 app:strokeWidth="1dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/txtAlRhajiBankTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -64,6 +63,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
+                app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@+id/radionBtn"
                 app:layout_constraintStart_toEndOf="@+id/icCardView"
                 app:layout_constraintStart_toStartOf="@+id/txtAlRhajiBankTitle"
@@ -78,6 +78,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="#0C0C0C"
+                app:layout_constrainedWidth="true"
                 android:layout_marginStart="@dimen/margin_large"
                 app:layout_constraintStart_toEndOf="@+id/icCardView"
                 app:layout_constraintTop_toTopOf="parent"
@@ -88,6 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constrainedWidth="true"
                 app:layout_constraintStart_toEndOf="@+id/txtDescription"
                 app:layout_constraintTop_toTopOf="@+id/txtDescription" />
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -901,7 +901,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.delivery.toString() + " " + CacheUtil.getInstance()
                     .getTranslations("mins", "mins")
             binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within $mins")
+                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)",mins)
         } else {
             binding!!.tvTimeLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.PICKUP_TIME, "Pickup Time")
@@ -909,7 +909,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString() + " " + CacheUtil.getInstance()
                     .getTranslations("mins", "mins")
             binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within $mins")
+                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)",mins)
         }
         binding!!.placeOrder.text = CacheUtil.getInstance()
             .getTranslations(Text.PLACE_ORDER, "Place Order")
@@ -940,6 +940,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             .txtDescription.text =  CacheUtil
             .getInstance()
             .getTranslations(Text.ALRAJI_BANK_DESCRIPTION,"The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful.")
+        binding!!.layoutPaymentSummary
+            .tvPaymentLabel.text = CacheUtil.getInstance().getTranslations(Text.PAYMENT_SUMMARY, "Payment summary")
     }
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}
