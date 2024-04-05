@@ -34,7 +34,8 @@ import javax.inject.Inject
 class PromotionsPresenter @Inject constructor(
     private val view: PromotionsContract.View,
     private val homeRepository: HomeRepository,
-    private val cacheUtilHelper: CacheUtilHelper) : PromotionsContract.Presenter {
+    private val cacheUtilHelper: CacheUtilHelper
+) : PromotionsContract.Presenter {
     private var digitalCoupons = ArrayList<Campaign>()
     private var menuItems = ArrayList<MenuItem>()
     private var digitalCall: Call<ResponseBody>? = null
@@ -153,7 +154,7 @@ class PromotionsPresenter @Inject constructor(
 
     override fun loadPromotions() {
 
-        GlobalScope.launch(contextProvider.IO){
+        GlobalScope.launch(contextProvider.IO) {
             val validDelivery =
                 CacheUtil.getInstance().orderType === OrderType.DELIVERY && (CacheUtil.getInstance().orderAddress != null || CacheUtil.getInstance().orderDeliveryAddress != null)
             val validPickup =
@@ -236,11 +237,17 @@ class PromotionsPresenter @Inject constructor(
                         OrderType.CURBSIDE -> {
                             deliveryCharge = 0.0
                             if (CacheUtil.getInstance().orderStore != null) {
-                                orderBody.addProperty("location", CacheUtil.getInstance().orderStore.id)
+                                orderBody.addProperty(
+                                    "location",
+                                    CacheUtil.getInstance().orderStore.id
+                                )
                             }
                             if (CacheUtil.getInstance().curbsideCar != null) {
                                 orderBody.addProperty("type", "curbside")
-                                orderBody.addProperty("car-id", CacheUtil.getInstance().curbsideCar.id)
+                                orderBody.addProperty(
+                                    "car-id",
+                                    CacheUtil.getInstance().curbsideCar.id
+                                )
                             }
                         }
 
@@ -255,7 +262,11 @@ class PromotionsPresenter @Inject constructor(
                 }
                 val vatAmount = 0.0
                 var total =
-                    String.format(Locale.ENGLISH, "%.2f", discountedSubtotal + deliveryCharge + vatAmount)
+                    String.format(
+                        Locale.ENGLISH,
+                        "%.2f",
+                        discountedSubtotal + deliveryCharge + vatAmount
+                    )
                         .toDouble()
                 if (total < 0) {
                     total = 0.0
@@ -270,7 +281,8 @@ class PromotionsPresenter @Inject constructor(
                     item.addProperty("id", menuItem.id)
                     item.addProperty(
                         "price",
-                        String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId)).toDouble()
+                        String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId))
+                            .toDouble()
                     )
                     item.addProperty("quantity", menuItem.attributes.quantity)
                     item.addProperty("is-reorder", menuItem.attributes.isReorder)
@@ -340,7 +352,10 @@ class PromotionsPresenter @Inject constructor(
                                             Locale.ENGLISH, "%.2f", modifierItem.attributes.price
                                         ).toDouble()
                                     )
-                                    modifier.addProperty("quantity", modifierItem.attributes.quantity)
+                                    modifier.addProperty(
+                                        "quantity",
+                                        modifierItem.attributes.quantity
+                                    )
                                     modifiers.add(modifier)
                                 }
                             }
@@ -383,15 +398,17 @@ class PromotionsPresenter @Inject constructor(
                         override fun onSuccess(o: Any) {
                             try {
                                 val response = JSONObject(o.toString())
-                                val digitalCouponsArray: Array<Campaign> = GsonHelper.gsonFinal().fromJson(
-                                    response.getJSONArray("data").toString(),
-                                    object : TypeToken<Array<Campaign>>() {}.type
-                                )
-                                if (response.has("included")) {
-                                    val promotions: Array<Promotion> = GsonHelper.gsonFinal().fromJson(
-                                        response.getJSONArray("included").toString(),
-                                        object : TypeToken<Array<Promotion>>() {}.type
+                                val digitalCouponsArray: Array<Campaign> =
+                                    GsonHelper.gsonFinal().fromJson(
+                                        response.getJSONArray("data").toString(),
+                                        object : TypeToken<Array<Campaign>>() {}.type
                                     )
+                                if (response.has("included")) {
+                                    val promotions: Array<Promotion> =
+                                        GsonHelper.gsonFinal().fromJson(
+                                            response.getJSONArray("included").toString(),
+                                            object : TypeToken<Array<Promotion>>() {}.type
+                                        )
                                     val promotionsHashMap = HashMap<String, Promotion>()
                                     for (promotion in promotions) {
                                         promotionsHashMap[promotion.id] = promotion
@@ -444,9 +461,17 @@ class PromotionsPresenter @Inject constructor(
                         rule.ruleKey.equals(
                             "order-type",
                             true
-                        ) && rule.text?.split(",")?.find { t-> t.trim().equals(category, true) } != null
+                        ) && rule.text?.split(",")
+                            ?.find { t ->
+                                if (category.equals(
+                                        "pickup",
+                                        ignoreCase = true
+                                    )
+                                ) (t.trim() == "pickup" || t.trim() == "to-go") else t.trim()
+                                    .equals(category, true)
+                            } != null
                     } != null
-                }.let {promosWithRules ->
+                }.let { promosWithRules ->
                     filteredList.addAll(promosWithRules)
                 }
                 view.showPromotions(filteredList)
@@ -469,53 +494,41 @@ class PromotionsPresenter @Inject constructor(
                             ), true, OrderType.NONE
                         )
                     )
-                    orderTypes.find { type -> type == OrderType.DELIVERY }?.let {
-                        promocateglist.add(
-                            PromotionCategory(
-                                cacheUtil.getTranslations(
-                                    Text.DELIVERY, "Delivery"
-                                ), false, it
-                            )
+                    promocateglist.add(
+                        PromotionCategory(
+                            cacheUtil.getTranslations(
+                                Text.PICKUP, "Pickup"
+                            ), false, OrderType.PICKUP
                         )
-                    }
-                    orderTypes.find { type -> type == OrderType.PICKUP }?.let {
-                        promocateglist.add(
-                            PromotionCategory(
-                                cacheUtil.getTranslations(
-                                    Text.PICKUP, "Pickup"
-                                ), false, it
-                            )
+                    )
+                    promocateglist.add(
+                        PromotionCategory(
+                            cacheUtil.getTranslations(
+                                Text.CURBSIDE_LABEL, "Curbside"
+                            ), false, OrderType.CURBSIDE
                         )
-                    }
-                    orderTypes.find { type -> type == OrderType.DINE_IN }?.let {
-                        promocateglist.add(
-                            PromotionCategory(
-                                cacheUtil.getTranslations(
-                                    Text.DINE_IN, "Dine In"
-                                ), false, it
-                            )
+                    )
+                    promocateglist.add(
+                        PromotionCategory(
+                            cacheUtil.getTranslations(
+                                Text.DRIVE_THRU, "Drive Thru"
+                            ), false, OrderType.DRIVE_THRU
                         )
-                    }
-                    orderTypes.find { type -> type == OrderType.CURBSIDE }?.let {
-                        promocateglist.add(
-                            PromotionCategory(
-                                cacheUtil.getTranslations(
-                                    Text.CURBSIDE_LABEL, "Curbside"
-                                ), false, it
-                            )
+                    )
+                    promocateglist.add(
+                        PromotionCategory(
+                            cacheUtil.getTranslations(
+                                Text.DINE_IN, "Dine In"
+                            ), false, OrderType.DINE_IN
                         )
-                    }
-                    orderTypes.find { type -> type == OrderType.DRIVE_THRU }?.let {
-                        promocateglist.add(
-                            PromotionCategory(
-                                cacheUtil.getTranslations(
-                                    Text.DRIVE_THRU, "Drive Thru"
-                                ),
-                                false,
-                                it
-                            )
+                    )
+                    promocateglist.add(
+                        PromotionCategory(
+                            cacheUtil.getTranslations(
+                                Text.DELIVERY, "Delivery"
+                            ), false, OrderType.DELIVERY
                         )
-                    }
+                    )
                     view.showPromotionsCategory(promocateglist)
                 }
             }

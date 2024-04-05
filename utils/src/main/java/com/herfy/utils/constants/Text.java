@@ -863,7 +863,7 @@ public class Text {
     public static final String PICKUP_METHODS = "pickup_methods";
 
     public static final String WALK_IN = "walk_in";
-    public static final String CURBSIDE_LABEL = "curbside_label";
+    public static final String CURBSIDE_LABEL = "curbside";
     public static final String HI_LABEL = "hi_label";
     public static final String YOUR_ORDERS_LABEL = "your_orders_label";
     public static final String LOYALTY_REWARDS_LABEL = "loyalty_rewards_label";
