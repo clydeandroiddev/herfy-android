@@ -860,7 +860,7 @@ public class Text {
     public static final String DRIVE_THRU = "drive_thru";
     public static final String DRIVE_THRU_DESCRIPTION = "drive_thru_description";
 
-    public static final String NEAREST_CAPS = "nearest_caps";
+    public static final String NEAREST_CAPS = "nearest_label";
 
     public static final String PICKUP_METHODS = "pickup_methods";
 

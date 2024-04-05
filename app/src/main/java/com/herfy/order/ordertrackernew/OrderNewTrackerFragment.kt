@@ -480,33 +480,35 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     goToStoreInMap(store)
                 }
 
-                if (storeMarker != null) {
-                    storeMarker?.remove()
-                }
-                val markerOptions = MarkerOptions()
-                val latLng = store.attributes?.lat?.let {
-                    store.attributes?.lng?.let { it1 ->
-                        LatLng(
-                            it, it1
-                        )
+                Handler(Looper.getMainLooper()).post {
+                    if (storeMarker != null) {
+                        storeMarker?.remove()
                     }
-                }
-                if (latLng != null) {
-                    markerOptions.position(latLng)
-                }
-                markerOptions.icon(
-                    BitmapDescriptorFactory.fromBitmap(
-                        ViewUtil.createDrawableFromView(
-                            activity, view
+                    val markerOptions = MarkerOptions()
+                    val latLng = store.attributes?.lat?.let {
+                        store.attributes?.lng?.let { it1 ->
+                            LatLng(
+                                it, it1
+                            )
+                        }
+                    }
+                    if (latLng != null) {
+                        markerOptions.position(latLng)
+                    }
+                    markerOptions.icon(
+                        BitmapDescriptorFactory.fromBitmap(
+                            ViewUtil.createDrawableFromView(
+                                activity, view
+                            )
                         )
                     )
-                )
-                markerOptions.anchor(0.5f, 1f)
-                markerOptions.title(store.toString())
-                storeMarker = googleMap?.addMarker(markerOptions)
-                if (isMoveCamera) {
-                    latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
-                        ?.let { googleMap?.animateCamera(it) }
+                    markerOptions.anchor(0.5f, 1f)
+                    markerOptions.title(store.toString())
+                    storeMarker = googleMap?.addMarker(markerOptions)
+                    if (isMoveCamera) {
+                        latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
+                            ?.let { googleMap?.animateCamera(it) }
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -789,7 +791,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 Text.DELIVERY_INSTRUCTION_LABEL, "Delivery Instruction"
                             )
                         statusDriverDetails.driverInstruction.text =
-                            address?.attributes?.instructions
+                            address.attributes?.instructions
                         statusDriverDetails.yourRiderLabel.text =
                             CacheUtil.getInstance().getTranslations(Text.YOUR_RIDER, "Your rider")
                         statusDriverDetails.yourRiderDescription.text =
@@ -1093,6 +1095,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         binding.apply {
             val mobile = CacheUtil.getInstance().concept.whatsappNumber
             if (StringUtil.isValidPhoneNumber(mobile)) {
+                binding.orderHelpDetailsFrame.isVisible = true
                 orderHelpDetails.callHelpLayout.setOnClickListener {
                     numberToCall = mobile
                     requestCallPermission(numberToCall)
@@ -1279,24 +1282,64 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     override fun updateDriver(latLng: LatLng?, mobileNumber: String?) {
         latLng?.let {
-            if (driverMarker != null) {
-                driverMarker?.remove()
-            }
-            val markerOptions = MarkerOptions()
-            markerOptions.position(latLng)
             try {
                 val activity: Activity? = activity
-                if (activity != null) {
-                    val icon = ViewUtil.vectorDrawableToBitmapDescriptor(
-                        activity, com.herfy.ordertracker.R.drawable.ic_rider
+                val inflater =
+                    activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val view =
+                    inflater.inflate(com.herfy.ordertracker.R.layout.order_driver_marker, null)
+                val textView = view.findViewById<TextView>(com.herfy.ordertracker.R.id.kmDriverAway)
+                var distanceValue = ""
+                try {
+                    val currentLocation = userLatLng
+                    val currentDistance = currentLocation?.latitude?.let {
+                        currentLocation.longitude.let { it1 ->
+                            latLng.latitude.let { it2 ->
+                                latLng.longitude.let { it3 ->
+                                    DistanceCalculator.calculateDistance(
+                                        it, it1, it2, it3
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    distanceValue = StringUtil.getDistance(
+                        currentDistance ?: 0.0
                     )
-                    markerOptions.icon(icon)
+                    textView.text =
+                        CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                            .replace("(x)", distanceValue).toLowerCase()
+                    if (currentDistance != null) {
+                        if (currentDistance <= 0.0) {
+                            textView.isInvisible = true
+                        } else {
+                            textView.isVisible = true
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+                Handler(Looper.getMainLooper()).post {
+                    if (driverMarker != null) {
+                        driverMarker?.remove()
+                    }
+                    val markerOptions = MarkerOptions()
+                    markerOptions.position(latLng)
+                    markerOptions.icon(
+                        BitmapDescriptorFactory.fromBitmap(
+                            ViewUtil.createDrawableFromView(
+                                activity, view
+                            )
+                        )
+                    )
+                    markerOptions.anchor(0.5f, 1f)
+                    driverMarker = googleMap?.addMarker(markerOptions)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            markerOptions.anchor(0.5f, 0.5f)
-            driverMarker = googleMap?.addMarker(markerOptions)
         }
     }
 
