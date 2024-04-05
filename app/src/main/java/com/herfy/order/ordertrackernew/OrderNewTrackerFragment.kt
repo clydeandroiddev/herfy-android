@@ -1067,8 +1067,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     private fun processCancel() {
         val time = CacheUtil.getInstance().concept.orderCancellationTime
-        if (time > 0) {
-            orderDetails?.let { order ->
+        val maxStatus = CacheUtil.getInstance().concept.orderCancellationMaxStatus
+
+        orderDetails?.let { order ->
+            if (time > 0 && maxStatus >= order.orderStatus.sequence) {
                 val difference = cancelTime(order.createdAt)
                 val totalCancelTime = time * 60
                 if (difference >= totalCancelTime) {
@@ -1085,9 +1087,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     binding.orderCancelFrame.isVisible = true
                     initTimer()
                 }
+            } else {
+                binding.orderCancelFrame.isVisible = false
             }
-        } else {
-            binding.orderCancelFrame.isVisible = false
         }
     }
 
@@ -1196,6 +1198,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 }
                 showOrderStatus(currentStatus)
                 val sequence = currentStatus?.sequence ?: -1
+                val maxStatus = CacheUtil.getInstance().concept.orderCancellationMaxStatus
+                if (maxStatus < order.orderStatus.sequence) {
+                    binding.orderCancelFrame.isVisible = false
+                }
                 val ot = OrderType.fromString(order.orderType)
                 if (ot == OrderType.DELIVERY) {
                     preparingTime.text =

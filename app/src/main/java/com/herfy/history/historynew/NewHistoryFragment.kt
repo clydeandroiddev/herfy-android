@@ -16,13 +16,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
+import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.common.deviceHeight
 import com.herfy.common.formatOrderTime
 import com.herfy.common.orderTypeString
 import com.herfy.ext.cast
-import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
 import com.herfy.history.databinding.FragmentNewOrderHistoryBinding
@@ -194,6 +194,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                 if (orderProgressId != null) {
                     pastOrders.addAll(orders.filter { it.id != orderProgressId })
                 } else {
+                    binding.inProgressLayout.isVisible = false
                     pastOrders = orders
                 }
                 binding.pastOrdersLabel.isVisible = pastOrders.isNotEmpty()
