@@ -300,6 +300,10 @@
             android:name="is_upsell"
             android:defaultValue="false"
             app:argType="boolean"/>
+        <argument
+            android:name="is_frequently_bought_item"
+            android:defaultValue="false"
+            app:argType="boolean"/>
 
         <action
             android:id="@+id/action_menu_item_to_cart"
@@ -345,6 +349,10 @@
 
         <argument
             android:name="is_upsell"
+            android:defaultValue="false"
+            app:argType="boolean"/>
+        <argument
+            android:name="is_frequently_bought_item"
             android:defaultValue="false"
             app:argType="boolean"/>
 

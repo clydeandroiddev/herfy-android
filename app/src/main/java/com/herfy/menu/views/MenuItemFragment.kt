@@ -22,6 +22,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -979,6 +980,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         } else {
             binding.favoriteIcon.setImageResource(R.drawable.ic_heart_unselected)
         }
+        if(args.isFrequentlyBoughtItem){
+            val bundle = Bundle()
+            bundle.putBoolean(Values.KEY_IS_ADDED_TO_FAVORITES, true)
+            setFragmentResult(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER,
+                bundle)
+        }
     }
 
     override fun showSearchedMenuItems(searchedMenuItems: ArrayList<MenuItem>) {}
@@ -1246,11 +1253,15 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuItem.attributes.image,
                         ViewUtil.dpToPx(it, 16)
                     )
-
+                    if(args.isFrequentlyBoughtItem){
+                        val bundle = Bundle()
+                        bundle.putBoolean(Values.KEY_IS_ADDED_TO_CART, true)
+                        setFragmentResult(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER,
+                            bundle)
+                    }
                     if (isShouldBackPressed) {
                         activity?.onBackPressed()
                     }
-
                 }
             }
         } catch (ex: Exception) {

@@ -2,11 +2,13 @@ package com.herfy.menu.views
 
 import android.content.Context
 import android.os.Build
+import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.View
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -47,8 +49,12 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>() {
+
+
+
 
     @Inject
     lateinit var cacheUtilHelper: CacheUtilHelper
@@ -83,6 +89,17 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     }
     private val menuCategoryId: String by lazy {
         args?.getString(Values.KEY_MENU_CATEGORY_ID, "") ?: ""
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setFragmentResultListener(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER){ key, bundle ->
+            val isAddedToFavorite = bundle.getBoolean(Values.KEY_IS_ADDED_TO_FAVORITES, false)
+            val isAddedToCart = bundle.getBoolean(Values.KEY_IS_ADDED_TO_CART, false)
+            if(isAddedToCart || isAddedToFavorite){
+                viewModel.getFrequentBoughtItems(1, menuItemId)
+            }
+        }
     }
 
     override fun initViews() {
@@ -531,12 +548,13 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                    if(isCombo){
                        navController.navigate(ComboMealFragmentDirections.actionComboToCombo(
                            pair.first.id,
-                           pair.second.id
+                           pair.second.id,
+                           isFrequentlyBoughtItem = true
                        ))
                    }else {
                        navController.navigate(ComboMealFragmentDirections.actionComboToMenuItem(
-                           pair.first.id,
-                           pair.second.id
+                           pair.second.id,pair.first.id,
+                           isFrequentlyBoughtItem = true
                        ))
                    }
                }

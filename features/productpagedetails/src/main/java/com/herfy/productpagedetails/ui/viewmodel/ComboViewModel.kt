@@ -1808,7 +1808,6 @@ class ComboViewModel @Inject constructor(
 
             if (menuCategory != null && frequentlyMenuItem != null) {
                 if (frequentlyMenuItem.isMustBeCustomized || frequentlyMenuItem.isCombo) {
-                    _navigateToMenuItemDetails.value = Event(Pair(menuCategory!!, frequentlyMenuItem))
                     if (menuCategory == null) {
                         for (category in menuCategories) {
                             for (item in category.getMenuItems()) {
