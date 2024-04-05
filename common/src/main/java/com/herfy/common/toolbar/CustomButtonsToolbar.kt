@@ -5,7 +5,9 @@ import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.herfy.common.R
@@ -17,8 +19,9 @@ class CustomButtonsToolbar @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var navButton: ImageButton? = null
-    private var rightButton: ImageButton? = null
+    private var rightButton: ImageView? = null
     private var tvTitle: TextView? = null
+    private var fmRight : FrameLayout? = null
     var title: String = ""
         set(value) {
             field = value
@@ -35,7 +38,8 @@ class CustomButtonsToolbar @JvmOverloads constructor(
 
 
         navButton = findViewById(R.id.ib_navigation)
-        rightButton = findViewById(R.id.ib_right)
+        rightButton = findViewById(R.id.iv_right)
+        fmRight = findViewById(R.id.fm_right)
         tvTitle = findViewById(R.id.tv_title)
 
         val ta = context.obtainStyledAttributes(attrs, R.styleable.CustomButtonsToolbar)
@@ -66,11 +70,15 @@ class CustomButtonsToolbar @JvmOverloads constructor(
     }
 
     fun setRightButtonAction(listener: OnClickListener) {
-        rightButton?.setOnClickListener(listener)
+        fmRight?.setOnClickListener(listener)
     }
 
     fun hide(toolbar: Boolean) {
         visibility = if (toolbar) View.GONE else View.VISIBLE
+    }
+
+    fun setRightButtonIcon(icon : Int){
+        rightButton?.setImageResource(icon)
     }
 
 

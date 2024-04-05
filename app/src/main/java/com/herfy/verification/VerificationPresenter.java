@@ -15,7 +15,7 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddres
 import com.skylinedynamics.solosdk.api.models.requestbodies.LoginTwitterBody;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
-import com.herfy.util.DeviceUtil;
+import com.herfy.utils.helper.DeviceUtil;
 import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.analytics.MixpanelUtil;

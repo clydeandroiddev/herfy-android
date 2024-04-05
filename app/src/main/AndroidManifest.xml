@@ -154,7 +154,7 @@
         -->
         <service android:name="org.eclipse.paho.android.service.MqttService" />
         <service
-            android:name="com.herfy.firebase.FirebaseService"
+            android:name="com.herfy.analytics.firebase.FirebaseService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

@@ -1,7 +1,6 @@
 package com.herfy.menu.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -10,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
-import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
+import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.ModifierNewGroupViewHolder;
 
 import java.util.HashMap;

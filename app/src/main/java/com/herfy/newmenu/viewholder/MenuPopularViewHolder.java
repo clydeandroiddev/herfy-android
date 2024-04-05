@@ -28,8 +28,9 @@ import com.bumptech.glide.request.target.Target;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil;
+import com.herfy.analytics.firebase.FirebaseService;
 import com.herfy.utils.constants.Text;
-import com.herfy.firebase.FirebaseService;
 import com.herfy.font.FontHandler;
 import com.herfy.main.MainActivity;
 import com.herfy.menu.MenuContract;
@@ -47,7 +48,6 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.herfy.analytics.facebook.FacebookAppEventUtil;
-import com.herfy.analytics.FirebaseECommerceEventUtil;
 import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;

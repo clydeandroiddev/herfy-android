@@ -4,7 +4,7 @@ import android.widget.ImageView;
 
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
-import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
+import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.FrequentBoughtViewHolder;
 import com.herfy.menu.viewholders.IngredientViewHolder;
 import com.herfy.menu.viewholders.MenuCategoryViewHolder;

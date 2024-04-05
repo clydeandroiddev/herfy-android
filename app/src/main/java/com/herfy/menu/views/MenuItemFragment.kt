@@ -22,10 +22,10 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -37,23 +37,24 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
-import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
+import com.herfy.analytics.firebase.FirebaseService
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
-import com.herfy.firebase.FirebaseService
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.menu.MenuContract
 import com.herfy.menu.MenuPresenter
 import com.herfy.menu.adapters.*
-import com.herfy.menu.viewholders.BaseModifierItemViewHolder
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet
 import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet.Companion.NAV_ARGS_INFO_KEY
 import com.herfy.nutritiondetails.NutritionInfoParams
 import com.herfy.productpagedetails.databinding.FragmentMenuItemDetailsBinding
+import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder
 import com.herfy.util.*
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
@@ -65,6 +66,7 @@ import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
+import com.herfy.utils.helper.CacheHelper
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
@@ -326,11 +328,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         try {
             val activity: Activity? = activity
             if (activity != null) {
-                binding.sizesRecyclerView.layoutManager = LinearLayoutManager(activity)
-                binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(activity)
-                binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(activity)
-                (binding.modifierGroupsRecyclerView.itemAnimator as SimpleItemAnimator?)!!.supportsChangeAnimations =
-                    false
+                binding.sizesRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+                binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+                binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            /*    (binding.modifierGroupsRecyclerView.itemAnimator as SimpleItemAnimator?)!!.supportsChangeAnimations =
+                    false*/
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -667,14 +669,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             //Trigger calorie count
                         }
                     })
-                    if (modifierGroupsAdapter != null) {
-                        println("Modifier group test")
-                        modifierGroupsAdapter!!.notifyDataSetChanged()
-                    }
-                    println("Modifier group count ${modifierGroupsAdapter?.itemCount}")
-                    binding.modifierGroupsRecyclerView.visibility = View.VISIBLE
+                    modifierGroupsAdapter?.notifyDataSetChanged()
+                    binding.modifierGroupsRecyclerView.visible()
                     binding.modifierGroupsRecyclerView.setHasFixedSize(true)
-                    ViewCompat.setNestedScrollingEnabled(binding.modifierGroupsRecyclerView, false)
+                    binding.modifierGroupsRecyclerView.isNestedScrollingEnabled = false
                     binding.modifierGroupsRecyclerView.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                     binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapter
@@ -982,6 +980,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         } else {
             binding.favoriteIcon.setImageResource(R.drawable.ic_heart_unselected)
         }
+        if(args.isFrequentlyBoughtItem){
+            val bundle = Bundle()
+            bundle.putBoolean(Values.KEY_IS_ADDED_TO_FAVORITES, true)
+            setFragmentResult(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER,
+                bundle)
+        }
     }
 
     override fun showSearchedMenuItems(searchedMenuItems: ArrayList<MenuItem>) {}
@@ -1249,11 +1253,15 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuItem.attributes.image,
                         ViewUtil.dpToPx(it, 16)
                     )
-
+                    if(args.isFrequentlyBoughtItem){
+                        val bundle = Bundle()
+                        bundle.putBoolean(Values.KEY_IS_ADDED_TO_CART, true)
+                        setFragmentResult(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER,
+                            bundle)
+                    }
                     if (isShouldBackPressed) {
                         activity?.onBackPressed()
                     }
-
                 }
             }
         } catch (ex: Exception) {

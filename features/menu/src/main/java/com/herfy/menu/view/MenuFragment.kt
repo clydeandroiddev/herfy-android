@@ -80,12 +80,12 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     private val menuCategoryItemAdapter: MenuCategoryItemAdapter by lazy {
         MenuCategoryItemAdapter(onSelect = { menuCategory, menuItem ->
-            navMenuItem(menuCategory.id, menuItem.id)
+            navMenuItem(menuCategory.id, menuItem.id, menuItem.isCombo)
         }, onFavorite = { menuItem ->
             viewModel.addRemoveFavorite(menuItem)
         }, onAdd = { menuCategory, menuItem ->
-            if (menuItem.isMustBeCustomized || menuItem.isCombo) {
-                navMenuItem(menuCategory.id, menuItem.id)
+            if (menuItem.isMustBeCustomized) {
+                navMenuItem(menuCategory.id, menuItem.id, menuItem.isCombo)
             } else {
                 viewModel.getMenuItem(menuCategory, menuItem)
             }
@@ -415,7 +415,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
         viewModel.showMenuItem.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { showMenuItem ->
-                navMenuItem(showMenuItem.first, showMenuItem.second)
+                navMenuItem(showMenuItem.first, showMenuItem.second, showMenuItem.third)
             }
         }
 
@@ -591,8 +591,9 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     }
 
-    private fun navMenuItem(menuCategoryId: String, menuItemId: String) {
-        findNavController().navigateToDeepLink("nav_menu_item/$menuCategoryId/$menuItemId")
+    private fun navMenuItem(menuCategoryId: String, menuItemId: String, isCombo : Boolean) {
+        val destinationLink = if(isCombo) "nav_combo" else "nav_menu_item"
+        findNavController().navigateToDeepLink("$destinationLink/$menuCategoryId/$menuItemId")
     }
 
     private fun navCart() {

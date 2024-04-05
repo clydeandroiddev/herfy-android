@@ -21,21 +21,22 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.herfy.R
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
+import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.auth.views.SignInActivity
-import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.databinding.ItemMenuItemNewBinding
 import com.herfy.ext.cast
-import com.herfy.firebase.FirebaseService
 import com.herfy.main.MainActivity
+import com.herfy.util.StringUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.menu.MenuUtil
+import com.herfy.views.SlantedTextView
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
-import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.utils.helper.LocaleUtil
-import com.herfy.util.StringUtil
-import com.herfy.views.SlantedTextView
-import com.herfy.utils.helper.*
-import com.herfy.utils.menu.MenuUtil
 
 /**
  * [MenuItemsAdapter] adapter for displaying all the menu categories and items

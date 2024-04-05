@@ -25,7 +25,7 @@ import com.herfy.database.entities.MenuItemEntity;
 import com.herfy.database.entities.ModifierGroupDb;
 import com.herfy.database.entities.ModifierItemDb;
 import com.herfy.database.responses.MenuCategoryItemResponse;
-import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
+import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.IngredientViewHolder;
 import com.herfy.menu.viewholders.MenuCategoryViewHolder;
 import com.herfy.menu.viewholders.MenuItemViewHolder;

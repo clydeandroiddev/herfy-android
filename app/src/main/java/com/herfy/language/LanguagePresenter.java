@@ -1,7 +1,7 @@
 package com.herfy.language;
 
 import com.herfy.util.AppLogger;
-import com.herfy.util.DeviceUtil;
+import com.herfy.utils.helper.DeviceUtil;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;

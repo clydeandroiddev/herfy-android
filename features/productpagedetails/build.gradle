@@ -1,10 +1,12 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
-apply plugin: 'com.jakewharton.butterknife'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-parcelize'
+
 android {
     namespace 'com.herfy.productpagedetails'
     compileSdk 34
@@ -75,17 +77,81 @@ android {
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation(project(":solosdk"))
-    implementation project(path: ':utils')
+
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation project(':analytics:kochava')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    implementation 'com.jakewharton:butterknife:10.2.3'
-    kapt 'com.jakewharton:butterknife-compiler:10.2.3'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
+
+    //Modules
+    implementation project(path: ':data:database')
+    implementation project(path: ':data:model')
+    implementation project(path: ':data:repository')
+    implementation(project(":common"))
+    implementation(project(":solosdk"))
+    implementation project(path: ':utils')
+    implementation project(path: ':analytics:firebase')
+    implementation project(path: ':analytics:facebook')
+
+    //ViewModel and LiveData
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0"
+
+    // Navigation
+    def navigation = "2.5.2"
+    implementation "androidx.navigation:navigation-fragment:$navigation"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
+    implementation "androidx.navigation:navigation-ui:$navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$navigation"
+    androidTestImplementation "androidx.navigation:navigation-testing:$navigation"
+    implementation "androidx.navigation:navigation-compose:$navigation"
+
+    //Dagger Hilt
+    def dagger_version = "2.48"
+    implementation "com.google.dagger:hilt-android:$dagger_version"
+    kapt "com.google.dagger:hilt-android-compiler:$dagger_version"
+    kapt('org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0')
+
+    //RXJava
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+    kapt 'com.github.bumptech.glide:compiler:4.14.2'
+
+    //FlexBox
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
+    //ImagePicker
+    implementation project(':imagepicker')
+
+    //Shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    //Gson
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    //Firebase
+    implementation platform('com.google.firebase:firebase-bom:30.1.0')
+
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-appindexing'
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-core'
+    implementation 'com.google.firebase:firebase-perf'
+    implementation "com.google.firebase:firebase-config:21.2.0"
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-dynamic-links'
+    implementation 'com.google.firebase:firebase-firestore'
+
+    //Kochava Events
+    def kochava_tracker_version = "5.2.0"
+    implementation("com.kochava.tracker:events:$kochava_tracker_version")
+
 }

@@ -35,8 +35,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.herfy.BuildConfig
 import com.herfy.R
-import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.browser.BrowserActivity
@@ -62,7 +62,7 @@ import com.herfy.newmenu.adapter.SearchMenuRecyclerViewAdapter
 import com.herfy.newmenu.adapter.SliderFragmentStateAdapter
 import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
-import com.herfy.util.CacheHelper
+import com.herfy.utils.helper.CacheHelper
 import com.herfy.util.StringUtil
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text

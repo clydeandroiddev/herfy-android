@@ -50,8 +50,8 @@ class MenuViewModel @Inject constructor(
     val searchMenuAdapterItems: LiveData<Event<List<MenuCategoryItemAdapter.MenuAdapterItem>>> =
         _searchMenuAdapterItems
 
-    private val _showMenuItem = MutableLiveData<Event<Pair<String, String>>>()
-    val showMenuItem: LiveData<Event<Pair<String, String>>> = _showMenuItem
+    private val _showMenuItem = MutableLiveData<Event<Triple<String, String, Boolean>>>()
+    val showMenuItem: LiveData<Event<Triple<String, String, Boolean>>> = _showMenuItem
 
     private val _showAddToCart = MutableLiveData<Event<MenuItem>>()
     val showAddToCart: LiveData<Event<MenuItem>> = _showAddToCart
@@ -121,7 +121,7 @@ class MenuViewModel @Inject constructor(
                 homeResponse.data?.cast<MenuItemEntity> { menuItemEntity ->
                     val categoryId = menuItemEntity.menuCategoryId
                     if (categoryId.isNotEmpty()) {
-                        _showMenuItem.value = Event(Pair(categoryId, menuItemEntity.id))
+                        _showMenuItem.value = Event(Triple(categoryId, menuItemEntity.id, menuItemEntity.isCombo))
                     }
                 }
             }
@@ -208,7 +208,7 @@ class MenuViewModel @Inject constructor(
                     addToCart(menuItem)
                 } else {
                     _showLoading.postValue(Event(false))
-                    _showMenuItem.postValue(Event(Pair(menuCategory.id, menuItem.id)))
+                    _showMenuItem.postValue(Event(Triple(menuCategory.id, menuItem.id, menuItem.isCombo)))
                 }
             })
         }

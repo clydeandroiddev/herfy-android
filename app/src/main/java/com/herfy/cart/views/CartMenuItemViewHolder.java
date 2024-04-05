@@ -220,7 +220,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         if (imageUrl == null || imageUrl.equalsIgnoreCase("null") || imageUrl.isEmpty() || imageUrl.toLowerCase().contains("default-image.png")) {
             imageUrl = Values.DEFAULT_IMAGE_URL;
         }
-        ImageViewExtKt.loadImageFromUrl(image, imageUrl, false, DiskCacheStrategy.ALL, RequestOptions.centerCropTransform());
+        ImageViewExtKt.loadImageFromUrl(image, imageUrl, false, DiskCacheStrategy.ALL, RequestOptions.centerCropTransform(), R.drawable.imagepicker_image_placeholder);
         quantity.setText(StringUtil.localize(String.format(LocaleUtil.getLocale(),"%02d",menuItem.getAttributes().getQuantity())));
 
         if (!menuItem.isPromo()) {
@@ -443,7 +443,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cartPresenter.editCartItem(getAdapterPosition(),menuItem);
+                cartPresenter.editCartItem(getAdapterPosition(), menuItem);
             }
         });
     }
