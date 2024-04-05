@@ -324,12 +324,6 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
     override fun setupTranslations() {
         binding.toolbarContainer.title.text = CacheUtil.getInstance().getTranslations(Text.PAYMENT_METHODS, "Choose Payment Method")
         binding.chooseMethodLabel.text = CacheUtil.getInstance().getTranslations(Text.DEBIT_CREDIT_CARD, "Debit/Credit Card")
-        if (this::cashLabel.isInitialized) {
-            cashLabel.text = CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
-        }
-        if (this::cardLabel.isInitialized) {
-            cardLabel.text = CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
-        }
     }
 
     override fun showPaymentTypes(paymentTypes: MutableSet<PaymentType>) {
@@ -348,6 +342,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
                 rbCash = view.findViewById(R.id.rb_cash)
                 cashLabel = view.findViewById(R.id.cash_label)
                 cashImage = view.findViewById(R.id.cash_image)
+                cashLabel.text = CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
                 cashContainer.setOnClickListener { selectPaymentTypeCash() }
                 binding.paymentTypeContainer.addView(view)
             } else if (paymentType == PaymentType.CARD) {
@@ -359,6 +354,7 @@ class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
                 cardContainer = view.findViewById(R.id.container_card)
                 cardImage = view.findViewById(R.id.card_image)
                 cardPayment = view.findViewById(R.id.cards_layout)
+                cardLabel.text = CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
                 binding.paymentTypeContainer.addView(view)
                 cardContainer.setOnClickListener {
                     selectedPaymentType = PaymentType.CARD
