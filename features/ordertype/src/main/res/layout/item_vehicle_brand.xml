@@ -41,6 +41,18 @@
                 app:layout_constraintTop_toTopOf="@id/curbsideEllipse" />
 
             <ImageView
+                android:id="@+id/otherBrand"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:scaleType="centerInside"
+                android:visibility="gone"
+                android:src="@drawable/ic_curbside_other"
+                app:layout_constraintBottom_toBottomOf="@id/curbsideEllipse"
+                app:layout_constraintEnd_toEndOf="@id/curbsideEllipse"
+                app:layout_constraintStart_toStartOf="@id/curbsideEllipse"
+                app:layout_constraintTop_toTopOf="@id/curbsideEllipse" />
+
+            <ImageView
                 android:id="@+id/selectedIdentifier"
                 android:layout_width="@dimen/margin_20dp"
                 android:layout_height="@dimen/margin_20dp"

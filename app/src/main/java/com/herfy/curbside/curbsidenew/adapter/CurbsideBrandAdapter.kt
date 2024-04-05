@@ -3,6 +3,7 @@ package com.herfy.curbside.curbsidenew.adapter
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -27,10 +28,7 @@ class CurbsideBrandAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemVehicleBrandBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(parent.context),
-            R.layout.item_vehicle_brand,
-            parent,
-            false
+            LayoutInflater.from(parent.context), R.layout.item_vehicle_brand, parent, false
         )
         return ViewHolder(binding)
     }
@@ -51,9 +49,12 @@ class CurbsideBrandAdapter(
 
             brandName.text = item.attributes.name
 
-            if (position == curbsideList.size - 1) {
-                curbsideBrand.setImageResource(R.drawable.ic_curbside_other)
+            if (position == curbsideList.size - 1 || item.attributes.imageUri.isNullOrEmpty()) {
+                otherBrand.isVisible = true
+                curbsideBrand.isVisible = false
             } else {
+                otherBrand.isVisible = false
+                curbsideBrand.isVisible = true
                 Glide.with(curbsideBrand.context).load(item.attributes.imageUri)
                     .skipMemoryCache(false).diskCacheStrategy(
                         DiskCacheStrategy.ALL
