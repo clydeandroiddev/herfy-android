@@ -805,8 +805,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         }
 
         if (loyaltyPoints > 0) {
-            int points = (int) (loyaltyPoints * Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion()));
-            orderBody.addProperty("points", points);
+            orderBody.addProperty("points", loyaltyPoints);
         }
 
         orderBody.addProperty("source", "Android");

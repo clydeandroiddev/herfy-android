@@ -139,6 +139,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
@@ -684,8 +685,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         val pointConversion =
                             AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble()
                         val sarAmount = Math.min(
-                            userSetPoints / AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble(),
-                            paymentPresenter!!.menuItemsTotalPrice
+                            userSetPoints / pointConversion, paymentPresenter!!.menuItemsTotalPrice
                         )
                         val formattedSarAmount = String.format("%.2f", sarAmount)
                         val points =
@@ -1269,7 +1269,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         if (pointsUsed > 0) {
             binding!!.layoutPaymentSummary.grpRedeemedPoints.visibility = View.VISIBLE
             binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.LOYALTY_POINTS, "Loyalty poinst (x)")
+                .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
                 .replace("x", pointsUsed.toString())
             binding!!.layoutPaymentSummary.tvRedeemPointsEquiv.text =
                 updateCurrency(
