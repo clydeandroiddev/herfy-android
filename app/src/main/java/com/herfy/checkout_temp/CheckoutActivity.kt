@@ -898,16 +898,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.tvTimeLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.DELIVERY_TIME, "Delivery Time")
             val mins =
-                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.delivery.toString() + " " + CacheUtil.getInstance()
-                    .getTranslations("mins", "mins")
+                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.delivery.toString()
             binding!!.tvWithin.text = CacheUtil.getInstance()
                 .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)",mins)
         } else {
             binding!!.tvTimeLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.PICKUP_TIME, "Pickup Time")
             val mins =
-                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString() + " " + CacheUtil.getInstance()
-                    .getTranslations("mins", "mins")
+                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString()
             binding!!.tvWithin.text = CacheUtil.getInstance()
                 .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)",mins)
         }
@@ -1523,7 +1521,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 .setCustomerCards(Gson().toJson(selectedCard))
                 CacheUtil
                     .getInstance().orderPayment = PaymentType.CARD
-                var res = R.drawable.ic_saved_card
+                var res = R.drawable.ic_card_new
                 var cardLabel = "Visa ****"
                 if (card.attributes.brand.equals("visa", true)) {
                     res = R.drawable.ic_visa
@@ -1531,6 +1529,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 } else if (card.attributes.brand.endsWith("mastercard", true)){
                     res = R.drawable.ic_mastercard
                     cardLabel = "Master ****"
+                }else if (card.attributes.brand.endsWith("amex", true)){
+                    res = R.drawable.ic_amex_card
+                    cardLabel = "Amex ****"
                 }
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(res)
                 binding!!.layoutPayment.tvSelectedPayment.text = cardLabel+card.attributes.last4Digits

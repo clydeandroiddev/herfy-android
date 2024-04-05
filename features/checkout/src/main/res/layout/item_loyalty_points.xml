@@ -46,7 +46,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_small"
                 android:layout_marginTop="@dimen/margin_small"
-                android:layout_marginBottom="@dimen/margin_large"
                 android:fontFamily="@font/inter_semi_bold"
                 tools:text="Use Loyalty Points"
                 android:textAllCaps="false"
@@ -71,7 +70,7 @@
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/loyalty_switch"
                 android:layout_width="@dimen/_50sdp"
-                android:layout_height="@dimen/_80sdp"
+                android:layout_height="wrap_content"
                 android:checked="false"
                 android:thumb="@drawable/thumb_selector"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_loyalty_points"
@@ -92,14 +91,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/image_view"
                 app:layout_constraintVertical_bias="1.0"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
 
                 <TextView
                     android:id="@+id/tv_points_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_large"
+                    android:layout_marginTop="@dimen/margin_medium"
                     android:textColor="@color/black"
                     style="@style/TextAppearance.Footnote.Medium_Regular"
                     android:textAllCaps="false"
@@ -113,7 +112,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_2sdp"
-                    android:layout_marginBottom="@dimen/_2sdp"
+                    android:layout_marginBottom="@dimen/_1sdp"
                     app:cardCornerRadius="@dimen/radius_small"
                     android:layout_marginTop="@dimen/margin_small"
                     app:cardPreventCornerOverlap="true"
@@ -175,7 +174,7 @@
                     android:id="@+id/tv_sar_amount_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_large"
+                    android:layout_marginTop="@dimen/margin_medium"
                     android:layout_marginStart="@dimen/margin_large"
                     android:textColor="@color/black"
                     style="@style/TextAppearance.Footnote.Medium_Regular"
@@ -190,7 +189,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_1sdp"
                     android:layout_marginTop="@dimen/margin_small"
                     app:cardCornerRadius="@dimen/radius_small"
                     app:cardPreventCornerOverlap="true"

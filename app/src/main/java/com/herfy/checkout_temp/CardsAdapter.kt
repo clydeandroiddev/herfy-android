@@ -28,6 +28,9 @@ class CardsAdapter(private val cards: List<CustomerCard>, private var selectedPo
             } else if (card.attributes.brand.endsWith("mastercard", true)){
                 res = R.drawable.ic_mastercard
                 cardLabel = "Master ****"
+            } else if (card.attributes.brand.endsWith("amex", true)){
+                res = R.drawable.ic_amex_card
+                cardLabel = "Amex ****"
             }
 
 

@@ -877,7 +877,7 @@ public class Text {
     public static final String GET_STARTED_LABEL = "get_started_label";
     public static final String SAR_AMOUNT = "sar_amount";
     public static final String DEBIT_CREDIT_CARD = "debit_credit_card";
-    public static final String WITHIN = "within";
+    public static final String WITHIN = "within_mins";
     public static final String PLACE_ORDER = "place_order";
     public static final String PICKUP_TIME = "pickup_time";
     public static final String DELIVERY_INSTRUCTION = "delivery_instructions";
@@ -1162,5 +1162,5 @@ public class Text {
 
     public static final String ENTER_CAR_BRAND_NAME = "enter_car_brand_name";
     public static final String NO_RESULTS_FOUND = "no_results_found";
-
+    public static final String CONFIRM = "confirm";
 }

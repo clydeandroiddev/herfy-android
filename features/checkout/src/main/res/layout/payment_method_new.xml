@@ -78,19 +78,19 @@
                     app:layout_constraintTop_toTopOf="@+id/tv_selected_payment"
                     tools:src="@drawable/ic_visa"/>
 
-                <com.herfy.common.component.EmptyStateView
-                    android:id="@+id/emptyState"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:emptyStateDrawable="@drawable/ic_empty_payment"
-                    android:layout_marginTop="@dimen/margin_small"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_payment_method">
+<!--                <com.herfy.common.component.EmptyStateView-->
+<!--                    android:id="@+id/emptyState"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:emptyStateDrawable="@drawable/ic_empty_payment"-->
+<!--                    android:layout_marginTop="@dimen/margin_small"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    android:visibility="gone"-->
+<!--                    tools:visibility="visible"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/tv_payment_method">-->
 
-                </com.herfy.common.component.EmptyStateView>
+<!--                </com.herfy.common.component.EmptyStateView>-->
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_selected_payment"
                     android:layout_width="wrap_content"
