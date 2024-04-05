@@ -92,6 +92,10 @@ public class MenuCouponViewHolder extends RecyclerView.ViewHolder implements Men
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {
@@ -141,6 +145,9 @@ public class MenuCouponViewHolder extends RecyclerView.ViewHolder implements Men
     @Override
     public void setFavorite(MenuItem menuItem) {
       
+    }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
+
     }
 
     @Override
@@ -199,12 +206,12 @@ public class MenuCouponViewHolder extends RecyclerView.ViewHolder implements Men
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, ImageView view) {
+    public void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed) {
 
     }
 
@@ -217,7 +224,9 @@ public class MenuCouponViewHolder extends RecyclerView.ViewHolder implements Men
     public void showMessage(String message) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showError(String error) {
 

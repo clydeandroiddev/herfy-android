@@ -152,6 +152,8 @@ public interface OrdersContract {
 
         boolean getFromAbly();
 
+        void setFromAblyToFalse();
+
         LoyaltyPointsTransaction getMukafaaTransaction();
 
         ArrayList<LoyaltyPointsTransaction> getLoyaltyPointsTransaction();

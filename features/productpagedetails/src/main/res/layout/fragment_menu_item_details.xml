@@ -226,7 +226,7 @@
                             android:layout_height="match_parent"
                             android:layout_gravity="center_vertical"
                             android:layout_weight="1"
-                            android:drawableStart="@drawable/ic_fire"
+                            android:drawableStart="@drawable/ic_common_calories"
                             android:drawablePadding="@dimen/margin_small"
                             android:gravity="center_vertical"
                             android:paddingStart="@dimen/padding_micro"
@@ -451,21 +451,44 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_large"
                         android:layout_marginTop="@dimen/margin_small"
-                        android:text="Frequently Bought Together"
                         android:textColor="@color/dark_shade_of_grey"
                         android:textSize="16sp" />
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/frequentlyBoughtShimmering"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:layout_marginTop="@dimen/margin_large"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/orderTypeContainer"
+                        app:shimmer_duration="1000"
+                        tools:visibility="gone">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <include layout="@layout/item_frequently_bought_placeholder" />
+                        <include layout="@layout/item_frequently_bought_placeholder" />
+
+                        <include layout="@layout/item_frequently_bought_placeholder" />
+
+                        <include layout="@layout/item_frequently_bought_placeholder" />
+
+                    </LinearLayout>
+                    </com.facebook.shimmer.ShimmerFrameLayout>
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/frequently_bough_recycleview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/margin_small"
                         android:clipToPadding="false"
-                        android:descendantFocusability="blocksDescendants"
-                        android:focusableInTouchMode="false"
+                        tools:listitem="@layout/item_modifier_frequently_bought"
                         android:layout_marginTop="@dimen/margin_large"
+                        android:paddingBottom="@dimen/_100sdp"
                         android:orientation="vertical"
-                        android:paddingTop="2dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_behavior="@string/appbar_scrolling_view_behavior"
                         tools:visibility="visible" />
 

@@ -35,6 +35,9 @@ public interface MenuItemDao {
     @Query("SELECT * FROM " + Values.TABLE_MENU_ITEMS + " WHERE name LIKE :name")
     List<MenuItemDb> findByName(String name);
 
+    @Query("SELECT * FROM " + Values.TABLE_MENU_ITEMS + " WHERE application_id = :applicationId AND name = :name LIMIT 1")
+    MenuItemDb findByApplicationAndName(String applicationId, String name);
+
     @Query("SELECT EXISTS(SELECT * FROM " + Values.TABLE_MENU_ITEMS + " WHERE id = :id)")
     boolean has(String id);
 

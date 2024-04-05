@@ -201,7 +201,12 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_orderType_to_menu_item"
+            app:destination="@id/nav_menu_item"
+            app:popUpTo="@+id/nav_favorites">
 
+        </action>
         <action
             android:id="@+id/action_order_type_fragment_to_dialog"
             app:destination="@id/nav_dialog_order_type"
@@ -222,7 +227,7 @@
             android:id="@+id/action_order_type_to_favourites"
             app:destination="@id/nav_favorites"
             app:popUpTo="@+id/nav_order_type"
-            app:popUpToInclusive="false">
+            app:popUpToInclusive="true">
             <argument
                 android:name="isFromOrderType"
                 android:defaultValue="false"
@@ -257,9 +262,67 @@
         android:label="customize_caps"
         tools:layout="@layout/fragment_menu_item">
 
-        <deepLink app:uri="android-app://com.herfy/nav_menu_item/{menu_item_id}" />
-
         <deepLink app:uri="android-app://com.herfy/nav_menu_item/{menu_category_id}/{menu_item_id}" />
+
+        <argument
+            android:name="menu_category_id"
+            android:defaultValue=""
+            app:nullable="true"
+            app:argType="string" />
+
+        <argument
+            android:name="menu_item_id"
+            app:argType="string" />
+
+        <argument
+            android:name="cart_menu_item_position"
+            android:defaultValue="-1"
+            app:argType="integer" />
+
+        <argument
+            android:name="is_promo"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="is_edit"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="is_favorite"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="isFromOrderType"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="is_upsell"
+            android:defaultValue="false"
+            app:argType="boolean"/>
+        <argument
+            android:name="is_frequently_bought_item"
+            android:defaultValue="false"
+            app:argType="boolean"/>
+
+        <action
+            android:id="@+id/action_menu_item_to_cart"
+            app:destination="@id/nav_cart"
+            app:popUpTo="@+id/nav_menu_item" />
+        <action
+            android:id="@+id/action_menu_item_to_favorite"
+            app:destination="@id/nav_favorites"
+            app:popUpTo="@+id/nav_menu_item"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_combo"
+        android:name="com.herfy.menu.views.ComboMealFragment"
+        android:label="customize_caps"
+        tools:layout="@layout/fragment_combo_meal">
+
+        <deepLink app:uri="android-app://com.herfy/nav_combo/{menu_category_id}/{menu_item_id}" />
 
         <argument
             android:name="menu_category_id"
@@ -288,12 +351,23 @@
             android:name="is_upsell"
             android:defaultValue="false"
             app:argType="boolean"/>
+        <argument
+            android:name="is_frequently_bought_item"
+            android:defaultValue="false"
+            app:argType="boolean"/>
 
         <action
-            android:id="@+id/action_menu_item_to_cart"
+            android:id="@+id/action_combo_to_cart"
             app:destination="@id/nav_cart"
-            app:popUpTo="@+id/nav_menu_item" />
+            app:popUpTo="@+id/nav_combo" />
 
+        <action
+            android:id="@+id/action_combo_to_menu_item"
+            app:destination="@+id/nav_menu_item"/>
+
+        <action
+            android:id="@+id/action_combo_to_combo"
+            app:destination="@+id/nav_combo" />
     </fragment>
 
     <fragment
@@ -327,6 +401,11 @@
         <action
             android:id="@+id/action_cart_to_menu_item"
             app:destination="@id/nav_menu_item"
+            app:popUpTo="@+id/nav_cart" />
+
+        <action
+            android:id="@+id/action_cart_to_combo_meal"
+            app:destination="@id/nav_combo"
             app:popUpTo="@+id/nav_cart" />
 
         <action
@@ -539,10 +618,18 @@
             app:destination="@id/nav_cart"
             app:popUpTo="@+id/nav_favorites" />
 
+
+        <action
+            android:id="@+id/action_favorites_to_home"
+            app:destination="@id/nav_herfy_home"
+            app:popUpTo="@+id/nav_favorites"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_favorites_to_menu_item"
             app:destination="@id/nav_menu_item"
-            app:popUpTo="@+id/nav_favorites" />
+            app:popUpTo="@+id/nav_favorites">
+
+        </action>
         <action
             android:id="@+id/action_favorites_to_order_type"
             app:destination="@id/nav_order_type"

@@ -1,12 +1,22 @@
 package com.herfy.repository
 
+import android.content.Context
 import com.herfy.database.AppDatabase
 import com.herfy.database.entities.MenuCategoryEntity.Companion.toDomain
+import com.herfy.database.entities.MenuItemDb
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
+import com.herfy.database.entities.ModifierGroupDb
+import com.herfy.database.entities.ModifierItemDb
+import com.herfy.utils.helper.AppLogger
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.menu.MenuUtil
+import com.skylinedynamics.solosdk.api.ApiRequestListener
+import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
+import com.skylinedynamics.solosdk.api.calls.MenuApiCall
+import com.skylinedynamics.solosdk.api.models.Pagination
 import com.skylinedynamics.solosdk.api.models.objects.Allergen
 import com.skylinedynamics.solosdk.api.models.objects.AllergenCdn
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient
@@ -18,7 +28,9 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupCdn
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemCdn
+import com.skylinedynamics.solosdk.api.models.requestbodies.AddFavoriteItemBody
 import com.skylinedynamics.solosdk.util.GsonHelper
+import org.json.JSONObject
 import java.util.LinkedList
 import javax.inject.Inject
 
@@ -28,40 +40,60 @@ interface MenuRepository {
     suspend fun getMenuCategoriesItems(result: (List<MenuCategory>) -> Unit)
 
     suspend fun getMenuItem(menuItemId: String, result: (MenuItem) -> Unit)
+    suspend fun getMenuCategoryIdFromMenuItemEntityBy(id: String, applicationId: String, result: (String) -> Unit)
+    suspend fun getMenuItemDbBy(applicationId: String, name: String, result: (MenuItemDb?) -> Unit)
+    fun getAllModifierGroupBy(
+        applicationId: String,
+        toTypedArray: Array<String>,
+        result: (List<ModifierGroupDb>) -> Unit
+    )
+    fun getModifierItemBy(applicationId: String, toTypedArray: Array<String>, result: (List<ModifierItemDb>) -> Unit)
 
+    suspend fun getFrequentlyBoughtItems(page : Int, menuId: String, result: (ArrayList<MenuItem>, Int ) -> Unit)
+
+    suspend fun getMenuCategory(menuCategoryId : String, applicationId : String, result: (MenuCategory) -> Unit)
+
+    suspend fun addItemToFavorite(menuItem : MenuItem, result: (Boolean, Any?) -> Unit)
+
+    suspend fun deleteItemFromFavorites(menuItemId : String, result: (Boolean, Any?) -> Unit)
+
+    suspend fun getMenuItemDbById(id: String, applicationId: String, result: (MenuItemDb?) -> Unit)
 }
 
 class MenuRepositoryImpl @Inject constructor(
     private val appDatabase: AppDatabase,
-    private val cacheUtilHelper: CacheUtilHelper
+    private val cacheUtilHelper: CacheUtilHelper,
+    private val context: Context,
 ) : MenuRepository {
 
     override suspend fun getMenuCategoriesItems(result: (List<MenuCategory>) -> Unit) {
         cacheUtilHelper.getApplication()?.let { application ->
-            val storeId  = CacheUtil.getOrderStoreId()
+            val storeId = CacheUtil.getOrderStoreId()
             val menuCategories = mutableListOf<MenuCategory>()
-            val menuCategoryDbs = appDatabase.menuCategoryEntityDao().getAllByApplication(application.id)
+            val menuCategoryDbs =
+                appDatabase.menuCategoryEntityDao().getAllByApplication(application.id)
             menuCategoryDbs.toDomain().forEach { menuCategory ->
-                if(menuCategory.enabled == 1 &&
+                if (menuCategory.enabled == 1 &&
                     (storeId == null ||
-                        (!menuCategory.excludedApps.contains(application.id) &&
-                            !menuCategory.excludedLocations.contains(storeId))
-                    )
+                            (!menuCategory.excludedApps.contains(application.id) &&
+                                    !menuCategory.excludedLocations.contains(storeId))
+                            )
                 ) {
-                    val menuItemDbs = appDatabase.menuItemEntityDao().findAllByMenuCategoryId(application.id, menuCategory.id)
+                    val menuItemDbs = appDatabase.menuItemEntityDao()
+                        .findAllByMenuCategoryId(application.id, menuCategory.id)
                     val filteredMenuItems = mutableListOf<MenuItem>()
                     menuItemDbs.toDomain().forEach { menuItem ->
-                        if(menuItem.enabled == 1 &&
+                        if (menuItem.enabled == 1 &&
                             (storeId == null ||
-                                (menuItem.excludedApps?.contains(application.id) == false &&
-                                menuItem.excludedLocations?.contains(storeId) == false &&
-                                menuItem.outOfStockLocations?.contains(storeId) == false)
-                            )
+                                    (menuItem.excludedApps?.contains(application.id) == false &&
+                                            menuItem.excludedLocations?.contains(storeId) == false &&
+                                            menuItem.outOfStockLocations?.contains(storeId) == false)
+                                    )
                         ) {
                             filteredMenuItems.add(menuItem)
                         }
                     }
-                    if(filteredMenuItems.isNotEmpty()) {
+                    if (filteredMenuItems.isNotEmpty()) {
                         filteredMenuItems.sortBy { it.displayOrder }
                         menuCategory.menuItems = filteredMenuItems
                         menuCategories.add(menuCategory)
@@ -75,7 +107,8 @@ class MenuRepositoryImpl @Inject constructor(
 
     override suspend fun getMenuItem(menuItemId: String, result: (MenuItem) -> Unit) {
         cacheUtilHelper.getApplication()?.let { application ->
-            val menuItemDb = appDatabase.menuItemDao().findByApplicationAndId(application.id, menuItemId)
+            val menuItemDb =
+                appDatabase.menuItemDao().findByApplicationAndId(application.id, menuItemId)
             menuItemDb?.data?.let {
                 val menuItem = MenuUtil.processMenuItemCustomObject(
                     GsonHelper.gsonFinal().fromJson(it, MenuItem::class.java)
@@ -167,6 +200,8 @@ class MenuRepositoryImpl @Inject constructor(
                             modifierItemCdn,
                             LocaleUtil.getInstance().language
                         )
+
+
                         modifierItem.attributes.isSelected = modifierItem.attributes.minimum == 1
                         if (modifierGroupModifierItemDisplayOrders.containsKey(modifierItem.id) && modifierGroupModifierItemDisplayOrders[modifierItem.id] != null) {
                             modifierItem.attributes.displayOrder =
@@ -193,6 +228,8 @@ class MenuRepositoryImpl @Inject constructor(
                     modifierGroup.modifierItems = modifierItems
 
                     if (modifierGroupDb.type == ModifierGroupType.SIZES.value) {
+                        modifierGroup.modifierItems.map { item -> item.attributes.isSelected = false }
+                        modifierGroup.modifierItems[0].attributes.isSelected = true
                         sizes = modifierGroup
                     } else {
                         modifierGroups.add(modifierGroup)
@@ -364,11 +401,134 @@ class MenuRepositoryImpl @Inject constructor(
                         }
                     }
                 }
-
                 result(menuItem)
-
             }
         }
     }
+
+    override suspend fun getMenuCategoryIdFromMenuItemEntityBy(
+        id: String,
+        applicationId: String,
+        result: (String) -> Unit
+    ) {
+        val menuCategoryId = appDatabase.menuItemEntityDao().findById(applicationId, id).menuCategoryId
+        result(menuCategoryId)
+    }
+
+    override suspend fun getMenuItemDbBy(
+        applicationId: String,
+        name: String,
+        result: (MenuItemDb?) -> Unit
+    ) {
+        result(appDatabase.menuItemDao().findByApplicationAndName(applicationId, name.trim()))
+    }
+
+    override fun getAllModifierGroupBy(
+        applicationId: String,
+        ids: Array<String>,
+        result: (List<ModifierGroupDb>) -> Unit
+    ) {
+        result(
+            appDatabase.modifierGroupDao()
+                .findAllByApplicationAndIds(
+                    applicationId,
+                    ids
+                )
+        )
+    }
+
+    override fun getModifierItemBy(
+        applicationId: String,
+        ids: Array<String>,
+        result: (List<ModifierItemDb>) -> Unit
+    ) {
+        result(appDatabase.modifierItemDao()
+            .findAllByApplicationAndIds(
+                applicationId,
+                ids
+            ))
+    }
+
+    override suspend fun getFrequentlyBoughtItems(page : Int, menuId : String, result: (ArrayList<MenuItem>, Int) -> Unit) {
+        MenuApiCall.getInstance().getFrequentlyBoughtMenuItems(CacheUtil.getInstance().menuId, menuId, page.toString(), object : ApiRequestListener{
+            override fun onSuccess(obj: Any?) {
+               try {
+                   val list = arrayListOf<MenuItem>()
+                   val `object` = JSONObject(obj.toString())
+                   val pagination = Pagination.parse(`object`)
+                   val response = `object`.getJSONArray("data")
+                   for (i in 0 until response.length()) {
+                       val jsonObject = response.getJSONObject(i)
+                       val frequentBoughtMenu = GsonHelper.gsonFinal().fromJson(
+                           jsonObject.toString(),
+                           MenuItem::class.java
+                       )
+                       list.add(frequentBoughtMenu)
+                   }
+
+                   result(list, pagination.totalPages)
+               }catch(e:Exception) {
+                   e.printStackTrace()
+                   this.onError(e)
+               }
+            }
+
+            override fun onError(error: Any?) {
+                AppLogger.printRetrofitError(error)
+            }
+
+        })
+    }
+
+    override suspend fun getMenuCategory(
+        menuCategoryId: String,
+        applicationId: String,
+        result: (MenuCategory) -> Unit
+    ) {
+        val menuCategoryDb = appDatabase.menuCategoryEntityDao().findById(applicationId, menuCategoryId)
+        val menuCategory = menuCategoryDb.toDomain()
+        result(menuCategory)
+    }
+
+    override suspend fun addItemToFavorite(menuItem: MenuItem, result: (Boolean, Any?) -> Unit) {
+        val customerId = AuthUtil.getInstance().customer.id
+        val addFavoriteItemBody = AddFavoriteItemBody.getCdn(LocaleUtil.getInstance().language, menuItem)
+        CustomersApiCall.getInstance().addItemToFavorite(customerId, addFavoriteItemBody, object : ApiRequestListener{
+            override fun onSuccess(obj: Any?) {
+                result(true, null)
+            }
+
+            override fun onError(error: Any?) {
+                result(true, error)
+            }
+
+        })
+    }
+
+    override suspend fun deleteItemFromFavorites(
+        menuItemId: String,
+        result: (Boolean, Any?) -> Unit
+    ) {
+        val customerId = AuthUtil.getInstance().customer.id
+        CustomersApiCall.getInstance().deleteItemFromFavorites(customerId, menuItemId, object : ApiRequestListener{
+            override fun onSuccess(obj: Any?) {
+                result(true, null)
+            }
+
+            override fun onError(error: Any?) {
+               result(false, error)
+            }
+
+        })
+    }
+
+    override suspend fun getMenuItemDbById(
+        id: String,
+        applicationId: String,
+        result: (MenuItemDb?) -> Unit
+    ) {
+        result(appDatabase.menuItemDao().findByApplicationAndId(applicationId, id))
+    }
+
 
 }

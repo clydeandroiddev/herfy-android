@@ -3,6 +3,7 @@ package com.herfy.utils.constants
 import android.os.Bundle
 
 object Values {
+
     const val TRANSLATIONS_URL = "https://cdn.getsolo.io/content/solo-mobile-apps2.json"
     const val DEFAULT_IMAGE_URL = "https://cdn.getsolo.io/system/default-image.png"
     const val CLOUDINARY_IMAGE_URL =
@@ -87,4 +88,14 @@ object Values {
     const val FACEBOOK_LINK = "https://www.facebook.com/herfyfscksa"
     const val TIKTOK_LINK = "https://www.tiktok.com/@herfyfsc"
     const val TWITTER_LINK = "https://twitter.com/herfyfs"
+
+    const val KEY_MENU_ITEM_ID = "menu_item_id"
+    const val KEY_IS_PROMO = "is_promo"
+    const val KEY_IS_EDIT ="is_edit"
+    const val KEY_CART_MENU_ITEM_POSITION = "cart_menu_item_position"
+    const val KEY_MENU_CATEGORY_ID ="menu_category_id"
+    const val KEY_IS_UPSELL ="is_upsell"
+    const val FREQUENTLY_BOUGHT_ITEM_LISTENER = "frequently_bought_item_listener"
+    const val KEY_IS_ADDED_TO_FAVORITES = "is_added_to_favorites"
+    const val KEY_IS_ADDED_TO_CART = "is_added_to_cart"
 }

@@ -61,6 +61,7 @@ import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType;
@@ -431,6 +432,10 @@ public abstract class OrderTrackActivity extends BaseActivity implements OrderCo
 
     @Override
     public void selectAddressHome(Address address, boolean redownloadMenu) {
+
+    }
+    @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
 
     }
 

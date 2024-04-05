@@ -50,7 +50,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.CacheHelper;
+import com.herfy.utils.helper.CacheHelper;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;
 
@@ -166,7 +166,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
 
                 if (bundle.containsKey("order_type") && bundle.getBoolean("order_type")) {
 
-                    menuPresenter.addCartItem(true, true);
+                    menuPresenter.addCartItem(true, true, false);
 
                 } else if (bundle.containsKey("menu_category_id") && bundle.containsKey("menu_item_id")) {
 
@@ -270,7 +270,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
                     menuPresenter.updateCartItem(false, cartMenuItem);
                 } else {
                     showLoadingDialog();
-                    menuPresenter.getCartMenuItem();
+                    menuPresenter.getCartMenuItem(true);
                 }
 
             }
@@ -288,9 +288,15 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
     public void setupTranslations() {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     @Override
     public void showStore(Store store) {
+
+    }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
 
     }
 
@@ -469,7 +475,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator != null) {
@@ -495,7 +501,7 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, ImageView view) {
+    public void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed) {
 
     }
 
@@ -517,7 +523,9 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
         dismissDialogs();
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showError(String error) {
         dismissDialogs();

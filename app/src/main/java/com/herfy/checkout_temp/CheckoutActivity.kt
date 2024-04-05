@@ -55,9 +55,6 @@ import com.google.gson.JsonObject
 import com.google.maps.android.SphericalUtil
 import com.herfy.BuildConfig
 import com.herfy.R
-import com.herfy.analytics.FirebaseECommerceEventUtil
-import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
-import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.applyPromotionEvent
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.checkout.DialogAlrajiRequestOtpBottomSheet
@@ -65,7 +62,8 @@ import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.OneDayDecorator
-import com.herfy.firebase.FirebaseService
+import com.herfy.analytics.firebase.*
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
 import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
 import com.herfy.main.MainActivity
 import com.herfy.main.MainActivity.Companion.currentMainActivity
@@ -85,7 +83,7 @@ import com.herfy.ratings.AppRatingBroadcastReceiver
 import com.herfy.util.ApiLogLevel
 import com.herfy.util.ApiLogUtil.Companion.sendOrderLog
 import com.herfy.util.AppLogger
-import com.herfy.util.CurrencyUtils.Companion.updateCurrency
+import com.herfy.utils.helper.CurrencyUtils.Companion.updateCurrency
 import com.herfy.util.ShipBookLogger.logError
 import com.herfy.util.ShipBookLogger.logInfo
 import com.herfy.util.StringUtil
@@ -139,6 +137,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
@@ -414,8 +413,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                 mMap?.animateCamera(zout)
                                 }
                             })
-
-                        drawCurveOnMap(addressLocation, storeLocation)
                     }
                 }.addOnFailureListener {
                     it.printStackTrace()
@@ -479,8 +476,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                 mMap?.animateCamera(zout)
                                 }
                         })
-
-                            drawCurveOnMap(currentLocation, storeLocation)
 
                         }
                     }?.addOnFailureListener {
@@ -688,8 +683,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         val pointConversion =
                             AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble()
                         val sarAmount = Math.min(
-                            userSetPoints / AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble(),
-                            paymentPresenter!!.menuItemsTotalPrice
+                            userSetPoints / pointConversion, paymentPresenter!!.menuItemsTotalPrice
                         )
                         val formattedSarAmount = String.format("%.2f", sarAmount)
                         val points =
@@ -1273,7 +1267,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         if (pointsUsed > 0) {
             binding!!.layoutPaymentSummary.grpRedeemedPoints.visibility = View.VISIBLE
             binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.LOYALTY_POINTS, "Loyalty poinst (x)")
+                .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
                 .replace("x", pointsUsed.toString())
             binding!!.layoutPaymentSummary.tvRedeemPointsEquiv.text =
                 updateCurrency(
@@ -1479,7 +1473,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         promotionName: String,
         orderedItems: List<MenuItem>
     ) {
-        applyPromotionEvent(this, promotionId, promotionName, paymentPresenter!!.menuItemsList)
+        FirebaseECommerceEventUtil.applyPromotionEvent(this, promotionId, promotionName, paymentPresenter!!.menuItemsList)
     }
 
     override fun updateMenuItems() {
@@ -1832,65 +1826,5 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
     fun setUpdatedPhoneNumber(phoneNumber:String) {
         binding?.tvMobileNumber?.text = phoneNumber
-    }
-
-    fun drawCurveOnMap(currentLocation: LatLng, storeLocation: LatLng){
-        val k = 0.5 //curve radius
-        var h = SphericalUtil.computeHeading(currentLocation, storeLocation)
-        var d = 0.0
-        val p: LatLng?
-
-        //The if..else block is for swapping the heading, offset and distance
-        //to draw curve always in the upward direction
-        if (h < 0) {
-            d = SphericalUtil.computeDistanceBetween(storeLocation, currentLocation)
-            h = SphericalUtil.computeHeading(storeLocation, currentLocation)
-            //Midpoint position
-            p = SphericalUtil.computeOffset(storeLocation, d * 0.5, h)
-        } else {
-            d = SphericalUtil.computeDistanceBetween(currentLocation, storeLocation)
-
-            //Midpoint position
-            p = SphericalUtil.computeOffset(currentLocation, d * 0.5, h)
-        }
-
-        //Apply some mathematics to calculate position of the circle center
-        val x = (1 - k * k) * d * 0.5 / (2 * k)
-        val r = (1 + k * k) * d * 0.5 / (2 * k)
-
-        val c = SphericalUtil.computeOffset(p, x, h + 90.0)
-
-        //Calculate heading between circle center and two points
-        val h1 = SphericalUtil.computeHeading(c, currentLocation)
-        val h2 = SphericalUtil.computeHeading(c, storeLocation)
-
-        //Calculate positions of points on circle border and add them to polyline options
-        val numberOfPoints = 1000 //more numberOfPoints more smooth curve you will get
-        val step = (h2 - h1) / numberOfPoints
-
-        //Create PolygonOptions object to draw on map
-        val polygon = PolygonOptions()
-
-        //Create a temporary list of LatLng to store the points that's being drawn on map for curve
-        val temp = arrayListOf<LatLng>()
-
-        //iterate the numberOfPoints and add the LatLng to PolygonOptions to draw curve
-        //and save in temp list to add again reversely in PolygonOptions
-        for (i in 0 until numberOfPoints) {
-            val latlng = SphericalUtil.computeOffset(c, r, h1 + i * step)
-            polygon.add(latlng) //Adding in PolygonOptions
-            temp.add(latlng)    //Storing in temp list to add again in reverse order
-        }
-
-        //iterate the temp list in reverse order and add in PolygonOptions
-        for (i in (temp.size - 1) downTo 1) {
-            polygon.add(temp[i])
-        }
-        val lineColor = getColor(R.color.background_color_blue)
-        polygon.strokeColor(lineColor)
-        polygon.strokeWidth(12f)
-        mMap?.addPolygon(polygon)
-
-        temp.clear()
     }
 }

@@ -856,6 +856,10 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             diffMenuSaved(address)
         }
     }
+    override fun navigateMenuItemDetails(menuItem: MenuItem?) {
+        findNavController().navigate(OrderTypeNewFragmentDirections.actionOrderTypeToMenuItem(menuItemId = menuItem
+            ?.id.orEmpty(), isFavorite = true, isFromOrderType = true))
+    }
 
     override fun selectAddressWork(position: Int) {
 
@@ -1504,6 +1508,16 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 }
             }
         }
+    }
+
+    override fun setCloseTime(time: String) {
+        binding.branchClosedLabel.text = CacheUtil.getInstance()
+            .getTranslations(Text.BRANCH_IS_CLOSED_ERROR, "This branch is closed. It opens (x).")
+            .replace("(x)", time)
+        binding.branchCloseLayout.isVisible = true
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.branchCloseLayout.isVisible = false
+        }, 2000)
     }
 
     private fun proceedToCurbside() {

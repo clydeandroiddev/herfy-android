@@ -1,5 +1,6 @@
 package com.herfy.di
 
+import android.content.Context
 import com.herfy.database.AppDatabase
 import com.herfy.repository.AuthRepository
 import com.herfy.repository.AuthRepositoryImpl
@@ -15,6 +16,7 @@ import com.herfy.utils.helper.CacheUtilHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -35,9 +37,10 @@ object RepositoryModule {
     @Singleton
     fun provideMenuRepository(
         appDatabase: AppDatabase,
-        cacheUtilHelper: CacheUtilHelper
+        cacheUtilHelper: CacheUtilHelper,
+        @ApplicationContext context : Context
     ): MenuRepository =
-        MenuRepositoryImpl(appDatabase, cacheUtilHelper)
+        MenuRepositoryImpl(appDatabase, cacheUtilHelper, context)
 
     @Provides
     @Singleton

@@ -267,6 +267,11 @@ public class AddressViewHolder extends RecyclerView.ViewHolder implements OrderC
     }
 
     @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
+
+    }
+
+    @Override
     public void selectAddressWork(int position) {
 
     }
@@ -457,6 +462,11 @@ public class AddressViewHolder extends RecyclerView.ViewHolder implements OrderC
 
     @Override
     public void showMinimumDeliveryForAreaMessage(String error) {
+
+    }
+
+    @Override
+    public void setCloseTime(String time) {
 
     }
 

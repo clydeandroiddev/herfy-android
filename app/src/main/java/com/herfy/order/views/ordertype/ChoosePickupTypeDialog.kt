@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -15,7 +16,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.DialogOrderTypeSelectionBinding
 import com.herfy.utils.constants.Text
-import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -79,8 +79,8 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
                 CacheUtil.getInstance().getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
             descriptionPickup.text = CacheUtil.getInstance()
                 .getTranslations(Text.PICKUP_DESCRIPTION, "Pickup your order inside the restaurant")
-            curbside.text =
-                CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP_LABEL, "Curbside pickup")
+            curbside.text = CacheUtil.getInstance()
+                .getTranslations(Text.CURBSIDE_PICKUP_LABEL, "Curbside pickup")
             descriptionCurbside.text = CacheUtil.getInstance().getTranslations(
                 Text.CURBSIDE_DESCRIPTION,
                 "Park at the restaurant and your order will be served in your car"
@@ -91,27 +91,31 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
             )
 
             choosePickup.setOnClickListener {
-                onSubmit?.orderType(OrderType.PICKUP)
+                if (it.isVisible) {
+                    onSubmit?.orderType(OrderType.PICKUP)
+                }
             }
 
             chooseDriveThru.setOnClickListener {
-                onSubmit?.orderType(OrderType.DRIVE_THRU)
+                if (it.isVisible) {
+                    onSubmit?.orderType(OrderType.DRIVE_THRU)
+                }
             }
 
             chooseCurbside.setOnClickListener {
-                onSubmit?.orderType(OrderType.CURBSIDE)
+                if (it.isVisible) {
+                    onSubmit?.orderType(OrderType.CURBSIDE)
+                }
             }
 
             back.setOnClickListener {
                 onSubmit?.exit()
             }
 
-            curbsideContainer.isVisible = AuthUtil.getInstance().isSignedIn
-
             store?.let {
-                chooseDriveThruContainer.isVisible = it.attributes.isDriveThruEnabled
-                curbsideContainer.isVisible = it.attributes.curbsideEnabled == 1
-                pickupContainer.isVisible = it.attributes.pickupEnabled == 1
+                chooseDriveThruContainer.isInvisible = !it.attributes.isDriveThruEnabled
+                curbsideContainer.isInvisible = it.attributes.curbsideEnabled != 1
+                pickupContainer.isInvisible = it.attributes.pickupEnabled != 1
             }
         }
     }

@@ -206,6 +206,7 @@ public class UpdateAddAddressDialogFragment extends BaseDialogFragment implement
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
 
+        super.onDismiss(dialog);
         AnimationSet animationSet = new AnimationSet(true);
         Animation animation = new ScaleAnimation(1f, 0f, 1f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         animation.setDuration(300);
@@ -519,6 +520,10 @@ public class UpdateAddAddressDialogFragment extends BaseDialogFragment implement
     public void selectAddressHome(Address address, boolean redownloadMenu) {
 
     }
+    @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
+
+    }
 
     @Override
     public void selectAddressWork(int position) {
@@ -719,6 +724,11 @@ public class UpdateAddAddressDialogFragment extends BaseDialogFragment implement
 
     @Override
     public void showMinimumDeliveryForAreaMessage(String error) {
+
+    }
+
+    @Override
+    public void setCloseTime(String time) {
 
     }
 

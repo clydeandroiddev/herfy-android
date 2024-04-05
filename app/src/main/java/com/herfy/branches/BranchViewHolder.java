@@ -1,10 +1,8 @@
 package com.herfy.branches;
 
-import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -14,11 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
+import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.StringUtil;
-import com.herfy.util.ViewUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,6 +41,19 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
 
     @BindView(R.id.nearestLabel)
     AppCompatTextView nearestLabel;
+
+    @BindView(R.id.nearestContainer)
+    MaterialCardView nearestContainer;
+
+    @BindView(R.id.closeContainer)
+    MaterialCardView closeContainer;
+
+    @BindView(R.id.closedLabel)
+    AppCompatTextView closedLabel;
+
+    @BindView(R.id.spaceNearest)
+    View spaceNearest;
+
     @BindView(R.id.directionsImage)
     ImageView directionsImage;
 
@@ -159,9 +169,11 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
             driveThruLabel.setText(CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU, "Drive Thru"));
 
             if (getAdapterPosition() == 0) {
-                nearestLabel.setVisibility(View.VISIBLE);
+                spaceNearest.setVisibility(View.VISIBLE);
+                nearestContainer.setVisibility(View.VISIBLE);
             } else {
-                nearestLabel.setVisibility(View.GONE);
+                spaceNearest.setVisibility(View.GONE);
+                nearestContainer.setVisibility(View.GONE);
             }
 
             if (store.getAttributes().getIsDriveThruEnabled()) {
@@ -207,14 +219,32 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
             boolean hoursAvailable = store.getAttributes().openingHoursUtc != null && day < store.getAttributes().openingHoursUtc.size();
 
             branchTime.setVisibility(View.VISIBLE);
+            closeContainer.setVisibility(View.GONE);
+
             if (!pickupHoursAvailable && !deliverHoursAvailable && hoursAvailable) {
                 String openingHours = StringUtil.getOpeningHours(store);
                 String openingFinal = (!openingHours.isEmpty() ? openingHours : "-");
                 branchTime.setText(openingFinal);
+                if (!store.getAttributes().getOpen()) {
+                    try {
+                        closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.getOpeningDayOnly(store)));
+                        closeContainer.setVisibility(View.VISIBLE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             } else {
                 if (pickupHoursAvailable) {
                     String hoursText = StringUtil.formatOpenHours(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed());
                     branchTime.setText(hoursText);
+                    if (!store.getAttributes().getOpenPickup()) {
+                        try {
+                            closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed())));
+                            closeContainer.setVisibility(View.VISIBLE);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 } else {
                     branchTime.setVisibility(View.GONE);
                 }
@@ -276,6 +306,11 @@ public class BranchViewHolder extends RecyclerView.ViewHolder implements Branche
 
     @Override
     public void selectBranch(String id) {
+
+    }
+
+    @Override
+    public void setCloseTime(String time) {
 
     }
 

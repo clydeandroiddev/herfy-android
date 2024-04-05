@@ -21,23 +21,32 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.herfy.R
-import com.herfy.analytics.FirebaseECommerceEventUtil
+import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil.Companion.addToCartEvent
+import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.auth.views.SignInActivity
-import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.databinding.ItemMenuItemNewBinding
-import com.herfy.firebase.FirebaseService
 import com.herfy.main.MainActivity
 import com.herfy.menu.MenuContract
-import com.skylinedynamics.solosdk.api.models.objects.*
-import com.herfy.util.*
-import com.herfy.analytics.FirebaseECommerceEventUtil.Companion.addToCartEvent
-import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.util.StringUtil
 import com.herfy.util.scroll.ScrollableViewPagerContentTouchEventDelegator
+import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.views.SlantedTextView
+import com.skylinedynamics.solosdk.api.models.objects.Campaign
+import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
+import com.skylinedynamics.solosdk.api.models.objects.Favorite
+import com.skylinedynamics.solosdk.api.models.objects.Ingredient
+import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
+import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
+import com.skylinedynamics.solosdk.api.models.objects.Store
 
 class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Presenter, val binding: ItemMenuItemNewBinding) : RecyclerView.ViewHolder(binding.root), MenuContract.View, SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -78,7 +87,15 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
     }
 
     override fun showStore(store: Store) {}
+    override fun navigateToMenuItemDetails(menuCategory: MenuCategory?, menuItem: MenuItem?) {
+
+    }
+
     override fun showStoreOpen(open: Boolean, message: String) {}
+    override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
+        TODO("Not yet implemented")
+    }
+
     override fun showAddress(address: String) {}
     override fun reloadMenu() {}
     override fun showMenuCategories(
@@ -104,8 +121,16 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
     override fun setMenuItemTotalPrice(totalPrice: Double, menuItemPrice: Double) {}
     override fun selectSize() {}
     override fun showOrderType() {}
-    override fun addCartItem(menuItem: MenuItem) {}
-    override fun addCartItem(menuItem: MenuItem, view: ImageView) {}
+    override fun addCartItem(
+        menuItem: MenuItem,
+        isShouldBackPressed: Boolean,
+        menuAddedToCartPosition: Int
+    ) {}
+    override fun addCartItem(
+        menuItem: MenuItem,
+        view: ImageView,
+        isShouldBackPressed: Boolean
+    ) {}
     override fun updateCartItem() {}
     override fun showMessage(message: String) {
         /*((HomeActivity) context).dismissDialogs();
@@ -116,7 +141,10 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
         /*((HomeActivity) context).dismissDialogs();
         ((HomeActivity) context).showAlertDialog("", error);*/
     }
-
+    override fun updateFavoriteByPosition(
+        position: Int,
+        menuItem: MenuItem?
+    ) {}
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean,

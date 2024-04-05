@@ -276,13 +276,15 @@
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center_vertical"
                     android:imeOptions="actionDone"
+                    android:inputType="textVisiblePassword"
                     android:maxLines="1"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:singleLine="true"
                     android:textColor="#0C0C0C"
                     android:textSize="12sp"
-                    tools:hint="e.g. KLK98898" />
+                    tools:hint="e.g. KLK98898"
+                    tools:ignore="TextFields" />
 
             </LinearLayout>
 

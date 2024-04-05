@@ -302,6 +302,10 @@ public class DineInTableNumberDialogFragment extends BaseDialogFragment implemen
     public void selectAddressHome(Address address, boolean redownloadMenu) {
 
     }
+    @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
+
+    }
 
     @Override
     public void selectAddressWork(int position) {
@@ -495,6 +499,11 @@ public class DineInTableNumberDialogFragment extends BaseDialogFragment implemen
 
     @Override
     public void showMinimumDeliveryForAreaMessage(String error) {
+
+    }
+
+    @Override
+    public void setCloseTime(String time) {
 
     }
 

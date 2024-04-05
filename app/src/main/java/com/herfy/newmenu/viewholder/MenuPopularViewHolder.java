@@ -28,8 +28,9 @@ import com.bumptech.glide.request.target.Target;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil;
+import com.herfy.analytics.firebase.FirebaseService;
 import com.herfy.utils.constants.Text;
-import com.herfy.firebase.FirebaseService;
 import com.herfy.font.FontHandler;
 import com.herfy.main.MainActivity;
 import com.herfy.menu.MenuContract;
@@ -47,7 +48,6 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.herfy.analytics.facebook.FacebookAppEventUtil;
-import com.herfy.analytics.FirebaseECommerceEventUtil;
 import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;
@@ -147,9 +147,18 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {
+
+    }
+
+    @Override
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
     }
 
@@ -264,12 +273,12 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, ImageView view) {
+    public void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed) {
 
     }
 
@@ -287,7 +296,9 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
     public void showError(String error) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
 

@@ -25,9 +25,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.herfy.R;
+import com.herfy.analytics.firebase.FirebaseService;
 import com.herfy.auth.views.SignInActivity;
 import com.herfy.utils.constants.Text;
-import com.herfy.firebase.FirebaseService;
 import com.herfy.main.MainActivity;
 import com.herfy.menu.MenuContract;
 import com.herfy.utils.constants.Values;
@@ -125,6 +125,10 @@ public class SearchMenuViewHolder extends RecyclerView.ViewHolder implements Men
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String message) {
@@ -185,7 +189,9 @@ public class SearchMenuViewHolder extends RecyclerView.ViewHolder implements Men
     public void setMenuItemTotalPrice(double totalPrice, double menuItemPrice) {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     @Override
     public void selectSize() {
 
@@ -197,12 +203,12 @@ public class SearchMenuViewHolder extends RecyclerView.ViewHolder implements Men
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, ImageView view) {
+    public void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed) {
 
     }
 
@@ -215,6 +221,11 @@ public class SearchMenuViewHolder extends RecyclerView.ViewHolder implements Men
     public void showMessage(String message) {
         /*((HomeActivity) context).dismissDialogs();
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();*/
+    }
+
+    @Override
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
+
     }
 
     @Override

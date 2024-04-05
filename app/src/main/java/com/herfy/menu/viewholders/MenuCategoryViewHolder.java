@@ -113,12 +113,18 @@ public class MenuCategoryViewHolder extends RecyclerView.ViewHolder implements M
     public void showStore(Store store) {
 
     }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
+
+    }
 
     @Override
     public void showStoreOpen(boolean open, String messag) {
 
     }
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
+    }
     @Override
     public void showAddress(String address) {
 
@@ -260,12 +266,12 @@ public class MenuCategoryViewHolder extends RecyclerView.ViewHolder implements M
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, ImageView view) {
+    public void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed) {
 
     }
 
@@ -281,6 +287,10 @@ public class MenuCategoryViewHolder extends RecyclerView.ViewHolder implements M
 
     @Override
     public void showError(String error) {
+
+    }
+    @Override
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
     }
 

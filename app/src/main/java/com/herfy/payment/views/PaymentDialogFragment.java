@@ -39,7 +39,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
 import com.skylinedynamics.solosdk.api.models.objects.PrayerTime;
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge;
-import com.herfy.util.CurrencyUtils;
+import com.herfy.utils.helper.CurrencyUtils;
 import com.herfy.util.StringUtil;
 
 import java.text.NumberFormat;

@@ -863,7 +863,7 @@ public class Text {
     public static final String PICKUP_METHODS = "pickup_methods";
 
     public static final String WALK_IN = "walk_in";
-    public static final String CURBSIDE_LABEL = "curbside_label";
+    public static final String CURBSIDE_LABEL = "curbside";
     public static final String HI_LABEL = "hi_label";
     public static final String YOUR_ORDERS_LABEL = "your_orders_label";
     public static final String LOYALTY_REWARDS_LABEL = "loyalty_rewards_label";
@@ -881,7 +881,7 @@ public class Text {
     public static final String PLACE_ORDER = "place_order";
     public static final String PICKUP_TIME = "pickup_time";
     public static final String DELIVERY_INSTRUCTION = "delivery_instructions";
-    public static final String LOYALTY_POINTS = "loyalty_points";
+    public static final String LOYALTY_POINTS = "loyalty_points_x";
     public static final String PAYMENT_METHODS = "payment_methods";
 
     public static final String ALL_LABEL = "all_label";
@@ -1003,6 +1003,7 @@ public class Text {
     public static final String FULL_NAME_LABEL = "full_name_label";
 
     public static final String DYNAMIC_CODE_DIGIT = "dyamic_code_digit";
+    public static final String FREQUETLY_BOUGHT_TOGETHER = "frequently_bought";
     public static final String DELIVERY_ADDRESSES = "delivery_addresses";
     public static final String CURBSIDE_VEHICLES = "curbside_vehicles";
     public static final String LOGOUT = "logout";
@@ -1162,5 +1163,13 @@ public class Text {
 
     public static final String ENTER_CAR_BRAND_NAME = "enter_car_brand_name";
     public static final String NO_RESULTS_FOUND = "no_results_found";
+
+    public static final String CLOSED_OPEN_STORE = "closed_open_store";
+
+    public static final String BRANCH_IS_CLOSED_ERROR = "branch_is_closed_error";
+
+    public static final String SPECIAL_INSTRUCTION_DESCRIPTION="special_instruction_description";
+    public static final String FREQUENTLY_BOUGHT_TOGETHER_LABEL="frequently_bought_togehter_label";
+    public static final String COMBO_SIZES_LABEL="combo_sizes_label";
     public static final String CONFIRM = "confirm";
 }

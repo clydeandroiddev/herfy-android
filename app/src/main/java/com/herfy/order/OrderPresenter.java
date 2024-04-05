@@ -648,6 +648,11 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     }
 
     @Override
+    public void setCloseTime(String time) {
+        orderView.setCloseTime(time);
+    }
+
+    @Override
     public void continueStore(boolean isDineIn, int position, Store store) {
 
         selectedAddress = null;
@@ -711,7 +716,9 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
+                        if (menuItem.isMustBeCustomized() || menuItem.isCombo) {
+                            orderView.navigateMenuItemDetails(menuItem);
+                        }else {
                         categoryId = getMenuCategory(menuItem.getId());
 
                         if (menuItem.getAttributes().getEnabled() == 0) {
@@ -1009,6 +1016,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                                 CacheUtil.getInstance().addToCart(favoriteMenuItem);
                                 orderView.addToCartFavorite(favoriteMenuItem);
                             }
+                        }
 
                             Store store = CacheUtil.getInstance().getOrderStore();
                             if (store != null && menuItem.getDisabledStores().containsKey(store.getId())) {

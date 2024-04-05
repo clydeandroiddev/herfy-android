@@ -38,8 +38,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.herfy.R
-import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.auth.AuthContract
 import com.herfy.auth.AuthFragmentPagerAdapter
 import com.herfy.auth.AuthPresenter
@@ -555,7 +555,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
 
     override fun logSigninEvent(customerId: String?) {
         if (isCanProceedFragmentTransaction(fragmentManager = parentFragmentManager)) {
-            FirebaseECommerceEventUtil.signInEvent(requireContext(), customerId)
+           FirebaseECommerceEventUtil.signInEvent(requireContext(), customerId)
         }
     }
 

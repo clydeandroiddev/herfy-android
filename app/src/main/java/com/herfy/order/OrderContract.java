@@ -54,6 +54,8 @@ public interface OrderContract {
 
         void selectAddressHome(Address address, boolean redownloadMenu);
 
+        void navigateMenuItemDetails(MenuItem menuItem);
+
         void selectAddressWork(int position);
 
         void selectAddressOther(Address address, boolean redownloadMenu);
@@ -127,6 +129,7 @@ public interface OrderContract {
 
         void showMinimumDeliveryForAreaMessage(String error);
 
+        void setCloseTime(String time);
     }
 
     interface Presenter extends BasePresenter {
@@ -170,6 +173,8 @@ public interface OrderContract {
         void callStore();
 
         void selectStore(boolean isDineIn, int position);
+
+        void setCloseTime(String time);
 
         void continueStore(boolean isDineIn, int position, Store store);
 

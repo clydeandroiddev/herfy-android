@@ -7,7 +7,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -23,8 +25,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
-import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
@@ -42,8 +44,10 @@ import com.herfy.main.NavigationActivity
 import com.herfy.order.views.ordertype.OrderTypeNewFragment
 import com.herfy.payment.dialog.PaymentOrderTimeDialog
 import com.herfy.payment.views.OrderDialogFragment
+import com.herfy.phonenumber.EnterNewPhoneNumberFragment
 import com.herfy.upsell.UpsellRecyclerViewAdapter
-import com.herfy.util.*
+import com.herfy.util.StringUtil
+import com.herfy.util.ViewUtil
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
@@ -57,7 +61,9 @@ import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
+import com.herfy.utils.helper.CacheHelper
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.TimeUtil
@@ -67,10 +73,18 @@ import com.kochava.tracker.events.EventType
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
-import com.skylinedynamics.solosdk.api.models.objects.*
+import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
+import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge
+import com.skylinedynamics.solosdk.api.models.objects.Store
+import com.skylinedynamics.solosdk.api.models.objects.Translated
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.GregorianCalendar
+import java.util.Locale
+import java.util.Objects
 import javax.inject.Inject
 
 
@@ -790,6 +804,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showMenuItems(
         menuItems: List<MenuItem>, fromPromo: Boolean, fromRemoveCoupon: Boolean
     ) {
+        val menuItemsCopy = arrayListOf<MenuItem>()
+        menuItemsCopy.addAll(menuItems)
+        if (!Values.NO_PROMOTIONS && !fromPromo && !dontShowDigitalCoupons) {
+            showProgressDialog()
+            cartPresenter!!.getDigitalCouponsWith(menuItemsCopy,false, false)
+        }
         dontShowDigitalCoupons = false
         cartPresenter!!.getTotalPrice(false, false)
         binding.paymentSummaryContainer.placeOrder.isEnabled = menuItems.size > 0
@@ -850,12 +870,18 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             adapter?.notifyDataSetChanged()
         }
         if (!fromChangeQuantity) update()
+
+        showProgressDialog()
+        cartPresenter.getDigitalCouponsWith(cartPresenter.menuItemsList, false ,false)
+
         setCartQuantity(cartPresenter.menuItemsList)
     }
 
     override fun updateMenuItems(menuItems: List<MenuItem>) {
         runOnMain {
+            setCartQuantity(menuItems)
             adapter?.notifyDataSetChanged()
+
         }
     }
 
@@ -998,17 +1024,34 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     }
 
-    override fun editCartItem(position: Int) {
+    override fun editCartItem(
+        position: Int, menuItem : MenuItem
+    ) {
         runOnMain {
             dismissDialogFragments()
-            NavigationUtils.navigateSafe(
-                findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                    menuCategoryId = "",
-                    menuItemId = "",
-                    cartMenuItemPosition = position,
-                    isPromo = false
+            if(menuItem.isCombo){
+                val bundle = Bundle()
+                bundle.putBoolean(Values.KEY_IS_PROMO, false)
+                bundle.putString(Values.KEY_MENU_ITEM_ID, menuItem.id)
+                bundle.putBoolean(Values.KEY_IS_UPSELL, menuItem.attributes.isUpsell)
+                bundle.putBoolean(Values.KEY_IS_EDIT, true)
+                bundle.putInt(Values.KEY_CART_MENU_ITEM_POSITION, position)
+                NavigationUtils.navigateSafe(
+                    findNavController(),
+                    R.id.action_cart_to_combo_meal,
+                    bundle
                 )
-            )
+            }else {
+                NavigationUtils.navigateSafe(
+                    findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                        menuCategoryId = "",
+                        menuItemId = menuItem.id,
+                        cartMenuItemPosition = position,
+                        isPromo = false
+                    )
+                )
+            }
+
         }
 
     }
@@ -1303,6 +1346,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
 
     override fun refreshDigitalCoupons() {
+        dismissProgressDialog()
         if (cartPresenter != null && cartPresenter!!.menuItemsCount > 0) {
             //binding.main.campaignLayout.visibility = View.VISIBLE
         }
@@ -1457,7 +1501,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             it.showLoadingDialog()
                         }
                         if (removeCoupon) {
-                            cartPresenter!!.removeCoupon()
+                            cartPresenter.removeCoupon()
                         }
                         cartPresenter!!.availDigitalCouponCampaign(digitalCoupons[position])
                     }
@@ -2121,5 +2165,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
 
     }
+
+
 
 }

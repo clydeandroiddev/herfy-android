@@ -1,0 +1,134 @@
+package com.herfy.utils.helper
+
+import android.text.SpannedString
+import androidx.core.text.buildSpannedString
+import androidx.core.text.scale
+import com.herfy.utils.extensions.hasDecimalPart
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+
+// For kotlin classes
+fun String.updateCurrency(currency: String, withSpace: Boolean): SpannedString {
+    val space = if (withSpace) " " else ""
+    val concept = CacheUtil.getInstance().concept
+    return buildSpannedString {
+        scale(0.58f) {
+            concept.currencyCode
+        }
+        append(space)
+        append(StringUtil.localize(this@updateCurrency))
+    }
+}
+
+// For non-kotlin classes
+class CurrencyUtils {
+
+    companion object {
+
+        @JvmOverloads
+        fun getFormattedAmount(amount: Double, ignoreDecimalPlaces: Boolean = false): String {
+            val concept = CacheUtil.getInstance().concept
+            val symbols = DecimalFormatSymbols(LocaleUtil.getLocale())
+
+            val pattern = if(ignoreDecimalPlaces) {
+                if(amount.hasDecimalPart()) {
+                    "#,##0.${"0".repeat(2)}"
+                } else {
+                    "#"
+                }
+            } else {
+                if (concept.decimalPlaces > 0) {
+                    "#,##0.${"0".repeat(concept.decimalPlaces)}"
+                } else {
+                    "#"
+                }
+            }
+
+            val decimalFormat = DecimalFormat(pattern, symbols)
+            return decimalFormat.format(amount)
+        }
+
+        @JvmOverloads
+        fun updateCurrency(
+            amount: Double,
+            withSpace: Boolean = false,
+            ignoreDecimalPlaces: Boolean = false,
+            isDiscount: Boolean = false
+        ): SpannedString {
+
+            val concept = CacheUtil.getInstance().concept
+            val symbols = DecimalFormatSymbols(LocaleUtil.getLocale())
+
+            val pattern = if(ignoreDecimalPlaces) {
+                if(amount.hasDecimalPart()) {
+                    "#,##0.${"0".repeat(2)}"
+                } else {
+                    "#"
+                }
+            } else {
+                if (concept.decimalPlaces > 0) {
+                    "#,##0.${"0".repeat(concept.decimalPlaces)}"
+                } else {
+                    "#"
+                }
+            }
+
+            val decimalFormat = DecimalFormat(pattern, symbols)
+            val formattedDecimal: String = decimalFormat.format(amount)
+
+            val discount = if (isDiscount) "-" else ""
+            val space = if (withSpace) " " else ""
+            return buildSpannedString {
+                append(discount)
+                append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
+                append(space)
+                append(StringUtil.localize(formattedDecimal))
+            }
+        }
+
+        @JvmOverloads
+        fun updateCurrencyWithText(
+            amount: Double,
+            withSpace: Boolean = false
+        ): SpannedString {
+
+            val concept = CacheUtil.getInstance().concept
+            val symbols = DecimalFormatSymbols(LocaleUtil.getLocale())
+
+            val pattern = if (concept.decimalPlaces > 0) {
+                "#,##0.${"0".repeat(concept.decimalPlaces)}"
+            } else {
+                "#"
+            }
+
+            val decimalFormat = DecimalFormat(pattern, symbols)
+            val formattedDecimal: String = decimalFormat.format(amount)
+            val space = if (withSpace) " " else ""
+            return buildSpannedString {
+                append(StringUtil.localize(formattedDecimal))
+                append(space)
+                append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
+            }
+        }
+
+        @JvmOverloads
+        fun updateAmountWithCurrency(amount: Double, withSpace: Boolean = false): SpannedString {
+            val concept = CacheUtil.getInstance().concept
+            val symbols = DecimalFormatSymbols(LocaleUtil.getLocale())
+            val pattern = if (concept.decimalPlaces > 0) {
+                "#,##0.${"0".repeat(concept.decimalPlaces)}"
+            } else {
+                "#"
+            }
+            val space = if (withSpace) " " else ""
+            val decimalFormat = DecimalFormat(pattern, symbols)
+            val formattedDecimal: String = decimalFormat.format(amount)
+            return buildSpannedString {
+                append(StringUtil.localize(formattedDecimal))
+                append(space)
+                append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
+            }
+        }
+
+    }
+}

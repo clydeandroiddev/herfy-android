@@ -1,40 +1,32 @@
 package com.herfy.order.viewholders;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.tabs.TabLayout;
 import com.herfy.R;
-import com.herfy.utils.constants.Text;
 import com.herfy.order.OrderContract;
+import com.herfy.util.StringUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
-import com.skylinedynamics.solosdk.api.models.objects.Facility;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.Rating;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.util.StringUtil;
-import com.herfy.util.ViewUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -62,6 +54,18 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
 
     @BindView(R.id.nearestLabel)
     AppCompatTextView nearestLabel;
+
+    @BindView(R.id.nearestContainer)
+    MaterialCardView nearestContainer;
+
+    @BindView(R.id.closeContainer)
+    MaterialCardView closeContainer;
+
+    @BindView(R.id.closedLabel)
+    AppCompatTextView closedLabel;
+
+    @BindView(R.id.spaceNearest)
+    View spaceNearest;
     @BindView(R.id.directionsImage)
     ImageView directionsImage;
 
@@ -198,6 +202,10 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
     public void selectAddressHome(Address address, boolean redownloadMenu) {
 
     }
+    @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
+
+    }
 
     @Override
     public void selectAddressWork(int position) {
@@ -226,9 +234,11 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
             nearestLabel.setText(CacheUtil.getInstance().getTranslations(Text.NEAREST_CAPS, "NEAREST"));
 
             if (getAdapterPosition() == 0) {
-                nearestLabel.setVisibility(View.VISIBLE);
+                spaceNearest.setVisibility(View.VISIBLE);
+                nearestContainer.setVisibility(View.VISIBLE);
             } else {
-                nearestLabel.setVisibility(View.GONE);
+                spaceNearest.setVisibility(View.GONE);
+                nearestContainer.setVisibility(View.GONE);
             }
 
             pickupMethodsLabel.setText(CacheUtil.getInstance().getTranslations(Text.PICKUP_METHODS, "Pickup Methods"));
@@ -296,18 +306,59 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
                 }
             }
 
-            if (selected) {
-                card.setStrokeColor(ContextCompat.getColor(itemView.getContext(), com.herfy.ordertype.R.color.card_stroke));
-            } else {
-                card.setStrokeColor(ContextCompat.getColor(itemView.getContext(), android.R.color.transparent));
-            }
-
+            closeContainer.setVisibility(View.GONE);
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     orderPresenter.selectStore(isDineIn, getAdapterPosition());
                 }
             });
+
+            if (!pickupHoursAvailable && !deliverHoursAvailable && hoursAvailable) {
+                if (!store.getAttributes().getOpen()) {
+                    try {
+                        closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.getOpeningDayOnly(store)));
+                        closeContainer.setVisibility(View.VISIBLE);
+                        container.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                orderPresenter.setCloseTime(StringUtil.getOpeningDayOnly(store));
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                if (pickupHoursAvailable) {
+                    if (!store.getAttributes().getOpenPickup()) {
+                        try {
+                            closedLabel.setText(CacheUtil.getInstance().getTranslations(Text.CLOSED_OPEN_STORE, "CLOSED - Opens (x)").replace("(x)", StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed())));
+                            closeContainer.setVisibility(View.VISIBLE);
+                            container.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Calendar calendar = Calendar.getInstance();
+                                    int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+                                    if (day < 0) {
+                                        day = 0;
+                                    }
+                                    orderPresenter.setCloseTime(StringUtil.formatOpenHoursOnly(store.getAttributes().openingHoursPickup.get(day).getOpen(), store.getAttributes().openingHoursPickup.get(day).getClosed()));
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            if (selected) {
+                card.setStrokeColor(ContextCompat.getColor(itemView.getContext(), com.herfy.ordertype.R.color.card_stroke));
+            } else {
+                card.setStrokeColor(ContextCompat.getColor(itemView.getContext(), android.R.color.transparent));
+            }
+
 
             branchName.setText(store.getAttributes().getName());
 
@@ -500,6 +551,11 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
 
     @Override
     public void showMinimumDeliveryForAreaMessage(String error) {
+
+    }
+
+    @Override
+    public void setCloseTime(String time) {
 
     }
 

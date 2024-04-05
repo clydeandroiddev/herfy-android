@@ -29,6 +29,8 @@ public interface BranchesContract {
         void showError(String error);
 
         void selectBranch(String id);
+
+        void setCloseTime(String time);
     }
 
     interface Presenter extends BasePresenter {
@@ -46,6 +48,8 @@ public interface BranchesContract {
         Store getBranch(int position);
 
         void selectBranch(int position);
+
+        void setCloseTime(String time);
 
         void selectBranch(String id);
 

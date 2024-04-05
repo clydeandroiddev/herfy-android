@@ -16,7 +16,7 @@ import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.main.MainActivity;
 import com.herfy.splash.SplashActivity;
-import com.herfy.util.DeepLinkUtil;
+import com.herfy.utils.helper.DeepLinkUtil;
 import com.herfy.utils.constants.Values;
 
 public class RouterActivity extends BaseActivity {

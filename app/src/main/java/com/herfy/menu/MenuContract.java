@@ -4,7 +4,7 @@ import android.widget.ImageView;
 
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
-import com.herfy.menu.viewholders.BaseModifierItemViewHolder;
+import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.FrequentBoughtViewHolder;
 import com.herfy.menu.viewholders.IngredientViewHolder;
 import com.herfy.menu.viewholders.MenuCategoryViewHolder;
@@ -46,8 +46,10 @@ public interface MenuContract {
 
         void showStore(Store store);
 
-        void showStoreOpen(boolean open, String message);
+        void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem);
 
+        void showStoreOpen(boolean open, String message);
+        void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems);
         void showAddress(String address);
 
         void reloadMenu();
@@ -89,13 +91,15 @@ public interface MenuContract {
 
         void showOrderType();
 
-        void addCartItem(MenuItem menuItem);
+        void addCartItem(MenuItem menuItem, boolean isShouldBackPressed,int menuAddedToCartPosition);
 
-        void addCartItem(MenuItem menuItem, ImageView view);
+        void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed);
 
         void updateCartItem();
 
         void showMessage(String message);
+
+        void updateFavoriteByPosition(int position,MenuItem menuItem);
 
         void showError(String error);
 
@@ -250,10 +254,14 @@ public interface MenuContract {
         MenuItem getMenuItem();
 
         void getMenuItem(boolean addToBag, String menuItemId);
+        void getMenuItemFromFrequent(String menuItemId,boolean addToBag, int menuAddedToCartPosition);
+
+        void addFrequentBoughtItem(boolean addToBag,int menuAddedToCartPosition);
 
         void getMenuItem(boolean addToBag, String menuItemId, boolean isUpsell);
 
         void prepareMenuItem(boolean addToBag);
+        void prepareMenuItemByMenu(MenuItem menuItem, boolean addToBag, int menuAddedToCartPosition);
 
         void setMenuItem(MenuItem menuItem);
 
@@ -263,6 +271,8 @@ public interface MenuContract {
 
 
         void selectMenuItem(MenuCategory menuCategory, MenuItem menuItem);
+
+        void navigateToMenuItemDetails(MenuItem menuItem);
 
         void clearSearchedMenuItems();
 
@@ -313,7 +323,7 @@ public interface MenuContract {
 
         void addRemoveFavorite(boolean add);
 
-        void getCartMenuItem();
+        void getCartMenuItem(boolean isFromFavorite);
 
         void addCartMenuItem();
 
@@ -323,9 +333,9 @@ public interface MenuContract {
 
         void getConcept(TimedEvent timedEvent);
 
-        void addCartItem(boolean add, boolean skip);
+        void addCartItem(boolean add, boolean skip, boolean isFromFavorite);
 
-        void addMenuItemToCart(String menuItemId);
+        void addMenuItemToCart(String menuItemId, int menuAddedToCartPosition);
 
         void addMenuItemToCartWithAnalytics(MenuItem menuItem, double price, int quantity);
 
@@ -351,7 +361,7 @@ public interface MenuContract {
 
         void getGuestDigitalCoupons();
 
-        void getFrequentBoughtItems();
+        void getFrequentBoughtItemsByMenuId(int page,String menuId);
 
         void selectDigitalCoupon(int position);
 
@@ -384,6 +394,9 @@ public interface MenuContract {
         boolean isPreselectedBranch();
 
         void updateCart(boolean forceUpdate);
+
+        void toggleFavorites(boolean isAddToFavorite, MenuItem menuItem, int position);
+
 
     }
 

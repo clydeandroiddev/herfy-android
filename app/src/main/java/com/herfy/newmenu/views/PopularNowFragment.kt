@@ -15,21 +15,30 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.herfy.analytics.FirebaseECommerceEventUtil
 import com.herfy.analytics.facebook.FacebookAppEventUtil
-import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.base.BaseFragment
-import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentPopularNowBinding
 import com.herfy.main.MainActivity
 import com.herfy.menu.MenuContract
 import com.herfy.menu.MenuPresenter
 import com.herfy.newmenu.adapter.PopularMenuItemAdapter
-import com.skylinedynamics.solosdk.api.models.objects.*
-import com.herfy.util.*
+import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
+import com.herfy.utils.helper.CacheHelper
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.NavigationUtils
+import com.skylinedynamics.solosdk.api.models.objects.Campaign
+import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
+import com.skylinedynamics.solosdk.api.models.objects.Favorite
+import com.skylinedynamics.solosdk.api.models.objects.Ingredient
+import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
+import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
+import com.skylinedynamics.solosdk.api.models.objects.Store
 
 class PopularNowFragment : BaseFragment(), MenuContract.View {
 
@@ -64,7 +73,13 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun showStore(store: Store) {}
+    override fun navigateToMenuItemDetails(menuCategory: MenuCategory?, menuItem: MenuItem?) {}
+
     override fun showStoreOpen(open: Boolean, message: String) {}
+    override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
+
+    }
+
     override fun showAddress(address: String) {}
     override fun reloadMenu() {}
     override fun showMenuCategories(
@@ -125,7 +140,11 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
     override fun setMenuItemTotalPrice(totalPrice: Double, menuItemPrice: Double) {}
     override fun selectSize() {}
     override fun showOrderType() {}
-    override fun addCartItem(menuItem: MenuItem) {
+    override fun addCartItem(
+        menuItem: MenuItem,
+        isShouldBackPressed: Boolean,
+        menuAddedToCartPosition: Int
+    ) {
         try {
             activity?.cast<MainActivity> {
                 it.runOnUiThread {
@@ -157,13 +176,22 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
         }
     }
 
-    override fun addCartItem(menuItem: MenuItem, view: ImageView) {
-        addCartItem(menuItem)
+    override fun addCartItem(
+        menuItem: MenuItem,
+        view: ImageView,
+        isShouldBackPressed: Boolean
+    ) {
+        addCartItem(menuItem, isShouldBackPressed,0)
     }
 
     override fun updateCartItem() {}
     override fun showMessage(message: String) {}
     override fun showError(error: String) {}
+
+    override fun updateFavoriteByPosition(
+        position: Int,
+        menuItem: MenuItem?
+    ) {}
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean,

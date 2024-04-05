@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.herfy.R;
+import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.*;
 import com.herfy.menu.MenuContract;
@@ -114,6 +115,10 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
     @Override
     public void showStore(Store store) {
+
+    }
+    @Override
+    public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
 
     }
 
@@ -323,12 +328,12 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem) {
+    public void addCartItem(MenuItem menuItem, boolean isShouldBackPressed, int menuAddedToCartPosition) {
 
     }
 
     @Override
-    public void addCartItem(MenuItem menuItem, ImageView view) {
+    public void addCartItem(MenuItem menuItem, ImageView view, boolean isShouldBackPressed) {
 
     }
 
@@ -342,11 +347,17 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
 
     }
 
+    public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
+
+    }
+
     @Override
     public void showError(String error) {
 
     }
+    public void updateFavoriteByPosition(int position, MenuItem menuItem) {
 
+    }
     @Override
     public void showHideModifierItemPrice(boolean show, int modifierGroupPosition) {
 

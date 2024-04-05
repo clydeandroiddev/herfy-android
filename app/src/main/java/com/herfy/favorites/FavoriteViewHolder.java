@@ -2,6 +2,7 @@ package com.herfy.favorites;
 
 
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,18 +21,21 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
+import com.herfy.analytics.firebase.FirebaseService;
 import com.herfy.base.BaseActivity;
 import com.herfy.utils.constants.Text;
-import com.herfy.firebase.FirebaseService;
 import com.herfy.font.FontHandler;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.LocaleUtil;
+import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -64,7 +68,7 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 
     @BindView(R.id.txtQuantity)
 
-    MaterialTextView txtQuantity;
+    TextView txtQuantity;
 
     @BindView(R.id.layoutCalories)
     LinearLayout layoutCalories;
@@ -124,8 +128,6 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 
     @Override
     public void setFavorite(Favorite favorite, ArrayList<String> outOfStockLocationList, double discount, double specialPrice) {
-
-//        favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
         int quantity = getQuantityByFavourites(favorite);
         favouriteQuantityLayout.setVisibility(quantity >= 1 ? View.VISIBLE : View.GONE);
         txtQuantity.setText(String.valueOf(quantity));
@@ -157,7 +159,6 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
         Glide.with(itemView.getContext()).load(imageUrl).skipMemoryCache(false).diskCacheStrategy(DiskCacheStrategy.ALL).apply(RequestOptions.centerCropTransform()).listener(new RequestListener<Drawable>() {
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-//                progress.setVisibility(View.GONE);
                 image.setVisibility(View.GONE);
                 return false;
             }
@@ -184,6 +185,16 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
                 action.onFavouriteAddToCart(favorite);
             }
         });
+        favouriteQuantityLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (CacheUtil.getInstance().getApplication().getAttributes().getMenuOnly()) {
+                    FirebaseService.newNotification(CacheUtil.getInstance().getTranslations(Text.MENU_ONLY_MESSAGE, "Sorry, ordering is not available at the moment"), add.getContext());
+                    return;
+                }
+                action.onFavouriteAddToCart(favorite);
+            }
+        });
         String description = favorite.getAttributes().getDescription();
         if (!description.isEmpty()) {
             extras.setText(favorite.getAttributes().getDescription());
@@ -193,13 +204,11 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 
     }
     public int getQuantityByFavourites(Favorite favorite) {
-
         int quantity = 0;
         ArrayList<MenuItem> cart = CacheUtil.getInstance().getCart();
-
         for (MenuItem item : cart) {
             if (Objects.equals(String.valueOf(item.getId()), favorite.getId()) && item.isFavorite()) {
-                quantity++;
+                quantity = item.getAttributes().getQuantity();
             }
         }
 

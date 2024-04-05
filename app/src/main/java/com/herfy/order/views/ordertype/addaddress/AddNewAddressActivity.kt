@@ -405,6 +405,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     }
 
+    override fun navigateMenuItemDetails(menuItem: MenuItem?) {
+
+    }
+
     override fun selectAddressWork(position: Int) {
 
     }
@@ -578,6 +582,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
                 "", error, CacheUtil.getInstance().getTranslations(Text.OK)
             ) { _: DialogInterface?, i: Int -> orderPresenter.setOrderType() }
         }
+    }
+
+    override fun setCloseTime(time: String?) {
+
     }
 
 }

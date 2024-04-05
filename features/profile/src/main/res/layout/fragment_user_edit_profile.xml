@@ -99,7 +99,7 @@
                             android:layout_marginTop="8dp"
                             android:background="@drawable/background_edit_text"
                             android:gravity="start|center_vertical"
-                            android:imeOptions="actionNext"
+                            android:imeOptions="actionDone"
                             android:paddingStart="16dp"
                             android:paddingEnd="16dp"
                             android:singleLine="true"

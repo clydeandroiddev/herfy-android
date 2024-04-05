@@ -151,6 +151,10 @@ public class OrderCompleteActivity extends BaseActivity implements OrderContract
     public void selectAddressHome(Address address, boolean redownloadMenu) {
 
     }
+    @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
+
+    }
 
     @Override
     public void selectAddressWork(int position) {
@@ -344,6 +348,11 @@ public class OrderCompleteActivity extends BaseActivity implements OrderContract
 
     @Override
     public void showMinimumDeliveryForAreaMessage(String error) {
+
+    }
+
+    @Override
+    public void setCloseTime(String time) {
 
     }
 

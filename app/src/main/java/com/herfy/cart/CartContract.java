@@ -13,19 +13,14 @@ import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.herfy.util.ApiLogLevel;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
-import kotlin.Function;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
-import kotlin.jvm.functions.Function2;
 
 public interface CartContract {
 
@@ -55,7 +50,7 @@ public interface CartContract {
 
         void deleteCartItem(int position);
 
-        void editCartItem(int position);
+        void editCartItem(int position, MenuItem menuItem);
 
         void showCoupon(String couponCode, String description);
 
@@ -156,7 +151,7 @@ public interface CartContract {
 
         void deleteCartItem(boolean delete, int position);
 
-        void editCartItem(int position);
+        void editCartItem(int position, MenuItem menuItem);
 
         void getCoupon(String couponCode);
 
@@ -218,6 +213,12 @@ public interface CartContract {
         void addToCart(MenuItem upsell);
         void getCouponFrom(String code, Function1<CouponResult, Unit> result);
         void validateDigitalCoupon(String couponCode, Function1<CouponResult, Unit> result);
+
+        void getDigitalCouponsWith(
+                ArrayList<MenuItem> menuItems,
+                Boolean show ,
+                Boolean fromButtonClick
+        );
     }
 
 }
