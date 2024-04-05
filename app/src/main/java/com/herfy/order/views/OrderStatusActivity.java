@@ -308,6 +308,10 @@ public class OrderStatusActivity extends BaseActivity implements OrderContract.V
     public void selectAddressHome(Address address, boolean redownloadMenu) {
 
     }
+    @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
+
+    }
 
     @Override
     public void selectAddressWork(int position) {

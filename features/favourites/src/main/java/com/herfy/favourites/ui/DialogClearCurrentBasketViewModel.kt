@@ -5,6 +5,7 @@ import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DispatcherProvider
 import com.herfy.utils.helper.launchWithTimber
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,6 +25,16 @@ class DialogClearCurrentBasketViewModel @Inject constructor(private val dispatch
         viewModelScope.launchWithTimber(dispatchers.io) {
             try {
                 _state.emit(DialogClearBasketState.IsLoading(true))
+                val updatedCart: ArrayList<MenuItem> = ArrayList<MenuItem>().apply {
+                    CacheUtil.getInstance().cart.forEach { menuItem ->
+                        menuItem.isFavorite = false
+                        if (menuItem.isFavorite) {
+                            add(menuItem)
+                        }
+                    }
+
+                }
+                CacheUtil.getInstance().cart = updatedCart
                 CacheUtil.getInstance().cart = arrayListOf()
                 val currentSelectedOrderType = OrderType.fromString(_selectedOrderType.value.orEmpty())
                 CacheUtil.getInstance().orderType = currentSelectedOrderType

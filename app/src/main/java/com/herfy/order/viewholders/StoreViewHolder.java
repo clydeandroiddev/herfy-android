@@ -202,6 +202,10 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
     public void selectAddressHome(Address address, boolean redownloadMenu) {
 
     }
+    @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
+
+    }
 
     @Override
     public void selectAddressWork(int position) {

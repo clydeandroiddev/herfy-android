@@ -444,6 +444,11 @@ public class AddressActivity extends BaseActivity implements OrderContract.View 
     }
 
     @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
+
+    }
+
+    @Override
     public void selectAddressWork(int position) {
 
     }

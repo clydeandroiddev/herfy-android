@@ -1082,6 +1082,10 @@ public class OrderTypeActivity extends BaseActivity implements OrderContract.Vie
     public void selectAddressHome(Address address, boolean redownloadMenu) {
 
     }
+    @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
+
+    }
 
     @Override
     public void selectAddressWork(int position) {

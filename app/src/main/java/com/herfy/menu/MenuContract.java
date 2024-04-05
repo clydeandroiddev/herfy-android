@@ -323,7 +323,7 @@ public interface MenuContract {
 
         void addRemoveFavorite(boolean add);
 
-        void getCartMenuItem();
+        void getCartMenuItem(boolean isFromFavorite);
 
         void addCartMenuItem();
 
@@ -333,7 +333,7 @@ public interface MenuContract {
 
         void getConcept(TimedEvent timedEvent);
 
-        void addCartItem(boolean add, boolean skip);
+        void addCartItem(boolean add, boolean skip, boolean isFromFavorite);
 
         void addMenuItemToCart(String menuItemId, int menuAddedToCartPosition);
 

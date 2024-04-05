@@ -44,6 +44,7 @@ import com.herfy.main.NavigationActivity
 import com.herfy.order.views.ordertype.OrderTypeNewFragment
 import com.herfy.payment.dialog.PaymentOrderTimeDialog
 import com.herfy.payment.views.OrderDialogFragment
+import com.herfy.phonenumber.EnterNewPhoneNumberFragment
 import com.herfy.upsell.UpsellRecyclerViewAdapter
 import com.herfy.util.CacheHelper
 import com.herfy.util.CurrencyUtils

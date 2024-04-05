@@ -267,6 +267,11 @@ public class AddressViewHolder extends RecyclerView.ViewHolder implements OrderC
     }
 
     @Override
+    public void navigateMenuItemDetails(MenuItem menuItem) {
+
+    }
+
+    @Override
     public void selectAddressWork(int position) {
 
     }

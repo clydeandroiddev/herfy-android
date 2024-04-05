@@ -153,7 +153,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         if (!args.isPromo) {
             if (args.menuItemId.isNotEmpty()) {
                 menuPresenter.setFromCartEdit(false)
-                if (args.menuCategoryId.isNotEmpty()) {
+                if (args.menuCategoryId?.isNotEmpty() == true) {
                     menuPresenter.setMenuCategory(args.menuCategoryId)
                 }
                 val isUpsell = args.isUpsell
@@ -745,7 +745,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             if (cartMenuItem >= 0) {
                                 menuPresenter.updateCartItem(false, cartMenuItem)
                             } else {
-                                menuPresenter.getCartMenuItem()
+                                menuPresenter.getCartMenuItem(args.isFavorite)
                             }
                         } else {
                             menuPresenter.updateCartItem(true, cartMenuItem)
