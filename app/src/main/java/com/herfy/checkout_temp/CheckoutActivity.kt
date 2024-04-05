@@ -1535,14 +1535,16 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             } ?: run {
             val isUserNotSelectedAnyPaymentMethod =
                 selecetedPayment == PaymentType.NONE && CacheUtil.getInstance().customCard == null
-            binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
+            /*binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
             binding!!.layoutPayment.emptyState.setTitle(
                 CacheUtil.getInstance()
                     .getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found.")
-            )
+            )*/
             if (isUserNotSelectedAnyPaymentMethod) {
-                binding!!.layoutPayment.tvSelectedPayment.visibility = View.GONE
-                binding!!.layoutPayment.ivSelectedPayment.visibility = View.GONE
+                binding!!.layoutPayment.tvSelectedPayment.visibility = View.VISIBLE
+                binding!!.layoutPayment.ivSelectedPayment.visibility = View.VISIBLE
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_no_selected_payment_method)
+                binding!!.layoutPayment.tvSelectedPayment.text = "-"
             } else {
                 binding!!.layoutPayment.tvSelectedPayment.visibility = View.VISIBLE
                 binding!!.layoutPayment.ivSelectedPayment.visibility = View.VISIBLE
@@ -1556,11 +1558,13 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     CacheUtil.getInstance().getTranslations(
                         Text.CARD, "Card"
                     )
-                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card)
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
             } else if (selecetedPayment == PaymentType.CARD_ON_DELIVERY || selecetedPayment == PaymentType.CARD_ON_PICKUP) {
-                binding!!.layoutPayment.tvSelectedPayment.text =
-                    CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
-                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
+                binding!!.layoutPayment.tvSelectedPayment.text =  if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
+                    CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
+                } else CacheUtil.getInstance().getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
+
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
             }
         }
     }
