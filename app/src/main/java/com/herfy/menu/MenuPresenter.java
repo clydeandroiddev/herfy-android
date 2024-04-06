@@ -4293,8 +4293,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                                 }
                             }
 
-                            //for (ModifierGroup modGroup : menuItem.getModifierGroups()) {
-                            //if (!group.getId().equals(modGroup.getId())) {
                             if (rule.getTargetId() != null && selectedModifiers.contains(rule.getTargetId())) {
                                 if (rule.getTargetIs() != null && rule.getTargetIs().equalsIgnoreCase("selected")) {
                                     group.getAttributes().getVisibilityConfig().setInitialValue("");
@@ -4304,8 +4302,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                             } else if (!rule.getTargetId().isEmpty()) {
                                 group.getAttributes().getVisibilityConfig().setInitialValue("hidden");
                             }
-                            //}
-                            //}
 
                         }
                     }
