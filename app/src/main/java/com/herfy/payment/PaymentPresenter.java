@@ -1235,9 +1235,9 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                     if (loyaltyPoints > 0) {
                         pointsSarValue = loyaltyPoints / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
                     }
-
+                    double discountValue = orderData.getDiscountDisplay() > 0.0?  orderData.getDiscountDisplay() : orderData.getDiscount();
                     paymentView.setPriceDetails(getValidatedSubtotal(),
-                            orderData.getDiscountDisplay(),
+                            discountValue,
                             getValidatedTotal(),
                             validatedDeliveryCharge,
                             pointsSarValue, pointsEarnable, loyaltyPointsUsed, orderData.getCharges());
