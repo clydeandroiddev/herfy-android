@@ -17,12 +17,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.herfy.R;
-import com.herfy.menu.MenuContract;
-import com.herfy.productpagedetails.ui.viewholder.util.ArabicUtils;
-import com.herfy.util.ModifierProcessor;
-import com.herfy.util.ModifierProcessorCallback;
-import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
 

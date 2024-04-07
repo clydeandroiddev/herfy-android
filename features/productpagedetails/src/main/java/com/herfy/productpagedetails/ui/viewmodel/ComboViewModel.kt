@@ -1153,6 +1153,10 @@ class ComboViewModel @Inject constructor(
         }
     }
 
+    override fun showMessage() {
+
+    }
+
     fun isAboveMax(group: ModifierGroup, count: Int): Boolean {
         return group.attributes.maximum - 1 < count
     }
