@@ -42,7 +42,7 @@ class RatingBarDialog : BottomSheetDialogFragment() {
     private lateinit var ratingBarAdapter: RatingBarAdapter
 
     interface OnRatingListener {
-        fun orderRatings(ratings: List<Rating>)
+        fun orderRatings(ratings: List<Rating>, feedbackOther: String)
         fun exit()
     }
 
@@ -98,6 +98,12 @@ class RatingBarDialog : BottomSheetDialogFragment() {
         binding.apply {
             ratingBarAdapter = RatingBarAdapter(ratings)
             ratingsList.adapter = ratingBarAdapter
+            otherFeedbackEdit.hint = CacheUtil.getInstance().getTranslations(
+                Text.OTHER_FEEDBACK_PLACEHOLDER,
+                "e.g: Loved the food and service!"
+            )
+            ratingName.text = CacheUtil.getInstance()
+                .getTranslations(Text.DO_HAVE_OTHER_FEEDBACK, "Do you have any other feedback?")
             soloType.text = CacheUtil.getInstance().getTranslations(Text.FEEDBACK, "Feedback")
             back.setOnClickListener {
                 onSubmit?.exit()
@@ -114,7 +120,7 @@ class RatingBarDialog : BottomSheetDialogFragment() {
                 .getTranslations(Text.HOW_WAS_YOUR_ORDER, "How was your order?")
             submitButton.text = CacheUtil.getInstance().getTranslations(Text.SUBMIT, "Submit")
             submitButton.setOnClickListener {
-                onSubmit?.orderRatings(ratingBarAdapter.getRatings())
+                onSubmit?.orderRatings(ratingBarAdapter.getRatings(), otherFeedbackEdit.text.toString())
             }
         }
     }

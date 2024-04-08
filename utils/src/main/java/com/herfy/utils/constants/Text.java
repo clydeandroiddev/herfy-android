@@ -1176,4 +1176,5 @@ public class Text {
 
     public static final String YOUR_ORDER_X = "your_order_template";
     public static final String DO_HAVE_OTHER_FEEDBACK = "do_have_other_feedback";
+    public static final String OTHER_FEEDBACK_PLACEHOLDER = "other_feedback_placeholder";
 }

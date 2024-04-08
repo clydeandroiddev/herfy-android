@@ -344,13 +344,13 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                     deviceHeight(it),
                     ratings!!.toList(),
                     object : RatingBarDialog.OnRatingListener {
-                        override fun orderRatings(ratings: List<Rating>) {
+                        override fun orderRatings(ratings: List<Rating>, feedbackOther: String) {
                             if (checkRatings(ratings)) {
                                 fromRate = true
                                 activity?.cast<BaseActivity> {
                                     it.showLoadingDialog()
                                 }
-                                ordersPresenter?.sendOrderFeedback(ratings, order.id)
+                                ordersPresenter?.sendOrderFeedback(ratings, order.id, feedbackOther)
                             }
                         }
 

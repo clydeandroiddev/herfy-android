@@ -980,10 +980,14 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     }
 
     @Override
-    public void sendOrderFeedback(List<Rating> ratings, String orderId) {
+    public void sendOrderFeedback(List<Rating> ratings, String orderId, String otherFeedback) {
         this.ratings = ratings;
+        String feedbackNew = otherFeedback;
+        if (feedbackNew.isEmpty()) {
+            feedbackNew = "Order Feedback";
+        }
         Customer customer = AuthUtil.getInstance().getCustomer();
-        OrderFeedbackBody orderFeedbackBody = new OrderFeedbackBody(customer.getAttributes().getFirstName() + " " + customer.getAttributes().getLastName(), customer.getAttributes().getEmail(), customer.getAttributes().getMobile(), "Order Feedback", "Order Feedback", this.ratings);
+        OrderFeedbackBody orderFeedbackBody = new OrderFeedbackBody(customer.getAttributes().getFirstName() + " " + customer.getAttributes().getLastName(), customer.getAttributes().getEmail(), customer.getAttributes().getMobile(), "Order Feedback", feedbackNew, this.ratings);
         OrdersApiCall.getInstance().sendOrderFeedback(orderId, orderFeedbackBody, null, new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
