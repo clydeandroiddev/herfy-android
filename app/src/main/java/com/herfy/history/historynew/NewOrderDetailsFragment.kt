@@ -422,7 +422,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
     }
 
     private fun checkRatings(ratings: List<Rating>): Boolean {
-        return ratings.all { it.attributes.rating != 0 }
+        return ratings.any { it.attributes.rating != 0 }
     }
 
     private fun showRatingDialog(ratings: MutableList<Rating>?) {

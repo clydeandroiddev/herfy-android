@@ -310,5 +310,5 @@ fun dpToPx(dp: Float): Int {
 fun deviceHeight(context: Activity): Int {
     val displayMetrics = DisplayMetrics()
     context.windowManager.defaultDisplay.getMetrics(displayMetrics)
-    return displayMetrics.heightPixels - dpToPx(300f)
+    return displayMetrics.heightPixels - dpToPx(260f)
 }
