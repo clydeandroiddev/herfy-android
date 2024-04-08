@@ -27,6 +27,7 @@ import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.helper.ModifierProcessor;
 import com.herfy.utils.helper.ModifierProcessorCallback;
 import com.herfy.utils.helper.StringUtil;
+import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
@@ -182,7 +183,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             modifierOptionImage.setVisibility(View.GONE);
         }
         if (modifierItem.getAttributes().hasModifierItemExceedMaximum() && modifierItem.getAttributes().hasUserInteractedWithModifierItem()) {
-            boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup, modifierItem);
+            boolean shouldShowQuantityLayout = MenuUtil.shouldShowQuantity(modifierGroup, modifierItem);
             if (shouldShowQuantityLayout) {
                 plus.setEnabled(true);
                 plus.setImageResource(R.drawable.quantity_up_blue);
@@ -190,7 +191,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
             }
         } else {
-                boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup, modifierItem);
+                boolean shouldShowQuantityLayout = MenuUtil.shouldShowQuantity(modifierGroup, modifierItem);
                 if (shouldShowQuantityLayout) {
                     plus.setEnabled(false);
                     plus.setImageResource(R.drawable.quantity_up_blue_gray);
@@ -203,15 +204,10 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             @Override
             public void onClick(View view) {
                 String modifierItemId = modifierItem.getId();
-                int selectedModifierItemCount = modifierItemQuantityCount(modifierGroup);
-                if (isAboveMaxModifierRequired(modifierGroup,selectedModifierItemCount) ||modifierItem.getAttributes().getMaximum() < modifierItem.getAttributes().getQuantity() + 1 ) {
-                    action.showMessage();
-                    return;
-                }
 
                 if (!clickCountMap.containsKey(modifierItemId) && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
                     clickCountMap.put(modifierItemId, 0);
-                    boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem) && modifierItem.getAttributes().isSelected();
+                    boolean shouldShowQuantityLayout = MenuUtil.shouldShowQuantity(modifierGroup,modifierItem) && modifierItem.getAttributes().isSelected();
                     quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
 
 
@@ -220,16 +216,12 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 Integer clickCount = clickCountMap.get(modifierItemId);
 
                 clickCount = clickCount == null ? 1 : clickCount + 1;
-                if (clickCount == 1 &&  modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
-                    action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, clickCount);
-                }
-
                 clickCountMap.put(modifierItemId, clickCount);
-                if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount > 1 && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
+                if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount >= 1 && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
                     action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, clickCount);
                 }else {
-                    int selectedItems = modifierItemQuantityCount(modifierGroup);
-                    if (isAboveMaxModifierRequired(modifierGroup,selectedItems)) {
+                    int selectedItems = MenuUtil.modifierItemQuantityCount(modifierGroup);
+                    if (MenuUtil.isAboveMaxModifierRequired(modifierGroup,selectedItems)) {
                         for (ModifierItem eachItems : modifierGroup.getModifierItems()) {
                             if (!Objects.equals(eachItems.getId(), modifierItem.getId()) &&  !eachItems.getAttributes().isSelected()) {
                                 eachItems.getAttributes().setModifierItemInteraction(false);
@@ -253,23 +245,6 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         });
     }
 
-
-    private int modifierItemQuantityCount(ModifierGroup modifierGroup) {
-        int counter = 0;
-        for (ModifierItem item : modifierGroup.getModifierItems()) {
-            if (item.getAttributes().isSelected()) {
-                counter += item.getAttributes().getQuantity();
-            }
-        }
-        return counter;
-    }
-    private boolean isAboveMaxModifierRequired(ModifierGroup modifierGroup,int selectedItems) {
-        return selectedItems >= modifierGroup.getAttributes().getMaximum();
-    }
-    private boolean shouldShowQuantity(ModifierGroup modifierGroup, ModifierItem modifierItem) {
-        return modifierGroup.getAttributes().getMaximum() > 1 &&
-                modifierItem.getAttributes().getMaximum() > 1;
-    }
     public static boolean isProbablyArabic(String s) {
         for (int i = 0; i < s.length(); ) {
             int c = s.codePointAt(i);

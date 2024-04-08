@@ -58,11 +58,11 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     public void showModifierItemPrice(boolean show, int position) {
         showModifierItemPrice.put(position, show);
-        notifyItemChanged(position);
+        notifyDataSetChanged();
     }
     public void shouldShowCheckBox(boolean show, int position) {
         shouldShowModifierGroupCheckbox.put(position, show);
-        notifyItemChanged(position);
+       notifyDataSetChanged();
     }
     public void shouldShowQuantity(boolean show, int position) {
         shouldShowQuantity.put(position, show);
