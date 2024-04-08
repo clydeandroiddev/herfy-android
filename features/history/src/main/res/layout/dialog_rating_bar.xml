@@ -172,28 +172,28 @@
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:scrollbars="none"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:id="@+id/ratingLayout"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintHeight_max="320dp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/ratingsList"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"
+                        android:nestedScrollingEnabled="false"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
-                        android:nestedScrollingEnabled="false"
-                        android:paddingBottom="60dp"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHeight_max="320dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:itemCount="4"
+                        tools:itemCount="2"
                         tools:listitem="@layout/item_rating_star_order" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -201,6 +201,8 @@
                         style="@style/Styles.Text.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
                         android:ellipsize="end"
                         android:gravity="start"
                         android:includeFontPadding="false"
