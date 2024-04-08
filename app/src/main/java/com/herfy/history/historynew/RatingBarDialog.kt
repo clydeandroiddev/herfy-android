@@ -87,9 +87,9 @@ class RatingBarDialog : BottomSheetDialogFragment() {
 
     private fun setupList() {
         maxListHeight?.let {
-            val layoutParams = binding.ratingsList.layoutParams as ConstraintLayout.LayoutParams
+            val layoutParams = binding.ratingLayout.layoutParams as ConstraintLayout.LayoutParams
             layoutParams.matchConstraintMaxHeight = it
-            binding.ratingsList.layoutParams = layoutParams
+            binding.ratingLayout.layoutParams = layoutParams
         }
     }
 
@@ -99,8 +99,7 @@ class RatingBarDialog : BottomSheetDialogFragment() {
             ratingBarAdapter = RatingBarAdapter(ratings)
             ratingsList.adapter = ratingBarAdapter
             otherFeedbackEdit.hint = CacheUtil.getInstance().getTranslations(
-                Text.OTHER_FEEDBACK_PLACEHOLDER,
-                "e.g: Loved the food and service!"
+                Text.OTHER_FEEDBACK_PLACEHOLDER, "e.g: Loved the food and service!"
             )
             ratingName.text = CacheUtil.getInstance()
                 .getTranslations(Text.DO_HAVE_OTHER_FEEDBACK, "Do you have any other feedback?")
@@ -120,7 +119,9 @@ class RatingBarDialog : BottomSheetDialogFragment() {
                 .getTranslations(Text.HOW_WAS_YOUR_ORDER, "How was your order?")
             submitButton.text = CacheUtil.getInstance().getTranslations(Text.SUBMIT, "Submit")
             submitButton.setOnClickListener {
-                onSubmit?.orderRatings(ratingBarAdapter.getRatings(), otherFeedbackEdit.text.toString())
+                onSubmit?.orderRatings(
+                    ratingBarAdapter.getRatings(), otherFeedbackEdit.text.toString()
+                )
             }
         }
     }

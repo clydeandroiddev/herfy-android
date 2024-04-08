@@ -171,9 +171,7 @@
                         android:layout_marginBottom="4dp"
                         app:cardBackgroundColor="@color/placeholder_color"
                         app:cardCornerRadius="20dp"
-                        app:cardElevation="4dp"
-                        app:strokeColor="#0064AC"
-                        app:strokeWidth="1.5dp">
+                        app:cardElevation="4dp">
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -185,9 +183,7 @@
                         android:layout_marginBottom="4dp"
                         app:cardBackgroundColor="@color/placeholder_color"
                         app:cardCornerRadius="20dp"
-                        app:cardElevation="4dp"
-                        app:strokeColor="#0064AC"
-                        app:strokeWidth="1.5dp">
+                        app:cardElevation="4dp">
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -199,9 +195,7 @@
                         android:layout_marginBottom="4dp"
                         app:cardBackgroundColor="@color/placeholder_color"
                         app:cardCornerRadius="20dp"
-                        app:cardElevation="4dp"
-                        app:strokeColor="#0064AC"
-                        app:strokeWidth="1.5dp">
+                        app:cardElevation="4dp">
 
                     </com.google.android.material.card.MaterialCardView>
 
