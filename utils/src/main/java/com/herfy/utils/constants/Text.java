@@ -1175,4 +1175,5 @@ public class Text {
     public static final String COMBO_SIZES_LABEL="combo_sizes_label";
 
     public static final String YOUR_ORDER_X = "your_order_template";
+    public static final String DO_HAVE_OTHER_FEEDBACK = "do_have_other_feedback";
 }

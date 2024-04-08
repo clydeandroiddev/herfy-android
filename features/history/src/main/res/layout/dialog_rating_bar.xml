@@ -196,6 +196,22 @@
                         tools:itemCount="4"
                         tools:listitem="@layout/item_rating_star_order" />
 
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/ratingName"
+                        style="@style/Styles.Text.Caption"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:includeFontPadding="false"
+                        android:isIndicator="true"
+                        android:paddingTop="20dp"
+                        android:textColor="#1E242B"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/ratingsList"
+                        tools:text="Signature Double Decker Burger" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.core.widget.NestedScrollView>
