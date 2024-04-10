@@ -1053,8 +1053,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             } else {
                 NavigationUtils.navigateSafe(
                     findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                        menuCategoryId = "",
                         menuItemId = menuItem.id,
+                        menuCategoryId = "",
                         cartMenuItemPosition = position,
                         isPromo = false
                     )
@@ -1863,17 +1863,30 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             } else {
                 null
             }
-            if (promoItem?.isMustBeCustomized == true || promoItem?.isCombo == true) {
-                NavigationUtils.navigateSafe(
-                    findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                        menuCategoryId = "",
-                        menuItemId = promoItem.id,
-                        cartMenuItemPosition = -1,
-                        isPromo = true,
-                        isEdit = false
+            promoItem?.let {promoMenuItem ->
+                if (promoMenuItem.isMustBeCustomized && promoMenuItem.isCombo) {
+                    NavigationUtils.navigateSafe(
+                        findNavController(), CartFragmentDirections.actionCartToComboMeal(
+                            menuCategoryId = "",
+                            menuItemId = promoItem.id,
+                            cartMenuItemPosition = -1,
+                            isPromo = true,
+                            isEdit = false
+                        )
                     )
-                )
+                }else if(promoMenuItem.isMustBeCustomized){
+                    NavigationUtils.navigateSafe(
+                        findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                            menuItemId = promoItem.id,
+                            menuCategoryId = "",
+                            cartMenuItemPosition = -1,
+                            isPromo = true,
+                            isEdit = false
+                        )
+                    )
+                }
             }
+
         }
     }
 
@@ -1887,17 +1900,30 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 } else {
                     null
                 }
-            if (promoItem?.isMustBeCustomized == true || promoItem?.isCombo == true) {
-                NavigationUtils.navigateSafe(
-                    findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                        menuCategoryId = "",
-                        menuItemId = promoItem.id,
-                        cartMenuItemPosition = -1,
-                        isPromo = true,
-                        isEdit = true
+            promoItem?.let {promoMenuItem ->
+                if (promoMenuItem.isMustBeCustomized && promoMenuItem.isCombo) {
+                    NavigationUtils.navigateSafe(
+                        findNavController(), CartFragmentDirections.actionCartToComboMeal(
+                            menuCategoryId = "",
+                            menuItemId = promoMenuItem.id,
+                            cartMenuItemPosition = -1,
+                            isPromo = true,
+                            isEdit = true
+                        )
                     )
-                )
+                }else if(promoMenuItem.isMustBeCustomized){
+                    NavigationUtils.navigateSafe(
+                        findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                            menuItemId = promoItem.id,
+                            menuCategoryId = "",
+                            cartMenuItemPosition = -1,
+                            isPromo = true,
+                            isEdit = true
+                        )
+                    )
+                }
             }
+
         }
     }
 
@@ -2108,12 +2134,25 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun goToItemDetails(position: Int, upsell: MenuItem) {
-        NavigationUtils.navigateSafe(
-            findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                upsell.attributes.categoryId.toString(), upsell.id, -1,
-                isUpsell = upsell.attributes.isUpsell
+        if(upsell.isCombo){
+            NavigationUtils.navigateSafe(
+                findNavController(), CartFragmentDirections.actionCartToComboMeal(
+                    upsell.attributes.categoryId.toString(),
+                    upsell.id,
+                    -1,
+                    isUpsell = upsell.attributes.isUpsell
+                )
             )
-        )
+        }else {
+            NavigationUtils.navigateSafe(
+                findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                    upsell.id,
+                    upsell.attributes.categoryId.toString(), -1,
+                    isUpsell = upsell.attributes.isUpsell
+                )
+            )
+        }
+
     }
 
     override fun showCartMenuItemsLoading() {
