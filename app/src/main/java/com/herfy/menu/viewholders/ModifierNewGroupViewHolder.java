@@ -2,11 +2,13 @@ package com.herfy.menu.viewholders;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -211,15 +213,12 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
         if (visibilityConfig != null) {
             if (visibilityConfig.getInitialValue() != null && !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
                 visible = true;
-                recyclerView.setVisibility(View.VISIBLE);
-            } else {
-                recyclerView.setVisibility(View.GONE);
             }
         } else {
             visible = true;
-            recyclerView.setVisibility(View.VISIBLE);
-        }
 
+        }
+        setVisibility(visible);
         name.setText(modifierGroup.getAttributes().getName());
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(modifierImage);
@@ -253,51 +252,6 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
             } else {
                 select.setVisibility(View.INVISIBLE);
             }
-
-            //hamburgini hide free modifiers text
-
-//                if(modifierGroup.getFreeModifiersCount() > 0) {
-//                    free.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_MODIFIERS_FOR_FREE, "Select (x) modifiers for free").replace("(x)", StringUtil.localize(String.valueOf(modifierGroup.getFreeModifiersCount()))));
-//                    free.setVisibility(View.VISIBLE);
-//                } else {
-//                    free.setVisibility(View.GONE);
-//                }
-//                if(modifierGroup.getAttributes().getFreeModifiersCount() > 0) {
-//                    free.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_MODIFIERS_FOR_FREE, "Select (x) modifiers for free").replace("(x)", StringUtil.localize(String.valueOf(modifierGroup.getAttributes().getFreeModifiersCount()))));
-//                    free.setVisibility(View.VISIBLE);
-//                } else {
-//                    free.setVisibility(View.GONE);
-//                }
-//            }
-
-
-            //hamburgini
-
-//            select.setVisibility(View.INVISIBLE);
-//            String selectString = "";
-//            int minimum = modifierGroup.getAttributes().getMinimum();
-//            int maximum = modifierGroup.getAttributes().getMaximum();
-//            if (minimum > 0) {
-//                if (maximum > minimum) {
-//                    selectString = CacheUtil.getInstance().getTranslations(Text.SELECT_ATLEAST, "(Select at least (x))").replace("(x)", StringUtil.localize(String.valueOf(minimum)));
-//                } else if (maximum == minimum) {
-//                    selectString = CacheUtil.getInstance().getTranslations(Text.SELECT_X, "(Select (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum)));
-//
-//                } else {
-//                    selectString = "";
-//                }
-//            } else if (minimum == 0) {
-//                if (maximum > 0) {
-//                    selectString = CacheUtil.getInstance().getTranslations(Text.SELECT_UP_TO_X, "(Select up to (x))").replace("(x)", StringUtil.localize(String.valueOf(maximum)));
-//                } else {
-//                    selectString = "";
-//                }
-//            } else {
-//                selectString = "";
-//            }
-
-
-
 
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             recyclerView.setNestedScrollingEnabled(false);
@@ -487,5 +441,15 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     public void updateFloatingTotalPrice() {
 
     }
-
+    public void setVisibility(boolean isVisible){
+        RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)itemView.getLayoutParams();
+        if (isVisible){
+            param.height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
+            itemView.setVisibility(View.VISIBLE);
+        }else{
+            itemView.setVisibility(View.GONE);
+            param.height = 0;
+        }
+        itemView.setLayoutParams(param);
+    }
 }
