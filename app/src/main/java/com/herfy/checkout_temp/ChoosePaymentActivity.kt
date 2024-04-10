@@ -99,28 +99,8 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
     }
 
     override fun setupViews() {
-       val cards = CacheUtil.getInstance().customerCards
-
-        binding.chooseMethodLabel.setVisible(cards.size >= 1)
         binding.confirmButton
-            .setText(CacheUtil.getInstance().getTranslations(Text.CONFIRM_LABEL,"Confirm"))
-       val creditCardAdapter =  CardsAdapter(cards) { card, position ->
-            selectedCard = card
-            if (isCashPaymentAvailable) {
-                rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
-                cashPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
-                cashPayment.setBackgroundColor(Color.WHITE)
-            }
-
-             if (isCashPaymentAvailable) {
-                rbCash.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
-                 cardPayment.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
-                 cardPayment.setBackgroundColor(Color.WHITE)
-             }
-        }
-
-        binding.rvCards.adapter = creditCardAdapter
-        creditCardAdapter.notifyDataSetChanged()
+            .setText(CacheUtil.getInstance().getTranslations(Text.CONFIRM,"Confirm"))
 
         binding.toolbarContainer.btnBack.setOnClickListener { onBackPressed() }
         binding
@@ -344,12 +324,6 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
     override fun setupTranslations() {
         binding.toolbarContainer.title.text = CacheUtil.getInstance().getTranslations(Text.PAYMENT_METHODS, "Choose Payment Method")
         binding.chooseMethodLabel.text = CacheUtil.getInstance().getTranslations(Text.DEBIT_CREDIT_CARD, "Debit/Credit Card")
-        if (this::cashLabel.isInitialized) {
-            cashLabel.text = CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
-        }
-        if (this::cardLabel.isInitialized) {
-            cardLabel.text = CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
-        }
     }
 
     override fun showPaymentTypes(paymentTypes: MutableSet<PaymentType>) {
@@ -357,8 +331,7 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
     }
 
     override fun showPaymentTypes(paymentTypes: ArrayList<PaymentType>) {
-        val type = CacheUtil
-            .getInstance().orderType
+        val type = CacheUtil.getInstance().orderType
         val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         paymentTypes.forEach { paymentType ->
             if (paymentType == PaymentType.CASH && type != OrderType.DELIVERY) {
@@ -369,18 +342,21 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
                 rbCash = view.findViewById(R.id.rb_cash)
                 cashLabel = view.findViewById(R.id.cash_label)
                 cashImage = view.findViewById(R.id.cash_image)
-                rbCash.setOnClickListener { selectPaymentTypeCash() }
+                cashLabel.text = CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
+                cashContainer.setOnClickListener { selectPaymentTypeCash() }
                 binding.paymentTypeContainer.addView(view)
             } else if (paymentType == PaymentType.CARD) {
                 isCardPaymentAvailable = true
+                setupSavedCards()
                 val view: View = inflater.inflate(R.layout.item_card_payment, null)
                 rbCard = view.findViewById(R.id.rb_card)
                 cardLabel = view.findViewById(R.id.card_label)
                 cardContainer = view.findViewById(R.id.container_card)
                 cardImage = view.findViewById(R.id.card_image)
                 cardPayment = view.findViewById(R.id.cards_layout)
+                cardLabel.text = CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
                 binding.paymentTypeContainer.addView(view)
-                rbCard.setOnClickListener {
+                cardContainer.setOnClickListener {
                     selectedPaymentType = PaymentType.CARD
                     if (isCashPaymentAvailable) unselectedView(rbCash, cashImage, cashContainer, cashPayment)
                     if (isCODPaymentAvailable) unselectedView(rbCod, codImage, codContainer, codPayment)
@@ -388,7 +364,7 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
                     selectedView(rbCard, cardImage, cardContainer, cardPayment)
                     checkoutPresenter.cashPresented = 0.0
                 }
-            } else if (paymentType == PaymentType.CARD_ON_DELIVERY || paymentType == PaymentType.CARD_ON_PICKUP && type == OrderType.DELIVERY) {
+            } else if (paymentType == PaymentType.CARD_ON_DELIVERY || paymentType == PaymentType.CARD_ON_PICKUP) {
                 isCODPaymentAvailable = true
                 val view: View = inflater.inflate(R.layout.item_payment_cod_cop, null)
                 codPayment = view.findViewById(R.id.cod_layout)
@@ -397,17 +373,21 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
                 rbCod = view.findViewById(R.id.rb_cod)
                 codImage = view.findViewById(R.id.cod_image)
                 binding.cashOnDeliveryContainer.addView(view)
-                rbCod.setOnClickListener {
-                    if (this::creditCardAdapter.isInitialized)  creditCardAdapter.setSelectedPosition(-1)
-                    if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
-                        selectedPaymentType = PaymentType.CARD_ON_DELIVERY
+                codLabel.text = if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
+                    CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
+                } else CacheUtil.getInstance().getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
+
+                codContainer.setOnClickListener {
+                    selectedPaymentType = if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
+                        PaymentType.CARD_ON_DELIVERY
                     } else {
-                        selectedPaymentType = PaymentType.CARD_ON_PICKUP
+                        PaymentType.CARD_ON_PICKUP
                     }
                     selectedView(rbCod, codImage, codContainer, codPayment)
 
                     if (isCashPaymentAvailable) unselectedView(rbCash, cashImage, cashContainer, cashPayment)
                     if (isCardPaymentAvailable) unselectedView(rbCard, cardImage, cardContainer, cardPayment)
+                    if (this::creditCardAdapter.isInitialized)  creditCardAdapter.setSelectedPosition(-1)
                     checkoutPresenter.cashPresented = 0.0
 
                    /* if (paymentPresenter.hasMukafaaTransactionId()) {
@@ -452,6 +432,21 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
             }
             else -> showCardFailed()
         }
+    }
+
+    private fun setupSavedCards() {
+        val cards = CacheUtil.getInstance().customerCards
+        binding.chooseMethodLabel.setVisible(cards.size >= 1)
+        binding.notesDivider.setVisible(true)
+        creditCardAdapter =  CardsAdapter(cards) { card, position ->
+            selectedCard = card
+            if (isCashPaymentAvailable) unselectedView(rbCash, cashImage, cashContainer, cashPayment)
+            if (isCardPaymentAvailable) unselectedView(rbCard, cardImage, cardContainer, cardPayment)
+            if (isCODPaymentAvailable) unselectedView(rbCod, codImage, codContainer, codPayment)
+        }
+
+        binding.rvCards.adapter = creditCardAdapter
+        creditCardAdapter.notifyDataSetChanged()
     }
 
     override fun onDestroy() {

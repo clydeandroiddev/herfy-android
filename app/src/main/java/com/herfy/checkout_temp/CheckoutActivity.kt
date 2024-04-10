@@ -890,18 +890,16 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.tvTimeLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.DELIVERY_TIME, "Delivery Time")
             val mins =
-                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.delivery.toString() + " " + CacheUtil.getInstance()
-                    .getTranslations("mins", "mins")
+                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.delivery.toString()
             binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within $mins")
+                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)",mins)
         } else {
             binding!!.tvTimeLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.PICKUP_TIME, "Pickup Time")
             val mins =
-                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString() + " " + CacheUtil.getInstance()
-                    .getTranslations("mins", "mins")
+                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString()
             binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within $mins")
+                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)",mins)
         }
         binding!!.placeOrder.text = CacheUtil.getInstance()
             .getTranslations(Text.PLACE_ORDER, "Place Order")
@@ -932,6 +930,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             .txtDescription.text =  CacheUtil
             .getInstance()
             .getTranslations(Text.ALRAJI_BANK_DESCRIPTION,"The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful.")
+        binding!!.layoutPaymentSummary
+            .tvPaymentLabel.text = CacheUtil.getInstance().getTranslations(Text.PAYMENT_SUMMARY, "Payment summary")
     }
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}
@@ -1513,7 +1513,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 .setCustomerCards(Gson().toJson(selectedCard))
                 CacheUtil
                     .getInstance().orderPayment = PaymentType.CARD
-                var res = R.drawable.ic_saved_card
+                var res = R.drawable.ic_card_new
                 var cardLabel = "Visa ****"
                 if (card.attributes.brand.equals("visa", true)) {
                     res = R.drawable.ic_visa
@@ -1521,20 +1521,25 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 } else if (card.attributes.brand.endsWith("mastercard", true)){
                     res = R.drawable.ic_mastercard
                     cardLabel = "Master ****"
+                }else if (card.attributes.brand.endsWith("amex", true)){
+                    res = R.drawable.ic_amex_card
+                    cardLabel = "Amex ****"
                 }
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(res)
                 binding!!.layoutPayment.tvSelectedPayment.text = cardLabel+card.attributes.last4Digits
             } ?: run {
             val isUserNotSelectedAnyPaymentMethod =
                 selecetedPayment == PaymentType.NONE && CacheUtil.getInstance().customCard == null
-            binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
+            /*binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
             binding!!.layoutPayment.emptyState.setTitle(
                 CacheUtil.getInstance()
                     .getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found.")
-            )
+            )*/
             if (isUserNotSelectedAnyPaymentMethod) {
-                binding!!.layoutPayment.tvSelectedPayment.visibility = View.GONE
-                binding!!.layoutPayment.ivSelectedPayment.visibility = View.GONE
+                binding!!.layoutPayment.tvSelectedPayment.visibility = View.VISIBLE
+                binding!!.layoutPayment.ivSelectedPayment.visibility = View.VISIBLE
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_no_selected_payment_method)
+                binding!!.layoutPayment.tvSelectedPayment.text = "-"
             } else {
                 binding!!.layoutPayment.tvSelectedPayment.visibility = View.VISIBLE
                 binding!!.layoutPayment.ivSelectedPayment.visibility = View.VISIBLE
@@ -1548,11 +1553,13 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     CacheUtil.getInstance().getTranslations(
                         Text.CARD, "Card"
                     )
-                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card)
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
             } else if (selecetedPayment == PaymentType.CARD_ON_DELIVERY || selecetedPayment == PaymentType.CARD_ON_PICKUP) {
-                binding!!.layoutPayment.tvSelectedPayment.text =
-                    CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
-                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
+                binding!!.layoutPayment.tvSelectedPayment.text =  if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
+                    CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
+                } else CacheUtil.getInstance().getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
+
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
             }
         }
     }

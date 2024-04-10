@@ -879,7 +879,7 @@ public class Text {
     public static final String GET_STARTED_LABEL = "get_started_label";
     public static final String SAR_AMOUNT = "sar_amount";
     public static final String DEBIT_CREDIT_CARD = "debit_credit_card";
-    public static final String WITHIN = "within";
+    public static final String WITHIN = "within_mins";
     public static final String PLACE_ORDER = "place_order";
     public static final String PICKUP_TIME = "pickup_time";
     public static final String DELIVERY_INSTRUCTION = "delivery_instructions";
@@ -1177,4 +1177,5 @@ public class Text {
     public static final String YOUR_ORDER_X = "your_order_template";
     public static final String DO_HAVE_OTHER_FEEDBACK = "do_have_other_feedback";
     public static final String OTHER_FEEDBACK_PLACEHOLDER = "other_feedback_placeholder";
+    public static final String CONFIRM = "confirm";
 }
