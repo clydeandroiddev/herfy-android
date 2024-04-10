@@ -267,7 +267,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".checkout_temp.CheckoutActivity"
+            android:name=".checkout.CheckoutActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:taskAffinity="">
@@ -281,7 +281,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".checkout_temp.ChoosePaymentAcitivty"
+            android:name=".checkout_temp.ChoosePaymentActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:taskAffinity="">
@@ -294,10 +294,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.herfy.checkout.CheckoutActivity"
-            android:screenOrientation="portrait"
-            android:taskAffinity="" />
         <activity
             android:name="com.herfy.order.views.OrderCompleteActivity"
             android:screenOrientation="portrait"
