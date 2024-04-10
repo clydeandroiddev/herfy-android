@@ -281,7 +281,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".checkout_temp.ChoosePaymentActivity"
+            android:name=".checkout.ChoosePaymentActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:taskAffinity="">

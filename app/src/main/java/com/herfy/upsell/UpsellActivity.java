@@ -15,7 +15,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.cart.views.CartPromoDialogFragment;
-import com.herfy.checkout_temp.CheckoutActivity;
+import com.herfy.checkout.CheckoutActivity;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.CacheUtil;

@@ -1,4 +1,4 @@
-package com.herfy.checkout_temp;
+package com.herfy.checkout;
 
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;

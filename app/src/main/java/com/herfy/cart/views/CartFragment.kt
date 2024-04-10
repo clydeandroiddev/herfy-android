@@ -34,7 +34,7 @@ import com.herfy.base.BaseFragment
 import com.herfy.cart.CartContract
 import com.herfy.cart.adapters.CartMenuItemsRecyclerViewAdapter
 import com.herfy.cart.databinding.FragmentHerfyCartBinding
-import com.herfy.checkout_temp.CheckoutActivity
+import com.herfy.checkout.CheckoutActivity
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.OneDayDecorator
 import com.herfy.ext.cast

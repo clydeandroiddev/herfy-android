@@ -11,9 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
-import com.herfy.checkout_temp.CheckoutActivity
+import com.herfy.checkout.CheckoutActivity
 import com.herfy.databinding.FragmentUpsellBinding
-import com.herfy.payment.views.PaymentActivity
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values

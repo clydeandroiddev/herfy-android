@@ -1,4 +1,4 @@
-package com.herfy.checkout_temp
+package com.herfy.checkout
 
 import android.Manifest
 import android.annotation.SuppressLint

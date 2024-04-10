@@ -1,4 +1,4 @@
-package com.herfy.checkout_temp
+package com.herfy.checkout
 
 import android.graphics.Color
 import android.os.Bundle
