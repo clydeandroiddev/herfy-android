@@ -29,6 +29,8 @@ public abstract class BaseModifierItemViewHolder extends RecyclerView.ViewHolder
 
         void onQuantityChanged(boolean add, int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean isQuantityVisible,
                                Integer clickCount);
+
+        void showMessage();
     }
 
 }

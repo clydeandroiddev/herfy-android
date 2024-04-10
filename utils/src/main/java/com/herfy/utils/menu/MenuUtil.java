@@ -490,5 +490,24 @@ public class MenuUtil {
     public static boolean isCustomizeable(MenuItem item) {
         return item.isCustomizable() || item.isMustBeCustomized() || item.isCombo;
     }
+     public static int modifierItemQuantityCount(ModifierGroup modifierGroup) {
+        int counter = 0;
+        for (ModifierItem item : modifierGroup.getModifierItems()) {
+            if (item.getAttributes().isSelected()) {
+                counter += item.getAttributes().getQuantity();
+            }
+        }
+        return counter;
+    }
+     public static boolean isAboveMaxModifierRequired(ModifierGroup modifierGroup,int selectedItems) {
+        return selectedItems >= modifierGroup.getAttributes().getMaximum();
+    }
+    public static boolean shouldShowQuantity(ModifierGroup modifierGroup, ModifierItem modifierItem) {
+        return modifierGroup.getAttributes().getMaximum() > 1 &&
+                modifierItem.getAttributes().getMaximum() > 1;
+    }
 
+    public static boolean areModifiersSame(ModifierItem currentModifier, ModifierItem selectedModifier) {
+        return Objects.equals(currentModifier.getId(), selectedModifier.getId());
+    }
 }

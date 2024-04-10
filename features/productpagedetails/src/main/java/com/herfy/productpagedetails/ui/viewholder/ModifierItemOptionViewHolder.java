@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -16,6 +17,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.helper.CacheUtil;
 
 import com.herfy.productpagedetails.R;
 import com.herfy.productpagedetails.databinding.ItemModifierOptionTypeBinding;
@@ -24,6 +27,7 @@ import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.helper.ModifierProcessor;
 import com.herfy.utils.helper.ModifierProcessorCallback;
 import com.herfy.utils.helper.StringUtil;
+import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
@@ -32,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder implements ModifierProcessorCallback {
     ImageView check;
@@ -106,7 +111,6 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
     @Override
     public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
-        final Boolean[] isShouldShowModifierItems = {false};
         modifierProcessor.processModifier(modifierItem);
         ModifierGroupAttributes modifierGroupAttributes = modifierGroup.getAttributes();
         boolean isModifierItemSelected = modifierItem.getAttributes().isSelected();
@@ -123,17 +127,22 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             radioButton.setImageResource(R.drawable.modifier_item_radio_unselected);
             check.setImageResource(R.drawable.modifier_item_unselected);
         }
-        plus.setVisibility(modifierGroupAttributes.getMaximum() > 1 ? View.VISIBLE : View.GONE);
-        if (clickCountMap.size() >= 1  && modifierItem.getAttributes().getQuantity() == 1 && !modifierItem.getAttributes().isShouldShowQuantity()) {
-            Integer clickCount = clickCountMap.get(modifierItem.getId());
-            if ( clickCount != null && clickCount >= 1 ) {
+        boolean isQuantityShouldShow = (modifierGroup.getAttributes().getMaximum() > 1 &&
+                modifierItem.getAttributes().isSelected() &&
+                modifierItem.getAttributes().getMaximum() > 1);
 
+        quantityDownLayout.setVisibility(isQuantityShouldShow ? View.VISIBLE : View.GONE);
+        plus.setFocusable(modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum());
+        plus.setClickable(modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum());
+        if (clickCountMap.size() >= 1 && modifierItem.getAttributes().getQuantity() == 1 && modifierGroup.getAttributes().getMaximum() > 1 || modifierItem.getAttributes().isSelected()) {
+            Integer clickCount = clickCountMap.get(modifierItem.getId());
+            if (clickCount != null && clickCount >= 0) {
                 clickCountMap.remove(modifierItem.getId());
             }
         }
 
-        quantity.setText(StringUtil.localize("0" + modifierItem.getAttributes().getQuantity()));
-        if (clickCountMap.size() >= 1) {
+        quantity.setText(StringUtil.localize(String.valueOf("0" + modifierItem.getAttributes().getQuantity())));
+        if (clickCountMap.size() >= 0) {
             Integer clickCount = clickCountMap.get(modifierItem.getId());
             if (clickCount != null) {
                 boolean shouldShowQuantityLayout = modifierGroup.getAttributes().getMaximum() > 1 &&
@@ -144,10 +153,11 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         checkLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (action != null && modifierItem.getAttributes().getMinimum() != 1) {
+                if (action != null && modifierItem.getAttributes().getMinimum() >= 1 || modifierItem.getAttributes().getMinimum() == 0)  {
                     if (modifierItem.getAttributes().isSelected()) {
                         action.onCheckedChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     } else {
+
                         action.onCheckedChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     }
                 }
@@ -172,8 +182,8 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         } else {
             modifierOptionImage.setVisibility(View.GONE);
         }
-        if (modifierItem.getAttributes().hasModifierItemExceedMaximum() && modifierItem.getAttributes().hasUserInteractedWithModifierItem() ) {
-            boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
+        if (modifierItem.getAttributes().hasModifierItemExceedMaximum() && modifierItem.getAttributes().hasUserInteractedWithModifierItem()) {
+            boolean shouldShowQuantityLayout = MenuUtil.shouldShowQuantity(modifierGroup, modifierItem);
             if (shouldShowQuantityLayout) {
                 plus.setEnabled(true);
                 plus.setImageResource(R.drawable.quantity_up_blue);
@@ -181,49 +191,45 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
             }
         } else {
-            if (!modifierItem.getAttributes().hasUserInteractedWithModifierItem() ) {
-                boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
-                if (shouldShowQuantityLayout) {
-                    plus.setEnabled(true);
-                    plus.setImageResource(R.drawable.quantity_up_blue);
-                    modifierItemCardView.setEnabled(true);
-                }
-
-            } else {
-                boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
+                boolean shouldShowQuantityLayout = MenuUtil.shouldShowQuantity(modifierGroup, modifierItem);
                 if (shouldShowQuantityLayout) {
                     plus.setEnabled(false);
                     plus.setImageResource(R.drawable.quantity_up_blue_gray);
                     modifierItemCardView.setEnabled(false);
                 }
-            }
         }
 
-        plus.setFocusable(modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum());
-        plus.setClickable(modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum());
 
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String modifierItemId = modifierItem.getId();
-                if (!clickCountMap.containsKey(modifierItemId) && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum() ) {
-                    clickCountMap.put(modifierItemId, 0);
-                    boolean shouldShowQuantityLayout = shouldShowQuantity(modifierGroup,modifierItem);
 
+                if (!clickCountMap.containsKey(modifierItemId) && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
+                    clickCountMap.put(modifierItemId, 0);
+                    boolean shouldShowQuantityLayout = MenuUtil.shouldShowQuantity(modifierGroup,modifierItem) && modifierItem.getAttributes().isSelected();
                     quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
+
 
                 }
 
                 Integer clickCount = clickCountMap.get(modifierItemId);
 
                 clickCount = clickCount == null ? 1 : clickCount + 1;
-                if (clickCount == 1) {
-                    action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, clickCount);
-                }
-
                 clickCountMap.put(modifierItemId, clickCount);
-                if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount > 1 && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
+                if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount >= 1 && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
                     action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, clickCount);
+                }else {
+                    int selectedItems = MenuUtil.modifierItemQuantityCount(modifierGroup);
+                    if (MenuUtil.isAboveMaxModifierRequired(modifierGroup,selectedItems)) {
+                        for (ModifierItem eachItems : modifierGroup.getModifierItems()) {
+                            if (!Objects.equals(eachItems.getId(), modifierItem.getId()) &&  !eachItems.getAttributes().isSelected()) {
+                                eachItems.getAttributes().setModifierItemInteraction(false);
+                                eachItems.getAttributes().setModifierItemQuantityExceedsMaximum(false);
+                            }
+                        }
+                    }
+                    Toast.makeText(itemView.getContext(), CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -232,15 +238,13 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                action.onQuantityChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, 0);
+                if (action != null && (modifierItem.getAttributes().getQuantity() > 1 || modifierItem.getAttributes().getMinimum() != 1)) {
+                    action.onQuantityChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, 0);
+                }
             }
         });
     }
 
-    private boolean shouldShowQuantity(ModifierGroup modifierGroup, ModifierItem modifierItem) {
-        return modifierGroup.getAttributes().getMaximum() > 1 &&
-                modifierItem.getAttributes().getMaximum() > 1;
-    }
     public static boolean isProbablyArabic(String s) {
         for (int i = 0; i < s.length(); ) {
             int c = s.codePointAt(i);
