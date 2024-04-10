@@ -1030,6 +1030,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         Locale.getDefault()
                     ).contains("default_category.png")
                 ) {
+                    binding.sizesImage.visible()
                     Glide.with(requireContext())
                         .load(imageUrl)
                         .apply(RequestOptions.centerCropTransform())
@@ -1037,7 +1038,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(binding.sizesImage)
                 } else {
-                    binding.sizesImage.invisible()
+                    binding.sizesImage.gone()
                 }
 
                 if (menuItem.sizes.modifierItems.size <= 3) {
