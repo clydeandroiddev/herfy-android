@@ -82,16 +82,6 @@
                 android:textSize="11sp"
                 android:textColor="#55667B" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:fontFamily="@font/inter_regular"
-                android:includeFontPadding="false"
-                android:textSize="11sp"
-                android:textColor="#55667B"
-                android:text="Kcal"/>
-
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatImageButton
