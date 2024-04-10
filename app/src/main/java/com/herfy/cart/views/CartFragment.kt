@@ -218,7 +218,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 OrderType.DINE_IN -> {
                     cartPresenter.getStore()
                     binding.orderTypeContainer.orderTypeText.text =
-                        CacheUtil.getInstance().getTranslations(Text.DINE_IN_AT)
+                        CacheUtil.getInstance().getTranslations(Text.DINE_IN)
                     if (CacheUtil.getInstance().orderStore != null) {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().orderStore.attributes.name
@@ -237,6 +237,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 OrderType.DELIVERY -> {
                     cartPresenter.getStore()
                     cartPresenter.getAddress()
+                    binding.orderTypeContainer.orderTypeText.text =
+                        CacheUtil.getInstance().getTranslations(Text.DELIVERY)
                     if (CacheUtil.getInstance().orderAddress != null) {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().orderAddress.attributes.line1
@@ -257,6 +259,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
                 OrderType.CURBSIDE -> {
                     cartPresenter.getStore()
+                    binding.orderTypeContainer.orderTypeText.text =
+                        CacheUtil.getInstance().getTranslations(
+                            Text.CURBSIDE_LABEL, "Curbside"
+                        ).uppercase(Locale.getDefault())
                     if (CacheUtil.getInstance().orderStore != null) {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().orderStore.attributes.name
@@ -912,14 +918,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             var _totalPrice = totalPrice
             validatedTotalPrice = _totalPrice
             binding.paymentSummaryContainer.subtotal.text =
-                CurrencyUtils.updateCurrency(subTotal, true, subTotal <= 0.0)
+                CurrencyUtils.updateCurrency(subTotal, true, true)
             if (discountAmount != 0.0) {
                 binding.paymentSummaryContainer.discountLayout.visibility = View.VISIBLE
                 binding.paymentSummaryContainer.couponDiscount.text = CurrencyUtils.updateCurrency(
                     amount = _discountAmount,
                     withSpace = true,
-                    ignoreDecimalPlaces = hasPromotion,
-                    isDiscount = false
+                    isDiscount = true,
+                    ignoreDecimalPlaces = true
                 )
                 binding.paymentSummaryContainer.couponDiscount.visibility = View.VISIBLE
             } else {
@@ -974,10 +980,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 )
             } else {
                 binding.paymentSummaryContainer.total.text = CurrencyUtils.updateCurrency(
-                    _totalPrice, withSpace = true, ignoreDecimalPlaces = hasPromotion
+                    _totalPrice, withSpace = true, ignoreDecimalPlaces = true
                 )
                 binding.paymentSummaryContainer.totalPrice.text = CurrencyUtils.updateCurrency(
-                    _totalPrice, withSpace = true, ignoreDecimalPlaces = hasPromotion
+                    _totalPrice, withSpace = true, ignoreDecimalPlaces = false
                 )
             }
             binding.paymentSummaryContainer.totalPrice.visible()

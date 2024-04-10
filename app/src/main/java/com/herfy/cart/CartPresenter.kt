@@ -788,10 +788,11 @@ class CartPresenter @Inject constructor(
         }
         subtotalForDisplay += promoItemPrice * validatedPromoItemQuantity
         totalForDisplay += promoItemPrice * validatedPromoItemQuantity
+        val discountValue = if(orderData.discountDisplay > 0.0) orderData.discountDisplay else orderData.discount
         cartView.setTotalPrice(
             hasPromotion,
             subtotalForDisplay,
-            orderData.discountDisplay,
+            discountValue,
             totalForDisplay,
             CacheUtil.getInstance().orderType == OrderType.DELIVERY,
             orderData.deliverCharge,
@@ -2441,11 +2442,12 @@ class CartPresenter @Inject constructor(
                                             true, orderData.subtotal + orderData.deliverCharge
                                         )
                                     }
+                                    val discountValue = if(orderData.discountDisplay > 0.0) orderData.discountDisplay else orderData.discount
                                     if (!isPromoItem) {
                                         cartView.setTotalPrice(
                                             true,
                                             orderData.subtotal,
-                                            orderData.discountDisplay,
+                                            discountValue,
                                             orderData.total,
                                             CacheUtil.getInstance().orderType == OrderType.DELIVERY,
                                             orderData.deliverCharge,

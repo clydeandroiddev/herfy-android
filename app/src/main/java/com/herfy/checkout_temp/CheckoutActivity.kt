@@ -882,7 +882,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             .getTranslations(Text.SAR_AMOUNT, "SAR Amount")
 
         binding!!.layoutPaymentSummary.tvDiscountLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
+            CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
         binding!!.layoutLoyalty.tvLoyaltyPointsLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.LOYALTY_USE_POINTS_NOT_CAPS, "Use Loyalty Points")
         val orderType = CacheUtil.getInstance().orderType
@@ -1292,14 +1292,19 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         val formattedTotal = updateCurrency(
             totalPrice,
             true,
-            CacheUtil.getInstance().hasPromotion()
+            true
         )
-        binding!!.tvDiscountedPrice.text = formattedTotal
+        val formattedDiscountedPrice = updateCurrency(
+            totalPrice,
+            true,
+            false
+        )
+        binding!!.tvDiscountedPrice.text = formattedDiscountedPrice
         binding!!.layoutPaymentSummary.tvTotal.text = formattedTotal
         totalValue = totalPrice
 
         val currSubTotal = if(isDelivery) subtotalPrice + deliveryCharge else subtotalPrice
-        val formattedCurrentSubtotal = updateCurrency(currSubTotal, true, CacheUtil.getInstance().hasPromotion())
+        val formattedCurrentSubtotal = updateCurrency(currSubTotal, true, false)
         if(totalPrice != currSubTotal){
             binding?.tvOriginalPrice?.visible()
             binding?.tvOriginalPrice?.text = formattedCurrentSubtotal
