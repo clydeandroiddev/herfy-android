@@ -4,6 +4,7 @@ import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
 import com.herfy.notification.views.NotificationViewHolder;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData;
 import com.skylinedynamics.solosdk.api.models.objects.notification.Notification;
 
@@ -30,6 +31,10 @@ public interface NotificationContract {
         void showError(String message);
 
         void setIsLoading(boolean isLoading);
+
+        void goToItemDetails(String menuCategoryId, MenuItem menuItem);
+
+        void markNotificationAsRead(int position);
 
     }
 
@@ -62,7 +67,9 @@ public interface NotificationContract {
         int getTotalNotifPageCount();
 
         void getDigitalCoupons(String digitalCouponId);
-        void markNotificationAsRead(String notificationId);
+        void markNotificationAsRead(int position, String notificationId);
+
+        void getMenuItem(String menuItemId);
 
     }
 }

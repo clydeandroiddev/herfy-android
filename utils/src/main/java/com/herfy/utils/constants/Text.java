@@ -1178,4 +1178,5 @@ public class Text {
     public static final String DO_HAVE_OTHER_FEEDBACK = "do_have_other_feedback";
     public static final String OTHER_FEEDBACK_PLACEHOLDER = "other_feedback_placeholder";
     public static final String CONFIRM = "confirm";
+    public static final String SORRY_YOU_ARE_NOT_YET_ELIGIBLE = "sorry_you_are_not_yet_eligible";
 }

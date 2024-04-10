@@ -3,14 +3,30 @@ package com.herfy.notification;
 import androidx.annotation.Nullable;
 
 import com.google.gson.reflect.TypeToken;
+import com.herfy.database.AppDatabase;
+import com.herfy.database.entities.MenuItemEntity;
 import com.herfy.utils.constants.Text;
 import com.herfy.notification.views.NotificationViewHolder;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall;
+import com.skylinedynamics.solosdk.api.calls.MenuApiCall;
 import com.skylinedynamics.solosdk.api.calls.NotificationApiCall;
+import com.skylinedynamics.solosdk.api.models.objects.Allergen;
+import com.skylinedynamics.solosdk.api.models.objects.AllergenAttributes;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
+import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType;
+import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
+import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.Promotion;
+import com.skylinedynamics.solosdk.api.models.objects.Store;
+import com.skylinedynamics.solosdk.api.models.objects.Translated;
+import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
+import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfigRule;
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData;
 import com.skylinedynamics.solosdk.api.models.objects.notification.Notification;
 import com.skylinedynamics.solosdk.util.GsonHelper;
@@ -22,8 +38,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class NotificationPresenter implements  NotificationContract.Presenter {
 
@@ -248,11 +270,14 @@ public class NotificationPresenter implements  NotificationContract.Presenter {
     }
 
     @Override
-    public void markNotificationAsRead(String notificationId) {
+    public void markNotificationAsRead(int position, String notificationId) {
         NotificationApiCall.getInstance().markNotificationAsRead(notificationId, new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
-
+                if(position < notifications.size()) {
+                    notifications.get(position).getNotifData().setReadAt((new Date()).toString());
+                    notificationView.markNotificationAsRead(position);
+                }
             }
 
             @Override
@@ -260,6 +285,55 @@ public class NotificationPresenter implements  NotificationContract.Presenter {
 
             }
         });
+    }
+
+    @Override
+    public void getMenuItem(String menuItemId) {
+        MenuApiCall.getInstance().getAllItemDetails(CacheUtil.getInstance().getMenuId(), menuItemId, new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                try {
+                    JSONObject object = new JSONObject(o.toString());
+                    JSONArray dataArray = object.getJSONArray("data");
+
+                    if (dataArray.length() > 0) {
+                        MenuItem menuItem = GsonHelper.gsonFinal().fromJson(dataArray.getJSONObject(0).toString(), MenuItem.class);
+                        menuItem.toCdn(CacheUtil.getOrderStoreId());
+
+                        try {
+                            menuItem.isCombo = dataArray.getJSONObject(0).getJSONObject("attributes").getBoolean("is-combo");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        String categoryId = getMenuCategory(menuItem.getId());
+                        notificationView.goToItemDetails(categoryId, menuItem);
+
+                    } else {
+                        this.onError("");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    this.onError(e);
+                }
+            }
+
+            @Override
+            public void onError(Object o) {
+                AppLogger.printRetrofitError(o);
+            }
+        });
+
+    }
+
+    private String getMenuCategory(String menuItemId) {
+        String applicationId = CacheUtil.getInstance().getApplication().getId();
+        AppDatabase appDatabase = AppDatabase.getInstance();
+        MenuItemEntity menuItemEntity = appDatabase.menuItemEntityDao().findById(applicationId, menuItemId);
+        if (menuItemEntity != null) {
+            return menuItemEntity.getMenuCategoryId();
+        }
+        return "";
     }
 
     @Override

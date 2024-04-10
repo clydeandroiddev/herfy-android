@@ -113,7 +113,10 @@ class CartPromoAdapter(private var campaigns: List<Campaign> = arrayListOf(), pr
                     } else {
                         tvContext.resources.getColor(R.color.secondaryTextColor)
                     }
-                    tvFooterCoupon.text = ""
+                    tvFooterCoupon.text = CacheUtil.getInstance().getTranslations(
+                        Text.SORRY_YOU_ARE_NOT_YET_ELIGIBLE,
+                        "Sorry, you are not yet eligible."
+                    )
                     tvFooterCoupon.setTextColor(ColorStateList.valueOf(textColor))
                     ivFooterCoupon.setImageResource(R.drawable.ic_coupon_unavailable)
                     lnFooterCoupon.setBackgroundResource(R.drawable.background_lock_redeem)

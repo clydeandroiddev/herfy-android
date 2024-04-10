@@ -1,12 +1,13 @@
 package com.herfy.home.views
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.View
-import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -22,7 +23,6 @@ import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
-import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.observeNonNull
@@ -88,6 +88,19 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         val intent = Intent()
                         intent.setClassName(it, Navigation.LOYALTY_ACTIVITY)
                         startActivity(intent)
+                    }
+                }
+            }
+            layoutCatering.btnCatering.setOnClickListener {
+                activity?.apply {
+                    try {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(Values.CATER_WITH_HERFY_URL)
+                        )
+                        startActivity(intent)
+                    } catch (e: ActivityNotFoundException) {
+                        e.printStackTrace()
                     }
                 }
             }
