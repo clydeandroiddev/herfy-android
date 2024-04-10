@@ -47,6 +47,8 @@ import com.herfy.R;
 import com.herfy.cart.receivers.CartExpiryBroadcastReceiver;
 import com.herfy.cart.receivers.CartNotificationBroadcastReceiver;
 import com.herfy.checkout_temp.CheckoutActivity;
+import com.herfy.checkout_temp.ChoosePaymentActivity;
+import com.herfy.payment.views.MoyasarActivity;
 import com.herfy.utils.constants.Text;
 import com.herfy.main.MainActivity;
 import com.herfy.main.NavigationActivity;
@@ -620,7 +622,7 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
 
     public void clearCart() {
         if (currentActivity != null) {
-            if (currentActivity instanceof UpsellActivity || currentActivity instanceof CheckoutActivity || currentActivity instanceof PaymentActivity || currentActivity instanceof OrderSummaryActivity || currentActivity instanceof MukafaaOTPActivity) {
+            if (currentActivity instanceof UpsellActivity || currentActivity instanceof CheckoutActivity || currentActivity instanceof ChoosePaymentActivity || currentActivity instanceof PaymentActivity || currentActivity instanceof OrderSummaryActivity || currentActivity instanceof MukafaaOTPActivity || currentActivity instanceof MoyasarActivity) {
                 CacheUtil.getInstance().setCartExpired(true);
             } else {
                 removeMukafaaRedemption();

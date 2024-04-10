@@ -44,7 +44,6 @@ import com.herfy.main.NavigationActivity
 import com.herfy.order.views.ordertype.OrderTypeNewFragment
 import com.herfy.payment.dialog.PaymentOrderTimeDialog
 import com.herfy.payment.views.OrderDialogFragment
-import com.herfy.phonenumber.EnterNewPhoneNumberFragment
 import com.herfy.upsell.UpsellRecyclerViewAdapter
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
@@ -238,8 +237,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 OrderType.DELIVERY -> {
                     cartPresenter.getStore()
                     cartPresenter.getAddress()
-                    binding.orderTypeContainer.orderTypeText.text =
-                        CacheUtil.getInstance().getTranslations(Text.DELIVER_TO)
                     if (CacheUtil.getInstance().orderAddress != null) {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().orderAddress.attributes.line1
@@ -260,10 +257,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
                 OrderType.CURBSIDE -> {
                     cartPresenter.getStore()
-                    binding.orderTypeContainer.orderTypeText.text =
-                        CacheUtil.getInstance().getTranslations(
-                            Text.CURBSIDE_PICKUP_FROM_CAPS, "CURBSIDE PICKUP FROM"
-                        ).uppercase(Locale.getDefault())
                     if (CacheUtil.getInstance().orderStore != null) {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().orderStore.attributes.name
@@ -731,6 +724,16 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             CacheUtil.getInstance()
                 .getTranslations(Text.YOUR_CART_IS_EMPTY_LABEL, "Your cart is empty")
         )
+        binding.paymentSummaryContainer.applyCouponLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
+        binding.paymentSummaryContainer.viewCoupon.text =
+            CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
+        binding.paymentSummaryContainer.apply {
+            paymentSummaryLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.PAYMENT_SUMMARY, "Payment Summary")
+            totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL, "Total")
+            placeOrder.text = CacheUtil.getInstance().getTranslations(Text.CHECKOUT, "Checkout")
+        }
     }
 
     override fun showProgressDialog() {
@@ -753,7 +756,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         if (binding.orderTypeContainer.orderTypeText != null) {
             val store = CacheUtil.getInstance().orderStore
             val selectedOrderType = CacheUtil.getInstance().orderType
-            if(selectedOrderType == OrderType.NONE || store == null) {
+            if (selectedOrderType == OrderType.NONE || store == null) {
                 binding.orderTypeContainer.orderTypeText.text =
                     CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE)
                 binding.orderTypeContainer.branchName.text =
@@ -761,17 +764,19 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             } else {
                 if (selectedOrderType == OrderType.PICKUP || selectedOrderType == OrderType.CURBSIDE || selectedOrderType == OrderType.DRIVE_THRU) {
                     binding.orderTypeContainer.orderTypeText.text =
-                        CacheUtil.getInstance().getTranslations(Text.PICKUP_IN_MINS, "Pickup in (x) mins")
+                        CacheUtil.getInstance()
+                            .getTranslations(Text.PICKUP_IN_MINS, "Pickup in (x) mins")
                             .replace("(x)", "${store.attributes.promisedTimeDelta.delivery}")
                     binding.orderTypeContainer.branchName.text =
                         CacheUtil.getInstance().orderStore.attributes.name
                 } else if (selectedOrderType == OrderType.DINE_IN) {
                     binding.orderTypeContainer.orderTypeText.text =
-                        CacheUtil.getInstance().getTranslations(Text.DINE_IN_MINS, "Dine In in (x) mins")
+                        CacheUtil.getInstance()
+                            .getTranslations(Text.DINE_IN_MINS, "Dine In in (x) mins")
                             .replace("(x)", "${store.attributes.promisedTimeDelta.delivery}")
                     binding.orderTypeContainer.branchName.text =
                         CacheUtil.getInstance().orderStore.attributes.name
-                } else if(selectedOrderType == OrderType.DELIVERY) {
+                } else if (selectedOrderType == OrderType.DELIVERY) {
                     binding.orderTypeContainer.orderTypeText.text =
                         CacheUtil.getInstance()
                             .getTranslations(Text.DELIVERY_IN_MINS, "Delivery in (x) mins")
@@ -808,7 +813,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         menuItemsCopy.addAll(menuItems)
         if (!Values.NO_PROMOTIONS && !fromPromo && !dontShowDigitalCoupons) {
             showProgressDialog()
-            cartPresenter!!.getDigitalCouponsWith(menuItemsCopy,false, false)
+            cartPresenter!!.getDigitalCouponsWith(menuItemsCopy, false, false)
         }
         dontShowDigitalCoupons = false
         cartPresenter!!.getTotalPrice(false, false)
@@ -844,7 +849,9 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         binding.orderDetailsContainer.apply {
             if (itemCount > 0) {
                 placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
-                yourOrderLabel.text = "Your Order (${itemCount})"
+                yourOrderLabel.text =
+                    CacheUtil.getInstance().getTranslations(Text.YOUR_ORDER_X, "Your Order (x)")
+                        .replace("(x)", itemCount.toString())
                 emptyCart.gone()
                 rvCartItems.visible()
                 rvCartItems.OnLayoutLoadingCompleted {
@@ -854,7 +861,9 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 }
                 adapter?.notifyDataSetChanged()
             } else {
-                yourOrderLabel.text = "Your Order (0)"
+                yourOrderLabel.text =
+                    CacheUtil.getInstance().getTranslations(Text.YOUR_ORDER_X, "Your Order (x)")
+                        .replace("(x)", "0")
                 emptyCart.visible()
                 rvCartItems.gone()
                 layoutItemCoupons.contentMain.gone()
@@ -872,7 +881,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         if (!fromChangeQuantity) update()
 
         showProgressDialog()
-        cartPresenter.getDigitalCouponsWith(cartPresenter.menuItemsList, false ,false)
+        cartPresenter.getDigitalCouponsWith(cartPresenter.menuItemsList, false, false)
 
         setCartQuantity(cartPresenter.menuItemsList)
     }
@@ -1025,11 +1034,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun editCartItem(
-        position: Int, menuItem : MenuItem
+        position: Int, menuItem: MenuItem
     ) {
         runOnMain {
             dismissDialogFragments()
-            if(menuItem.isCombo){
+            if (menuItem.isCombo) {
                 val bundle = Bundle()
                 bundle.putBoolean(Values.KEY_IS_PROMO, false)
                 bundle.putString(Values.KEY_MENU_ITEM_ID, menuItem.id)
@@ -1041,11 +1050,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     R.id.action_cart_to_combo_meal,
                     bundle
                 )
-            }else {
+            } else {
                 NavigationUtils.navigateSafe(
                     findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                        menuCategoryId = "",
                         menuItemId = menuItem.id,
+                        menuCategoryId = "",
                         cartMenuItemPosition = position,
                         isPromo = false
                     )
@@ -1854,17 +1863,30 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             } else {
                 null
             }
-            if (promoItem?.isMustBeCustomized == true || promoItem?.isCombo == true) {
-                NavigationUtils.navigateSafe(
-                    findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                        menuCategoryId = "",
-                        menuItemId = promoItem.id,
-                        cartMenuItemPosition = -1,
-                        isPromo = true,
-                        isEdit = false
+            promoItem?.let {promoMenuItem ->
+                if (promoMenuItem.isMustBeCustomized && promoMenuItem.isCombo) {
+                    NavigationUtils.navigateSafe(
+                        findNavController(), CartFragmentDirections.actionCartToComboMeal(
+                            menuCategoryId = "",
+                            menuItemId = promoItem.id,
+                            cartMenuItemPosition = -1,
+                            isPromo = true,
+                            isEdit = false
+                        )
                     )
-                )
+                }else if(promoMenuItem.isMustBeCustomized){
+                    NavigationUtils.navigateSafe(
+                        findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                            menuItemId = promoItem.id,
+                            menuCategoryId = "",
+                            cartMenuItemPosition = -1,
+                            isPromo = true,
+                            isEdit = false
+                        )
+                    )
+                }
             }
+
         }
     }
 
@@ -1878,17 +1900,30 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 } else {
                     null
                 }
-            if (promoItem?.isMustBeCustomized == true || promoItem?.isCombo == true) {
-                NavigationUtils.navigateSafe(
-                    findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                        menuCategoryId = "",
-                        menuItemId = promoItem.id,
-                        cartMenuItemPosition = -1,
-                        isPromo = true,
-                        isEdit = true
+            promoItem?.let {promoMenuItem ->
+                if (promoMenuItem.isMustBeCustomized && promoMenuItem.isCombo) {
+                    NavigationUtils.navigateSafe(
+                        findNavController(), CartFragmentDirections.actionCartToComboMeal(
+                            menuCategoryId = "",
+                            menuItemId = promoMenuItem.id,
+                            cartMenuItemPosition = -1,
+                            isPromo = true,
+                            isEdit = true
+                        )
                     )
-                )
+                }else if(promoMenuItem.isMustBeCustomized){
+                    NavigationUtils.navigateSafe(
+                        findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                            menuItemId = promoItem.id,
+                            menuCategoryId = "",
+                            cartMenuItemPosition = -1,
+                            isPromo = true,
+                            isEdit = true
+                        )
+                    )
+                }
             }
+
         }
     }
 
@@ -2099,12 +2134,25 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun goToItemDetails(position: Int, upsell: MenuItem) {
-        NavigationUtils.navigateSafe(
-            findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                upsell.attributes.categoryId.toString(), upsell.id, -1,
-                isUpsell = upsell.attributes.isUpsell
+        if(upsell.isCombo){
+            NavigationUtils.navigateSafe(
+                findNavController(), CartFragmentDirections.actionCartToComboMeal(
+                    upsell.attributes.categoryId.toString(),
+                    upsell.id,
+                    -1,
+                    isUpsell = upsell.attributes.isUpsell
+                )
             )
-        )
+        }else {
+            NavigationUtils.navigateSafe(
+                findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                    upsell.id,
+                    upsell.attributes.categoryId.toString(), -1,
+                    isUpsell = upsell.attributes.isUpsell
+                )
+            )
+        }
+
     }
 
     override fun showCartMenuItemsLoading() {
@@ -2119,7 +2167,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun sendAddToCartFacebookEvent(menuItem: MenuItem) {
         activity?.apply {
-            FacebookAppEventUtil.addToCartEvent(this, menuItem, MenuUtil.getMenuItemTotalPrice(menuItem))
+            FacebookAppEventUtil.addToCartEvent(
+                this,
+                menuItem,
+                MenuUtil.getMenuItemTotalPrice(menuItem)
+            )
         }
     }
 
@@ -2165,7 +2217,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
 
     }
-
 
 
 }

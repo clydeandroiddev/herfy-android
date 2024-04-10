@@ -221,7 +221,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
             imageUrl = Values.DEFAULT_IMAGE_URL;
         }
         ImageViewExtKt.loadImageFromUrl(image, imageUrl, false, DiskCacheStrategy.ALL, RequestOptions.centerCropTransform(), R.drawable.imagepicker_image_placeholder);
-        quantity.setText(StringUtil.localize(String.format(LocaleUtil.getLocale(),"%02d",menuItem.getAttributes().getQuantity())));
+        quantity.setText(StringUtil.localize(String.valueOf(menuItem.getAttributes().getQuantity())));
 
         if (!menuItem.isPromo()) {
             totalPrice.setText(StringUtil.getNewFormattedPrice(menuItemTotalPrice * menuItem.getAttributes().getQuantity(), true));
@@ -429,6 +429,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
                 stringBuilder.append(ingredient.getAttributes().getName());
             }
         }
+        edit.setText(CacheUtil.getInstance().getTranslations(Text.EDIT, "edit"));
         if(menuItem.getAttributes().isUpsell()){
             edit.setVisibility(menuItem.isCustomizable() ? View.VISIBLE : View.INVISIBLE);
             lineSepEdit.setVisibility(menuItem.isCustomizable() ? View.VISIBLE : View.INVISIBLE);

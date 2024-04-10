@@ -36,7 +36,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge
 import java.util.Calendar
 import com.herfy.checkout.R as checkoutR
 
-class ChoosePaymentAcitivty : BaseActivity(), PaymentContract.View {
+class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
 
     private lateinit var checkoutPresenter: PaymentContract.Presenter
     private lateinit var binding: ActivityChoosePaymentMethodBinding

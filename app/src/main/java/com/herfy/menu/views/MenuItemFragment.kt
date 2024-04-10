@@ -6,7 +6,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.DisplayMetrics
@@ -643,6 +642,15 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             }
 
 
+                        }
+
+                        override fun showMessage() {
+                            activity?.cast<BaseActivity> {
+                                it.dismissDialogs()
+                                Toast.makeText(it,
+                                    CacheUtil.getInstance()
+                                        .getTranslations(Text.MODIFIER_MAXIMUM_LIMIT), Toast.LENGTH_SHORT).show()
+                            }
                         }
 
                         override fun onQuantityChanged(

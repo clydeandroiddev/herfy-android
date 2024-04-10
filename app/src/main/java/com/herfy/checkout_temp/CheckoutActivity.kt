@@ -3,7 +3,6 @@ package com.herfy.checkout_temp
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlarmManager
-import android.app.Dialog
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Bitmap
@@ -77,7 +76,6 @@ import com.herfy.payment.savedcards.SavedCardsDialog
 import com.herfy.payment.views.CustomCheckoutDialog
 import com.herfy.payment.views.CustomCheckoutDialog.OnActionSelectedListener
 import com.herfy.payment.views.MoyasarActivity
-import com.herfy.payment.views.OrderDialogFragment
 import com.herfy.payment.views.PaymentDialogFragment
 import com.herfy.ratings.AppRatingBroadcastReceiver
 import com.herfy.util.ApiLogLevel
@@ -1567,7 +1565,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     private fun showPaymentMethod() {
-        val intent = Intent(this, ChoosePaymentAcitivty::class.java)
+        val intent = Intent(this, ChoosePaymentActivity::class.java)
         startActivity(intent)
     }
 

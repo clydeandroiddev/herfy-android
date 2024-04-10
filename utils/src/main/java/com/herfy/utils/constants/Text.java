@@ -1,5 +1,7 @@
 package com.herfy.utils.constants;
 
+import org.jetbrains.annotations.Nullable;
+
 public class Text {
 
     public static final String CART = "cart";
@@ -515,7 +517,7 @@ public class Text {
     public static final String ENTER_PROMO_CODE = "enter_promo_code";
     public static final String APPLY_CODE = "apply_code";
     public static final String RECOMMENDED = "recommended";
-    public static final String WOULD_YOU_LIKE_TO_ADD_THESE = "would_you_like_to_add_these";
+    public static final String WOULD_YOU_LIKE_TO_ADD_THESE = "would_you_like_to_add";
     public static final String TAP_ON_A_MENU_ITEM_IF_YOU_WANT_TO_ADD_IT_TO_YOUR_CART = "tap_on_a_mennu_item_if_you_want_to_add_it_to_your_cart";
     public static final String SKIP_THIS = "skip_this";
     public static final String ADD_AND_CONTINUE = "add_and_continue";
@@ -541,7 +543,7 @@ public class Text {
     public static final String TELL_US_ABOUT_YOUR_EXPERIENCE_HERE = "tell_us_about_your_experience_here";
     public static final String ADD_AN_IMAGE_CAPS = "add_an_image_caps";
     public static final String UPLOAD_IMAGE_CAPS = "upload_image_caps";
-    public static final String PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE = "please_tap_here_to_pick_an_order_type";
+    public static final String PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE = "no_order_type_selected";
     public static final String YOU_WILL_SEE_YOUR_ORDER_HISTORY_HERE_IF = "you_will_see_your_order_history_here_if";
     public static final String YOU_BUY_SOMETHING_FROM_OUR_MENU = "you_buy_something_from_our_menu";
     public static final String WE_WILL_SEND_CODE_MESSAGE = "we_will_send_code_message";
@@ -858,7 +860,7 @@ public class Text {
     public static final String DRIVE_THRU = "drive_thru";
     public static final String DRIVE_THRU_DESCRIPTION = "drive_thru_description";
 
-    public static final String NEAREST_CAPS = "nearest_caps";
+    public static final String NEAREST_CAPS = "nearest_label";
 
     public static final String PICKUP_METHODS = "pickup_methods";
 
@@ -891,7 +893,7 @@ public class Text {
     public static final String MINS = "mins";
     public static final String YOUR_BASKET_LABEL = "your_basket_label";
     public static final String HELP_LABEL = "help_label";
-    public static final String YOUR_BAG_LABEL = "your_bag_label";
+    public static final String YOUR_BAG_LABEL = "your_bag";
     public static final String USE_CURRENT_LOCATION = "use_current_location";
     public static final String ADD_NEW_ADDRESS = "add_new_address";
 
@@ -939,8 +941,8 @@ public class Text {
     public static final String AVAILABLE_TO_REDEEM = "available_to_redeem";
     public static final String MORE_TO_REDEEM = "more_to_redeem";
     public static final String EXPIRES_LABEL = "expires_label";
-    public static final String APPLY_A_COUPON_LABEL = "apply_a_coupon_label";
-    public static final String VIEW_COUPONS_LABEL = "view_coupons_label";
+    public static final String APPLY_A_COUPON_LABEL = "apply_a_coupon";
+    public static final String VIEW_COUPONS_LABEL = "view_coupons";
     public static final String INVALID_FOR_THIS_ORDER = "invalid_for_this_order";
     public static final String GOT_IT_LABEL = "got_it_label";
     public static final String ADD_MORE_ITEMS_LABEL = "add_more_items_label";
@@ -1171,5 +1173,9 @@ public class Text {
     public static final String SPECIAL_INSTRUCTION_DESCRIPTION="special_instruction_description";
     public static final String FREQUENTLY_BOUGHT_TOGETHER_LABEL="frequently_bought_togehter_label";
     public static final String COMBO_SIZES_LABEL="combo_sizes_label";
+
+    public static final String YOUR_ORDER_X = "your_order_template";
+    public static final String DO_HAVE_OTHER_FEEDBACK = "do_have_other_feedback";
+    public static final String OTHER_FEEDBACK_PLACEHOLDER = "other_feedback_placeholder";
     public static final String CONFIRM = "confirm";
 }
