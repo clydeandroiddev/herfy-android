@@ -422,7 +422,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
     }
 
     private fun checkRatings(ratings: List<Rating>): Boolean {
-        return ratings.all { it.attributes.rating != 0 }
+        return ratings.any { it.attributes.rating != 0 }
     }
 
     private fun showRatingDialog(ratings: MutableList<Rating>?) {
@@ -435,13 +435,13 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                     deviceHeight(it),
                     ratings!!.toList(),
                     object : RatingBarDialog.OnRatingListener {
-                        override fun orderRatings(ratings: List<Rating>) {
+                        override fun orderRatings(ratings: List<Rating>, feedbackOther: String) {
                             if (checkRatings(ratings)) {
                                 fromRate = true
                                 activity?.cast<BaseActivity> {
                                     it.showLoadingDialog()
                                 }
-                                orderPresenter?.sendOrderFeedback(ratings, order.id)
+                                orderPresenter?.sendOrderFeedback(ratings, order.id, feedbackOther)
                             }
                         }
 

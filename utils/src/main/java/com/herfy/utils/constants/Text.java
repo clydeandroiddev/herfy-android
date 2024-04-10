@@ -860,7 +860,7 @@ public class Text {
     public static final String DRIVE_THRU = "drive_thru";
     public static final String DRIVE_THRU_DESCRIPTION = "drive_thru_description";
 
-    public static final String NEAREST_CAPS = "nearest_caps";
+    public static final String NEAREST_CAPS = "nearest_label";
 
     public static final String PICKUP_METHODS = "pickup_methods";
 
@@ -1175,4 +1175,6 @@ public class Text {
     public static final String COMBO_SIZES_LABEL="combo_sizes_label";
 
     public static final String YOUR_ORDER_X = "your_order_template";
+    public static final String DO_HAVE_OTHER_FEEDBACK = "do_have_other_feedback";
+    public static final String OTHER_FEEDBACK_PLACEHOLDER = "other_feedback_placeholder";
 }

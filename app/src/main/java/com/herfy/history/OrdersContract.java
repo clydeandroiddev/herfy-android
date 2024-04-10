@@ -134,7 +134,7 @@ public interface OrdersContract {
 
         void sendOrderFeedback(List<Rating> ratings);
 
-        void sendOrderFeedback(List<Rating> ratings, String orderId);
+        void sendOrderFeedback(List<Rating> ratings, String orderId, String otherFeedback);
 
         void cancel();
 
