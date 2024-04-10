@@ -39,7 +39,6 @@ import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.firebase.FirebaseService
-import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
@@ -1025,13 +1024,21 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 if (imageUrl != null && !imageUrl.equals(
                         "null",
                         ignoreCase = true
-                    ) && !imageUrl.isEmpty() && !imageUrl.lowercase(
+                    ) && !imageUrl.lowercase(
                         Locale.getDefault()
-                    ).contains("default-image.png")
+                    ).contains("default-image.png") && !imageUrl.lowercase(
+                        Locale.getDefault()
+                    ).contains("default_category.png")
                 ) {
-                    Glide.with(requireContext()).load(imageUrl).apply(RequestOptions.centerCropTransform())
+                    binding.sizesImage.visible()
+                    Glide.with(requireContext())
+                        .load(imageUrl)
+                        .apply(RequestOptions.centerCropTransform())
                         .placeholder(R.drawable.imagepicker_image_placeholder)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL).into(binding.sizesImage)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(binding.sizesImage)
+                } else {
+                    binding.sizesImage.gone()
                 }
 
                 if (menuItem.sizes.modifierItems.size <= 3) {
@@ -1115,8 +1122,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         val txtModifierPrice =
                             view.findViewById<MaterialTextView>(R.id.txtSizesPrice)
                         txtModifierPrice.setVisible(modifierItem.attributes.price != 0.0)
-                        txtModifierPrice.text =
-                            "+${StringUtil.getFormattedPrice(modifierItem.attributes.price)}"
+                        txtModifierPrice.text = StringUtil.getFormattedPrice(modifierItem.attributes.price)
                         txtModifierSizes.text = modifierItem.attributes.name
                         binding.sizesContainer.addView(view)
                     }

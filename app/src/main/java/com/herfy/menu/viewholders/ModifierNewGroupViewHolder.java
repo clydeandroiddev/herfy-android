@@ -220,8 +220,16 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
         }
         setVisibility(visible);
         name.setText(modifierGroup.getAttributes().getName());
-        if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
-            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(modifierImage);
+        if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.toLowerCase().contains("default-image.png") && !imageUrl.toLowerCase().contains("default_category.png")) {
+            modifierImage.setVisibility(View.VISIBLE);
+            Glide.with(context)
+                    .load(imageUrl)
+                    .apply(RequestOptions.centerCropTransform())
+                    .placeholder(R.drawable.imagepicker_image_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(modifierImage);
+        } else {
+            modifierImage.setVisibility(View.GONE);
         }
         boolean isModifierGroupRequired  = modifierGroup.getAttributes().getMinimum() >= 1;
         requiredCardView.setVisibility(isModifierGroupRequired ? View.VISIBLE : View.GONE);
