@@ -21,6 +21,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData
 import com.skylinedynamics.solosdk.api.models.objects.notification.Notification
 import java.text.ParseException
@@ -135,6 +136,14 @@ class NotificationFragment : BaseFragment(), NotificationContract.View {
     override fun showDigitalCoupon(digitalCoupon: Campaign) {}
     override fun showError(message: String?) {}
     override fun setIsLoading(isLoading: Boolean) {
-        TODO("Not yet implemented")
+
+    }
+
+    override fun goToItemDetails(menuCategoryId: String?, menuItem: MenuItem?) {
+
+    }
+
+    override fun markNotificationAsRead(position: Int) {
+
     }
 }

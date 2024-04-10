@@ -2153,7 +2153,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             NavigationUtils.navigateSafe(
                 findNavController(), CartFragmentDirections.actionCartToMenuItem(
                     upsell.id,
-                    upsell.attributes.categoryId.toString(), -1,
+                    upsell.attributes.categoryId.toString(),
+                    -1,
                     isUpsell = upsell.attributes.isUpsell
                 )
             )

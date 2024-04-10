@@ -32,6 +32,7 @@ import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.viewLifecycleScope
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifDeeplink
 import com.skylinedynamics.solosdk.api.models.objects.notification.Notification
@@ -102,7 +103,7 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
                         val notifDeeplink = notification?.notifData?.deeplink
                         val notificationId = notificationPresenter?.getNotification(position)?.id
                         notificationId?.let {
-                            notificationPresenter?.markNotificationAsRead(it)
+                            notificationPresenter?.markNotificationAsRead(position, it)
                         }
                         if (notifDeeplink != null && notifDeeplink.type != null) {
                             processDeeplink(notifDeeplink)
@@ -210,13 +211,45 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
         binding.notificationShimmer.startShimmer()
     }
 
+    override fun goToItemDetails(menuCategoryId: String, menuItem: MenuItem) {
+        dismissDialogs()
+        if(menuItem.isCombo) {
+            NavigationUtils.navigateSafe(
+                findNavController(),
+                NotificationsFragmentDirections.actionNotificationsToComboMeal(
+                    menuCategoryId = menuCategoryId,
+                    menuItemId = menuItem.id,
+                    cartMenuItemPosition = -1,
+                    isUpsell = false
+                )
+            )
+        } else {
+            NavigationUtils.navigateSafe(
+                findNavController(),
+                NotificationsFragmentDirections.actionNotificationsToMenuItem(
+                    menuItemId = menuItem.id,
+                    menuCategoryId = menuCategoryId,
+                    cartMenuItemPosition = -1,
+                    isUpsell = false
+                )
+            )
+        }
+    }
+
+    override fun markNotificationAsRead(position: Int) {
+        notificationAdapter?.notifyItemChanged(position)
+    }
+
     private fun processDeeplink(notifDeeplink: NotifDeeplink) {
         val type = notifDeeplink.type
         val value = notifDeeplink.value
         when (type) {
             "home" -> findNavController().navigateUp()
             "categories", "category" -> findNavController().navigateToDeepLink("nav_menu/$value")
-            "item" -> NavigationUtils.navigateSafe(findNavController(), NotificationsFragmentDirections.actionNotificationsToMenuItem("", value))
+            "item" -> {
+                showLoadingDialog()
+                notificationPresenter?.getMenuItem(value)
+            }
             "digital-coupon", "promotions", "promo" -> findNavController().navigateToDeepLink("nav_promotions")
             "shoppingcart", "shopping-cart", "cart" -> {
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)

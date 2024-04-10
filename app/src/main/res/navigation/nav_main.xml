@@ -704,6 +704,11 @@
             app:popUpTo="@+id/nav_notifications" />
 
         <action
+            android:id="@+id/action_notifications_to_combo_meal"
+            app:destination="@id/nav_combo"
+            app:popUpTo="@+id/nav_notifications" />
+
+        <action
             android:id="@+id/action_notifications_to_cart"
             app:destination="@id/nav_cart"
             app:popUpTo="@+id/nav_notifications" />

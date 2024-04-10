@@ -16,6 +16,7 @@ import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.DateFormatterUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.notification.NotifData;
 import com.skylinedynamics.solosdk.api.models.objects.notification.Notification;
 import com.herfy.utils.helper.LocaleUtil;
@@ -140,6 +141,16 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder implements N
 
     @Override
     public void setIsLoading(boolean isLoading) {
+
+    }
+
+    @Override
+    public void goToItemDetails(String menuCategoryId, MenuItem menuItem) {
+
+    }
+
+    @Override
+    public void markNotificationAsRead(int position) {
 
     }
 
