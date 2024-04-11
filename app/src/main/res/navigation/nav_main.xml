@@ -263,6 +263,7 @@
         tools:layout="@layout/fragment_menu_item">
 
         <deepLink app:uri="android-app://com.herfy/nav_menu_item/{menu_category_id}/{menu_item_id}" />
+        <deepLink app:uri="android-app://com.herfy/nav_menu_item/{menu_category_id}/{menu_item_id}?is_frequently_bought_item={is_frequently_bought_item}" />
 
         <argument
             android:name="menu_category_id"
@@ -304,7 +305,10 @@
             android:name="is_frequently_bought_item"
             android:defaultValue="false"
             app:argType="boolean"/>
-
+        <argument
+            android:name="frequently_bought_item_position"
+            android:defaultValue="-1"
+            app:argType="integer"/>
         <action
             android:id="@+id/action_menu_item_to_cart"
             app:destination="@id/nav_cart"
