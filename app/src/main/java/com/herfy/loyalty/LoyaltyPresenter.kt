@@ -69,15 +69,21 @@ class LoyaltyPresenter @Inject constructor(
                 }
 
                 override fun onError(o: Any) {
-                    if (o is Throwable) {
-                        source.onError(o)
-                    } else {
-                        source.onError(
-                            Throwable(
-                                CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
+                    try{
+                        if (o is Throwable) {
+                            source.onError(o)
+                        } else {
+                            source.onError(
+                                Throwable(
+                                    CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED, "An error occurred."),
+
+                                )
                             )
-                        )
+                        }
+                    }catch (e : Exception){
+                        e.printStackTrace()
                     }
+
                 }
             })
         }
@@ -218,23 +224,11 @@ class LoyaltyPresenter @Inject constructor(
                         pointsToNextTier,
                         startPoints
                     )
-                }) { error: Throwable? ->
+                })
+            { error: Throwable? ->
                 val loyalty = Loyalty()
-                val loyaltyAttributes = LoyaltyAttributes()
-                val loyaltyTier = LoyaltyTier()
-                loyaltyTier.name = "Classic"
-                loyaltyAttributes.loyaltyTier = loyaltyTier
-                loyaltyAttributes.currentBalance = 0
-                val currentTier = Tier()
-                currentTier.name = "Classic"
-                currentTier.startPoint = 0
                 val nextTier = Tier()
-                nextTier.name = "Silver"
-                nextTier.startPoint = 100
-                loyaltyAttributes.loyaltyTier = loyaltyTier
-                loyaltyAttributes.currentBalance = 0
-                tiers = ArrayList(Arrays.asList(currentTier))
-                loyalty.attributes = loyaltyAttributes
+                tiers = ArrayList()
                 loyaltyView.showLoyalty(
                     loyalty,
                     AuthUtil.getInstance().customer.attributes.firstName + " " + AuthUtil.getInstance().customer.attributes.lastName
