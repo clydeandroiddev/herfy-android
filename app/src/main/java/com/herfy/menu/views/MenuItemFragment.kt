@@ -1312,10 +1312,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         ViewUtil.dpToPx(it, 16)
                     )
                     if (args.isFrequentlyBoughtItem) {
-
                         val bundle = Bundle()
                         bundle.putBoolean(Values.KEY_IS_ADDED_TO_CART, true)
-//
                     }
                     if (isShouldBackPressed) {
                         activity?.onBackPressed()
