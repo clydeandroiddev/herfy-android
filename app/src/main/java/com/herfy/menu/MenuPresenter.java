@@ -5,7 +5,6 @@ import android.util.Pair;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -841,6 +840,13 @@ public class MenuPresenter implements MenuContract.Presenter {
         viewHolder.setFrequentBoughtMenuItem(frequentBoughtMenuItems.get(position));
     }
 
+    @Override
+    public void updateFrequentlyIsAddedToCartByPosition(int position, Boolean isAddedToCart) {
+        frequentBoughtMenuItems.get(position).setAddedToCart(isAddedToCart);
+    }
+
+    private void updateFrequentlyIsAddedToCartByPosition(int position) {
+    }
     @Override
     public void onBindRecentOrderViewAtPosition(int position, MenuRecentViewHolder orderViewHolder) {
         ArrayList<String> outOfStockLocationList = new ArrayList<String>();
@@ -4324,9 +4330,9 @@ public class MenuPresenter implements MenuContract.Presenter {
                     int selectedItemQuantity = MenuUtil.modifierItemQuantityCount(group);
                     if (selectedItemQuantity < modifierGroupMax) {
                         for (ModifierItem eachModifierItem : group.getModifierItems()) {
-                            if (eachModifierItem.getAttributes().getMaximum() > 1 && modifierGroupMax > 1 && !Objects.equals(eachModifierItem.getId(), item.getId()) && !eachModifierItem.getAttributes().hasUserInteractedWithModifierItem()) {
-                                eachModifierItem.getAttributes().setModifierItemQuantityExceedsMaximum(false);
-                                eachModifierItem.getAttributes().setModifierItemInteraction(false);
+                            if (eachModifierItem.getAttributes().getMaximum() > 1 && modifierGroupMax > 1 && !Objects.equals(eachModifierItem.getId(), item.getId()) && !modifierItem.getAttributes().isSelected()) {
+                                eachModifierItem.getAttributes().setModifierItemQuantityExceedsMaximum(true);
+                                eachModifierItem.getAttributes().setModifierItemInteraction(true);
                             }
                         }
                     }
@@ -4350,10 +4356,9 @@ public class MenuPresenter implements MenuContract.Presenter {
             ModifierGroup group = menuItem.getModifierGroups().get(modifierGroupPosition);
             ModifierItem modifierItemSelected = group.getModifierItems().get(modifierItemPosition);
             modifierItemSelected.getAttributes().setShouldShowQuantity(true);
-            modifierItemSelected.getAttributes().setSelected(true);
 
             for (ModifierItem eachItem : modifierGroup.getModifierItems()) {
-                if (eachItem.getAttributes().isSelected() || eachItem.getAttributes().isShouldShowQuantity()) {
+                if (eachItem.getAttributes().isSelected()) {
                     selectedItemMinusTotal += eachItem.getAttributes().getQuantity();
                 }
             }
@@ -4368,21 +4373,26 @@ public class MenuPresenter implements MenuContract.Presenter {
                 menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT));
 
             } else {
-                modifierItemSelected.getAttributes().setModifierItemInteraction(true);
-                    for (ModifierItem eachItems : group.getModifierItems()) {
+
+                    ModifierItem item = group.getModifierItems().get(modifierItemPosition);
+                    if (item.getId().equals(modifierItem.getId())) {
+                        if (modifierItemSelected.getAttributes().getQuantity() == 1 &&  !item.getAttributes().isSelected()) {
+                            item.getAttributes().setSelected(true);
+                            item.getAttributes().setModifierItemInteraction(true);
+                        } else {
+                            item.getAttributes().setSelected(true);
+                            item.getAttributes().setModifierItemInteraction(true);
+                            item.getAttributes().setQuantity(modifierItemSelected.getAttributes().getQuantity() + 1);
+                        }
+                        for (ModifierItem eachItems : group.getModifierItems()) {
                         if (!eachItems.getAttributes().isSelected() && !MenuUtil.areModifiersSame(eachItems,modifierItemSelected) && selectedItemMinusTotal + 1 >= modifierGroup.getAttributes().getMaximum()) {
                             eachItems.getAttributes().setModifierItemInteraction(false);
                             eachItems.getAttributes().setModifierItemQuantityExceedsMaximum(false);
                         }
                     }
-
-                    ModifierItem item = group.getModifierItems().get(modifierItemPosition);
-                    if (item.getId().equals(modifierItem.getId())) {
-                        item.getAttributes().setQuantity(modifierItemSelected.getAttributes().getQuantity() + 1);
-
                         if (MenuUtil.isAboveMaxModifierRequired(group,countSelectedModifierItems(modifierGroupPosition))) {
                             for (ModifierItem eachModifierItem: group.getModifierItems()) {
-                                if (!MenuUtil.areModifiersSame(eachModifierItem,modifierItem)) {
+                                if (!MenuUtil.areModifiersSame(eachModifierItem,modifierItem) && !eachModifierItem.getAttributes().isSelected()) {
                                     eachModifierItem.getAttributes().setModifierItemInteraction(false);
                                     eachModifierItem.getAttributes().setModifierItemQuantityExceedsMaximum(false);
                                 }
@@ -5304,7 +5314,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 .getInstance()
                 .getFrequentlyBoughtMenuItems(CacheUtil
                         .getInstance()
-                        .getMenuId(), menuId,String.valueOf(page), new ApiRequestListener() {
+                        .getMenuId(), menuId, String.valueOf(page), new ApiRequestListener() {
 
                     @Override
                     public void onSuccess(Object obj) {
@@ -5316,18 +5326,33 @@ public class MenuPresenter implements MenuContract.Presenter {
                             }
 
                             JSONArray response = object.getJSONArray("data");
+
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 MenuItem frequentBoughtMenu = GsonHelper.gsonFinal().fromJson(jsonObject.toString(), MenuItem.class);
                                 frequentBoughtMenuItems.add(frequentBoughtMenu);
                             }
+                            ArrayList<MenuItem> cartItems = CacheUtil.getInstance().getCart();
+                            CacheUtil cacheUtil = CacheUtil.getInstance();
+                            Set<String> favorites = cacheUtil.getFavorites();
+                            for (MenuItem item : frequentBoughtMenuItems) {
+                                item.setFavorite(favorites.contains(item.getId()));
+                            }
+                            Pair<Boolean, String> frequentlyMenuAdded = CacheUtil.getInstance().getFrequentlyQuantityShouldShow();
 
+                            boolean isFrequentMenuAdded = frequentlyMenuAdded.first;
+                            String frequentMenuId = frequentlyMenuAdded.second;
+
+                            for (MenuItem cartItem : frequentBoughtMenuItems) {
+                                    cartItem.setAddedToCart(isSameMenuItem(cartItem, menuItem) && cartItem.isAddedToCart());
+                                    cartItem.setAddedToCart(isFrequentMenuAdded && !frequentMenuId.isEmpty() && Objects.equals(String.valueOf(cartItem.getId()), frequentMenuId));
+                            }
                             if (page == pagination.getTotalPages()) {
                                 menuView.showFrequentBoughtItems(frequentBoughtMenuItems);
                             } else {
-                                getFrequentBoughtItemsByMenuId(page + 1,menuId);
+                                getFrequentBoughtItemsByMenuId(page + 1, menuId);
                             }
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                             this.onError(e);
                         }
@@ -5338,6 +5363,9 @@ public class MenuPresenter implements MenuContract.Presenter {
                         AppLogger.printRetrofitError(error);
                     }
                 });
+    }
+    private boolean isSameMenuItem(MenuItem item1, MenuItem item2) {
+        return Objects.equals(String.valueOf(item1.getId()), item2.getId());
     }
 
     @Override
