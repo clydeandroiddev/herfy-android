@@ -18,6 +18,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
+import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.helper.PriceFormatter;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.AuthUtil;
@@ -27,6 +28,7 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
@@ -74,9 +76,8 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         MenuItemAttributes menuItemAttributes = menuItem.getAttributes();
         String imageUrl = menuItemAttributes.getImage();
 
-        boolean isAlreadyAddedToCart = isFavoriteItemInCart(menuItem);
-        System.out.println("Cart item " + isAlreadyAddedToCart);
-        addToCart.setVisibility(isAlreadyAddedToCart ? View.GONE : View.VISIBLE);
+//        Pair<String,Boolean> addedToCart = isFavoriteItemInCart(menuItem);
+        addToCart.setVisibility(menuItem.isAddedToCart()  ? View.GONE : View.VISIBLE);
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
             Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
             image.setVisibility(View.VISIBLE);
@@ -132,24 +133,27 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         txtModifierPrice.setText(PriceFormatter.INSTANCE.formatPriceWithLocale(menuItemAttributes.getPrice(),menuItemAttributes.getName()));
     }
 
-    public boolean isFavoriteItemInCart(MenuItem menuItem) {
-        ArrayList<MenuItem> cartItems = CacheUtil.getInstance().getCart();
-        Pair<Boolean, String> frequentlyMenuAdded = CacheUtil.getInstance().getFrequentlyQuantityShouldShow();
-
-        boolean isFrequentMenuAdded = frequentlyMenuAdded.first;
-        String frequentMenuId = frequentlyMenuAdded.second;
-
-        for (MenuItem cartItem : cartItems) {
-            if (isSameMenuItem(cartItem, menuItem) && cartItem.isAddedToCart()) {
-                return true;
-            }
-            if (isFrequentMenuAdded && !frequentMenuId.isEmpty() && Objects.equals(String.valueOf(cartItem.getId()), frequentMenuId)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+//    public Pair<String,Boolean> isFavoriteItemInCart(MenuItem menuItem) {
+//        ArrayList<MenuItem> cartItems = CacheUtil.getInstance().getCart();
+//        Pair<Boolean, String> frequentlyMenuAdded = CacheUtil.getInstance().getFrequentlyQuantityShouldShow();
+//
+//        boolean isFrequentMenuAdded = frequentlyMenuAdded.first;
+//        String frequentMenuId = frequentlyMenuAdded.second;
+//
+//        for (MenuItem cartItem : cartItems) {
+//            if (isSameMenuItem(cartItem, menuItem) && cartItem.isAddedToCart()) {
+//                return new Pair<String,Boolean>(menuItem.getAttributes().getName(),true);
+//            }
+//            if (isFrequentMenuAdded && !frequentMenuId.isEmpty() && Objects.equals(String.valueOf(cartItem.getId()), frequentMenuId)) {
+//                System.out.println("Is added " + cartItem.getName(LocaleUtil.getInstance().getLanguage() + " Ids " + cartItem.getId() + "Ids bai " + frequentMenuId + " Name " + menuItem.getAttributes().getName()  ));
+//              return new Pair<String,Boolean>(menuItem.getAttributes().getName(),true);
+//
+//
+//            }
+//        }
+//
+//        return new Pair<String,Boolean>("",false);
+//    }
     private boolean isSameMenuItem(MenuItem item1, MenuItem item2) {
         return Objects.equals(String.valueOf(item1.getId()), item2.getId());
     }
