@@ -596,12 +596,6 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     private fun navMenuItem(menuCategoryId: String, menuItemId: String, menu:MenuItem) {
         val destinationLink = if(menu.isCombo) "nav_combo" else "nav_menu_item"
-        if  (!menu.isCombo || menu.isMustBeCustomized) {
-            val bundle = Bundle()
-            bundle.putBoolean(Values.KEY_IS_ADDED_TO_CART, false)
-            setFragmentResult(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER,
-                bundle)
-        }
         findNavController().navigateToDeepLink("$destinationLink/$menuCategoryId/$menuItemId")
     }
 

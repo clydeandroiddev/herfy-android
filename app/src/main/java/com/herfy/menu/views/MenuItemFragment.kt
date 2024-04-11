@@ -145,12 +145,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         }
         menuPresenter.start()
         binding.frequentlyBoughtShimmering.setVisible(true)
-        setFragmentResultListener(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER){ key, bundle ->
-            val isAddedToCart = bundle.getBoolean(Values.KEY_IS_ADDED_TO_CART, false)
-            if (!isAddedToCart) {
-                resetFrequentlyAddedFavoritesInCart()
-            }
-        }
         initialModifierId = ""
         activity?.cast<BaseActivity> {
             if (BuildUtil.soloAppKey().equals("SpeWD37HZx9Uqora", ignoreCase = true)) {
