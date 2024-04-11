@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.herfy.database.entities.MenuItemEntity
+import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.menu.adapter.MenuCategoryItemAdapter
 import com.herfy.repository.FavoriteRepository
@@ -50,8 +51,8 @@ class MenuViewModel @Inject constructor(
     val searchMenuAdapterItems: LiveData<Event<List<MenuCategoryItemAdapter.MenuAdapterItem>>> =
         _searchMenuAdapterItems
 
-    private val _showMenuItem = MutableLiveData<Event<Triple<String, String, Boolean>>>()
-    val showMenuItem: LiveData<Event<Triple<String, String, Boolean>>> = _showMenuItem
+    private val _showMenuItem = MutableLiveData<Event<Triple<String, String, MenuItem>>>()
+    val showMenuItem: LiveData<Event<Triple<String, String, MenuItem>>> = _showMenuItem
 
     private val _showAddToCart = MutableLiveData<Event<MenuItem>>()
     val showAddToCart: LiveData<Event<MenuItem>> = _showAddToCart
@@ -121,7 +122,7 @@ class MenuViewModel @Inject constructor(
                 homeResponse.data?.cast<MenuItemEntity> { menuItemEntity ->
                     val categoryId = menuItemEntity.menuCategoryId
                     if (categoryId.isNotEmpty()) {
-                        _showMenuItem.value = Event(Triple(categoryId, menuItemEntity.id, menuItemEntity.isCombo))
+                        _showMenuItem.value = Event(Triple(categoryId, menuItemEntity.id, menuItemEntity.toDomain()))
                     }
                 }
             }
@@ -216,7 +217,7 @@ class MenuViewModel @Inject constructor(
                     addToCart(menuItem)
                 } else {
                     _showLoading.postValue(Event(false))
-                    _showMenuItem.postValue(Event(Triple(menuCategory.id, menuItem.id, menuItem.isCombo)))
+                    _showMenuItem.postValue(Event(Triple(menuCategory.id, menuItem.id, menuItem)))
                 }
             })
         }
