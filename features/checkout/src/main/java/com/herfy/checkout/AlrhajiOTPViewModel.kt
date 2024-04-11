@@ -32,7 +32,7 @@ class AlrhajiOTPViewModel @Inject constructor(
         invoke {
             paymentRepository.sendOTP(number){
                 if(it.isSuccess){
-                    _showCountDown.value = (30*1000)
+                    _showCountDown.value = (3*60*1000)
                 }else {
                     it.error?.let {
                         _showError.value = it

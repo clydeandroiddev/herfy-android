@@ -22,6 +22,7 @@ import com.herfy.common.base.BaseBottomSheetDialogFragment
 import com.herfy.model.ErrorMsgItem
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.invisible
 import com.herfy.utils.extensions.isVisible
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
@@ -145,6 +146,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
             etAmount.addTextChangedListener(amountTextWatcher)
             cvResend.setOnClickListener {
                 if (number.isNotEmpty()) {
+                    cvResend.isEnabled = false
                     viewModel.sendOTP(number)
                 }
 
@@ -201,6 +203,13 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                     )
                 }
             }
+
+            tvEditMobileNumber.setOnClickListener {
+                countDownTimer?.cancel()
+                countDownTimer = null
+                setLayoutInputOTP(false)
+                setLayoutInputNumber(true)
+            }
         }
     }
 
@@ -247,12 +256,13 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
             showInvalidOTPDialog(it)
         }
 
-        viewModel.showCountdown.observe(this) {
-            setCountdown(it)
+        viewModel.showCountdown.observe(this) { time ->
             binding.apply {
-                lnInputNumber.gone()
-                lnInputNumber.visible()
+                setLayoutInputNumber(false)
+                setLayoutInputOTP(true)
+                setCountdown(time)
             }
+
         }
 
         viewModel.showVerified.observe(this) {
@@ -266,7 +276,34 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
         }
     }
 
+    private fun setLayoutInputOTP(show: Boolean) {
+        binding.apply {
+            if(show){
+                lnInputOtp.visible()
+                tvMobileNumberValue.text = number
+            }else {
+                lnInputOtp.gone()
+            }
+        }
+    }
+
+    private fun setLayoutInputNumber(show : Boolean){
+        binding.apply {
+            if(show){
+                lnInputNumber.visible()
+                tvAlrhajiDescription.visible()
+            }else {
+                lnInputNumber.gone()
+                tvAlrhajiDescription.invisible()
+            }
+        }
+
+    }
+
     private fun showInvalidOTPDialog(errorMsgItem: ErrorMsgItem) {
+        invalidOTPDialog?.dismiss()
+        invalidOTPDialog = null
+
         invalidOTPDialog = InvalidOTPDialog.newInstance(
             errorMsgItem.message
         ) {
@@ -318,11 +355,19 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
         binding.cvResend.isEnabled = false
         countDownTimer = object : CountDownTimer(millis, 1000) {
             override fun onTick(p0: Long) {
-                val lbl = "(${viewModel.getFormattedTimeForCountdown(p0)}s)"
-                binding.tvResendCountdown.text = lbl
+                var second = (p0 / 1000).toInt()
+                if (second == 0) {
+                    second = 1
+                }
+                binding.tvResend.text = (CacheUtil.getInstance()
+                    .getTranslations(Text.SEND_AGAIN_LABEL, "Send again ((x)s)").replace(
+                        "(x)", StringUtil.localize(second.toString())
+                    ))
             }
 
             override fun onFinish() {
+                binding.tvResend.text =
+                    (CacheUtil.getInstance().getTranslations(Text.SEND_AGAIN, "Send again"))
                 binding.cvResend.isEnabled = true
             }
         }

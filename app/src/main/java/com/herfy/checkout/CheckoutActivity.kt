@@ -58,8 +58,6 @@ import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.base.BaseActivity
-import com.herfy.checkout.DialogAlrajiRequestOtpBottomSheet
-import com.herfy.checkout.BottomSheetAlrhaji
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
 import com.herfy.decorator.BeforeDateDecorator

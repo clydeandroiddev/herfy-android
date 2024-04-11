@@ -65,10 +65,12 @@
                 android:layout_marginEnd="8dp"
                 tools:text="The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful."/>
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switch_alrahji"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/_50sdp"
                 android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
                 app:track="@drawable/track_selector"
                 android:thumb="@drawable/thumb_selector"
                 app:layout_constraintTop_toTopOf="parent"

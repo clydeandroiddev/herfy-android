@@ -113,6 +113,7 @@
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     android:textSize="14sp"
+                    android:maxLength="12"
                     android:textColor="@color/secondaryTextColor"
                     android:textAppearance="@style/TextAppearance.Body.Medium"
                     android:layout_gravity="center_vertical"
@@ -341,15 +342,6 @@
                             android:textAppearance="@style/TextAppearance.Caption.Semibold"
                             android:textColor="@color/background_color_blue"
                             tools:text="Send again"/>
-
-                        <TextView
-                            android:id="@+id/tv_resend_countdown"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.Caption.Semibold"
-                            android:textColor="@color/background_color_blue"
-                            android:layout_marginStart="4dp"
-                            tools:text="(30s)"/>
 
                     </LinearLayout>
 
