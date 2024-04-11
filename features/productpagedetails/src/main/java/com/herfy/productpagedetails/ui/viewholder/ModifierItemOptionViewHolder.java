@@ -153,7 +153,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         checkLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (action != null && modifierItem.getAttributes().getMinimum() >= 1 || modifierItem.getAttributes().getMinimum() == 0)  {
+                if (action != null)  {
                     if (modifierItem.getAttributes().isSelected()) {
                         action.onCheckedChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     } else {
@@ -205,9 +205,9 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             public void onClick(View view) {
                 String modifierItemId = modifierItem.getId();
 
-                if (!clickCountMap.containsKey(modifierItemId) && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
+                if (modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum()) {
                     clickCountMap.put(modifierItemId, 0);
-                    boolean shouldShowQuantityLayout = MenuUtil.shouldShowQuantity(modifierGroup,modifierItem) && modifierItem.getAttributes().isSelected();
+                    boolean shouldShowQuantityLayout = MenuUtil.shouldShowQuantity(modifierGroup,modifierItem) && modifierItem.getAttributes().isSelected() && clickCountMap.size() == 0;
                     quantityDownLayout.setVisibility(shouldShowQuantityLayout ? View.VISIBLE : View.GONE);
 
 
@@ -217,7 +217,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
 
                 clickCount = clickCount == null ? 1 : clickCount + 1;
                 clickCountMap.put(modifierItemId, clickCount);
-                if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount >= 1 && modifierItem.getAttributes().getQuantity() < modifierGroup.getAttributes().getMaximum()) {
+                if (action != null && clickCountMap.containsKey(modifierItemId) && clickCount >= 1 && modifierItem.getAttributes().getQuantity() < modifierItem.getAttributes().getMaximum()) {
                     action.onQuantityChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem, quantityDownLayout.getVisibility() == View.VISIBLE, clickCount);
                 }else {
                     int selectedItems = MenuUtil.modifierItemQuantityCount(modifierGroup);
