@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -29,9 +28,9 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,24 +45,22 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolygonOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.model.mutation.Overlay
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.google.maps.android.SphericalUtil
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.firebase.*
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
 import com.herfy.base.BaseActivity
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.OneDayDecorator
-import com.herfy.analytics.firebase.*
-import com.herfy.analytics.firebase.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
 import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
 import com.herfy.main.MainActivity
 import com.herfy.main.MainActivity.Companion.currentMainActivity
@@ -79,10 +76,7 @@ import com.herfy.payment.views.CustomCheckoutDialog.OnActionSelectedListener
 import com.herfy.payment.views.MoyasarActivity
 import com.herfy.payment.views.PaymentDialogFragment
 import com.herfy.ratings.AppRatingBroadcastReceiver
-import com.herfy.utils.helper.ApiLogLevel
-import com.herfy.utils.helper.ApiLogUtil.Companion.sendOrderLog
 import com.herfy.util.AppLogger
-import com.herfy.utils.helper.CurrencyUtils.Companion.updateCurrency
 import com.herfy.util.ShipBookLogger.logError
 import com.herfy.util.ShipBookLogger.logInfo
 import com.herfy.util.StringUtil
@@ -95,9 +89,12 @@ import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.showToast
 import com.herfy.utils.extensions.visible
+import com.herfy.utils.helper.ApiLogLevel
+import com.herfy.utils.helper.ApiLogUtil.Companion.sendOrderLog
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.CurrencyUtils.Companion.updateCurrency
 import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.DistanceCalculator
 import com.herfy.utils.helper.GlideUtils
@@ -137,7 +134,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
@@ -203,46 +199,42 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         paymentPresenter?.getLoyalty()
         paymentPresenter?.start()
         paymentPresenter?.getPaymentTypes()
-        moyasarActivityResultLauncher =
-            registerForActivityResult<Intent, ActivityResult>(
-                ActivityResultContracts.StartActivityForResult()
-            ) { result ->
-                if (result != null) {
-                    if (result.resultCode == RESULT_OK) {
-                        val intent = result.data
-                        if (intent != null) {
-                            if (intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID)) {
-                                if (!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
-                                        .equals(
-                                            "failed",
-                                            ignoreCase = true
-                                        ) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
-                                        .equals("canceled", ignoreCase = true)
-                                ) {
-                                    paymentPresenter!!.sendUpsells()
-                                } else {
-                                    val errorMessage =
-                                        intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
-                                    val orderId =
-                                        intent.getStringExtra(MoyasarActivity.EXTRA_ORDER_ID)
-                                    if (orderId != null && errorMessage != null && errorMessage != "cancelled") {
+        moyasarActivityResultLauncher = registerForActivityResult<Intent, ActivityResult>(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result != null) {
+                if (result.resultCode == RESULT_OK) {
+                    val intent = result.data
+                    if (intent != null) {
+                        if (intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID)) {
+                            if (!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equals(
+                                        "failed", ignoreCase = true
+                                    ) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
+                                    .equals("canceled", ignoreCase = true)
+                            ) {
+                                paymentPresenter!!.sendUpsells()
+                            } else {
+                                val errorMessage =
+                                    intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
+                                val orderId = intent.getStringExtra(MoyasarActivity.EXTRA_ORDER_ID)
+                                if (orderId != null && errorMessage != null && errorMessage != "cancelled") {
 //                                        logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter?.paymentProvider + " Card Payment Failed (Reason: Moyasar " + errorMessage + ")")
-                                        sendOrderLog(
-                                            ApiLogLevel.ERROR,
-                                            orderId,
-                                            paymentPresenter?.paymentProvider.orEmpty(),
-                                            "Card Payment Failed (Reason: Moyasar $errorMessage)"
-                                        )
-                                    }
-                                    isShowCardFailed = true
+                                    sendOrderLog(
+                                        ApiLogLevel.ERROR,
+                                        orderId,
+                                        paymentPresenter?.paymentProvider.orEmpty(),
+                                        "Card Payment Failed (Reason: Moyasar $errorMessage)"
+                                    )
                                 }
+                                isShowCardFailed = true
                             }
                         }
-                    } else {
-                        isShowCardFailed = true
                     }
+                } else {
+                    isShowCardFailed = true
                 }
             }
+        }
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
     }
 
@@ -251,8 +243,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             try {
                 if (currentMainActivity != null) {
                     Handler(Looper.getMainLooper()).postDelayed(
-                        { currentMainActivity!!.popUpsell() },
-                        300
+                        { currentMainActivity!!.popUpsell() }, 300
                     )
                 }
             } catch (e: Exception) {
@@ -262,15 +253,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     private fun requestPermissionLocation() {
-        permissionManager.requestPermissions(
-            permissions = arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            showRationale = { rationaleCallback ->
-                rationaleCallback.showRationale()
-            }
-        ) { result ->
+        permissionManager.requestPermissions(permissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+        ), showRationale = { rationaleCallback ->
+            rationaleCallback.showRationale()
+        }) { result ->
             when (result) {
                 is PermissionResult.Denied -> {
                     showToast(result.deniedPermissions.joinToString(", "))
@@ -297,11 +284,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             return
         }
         paymentPresenter!!.validateOrder(
-            false,
-            CacheUtil.getInstance().orderStore,
-            null,
-            0,
-            isShowCardFailed
+            false, CacheUtil.getInstance().orderStore, null, 0, isShowCardFailed
         )
         paymentPresenter!!.fetchCustomerCards()
         showSelectedPayment()
@@ -363,22 +346,22 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     val bitmap = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 110, 110, true)
                     val canvas = Canvas(bitmap)
                     val view = inflater.inflate(R.layout.marker_store_new, null)
-                    val textView =
-                        view.findViewById<TextView>(R.id.kmAway)
+                    val textView = view.findViewById<TextView>(R.id.kmAway)
                     val image = view.findViewById<ImageView>(R.id.icon)
                     image.setImageResource(R.drawable.delivery_marker_selected)
                     val paint = Paint()
                     val filter: ColorFilter = PorterDuffColorFilter(
-                        Color.parseColor(CacheUtil.getInstance().colorMain),
-                        PorterDuff.Mode.SRC_IN
+                        Color.parseColor(CacheUtil.getInstance().colorMain), PorterDuff.Mode.SRC_IN
                     )
                     val task = fusedLocationProviderClient!!.lastLocation
                     task.addOnSuccessListener { location ->
                         location?.let {
                             val currentLocation = LatLng(it.latitude, it.longitude)
                             val currentDistance = DistanceCalculator.calculateDistance(
-                                currentLocation.latitude, currentLocation.longitude,
-                                storeLocation.latitude, storeLocation.longitude
+                                currentLocation.latitude,
+                                currentLocation.longitude,
+                                storeLocation.latitude,
+                                storeLocation.longitude
                             )
 
                             val distanceValue = StringUtil.getDistance(currentDistance)
@@ -410,8 +393,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             builder.include(storeLocation)
                             val bounds = builder.build()
                             val cu = CameraUpdateFactory.newLatLngBounds(
-                                bounds,
-                                50
+                                bounds, 50
                             )
                             mMap?.animateCamera(cu, object : CancelableCallback {
                                 override fun onCancel() {}
@@ -429,8 +411,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             } else {
                 markerOptions.position(storeLocation)
                 val view = inflater.inflate(R.layout.marker_store_new, null)
-                val textView =
-                    view.findViewById<TextView>(R.id.kmAway)
+                val textView = view.findViewById<TextView>(R.id.kmAway)
                 val imageView = view.findViewById<AppCompatImageView>(R.id.icon)
                 imageView.setImageResource(R.drawable.ic_marker_red)
                 lifecycleScope.launchWithTimber {
@@ -439,8 +420,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         location?.let {
                             val currentLocation = LatLng(it.latitude, it.longitude)
                             val currentDistance = DistanceCalculator.calculateDistance(
-                                currentLocation.latitude, currentLocation.longitude,
-                                storeLocation.latitude, storeLocation.longitude
+                                currentLocation.latitude,
+                                currentLocation.longitude,
+                                storeLocation.latitude,
+                                storeLocation.longitude
                             )
 
                             val distanceValue = StringUtil.getDistance(currentDistance)
@@ -473,8 +456,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             builder.include(storeLocation)
                             val bounds = builder.build()
                             val cu = CameraUpdateFactory.newLatLngBounds(
-                                bounds,
-                                50
+                                bounds, 50
                             )
                             mMap?.animateCamera(cu, object : CancelableCallback {
                                 override fun onCancel() {}
@@ -504,6 +486,22 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         orderType = CacheUtil.getInstance().orderType
         requestPermissionLocation()
 
+//        tvChangeOrderType.setOnClickListener( new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showOrderType(true);
+//            }
+//        });
+
+        /* ivShowOrders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rvOrderSummary.getVisibility() == View.VISIBLE) {
+                    rvOrderSummary.setVisibility(View.GONE);
+                } else {
+                    rvOrderSummary.setVisibility(View.VISIBLE);
+                }
+            }*/
         binding!!.layoutPayment.tvEditPaymentMethod.setOnClickListener { showPaymentMethod() }
         val orderStore = CacheUtil.getInstance().orderStore
         if (orderStore != null && orderStore.attributes != null) {
@@ -511,8 +509,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             if (branchImage != null) {
                 isBranchImageAvailable = branchImage.isNotEmpty()
             }
-        }
-        /*if (isScheduled) {
+        }/*if (isScheduled) {
             schedLayout.setVisibility(View.VISIBLE);
             scheduleText.setText(TimeUtil.properSchedDate(goodDaySelected + " " + goodSelectedDateString));
         } else {
@@ -530,15 +527,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.toolbarLayout.btnBack.setOnClickListener { onBackPressed() }
         if (CacheUtil.getInstance().orderStore != null) {
             paymentPresenter!!.validateOrder(
-                false,
-                CacheUtil.getInstance().orderStore,
-                null,
-                0,
-                false
+                false, CacheUtil.getInstance().orderStore, null, 0, false
             )
         }
-        if (orderType === OrderType.DELIVERY) {
-            /*showLoadingDialog();
+        if (orderType === OrderType.DELIVERY) {/*showLoadingDialog();
             Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
             paymentPresenter.getStore(geocoder);*/
             if (CacheUtil.getInstance().orderAddress != null) {
@@ -547,8 +539,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.grpDeliveryNote.visibility = View.VISIBLE
             binding!!.tvDeliveryInstruction.text =
                 CacheUtil.getInstance().orderAddress.attributes.instructions
-        } else {
-            /*Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
+        } else {/*Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
             paymentPresenter.getAddresses(geocoder);*/
             if (CacheUtil.getInstance().orderStore != null) {
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name
@@ -624,12 +615,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 firebaseAddPaymentInfoEvent()
             } else {
                 Toast.makeText(
-                    this@CheckoutActivity,
-                    CacheUtil.getInstance().getTranslations(
-                        Text.PLEASE_SELECT_PAYMENT_TYPE,
-                        "Please select payment type"
-                    ),
-                    Toast.LENGTH_SHORT
+                    this@CheckoutActivity, CacheUtil.getInstance().getTranslations(
+                        Text.PLEASE_SELECT_PAYMENT_TYPE, "Please select payment type"
+                    ), Toast.LENGTH_SHORT
                 ).show()
             }
         }
@@ -642,20 +630,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 binding!!.layoutLoyalty.etPoints.setText("")
                 loyaltypointsInput = 0
                 paymentPresenter!!.validateOrder(
-                    false,
-                    CacheUtil.getInstance().orderStore,
-                    null,
-                    0,
-                    false
+                    false, CacheUtil.getInstance().orderStore, null, 0, false
                 )
             }
         }
 
         val loyalty = AuthUtil.getInstance().customerLoyalty
         lifecycleScope.launchWithTimber {
-            binding!!.layoutLoyalty
-                .etPoints.debounceAfterTextChanges()
-                .map { it.toString() }
+            binding!!.layoutLoyalty.etPoints.debounceAfterTextChanges().map { it.toString() }
                 .collectLatest { pointsText ->
                     if (pointsText.length > 0) {
                         val userSetPoints = StringUtil.toEnglish(pointsText).toDouble()
@@ -668,8 +650,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         )
                         val formattedSarAmount = String.format("%.2f", sarAmount)
                         val points =
-                            if (loyalty.attributes.currentBalanceAmount > paymentPresenter!!.menuItemsTotalPrice) paymentPresenter!!.menuItemsTotalPrice * pointConversion else loyalty.attributes.currentBalance
-                                .toDouble()
+                            if (loyalty.attributes.currentBalanceAmount > paymentPresenter!!.menuItemsTotalPrice) paymentPresenter!!.menuItemsTotalPrice * pointConversion else loyalty.attributes.currentBalance.toDouble()
 
                         if (sarAmount > 0) {
                             binding?.layoutLoyalty?.etSarAmount?.setText(formattedSarAmount)
@@ -725,16 +706,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
             val loyaltyBalanceLabelText = CacheUtil.getInstance().getTranslations(
                 Text.LOYALTY_POINTS_PAYMENT_LABEL, "(x) Points ((y))"
-            ).replace(
-                "(x)",
-                if (currentBalanceAmount.toInt().toDouble() == currentBalanceAmount) {
-                    AuthUtil.getInstance().customerLoyalty.attributes.currentBalance.toString()
-                } else {
-                    formattedLoyaltyPoints.takeIf { it.isNotEmpty() } ?: "0"
-                }
-            ).replace(
-                "(y)",
-                updateCurrency(currentBalanceAmount, true).toString()
+            ).replace("(x)", if (currentBalanceAmount.toInt().toDouble() == currentBalanceAmount) {
+                AuthUtil.getInstance().customerLoyalty.attributes.currentBalance.toString()
+            } else {
+                formattedLoyaltyPoints.takeIf { it.isNotEmpty() } ?: "0"
+            }).replace(
+                "(y)", updateCurrency(currentBalanceAmount, true).toString()
             )
             binding!!.layoutLoyalty.tvLoyaltyPoints.text = loyaltyBalanceLabelText
             //loyaltyLabel.setText(StringUtil.getFormattedAmount(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getCurrentBalance())+" Points ("+StringUtil.getFormattedAmount(loyalty.getAttributes().getCurrentBalanceAmount()) +")");
@@ -749,16 +726,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         try {
             var paymentTypes: Set<PaymentType?> =
                 CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes()
-            if (CacheUtil
-                    .getInstance()
-                    .orderType != OrderType.DELIVERY
-            ) {
+            if (CacheUtil.getInstance().orderType != OrderType.DELIVERY) {
                 paymentTypes =
                     CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name;
             } else {
-                binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress
-                    .attributes.line1
+                binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress.attributes.line1
 //                tvBranchAddress.setText(CacheUtil.getInstance().getOrderAddress().getAttributes().getLine1());
             }
             val isEligibleForLoyaltyDiscount =
@@ -768,7 +741,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             )
             binding!!.ivOrderType.setVisible(isBranchImageAvailable)
             GlideUtils.loadImageUrl(
-                binding!!.ivOrderType, url = CacheUtil.getInstance().orderStore.attributes.image,
+                binding!!.ivOrderType,
+                url = CacheUtil.getInstance().orderStore.attributes.image,
                 this
             )
         } catch (e: Exception) {
@@ -869,13 +843,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             cvAlrhaji.setOnClickListener {
                 paymentPresenter?.let {
                     bottomSheetAlrhaji = BottomSheetAlrhaji.newInstance(
-                        it.validatedTotal,
-                        it.validatedBody,
-                        it.validatedDeliveryCharge
+                        it.validatedTotal, it.validatedBody, it.validatedDeliveryCharge
                     )
                     bottomSheetAlrhaji?.show(
-                        supportFragmentManager,
-                        BottomSheetAlrhaji::class.java.simpleName
+                        supportFragmentManager, BottomSheetAlrhaji::class.java.simpleName
                     )
                 }
 
@@ -890,16 +861,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPayment.tvEditPaymentMethod.text =
             CacheUtil.getInstance().getTranslations(Text.EDIT, "Edit")
         binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance().getTranslations(
-            Text.DELIVERY_INSTRUCTION,
-            "Delivery Instruction"
+            Text.DELIVERY_INSTRUCTION, "Delivery Instruction"
         )
-        binding!!.layoutPayment.tvPaymentMethod.text = CacheUtil.getInstance()
-            .getTranslations(Text.PAYMENT_METHOD_NOT_CAPS, "Payment Method")
+        binding!!.layoutPayment.tvPaymentMethod.text =
+            CacheUtil.getInstance().getTranslations(Text.PAYMENT_METHOD_NOT_CAPS, "Payment Method")
         //        tvChangeOrderType.setText(CacheUtil.getInstance().getTranslations(Text.CHANGE, "Change").toUpperCase());
         binding!!.layoutLoyalty.tvPointsLabel.text =
             CacheUtil.getInstance().getTranslations(Text.POINTS, "Points")
-        binding!!.layoutLoyalty.tvSarAmountLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.SAR_AMOUNT, "SAR Amount")
+        binding!!.layoutLoyalty.tvSarAmountLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.SAR_AMOUNT, "SAR Amount")
 
         binding!!.layoutPaymentSummary.tvDiscountLabel.text =
             CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
@@ -907,29 +877,30 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             .getTranslations(Text.LOYALTY_USE_POINTS_NOT_CAPS, "Use Loyalty Points")
         val orderType = CacheUtil.getInstance().orderType
         if (orderType === OrderType.DELIVERY) {
-            binding!!.tvTimeLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.DELIVERY_TIME, "Delivery Time")
+            binding!!.tvTimeLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.DELIVERY_TIME, "Delivery Time")
             val mins =
                 CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.delivery.toString()
-            binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)",mins)
+            binding!!.tvWithin.text =
+                CacheUtil.getInstance().getTranslations(Text.WITHIN, "Within (x) mins")
+                    .replace("(x)", mins)
         } else {
-            binding!!.tvTimeLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.PICKUP_TIME, "Pickup Time")
+            binding!!.tvTimeLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.PICKUP_TIME, "Pickup Time")
             val mins =
                 CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString()
-            binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)",mins)
+            binding!!.tvWithin.text =
+                CacheUtil.getInstance().getTranslations(Text.WITHIN, "Within (x) mins")
+                    .replace("(x)", mins)
         }
-        binding!!.placeOrder.text = CacheUtil.getInstance()
-            .getTranslations(Text.PLACE_ORDER, "Place Order")
+        binding!!.placeOrder.text =
+            CacheUtil.getInstance().getTranslations(Text.PLACE_ORDER, "Place Order")
         binding!!.layoutPaymentSummary.tvSubtotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL)
         binding!!.layoutPaymentSummary.tvDiscount.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
         binding!!.layoutPaymentSummary.tvTotalLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
-                .replace(":", "")
+            CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total").replace(":", "")
         binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.DELIVERY_INSTRUCTION, "Delivery Instruction")
         binding!!.layoutPaymentSummary.tvSubtotalLabel.text =
@@ -947,10 +918,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 "The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful."
             )
         }
-        binding!!
-            .layoutPaymentSummary.tvDeliveryChargeLabel.text = CacheUtil
-            .getInstance()
-            .getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
+        binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
         binding!!.totalVatDescription.text = CacheUtil.getInstance()
             .getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
     }
@@ -968,10 +937,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun setEndName(endName: String) {}
     override fun setEndAddress(endAddress: String) {}
     override fun updateMap(
-        orderType: OrderType,
-        startLocation: LatLng,
-        endLocation: LatLng,
-        bounds: LatLngBounds
+        orderType: OrderType, startLocation: LatLng, endLocation: LatLng, bounds: LatLngBounds
     ) {
     }
 
@@ -991,16 +957,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
         val validatedTotal = paymentPresenter?.validatedTotal?.toInt()
         if (CacheUtil.getInstance().orderType === OrderType.DELIVERY && validatedTotal != null && validatedTotal != 0) {
-            val paymentDialogFragment: PaymentDialogFragment =
-                PaymentDialogFragment.newInstance(
-                    paymentPresenter
-                ) { dialog, cashPresented ->
-                    dialog.dismiss()
-                    paymentPresenter!!.cashPresented = cashPresented
-                }
+            val paymentDialogFragment: PaymentDialogFragment = PaymentDialogFragment.newInstance(
+                paymentPresenter
+            ) { dialog, cashPresented ->
+                dialog.dismiss()
+                paymentPresenter!!.cashPresented = cashPresented
+            }
             paymentDialogFragment.show(
-                supportFragmentManager,
-                PaymentDialogFragment::class.java.simpleName
+                supportFragmentManager, PaymentDialogFragment::class.java.simpleName
             )
         }
     }
@@ -1024,10 +988,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             override fun onClose() {
                                 saveDialogAlert!!.dismissAllowingStateLoss()
                                 checkTokenGenerated(
-                                    response!!.token,
-                                    null,
-                                    false,
-                                    orderId.orEmpty()
+                                    response!!.token, null, false, orderId.orEmpty()
                                 )
                             }
 
@@ -1038,8 +999,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         })
                     saveDialogAlert?.setCancelable(false)
                     saveDialogAlert?.show(
-                        supportFragmentManager,
-                        SaveDialogAlert::class.java.toString()
+                        supportFragmentManager, SaveDialogAlert::class.java.toString()
                     )
                 }
 
@@ -1050,7 +1010,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     }
                     logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Failed (Reason: " + reason + ")")
                     sendOrderLog(
-                        ApiLogLevel.ERROR, orderId, paymentPresenter!!.paymentProvider,
+                        ApiLogLevel.ERROR,
+                        orderId,
+                        paymentPresenter!!.paymentProvider,
                         "Card Payment Failed (Reason: $reason)"
                     )
                     dismissDialogs()
@@ -1065,7 +1027,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 override fun on3DSFailure(error: String?) {
                     logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Failed (Reason: on3DSFailure " + error + ")")
                     sendOrderLog(
-                        ApiLogLevel.ERROR, orderId, paymentPresenter!!.paymentProvider,
+                        ApiLogLevel.ERROR,
+                        orderId,
+                        paymentPresenter!!.paymentProvider,
                         "Card Payment Failed (Reason: on3DSFailure $error)"
                     )
                     showCardFailed()
@@ -1091,8 +1055,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
             dismissDialogs()
             dialogCheckout!!.show(
-                supportFragmentManager,
-                CustomCheckoutDialog::class.java.simpleName
+                supportFragmentManager, CustomCheckoutDialog::class.java.simpleName
             )
         }
     }
@@ -1100,19 +1063,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun showCardFailed() {
         if (CacheUtil.getInstance().orderPayment == PaymentType.CASH) {
             showAlertDialog(
-                "",
-                CacheUtil.getInstance().getTranslations(
+                "", CacheUtil.getInstance().getTranslations(
                     Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH,
                     "Card payment failed. Do you want to Pay with Cash instead?"
-                ),
-                CacheUtil.getInstance().getTranslations(Text.YES_CAPS),
-                { dialog, which ->
+                ), CacheUtil.getInstance().getTranslations(Text.YES_CAPS), { dialog, which ->
                     if (dialogCheckout != null) {
                         dialogCheckout!!.dismiss()
                     }
                     selectPaymentTypeCash()
-                },
-                CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
+                }, CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
             ) { dialog, which -> dialog.dismiss() }
         } else {
             showAlertDialog(
@@ -1197,8 +1156,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         val hasPromotion = CacheUtil.getInstance().hasPromotion()
         val total = updateCurrency(subtotalPrice, true, hasPromotion).toString()
         val deliveryChargeTotal = updateCurrency(deliveryCharge, withSpace = true).toString()
-        binding!!.layoutPaymentSummary.tvSubtotal.text =
-            total
+        binding!!.layoutPaymentSummary.tvSubtotal.text = total
         val isDeliverCharge = deliveryCharge >= 1 && isDelivery
         binding!!.layoutPaymentSummary.viewDeliverySeparator.setVisible(isDeliverCharge)
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.setVisible(isDeliverCharge)
@@ -1290,16 +1248,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }*/
         if (pointsUsed > 0) {
             binding!!.layoutPaymentSummary.grpRedeemedPoints.visibility = View.VISIBLE
-            binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
-                .replace("x", pointsUsed.toString())
-            binding!!.layoutPaymentSummary.tvRedeemPointsEquiv.text =
-                updateCurrency(
-                    Math.min(
-                        pointsSarValue,
-                        paymentPresenter!!.menuItemsTotalPrice
-                    ), true, hasPromotion, true
-                )
+            binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
+                    .replace("x", pointsUsed.toString())
+            binding!!.layoutPaymentSummary.tvRedeemPointsEquiv.text = updateCurrency(
+                Math.min(
+                    pointsSarValue, paymentPresenter!!.menuItemsTotalPrice
+                ), true, hasPromotion, true
+            )
         } else {
             binding!!.layoutPaymentSummary.grpRedeemedPoints.visibility = View.GONE
         }
@@ -1316,22 +1272,17 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
 
         val formattedTotal = updateCurrency(
-            totalPrice,
-            true,
-            true
+            totalPrice, true, true
         )
         val formattedDiscountedPrice = updateCurrency(
-            totalPrice,
-            true,
-            false
+            totalPrice, true, false
         )
         binding!!.tvDiscountedPrice.text = formattedDiscountedPrice
         binding!!.layoutPaymentSummary.tvTotal.text = formattedTotal
         totalValue = totalPrice
 
         val currSubTotal = if (isDelivery) subtotalPrice + deliveryCharge else subtotalPrice
-        val formattedCurrentSubtotal =
-            updateCurrency(currSubTotal, true, false)
+        val formattedCurrentSubtotal = updateCurrency(currSubTotal, true, false)
         if (totalPrice != currSubTotal) {
             binding?.tvOriginalPrice?.visible()
             binding?.tvOriginalPrice?.text = formattedCurrentSubtotal
@@ -1355,8 +1306,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     @SuppressLint("MissingPermission")
     private fun continueOrder() {
         try {
+            showLoadingDialog()
             Handler().postDelayed({
                 runOnUiThread {
+                    binding?.blocker?.isVisible = true
+                    binding?.blocker?.setOnClickListener(null)
                     val concept = CacheUtil.getInstance().concept
                     if (concept != null) {
                         var promptRatingSeconds =
@@ -1391,6 +1345,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             }
                         }
                     }
+                    dismissDialogs()
                     val intent = Intent(this@CheckoutActivity, MainActivity::class.java)
                     intent.putExtra("payment", true)
                     intent.putExtra("order_id", orderId)
@@ -1414,16 +1369,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     override fun showErrorPrayerTime() {}
     val activityResultLauncher: ActivityResultLauncher<Pair<String, ResultType>> =
-        registerForActivityResult(
-            PaymentResultContract() as ActivityResultContract<Pair<String, ResultType>, Any>,
+        registerForActivityResult(PaymentResultContract() as ActivityResultContract<Pair<String, ResultType>, Any>,
             ActivityResultCallback<Any> { result ->
                 if (result == null) return@ActivityResultCallback
                 when (result) {
                     is PaymentStatus.Success -> paymentPresenter?.sendUpsells()
                     is PaymentStatus.Redirect -> {
                         if (result.result.component2()?.status.equals(
-                                "SUCCESSFUL",
-                                ignoreCase = true
+                                "SUCCESSFUL", ignoreCase = true
                             )
                         ) {
                             paymentPresenter?.sendUpsells()
@@ -1434,8 +1387,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
                     else -> showCardFailed()
                 }
-            }
-        )
+            })
 
     override fun moneyHashContract(): ActivityResultLauncher<Pair<String, ResultType>> {
         return activityResultLauncher
@@ -1444,8 +1396,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun setOrderId(orderId: String) {}
     override fun showCardDialogList(orderId: String) {
         if (isCanProceedFragmentTransaction(supportFragmentManager)) {
-            savedCardsDialog = SavedCardsDialog.newInstance(
-                CacheUtil.getInstance().customerCards,
+            savedCardsDialog = SavedCardsDialog.newInstance(CacheUtil.getInstance().customerCards,
                 object : SavedCardsDialog.OnSavedAction {
                     override fun onClose() {
                         dismissDialogs()
@@ -1473,8 +1424,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             // Check if the fragment is still added to the activity
             if (!savedCardsDialog?.isAdded()!!) {
                 savedCardsDialog?.show(
-                    supportFragmentManager,
-                    SavedCardsDialog::class.java.toString()
+                    supportFragmentManager, SavedCardsDialog::class.java.toString()
                 )
             }
         }
@@ -1493,8 +1443,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         try {
             if (this != null) {
                 addPaymentInfoEvent(this, paymentPresenter!!.menuItemsList, totalValue)
-                val orderPayment = CacheUtil
-                    .getInstance().orderPayment
+                val orderPayment = CacheUtil.getInstance().orderPayment
                 if (orderPayment != null) {
                     addPaymentInfoEvent(this, paymentPresenter!!.menuItemsList, totalValue)
                 }
@@ -1505,15 +1454,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun firebaseApplyPromotionEvent(
-        promotionId: String,
-        promotionName: String,
-        orderedItems: List<MenuItem>
+        promotionId: String, promotionName: String, orderedItems: List<MenuItem>
     ) {
         FirebaseECommerceEventUtil.applyPromotionEvent(
-            this,
-            promotionId,
-            promotionName,
-            paymentPresenter!!.menuItemsList
+            this, promotionId, promotionName, paymentPresenter!!.menuItemsList
         )
     }
 
@@ -1522,10 +1466,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun showMoyasarSheet(
-        orderId: String,
-        validatedTotal: Double,
-        menuItems: String,
-        apiKey: String
+        orderId: String, validatedTotal: Double, menuItems: String, apiKey: String
     ) {
         Handler().post {
             val intent = Intent(this@CheckoutActivity, MoyasarActivity::class.java)
@@ -1547,15 +1488,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     override fun showSelectedPayment() {
         val selecetedPayment = CacheUtil.getInstance().orderPayment
-        val selectedCard = CacheUtil
-            .getInstance().customCard
+        val selectedCard = CacheUtil.getInstance().customCard
 
         selectedCard?.let { card ->
-            CacheUtil
-                .getInstance()
-                .setCustomerCards(Gson().toJson(selectedCard))
-            CacheUtil
-                .getInstance().orderPayment = PaymentType.CARD
+            CacheUtil.getInstance().setCustomerCards(Gson().toJson(selectedCard))
+            CacheUtil.getInstance().orderPayment = PaymentType.CARD
             var res = R.drawable.ic_card_new
             var cardLabel = "Visa ****"
             if (card.attributes.brand.equals("visa", true)) {
@@ -1564,16 +1501,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             } else if (card.attributes.brand.endsWith("mastercard", true)) {
                 res = R.drawable.ic_mastercard
                 cardLabel = "Master ****"
-                }else if (card.attributes.brand.endsWith("amex", true)){
-                    res = R.drawable.ic_amex_card
-                    cardLabel = "Amex ****"
+            } else if (card.attributes.brand.endsWith("amex", true)) {
+                res = R.drawable.ic_amex_card
+                cardLabel = "Amex ****"
             }
             binding!!.layoutPayment.ivSelectedPayment.setImageResource(res)
             binding!!.layoutPayment.tvSelectedPayment.text = cardLabel + card.attributes.last4Digits
         } ?: run {
             val isUserNotSelectedAnyPaymentMethod =
-                selecetedPayment == PaymentType.NONE && CacheUtil.getInstance().customCard == null
-            /*binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
+                selecetedPayment == PaymentType.NONE && CacheUtil.getInstance().customCard == null/*binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
             binding!!.layoutPayment.emptyState.setTitle(
                 CacheUtil.getInstance()
                     .getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found.")
@@ -1599,9 +1535,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     )
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
             } else if (selecetedPayment == PaymentType.CARD_ON_DELIVERY || selecetedPayment == PaymentType.CARD_ON_PICKUP) {
-                binding!!.layoutPayment.tvSelectedPayment.text =  if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
-                    CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
-                } else CacheUtil.getInstance().getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
+                binding!!.layoutPayment.tvSelectedPayment.text =
+                    if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
+                        CacheUtil.getInstance()
+                            .getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
+                    } else CacheUtil.getInstance()
+                        .getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
 
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
             }
@@ -1631,9 +1570,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun onDateSelected(
-        materialCalendarView: MaterialCalendarView,
-        calendarDay: CalendarDay,
-        b: Boolean
+        materialCalendarView: MaterialCalendarView, calendarDay: CalendarDay, b: Boolean
     ) {
 //        oneDayDecorator.setDate(calendarDay.getDate());
 //        daySelected = calendarDay.getDate().toString();
@@ -1771,10 +1708,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun userEnabledSaveCardOption(saveCardEnabled: Boolean) {}
     override fun cardTokenizedSuccessfully(token: Token, saveCardEnabled: Boolean) {}
     private fun checkTokenGenerated(
-        token: String,
-        cvv: String?,
-        isSave: Boolean,
-        orderIds: String
+        token: String, cvv: String?, isSave: Boolean, orderIds: String
     ) {
         val body = JsonObject()
         body.addProperty("order", orderIds)
@@ -1831,8 +1765,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         })
     }
 
-    private fun checkoutForce(data: JSONObject) {
-        /*Intent intent = new Intent(PaymentActivity.this, CustomCheckoutActivity.class);
+    private fun checkoutForce(data: JSONObject) {/*Intent intent = new Intent(PaymentActivity.this, CustomCheckoutActivity.class);
         intent.putExtra(CustomCheckoutActivity.EXTRA_ORDER_ID , orderId);
         intent.putExtra(CustomCheckoutActivity.EXTRA_PAYMENT_PROVIDER, paymentPresenter.getPaymentProvider());
         intent.putExtra(CustomCheckoutActivity.EXTRA_3DS_DATA, data.toString());
@@ -1886,11 +1819,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
 
         paymentPresenter?.validateOrder(
-            false,
-            CacheUtil.getInstance().orderStore,
-            null,
-            0,
-            false
+            false, CacheUtil.getInstance().orderStore, null, 0, false
         )
     }
 }
