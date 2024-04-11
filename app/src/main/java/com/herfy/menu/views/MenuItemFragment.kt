@@ -143,6 +143,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             binding.mainToolbar.invalidate()
             binding.image.invalidate()
         }
+        resetFrequentlyAddedFavoritesInCart()
         menuPresenter.start()
         binding.frequentlyBoughtShimmering.setVisible(true)
         initialModifierId = ""
