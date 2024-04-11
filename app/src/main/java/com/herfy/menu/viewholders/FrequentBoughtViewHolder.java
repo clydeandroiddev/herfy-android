@@ -130,31 +130,9 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
 
         name.setText(menuItemAttributes.getName());
         txtModifierDescription.setText(menuItemAttributes.getDescription());
-        txtModifierPrice.setText(PriceFormatter.INSTANCE.formatPriceWithLocale(menuItemAttributes.getPrice(),menuItemAttributes.getName()));
+        if (menuItemAttributes.getPrice() != 0.0) {
+            txtModifierPrice.setText(PriceFormatter.INSTANCE.formatPriceWithLocale(menuItemAttributes.getPrice(), menuItemAttributes.getName()));
+        }
     }
 
-//    public Pair<String,Boolean> isFavoriteItemInCart(MenuItem menuItem) {
-//        ArrayList<MenuItem> cartItems = CacheUtil.getInstance().getCart();
-//        Pair<Boolean, String> frequentlyMenuAdded = CacheUtil.getInstance().getFrequentlyQuantityShouldShow();
-//
-//        boolean isFrequentMenuAdded = frequentlyMenuAdded.first;
-//        String frequentMenuId = frequentlyMenuAdded.second;
-//
-//        for (MenuItem cartItem : cartItems) {
-//            if (isSameMenuItem(cartItem, menuItem) && cartItem.isAddedToCart()) {
-//                return new Pair<String,Boolean>(menuItem.getAttributes().getName(),true);
-//            }
-//            if (isFrequentMenuAdded && !frequentMenuId.isEmpty() && Objects.equals(String.valueOf(cartItem.getId()), frequentMenuId)) {
-//                System.out.println("Is added " + cartItem.getName(LocaleUtil.getInstance().getLanguage() + " Ids " + cartItem.getId() + "Ids bai " + frequentMenuId + " Name " + menuItem.getAttributes().getName()  ));
-//              return new Pair<String,Boolean>(menuItem.getAttributes().getName(),true);
-//
-//
-//            }
-//        }
-//
-//        return new Pair<String,Boolean>("",false);
-//    }
-    private boolean isSameMenuItem(MenuItem item1, MenuItem item2) {
-        return Objects.equals(String.valueOf(item1.getId()), item2.getId());
-    }
 }

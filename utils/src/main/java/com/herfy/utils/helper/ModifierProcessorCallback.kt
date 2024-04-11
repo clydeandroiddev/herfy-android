@@ -20,8 +20,12 @@ class ModifierProcessor(private val callback: ModifierProcessorCallback) {
 
         val formattedPrice = formatPriceBasedOnLocale(originalPrice, translatedName)
         val text = createFormattedText(originalPrice, formattedPrice)
-        callback.onModifierProcessed(translatedName, formattedPrice)
-    }
+        if (originalPrice != 0.0) {
+            callback.onModifierProcessed(translatedName, formattedPrice)
+        }else {
+            callback.onModifierProcessed(translatedName, "")
+        }
+     }
 
     private fun createFormattedText(originalPrice: Double, formattedPrice: String): String {
         return if (originalPrice <= 0) "" else "<font color='#D62300'>$formattedPrice</font>"

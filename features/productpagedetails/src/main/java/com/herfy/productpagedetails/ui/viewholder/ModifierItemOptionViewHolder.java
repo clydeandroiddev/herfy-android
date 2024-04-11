@@ -270,7 +270,8 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 modifierNameAndPrice.setText(Html.fromHtml(name), TextView.BufferType.SPANNABLE);
             }
         }
-
-        txtModifierPrice.setText(formattedPrice);
+        if (!formattedPrice.isEmpty()) {
+            txtModifierPrice.setText(formattedPrice);
+        }
     }
 }
