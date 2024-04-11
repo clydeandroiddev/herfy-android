@@ -409,6 +409,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         binding.frequentlyBoughRecycleview.adapter = frequentBoughItemsAdapter
         frequentBoughItemsAdapter?.notifyDataSetChanged()
         binding.frequentlyBoughtShimmering.setVisible(false)
+        binding.txtFrequntlyBought.setVisible(frequentBoughtItems?.isNotEmpty())
     }
 
     override fun showAddress(address: String) {}
