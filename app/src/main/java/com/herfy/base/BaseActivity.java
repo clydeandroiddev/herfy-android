@@ -71,6 +71,7 @@ import com.herfy.util.receivers.InAppRatingBroadcastReceivers;
 import com.herfy.util.receivers.NetworkConnection;
 import com.herfy.views.DynamicTheme;
 import com.herfy.views.NetworkConnectivityDialog;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -78,6 +79,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import dmax.dialog.SpotsDialog;
@@ -626,6 +628,11 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                 CacheUtil.getInstance().setCartExpired(true);
             } else {
                 removeMukafaaRedemption();
+                List<MenuItem> cartItems = CacheUtil.getInstance().getCart();
+
+                for (MenuItem item : cartItems) {
+                    item.setFavorite(false);
+                }
                 CacheUtil.getInstance().setCart(new ArrayList<>());
                 CacheUtil.getInstance().setUpsell(true);
                 CacheUtil.getInstance().setCouponCode(null);

@@ -55,6 +55,7 @@ import com.herfy.digitalcoupons.views.DigitalCouponFragmentDirections
 import com.herfy.digitalcoupons.views.DigitalCouponsFragmentDirections
 import com.herfy.ext.cast
 import com.herfy.ext.readAssetsFile
+import com.herfy.favorites.FavoritesFragment
 import com.herfy.favorites.FavoritesFragmentDirections
 import com.herfy.feedback.FeedbackActivity
 import com.herfy.home.views.HomeFragment
@@ -1062,6 +1063,9 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         fragment?.cast<CartFragment> {
             it.cartExpired()
+        }
+        fragment?.cast<FavoritesFragment> {
+            it.updateFavoriteQuantity()
         }
     }
 

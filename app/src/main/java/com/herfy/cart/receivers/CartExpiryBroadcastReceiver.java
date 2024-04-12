@@ -10,8 +10,10 @@ import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CartExpiryBroadcastReceiver extends BroadcastReceiver {
 
@@ -25,6 +27,11 @@ public class CartExpiryBroadcastReceiver extends BroadcastReceiver {
         if (CacheUtil.getInstance().getCartQuantity() != 0) {
             if (isInBackground) {
                 removeMukafaaRedemption();
+                List<MenuItem> cartItems = CacheUtil.getInstance().getCart();
+
+                for (MenuItem item : cartItems) {
+                    item.setFavorite(false);
+                }
                 CacheUtil.getInstance().setCart(new ArrayList<>());
                 CacheUtil.getInstance().setUpsell(true);
                 CacheUtil.getInstance().setCouponCode(null);
