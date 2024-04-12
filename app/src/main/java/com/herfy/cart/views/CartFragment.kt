@@ -54,6 +54,7 @@ import com.herfy.utils.extensions.OnLayoutLoadingCompleted
 import com.herfy.utils.extensions.collapse
 import com.herfy.utils.extensions.expand
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.invisible
 import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.runOnMain
@@ -853,6 +854,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             itemCount += item.attributes.quantity
         }
         binding.orderDetailsContainer.apply {
+            clOrderDetails.visible()
             if (itemCount > 0) {
                 placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
                 yourOrderLabel.text =
@@ -917,9 +919,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             val _discountAmount = discountAmount
             var _totalPrice = totalPrice
             validatedTotalPrice = _totalPrice
-            binding.paymentSummaryContainer.subtotal.text =
-                CurrencyUtils.updateCurrency(subTotal, true, true)
-            if (discountAmount != 0.0) {
+            if(subTotal > 0.0){
+                binding.paymentSummaryContainer.subtotal.text = CurrencyUtils.updateCurrency(subTotal, true, true)
+            }else {
+                binding.paymentSummaryContainer.subtotal.text = CurrencyUtils.updateCurrency(0.0, true, true)
+            }
+            if (discountAmount > 0.0) {
                 binding.paymentSummaryContainer.discountLayout.visibility = View.VISIBLE
                 binding.paymentSummaryContainer.couponDiscount.text = CurrencyUtils.updateCurrency(
                     amount = _discountAmount,
@@ -1349,9 +1354,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
     }
 
-    private fun hideRelatedCouponViews() {
-        //binding.originalPrice.visibility = View.GONE
-        //binding.dashed.visibility = View.GONE
+    private fun hideRelatedCouponViews(){
+        binding.orderDetailsContainer.apply {
+            layoutItemCoupons.contentMain.gone()
+        }
     }
 
     val totalPriceAfterReset: Unit
@@ -1799,19 +1805,20 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     }
 
                     val menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1)
-                    quantityLayout.visibility =
-                        if (menuItem.isPromo || menuItemTotalPrice == 0.0) View.INVISIBLE else View.VISIBLE
+                    if(menuItemTotalPrice > 0.0 && menuItem.attributes.quantity > 0){
+                        quantityLayout.visible()
+                    }else {
+                        quantityLayout.gone()
+                    }
+                    //quantityLayout.visibility = if (menuItem.isPromo || menuItemTotalPrice == 0.0) View.INVISIBLE else View.VISIBLE
 
-                    if (!menuItem.isPromo && menuItem.attributes.quantity > 1) {
-                        delete.visibility = View.GONE
-                        minus.visibility = View.VISIBLE
-                    } else {
-                        delete.visibility = View.VISIBLE
-                        minus.visibility = View.GONE
+                    if(menuItem.isPromo){
+                        delete.invisible()
+                        minus.gone()
+                        plus.invisible()
                     }
 
                     quantity.text = StringUtil.localize(menuItem.attributes.quantity.toString())
-
 
                     if (menuItemTotalPrice > 0) {
                         totalPrice.text = StringUtil.getNewFormattedPrice(
