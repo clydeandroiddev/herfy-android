@@ -57,6 +57,8 @@ public interface PaymentContract {
 
         void showCheckoutPaymentForm(String orderId);
 
+        void showInputCvvDialog(String orderId);
+
         void showCardFailed();
 
         void showMessage(String message);

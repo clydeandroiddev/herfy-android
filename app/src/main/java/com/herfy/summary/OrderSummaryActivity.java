@@ -449,6 +449,11 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
     }
 
     @Override
+    public void showInputCvvDialog(String orderId) {
+
+    }
+
+    @Override
     public void showCardFailed() {
         if (hasCash) {
             showAlertDialog("", CacheUtil.getInstance().getTranslations(Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH, "Card payment failed. Do you want to Pay with Cash instead?"), CacheUtil.getInstance().getTranslations(Text.YES_CAPS), new DialogInterface.OnClickListener() {

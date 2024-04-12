@@ -283,6 +283,10 @@ class CartPresenter @Inject constructor(
                                 object : TypeToken<List<CustomerCard?>?>() {}.type
                             )
                             CacheUtil.getInstance().setCustomerCards(Gson().toJson(cards))
+                            val defaultCard = cards.find { card -> card.attributes.isDefault }
+                            if (defaultCard !=  null) {
+                                CacheUtil.getInstance().setCustomCard(Gson().toJson(defaultCard))
+                            }
                         } catch (e: JSONException) {
                             e.printStackTrace()
                         }

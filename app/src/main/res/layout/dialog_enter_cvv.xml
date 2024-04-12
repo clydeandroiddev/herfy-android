@@ -58,15 +58,16 @@
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/center"
                 tools:text="CANCEL" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/apply_changes"
                 android:layout_width="0dp"
                 android:layout_height="46dp"
-                android:background="@drawable/background_add_to_bag"
+                android:background="@drawable/bg_place_order_button"
                 android:fontFamily="@font/cairo_bold"
                 android:gravity="center"
                 android:includeFontPadding="false"
@@ -131,7 +132,7 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
-                            android:fontFamily="@font/cairo_regular"
+                            android:fontFamily="@font/inter_semi_bold"
                             android:gravity="center_vertical"
                             android:includeFontPadding="false"
                             android:textColor="@color/black"
@@ -161,13 +162,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@null"
-                        android:fontFamily="@font/cairo_regular"
+                        android:fontFamily="@font/inter_semi_bold"
                         android:gravity="center"
                         android:inputType="textVisiblePassword"
                         android:maxLength="5"
                         android:textSize="12sp"
                         tools:ignore="TextFields"
-                        tools:text="4868" />
+                        android:textColorHint="@color/disabled"
+                        android:hint="CVV"/>
 
                 </androidx.cardview.widget.CardView>
 
@@ -202,14 +204,14 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageCvv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="88dp"
+                android:layout_height="60dp"
                 android:layout_marginBottom="14dp"
                 android:paddingTop="5dp"
                 app:layout_constraintBottom_toTopOf="@id/layout_cars"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/ic_cvv_saved_card" />
+                app:srcCompat="@drawable/ic_saved_card" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/closeButton"

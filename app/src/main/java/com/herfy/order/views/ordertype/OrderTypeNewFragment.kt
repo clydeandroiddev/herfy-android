@@ -1608,7 +1608,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun dismissPickupTypeDialog() {
         try {
-            choosePickupTypeDialog.dismiss()
+            if (this::choosePickupTypeDialog.isInitialized) {
+                choosePickupTypeDialog.dismiss()
+            }
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }

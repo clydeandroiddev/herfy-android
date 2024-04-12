@@ -1459,6 +1459,10 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
     }
 
     @Override
+    public void showInputCvvDialog(String orderId) {
+    }
+
+    @Override
     public void initializeTap(String orderId, double total) {
 
         if (!BuildConfig.BUILD_TYPE.equalsIgnoreCase("release")) {
