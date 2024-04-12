@@ -32,6 +32,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -1355,8 +1356,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     @SuppressLint("MissingPermission")
     private fun continueOrder() {
         try {
+            showLoadingDialog()
             Handler().postDelayed({
                 runOnUiThread {
+                    binding?.blocker?.isVisible = true
+                    binding?.blocker?.setOnClickListener(null)
                     val concept = CacheUtil.getInstance().concept
                     if (concept != null) {
                         var promptRatingSeconds =
@@ -1391,6 +1395,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             }
                         }
                     }
+                    dismissDialogs()
                     val intent = Intent(this@CheckoutActivity, MainActivity::class.java)
                     intent.putExtra("payment", true)
                     intent.putExtra("order_id", orderId)
@@ -1564,9 +1569,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             } else if (card.attributes.brand.endsWith("mastercard", true)) {
                 res = R.drawable.ic_mastercard
                 cardLabel = "Master ****"
-                }else if (card.attributes.brand.endsWith("amex", true)){
-                    res = R.drawable.ic_amex_card
-                    cardLabel = "Amex ****"
+            }else if (card.attributes.brand.endsWith("amex", true)){
+                res = R.drawable.ic_amex_card
+                cardLabel = "Amex ****"
             }
             binding!!.layoutPayment.ivSelectedPayment.setImageResource(res)
             binding!!.layoutPayment.tvSelectedPayment.text = cardLabel + card.attributes.last4Digits

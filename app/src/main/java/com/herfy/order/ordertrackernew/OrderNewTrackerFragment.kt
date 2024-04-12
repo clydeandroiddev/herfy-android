@@ -826,16 +826,20 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 statusDriverDetails.riderName.text = "${driver.firstName} ${driver.lastName}"
                 statusDriverDetails.driverInitial.text =
                     "${driver.firstName.first()}${driver.lastName.first()}"
-                statusDriverDetails.callRider.setOnClickListener {
-                    if (StringUtil.isValidPhoneNumber(driver.mobile)) {
+
+                if (StringUtil.isValidPhoneNumber(driver.mobile)) {
+                    statusDriverDetails.callRider.isVisible = true
+                    statusDriverDetails.messageRider.isVisible = true
+                    statusDriverDetails.callRider.setOnClickListener {
                         numberToCall = driver.mobile
                         requestCallPermission(numberToCall)
                     }
-                }
-                statusDriverDetails.messageRider.setOnClickListener {
-                    if (StringUtil.isValidPhoneNumber(driver.mobile)) {
+                    statusDriverDetails.messageRider.setOnClickListener {
                         callWhatsApp(driver.mobile)
                     }
+                } else {
+                    statusDriverDetails.callRider.isVisible = false
+                    statusDriverDetails.messageRider.isVisible = false
                 }
             } else {
                 statusDriverDetails.noDriverLayout.isVisible = true
