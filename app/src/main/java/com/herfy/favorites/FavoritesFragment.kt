@@ -33,6 +33,7 @@ import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.*
@@ -189,6 +190,11 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             binding.txtCartFavouriteTotal.text = quantityTotal.toString()
             binding.footer.setVisible(quantityTotal >= 1)
 
+        binding.viewBasketLayout
+            .setOnClickListener {
+                    findNavController().navigateToDeepLink("nav_cart")
+                }
+
         adapter = FavoritesRecyclerViewAdapter(favoritesPresenter)
         adapter?.setOnAction(object : FavoritesAction {
 
@@ -214,6 +220,20 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         })
         binding.favouriteRecycleView.layoutManager = LinearLayoutManager(context)
         binding.favouriteRecycleView.adapter = adapter
+    }
+
+    fun updateFavoriteQuantity() {
+        val cartItems = CacheUtil.getInstance().cart
+        val quantityTotal =  cartItems.filter { it.isFavorite }
+            .sumOf { it.attributes.quantity }
+
+
+        binding.txtCartFavouriteTotal.text = quantityTotal.toString()
+        binding.footer.setVisible(quantityTotal >= 1)
+        val currentSelectedOrderType = CacheUtil.getInstance().orderType
+        getFavoritesByOrderType(currentSelectedOrderType,
+            orderTypeMenus = orderTypeMenus)
+
     }
 
     override fun setupFonts() {}
@@ -424,8 +444,9 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                 }
 
                 Toast.makeText(
-                    baseActivity,
-                    CacheUtil.getInstance().getTranslations(Text.FAVORITE_ADDED_TO_CART),
+                    it,
+                    CacheUtil.getInstance()
+                        .getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
                     Toast.LENGTH_SHORT
                 ).show()
 
