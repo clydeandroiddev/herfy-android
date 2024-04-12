@@ -1066,7 +1066,12 @@ class CartPresenter @Inject constructor(
         val menuItem = menuItems[position]
         var addingItem = false
         if (!add && menuItem.attributes.quantity != 1) {
-            (menuItem.attributes.quantity - 1).also { menuItem.attributes.quantity = it }
+            if (menuItem.isFavorite) {
+                (menuItem.attributes.quantity - 1).also { menuItem.attributes.quantity = it }
+
+            }else {
+                (menuItem.attributes.quantity - 1).also { menuItem.attributes.quantity = it }
+            }
             if (menuItem.attributes.isUpsell && menuItem.attributes.upsellQuantity != 1) {
                 menuItem.attributes.upsellQuantity -= 1
             }
