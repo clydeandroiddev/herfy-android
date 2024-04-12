@@ -67,6 +67,7 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyHistoryContract.View {
             } else {
                 overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
             }
+            finish()
         }
     }
 

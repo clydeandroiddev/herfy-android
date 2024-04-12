@@ -269,10 +269,13 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         clRewardTier.visible()
                     }
                 }
-                tiers.find { t -> t.name.equals(loyalty.attributes.loyaltyTier.name)}?.let {
-                    layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
-                        .replace("(x)", it.collectRules.earnPoint.toString())
-                        .replace("(y)", it.collectRules.perSar.toString())
+                tiers.find { t -> t.name.equals(loyalty.attributes.loyaltyTier.name?:"")}?.let {
+                    it.collectRules?.let {collectRules ->
+                        layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
+                            .replace("(x)", collectRules.earnPoint.toString())
+                            .replace("(y)", collectRules.perSar.toString())
+                    }
+
                 }
             }else {
                 fmRewardsTier.gone()
@@ -289,11 +292,11 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         loyalty.attributes.loyaltyTier == null
                                 && loyaltyPresenter.tiers != null &&
                                 loyaltyPresenter.tiers.size > 0 -> {
-                            loyaltyPresenter.tiers[0].name
+                            loyaltyPresenter.tiers[0]?.name?:""
                         }
 
                         else -> {
-                            loyalty.attributes.loyaltyTier.name
+                            loyalty.attributes?.loyaltyTier?.name?: ""
                         }
                     }
                     if(LocaleUtil.getInstance().isEnglish) {
