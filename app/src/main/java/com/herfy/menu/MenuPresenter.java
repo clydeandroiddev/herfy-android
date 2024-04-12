@@ -4327,6 +4327,11 @@ public class MenuPresenter implements MenuContract.Presenter {
                 if (MenuUtil.areModifiersSame(item,modifierItem)) {
                     item.getAttributes().setSelected(false);
                     item.getAttributes().setShouldShowQuantity(false);
+                    for (ModifierItem eachModifier: group.getModifierItems()) {
+                        if (!eachModifier.getAttributes().isSelected() && Objects.equals(group.getId(), modifierGroup.getId())) {
+                            updateModifierGroupSelectionIndicator(false,modifierGroupPosition);
+                        }
+                    }
                     int selectedItemQuantity = MenuUtil.modifierItemQuantityCount(group);
                     if (selectedItemQuantity < modifierGroupMax) {
                         for (ModifierItem eachModifierItem : group.getModifierItems()) {
@@ -4378,6 +4383,11 @@ public class MenuPresenter implements MenuContract.Presenter {
                     if (item.getId().equals(modifierItem.getId())) {
                         if (modifierItemSelected.getAttributes().getQuantity() == 1 &&  !item.getAttributes().isSelected()) {
                             item.getAttributes().setSelected(true);
+                            for (ModifierItem eachModifier: group.getModifierItems()) {
+                                if (eachModifier.getAttributes().isSelected() && Objects.equals(group.getId(), modifierGroup.getId())) {
+                                    updateModifierGroupSelectionIndicator(true,modifierGroupPosition);
+                                }
+                            }
                             item.getAttributes().setModifierItemInteraction(true);
                         } else {
                             item.getAttributes().setSelected(true);
