@@ -68,6 +68,7 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_ashab_herfy"
                 style="@style/Styles.Text.Footnote.Semi.Bold"
                 tools:text="Diamond"
+                android:visibility="invisible"
                 />
 
             <androidx.constraintlayout.widget.ConstraintLayout
