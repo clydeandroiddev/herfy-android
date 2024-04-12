@@ -297,31 +297,19 @@
                         layout="@layout/payment_method_new"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/margin_medium"
                         android:layout_marginStart="@dimen/margin_small"
                         android:layout_marginEnd="@dimen/margin_small"/>
 
-                    <!--                <include-->
-                    <!--                    android:id="@+id/layout_order_summary"-->
-                    <!--                    layout="@layout/order_summary"-->
-                    <!--                    android:layout_width="match_parent"-->
-                    <!--                    android:layout_height="wrap_content"-->
-                    <!--                    android:layout_marginBottom="5dp"-->
-                    <!--                    app:layout_constraintBottom_toTopOf="@+id/layout_payment_summary"-->
-                    <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-                    <!--                    app:layout_constraintStart_toStartOf="parent" />-->
-
                     <include
-                        android:id="@+id/layout_alraji"
-                        layout="@layout/item_alraji_bank"
+                        android:id="@+id/layout_alrahji"
+                        layout="@layout/layout_alrhaji"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_medium"
                         android:layout_marginStart="@dimen/margin_small"
-                        android:layout_marginEnd="@dimen/margin_small"
-                        android:layout_marginBottom="@dimen/margin_micro"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        android:layout_marginEnd="@dimen/margin_small"/>
+
 
                     <include
                         android:id="@+id/layout_loyalty"

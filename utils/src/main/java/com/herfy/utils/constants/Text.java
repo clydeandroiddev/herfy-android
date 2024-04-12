@@ -724,8 +724,8 @@ public class Text {
     public static final String AMOUNT = "amount";
     public static final String RESEND_OTP_MESSAGE = "resend_otp_message";
     public static final String RESEND_OTP_HERE = "resent_otp_here";
-    public static final String SUBMIT_OTP = "submit_otp_caps";
-    public static final String REQUEST_OTP = "request_otp_caps";
+    public static final String SUBMIT_OTP = "submit_otp_label";
+    public static final String REQUEST_OTP = "request_otp_label";
     public static final String ERROR_CAPS = "error_caps";
     public static final String INVALID_OTP = "invalid_otp";
     public static final String OKAY_CAPS = "okay_caps";
@@ -1015,6 +1015,11 @@ public class Text {
     public static final String COMPLETE_PROFILE = "complete_profile";
     public static final String COMPLETE_YOUR_PROFILE = "complete_your_profile";
 
+    public static final String ALRHAJI_LABEL="alrhaji_label";
+    public static final String ALRHAJI_DESCRIPTION="alrhaji_description";
+    public static final String CIC_NUMBER_LABEL="cic_number_label";
+    public static final String ENTER_OTP_LABEL="enter_otp_label";
+    public static final String ALRHAJI_AMOUNT_ERROR= "alrhaji_amount_error";
     public static final String POINTS_EQUAL_SAR = "points_equal_sar";
 
     public static final String NAME = "name_label";
@@ -1025,7 +1030,6 @@ public class Text {
     public static final String YOUR_NAME = "your_name";
 
     public static final String CAN_NOT_BE_EDITED = "can_not_be_edited";
-
     public static final String ARE_YOU_SURE_YOU_WANT_TO_DELETE = "are_you_sure_want_delete";
     public static final String THIS_ACTION_CAN_NOT_REVERSE = "this_action_can_not_reverse";
 

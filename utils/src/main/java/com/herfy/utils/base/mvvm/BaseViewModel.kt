@@ -35,10 +35,11 @@ open class BaseViewModel : ViewModel() {
 
     fun invoke(task: suspend () -> Unit) {
 
-        showProgressBar.postValue(true)
+        showProgressBar.value = true
         viewModelScope.launch(exceptionHandler) {
             task.invoke()
-            showProgressBar.postValue(false)
+        }.invokeOnCompletion {
+            showProgressBar.value = false
         }
     }
 

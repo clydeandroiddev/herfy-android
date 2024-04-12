@@ -3,13 +3,17 @@ package com.herfy.common.base
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -204,6 +208,39 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
                 findViewById<View>(com.google.android.material.R.id.coordinator)?.fitsSystemWindows =
                     false
             }
+        }
+    }
+
+    private var loadingDialog: AlertDialog? = null
+    open fun showLoadingDialog() {
+        try {
+            dismissLoadingDialog()
+            context?.let {
+                val builder = AlertDialog.Builder(it)
+                builder.setCancelable(false)
+                builder.setView(layoutInflater.inflate(R.layout.loading, null))
+                loadingDialog = builder.create()
+                loadingDialog?.apply {
+                    requestWindowFeature(Window.FEATURE_NO_TITLE)
+                    window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    show()
+                }
+            }
+
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    open fun dismissLoadingDialog() {
+        try {
+           loadingDialog?.let { dialog ->
+               if(dialog.isShowing){
+                   dialog.dismiss()
+               }
+           }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
         }
     }
 }

@@ -10,6 +10,8 @@ import com.herfy.repository.HomeRepository
 import com.herfy.repository.HomeRepositoryImpl
 import com.herfy.repository.MenuRepository
 import com.herfy.repository.MenuRepositoryImpl
+import com.herfy.repository.PaymentRepository
+import com.herfy.repository.PaymentRepositoryImpl
 import com.herfy.repository.StoreRepository
 import com.herfy.repository.StoreRepositoryImpl
 import com.herfy.utils.helper.CacheUtilHelper
@@ -66,5 +68,13 @@ object RepositoryModule {
         cacheUtilHelper: CacheUtilHelper
     ): StoreRepository =
         StoreRepositoryImpl()
+
+    @Provides
+    @Singleton
+    fun providePaymentRepository(
+        appDatabase: AppDatabase,
+        cacheUtilHelper: CacheUtilHelper
+    ) : PaymentRepository = PaymentRepositoryImpl(appDatabase, cacheUtilHelper)
+
 
 }

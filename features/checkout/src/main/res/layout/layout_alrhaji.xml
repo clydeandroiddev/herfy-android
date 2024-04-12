@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_alrhaji"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="@dimen/radius_large"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        app:cardBackgroundColor="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <FrameLayout
+                android:id="@+id/fm_alrhaji_logo"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/background_alrhaji_logo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+                <ImageView
+                    android:id="@+id/iv_alrajhi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_alrhaji_logo"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_alrhaji_label"
+                style="@style/TextAppearance.Headline1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="11dp"
+                android:maxLines="1"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="14sp"
+                android:ellipsize="end"
+                app:layout_constraintEnd_toStartOf="@+id/switch_alrahji"
+                app:layout_constraintStart_toEndOf="@id/fm_alrhaji_logo"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Al Rhaji Bank (Mokafa's Rewards)" />
+
+            <TextView
+                android:id="@+id/tv_alrhaji_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:lines="3"
+                android:textSize="11sp"
+                android:textColor="@color/secondaryTextColor"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toStartOf="@id/tv_alrhaji_label"
+                app:layout_constraintTop_toBottomOf="@id/tv_alrhaji_label"
+                app:layout_constraintEnd_toStartOf="@id/switch_alrahji"
+                android:layout_marginEnd="8dp"
+                tools:text="The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful."/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_alrahji"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                app:track="@drawable/track_selector"
+                android:thumb="@drawable/thumb_selector"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>

@@ -17,12 +17,12 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.herfy.common.base.BaseBottomSheetDialogFragment
 import com.herfy.home.R
 import com.herfy.home.adapter.PromotionOrderTypeAdapter
 import com.herfy.home.adapter.PromotionRulesAdapter
 import com.herfy.home.databinding.BottomSheetPromotionDetailBinding
 import com.herfy.model.PromotionOrderType
-import com.herfy.utils.base.mvvm.BaseBottomSheetDialogFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.visible

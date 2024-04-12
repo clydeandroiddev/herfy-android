@@ -1,13 +1,16 @@
-package com.herfy.utils.base.mvvm
+package com.herfy.common.base
 
 import android.content.DialogInterface
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.view.Window
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.herfy.utils.R
+import com.herfy.common.R
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.ViewUtil
@@ -120,6 +123,39 @@ open class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 promoDialog!!.dismiss()
             }
         } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private var loadingDialog: AlertDialog? = null
+    open fun showLoadingDialog() {
+        try {
+            dismissLoadingDialog()
+            context?.let {
+                val builder = AlertDialog.Builder(it)
+                builder.setCancelable(false)
+                builder.setView(layoutInflater.inflate(R.layout.loading, null))
+                loadingDialog = builder.create()
+                loadingDialog?.apply {
+                    requestWindowFeature(Window.FEATURE_NO_TITLE)
+                    window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    show()
+                }
+            }
+
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    open fun dismissLoadingDialog() {
+        try {
+            loadingDialog?.let { dialog ->
+                if(dialog.isShowing){
+                    dialog.dismiss()
+                }
+            }
+        } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
     }
