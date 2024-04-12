@@ -117,6 +117,13 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         radioButton.setVisibility(modifierGroupAttributes.getMaximum() == 1 ? View.VISIBLE : View.GONE);
         check.setVisibility(modifierGroup.getAttributes().getMaximum() > 1 ? View.VISIBLE : View.GONE);
 
+        int selectedDefaultModifierItem = MenuUtil.modifierItemQuantityCount(modifierGroup);
+        if (selectedDefaultModifierItem >= modifierGroup.getAttributes().getMaximum()) {
+            if (!modifierItem.getAttributes().isSelected()) {
+                modifierItem.getAttributes().setModifierItemInteraction(false);
+                modifierItem.getAttributes().setModifierItemQuantityExceedsMaximum(false);
+            }
+        }
 
         if (isModifierItemSelected) {
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state);
