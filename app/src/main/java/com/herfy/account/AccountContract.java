@@ -54,6 +54,8 @@ public interface AccountContract {
 
         void showRevelRewardPoints(Double pointValue);
 
+        void showCard(boolean isDefault);
+
     }
 
     interface Presenter extends BasePresenter {
@@ -83,6 +85,8 @@ public interface AccountContract {
         int getBookmarkLocationsCount();
 
         void fetchCustomerCards();
+
+        void setCustomerDefaultCard(String cardId, boolean isDefault);
 
         void deleteLocation(Address location);
 

@@ -12,6 +12,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Customer;
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard;
 import com.skylinedynamics.solosdk.api.models.objects.RevelReward;
+import com.skylinedynamics.solosdk.api.models.requestbodies.DefaultCardBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerPasswordBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdatePasswordCustomerBody;
@@ -142,6 +143,32 @@ public class AccountPresenter implements AccountContract.Presenter {
                 accountView.showCustomerCards();
             }
         });
+    }
+
+    @Override
+    public void setCustomerDefaultCard(String cardId, boolean isDefault) {
+
+        CustomersApiCall.getInstance().updateDefaultCard(new DefaultCardBody(isDefault),
+                AuthUtil.getInstance().getCustomer().getId(),
+                cardId,
+                new ApiRequestListener() {
+                    @Override
+                    public void onSuccess(Object obj) {
+                        try {
+                        JSONObject jsonObject = new JSONObject(obj.toString());
+                            CustomerCard card = GsonHelper.gsonFinal().fromJson(jsonObject.getJSONObject("data").toString(), new TypeToken<CustomerCard>() {
+                            }.getType());
+                            CacheUtil.getInstance().setCustomCard(new Gson().toJson(card));
+                            accountView.showCard(card.attributes.isDefault);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    @Override
+                    public void onError(Object error) {
+                        accountView.showCard(!isDefault);
+                    }
+                });
     }
 
     @Override

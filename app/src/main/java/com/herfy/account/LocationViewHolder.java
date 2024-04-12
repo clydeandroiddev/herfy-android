@@ -210,4 +210,8 @@ public class LocationViewHolder extends RecyclerView.ViewHolder implements Accou
 
     }
 
+    @Override
+    public void showCard(boolean isDefault) {
+    }
+
 }

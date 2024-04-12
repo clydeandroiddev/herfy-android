@@ -428,4 +428,7 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
     override fun showRevelRewardPoints(pointValue: Double?) {
 
     }
+
+    override fun showCard(isDefault: Boolean) {
+    }
 }

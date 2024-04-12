@@ -59,6 +59,7 @@ class CardDetailsFragment : BaseFragment(), AccountContract.View {
         card?.let {
             binding.cardBrand.text = it.attributes.brand
             binding.cardNumber.text = "**** **** **** " + it.attributes.last4Digits
+            binding.toggleDefault.isOpened = card?.attributes?.isDefault == true
         }
     }
 
@@ -84,6 +85,16 @@ class CardDetailsFragment : BaseFragment(), AccountContract.View {
             back.setOnClickListener {
                 navigateUp()
             }
+
+            toggleDefault.setOnClickListener {
+                showLoadingDialog()
+                if (toggleDefault.isOpened) {
+                    paymentPresenter?.setCustomerDefaultCard(card?.id, true)
+                } else {
+                    paymentPresenter?.setCustomerDefaultCard(card?.id, false)
+                }
+            }
+
             deletePaymentMethod.setOnClickListener {
                 card?.let {
                     showLoadingDialog()
@@ -243,5 +254,10 @@ class CardDetailsFragment : BaseFragment(), AccountContract.View {
 
     override fun showRevelRewardPoints(pointValue: Double?) {
 
+    }
+
+    override fun showCard(isDefault: Boolean) {
+        dismissDialogs()
+        binding.toggleDefault.isOpened = isDefault
     }
 }
