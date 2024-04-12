@@ -628,11 +628,6 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                 CacheUtil.getInstance().setCartExpired(true);
             } else {
                 removeMukafaaRedemption();
-                List<MenuItem> cartItems = CacheUtil.getInstance().getCart();
-
-                for (MenuItem item : cartItems) {
-                    item.setFavorite(false);
-                }
                 CacheUtil.getInstance().setCart(new ArrayList<>());
                 CacheUtil.getInstance().setUpsell(true);
                 CacheUtil.getInstance().setCouponCode(null);
