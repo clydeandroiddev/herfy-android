@@ -231,7 +231,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
         } else {
             modifierImage.setVisibility(View.GONE);
         }
-        boolean isModifierGroupRequired  = modifierGroup.getAttributes().getMinimum() >= 1;
+        boolean isModifierGroupRequired  = !showShowModifierCheckBox && modifierGroup.getAttributes().getMinimum() >= 1;
         requiredCardView.setVisibility(isModifierGroupRequired ? View.VISIBLE : View.GONE);
         modifierCheckBox.setVisibility(showShowModifierCheckBox ? View.VISIBLE : View.GONE);
         txtMinimum.setText(CacheUtil.getInstance().getTranslations(Text.REQUIRED,"Required"));
