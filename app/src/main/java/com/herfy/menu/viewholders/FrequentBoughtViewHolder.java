@@ -26,7 +26,10 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -100,7 +103,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
             txtCalories.setText("");
         }
             if (AuthUtil.getInstance().isSignedIn()) {
-                if (menuItem.isFavorite()) {
+                if (menuItem.isFavorite() || CacheUtil.getInstance().getFavorites().contains(menuItem.getId())) {
                     btnFavorite.setImageResource(R.drawable.ic_favorite_filled);
                 } else {
                     btnFavorite.setImageResource(R.drawable.ic_frequent_favourites);

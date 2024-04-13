@@ -1205,31 +1205,27 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void toggleFavorites(boolean isAddToFavorite, MenuItem menuItem, int position) {
-        if (!isAddToFavorite) {
-            CustomersApiCall.getInstance().addItemToFavorite(AuthUtil.getInstance().getCustomer().getId(), AddFavoriteItemBody.getCdn(LocaleUtil.getInstance().getLanguage(), this.menuItem), new ApiRequestListener() {
+        if (!isAddToFavorite && !CacheUtil.getInstance().getFavorites().contains(menuItem.getId())) {
+            CustomersApiCall.getInstance().addItemToFavorite(AuthUtil.getInstance().getCustomer().getId(), AddFavoriteItemBody.getCdn(LocaleUtil.getInstance().getLanguage(), menuItem), new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
 
                     MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM);
                     KochavaTrackerUtil.trackEvent(EventType.ADD_TO_WISH_LIST);
 
-                    getFavorites(true, 1);
 
                     Set<String> favorites = CacheUtil.getInstance().getFavorites();
-                    favorites.add(MenuPresenter.this.menuItem.getId());
+                    favorites.add(menuItem.getId());
                     CacheUtil.getInstance().setFavorites(favorites);
 
                     HashMap<String, String> eventAttributes = new HashMap<>();
                     eventAttributes.put("Item ID", MenuPresenter.this.menuItem.getId());
-                    eventAttributes.put("Item Name", MenuPresenter.this.menuItem.getAttributes().getName());
+                    eventAttributes.put("Item Name", menuItem.getAttributes().getName());
 
                     menuView.logEvent("AddToFavorites", eventAttributes, null, 0);
-                    menuView.logAddToWishlistEvent(MenuPresenter.this.menuItem);
+                    menuView.logAddToWishlistEvent(menuItem);
                     menuItem
                             .setFavorite(true);
-
-                    menuView.setFavorite(MenuPresenter.this.menuItem);
-
                     menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_FAVORITES));
                     menuView.updateFavoriteByPosition(position,menuItem);
 
@@ -1242,17 +1238,17 @@ public class MenuPresenter implements MenuContract.Presenter {
                 }
             });
         } else {
-            CustomersApiCall.getInstance().deleteItemFromFavorites(AuthUtil.getInstance().getCustomer().getId(), this.menuItem.getId(), new ApiRequestListener() {
+            CustomersApiCall.getInstance().deleteItemFromFavorites(AuthUtil.getInstance().getCustomer().getId(), menuItem.getId(), new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
 
                     getFavorites(true, 1);
 
                     Set<String> favorites = CacheUtil.getInstance().getFavorites();
-                    favorites.remove(MenuPresenter.this.menuItem.getId());
+                    favorites.remove(menuItem.getId());
                     CacheUtil.getInstance().setFavorites(favorites);
 
-                    menuView.setFavorite(MenuPresenter.this.menuItem);
+                    menuView.setFavorite(menuItem);
                     menuItem
                             .setFavorite(false);
                     menuView.updateFavoriteByPosition(position,menuItem);
