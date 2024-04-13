@@ -171,7 +171,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
             public void onSuccess(Object o) {
 
                 Set<String> favoritesSet = CacheUtil.getInstance().getFavorites();
-                favoritesSet.remove(favorite.getItemId());
+                favoritesSet.remove(favorite.getId());
                 CacheUtil.getInstance().setFavorites(favoritesSet);
 
                 favorites.remove(favorite);
