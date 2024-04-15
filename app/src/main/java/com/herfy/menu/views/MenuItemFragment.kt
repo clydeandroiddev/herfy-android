@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -144,6 +145,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         }
         menuPresenter.start()
         binding.frequentlyBoughtShimmering.setVisible(true)
+        setFragmentResultListener(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER){ key, bundle ->
+            val isAddedToCart = bundle.getBoolean(Values.KEY_IS_ADDED_TO_CART, false)
+            if (!isAddedToCart) {
+                resetFrequentlyAddedFavoritesInCart()
+            }
+        }
         initialModifierId = ""
         activity?.cast<BaseActivity> {
             if (BuildUtil.soloAppKey().equals("SpeWD37HZx9Uqora", ignoreCase = true)) {
@@ -155,6 +162,22 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 menuPresenter.setFromCartEdit(false)
                 if (args.menuCategoryId?.isNotEmpty() == true) {
                     menuPresenter.setMenuCategory(args.menuCategoryId)
+                } else {
+                    if (args.cartMenuItemPosition != -1) {
+                        cartMenuItem = args.cartMenuItemPosition
+                        val menuItems: List<MenuItem>? = CacheUtil.getInstance().cart
+                        if (menuItems != null && cartMenuItem < menuItems.size) {
+                            val menuItem = menuItems[cartMenuItem]
+                            menuPresenter.setFromCartEdit(true)
+                            menuPresenter.setMenuCategory(menuItem)
+                            menuPresenter.menuItem = menuItem
+                            setMenuItemDetails(menuPresenter.menuItem)
+                            setMenuItem(menuPresenter.menuCategory, menuPresenter.menuItem)
+                            menuPresenter.getFrequentBoughtItemsByMenuId(1,args.menuItemId)
+                            menuPresenter.showHideModifierItemPrice()
+                            return
+                        }
+                    }
                 }
                 val isUpsell = args.isUpsell
                 if(isUpsell){
@@ -163,18 +186,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     menuPresenter.getMenuItem(false, args.menuItemId)
                 }
                 menuPresenter.getFrequentBoughtItemsByMenuId(1,args.menuItemId)
-            } else if (args.cartMenuItemPosition != -1) {
-                cartMenuItem = args.cartMenuItemPosition
-                val menuItems: List<MenuItem>? = CacheUtil.getInstance().cart
-                if (menuItems != null && cartMenuItem < menuItems.size) {
-                    val menuItem = menuItems[cartMenuItem]
-                    menuPresenter.setFromCartEdit(true)
-                    menuPresenter.setMenuCategory(menuItem)
-                    menuPresenter.menuItem = menuItem
-                    setMenuItemDetails(menuPresenter.menuItem)
-                    setMenuItem(menuPresenter.menuCategory, menuPresenter.menuItem)
-                    menuPresenter.showHideModifierItemPrice()
-                }
             }
         } else {
             val menuItem: MenuItem? = if (!args.isEdit) {
@@ -304,7 +315,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
         }
         CacheUtil.getInstance().setFrequentlyQuantityShouldShow(false,"")
-        System.out.println("Updated cart " + updatedCart)
         CacheUtil.getInstance().cart = updatedCart
     }
 
@@ -386,13 +396,16 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun showStore(store: Store) {}
-    override fun navigateToMenuItemDetails(menuCategory: MenuCategory?, menuItem: MenuItem?) {
-        navMenuItem(menuCategory?.id.orEmpty(), menuItemId = menuItem?.id.orEmpty())
+    override fun navigateToMenuItemDetails(
+        menuCategory: MenuCategory?,
+        menuItem: MenuItem?
+    ) {
+        navMenuItem(menuCategory?.id.orEmpty(), menuItemId = menuItem?.id.orEmpty(),menuItem?.isCombo == true,true)
     }
 
     override fun showStoreOpen(open: Boolean, message: String) {}
     override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
-        frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(),menuPresenter)
+        frequentBoughItemsAdapter = FrequentBoughItemsAdapter(requireContext(), menuPresenter)
         binding.frequentlyBoughRecycleview.adapter = frequentBoughItemsAdapter
         frequentBoughItemsAdapter?.notifyDataSetChanged()
         binding.frequentlyBoughtShimmering.setVisible(false)
@@ -525,12 +538,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     menuPresenter!!.addRemoveFavorite(false)
                 }
                 setFavorite(menuItem)
-                binding.etItemNotes
-                    .setHint(
-                        CacheUtil
-                            .getInstance()
-                            .getTranslations(Text.NOTE_FOR_MENU_HINT, "e.g. no mayo")
-                    )
+                binding.etItemNotes.hint = CacheUtil
+                    .getInstance()
+                    .getTranslations(Text.NOTE_FOR_MENU_HINT, "e.g. no mayo")
                 if (!args.isPromo && AuthUtil.getInstance().isSignedIn && !menuItem.isCombo) {
                     binding.favoriteCard.visible()
                 } else {
@@ -646,9 +656,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         override fun showMessage() {
                             activity?.cast<BaseActivity> {
                                 it.dismissDialogs()
-                                Toast.makeText(it,
+                                Toast.makeText(
+                                    it,
                                     CacheUtil.getInstance()
-                                        .getTranslations(Text.MODIFIER_MAXIMUM_LIMIT), Toast.LENGTH_SHORT).show()
+                                        .getTranslations(Text.MODIFIER_MAXIMUM_LIMIT),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
 
@@ -707,6 +720,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 var addToCart = ""
                 if (cartMenuItem >= 0 || args.isEdit) {
                     binding.add.text = CacheUtil.getInstance().getTranslations(Text.UPDATE)
+                    menuPresenter!!.getMenuItemTotalPrice(menuPresenter!!.menuItem, -1)
+                    binding.coordinatorLayout.visibility = View.VISIBLE
+                    binding.footer.visibility = View.VISIBLE
                 } else {
 
 
@@ -729,12 +745,32 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 //                    )
 //                }
                     }
+                }
+                binding.add.setOnClickListener(View.OnClickListener {
+                    if (CacheUtil.getInstance().application.attributes.menuOnly) {
+                        FirebaseService.newNotification(
+                            CacheUtil.getInstance().getTranslations(
+                                Text.MENU_ONLY_MESSAGE,
+                                "Sorry, ordering is not available at the moment"
+                            ), binding.add.context
+                        )
+                        return@OnClickListener
+                    }
+                    var itemNote = binding.etItemNotes.text.toString() ?: ""
+                    if (itemNote.isEmpty()) {
+                        menuPresenter.setItemNote("")
+                    } else {
+                        menuPresenter.setItemNote(itemNote)
+                    }
 
                     binding.tvSoldOut.text =
                         CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
 
                     binding.add.apply {
-                        if (CacheUtil.getOrderStoreId() != null && menuItem.outOfStockLocations.contains(CacheUtil.getOrderStoreId())) {
+                        if (CacheUtil.getOrderStoreId() != null && menuItem.outOfStockLocations.contains(
+                                CacheUtil.getOrderStoreId()
+                            )
+                        ) {
                             binding.tvSoldOut.visible()
                             isEnabled = false
                             alpha = 0.3f
@@ -796,83 +832,70 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             CacheUtil.getOrderStoreId()
                         )
                     ) {
-//                    binding.soldout.text =
-//                        CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
-//                    binding.soldout.visibility = View.VISIBLE
                         binding.image.setColorFilter(
                             ContextCompat.getColor(
                                 requireContext(),
                                 R.color.soldout
                             )
                         )
-//                    binding.add.backgroundTintList = ColorStateList.valueOf(
-//                        ContextCompat.getColor(
-//                            requireContext(),
-//                            R.color.disabled_tint
-//                        )
-//                    )
-                        binding.add.isEnabled = false
-                    }
-//                if (menuItem.listPrice > 0.0) {
-//                    binding.discountIndicator.visibility = View.VISIBLE
-//                } else {
-//                    binding.discountIndicator.visibility = View.GONE
-//                }
-
-//                binding.componentsShimmer.visibility = View.GONE
-                    var imageUrl = menuItem.image
-                    if (imageUrl == null || imageUrl.equals(
-                            "null",
-                            ignoreCase = true
-                        ) || imageUrl.isEmpty() || imageUrl.lowercase(
-                            Locale.getDefault()
-                        ).contains("default-image.png")
-                    ) {
-                        imageUrl = Values.DEFAULT_IMAGE_URL
-                    }
-                    val requestOptions: RequestOptions
-                    if (BuildUtil.soloAppKey().equals("kExl05bOT4ttFEO2", ignoreCase = true)) {
-                        requestOptions = RequestOptions.centerInsideTransform()
-                        binding.image.scaleType = ImageView.ScaleType.CENTER_INSIDE
-                    } else {
-                        requestOptions = RequestOptions.centerCropTransform()
-                        binding.image.scaleType = ImageView.ScaleType.CENTER_CROP
-                    }
-                    Glide.with(baseActivity)
-                        .load(imageUrl)
-                        .skipMemoryCache(false)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .apply(requestOptions)
-                        .listener(object : RequestListener<Drawable?> {
-                            override fun onLoadFailed(
-                                e: GlideException?,
-                                model: Any,
-                                target: Target<Drawable?>,
-                                isFirstResource: Boolean
-                            ): Boolean {
+                        var imageUrl = menuItem.image
+                        if (imageUrl == null || imageUrl.equals(
+                                "null",
+                                ignoreCase = true
+                            ) || imageUrl.isEmpty() || imageUrl.lowercase(
+                                Locale.getDefault()
+                            ).contains("default-image.png")
+                        ) {
+                            imageUrl = Values.DEFAULT_IMAGE_URL
+                        }
+                        val requestOptions: RequestOptions
+                        if (BuildUtil.soloAppKey().equals("kExl05bOT4ttFEO2", ignoreCase = true)) {
+                            requestOptions = RequestOptions.centerInsideTransform()
+                            binding.image.scaleType = ImageView.ScaleType.CENTER_INSIDE
+                        } else {
+                            requestOptions = RequestOptions.centerCropTransform()
+                            binding.image.scaleType = ImageView.ScaleType.CENTER_CROP
+                        }
+                        Glide.with(baseActivity)
+                            .load(imageUrl)
+                            .skipMemoryCache(false)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .apply(requestOptions)
+                            .listener(object : RequestListener<Drawable?> {
+                                override fun onLoadFailed(
+                                    e: GlideException?,
+                                    model: Any,
+                                    target: Target<Drawable?>,
+                                    isFirstResource: Boolean
+                                ): Boolean {
 //                            binding.imageShimmer.visibility = View.GONE
-                                return false
-                            }
+                                    return false
+                                }
 
-                            override fun onResourceReady(
-                                resource: Drawable?,
-                                model: Any,
-                                target: Target<Drawable?>,
-                                dataSource: DataSource,
-                                isFirstResource: Boolean
-                            ): Boolean {
+                                override fun onResourceReady(
+                                    resource: Drawable?,
+                                    model: Any,
+                                    target: Target<Drawable?>,
+                                    dataSource: DataSource,
+                                    isFirstResource: Boolean
+                                ): Boolean {
 //                            binding.imageShimmer.visibility = View.GONE
-                                return false
-                            }
-                        })
-                        .into(binding.image)
+                                    return false
+                                }
+                            })
+                            .into(binding.image)
 
-                    if (!viewEventSent) {
-                        viewEventSent = true
-                        FirebaseECommerceEventUtil.viewItemEvent(activity, menuItem, menuCategory)
-                        FacebookAppEventUtil.viewMenuItemEvent(activity, menuItem)
+                        if (!viewEventSent) {
+                            viewEventSent = true
+                            FirebaseECommerceEventUtil.viewItemEvent(
+                                activity,
+                                menuItem,
+                                menuCategory
+                            )
+                            FacebookAppEventUtil.viewMenuItemEvent(activity, menuItem)
+                        }
                     }
-                }
+                })
             }
         }
     }
@@ -1257,7 +1280,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             activity?.cast<BaseActivity> {
                 it.runOnUiThread {
                     if (!isShouldBackPressed) {
-                        frequentBoughItemsAdapter?.notifyItemChanged(menuAddedToCartPosition, menuItem)
+                        menuPresenter.updateFrequentlyIsAddedToCartByPosition(
+                            menuAddedToCartPosition,
+                            menuItem.isAddedToCart
+                        )
+                        frequentBoughItemsAdapter?.notifyItemChanged(menuAddedToCartPosition)
                     }
                     val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                     if (vibrator != null) {
@@ -1283,11 +1310,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuItem.attributes.image,
                         ViewUtil.dpToPx(it, 16)
                     )
-                    if(args.isFrequentlyBoughtItem){
+                    if (args.isFrequentlyBoughtItem) {
+
                         val bundle = Bundle()
                         bundle.putBoolean(Values.KEY_IS_ADDED_TO_CART, true)
-                        setFragmentResult(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER,
-                            bundle)
+//
                     }
                     if (isShouldBackPressed) {
                         activity?.onBackPressed()
@@ -1484,10 +1511,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun updateFloatingTotalPrice() {
 
     }
-    private fun navMenuItem(menuCategoryId: String, menuItemId: String) {
-        val navController = findNavController()
-        navController.popBackStack() // Clear the back stack
-        findNavController().navigateToDeepLink("nav_menu_item/$menuCategoryId/$menuItemId")
+    private fun navMenuItem(menuCategoryId: String, menuItemId: String, isCombo : Boolean, isFromFrequentBoughtMenuItem: Boolean) {
+        val destinationLink = if(isCombo) "nav_combo" else "nav_menu_item"
+        val destinationUri = "${destinationLink}/$menuCategoryId/$menuItemId?is_frequently_bought_item=$isFromFrequentBoughtMenuItem"
+        findNavController().navigateToDeepLink(destinationUri)
     }
 
 }

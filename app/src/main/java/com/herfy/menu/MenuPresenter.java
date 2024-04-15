@@ -1286,7 +1286,10 @@ public class MenuPresenter implements MenuContract.Presenter {
         }
         return menuItems;
     }
-
+    @Override
+    public void updateFrequentlyIsAddedToCartByPosition(int position, Boolean isAddedToCart) {
+        frequentBoughtMenuItems.get(position).setAddedToCart(isAddedToCart);
+    }
     private LinkedList<MenuItem> getCategoryMenuItemIds(MenuCategory category, AppDatabase appDatabase) {
         LinkedList<MenuItem> menuItems = new LinkedList<>();
         List<String> ids = appDatabase.menuItemDao().findAllIdsByMenuCategoryId(category.getId());
