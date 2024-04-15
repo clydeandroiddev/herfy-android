@@ -337,7 +337,7 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
         val type = CacheUtil.getInstance().orderType
         val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         paymentTypes.forEach { paymentType ->
-            if (paymentType == PaymentType.CASH && type != OrderType.DELIVERY) {
+            if (paymentType == PaymentType.CASH) {
                 isCashPaymentAvailable = true
                 val view: View = inflater.inflate(R.layout.item_payment_cash, null)
                 cashPayment = view.findViewById(R.id.cash_layout)
