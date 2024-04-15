@@ -8,7 +8,7 @@ object DistanceCalculator {
         val result = FloatArray(1)
         Location.distanceBetween(lat1, lon1, lat2, lon2, result)
 
-        return result[0].toDouble() / 1000.0
+        return result[0].toDouble()
     }
 
 }

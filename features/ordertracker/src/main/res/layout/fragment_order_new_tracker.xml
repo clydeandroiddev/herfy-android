@@ -386,7 +386,7 @@
                                         android:layout_height="6dp"
                                         android:layout_marginStart="4dp"
                                         android:layout_marginTop="1dp"
-                                        android:src="@drawable/ic_open_summary" />
+                                        android:src="@drawable/ic_close_summary" />
 
                                 </LinearLayout>
 
@@ -394,9 +394,7 @@
                                     android:id="@+id/orderPaymentDetailsFrame"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:visibility="gone"
-                                    app:layout_constraintTop_toBottomOf="@id/paymentSummaryFrame"
-                                    tools:visibility="visible">
+                                    app:layout_constraintTop_toBottomOf="@id/paymentSummaryFrame">
 
                                     <include
                                         android:id="@+id/order_payment_details"

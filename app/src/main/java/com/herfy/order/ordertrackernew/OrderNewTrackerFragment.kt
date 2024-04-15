@@ -113,7 +113,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     private lateinit var orderMenuItemsAdapter: OrderMenuItemsAdapter
 
-    private var isSummaryHidden = true
+    private var isSummaryHidden = false
 
     private var numberToCall = ""
 
@@ -274,10 +274,12 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
             paymentSummaryFrame.setOnClickListener {
                 if (isSummaryHidden) {
+                    imageOpenAndCloseSumamry.setImageResource(R.drawable.ic_close_summary)
                     orderPaymentDetailsFrame.isVisible = true
                     isSummaryHidden = false
                 } else {
                     isSummaryHidden = true
+                    imageOpenAndCloseSumamry.setImageResource(R.drawable.ic_open_summary)
                     orderPaymentDetailsFrame.isVisible = false
                 }
             }
@@ -650,7 +652,12 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             orderAddress?.let { address ->
                                 orderAddressDetails.addressKm.isVisible = false
                                 orderAddressDetails.addressTime.isVisible = false
-                                orderAddressDetails.addressType.text = address.attributes?.label
+                                if (address.attributes?.label.isNullOrEmpty()) {
+                                    orderAddressDetails.addressType.text =
+                                        CacheUtil.getInstance().getTranslations(Text.OTHER, "Other")
+                                } else {
+                                    orderAddressDetails.addressType.text = address.attributes?.label
+                                }
                                 orderAddressDetails.addressName.text = address.attributes?.line1
                                 orderAddressDetails.getDirection.isVisible = false
                                 orderAddressDetails.deliveryDetailsLabel.text =
@@ -672,8 +679,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         OrderType.DINE_IN -> {
                             getBranchTime(store)
                             getDirection(store)
-                            orderAddressDetails.addressType.text = store?.attributes?.name
-                            orderAddressDetails.addressName.text = store?.attributes?.line1
+                            orderAddressDetails.addressType.text = store.attributes?.name
+                            orderAddressDetails.addressName.text = store.attributes?.line1
                             orderAddressDetails.deliveryDetailsLabel.text =
                                 CacheUtil.getInstance().getTranslations(
                                     Text.DINE_IN_DETAILS, "Dine In Details"
@@ -692,8 +699,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         else -> {
                             getBranchTime(store)
                             getDirection(store)
-                            orderAddressDetails.addressType.text = store?.attributes?.name
-                            orderAddressDetails.addressName.text = store?.attributes?.line1
+                            orderAddressDetails.addressType.text = store.attributes?.name
+                            orderAddressDetails.addressName.text = store.attributes?.line1
                             orderAddressDetails.tellLabel.text = when (orderType) {
                                 OrderType.CURBSIDE -> CacheUtil.getInstance().getTranslations(
                                     Text.TELL_THE_ORDER_NUMB_CURBSIDE,

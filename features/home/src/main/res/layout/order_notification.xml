@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:visibility="gone"
     android:id="@+id/cl_order_notif"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="gone"
     tools:visibility="visible">
 
 
@@ -13,26 +13,26 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:background="#B0CFE5"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:strokeWidth="2dp"
-        app:strokeColor="#B0CFE5"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="#E6F0F7"
         app:cardCornerRadius="8dp"
-        app:cardUseCompatPadding="false"
         app:cardElevation="16dp"
+        app:cardUseCompatPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="16dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="#B0CFE5"
+        app:strokeWidth="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
             android:id="@+id/otherDetails"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/_2sdp"
-            android:paddingBottom="@dimen/_4sdp"
             android:paddingStart="@dimen/_10sdp"
-            android:paddingEnd="@dimen/_10sdp">
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingEnd="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_4sdp">
 
 
             <ImageView
@@ -40,10 +40,11 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/background_order_type_stroke"
-                android:src="@drawable/ic_order_notif"
+                android:padding="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/ic_order_notif" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -73,14 +74,14 @@
                 android:layout_marginBottom="6dp"
                 android:gravity="center_vertical"
                 android:includeFontPadding="false"
+                android:text="Your delivery order from Herfy"
                 android:textColor="#404D5C"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_estimate_label"
                 app:layout_constraintEnd_toStartOf="@+id/iv_see_order_details"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/iv_order_notif"
-                app:layout_constraintTop_toBottomOf="@+id/tv_status_label"
-                android:text="Your delivery order from Herfy" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_status_label" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -131,8 +132,6 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 
     </com.google.android.material.card.MaterialCardView>
