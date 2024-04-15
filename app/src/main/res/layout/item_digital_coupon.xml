@@ -46,7 +46,7 @@
                 app:layout_constraintStart_toStartOf="@id/digital_image"
                 app:layout_constraintTop_toTopOf="@id/digital_image" />
 
-            <com.herfy.views.SlantedTextView
+            <com.herfy.common.view.SlantedTextView
                 android:id="@+id/ineligble"
                 android:layout_width="80dp"
                 android:layout_height="80dp"

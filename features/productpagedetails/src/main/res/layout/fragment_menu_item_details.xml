@@ -153,6 +153,28 @@
                         tools:text="Combo Large Super Herfy - Large Size" />
 
                     <TextView
+                        android:id="@+id/tvSoldOut"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_oval"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:textAlignment="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        app:backgroundTint="#0064AC"
+                        app:cornerRadius="14dp"
+                        app:layout_constraintStart_toStartOf="@+id/name"
+                        app:layout_constraintTop_toBottomOf="@+id/name"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView
                         android:id="@+id/total"
                         style="@style/Styles.Text.Headline1"
                         android:layout_width="wrap_content"
@@ -178,7 +200,7 @@
                         app:layout_constraintEnd_toEndOf="@+id/total"
                         app:layout_constraintHorizontal_bias="1.0"
                         app:layout_constraintStart_toStartOf="@+id/name"
-                        app:layout_constraintTop_toBottomOf="@+id/name"
+                        app:layout_constraintTop_toBottomOf="@+id/tvSoldOut"
                         tools:text="Grilled chicken patty, topped with a flavorful slice of cheese and shredded fresh lettuce" />
 
                     <com.google.android.material.textview.MaterialTextView

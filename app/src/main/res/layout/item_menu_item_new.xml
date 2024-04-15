@@ -176,7 +176,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.herfy.views.SlantedTextView
+        <com.herfy.common.view.SlantedTextView
             android:id="@+id/stvSoldout"
             android:layout_width="80dp"
             android:layout_height="80dp"

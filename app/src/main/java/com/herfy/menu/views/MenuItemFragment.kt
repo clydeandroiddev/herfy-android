@@ -729,6 +729,22 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 //                    )
 //                }
                     }
+
+                    binding.tvSoldOut.text =
+                        CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
+
+                    binding.add.apply {
+                        if (CacheUtil.getOrderStoreId() != null && menuItem.outOfStockLocations.contains(CacheUtil.getOrderStoreId())) {
+                            binding.tvSoldOut.visible()
+                            isEnabled = false
+                            alpha = 0.3f
+                        } else {
+                            binding.tvSoldOut.gone()
+                            isEnabled = true
+                            alpha = 1.0f
+                        }
+                    }
+
                     binding.add.setOnClickListener(View.OnClickListener {
                         if (CacheUtil.getInstance().application.attributes.menuOnly) {
                             FirebaseService.newNotification(

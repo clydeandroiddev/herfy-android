@@ -12,4 +12,5 @@
     <color name="mercury">#FAFBFC</color>
     <color name="colorAlertSuccess">#3BDD5E</color>
     <color name="colorOnAlertSuccess">#000000</color>
+    <color name="transparent">#00000000</color>
 </resources>

@@ -39,10 +39,9 @@ object RepositoryModule {
     @Singleton
     fun provideMenuRepository(
         appDatabase: AppDatabase,
-        cacheUtilHelper: CacheUtilHelper,
-        @ApplicationContext context : Context
+        cacheUtilHelper: CacheUtilHelper
     ): MenuRepository =
-        MenuRepositoryImpl(appDatabase, cacheUtilHelper, context)
+        MenuRepositoryImpl(appDatabase, cacheUtilHelper)
 
     @Provides
     @Singleton
