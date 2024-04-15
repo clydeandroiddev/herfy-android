@@ -650,7 +650,7 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
 
                 AlertDialog cartAlertDialog = builder.create();
 
-                cartAlertDialog.setButton(AlertDialog.BUTTON_POSITIVE, CacheUtil.getInstance().getTranslations(Text.CONTINUE_TITLE, "Continue"), new DialogInterface.OnClickListener() {
+                cartAlertDialog.setButton(AlertDialog.BUTTON_POSITIVE, CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

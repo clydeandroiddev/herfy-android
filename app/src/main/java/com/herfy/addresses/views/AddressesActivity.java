@@ -379,7 +379,7 @@ public class AddressesActivity extends BaseActivity implements AddressesContract
         homeAddressesLabel.setText(CacheUtil.getInstance().getTranslations(Text.HOME));
         workAddressesLabel.setText(CacheUtil.getInstance().getTranslations(Text.WORK));
         otherAddressesLabel.setText(CacheUtil.getInstance().getTranslations(Text.OTHER));
-        addressesContinue.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_CONTINUE));
+        addressesContinue.setText(CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue"));
     }
 
     @Override

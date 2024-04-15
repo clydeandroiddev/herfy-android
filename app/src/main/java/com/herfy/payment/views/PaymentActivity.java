@@ -439,8 +439,8 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                         if (result.getResultCode() == RESULT_OK) {
                             Intent intent = result.getData();
                             if (intent != null) {
-                                if (intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID)) {
-                                    if (!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase("failed") && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase("canceled")) {
+                                if(intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID) && intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)){
+                                    if(!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase("failed") && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase("canceled") && intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS).equalsIgnoreCase("paid")){
                                         paymentPresenter.sendUpsells();
                                     } else {
                                         String errorMessage = intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS);

@@ -212,13 +212,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     if (result.resultCode == RESULT_OK) {
                         val intent = result.data
                         if (intent != null) {
-                            if (intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID)) {
+                            if (intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID) && intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)) {
                                 if (!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
                                         .equals(
                                             "failed",
                                             ignoreCase = true
                                         ) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
-                                        .equals("canceled", ignoreCase = true)
+                                        .equals("canceled", ignoreCase = true) && intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
+                                        .equals("paid", ignoreCase = true)
                                 ) {
                                     paymentPresenter!!.sendUpsells()
                                 } else {
