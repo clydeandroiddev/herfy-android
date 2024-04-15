@@ -143,7 +143,7 @@
                 app:layout_constraintTop_toBottomOf="@id/item_name"
                 tools:text="Pickles, gravy, buns, beef patty, cheddar cheese, etc." />
 
-            <com.herfy.views.SlantedTextView
+            <com.herfy.common.view.SlantedTextView
                 android:id="@+id/stvSoldout"
                 android:layout_width="80dp"
                 android:layout_height="80dp"

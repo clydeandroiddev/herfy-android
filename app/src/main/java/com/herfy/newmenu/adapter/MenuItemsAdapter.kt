@@ -24,6 +24,7 @@ import com.herfy.R
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.auth.views.SignInActivity
+import com.herfy.common.view.SlantedTextView
 import com.herfy.databinding.ItemMenuItemNewBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
@@ -34,7 +35,6 @@ import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.menu.MenuUtil
-import com.herfy.views.SlantedTextView
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 

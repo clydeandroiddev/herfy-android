@@ -1,18 +1,24 @@
 package com.herfy.menu.adapter
 
+import android.text.SpannableString
+import android.text.style.StrikethroughSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.herfy.common.view.SlantedTextView
 import com.herfy.menu.R
 import com.herfy.menu.databinding.AdapterMenuCategoryBinding
 import com.herfy.menu.databinding.AdapterMenuItemBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
@@ -105,6 +111,34 @@ class MenuCategoryItemAdapter(
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(ivImage)
 
+                val soldOutColor = ContextCompat.getColor(itemView.context, R.color.soldout)
+                val notSoldOutColor = ContextCompat.getColor(itemView.context, R.color.transparent)
+
+                if (LocaleUtil.getInstance().isArabic) {
+                    tvSoldOut.mode = SlantedTextView.MODE_LEFT
+                } else tvSoldOut.mode = SlantedTextView.MODE_RIGHT
+
+                if (CacheUtil.getOrderStoreId() != null && menuItem.outOfStockLocations.contains(CacheUtil.getOrderStoreId())) {
+                    tvSoldOut.apply {
+                        text = CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
+                        visible()
+                    }
+                    ivImage.setColorFilter(soldOutColor)
+                    binding.btnAdd.apply {
+                        alpha = 0.3f
+                        isEnabled = false
+                    }
+                    btnFavorite.gone()
+                } else {
+                    ivImage.setColorFilter(notSoldOutColor)
+                    binding.btnAdd.apply {
+                        alpha = 1.0f
+                        isEnabled = true
+                    }
+                    tvSoldOut.gone()
+                    btnFavorite.visible()
+                }
+
                 val caloriesValue = menuItem.calories
                 val calorieCount = menuItem.calorieCount
                 tvCalories.text = if (calorieCount != 0) {
@@ -138,6 +172,20 @@ class MenuCategoryItemAdapter(
 
                 val price = menuItem.getPrice(CacheUtil.getOrderStoreId())
                 tvPrice.text = String.format("SAR %.2f", price)
+
+                if(menuItem.listPrice > 0.0) {
+                    val formattedOldPrice = String.format("SAR %.2f", menuItem.listPrice)
+                    val oldPrice = SpannableString(formattedOldPrice)
+                    oldPrice.setSpan(StrikethroughSpan(),0, formattedOldPrice.length,0)
+                    tvOldPrice.apply {
+                        text = oldPrice
+                        visible()
+                    }
+                    ivDiscount.visible()
+                } else {
+                    binding.tvOldPrice.gone()
+                    binding.ivDiscount.gone()
+                }
 
             }
         }

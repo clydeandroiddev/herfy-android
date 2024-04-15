@@ -1,4 +1,4 @@
-package com.herfy.views;
+package com.herfy.common.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -17,7 +17,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.herfy.R;
+import com.herfy.common.R;
 
 public class SlantedTextView extends View {
 

@@ -36,7 +36,7 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
-import com.herfy.views.SlantedTextView
+import com.herfy.common.view.SlantedTextView
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.Favorite

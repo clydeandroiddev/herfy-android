@@ -1,18 +1,23 @@
 package com.herfy.repository
 
-import android.content.Context
+import com.google.gson.reflect.TypeToken
 import com.herfy.database.AppDatabase
+import com.herfy.database.entities.AllergenDb
+import com.herfy.database.entities.IngredientDb
 import com.herfy.database.entities.MenuCategoryEntity.Companion.toDomain
 import com.herfy.database.entities.MenuItemDb
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.database.entities.ModifierGroupDb
 import com.herfy.database.entities.ModifierItemDb
+import com.herfy.database.responses.MenuCategoryItemResponse
 import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.menu.MenuUtil
+import com.skylinedynamics.solosdk.api.ApiRequestWithHeadersListener
+import com.skylinedynamics.solosdk.api.calls.UtilitiesApiCall
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall
@@ -30,12 +35,19 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemCdn
 import com.skylinedynamics.solosdk.api.models.requestbodies.AddFavoriteItemBody
 import com.skylinedynamics.solosdk.util.GsonHelper
+import okhttp3.Headers
+import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
+import java.util.Date
 import java.util.LinkedList
+import java.util.Locale
 import javax.inject.Inject
 
 
 interface MenuRepository {
+
+    suspend fun getMenu(onComplete: () -> Unit)
 
     suspend fun getMenuCategoriesItems(result: (List<MenuCategory>) -> Unit)
 
@@ -62,9 +74,175 @@ interface MenuRepository {
 
 class MenuRepositoryImpl @Inject constructor(
     private val appDatabase: AppDatabase,
-    private val cacheUtilHelper: CacheUtilHelper,
-    private val context: Context,
+    private val cacheUtilHelper: CacheUtilHelper
 ) : MenuRepository {
+
+    override suspend fun getMenu( onComplete: () -> Unit) {
+        cacheUtilHelper.getApplication()?.let { application ->
+            val applicationId =  application.id
+            appDatabase.menuCategoryDao().deleteByApplication(applicationId)
+            appDatabase.menuItemDao().deleteByApplication(applicationId)
+            appDatabase.modifierGroupDao().deleteByApplication(applicationId)
+            appDatabase.modifierItemDao().deleteByApplication(applicationId)
+            appDatabase.ingredientDao().deleteByApplication(applicationId)
+            appDatabase.allergenDao().deleteByApplication(applicationId)
+            appDatabase.menuCategoryEntityDao().deleteByApplication(applicationId)
+            appDatabase.menuItemEntityDao().deleteByApplication(applicationId)
+
+            val menuUrl = MenuUtil.getDiffMenuCdnUrl()
+
+            UtilitiesApiCall.getInstance()
+                .getMenuCategoriesWithHeaders(menuUrl, object : ApiRequestWithHeadersListener {
+                    override fun onSuccess(headers: Headers, o: Any) {
+                        try {
+                            if (headers.names().contains("last-modified")) {
+                                CacheUtil.getInstance().menuCdnLastModified = headers["last-modified"]
+                            }
+                            val data = JSONObject(o.toString())
+                            try {
+                                val dataArray = data.getJSONArray("data")
+                                val menuCategoryItemsResponse = GsonHelper.gsonFinal()
+                                    .fromJson<List<MenuCategoryItemResponse>>(
+                                        dataArray.toString(),
+                                        object :
+                                            TypeToken<java.util.ArrayList<MenuCategoryItemResponse?>?>() {}.type
+                                    )
+                                val included = data.getJSONObject("included")
+                                var allergensArray = JSONArray()
+                                if (included.has("allergens") && !included.isNull("allergens")) {
+                                    allergensArray = included.getJSONArray("allergens")
+                                }
+                                for (index in 0 until allergensArray.length()) {
+                                    val allergenObject = allergensArray.getJSONObject(index)
+                                    val allergenId = allergenObject.getLong("id").toString()
+                                    val allergenDb = AllergenDb()
+                                    allergenDb.applicationId = applicationId
+                                    allergenDb.itemAllergenId = allergenId
+                                    allergenDb.id = allergenId
+                                    allergenDb.data = allergenObject.toString()
+                                    appDatabase.allergenDao().insertAll(allergenDb)
+                                }
+                                var ingredientsArray = JSONArray()
+                                if (included.has("ingredients") && !included.isNull("ingredients")) {
+                                    ingredientsArray = included.getJSONArray("ingredients")
+                                }
+                                for (index in 0 until ingredientsArray.length()) {
+                                    val ingredientObject = ingredientsArray.getJSONObject(index)
+                                    val ingredientId = ingredientObject.getLong("id").toString()
+                                    val ingredientDb = IngredientDb()
+                                    ingredientDb.applicationId = applicationId
+                                    ingredientDb.itemIngredientId = ingredientId
+                                    ingredientDb.id = ingredientId
+                                    ingredientDb.data = ingredientObject.toString()
+                                    appDatabase.ingredientDao().insertAll(ingredientDb)
+                                }
+                                var modifierGroupsArray = JSONArray()
+                                if (included.has("modifierGroups") && !included.isNull("modifierGroups")) {
+                                    modifierGroupsArray = included.getJSONArray("modifierGroups")
+                                }
+                                for (index in 0 until modifierGroupsArray.length()) {
+                                    val modifierGroupObject = modifierGroupsArray.getJSONObject(index)
+                                    val modifierGroupAttributesObject =
+                                        modifierGroupObject.getJSONObject("attributes")
+                                    var code = ""
+                                    if (modifierGroupAttributesObject.getString("code") != null) {
+                                        code = modifierGroupAttributesObject.getString("code").trim { it <= ' ' }
+                                            .lowercase(Locale.getDefault())
+                                    }
+                                    var type = ""
+                                    if (modifierGroupAttributesObject.getString("type") != null) {
+                                        type = modifierGroupAttributesObject.getString("type").trim { it <= ' ' }
+                                            .lowercase(Locale.getDefault())
+                                    }
+                                    var label = ""
+                                    if (modifierGroupAttributesObject.getString("label") != null) {
+                                        label = modifierGroupAttributesObject.getString("label").trim { it <= ' ' }
+                                            .lowercase(Locale.getDefault())
+                                    }
+                                    var modifierGroupType = ModifierGroupType.OPTIONS
+                                    if (code == "sizes" || type == "sizes" || label == "sizes") {
+                                        modifierGroupType = ModifierGroupType.SIZES
+                                    }
+                                    val modifierGroupDb = ModifierGroupDb()
+                                    val modifierGroupId = modifierGroupObject.getLong("id").toString()
+                                    modifierGroupDb.itemGroupId = modifierGroupId
+                                    modifierGroupDb.id = modifierGroupId
+                                    modifierGroupDb.applicationId = applicationId
+                                    modifierGroupDb.type = modifierGroupType.value
+                                    modifierGroupDb.data = modifierGroupObject.toString()
+                                    appDatabase.modifierGroupDao().insertAll(modifierGroupDb)
+                                }
+                                var modifiersArray = JSONArray()
+                                if (included.has("modifiers") && !included.isNull("modifiers")) {
+                                    modifiersArray = included.getJSONArray("modifiers")
+                                }
+                                for (index in 0 until modifiersArray.length()) {
+                                    val modifierItemObject = modifiersArray.getJSONObject(index)
+                                    val modifierItemId = modifierItemObject.getLong("id").toString()
+                                    val modifierItemDb = ModifierItemDb()
+                                    modifierItemDb.applicationId = applicationId
+                                    modifierItemDb.itemGroupModifierId = modifierItemId
+                                    modifierItemDb.id = modifierItemId
+                                    modifierItemDb.data = modifierItemObject.toString()
+                                    appDatabase.modifierItemDao().insertAll(modifierItemDb)
+                                }
+                                val menuItemDbs = java.util.ArrayList<MenuItemDb>()
+                                for (index in 0 until dataArray.length()) {
+                                    val menuCategoryItemObject = dataArray.getJSONObject(index)
+                                    val menuCategoryItemAttributesObject =
+                                        menuCategoryItemObject.getJSONObject("attributes")
+                                    val menuCategoryObject =
+                                        menuCategoryItemAttributesObject.getJSONObject("category")
+                                    val menuItemsArray = menuCategoryItemAttributesObject.getJSONArray("items")
+                                    for (menuItemIndex in 0 until menuItemsArray.length()) {
+                                        val menuItemObject = menuItemsArray.getJSONObject(menuItemIndex)
+                                        val menuItemDb = MenuItemDb()
+                                        val menuItemId = menuItemObject.getLong("id").toString()
+                                        menuItemDb.id = menuItemId
+                                        menuItemDb.applicationId = applicationId
+                                        menuItemDb.name = menuItemObject.getJSONObject("name")
+                                            .getString(LocaleUtil.getInstance().language)
+                                        menuItemDb.menuCategoryId = menuCategoryObject.getLong("id").toString()
+                                        val menuItemDbData = menuItemObject.toString()
+                                        menuItemDb.data = menuItemDbData
+                                        menuItemDbs.add(menuItemDb)
+                                    }
+                                }
+                                try {
+                                    appDatabase.menuItemDao().insertAll(*menuItemDbs.toTypedArray<MenuItemDb>())
+                                } catch (e: ArrayIndexOutOfBoundsException) {
+                                    e.printStackTrace()
+                                }
+                                for (menuCategoryItem in menuCategoryItemsResponse) {
+                                    val menuCategoryEntity = menuCategoryItem.attributes.menuCategory
+                                    menuCategoryEntity.applicationId = applicationId
+                                    if (!MenuUtil.isExcluded(menuCategoryEntity.excludedApps)) {
+                                        appDatabase.menuCategoryEntityDao().insertAll(menuCategoryEntity)
+                                        for (menuItem in menuCategoryItem.attributes.menuItems) {
+                                            menuItem.applicationId = applicationId
+                                            menuItem.menuCategoryId = menuCategoryItem.attributes.menuCategory.id
+                                            if (!MenuUtil.isExcluded(menuItem.excludedApps)) {
+                                                appDatabase.menuItemEntityDao().insertAll(menuItem)
+                                            }
+                                        }
+                                    }
+                                }
+                                CacheUtil.getInstance().menuCached = Date().time
+                                onComplete()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                        }
+                    }
+
+                    override fun onError(o: Any) {
+                        AppLogger.printRetrofitError(o.toString())
+                    }
+                })
+        }
+    }
 
     override suspend fun getMenuCategoriesItems(result: (List<MenuCategory>) -> Unit) {
         cacheUtilHelper.getApplication()?.let { application ->
@@ -86,8 +264,7 @@ class MenuRepositoryImpl @Inject constructor(
                         if (menuItem.enabled == 1 &&
                             (storeId == null ||
                                     (menuItem.excludedApps?.contains(application.id) == false &&
-                                            menuItem.excludedLocations?.contains(storeId) == false &&
-                                            menuItem.outOfStockLocations?.contains(storeId) == false)
+                                            menuItem.excludedLocations?.contains(storeId) == false)
                                     )
                         ) {
                             filteredMenuItems.add(menuItem)
@@ -200,8 +377,6 @@ class MenuRepositoryImpl @Inject constructor(
                             modifierItemCdn,
                             LocaleUtil.getInstance().language
                         )
-
-
                         modifierItem.attributes.isSelected = modifierItem.attributes.minimum == 1
                         if (modifierGroupModifierItemDisplayOrders.containsKey(modifierItem.id) && modifierGroupModifierItemDisplayOrders[modifierItem.id] != null) {
                             modifierItem.attributes.displayOrder =

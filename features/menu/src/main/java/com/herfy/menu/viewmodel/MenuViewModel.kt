@@ -128,7 +128,15 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    fun getMenuCategoriesItems() {
+    fun getMenu() {
+        invoke {
+            menuRepository.getMenu {
+                getMenuCategoriesItems()
+            }
+        }
+    }
+
+    private fun getMenuCategoriesItems() {
         invoke {
             val adapterItems = mutableListOf<MenuCategoryItemAdapter.MenuAdapterItem>()
             menuRepository.getMenuCategoriesItems {
