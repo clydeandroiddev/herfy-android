@@ -200,6 +200,9 @@ public interface MenuContract {
 
         void onBindFrequentBoughtItemPosition(int position, FrequentBoughtViewHolder viewHolder);
 
+        void updateFrequentlyIsAddedToCartByPosition(int position,Boolean isAddedToCart);
+
+
         void onBindRecentOrderViewAtPosition(int position, MenuRecentViewHolder orderViewHolder);
 
         int getFavoritesCount();
@@ -397,6 +400,7 @@ public interface MenuContract {
 
         void toggleFavorites(boolean isAddToFavorite, MenuItem menuItem, int position);
 
+        void updateFrequentlyIsAddedToCartByPosition(int position,Boolean isAddedToCart);
 
     }
 

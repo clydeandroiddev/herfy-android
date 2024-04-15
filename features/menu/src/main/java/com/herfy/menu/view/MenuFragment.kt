@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.VibrationEffect
@@ -15,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -45,6 +47,7 @@ import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.menu.MenuUtil
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
@@ -80,12 +83,12 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     private val menuCategoryItemAdapter: MenuCategoryItemAdapter by lazy {
         MenuCategoryItemAdapter(onSelect = { menuCategory, menuItem ->
-            navMenuItem(menuCategory.id, menuItem.id, menuItem.isCombo)
+            navMenuItem(menuCategory.id, menuItem.id, menuItem)
         }, onFavorite = { menuItem ->
             viewModel.addRemoveFavorite(menuItem)
         }, onAdd = { menuCategory, menuItem ->
             if (menuItem.isMustBeCustomized) {
-                navMenuItem(menuCategory.id, menuItem.id, menuItem.isCombo)
+                navMenuItem(menuCategory.id, menuItem.id, menuItem)
             } else {
                 viewModel.getMenuItem(menuCategory, menuItem)
             }
@@ -591,8 +594,8 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     }
 
-    private fun navMenuItem(menuCategoryId: String, menuItemId: String, isCombo : Boolean) {
-        val destinationLink = if(isCombo) "nav_combo" else "nav_menu_item"
+    private fun navMenuItem(menuCategoryId: String, menuItemId: String, menu:MenuItem) {
+        val destinationLink = if(menu.isCombo) "nav_combo" else "nav_menu_item"
         findNavController().navigateToDeepLink("$destinationLink/$menuCategoryId/$menuItemId")
     }
 
