@@ -400,7 +400,6 @@ public interface MenuContract {
 
         void toggleFavorites(boolean isAddToFavorite, MenuItem menuItem, int position);
 
-        void updateFrequentlyIsAddedToCartByPosition(int position,Boolean isAddedToCart);
 
     }
 
