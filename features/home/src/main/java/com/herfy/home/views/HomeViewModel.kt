@@ -499,7 +499,7 @@ class HomeViewModel @Inject constructor(
             OrderType.DINE_IN -> "eat-in"
             OrderType.DELIVERY -> "delivery"
             OrderType.CURBSIDE -> "curbside"
-            OrderType.DRIVE_THRU -> "drive-thru"
+            OrderType.DRIVE_THRU -> "pickup"
         }
 
 
@@ -807,7 +807,16 @@ class HomeViewModel @Inject constructor(
                         }
 
                         OrderType.DRIVE_THRU -> {
-
+                            deliveryCharge = 0.0
+                            if (CacheUtil.getInstance().getApplication().attributes.getOrderTypes()
+                                    .size == 3 || CacheUtil.getInstance().getApplication()
+                                    .attributes.getOrderTypes().contains(OrderType.DINE_IN)
+                            ) {
+                                orderBody.addProperty("type", "to-go")
+                            } else {
+                                orderBody.addProperty("type", "pickup")
+                            }
+                            orderBody.addProperty("location", store.id)
                         }
 
                         OrderType.NONE -> deliveryCharge = 0.0

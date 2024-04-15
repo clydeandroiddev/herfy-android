@@ -326,14 +326,26 @@ class HomeRepositoryImpl @Inject constructor(
             orderBody.addProperty("type", "")
             when (category) {
                 OrderType.PICKUP -> {
-                    orderBody.addProperty("type", "pickup")
+                    if (CacheUtil.getInstance().application.attributes.getOrderTypes().size == 3 || CacheUtil.getInstance().application.attributes.getOrderTypes()
+                            .contains(OrderType.DINE_IN)
+                    ) {
+                        orderBody.addProperty("type", "to-go")
+                    } else {
+                        orderBody.addProperty("type", "pickup")
+                    }
                     if (store != null) {
                         orderBody.addProperty("location", store.id)
                     }
                 }
 
                 OrderType.DRIVE_THRU -> {
-                    orderBody.addProperty("type", "drive-thru")
+                    if (CacheUtil.getInstance().application.attributes.getOrderTypes().size == 3 || CacheUtil.getInstance().application.attributes.getOrderTypes()
+                            .contains(OrderType.DINE_IN)
+                    ) {
+                        orderBody.addProperty("type", "to-go")
+                    } else {
+                        orderBody.addProperty("type", "pickup")
+                    }
                     if (store != null) {
                         orderBody.addProperty("location", store.id)
                     }

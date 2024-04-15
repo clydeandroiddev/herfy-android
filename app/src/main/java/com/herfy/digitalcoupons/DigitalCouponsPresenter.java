@@ -383,17 +383,13 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
 
             switch (CacheUtil.getInstance().getOrderType()) {
                 case PICKUP:
+                case DRIVE_THRU:
                     deliveryCharge = 0.0;
                     if (CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().size() == 3 || CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.DINE_IN)) {
                         orderBody.addProperty("type", "to-go");
                     } else {
                         orderBody.addProperty("type", "pickup");
                     }
-                    orderBody.addProperty("location", store.getId());
-                    break;
-                case DRIVE_THRU:
-                    deliveryCharge = 0.0;
-                    orderBody.addProperty("type", "drive-thru");
                     orderBody.addProperty("location", store.getId());
                     break;
                 case DINE_IN:

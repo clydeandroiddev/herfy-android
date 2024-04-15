@@ -13,6 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.herfy.home.R
 import com.herfy.home.adapter.PromotionCategoryAdapter
 import com.herfy.home.adapter.PromotionsAdapter
@@ -523,6 +525,8 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.showOrderTrackerNotif.observe(this) {
             it.getContentIfNotHandled()?.let { orderDetails ->
                 binding.apply {
+                    Glide.with(requireActivity()).asGif().load(R.drawable.cooking)
+                        .transition(DrawableTransitionOptions.withCrossFade()).into(orderTracker.ivOrderNotif)
                     orderTracker.clOrderNotif.visibility = View.VISIBLE
                     orderTracker.tvStatusLabel.text = orderDetails.orderStatus.description
                     orderTracker.tvOrderTypeLabel.text =

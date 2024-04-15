@@ -253,7 +253,14 @@ class PromotionsPresenter @Inject constructor(
 
                         OrderType.NONE -> deliveryCharge = 0.0
                         OrderType.DRIVE_THRU -> {
-                            orderBody.addProperty("type", "drive-thru")
+                            deliveryCharge = 0.0
+                            if (CacheUtil.getInstance().application.attributes.getOrderTypes()
+                                    .contains(OrderType.DINE_IN)
+                            ) {
+                                orderBody.addProperty("type", "to-go")
+                            } else {
+                                orderBody.addProperty("type", "pickup")
+                            }
                             if (store != null) {
                                 orderBody.addProperty("location", store.id)
                             }
@@ -449,7 +456,7 @@ class PromotionsPresenter @Inject constructor(
             OrderType.DINE_IN -> "eat-in"
             OrderType.DELIVERY -> "delivery"
             OrderType.CURBSIDE -> "curbside"
-            OrderType.DRIVE_THRU -> "drive-thru"
+            OrderType.DRIVE_THRU -> "pickup"
         }
 
 
