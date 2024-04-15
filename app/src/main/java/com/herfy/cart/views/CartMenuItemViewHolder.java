@@ -222,13 +222,14 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         }
         ImageViewExtKt.loadImageFromUrl(image, imageUrl, false, DiskCacheStrategy.ALL, RequestOptions.centerCropTransform(), R.drawable.imagepicker_image_placeholder);
         quantity.setText(StringUtil.localize(String.valueOf(menuItem.getAttributes().getQuantity())));
-
+        totalPrice.setVisibility(View.VISIBLE);
         if (!menuItem.isPromo()) {
             totalPrice.setText(StringUtil.getNewFormattedPrice(menuItemTotalPrice * menuItem.getAttributes().getQuantity(), true));
         } else {
             if (menuItemTotalPrice > 0) {
                 totalPrice.setText(StringUtil.getNewFormattedPrice(menuItemTotalPrice * menuItem.getAttributes().getQuantity(), true));
             } else {
+                totalPrice.setVisibility(View.GONE);
                 totalPrice.setText(CacheUtil.getInstance().getTranslations(Text.FREE_CAPS, "FREE"));
             }
         }
@@ -393,6 +394,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         } else {
             lnModifiersDropdown.setVisibility(View.GONE);
             tvModifiers.setVisibility(View.INVISIBLE);
+            tvModifiers.setText("");
         }
 
         lnModifiersDropdown.setOnClickListener(view -> {

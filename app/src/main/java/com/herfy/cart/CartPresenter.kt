@@ -16,8 +16,6 @@ import com.herfy.model.CampaignToAdd
 import com.herfy.model.CouponResult
 import com.herfy.model.CouponToAdd
 import com.herfy.upsell.UpsellViewHolder
-import com.herfy.utils.helper.ApiLogLevel
-import com.herfy.utils.helper.ApiLogUtil.Companion.sendMessageLog
 import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
 import com.herfy.utils.analytics.MixpanelUtil
@@ -25,6 +23,8 @@ import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.handler.ErrorHandler
+import com.herfy.utils.helper.ApiLogLevel
+import com.herfy.utils.helper.ApiLogUtil.Companion.sendMessageLog
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
@@ -960,6 +960,10 @@ class CartPresenter @Inject constructor(
         }
         val price = item.getPrice(orderStoreId)
         var totalPrice = if(price == 0.0) item.attributes.price else price
+        if(item.isPromo){
+            totalPrice = item.attributes.price
+        }
+
         if (BuildUtil.isEkfc() && item.total != 0.0) {
             totalPrice = item.total
         } else {
@@ -1114,7 +1118,7 @@ class CartPresenter @Inject constructor(
                     }
                 menuItems.removeAt(position)
                 removeMukafaaRedemption()
-                CacheUtil.getInstance().cart = menuItems
+
                 if (menuItems.size == 0) {
                     CacheUtil.getInstance().upsell = true
                     removeCoupon()
@@ -1123,6 +1127,7 @@ class CartPresenter @Inject constructor(
                     CacheUtil.getInstance().campaign = null
                     CacheUtil.getInstance().campaignPromotion = null
                     CacheUtil.getInstance().campaignPromotionMenuItem = null
+                    CacheUtil.getInstance().cart = menuItems
                     cartView.showDigitalCoupon(null)
                     cartView.setTotalPrice(
                         false,
@@ -1135,6 +1140,7 @@ class CartPresenter @Inject constructor(
                         0.0
                     )
                 } else {
+                    CacheUtil.getInstance().cart = menuItems
                     cartView.refreshMenuItems(-1, true)
                     getTotalPrice(true, true)
                 }
@@ -1704,9 +1710,14 @@ class CartPresenter @Inject constructor(
         if (validatePromotionDisposable != null) validatePromotionDisposable!!.dispose()
         if (validateDigitalCouponDisposable != null) validateDigitalCouponDisposable!!.dispose()
         if (digitalCall != null && digitalCall!!.isExecuted()) digitalCall!!.cancel();
-        menuItems = CacheUtil.getInstance().cart
-        cartView.showMenuItems(menuItems, true, true)
-        cartView.removeCoupon()
+        GlobalScope.launch(contextPool.Main){
+            cacheUtilHelper.getCartItems {
+                menuItems = CacheUtil.getInstance().cart
+                cartView.showMenuItems(menuItems, true, true)
+                cartView.removeCoupon()
+
+            }
+        }
         removeMukafaa()
     }
 
