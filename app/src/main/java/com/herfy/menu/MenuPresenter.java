@@ -840,13 +840,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         viewHolder.setFrequentBoughtMenuItem(frequentBoughtMenuItems.get(position));
     }
 
-    @Override
-    public void updateFrequentlyIsAddedToCartByPosition(int position, Boolean isAddedToCart) {
-        frequentBoughtMenuItems.get(position).setAddedToCart(isAddedToCart);
-    }
 
-    private void updateFrequentlyIsAddedToCartByPosition(int position) {
-    }
     @Override
     public void onBindRecentOrderViewAtPosition(int position, MenuRecentViewHolder orderViewHolder) {
         ArrayList<String> outOfStockLocationList = new ArrayList<String>();
