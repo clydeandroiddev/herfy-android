@@ -283,6 +283,9 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
 
     }
 
+    override fun showCard(isDefault: Boolean) {
+    }
+
     override fun onClose() {
 
     }

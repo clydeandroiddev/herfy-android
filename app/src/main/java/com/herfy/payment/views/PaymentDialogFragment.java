@@ -299,6 +299,11 @@ public class PaymentDialogFragment extends BaseDialogFragment implements Payment
     }
 
     @Override
+    public void showInputCvvDialog(String orderId) {
+
+    }
+
+    @Override
     public void showCardFailed() {
 
     }

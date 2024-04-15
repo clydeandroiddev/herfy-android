@@ -364,4 +364,8 @@ public class AccountActivity extends BaseActivity implements AccountContract.Vie
         pointsLabel.setText(CacheUtil.getInstance().getTranslations(Text.POINTS, "points"));
     }
 
+    @Override
+    public void showCard(boolean isDefault) {
+    }
+
 }

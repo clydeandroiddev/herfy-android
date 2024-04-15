@@ -254,4 +254,8 @@ public class ChangePasswordActivity extends BaseActivity implements AccountContr
 
     }
 
+    @Override
+    public void showCard(boolean isDefault) {
+    }
+
 }

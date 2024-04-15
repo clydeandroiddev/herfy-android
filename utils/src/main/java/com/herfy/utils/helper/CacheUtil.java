@@ -687,6 +687,7 @@ public class CacheUtil {
         setCampaignPromotionMenuItem(null);
         setCampaignToAdd(null);
         setCustomerCards(null);
+        setCustomCard(null);
         setConsumerData(null);
         setLastOrderId(null);
     }

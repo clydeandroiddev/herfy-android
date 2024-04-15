@@ -142,6 +142,9 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
 
     }
 
+    override fun showInputCvvDialog(orderId: String?) {
+    }
+
     override fun showCardFailed() {
 
     }

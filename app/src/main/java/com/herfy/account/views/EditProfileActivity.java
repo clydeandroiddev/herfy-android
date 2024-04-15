@@ -613,4 +613,8 @@ public class EditProfileActivity extends BaseActivity implements AccountContract
 
     }
 
+    @Override
+    public void showCard(boolean isDefault) {
+    }
+
 }

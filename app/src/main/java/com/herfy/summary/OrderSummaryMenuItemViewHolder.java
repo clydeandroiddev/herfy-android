@@ -165,6 +165,11 @@ public class OrderSummaryMenuItemViewHolder extends RecyclerView.ViewHolder impl
     }
 
     @Override
+    public void showInputCvvDialog(String orderId) {
+
+    }
+
+    @Override
     public void showCardFailed() {
 
     }

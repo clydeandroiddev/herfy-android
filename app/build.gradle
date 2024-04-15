@@ -436,6 +436,9 @@ dependencies {
 
     //Rating bar
     implementation 'com.github.ome450901:SimpleRatingBar:1.5.1'
+
+    //SwitchView
+    implementation 'com.github.iielse:switchbutton:1.0.4'
 }
 
 
