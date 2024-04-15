@@ -407,6 +407,17 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
 
             }
         }
+
+        if(paymentTypes.isEmpty() || (!isCashPaymentAvailable && !isCardPaymentAvailable && !isCODPaymentAvailable)) {
+            binding.emptyState.setVisible(true)
+            binding.border.setVisible(true)
+            binding.paymentContainer.setVisible(false)
+            binding.emptyState.setTitle(
+                CacheUtil.getInstance()
+                    .getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found.")
+            )
+            return
+        }
     }
 
     private fun unselectedView(radioButton: ImageView, imageView: ImageView, constraintLayout: ConstraintLayout, cardView: MaterialCardView) {

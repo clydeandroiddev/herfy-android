@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -29,7 +28,6 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -47,24 +45,22 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolygonOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.model.mutation.Overlay
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.google.maps.android.SphericalUtil
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.firebase.*
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
 import com.herfy.base.BaseActivity
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.OneDayDecorator
-import com.herfy.analytics.firebase.*
-import com.herfy.analytics.firebase.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
 import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
 import com.herfy.main.MainActivity
 import com.herfy.main.MainActivity.Companion.currentMainActivity
@@ -80,10 +76,7 @@ import com.herfy.payment.views.CustomCheckoutDialog.OnActionSelectedListener
 import com.herfy.payment.views.MoyasarActivity
 import com.herfy.payment.views.PaymentDialogFragment
 import com.herfy.ratings.AppRatingBroadcastReceiver
-import com.herfy.utils.helper.ApiLogLevel
-import com.herfy.utils.helper.ApiLogUtil.Companion.sendOrderLog
 import com.herfy.util.AppLogger
-import com.herfy.utils.helper.CurrencyUtils.Companion.updateCurrency
 import com.herfy.util.ShipBookLogger.logError
 import com.herfy.util.ShipBookLogger.logInfo
 import com.herfy.util.StringUtil
@@ -92,13 +85,15 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.debounceAfterTextChanges
 import com.herfy.utils.extensions.gone
-import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.showToast
 import com.herfy.utils.extensions.visible
+import com.herfy.utils.helper.ApiLogLevel
+import com.herfy.utils.helper.ApiLogUtil.Companion.sendOrderLog
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.CurrencyUtils.Companion.updateCurrency
 import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.DistanceCalculator
 import com.herfy.utils.helper.GlideUtils
@@ -138,7 +133,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
@@ -958,10 +952,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}
     override fun showPaymentTypes(paymentTypes: ArrayList<PaymentType>) {
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-//        paymentTypes.forEach { payment
-//
-//        }
     }
 
     override fun setStartName(startName: String) {}
@@ -1555,34 +1545,40 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         startActivity(intent)
     }
 
+    private fun isCardPaymentAllowed(): Boolean {
+        val application = CacheUtil.getInstance().application
+        val paymentTypes = mutableListOf<PaymentType>()
+        if (CacheUtil.getInstance().orderType == OrderType.DELIVERY) {
+            paymentTypes.addAll(application.attributes.getDeliverPaymentTypes());
+        } else paymentTypes.addAll(application.attributes.getPickupPaymentTypes());
+        return paymentTypes.contains(PaymentType.CARD)
+    }
+
     override fun showSelectedPayment() {
         val selectedPayment = CacheUtil.getInstance().orderPayment
-        val selectedCard = CacheUtil
-            .getInstance().customCard
+        val selectedCard = CacheUtil.getInstance().customCard
 
-        selectedCard?.let { card->
-                var res = R.drawable.ic_card_new
-                var cardLabel = "Visa ****"
-                if (card.attributes.brand.equals("visa", true)) {
-                    res = R.drawable.ic_visa
-                    cardLabel = "Visa ****"
-                } else if (card.attributes.brand.endsWith("mastercard", true)){
-                    res = R.drawable.ic_mastercard
-                    cardLabel = "Master ****"
-                }else if (card.attributes.brand.endsWith("amex", true)){
-                    res = R.drawable.ic_amex_card
-                    cardLabel = "Amex ****"
-                }
-                if (card.attributes.isDefault) {
-                    CacheUtil
-                        .getInstance()
-                        .setCustomerCards(Gson().toJson(selectedCard))
-                    CacheUtil
-                        .getInstance().orderPayment = PaymentType.CARD
-                    binding!!.layoutPayment.ivSelectedPayment.setImageResource(res)
-                    binding!!.layoutPayment.tvSelectedPayment.text = cardLabel+card.attributes.last4Digits
-                }
-            } ?: run {
+        if (selectedCard != null && selectedCard.attributes.isDefault && isCardPaymentAllowed() ) {
+            var res = R.drawable.ic_card_new
+            var cardLabel = "Visa ****"
+            if (selectedCard.attributes.brand.equals("visa", true)) {
+                res = R.drawable.ic_visa
+                cardLabel = "Visa ****"
+            } else if (selectedCard.attributes.brand.endsWith("mastercard", true)){
+                res = R.drawable.ic_mastercard
+                cardLabel = "Master ****"
+            }else if (selectedCard.attributes.brand.endsWith("amex", true)){
+                res = R.drawable.ic_amex_card
+                cardLabel = "Amex ****"
+            }
+            CacheUtil
+                .getInstance()
+                .setCustomerCards(Gson().toJson(selectedCard))
+            CacheUtil
+                .getInstance().orderPayment = PaymentType.CARD
+            binding!!.layoutPayment.ivSelectedPayment.setImageResource(res)
+            binding!!.layoutPayment.tvSelectedPayment.text = cardLabel+selectedCard.attributes.last4Digits
+        } else {
             val isUserNotSelectedAnyPaymentMethod =
                 selectedPayment == PaymentType.NONE  // && CacheUtil.getInstance().customCard == null
             /*binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
@@ -1615,7 +1611,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 binding!!.layoutPayment.tvSelectedPayment.text =  if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
                     CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
                 } else CacheUtil.getInstance().getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
-
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
             }
         }
