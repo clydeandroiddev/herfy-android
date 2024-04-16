@@ -60,6 +60,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "669493504227-s8kq58vocj3agud0tf6ib7h7ct1fok31.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.herfy.android",
+            "certificate_hash": "344014165ca26951d4ec3bb2f1dec773509efae9"
+          }
+        },
+        {
           "client_id": "669493504227-3v0hq1lgrn0lbas1hqk2khsqh646bpj9.apps.googleusercontent.com",
           "client_type": 3
         }
