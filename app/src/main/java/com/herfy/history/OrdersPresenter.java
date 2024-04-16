@@ -65,6 +65,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfigRule;
 import com.skylinedynamics.solosdk.api.models.objects.combo.ComboItemMain;
+import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
 import com.skylinedynamics.solosdk.api.models.objects.order.OrderIngredient;
 import com.skylinedynamics.solosdk.api.models.objects.order.OrderModifierItem;
 import com.skylinedynamics.solosdk.api.models.requestbodies.OrderFeedbackBody;
@@ -294,7 +295,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     @Override
     public void getOrder(String id, int position, boolean statusUpdate, boolean reorder) {
 
-        OrdersApiCall.getInstance().getOrderNew(id, "items,location,customerAddress,campaign.promotion,payments,loyalty-points-transactions,feedbacks", new ApiRequestListener() {
+        OrdersApiCall.getInstance().getOrderNew(id, "items,location,customerAddress,campaign.promotion,payments,loyalty-points-transactions,feedbacks,car", new ApiRequestListener() {
 
             @Override
             public void onSuccess(Object o) {
@@ -314,6 +315,9 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                                     JSONObject includedObject = included.getJSONObject(a);
                                     if (includedObject.getString("type").equals("payments")) {
                                         order.payment = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<Payment>() {
+                                        }.getType());
+                                    } else if (includedObject.getString("type").equals("customer-car")) {
+                                        order.customerCar = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<CustomerCar>() {
                                         }.getType());
                                     }
                                 }
