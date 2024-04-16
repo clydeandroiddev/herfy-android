@@ -67,13 +67,10 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }
     }
     private var isCartEmpty = true
-    private var previousStoreId = ""
 
     private var orderTypeLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if(previousStoreId != CacheUtil.getOrderStoreId()) {
-                viewModel.getMenu()
-            }
+            viewModel.getMenu()
         }
 
     private val menuCategoryAdapter: MenuCategoryAdapter by lazy {
@@ -550,14 +547,14 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         activity?.let {
             it.runOnUiThread {
                 val intent = Intent()
-                previousStoreId = CacheUtil.getOrderStoreId() ?: ""
+                val storeId = CacheUtil.getOrderStoreId() ?: ""
                 intent.setClassName(it, Navigation.NAVIGATION_ACTIVITY)
                 intent.putExtra("navigation", "nav_order_type")
                 intent.putExtra("selectedOrderType", orderType.value)
                 intent.putExtra("fromHome", false)
                 intent.putExtra("fromCart", false)
                 intent.putExtra("checkout", false)
-                intent.putExtra("storeId", previousStoreId)
+                intent.putExtra("storeId", storeId)
                 orderTypeLauncher.launch(intent)
             }
         }
