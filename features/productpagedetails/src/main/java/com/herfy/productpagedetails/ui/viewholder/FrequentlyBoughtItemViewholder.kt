@@ -80,7 +80,8 @@ class FrequentlyBoughtItemViewholder(val binding : ItemModifierFrequentlyBoughtB
             }
             frequentlyParentLayout.setOnClickListener {
                 listener.navigateToMenuItemDetails(
-                    menuItem.id
+                    menuItem.id,
+                    position
                 )
             }
 
@@ -97,6 +98,6 @@ class FrequentlyBoughtItemViewholder(val binding : ItemModifierFrequentlyBoughtB
     interface OnClickListener{
         fun addFrequentlyBoughtItemToCart(menuItemId: String, position: Int)
         fun toggleFavoriteFrequentlyBoughtItem(favorite: Boolean, menuItem: MenuItem, position: Int)
-        fun navigateToMenuItemDetails(menuItemId: String)
+        fun navigateToMenuItemDetails(menuItemId: String,position: Int)
     }
 }

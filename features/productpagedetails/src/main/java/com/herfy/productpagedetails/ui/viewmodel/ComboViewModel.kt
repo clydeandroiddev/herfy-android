@@ -100,7 +100,7 @@ class ComboViewModel @Inject constructor(
     private var menuItemComponentList = HashMap<Int, MenuItemComponents>()
     private var menuItemComboList = HashMap<Int, HashMap<Int, MenuItemComponents>>()
     private val selectedComponents = HashMap<String, Any>()
-    private val frequentBoughtItemList = arrayListOf<MenuItem>()
+    val frequentBoughtItemList = arrayListOf<MenuItem>()
 
 
     //Observalbles
@@ -150,16 +150,19 @@ class ComboViewModel @Inject constructor(
     val logEvent: LiveData<EventAttributesMetric> = _logEvent
     private val _logAddToWishlistEvent = MutableLiveData<MenuItem>()
     val logAddToWishlistEvent: LiveData<MenuItem> = _logAddToWishlistEvent
-    private val _showFrequentBoughtItems = MutableLiveData<ArrayList<MenuItem>>()
-    val showFrequentBoughtItems: LiveData<ArrayList<MenuItem>> = _showFrequentBoughtItems
+    private val _showFrequentBoughtItems = MutableLiveData<Event<ArrayList<MenuItem>>>()
+    val showFrequentBoughtItems: LiveData<Event<ArrayList<MenuItem>>> = _showFrequentBoughtItems
     private val _addFrequentlyBoughtItem = MutableLiveData<Pair<MenuItem, Int>>()
     val addFrequentlyBoughtItem: LiveData<Pair<MenuItem, Int>> = _addFrequentlyBoughtItem
-    private val _navigateToMenuItemDetails = MutableLiveData<Event<Pair<MenuCategory, MenuItem>>>()
-    val navigateToMenuItemDetails : LiveData<Event<Pair<MenuCategory, MenuItem>>> = _navigateToMenuItemDetails
+    private val _navigateToMenuItemDetails =
+        MutableLiveData<Event<Triple<MenuCategory, MenuItem, Int>>>()
+    val navigateToMenuItemDetails: LiveData<Event<Triple<MenuCategory, MenuItem, Int>>> =
+        _navigateToMenuItemDetails
     private val _updateFavoriteByPosition = MutableLiveData<Pair<Int, MenuItem>>()
-    val updateFavoriteByPosition : LiveData<Pair<Int, MenuItem>> = _updateFavoriteByPosition
+    val updateFavoriteByPosition: LiveData<Pair<Int, MenuItem>> = _updateFavoriteByPosition
     private val _showLoading = MutableLiveData<Boolean>()
-    val showLoading : LiveData<Boolean> = _showLoading
+    val showLoading: LiveData<Boolean> = _showLoading
+
 
     /**Function for retrieving data of menu item from db**/
     fun getMenuItemFromDbBy(addToBag: Boolean, id: String, isUpsell: Boolean) {
@@ -260,13 +263,10 @@ class ComboViewModel @Inject constructor(
                 frequentBoughtItemList.addAll(items)
                 if (page == totalPages) {
                     val favorites = CacheUtil.getInstance().favorites
-                    frequentBoughtItemList.map { item -> item.isFavorite = favorites.contains(item.id) }
-                    invoke {
-                        cacheUtilHelper.getCartItems {cartItems ->
-                            frequentBoughtItemList.map { item-> item.isAddedToCart = cartItems.find { cartItem -> item.id == cartItem.id } != null }
-                            _showFrequentBoughtItems.value = frequentBoughtItemList
-                        }
+                    frequentBoughtItemList.map { item ->
+                        item.isFavorite = favorites.contains(item.id)
                     }
+                    _showFrequentBoughtItems.value = Event(frequentBoughtItemList)
                 } else {
                     getFrequentBoughtItems(page + 1, menuId)
                 }
@@ -1053,29 +1053,36 @@ class ComboViewModel @Inject constructor(
 
             var proceed = true
             var quantity = modifierItem.attributes.quantity
-            if(modifierItem.attributes.quantity < modifierItem.attributes.maximum){
+            if (modifierItem.attributes.quantity < modifierItem.attributes.maximum) {
                 quantity += 1
-                if(isAboveMax(modifierGroup, modifierItemQuantityCount(modifierGroup.modifierItems))){
+                if (isAboveMax(
+                        modifierGroup,
+                        modifierItemQuantityCount(modifierGroup.modifierItems)
+                    )
+                ) {
                     proceed = false
-                    _showToastMessage.value =  modifierGroup.attributes.name + " " + CacheUtil.getInstance()
-                        .getTranslations(
-                            Text.MODIFIER_LIMIT_REACHED, "Options limit reached"
-                        )
-                }else {
-                    if (modifierItem.attributes.maximum < modifierItem.attributes.quantity + 1) {
-                        proceed = false
-                        _showToastMessage.value = modifierGroup.attributes.name + " " + CacheUtil.getInstance()
+                    _showToastMessage.value =
+                        modifierGroup.attributes.name + " " + CacheUtil.getInstance()
                             .getTranslations(
                                 Text.MODIFIER_LIMIT_REACHED, "Options limit reached"
                             )
+                } else {
+                    if (modifierItem.attributes.maximum < modifierItem.attributes.quantity + 1) {
+                        proceed = false
+                        _showToastMessage.value =
+                            modifierGroup.attributes.name + " " + CacheUtil.getInstance()
+                                .getTranslations(
+                                    Text.MODIFIER_LIMIT_REACHED, "Options limit reached"
+                                )
                     }
                 }
-            }else {
+            } else {
                 proceed = false
-                _showToastMessage.value =  CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT)
+                _showToastMessage.value =
+                    CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT)
             }
 
-            if(proceed){
+            if (proceed) {
                 val group = modifierGroup
                 val item = group.modifierItems[modifierItemPosition]
                 var modifierTotal = 0
@@ -1372,7 +1379,7 @@ class ComboViewModel @Inject constructor(
         }
     }
 
-    private fun checkComboModifiers(menuItem : MenuItem): Boolean {
+    private fun checkComboModifiers(menuItem: MenuItem): Boolean {
         var invalid = false
         if (menuItem!!.isCombo) {
             var comboIndex = 0
@@ -1749,10 +1756,10 @@ class ComboViewModel @Inject constructor(
             val cartCount = cacheUtilHelper.getCartQuantity()
             frequentlyMenuItem.isSandwichOnly = false
             frequentlyMenuItem.isAddedToCart = true
-             CacheUtil.getInstance().setFrequentlyQuantityShouldShow(
-                 frequentlyMenuItem.isAddedToCart,
-                 frequentlyMenuItem.id
-             )
+            CacheUtil.getInstance().setFrequentlyQuantityShouldShow(
+                frequentlyMenuItem.isAddedToCart,
+                frequentlyMenuItem.id
+            )
             removeMukafaaRedemption()
             CacheUtil.getInstance().addToCart(frequentlyMenuItem)
             if (cartCount == 0) {
@@ -1785,16 +1792,17 @@ class ComboViewModel @Inject constructor(
         invoke {
             _showLoading.value = true
             val applicationId = CacheUtil.getInstance().getApplication().id
-            var menuCategory : MenuCategory? = null
-            var menuItemDb : MenuItemDb? = null
-            menuRepository.getMenuItemDbById(menuItemId,applicationId) {result ->
-                result?.let {itemDb ->
+            var menuCategory: MenuCategory? = null
+            var menuItemDb: MenuItemDb? = null
+            menuRepository.getMenuItemDbById(menuItemId, applicationId) { result ->
+                result?.let { itemDb ->
                     menuItemDb = itemDb
-                    frequentlyMenuItem = GsonHelper.gsonFinal().fromJson(itemDb.data, MenuItem::class.java)
+                    frequentlyMenuItem =
+                        GsonHelper.gsonFinal().fromJson(itemDb.data, MenuItem::class.java)
                 }
             }
 
-            menuRepository.getMenuCategory(menuItemDb?.menuCategoryId?:"", applicationId){
+            menuRepository.getMenuCategory(menuItemDb?.menuCategoryId ?: "", applicationId) {
                 menuCategory = it
             }
 
@@ -1826,11 +1834,12 @@ class ComboViewModel @Inject constructor(
                         }
                     }
                     _showLoading.value = false
-                    _navigateToMenuItemDetails.value = Event(Pair(menuCategory!!, frequentlyMenuItem))
+                    _navigateToMenuItemDetails.value =
+                        Event(Triple(menuCategory!!, frequentlyMenuItem, position))
                 } else {
                     getMenuItemFromFrequent(menuItemId, true, position, menuCategory!!)
                 }
-            }else {
+            } else {
                 _showLoading.value = false
             }
         }
@@ -1842,9 +1851,9 @@ class ComboViewModel @Inject constructor(
         position: Int
     ) {
         invoke {
-            if(!favorite){
-                menuRepository.addItemToFavorite(menuItem){ isSuccess, error ->
-                    if(isSuccess){
+            if (!favorite) {
+                menuRepository.addItemToFavorite(menuItem) { isSuccess, error ->
+                    if (isSuccess) {
                         trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM)
                         trackEvent(EventType.ADD_TO_WISH_LIST)
                         val favorites = CacheUtil.getInstance().getFavorites()
@@ -1855,31 +1864,47 @@ class ComboViewModel @Inject constructor(
                         eventAttributes["Item ID"] = menuItem.id
                         eventAttributes["Item Name"] = menuItem.attributes.name
 
-                        _logEvent.value = EventAttributesMetric(eventName = "AddToFavorites", eventAttributes =  eventAttributes,  eventMetricValue = 0.0)
+                        _logEvent.value = EventAttributesMetric(
+                            eventName = "AddToFavorites",
+                            eventAttributes = eventAttributes,
+                            eventMetricValue = 0.0
+                        )
                         _logAddToWishlistEvent.value = menuItem
                         menuItem.isFavorite = true
-                        _showToastMessage.value = CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_FAVORITES)
+                        _showToastMessage.value =
+                            CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_FAVORITES)
                         _updateFavoriteByPosition.value = Pair(position, menuItem)
                     } else {
-                        error?.let{
+                        error?.let {
                             AppLogger.printRetrofitError(error)
-                            _showToastMessage.value = getErrorMessage(error, CacheUtil.getInstance().getTranslations(Text.ERROR_ADD_TO_FAVORITES), null)
+                            _showToastMessage.value = getErrorMessage(
+                                error,
+                                CacheUtil.getInstance()
+                                    .getTranslations(Text.ERROR_ADD_TO_FAVORITES),
+                                null
+                            )
                         }
                     }
                 }
-            }else {
-                menuRepository.deleteItemFromFavorites(menuItem.id){ isSuccess, error ->
-                    if(isSuccess){
+            } else {
+                menuRepository.deleteItemFromFavorites(menuItem.id) { isSuccess, error ->
+                    if (isSuccess) {
                         val favorites = CacheUtil.getInstance().getFavorites()
                         favorites.remove(menuItem.id)
                         CacheUtil.getInstance().setFavorites(favorites)
                         menuItem.isFavorite = false
-                        _showToastMessage.value = CacheUtil.getInstance().getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES)
+                        _showToastMessage.value = CacheUtil.getInstance()
+                            .getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES)
                         _updateFavoriteByPosition.value = Pair(position, menuItem)
-                    }else {
-                        error?.let{
+                    } else {
+                        error?.let {
                             AppLogger.printRetrofitError(error)
-                            _showToastMessage.value = getErrorMessage(error, CacheUtil.getInstance().getTranslations(Text.ERROR_ADD_TO_FAVORITES), null)
+                            _showToastMessage.value = getErrorMessage(
+                                error,
+                                CacheUtil.getInstance()
+                                    .getTranslations(Text.ERROR_ADD_TO_FAVORITES),
+                                null
+                            )
                         }
                     }
 
@@ -1889,28 +1914,33 @@ class ComboViewModel @Inject constructor(
 
     }
 
-    override fun navigateToMenuItemDetails(menuItemId: String) {
+    override fun navigateToMenuItemDetails(menuItemId: String, position: Int) {
         invoke {
             val appId = CacheUtil.getInstance().application.id
-            var menuItem : MenuItem? = null
-            var menuCategoryId : String = ""
-            menuRepository.getMenuItem(menuItemId){item ->
+            var menuItem: MenuItem? = null
+            var menuCategoryId: String = ""
+            menuRepository.getMenuItem(menuItemId) { item ->
                 menuItem = item
             }
-            menuRepository.getMenuCategoryIdFromMenuItemEntityBy(menuItemId, appId){
+            menuRepository.getMenuCategoryIdFromMenuItemEntityBy(menuItemId, appId) {
                 menuCategoryId = it
             }
-            menuRepository.getMenuCategory(menuCategoryId, appId){menuCategory ->
+            menuRepository.getMenuCategory(menuCategoryId, appId) { menuCategory ->
                 menuItem?.let {
-                    _navigateToMenuItemDetails.value = Event(Pair(menuCategory, it))
+                    _navigateToMenuItemDetails.value = Event(Triple(menuCategory, it,position))
                 }
             }
         }
     }
 
-    private fun getMenuItemFromFrequent(menuItemId : String, addToBag : Boolean, position: Int, menuCategory : MenuCategory){
+    private fun getMenuItemFromFrequent(
+        menuItemId: String,
+        addToBag: Boolean,
+        position: Int,
+        menuCategory: MenuCategory
+    ) {
         invoke {
-            menuRepository.getMenuItem(menuItemId){
+            menuRepository.getMenuItem(menuItemId) {
                 frequentlyMenuItem = it
                 prepareFrequentlyMenuItem(frequentlyMenuItem, addToBag, position, menuCategory)
             }
@@ -1962,7 +1992,20 @@ class ComboViewModel @Inject constructor(
             addFrequentBoughtItem(addToBag, position)
         } else {
             _showLoading.value = false
-            _navigateToMenuItemDetails.value = Event(Pair(menuCategory, frequentlyMenuItem))
+            _navigateToMenuItemDetails.value = Event(Triple(menuCategory, frequentlyMenuItem, position))
+        }
+    }
+
+    fun updateFrequentlyBoughtItems(position: Int, isAddedToCart : Boolean){
+        if(frequentBoughtItemList.isNotEmpty()){
+            if(isAddedToCart){
+                frequentBoughtItemList[position].isAddedToCart = true
+            }
+            val favorites = CacheUtil.getInstance().favorites
+            frequentBoughtItemList.map { item ->
+                item.isFavorite = favorites.contains(item.id)
+            }
+            _showFrequentBoughtItems.value = Event(frequentBoughtItemList)
         }
     }
 }

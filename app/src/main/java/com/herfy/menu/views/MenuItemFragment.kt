@@ -47,14 +47,20 @@ import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.menu.MenuContract
 import com.herfy.menu.MenuPresenter
-import com.herfy.menu.adapters.*
+import com.herfy.menu.adapters.ComboMainYourWayListAdapter
+import com.herfy.menu.adapters.CombosListAdapter
+import com.herfy.menu.adapters.FrequentBoughItemsAdapter
+import com.herfy.menu.adapters.IngredientsRecyclerViewAdapter
+import com.herfy.menu.adapters.ModifierGroupsNewRecyclerViewAdapter
+import com.herfy.menu.adapters.SizesRecyclerViewAdapter
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet
 import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet.Companion.NAV_ARGS_INFO_KEY
 import com.herfy.nutritiondetails.NutritionInfoParams
 import com.herfy.productpagedetails.databinding.FragmentMenuItemDetailsBinding
 import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder
-import com.herfy.util.*
+import com.herfy.util.StringUtil
+import com.herfy.util.ViewUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
@@ -72,10 +78,20 @@ import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
 import com.herfy.utils.menu.MenuUtil
 import com.kochava.tracker.events.EventType
-import com.skylinedynamics.solosdk.api.models.objects.*
+import com.skylinedynamics.solosdk.api.models.objects.Campaign
+import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
+import com.skylinedynamics.solosdk.api.models.objects.Favorite
+import com.skylinedynamics.solosdk.api.models.objects.Ingredient
+import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
+import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
+import com.skylinedynamics.solosdk.api.models.objects.Store
+import com.skylinedynamics.solosdk.api.models.objects.Translated
 import com.skylinedynamics.solosdk.util.GsonHelper
 import io.shipbook.shipbooksdk.Log
-import java.util.*
+import java.util.Locale
 
 
 class MenuItemFragment : BaseFragment(), MenuContract.View {
@@ -86,7 +102,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     private lateinit var menuPresenter: MenuContract.Presenter
     private var cartMenuItem = -1
-    private var fromFavorite = false
+    private var  fromFavorite = false
 
     private var originalMenuItem: String? = null
     private var sizeId: String? = null
@@ -692,7 +708,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             isQuantityVisible: Boolean,
                             clickCount: Int
                         ) {
-                            menuPresenter!!.changeModifierItemQuantity(
+                            menuPresenter.changeModifierItemQuantity(
                                 add,
                                 modifierGroupPosition,
                                 modifierGroup,
