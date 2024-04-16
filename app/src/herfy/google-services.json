@@ -1,48 +1,124 @@
 {
   "project_info": {
-    "project_number": "650260545167",
-    "project_id": "herfy-53052",
-    "storage_bucket": "herfy-53052.appspot.com"
+    "project_number": "669493504227",
+    "firebase_url": "https://herfy-android-studio.firebaseio.com",
+    "project_id": "herfy-android-studio",
+    "storage_bucket": "herfy-android-studio.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:650260545167:android:333dd90b16ee21c8e7fafa",
+        "mobilesdk_app_id": "1:669493504227:android:4f34a4ef3d070999",
         "android_client_info": {
-          "package_name": "com.herfy.android"
+          "package_name": "com.hanmajid.flutterwhatsapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "650260545167-mv1pomm5and5hfrtin25oatnd4s05fhk.apps.googleusercontent.com",
+          "client_id": "669493504227-k65hnfit0a52ndcnsm2fhegt0i5a3anj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.herfy.android",
-            "certificate_hash": "344014165ca26951d4ec3bb2f1dec773509efae9"
+            "package_name": "com.hanmajid.flutterwhatsapp",
+            "certificate_hash": "788c5c5fc2d6fc7d7c10bbcb7fbebc4569886a0e"
           }
         },
         {
-          "client_id": "650260545167-lruhahepj34bscml0dqiafk285camtum.apps.googleusercontent.com",
+          "client_id": "669493504227-3v0hq1lgrn0lbas1hqk2khsqh646bpj9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAYNNFbwHNnVgK0ACwB7L9UBX4tpqTHs9M"
+          "current_key": "AIzaSyAl3Q6IWY4oHNrDlCnpE6K7Pg936gXmGuk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "650260545167-lruhahepj34bscml0dqiafk285camtum.apps.googleusercontent.com",
+              "client_id": "669493504227-3v0hq1lgrn0lbas1hqk2khsqh646bpj9.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "650260545167-3vagrsd614k25bd8d52j8io9r2ctio4r.apps.googleusercontent.com",
+              "client_id": "669493504227-rt4ms8hbg34ut4lu7a98r9mav436c8vh.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.herfyrestaurant.ios"
+                "bundle_id": "com.herfy.consumer",
+                "app_store_id": "1585612762"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669493504227:android:f0f6477b206c646c4bbdd6",
+        "android_client_info": {
+          "package_name": "com.herfy.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "669493504227-3v0hq1lgrn0lbas1hqk2khsqh646bpj9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl3Q6IWY4oHNrDlCnpE6K7Pg936gXmGuk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "669493504227-3v0hq1lgrn0lbas1hqk2khsqh646bpj9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "669493504227-rt4ms8hbg34ut4lu7a98r9mav436c8vh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.herfy.consumer",
+                "app_store_id": "1585612762"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669493504227:android:a819077a408ae5394bbdd6",
+        "android_client_info": {
+          "package_name": "sa.herfy.team"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "669493504227-3v0hq1lgrn0lbas1hqk2khsqh646bpj9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl3Q6IWY4oHNrDlCnpE6K7Pg936gXmGuk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "669493504227-3v0hq1lgrn0lbas1hqk2khsqh646bpj9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "669493504227-rt4ms8hbg34ut4lu7a98r9mav436c8vh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.herfy.consumer",
+                "app_store_id": "1585612762"
               }
             }
           ]
