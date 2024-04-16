@@ -48,6 +48,7 @@ import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.TimeZone
 import javax.inject.Inject
 
 
@@ -192,6 +193,12 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 minus.visible()
                 plus.visible()
             }
+            minus.setOnClickListener {
+                viewModel?.changeMenuItemQuantity(false)
+            }
+            plus.setOnClickListener {
+                viewModel?.changeMenuItemQuantity(true)
+            }
         }
         if (!isPromo) {
             if (menuItemId.isNotEmpty()) {
@@ -236,6 +243,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 }
             }
         }
+
     }
 
     override fun initTranslations() {

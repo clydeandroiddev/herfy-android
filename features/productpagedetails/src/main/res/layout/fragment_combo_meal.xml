@@ -518,9 +518,7 @@
                             app:layout_constraintBottom_toBottomOf="@+id/minus"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/minus"
-                            app:srcCompat="@drawable/quantity_up_blue"
-                            android:onClick="@{() -> viewModel.changeMenuItemQuantity(true)}"
-                            />
+                            app:srcCompat="@drawable/quantity_up_blue"/>
 
                         <androidx.appcompat.widget.AppCompatImageButton
                             android:id="@+id/minus"
@@ -531,8 +529,7 @@
                             app:layout_constraintEnd_toStartOf="@+id/quantity"
                             app:layout_constraintHorizontal_chainStyle="packed"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_new_minus"
-                            android:onClick="@{() -> viewModel.changeMenuItemQuantity(false)"/>
+                            app:srcCompat="@drawable/ic_new_minus"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
 
