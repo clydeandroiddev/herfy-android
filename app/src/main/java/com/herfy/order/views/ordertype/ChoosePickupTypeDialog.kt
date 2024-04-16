@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -113,9 +112,9 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
             }
 
             store?.let {
-                chooseDriveThruContainer.isInvisible = !it.attributes.isDriveThruEnabled
-                curbsideContainer.isInvisible = it.attributes.curbsideEnabled != 1
-                pickupContainer.isInvisible = it.attributes.pickupEnabled != 1
+                chooseDriveThruContainer.isVisible = it.attributes.isDriveThruEnabled
+                curbsideContainer.isVisible = it.attributes.curbsideEnabled == 1
+                pickupContainer.isVisible = it.attributes.pickupEnabled == 1
             }
         }
     }
