@@ -160,7 +160,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         checkLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (action != null)  {
+                if (action != null && modifierItem.getAttributes().getMinimum() != 1)  {
                     if (modifierItem.getAttributes().isSelected()) {
                         action.onCheckedChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     } else {
