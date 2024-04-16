@@ -70,7 +70,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     private var orderTypeLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            viewModel.getMenu()
+            viewModel.getMenuCategoriesItems()
         }
 
     private val menuCategoryAdapter: MenuCategoryAdapter by lazy {
