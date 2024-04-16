@@ -830,8 +830,8 @@ public class OrderTypeActivity extends BaseActivity implements OrderContract.Vie
         homeAddressesLabel.setText(CacheUtil.getInstance().getTranslations(Text.HOME_CAPS));
         workAddressesLabel.setText(CacheUtil.getInstance().getTranslations(Text.WORK));
         otherAddressesLabel.setText(CacheUtil.getInstance().getTranslations(Text.OTHER));
-        addressesContinue.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_CONTINUE));
-        storesContinue.setText(CacheUtil.getInstance().getTranslations(Text.SELECT_CONTINUE));
+        addressesContinue.setText(CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue"));
+        storesContinue.setText(CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue"));
 
         //mapView.setText(CacheUtil.getInstance().getTranslations(Text.MAP_VIEW));
         //listView.setText(CacheUtil.getInstance().getTranslations(Text.LIST_VIEW));
