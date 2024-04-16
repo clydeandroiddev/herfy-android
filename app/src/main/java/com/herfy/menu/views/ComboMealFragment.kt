@@ -47,6 +47,7 @@ import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
+import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.TimeZone
 import javax.inject.Inject
@@ -103,7 +104,6 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
         super.initViews()
         binding.viewModel = this@ComboMealFragment.viewModel
         setupFrequentlyBoughtItems()
-        setupSizeItems()
         setupComboMealItems()
         setupComboMealDetailsBottomSheet()
         binding.apply {
@@ -351,13 +351,13 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
         }
     }
-    private fun setupSizeItems() {
+    private fun setupSizeItems(sizes: List<ModifierItem>) {
         binding.apply {
             ivComboSizeIcon.setImageResource(R.drawable.ic_combo_size)
             activity?.let { act ->
-                val itemWidth = (ViewUtil.getScreenWidth(act) / 3) - ViewUtil.dpToPx(act, 20)
-                val linearLayoutManager = GridLayoutManager(act, 3)
-                sizesAdapter = SizesItemAdapter(itemWidth = itemWidth)
+                val itemWidth = (ViewUtil.getScreenWidth(act) / sizes.size) - ViewUtil.dpToPx(act, 20)
+                val linearLayoutManager = GridLayoutManager(act, sizes.size)
+                sizesAdapter = SizesItemAdapter(items = sizes,itemWidth = itemWidth)
                 sizesAdapter?.setOnAction(this@ComboMealFragment.viewModel)
                 sizesRecyclerView.apply {
                     adapter = sizesAdapter
@@ -365,6 +365,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     setHasFixedSize(true)
                     isNestedScrollingEnabled = false
                 }
+
             }
         }
     }
@@ -406,7 +407,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                         } else {
                             checkBox.gone()
                         }
-                        sizesAdapter?.updateList(it)
+                        setupSizeItems(it)
                     } else {
                         sizesLayoutTextContainer.gone()
                         sizesRecyclerView.gone()
