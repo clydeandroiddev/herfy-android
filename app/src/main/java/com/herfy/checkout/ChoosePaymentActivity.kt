@@ -337,7 +337,7 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
         val type = CacheUtil.getInstance().orderType
         val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         paymentTypes.forEach { paymentType ->
-            if (paymentType == PaymentType.CASH && type != OrderType.DELIVERY) {
+            if (paymentType == PaymentType.CASH) {
                 isCashPaymentAvailable = true
                 val view: View = inflater.inflate(R.layout.item_payment_cash, null)
                 cashPayment = view.findViewById(R.id.cash_layout)
@@ -406,6 +406,17 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
                 }
 
             }
+        }
+
+        if(paymentTypes.isEmpty() || (!isCashPaymentAvailable && !isCardPaymentAvailable && !isCODPaymentAvailable)) {
+            binding.emptyState.setVisible(true)
+            binding.border.setVisible(true)
+            binding.paymentContainer.setVisible(false)
+            binding.emptyState.setTitle(
+                CacheUtil.getInstance()
+                    .getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found.")
+            )
+            return
         }
     }
 
