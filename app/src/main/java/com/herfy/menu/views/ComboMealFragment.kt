@@ -8,6 +8,7 @@ import android.os.Vibrator
 import android.view.View
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -90,6 +91,9 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     private val menuCategoryId: String by lazy {
         args?.getString(Values.KEY_MENU_CATEGORY_ID, "") ?: ""
     }
+    private val isSoldOut: Boolean by lazy {
+        args?.getBoolean(Values.KEY_IS_SOLD_OUT, false) ?: false
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,6 +114,25 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
         setupComboMealItems()
         setupComboMealDetailsBottomSheet()
         binding.apply {
+            add.apply {
+                if (isSoldOut) {
+                    activity?.apply {
+                        image.setColorFilter(
+                            ContextCompat.getColor(
+                                this,
+                                com.herfy.R.color.soldout
+                            )
+                        )
+                    }
+                    binding.tvSoldOut.visible()
+                    isEnabled = false
+                    alpha = 0.3f
+                } else {
+                    binding.tvSoldOut.gone()
+                    isEnabled = true
+                    alpha = 1.0f
+                }
+            }
             cbtComboMeal.apply {
                 setNavButtonAction {
                     navigateUp()
@@ -218,6 +241,8 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     override fun initTranslations() {
         super.initTranslations()
         binding.apply {
+            tvSoldOut.text =
+                CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
             notesLabel.text =
                 cacheUtilHelper.getTranslations(Text.SPECIAL_INSTRUCTION, "Special Instruction")
             notesDescription.text = cacheUtilHelper.getTranslations(

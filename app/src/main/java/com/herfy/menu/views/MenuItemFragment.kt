@@ -314,6 +314,26 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun setupViews() {
+        binding.add.apply {
+            if (args.isSoldOut) {
+                activity?.apply {
+                    binding.image.setColorFilter(
+                        ContextCompat.getColor(
+                            this,
+                            R.color.soldout
+                        )
+                    )
+                }
+                binding.tvSoldOut.visible()
+                isEnabled = false
+                alpha = 0.3f
+            } else {
+                binding.tvSoldOut.gone()
+                isEnabled = true
+                alpha = 1.0f
+            }
+        }
+
 //        binding.appbar.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
 //            override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
 //                binding.toolbar.apply {
@@ -380,6 +400,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun setupFonts() {}
     override fun setupTranslations() {
+        binding.tvSoldOut.text =
+            CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
         binding.txtMoreInfo.text = CacheUtil.getInstance()
             .getTranslations(Text.MORE_INFO, "More Info")
         val originalQuantityWithColon = CacheUtil.getInstance().getTranslations(Text.ITEM_QUANTITY,"Item quantity")
@@ -759,24 +781,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuPresenter.setItemNote(itemNote)
                     }
 
-                    binding.tvSoldOut.text =
-                        CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
-
-                    binding.add.apply {
-                        if (CacheUtil.getOrderStoreId() != null && menuItem.outOfStockLocations.contains(
-                                CacheUtil.getOrderStoreId()
-                            )
-                        ) {
-                            binding.tvSoldOut.visible()
-                            isEnabled = false
-                            alpha = 0.3f
-                        } else {
-                            binding.tvSoldOut.gone()
-                            isEnabled = true
-                            alpha = 1.0f
-                        }
-                    }
-
                     binding.add.setOnClickListener(View.OnClickListener {
                         if (CacheUtil.getInstance().application.attributes.menuOnly) {
                             FirebaseService.newNotification(
@@ -824,72 +828,14 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     if (!menuItem.isSandwichOnly) {
                         previousMenuItem = menuItem
                     }
-                    if (CacheUtil.getOrderStoreId() != null && menuItem.outOfStockLocations.contains(
-                            CacheUtil.getOrderStoreId()
+                    if (!viewEventSent) {
+                        viewEventSent = true
+                        FirebaseECommerceEventUtil.viewItemEvent(
+                            activity,
+                            menuItem,
+                            menuCategory
                         )
-                    ) {
-                        binding.image.setColorFilter(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.soldout
-                            )
-                        )
-                        var imageUrl = menuItem.image
-                        if (imageUrl == null || imageUrl.equals(
-                                "null",
-                                ignoreCase = true
-                            ) || imageUrl.isEmpty() || imageUrl.lowercase(
-                                Locale.getDefault()
-                            ).contains("default-image.png")
-                        ) {
-                            imageUrl = Values.DEFAULT_IMAGE_URL
-                        }
-                        val requestOptions: RequestOptions
-                        if (BuildUtil.soloAppKey().equals("kExl05bOT4ttFEO2", ignoreCase = true)) {
-                            requestOptions = RequestOptions.centerInsideTransform()
-                            binding.image.scaleType = ImageView.ScaleType.CENTER_INSIDE
-                        } else {
-                            requestOptions = RequestOptions.centerCropTransform()
-                            binding.image.scaleType = ImageView.ScaleType.CENTER_CROP
-                        }
-                        Glide.with(baseActivity)
-                            .load(imageUrl)
-                            .skipMemoryCache(false)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .apply(requestOptions)
-                            .listener(object : RequestListener<Drawable?> {
-                                override fun onLoadFailed(
-                                    e: GlideException?,
-                                    model: Any,
-                                    target: Target<Drawable?>,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-//                            binding.imageShimmer.visibility = View.GONE
-                                    return false
-                                }
-
-                                override fun onResourceReady(
-                                    resource: Drawable?,
-                                    model: Any,
-                                    target: Target<Drawable?>,
-                                    dataSource: DataSource,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-//                            binding.imageShimmer.visibility = View.GONE
-                                    return false
-                                }
-                            })
-                            .into(binding.image)
-
-                        if (!viewEventSent) {
-                            viewEventSent = true
-                            FirebaseECommerceEventUtil.viewItemEvent(
-                                activity,
-                                menuItem,
-                                menuCategory
-                            )
-                            FacebookAppEventUtil.viewMenuItemEvent(activity, menuItem)
-                        }
+                        FacebookAppEventUtil.viewMenuItemEvent(activity, menuItem)
                     }
                 })
             }
