@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -25,7 +26,13 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
@@ -752,12 +759,44 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
                     curbsideBrandImage.setImageResource(com.herfy.ordertype.R.drawable.ic_curbside_other)
 
-                    curbsideBrandName.text = order.carMakerName
+                    if (order.customerCar != null) {
+                        if (!order.customerCar.attributes.colorName.isNullOrEmpty()) {
+                            curbsideVehicleColor.text =
+                                "- " + order.customerCar.attributes.colorName
+                        }
+                        try {
+                            if (!order.customerCar.attributes.carMakerImageUri.isNullOrEmpty()) {
+                                Glide.with(curbsideBrandImage.context)
+                                    .load(order.customerCar.attributes.carMakerImageUri)
+                                    .apply(RequestOptions().override(80, 80)).skipMemoryCache(false)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .apply(RequestOptions.centerInsideTransform())
+                                    .listener(object : RequestListener<Drawable?> {
+                                        override fun onLoadFailed(
+                                            e: GlideException?,
+                                            model: Any,
+                                            target: Target<Drawable?>,
+                                            isFirstResource: Boolean
+                                        ): Boolean {
+                                            return false
+                                        }
 
-                    if (!order.carColor.isNullOrEmpty()) {
-                        curbsideVehicleColor.text = "- " + order.carColor
+                                        override fun onResourceReady(
+                                            resource: Drawable?,
+                                            model: Any,
+                                            target: Target<Drawable?>,
+                                            dataSource: DataSource,
+                                            isFirstResource: Boolean
+                                        ): Boolean {
+                                            return false
+                                        }
+                                    }).into(curbsideBrandImage)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-
+                    curbsideBrandName.text = order.carMakerName
                     if (!order.carPlateNumber.isNullOrEmpty()) {
                         curbsidePlateNumber.text = "- " + order.carPlateNumber
                     }
@@ -1081,7 +1120,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         val maxStatus = CacheUtil.getInstance().concept.orderCancellationMaxStatus
 
         orderDetails?.let { order ->
-            if (time > 0 && maxStatus >= order.orderStatus.sequence) {
+            if (time > 0 && maxStatus > order.orderStatus.sequence) {
                 val difference = cancelTime(order.createdAt)
                 val totalCancelTime = time * 60
                 if (difference >= totalCancelTime) {
@@ -1210,7 +1249,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 showOrderStatus(currentStatus)
                 val sequence = currentStatus?.sequence ?: -1
                 val maxStatus = CacheUtil.getInstance().concept.orderCancellationMaxStatus
-                if (maxStatus < order.orderStatus.sequence) {
+                if (maxStatus <= order.orderStatus.sequence) {
                     binding.orderCancelFrame.isVisible = false
                 }
                 val ot = OrderType.fromString(order.orderType)
