@@ -264,6 +264,7 @@
 
         <deepLink app:uri="android-app://com.herfy/nav_menu_item/{menu_category_id}/{menu_item_id}" />
         <deepLink app:uri="android-app://com.herfy/nav_menu_item/{menu_category_id}/{menu_item_id}?is_frequently_bought_item={is_frequently_bought_item}" />
+        <deepLink app:uri="android-app://com.herfy/nav_menu_item/{menu_category_id}/{menu_item_id}?is_sold_out={is_sold_out}" />
 
         <argument
             android:name="menu_category_id"
@@ -309,6 +310,10 @@
             android:name="frequently_bought_item_position"
             android:defaultValue="-1"
             app:argType="integer"/>
+        <argument
+            android:name="is_sold_out"
+            android:defaultValue="false"
+            app:argType="boolean"/>
         <action
             android:id="@+id/action_menu_item_to_cart"
             app:destination="@id/nav_cart"
@@ -327,6 +332,7 @@
         tools:layout="@layout/fragment_combo_meal">
 
         <deepLink app:uri="android-app://com.herfy/nav_combo/{menu_category_id}/{menu_item_id}" />
+        <deepLink app:uri="android-app://com.herfy/nav_combo/{menu_category_id}/{menu_item_id}?is_sold_out={is_sold_out}" />
 
         <argument
             android:name="menu_category_id"
@@ -357,6 +363,10 @@
             app:argType="boolean"/>
         <argument
             android:name="is_frequently_bought_item"
+            android:defaultValue="false"
+            app:argType="boolean"/>
+        <argument
+            android:name="is_sold_out"
             android:defaultValue="false"
             app:argType="boolean"/>
 

@@ -98,5 +98,6 @@ object Values {
     const val FREQUENTLY_BOUGHT_ITEM_LISTENER = "frequently_bought_item_listener"
     const val KEY_IS_ADDED_TO_FAVORITES = "is_added_to_favorites"
     const val KEY_IS_ADDED_TO_CART = "is_added_to_cart"
+    const val KEY_IS_SOLD_OUT = "is_sold_out"
     const val CATER_WITH_HERFY_URL = "https://www.herfy.com/"
 }

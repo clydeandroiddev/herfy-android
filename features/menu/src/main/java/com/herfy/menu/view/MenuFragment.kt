@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.VibrationEffect
@@ -14,9 +13,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -69,11 +68,10 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     }
     private var isCartEmpty = true
 
-    override fun onResume() {
-        super.onResume()
-        setCartQuantity()
-        viewModel.getOrderType()
-    }
+    private var orderTypeLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            viewModel.getMenu()
+        }
 
     private val menuCategoryAdapter: MenuCategoryAdapter by lazy {
         MenuCategoryAdapter { position, menuCategory ->
@@ -124,6 +122,13 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showLoading()
+        setCartQuantity()
+        viewModel.getOrderType()
     }
 
     override fun initViews() {
@@ -376,6 +381,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         viewModel.showMenuCategories.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { menuCategories ->
                 binding.shimmerMenuCategories.root.gone()
+                binding.rvMenuCategories.visible()
                 menuCategoryAdapter.addData(menuCategories)
                 binding.layoutSearch.visible()
             }
@@ -384,6 +390,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         viewModel.menuAdapterItems.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { menuAdapterItems ->
                 binding.shimmerMenuItems.root.gone()
+                binding.rvMenuCategoriesItems.visible()
                 menuCategoryItemAdapter.addData(menuAdapterItems)
                 if (viewModel.initialLoad && args.menuCategoryId.isNotEmpty()) {
                     menuCategoryAdapter.getPosition(args.menuCategoryId)?.let { position ->
@@ -509,6 +516,16 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     }
 
+    private fun showLoading() {
+        binding.apply {
+            shimmerMenuCategories.root.visible()
+            shimmerMenuItems.root.visible()
+            layoutSearch.gone()
+            rvMenuCategories.gone()
+            rvMenuCategoriesItems.gone()
+        }
+    }
+
     private fun orderTypeClick() {
         val type = CacheUtil.getInstance().orderType
         var orderType = OrderType.DELIVERY
@@ -538,7 +555,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 intent.putExtra("fromCart", false)
                 intent.putExtra("checkout", false)
                 intent.putExtra("storeId", storeId)
-                it.startActivity(intent)
+                orderTypeLauncher.launch(intent)
             }
         }
     }
@@ -594,9 +611,12 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     }
 
-    private fun navMenuItem(menuCategoryId: String, menuItemId: String, menu:MenuItem) {
+    private fun navMenuItem(menuCategoryId: String, menuItemId: String, menu: MenuItem) {
         val destinationLink = if(menu.isCombo) "nav_combo" else "nav_menu_item"
-        findNavController().navigateToDeepLink("$destinationLink/$menuCategoryId/$menuItemId")
+        val isSoldOut = CacheUtil.getOrderStoreId() != null && menu.outOfStockLocations.contains(
+            CacheUtil.getOrderStoreId()
+        )
+        findNavController().navigateToDeepLink("$destinationLink/$menuCategoryId/$menuItemId?is_sold_out=$isSoldOut")
     }
 
     private fun navCart() {
