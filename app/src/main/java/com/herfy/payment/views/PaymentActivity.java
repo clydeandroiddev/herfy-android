@@ -440,12 +440,12 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                             Intent intent = result.getData();
                             if (intent != null) {
                                 if(intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID) && intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)){
-                                    if(!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase("failed") && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase("canceled") && intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS).equalsIgnoreCase("paid")){
+                                    if(!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase(MoyasarActivity.STATUS_FAILED) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equalsIgnoreCase(MoyasarActivity.STATUS_CANCELLED) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS).equalsIgnoreCase(MoyasarActivity.STATUS_FAILED)){
                                         paymentPresenter.sendUpsells();
                                     } else {
                                         String errorMessage = intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS);
                                         String orderId = intent.getStringExtra(MoyasarActivity.EXTRA_ORDER_ID);
-                                        if (orderId != null && errorMessage != null && !errorMessage.equals("cancelled")) {
+                                        if (orderId != null && errorMessage != null && !errorMessage.equals(MoyasarActivity.STATUS_CANCELLED)) {
                                             ShipBookLogger.logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter.getPaymentProvider() + " Card Payment Failed (Reason: Moyasar " + errorMessage + ")");
                                             ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, paymentPresenter.getPaymentProvider(), "Card Payment Failed (Reason: Moyasar " + errorMessage + ")");
                                         }

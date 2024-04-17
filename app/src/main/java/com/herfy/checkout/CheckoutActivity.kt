@@ -209,11 +209,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             if (intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID) && intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)) {
                                 if (!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
                                         .equals(
-                                            "failed",
+                                            MoyasarActivity.STATUS_FAILED,
                                             ignoreCase = true
                                         ) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
-                                        .equals("canceled", ignoreCase = true) && intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
-                                        .equals("paid", ignoreCase = true)
+                                        .equals(MoyasarActivity.STATUS_CANCELLED, ignoreCase = true) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
+                                        .equals(MoyasarActivity.STATUS_FAILED, ignoreCase = true)
                                 ) {
                                     paymentPresenter!!.sendUpsells()
                                 } else {
@@ -221,7 +221,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                         intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
                                     val orderId =
                                         intent.getStringExtra(MoyasarActivity.EXTRA_ORDER_ID)
-                                    if (orderId != null && errorMessage != null && errorMessage != "cancelled") {
+                                    if (orderId != null && errorMessage != null && errorMessage != MoyasarActivity.STATUS_CANCELLED) {
 //                                        logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter?.paymentProvider + " Card Payment Failed (Reason: Moyasar " + errorMessage + ")")
                                         sendOrderLog(
                                             ApiLogLevel.ERROR,
