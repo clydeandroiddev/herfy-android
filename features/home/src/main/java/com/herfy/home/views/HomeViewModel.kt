@@ -63,8 +63,8 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel(), PromotionsAdapter.PromotionListener, SliderImageAdapter.SliderListener,
     PromotionCategoryAdapter.PromotionCategoryListener, PromotionDetailBottomSheet.onAction {
 
-    private val _showError = MutableLiveData<ErrorMsgItem>()
-    val showError: LiveData<ErrorMsgItem> = _showError
+    private val _showError = MutableLiveData<Event<ErrorMsgItem>>()
+    val showError: LiveData<Event<ErrorMsgItem>> = _showError
 
     private val _slideList = MutableLiveData<ArrayList<Slide>>()
     val slideList: LiveData<ArrayList<Slide>> = _slideList
@@ -259,7 +259,7 @@ class HomeViewModel @Inject constructor(
                     }
                 } else {
                     _promotionsList.value = arrayListOf()
-                    _showError.value = ErrorMsgItem(true, homeResponse.message)
+                    //_showError.value = ErrorMsgItem(true, homeResponse.message)
                 }
             }
         }
@@ -470,7 +470,7 @@ class HomeViewModel @Inject constructor(
                                 CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
                             )
                         )
-                        _showError.value = ErrorMsgItem(true, homeResponse.message)
+                        _showError.value = Event(ErrorMsgItem(true, homeResponse.message))
                     }
                 }
             }
@@ -513,7 +513,14 @@ class HomeViewModel @Inject constructor(
                             "order-type",
                             true
                         ) && rule.text?.split(",")
-                            ?.find { t -> if(category.equals("pickup", ignoreCase = true)) (t.trim() == "pickup" || t.trim() == "to-go")else t.trim().equals(category, true) } != null
+                            ?.find { t ->
+                                if (category.equals(
+                                        "pickup",
+                                        ignoreCase = true
+                                    )
+                                ) (t.trim() == "pickup" || t.trim() == "to-go") else t.trim()
+                                    .equals(category, true)
+                            } != null
                     } != null
                 }.let { promosWithRules ->
                     filteredList.addAll(promosWithRules)
@@ -538,41 +545,51 @@ class HomeViewModel @Inject constructor(
                             ), true, OrderType.NONE
                         )
                     )
-                    promocateglist.add(
-                        PromotionCategory(
-                            cacheUtil.getTranslations(
-                                Text.PICKUP, "Pickup"
-                            ), false, OrderType.PICKUP
+                    orderTypes.find { type -> type == OrderType.PICKUP }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.PICKUP, "Pickup"
+                                ), false, it
+                            )
                         )
-                    )
-                    promocateglist.add(
-                        PromotionCategory(
-                            cacheUtil.getTranslations(
-                                Text.CURBSIDE_LABEL, "Curbside"
-                            ), false, OrderType.CURBSIDE
+                    }
+                    orderTypes.find { type -> type == OrderType.CURBSIDE }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.CURBSIDE_LABEL, "Curbside"
+                                ), false, it
+                            )
                         )
-                    )
-                    promocateglist.add(
-                        PromotionCategory(
-                            cacheUtil.getTranslations(
-                                Text.DRIVE_THRU, "Drive Thru"
-                            ), false, OrderType.DRIVE_THRU
+                    }
+                    orderTypes.find { type -> type == OrderType.DRIVE_THRU }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.DRIVE_THRU, "Drive Thru"
+                                ), false, it
+                            )
                         )
-                    )
-                    promocateglist.add(
-                        PromotionCategory(
-                            cacheUtil.getTranslations(
-                                Text.DINE_IN, "Dine In"
-                            ), false, OrderType.DINE_IN
+                    }
+                    orderTypes.find { type -> type == OrderType.DINE_IN }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.DINE_IN, "Dine In"
+                                ), false, it
+                            )
                         )
-                    )
-                    promocateglist.add(
-                        PromotionCategory(
-                            cacheUtil.getTranslations(
-                                Text.DELIVERY, "Delivery"
-                            ), false, OrderType.DELIVERY
+                    }
+                    orderTypes.find { type -> type == OrderType.DELIVERY }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.DELIVERY, "Delivery"
+                                ), false, it
+                            )
                         )
-                    )
+                    }
                     _promotionCategoryList.value = promocateglist
                 }
             }
@@ -647,23 +664,23 @@ class HomeViewModel @Inject constructor(
                                         val errorObject = error.getJSONObject(0)
                                         detail = errorObject.getString("detail")
                                     }
-                                    _showError.value = ErrorMsgItem(true, detail)
+                                    _showError.value = Event(ErrorMsgItem(true, detail))
                                 } catch (e: JSONException) {
                                     e.printStackTrace()
-                                    _showError.value = ErrorMsgItem(
+                                    _showError.value = Event(ErrorMsgItem(
                                         true, CacheUtil.getInstance().getTranslations(
                                             Text.YOU_ARE_NOT_ELIGIBLE_TO_CLAIM_THE_PROMOTION,
                                             "You are not eligible to claim the promotion."
                                         )
-                                    )
+                                    ))
                                 }
                             } else {
-                                _showError.value = ErrorMsgItem(
+                                _showError.value = Event(ErrorMsgItem(
                                     true, CacheUtil.getInstance().getTranslations(
                                         Text.YOU_ARE_NOT_ELIGIBLE_TO_CLAIM_THE_PROMOTION,
                                         "You are not eligible to claim the promotion."
                                     )
-                                )
+                                ))
                             }
                         }
                     })
@@ -966,7 +983,7 @@ class HomeViewModel @Inject constructor(
                                     val jsonObject = JSONObject(o.toString())
                                     if (jsonObject.has("error") && !jsonObject.isNull("error")) {
                                         _showError.value =
-                                            ErrorMsgItem(true, jsonObject.getString("error"))
+                                            Event(ErrorMsgItem(true, jsonObject.getString("error")))
                                     } else {
                                         if (digitalCoupon.getPromotion() != null && digitalCoupon.getPromotion()
                                                 .getAttributes().getType()
@@ -992,7 +1009,7 @@ class HomeViewModel @Inject constructor(
 
                             override fun onError(o: Any) {
                                 AppLogger.printRetrofitError(o)
-                                _showError.value = ErrorMsgItem(
+                                _showError.value = Event(ErrorMsgItem(
                                     true,
                                     ErrorHandler.getErrorMessage(
                                         o,
@@ -1002,20 +1019,20 @@ class HomeViewModel @Inject constructor(
                                         ),
                                         null
                                     )
-                                )
+                                ))
                             }
                         })
                 }
             }
 
         } else {
-            _showError.value = ErrorMsgItem(
+            _showError.value = Event(ErrorMsgItem(
                 true,
                 CacheUtil.getInstance().getTranslations(
                     Text.PLEASE_ADD_ITEMS_TO_YOUR_CART,
                     "Please add items to your cart to avail this offer"
                 )
-            )
+            ))
         }
     }
 

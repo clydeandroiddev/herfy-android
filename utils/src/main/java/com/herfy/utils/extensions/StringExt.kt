@@ -7,6 +7,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 fun String.removeSpecialCharacters(): String {
     return replace("[^\\d]".toRegex(), "")
@@ -17,7 +18,8 @@ fun String.isValidEmail() =
 
 fun String.formatDate(format : String): String {
     return try {
-        val originalFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+        val originalFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.ssssss'Z'",Locale.ENGLISH)
+        originalFormat.timeZone = TimeZone.getTimeZone("UTC")
         val date: Date
         try {
             date = originalFormat.parse(this)!!
@@ -26,7 +28,8 @@ fun String.formatDate(format : String): String {
             return this
         }
         // Format the date in the desired format
-        val targetFormat = SimpleDateFormat(format, Locale.US)
+        val targetFormat = SimpleDateFormat(format, Locale.ENGLISH)
+        targetFormat.timeZone = TimeZone.getDefault()
         targetFormat.format(date)
     } catch (pe: ParseException) {
         this

@@ -501,41 +501,57 @@ class PromotionsPresenter @Inject constructor(
                             ), true, OrderType.NONE
                         )
                     )
-                    promocateglist.add(
-                        PromotionCategory(
-                            cacheUtil.getTranslations(
-                                Text.PICKUP, "Pickup"
-                            ), false, OrderType.PICKUP
+
+                    orderTypes.find { type -> type == OrderType.PICKUP }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.PICKUP, "Pickup"
+                                ), false, it
+                            )
                         )
-                    )
-                    promocateglist.add(
-                        PromotionCategory(
-                            cacheUtil.getTranslations(
-                                Text.CURBSIDE_LABEL, "Curbside"
-                            ), false, OrderType.CURBSIDE
+                    }
+
+                    orderTypes.find { type -> type == OrderType.CURBSIDE }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.CURBSIDE_LABEL, "Curbside"
+                                ), false, it
+                            )
                         )
-                    )
-                    promocateglist.add(
-                        PromotionCategory(
-                            cacheUtil.getTranslations(
-                                Text.DRIVE_THRU, "Drive Thru"
-                            ), false, OrderType.DRIVE_THRU
+                    }
+
+                    orderTypes.find { type -> type == OrderType.DRIVE_THRU }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.DRIVE_THRU, "Drive Thru"
+                                ), false, it
+                            )
                         )
-                    )
-                    promocateglist.add(
-                        PromotionCategory(
-                            cacheUtil.getTranslations(
-                                Text.DINE_IN, "Dine In"
-                            ), false, OrderType.DINE_IN
+                    }
+
+                    orderTypes.find { type -> type == OrderType.DINE_IN }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.DINE_IN, "Dine In"
+                                ), false, it
+                            )
                         )
-                    )
-                    promocateglist.add(
-                        PromotionCategory(
-                            cacheUtil.getTranslations(
-                                Text.DELIVERY, "Delivery"
-                            ), false, OrderType.DELIVERY
+                    }
+
+                    orderTypes.find { type -> type == OrderType.DELIVERY }?.let {
+                        promocateglist.add(
+                            PromotionCategory(
+                                cacheUtil.getTranslations(
+                                    Text.DELIVERY, "Delivery"
+                                ), false, it
+                            )
                         )
-                    )
+                    }
+
                     view.showPromotionsCategory(promocateglist)
                 }
             }

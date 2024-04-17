@@ -87,7 +87,12 @@ class CartPromoAdapter(private var campaigns: List<Campaign> = arrayListOf(), pr
                 }
                 tvCoupon.text = campaign.attributes.name
                 tvCouponDescription.text = campaign.attributes.description
-                tvCouponExpiryDate.text = CacheUtil.getInstance().getTranslations(Text.EXPIRES_LABEL, "Expires: (x)").replace("(x)",campaign.attributes.validUntil.formatDate("MMMM dd, YYYY"))
+                val validFromDate = campaign.attributes.validFrom //campaign.attributes.validFrom.split(".")[0]
+                val validUntilDate = campaign.attributes.validUntil //campaign.attributes.validUntil.split(".")[0]
+                tvCouponExpiryDate.text = CacheUtil.getInstance().getTranslations(Text.EXPIRES_LABEL, "Expires: (x)").replace("(x)",validUntilDate.formatDate("MMMM dd, YYYY"))
+                val validFromTime = validFromDate.formatDate("h a")
+                val validUntilTime = validUntilDate.formatDate("h a")
+                tvCouponValidTime.text = CacheUtil.getInstance().getTranslations(Text.VALID_TIME_LABEL, "Valid Time: (x) to (y)").replace("(x)", validFromTime).replace("(y)",validUntilTime)
                 if (campaign.attributes.isEligible && campaign.promotion != null && campaign.promotion.attributes.rules.isMet()) {
                     tvFooterCoupon.text = CacheUtil.getInstance()
                         .getTranslations(Text.AVAILABLE_TO_REDEEM, "Available to Redeem")
@@ -113,10 +118,7 @@ class CartPromoAdapter(private var campaigns: List<Campaign> = arrayListOf(), pr
                     } else {
                         tvContext.resources.getColor(R.color.secondaryTextColor)
                     }
-                    tvFooterCoupon.text = CacheUtil.getInstance().getTranslations(
-                        Text.SORRY_YOU_ARE_NOT_YET_ELIGIBLE,
-                        "Sorry, you are not yet eligible."
-                    )
+                    tvFooterCoupon.text = campaign.attributes.error
                     tvFooterCoupon.setTextColor(ColorStateList.valueOf(textColor))
                     ivFooterCoupon.setImageResource(R.drawable.ic_coupon_unavailable)
                     lnFooterCoupon.setBackgroundResource(R.drawable.background_lock_redeem)
