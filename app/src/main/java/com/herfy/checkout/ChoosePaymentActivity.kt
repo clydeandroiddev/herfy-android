@@ -309,17 +309,6 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
         }
     }
 
-    private fun cards() : List<CustomerCard> {
-
-        val cc = CustomerCard()
-        cc.id = "123"
-        cc.type = "credit"
-        cc.attributes.brand = "visa"
-        cc.attributes.last4Digits = "8989"
-
-        return listOf<CustomerCard>(cc, cc, cc)
-    }
-
     override fun setupFonts() {
 
     }
