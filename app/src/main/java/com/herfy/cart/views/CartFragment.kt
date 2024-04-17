@@ -307,7 +307,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             cartPresenter.showCoupon()
             cartPresenter.getUpsells()
             if (CacheUtil.getInstance().campaign != null) {
-                if(CacheUtil.getInstance().campaignPromotionMenuItem != null){
+                if((CacheUtil.getInstance().campaignPromotionMenuItem != null || CacheUtil.getInstance().couponMenuItem != null)){
                     isFromPromotions = true
                 }
                 cartPresenter.validateDigitalCoupon(
