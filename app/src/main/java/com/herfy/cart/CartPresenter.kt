@@ -1698,6 +1698,7 @@ class CartPresenter @Inject constructor(
                 CacheUtil.getInstance().campaignPromotion = null
             } else {
                 CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
+                cartView.addPromotionItem(menuItem)
             }
             cartView.showDigitalCoupon(campaign)
         }
