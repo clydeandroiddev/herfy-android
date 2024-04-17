@@ -127,7 +127,7 @@
             android:layout_height="wrap_content"
             style="@style/Styles.Text.SmallTitle"
             tools:text="Available to Redeem"
-            android:textSize="@dimen/_11ssp"
+            android:textSize="11sp"
             android:textColor="@color/text_coupon_available"/>
 
 

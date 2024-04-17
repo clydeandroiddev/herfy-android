@@ -269,11 +269,13 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.showError.observeNonNull(this) {
-            if (it.message.isNotEmpty()) {
-                showAlertDialog(
-                    title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
-                    message = it.message
-                )
+            it.getContentIfNotHandled()?.let{error ->
+                if (error.message.isNotEmpty()) {
+                    showAlertDialog(
+                        title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
+                        message = error.message
+                    )
+                }
             }
         }
 
