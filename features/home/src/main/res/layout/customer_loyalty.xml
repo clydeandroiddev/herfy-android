@@ -190,7 +190,7 @@
                         android:background="@color/white"
                         android:paddingVertical="18dp"
                         android:paddingHorizontal="20dp"
-                        android:visibility="gone">
+                        android:visibility="visible">
                         
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tv_see_rewards"

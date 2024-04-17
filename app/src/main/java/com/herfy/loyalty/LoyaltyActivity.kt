@@ -10,12 +10,10 @@ import android.os.Handler
 import android.os.Looper
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.doOnLayout
 import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.databinding.ActivityLoyaltyBinding
-import com.herfy.model.SortingCategory
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.OnLayoutLoadingCompleted
 import com.herfy.utils.extensions.gone
@@ -118,12 +116,12 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            finish()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                overrideActivityTransition(AnimUtil.outF(), AnimUtil.outS(), R.color.white)
+                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,AnimUtil.outF(), AnimUtil.outS(), R.color.white)
             } else {
                 overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
             }
+            finish()
         }
     }
 
@@ -200,7 +198,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 tvTotalPointsLabel.text =
                     cacheUtilHelper.getTranslations(Text.TOTAL_POINTS, "Total Points")
                 tvSarValueLabel.text =
-                    cacheUtilHelper.getTranslations(Text.SAR_VALUE_LABEL, "SAR VALUE")
+                    cacheUtilHelper.getTranslations(Text.SAR_VALUE_LABEL, "SR VALUE")
             }
             layoutRewardsTier.apply {
                 tvRewardTierLabel.text =
@@ -324,9 +322,9 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                     }
                     tvTier.text = loyaltyTier
                     tvTier.setBackgroundResource(tierBackground)
-                    val formatter = DecimalFormat("#,###")
+                    val currentBalanceValue = String.format("%.2f", loyalty.attributes.currentBalanceAmount)
                     tvSarValue.text =
-                        StringUtil.localize(formatter.format(loyalty.attributes.currentBalanceAmount))
+                        StringUtil.localize(currentBalanceValue)
                     tvTotalPoints.text =
                         StringUtil.localize(loyalty.attributes.currentBalance.toLong().toString())
                 }
