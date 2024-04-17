@@ -26,6 +26,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -173,7 +174,9 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         val locale = LocaleUtil.getLocale()
         if (locale != mCurrentLocale) {
             mCurrentLocale = locale
-            recreate()
+            val i = Intent(this@MainActivity, MainActivity::class.java)
+            startActivity(i)
+            overridePendingTransition(0, 0)
         }
     }
 
@@ -181,7 +184,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         if (AuthUtil.getInstance().isSignedIn) {
             val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
             firebaseAnalytics.setUserId(AuthUtil.getInstance().customer.id)
