@@ -1558,27 +1558,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun showSelectedPayment() {
         val selectedPayment = CacheUtil.getInstance().orderPayment
         val selectedCard = CacheUtil.getInstance().customCard
-
         if (selectedCard != null && selectedCard.attributes.isDefault && isCardPaymentAllowed() ) {
-            var res = R.drawable.ic_card_new
-            var cardLabel = "Visa ****"
-            if (selectedCard.attributes.brand.equals("visa", true)) {
-                res = R.drawable.ic_visa
-                cardLabel = "Visa ****"
-            } else if (selectedCard.attributes.brand.endsWith("mastercard", true)){
-                res = R.drawable.ic_mastercard
-                cardLabel = "Master ****"
-            }else if (selectedCard.attributes.brand.endsWith("amex", true)){
-                res = R.drawable.ic_amex_card
-                cardLabel = "Amex ****"
-            }
-            CacheUtil
-                .getInstance()
-                .setCustomerCards(Gson().toJson(selectedCard))
-            CacheUtil
-                .getInstance().orderPayment = PaymentType.CARD
-            binding!!.layoutPayment.ivSelectedPayment.setImageResource(res)
-            binding!!.layoutPayment.tvSelectedPayment.text = cardLabel+selectedCard.attributes.last4Digits
+            val cardPair = setupSaveCard(selectedCard)
+            CacheUtil.getInstance().setCustomerCards(Gson().toJson(selectedCard))
+            CacheUtil.getInstance().orderPayment = PaymentType.CARD
+            binding!!.layoutPayment.ivSelectedPayment.setImageResource(cardPair.first)
+            binding!!.layoutPayment.tvSelectedPayment.text =  cardPair.second+selectedCard.attributes.last4Digits
         } else {
             val isUserNotSelectedAnyPaymentMethod =
                 selectedPayment == PaymentType.NONE  // && CacheUtil.getInstance().customCard == null
@@ -1603,11 +1588,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
             } else if (selectedPayment == PaymentType.CARD) {
-                binding!!.layoutPayment.tvSelectedPayment.text =
-                    CacheUtil.getInstance().getTranslations(
-                        Text.CARD, "Card"
-                    )
-                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
+                if (selectedCard != null ) {
+                    val cardPair = setupSaveCard(selectedCard)
+                    binding!!.layoutPayment.ivSelectedPayment.setImageResource(cardPair.first)
+                    binding!!.layoutPayment.tvSelectedPayment.text =  cardPair.second+selectedCard.attributes.last4Digits
+                } else {
+                    binding!!.layoutPayment.tvSelectedPayment.text =
+                        CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
+                    binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
+                }
             } else if (selectedPayment == PaymentType.CARD_ON_DELIVERY || selectedPayment == PaymentType.CARD_ON_PICKUP) {
                 binding!!.layoutPayment.tvSelectedPayment.text =  if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
                     CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
@@ -1615,6 +1604,22 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
             }
         }
+    }
+
+    private fun setupSaveCard(selectedCard: CustomerCard) : Pair<Int, String> {
+        var res = R.drawable.ic_card_new
+        var cardLabel = "Visa ****"
+        if (selectedCard.attributes.brand.equals("visa", true)) {
+            res = R.drawable.ic_visa
+            cardLabel = "Visa ****"
+        } else if (selectedCard.attributes.brand.endsWith("mastercard", true)){
+            res = R.drawable.ic_mastercard
+            cardLabel = "Master ****"
+        }else if (selectedCard.attributes.brand.endsWith("amex", true)){
+            res = R.drawable.ic_amex_card
+            cardLabel = "Amex ****"
+        }
+        return Pair(res,cardLabel)
     }
 
     private fun showPaymentMethod() {

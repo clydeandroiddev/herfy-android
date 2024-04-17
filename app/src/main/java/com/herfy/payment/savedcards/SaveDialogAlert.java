@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,10 +50,17 @@ public class SaveDialogAlert extends DialogFragment {
                 onAction.onClose();
             }
         });
+
+        int defaultInterval = 1000;
         save.setOnClickListener(new View.OnClickListener() {
+            Long lastTimeClicked = 0L;
             @Override
             public void onClick(View view) {
+                if (SystemClock.elapsedRealtime() - lastTimeClicked < defaultInterval) {
+                    return;
+                }
                 onAction.onProceed();
+                lastTimeClicked = SystemClock.elapsedRealtime();
             }
         });
         noThanks.setOnClickListener(new View.OnClickListener() {
