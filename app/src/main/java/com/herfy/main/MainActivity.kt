@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -26,7 +27,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -169,6 +170,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         mCurrentLocale = resources.configuration.locale
     }
 
+
+
     override fun onRestart() {
         super.onRestart()
         val locale = LocaleUtil.getLocale()
@@ -176,7 +179,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             mCurrentLocale = locale
             val i = Intent(this@MainActivity, MainActivity::class.java)
             startActivity(i)
-            overridePendingTransition(0, 0)
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, 0, 0)
+            }else {
+                overridePendingTransition(0, 0)
+            }
         }
     }
 
@@ -184,7 +191,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         if (AuthUtil.getInstance().isSignedIn) {
             val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
             firebaseAnalytics.setUserId(AuthUtil.getInstance().customer.id)
