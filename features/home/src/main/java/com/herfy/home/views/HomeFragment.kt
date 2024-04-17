@@ -40,7 +40,6 @@ import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.DecimalFormat
 
 
 @AndroidEntryPoint
@@ -175,7 +174,7 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     tvLabelYourPoints.text =
                         cacheHelper.getTranslations(Text.TOTAL_POINTS, "Total Points")
                     tvSarLabel.text =
-                        cacheHelper.getTranslations(Text.SAR_VALUE_LABEL, "SAR VALUE")
+                        cacheHelper.getTranslations(Text.SAR_VALUE_LABEL, "SR VALUE")
                     tvSeeRewards.text =
                         cacheHelper.getTranslations(Text.SEE_MY_REWARDS, "See my rewards")
                     tvTitleEmptyState.text = cacheHelper.getTranslations(
@@ -369,10 +368,9 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     clCustomerLoyalty.visibility = View.VISIBLE
                     rlLoyaltyContent.visible()
                     lnLoyaltyEmptyState.gone()
-                    tvPoints.text = loyalty.attributes.pointsAccumulated.toString()
-                    val formatter = DecimalFormat("#,###")
-                    tvSarValue.text =
-                        StringUtil.localize(formatter.format(loyalty.attributes.currentBalanceAmount))
+                    tvPoints.text = StringUtil.localize(loyalty.attributes.pointsAccumulated.toString())
+                    val currentBalanceValue = String.format("%.2f", loyalty.attributes.currentBalanceAmount)
+                    tvSarValue.text = StringUtil.localize(currentBalanceValue)
                     var loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
                     if (LocaleUtil.getInstance().isEnglish) {
                         loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
