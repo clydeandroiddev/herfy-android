@@ -16,7 +16,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.clearFragmentResultListener
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -308,6 +307,9 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             cartPresenter.showCoupon()
             cartPresenter.getUpsells()
             if (CacheUtil.getInstance().campaign != null) {
+                if((CacheUtil.getInstance().campaignPromotionMenuItem != null || CacheUtil.getInstance().couponMenuItem != null)){
+                    isFromPromotions = true
+                }
                 cartPresenter.validateDigitalCoupon(
                     isFromPromotions, CacheUtil.getInstance().campaign
                 )
@@ -1809,7 +1811,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     if(menuItemTotalPrice > 0.0 && menuItem.attributes.quantity > 0){
                         quantityLayout.visible()
                     }else {
-                        quantityLayout.gone()
+                        quantityLayout.invisible()
                     }
                     //quantityLayout.visibility = if (menuItem.isPromo || menuItemTotalPrice == 0.0) View.INVISIBLE else View.VISIBLE
 
@@ -1874,6 +1876,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 CacheUtil.getInstance().couponToAdd.menuItem
             } else if (CacheUtil.getInstance().campaignToAdd != null) {
                 CacheUtil.getInstance().campaignToAdd.menuItem
+            } else if (CacheUtil.getInstance().campaignPromotionMenuItem != null){
+                CacheUtil.getInstance().campaignPromotionMenuItem
             } else {
                 null
             }
