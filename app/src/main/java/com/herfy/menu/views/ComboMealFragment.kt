@@ -49,7 +49,6 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.TimeZone
 import javax.inject.Inject
 
 
@@ -398,7 +397,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
             showComboSizes.observe(this@ComboMealFragment) {
                 binding.apply {
-                    if (it.isNotEmpty()) {
+                    if (it.size > 1) {
                         sizesLayoutTextContainer.visible()
                         sizesRecyclerView.visible()
                         val hasSelectedSize = it.any { it.attributes.isSelected }
