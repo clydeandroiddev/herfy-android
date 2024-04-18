@@ -30,7 +30,7 @@ class ComboMealModifierItemViewHolder(val binding: ItemComboComponentItemBinding
         binding.apply {
             val context = itemView.context
             var imageUrl: String? = componentModifierItem.image
-            var hasModifiers = componentModifierItem.modifierGroups.size > 1
+            var hasModifiers = componentModifierItem.modifierGroups.size >= 1
             if (imageUrl == null || imageUrl.equals(
                     "null",
                     ignoreCase = true

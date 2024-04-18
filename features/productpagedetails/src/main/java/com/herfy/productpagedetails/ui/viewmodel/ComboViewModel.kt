@@ -988,7 +988,7 @@ class ComboViewModel @Inject constructor(
 
     private fun checkToShowModifierDetail(
         components: ComponentModifierItem,
-    ): Boolean = components.modifierGroups.size > 1
+    ): Boolean = components.modifierGroups.size >= 1
 
     override fun onCheckedChanged(
         isSelected: Boolean,
