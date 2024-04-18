@@ -177,7 +177,7 @@ class PaymentMethodsUserFragment : BaseFragment(), AccountContract.View,
     override fun showCustomerCards() {
         dismissDialogs()
         val customerCards = CacheUtil.getInstance().customerCards
-        binding.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found"))
+        binding.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found."))
         binding.emptyState.setVisible(customerCards.isEmpty())
         adapter.updateList(ArrayList(customerCards))
     }
