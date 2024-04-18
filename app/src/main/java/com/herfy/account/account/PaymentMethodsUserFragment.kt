@@ -13,6 +13,7 @@ import com.herfy.base.BaseFragment
 import com.herfy.profile.databinding.FragmentUserPaymentMethodsBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
+import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
 import com.skylinedynamics.solosdk.api.models.objects.Address
@@ -175,7 +176,10 @@ class PaymentMethodsUserFragment : BaseFragment(), AccountContract.View,
 
     override fun showCustomerCards() {
         dismissDialogs()
-        adapter.updateList(ArrayList(CacheUtil.getInstance().customerCards))
+        val customerCards = CacheUtil.getInstance().customerCards
+        binding.emptyState.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found."))
+        binding.emptyState.setVisible(customerCards.isEmpty())
+        adapter.updateList(ArrayList(customerCards))
     }
 
     override fun showRevelRewardPoints(pointValue: Double?) {
