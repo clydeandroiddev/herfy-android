@@ -2,7 +2,6 @@ package com.herfy.menu.adapter
 
 import android.text.SpannableString
 import android.text.style.StrikethroughSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +21,7 @@ import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
@@ -171,10 +171,10 @@ class MenuCategoryItemAdapter(
                 tvDescription.text = menuItem.getDescription(LocaleUtil.getInstance().language)
 
                 val price = menuItem.getPrice(CacheUtil.getOrderStoreId())
-                tvPrice.text = String.format("SAR %.2f", price)
+                tvPrice.text = StringUtil.getFormattedPrice(price)
 
                 if(menuItem.listPrice > 0.0) {
-                    val formattedOldPrice = String.format("SAR %.2f", menuItem.listPrice)
+                    val formattedOldPrice = StringUtil.getFormattedPrice(menuItem.listPrice)
                     val oldPrice = SpannableString(formattedOldPrice)
                     oldPrice.setSpan(StrikethroughSpan(),0, formattedOldPrice.length,0)
                     tvOldPrice.apply {
@@ -239,10 +239,8 @@ class MenuCategoryItemAdapter(
                             onFavorite(item.menuItem)
                             setImageResource(
                                 if (CacheUtil.getInstance().favorites.contains(item.menuItem.id)) {
-                                    Log.d("FAFA","Empty")
                                     R.drawable.ic_favorite_empty
                                 } else {
-                                    Log.d("FAFA","Contains")
                                     R.drawable.ic_favorite_filled
                                 }
                             )
