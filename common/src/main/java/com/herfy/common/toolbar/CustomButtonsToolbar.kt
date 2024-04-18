@@ -53,7 +53,7 @@ class CustomButtonsToolbar @JvmOverloads constructor(
 
             ta.getResourceId(
                 R.styleable.CustomButtonsToolbar_rightButtonIcon,
-                R.drawable.ic_history_circle_white
+                R.drawable.ic_loyalty_history
             ).let {
                 rightButton?.setImageResource(it)
             }
