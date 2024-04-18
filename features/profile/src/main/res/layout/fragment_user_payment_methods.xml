@@ -65,6 +65,16 @@
                     android:layout_height="1dp"
                     android:background="#E6E8EB" />
 
+                <com.herfy.common.component.EmptyStateView
+                    android:id="@+id/emptyState"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/margin_xxxlarge"
+                    android:visibility="gone"
+                    app:emptyStateDrawable="@drawable/ic_empty_payment"
+                    android:layout_height="wrap_content">
+
+                </com.herfy.common.component.EmptyStateView>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/paymentsList"
                     android:layout_width="match_parent"
