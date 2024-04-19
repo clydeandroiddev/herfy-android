@@ -79,6 +79,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemCdn;
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
+import com.skylinedynamics.solosdk.api.models.objects.OrderTypeMenus;
 import com.skylinedynamics.solosdk.api.models.objects.Promotion;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.TimedEvent;
@@ -5312,14 +5313,25 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void getFrequentBoughtItemsByMenuId(int page, String menuId) {
+    public void getFrequentBoughtItemsByMenuId(int page, String menuItemId) {
+
+        String menuId = CacheUtil.getInstance().getMenuId();
+        if(CacheUtil.getInstance().isSeparatedMenus()) {
+            List<OrderTypeMenus> orderTypeMenus = CacheUtil.getInstance().getApplication().getAttributes().getOrderTypeMenus();
+            for (OrderTypeMenus menu : orderTypeMenus) {
+                if (menu.getType().equalsIgnoreCase("delivery") && CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
+                    menuId = menu.getId();
+                    break;
+                } else if (menu.getType().equalsIgnoreCase("delivery")) {
+                    menuId = menu.getId();
+                    break;
+                }
+            }
+        }
 
         MenuApiCall
                 .getInstance()
-                .getFrequentlyBoughtMenuItems(CacheUtil
-                        .getInstance()
-                        .getMenuId(), menuId, String.valueOf(page), new ApiRequestListener() {
-
+                .getFrequentlyBoughtMenuItems(menuId, menuItemId, String.valueOf(page), new ApiRequestListener() {
                     @Override
                     public void onSuccess(Object obj) {
                         try {
@@ -5336,7 +5348,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                                 MenuItem frequentBoughtMenu = GsonHelper.gsonFinal().fromJson(jsonObject.toString(), MenuItem.class);
                                 frequentBoughtMenuItems.add(frequentBoughtMenu);
                             }
-                            ArrayList<MenuItem> cartItems = CacheUtil.getInstance().getCart();
                             CacheUtil cacheUtil = CacheUtil.getInstance();
                             Set<String> favorites = cacheUtil.getFavorites();
                             for (MenuItem item : frequentBoughtMenuItems) {
@@ -5354,7 +5365,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                             if (page == pagination.getTotalPages()) {
                                 menuView.showFrequentBoughtItems(frequentBoughtMenuItems);
                             } else {
-                                getFrequentBoughtItemsByMenuId(page + 1, menuId);
+                                getFrequentBoughtItemsByMenuId(page + 1, menuItemId);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();

@@ -3,6 +3,7 @@ package com.herfy.menu.viewmodel
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.herfy.database.entities.MenuItemEntity
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.home.adapter.SliderImageAdapter
@@ -23,6 +24,8 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,7 +40,7 @@ class MenuViewModel @Inject constructor(
     private val _slides = MutableLiveData<Event<ArrayList<Slide>>>()
     val slides: LiveData<Event<ArrayList<Slide>>> = _slides
 
-    private val menuCategories = mutableListOf<MenuCategory>()
+    val menuCategories = mutableListOf<MenuCategory>()
     private val _showMenuCategories = MutableLiveData<Event<List<MenuCategory>>>()
     val showMenuCategories: LiveData<Event<List<MenuCategory>>> = _showMenuCategories
 
@@ -129,16 +132,8 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    fun getMenu() {
-        invoke {
-            menuRepository.getMenu {
-                getMenuCategoriesItems()
-            }
-        }
-    }
-
     fun getMenuCategoriesItems() {
-        invoke {
+        viewModelScope.launch(Dispatchers.IO) {
             val adapterItems = mutableListOf<MenuCategoryItemAdapter.MenuAdapterItem>()
             menuRepository.getMenuCategoriesItems {
                 menuCategories.clear()
