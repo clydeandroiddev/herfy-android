@@ -1619,6 +1619,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
+                paymentView.setupViews();
             }
         });
     }

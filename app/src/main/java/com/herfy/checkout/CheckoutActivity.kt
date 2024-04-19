@@ -693,7 +693,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 }
         }
 
-        if (loyalty.attributes != null) {
+        if (loyalty != null && loyalty.attributes != null) {
             firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener { task: Task<Boolean?> ->
                 if (task.isSuccessful) {
                     val loyaltySettings = firebaseRemoteConfig.getString("loyalty_settings")
