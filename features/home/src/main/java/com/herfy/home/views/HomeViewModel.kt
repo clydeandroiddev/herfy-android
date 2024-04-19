@@ -438,11 +438,7 @@ class HomeViewModel @Inject constructor(
                             }
                         }
                     } else {
-                        source.onError(
-                            Throwable(
-                                CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
-                            )
-                        )
+                        //_showError.value = Event(ErrorMsgItem(true, homeResponse.message))
                     }
                 }
             }
@@ -465,11 +461,6 @@ class HomeViewModel @Inject constructor(
                         }
                     } else {
                         _loyalty.value = null
-                        source.onError(
-                            Throwable(
-                                CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
-                            )
-                        )
                         //_showError.value = Event(ErrorMsgItem(true, homeResponse.message))
                     }
                 }

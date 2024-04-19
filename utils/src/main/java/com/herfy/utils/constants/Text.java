@@ -1184,4 +1184,6 @@ public class Text {
     public static final String CONFIRM = "confirm";
     public static final String SORRY_YOU_ARE_NOT_YET_ELIGIBLE = "sorry_you_are_not_yet_eligible";
     public static final String VALID_TIME_LABEL="valid_time_value";
+    public static final String LOGIN_REGISTER_LABEL ="login_register";
+    public static final String REPEATING_OFFER_LABEL="repeating_offer_label";
 }

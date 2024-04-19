@@ -23,8 +23,8 @@ import com.herfy.home.adapter.PromotionOrderTypeAdapter
 import com.herfy.home.adapter.PromotionRulesAdapter
 import com.herfy.home.databinding.BottomSheetPromotionDetailBinding
 import com.herfy.model.PromotionOrderType
+import com.herfy.model.PromotionRequirement
 import com.herfy.utils.constants.Text
-import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
@@ -153,13 +153,13 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
                 btnClaim.setOnClickListener {
                     if (!toRemove) {
-                        if (CacheUtil.getInstance().couponCode != null) {
+                        if (CacheUtil.getInstance().couponCode != null || CacheUtil.getInstance().campaign != null) {
                             try {
                                 showPromptAlertDialog(
                                     "",
                                     CacheUtil.getInstance().getTranslations(
                                         Text.ONE_DISCOUNT_ONLY_MESSAGE,
-                                        "You can only apply one discount at a time. Currently applied discount will be removed"
+                                        "You can only apply one discount at a time. Currently applied discount will be removed."
                                     ),
                                     CacheUtil.getInstance().getTranslations(
                                         Text.YES_CAPS
@@ -169,6 +169,11 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                                         CacheUtil.getInstance().couponName = null
                                         CacheUtil.getInstance().couponMenuItem = null
                                         CacheUtil.getInstance().couponToAdd = null
+                                        CacheUtil.getInstance().digitalCoupons = ""
+                                        CacheUtil.getInstance().campaign = null
+                                        CacheUtil.getInstance().campaignPromotion = null
+                                        CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                        CacheUtil.getInstance().campaignToAdd = null
                                         action?.onClickClaimPromo(promoData)
                                         dismiss()
                                     },
@@ -180,6 +185,11 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                                     CacheUtil.getInstance().couponName = null
                                     CacheUtil.getInstance().couponMenuItem = null
                                     CacheUtil.getInstance().couponToAdd = null
+                                    CacheUtil.getInstance().digitalCoupons = ""
+                                    CacheUtil.getInstance().campaign = null
+                                    CacheUtil.getInstance().campaignPromotion = null
+                                    CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                    CacheUtil.getInstance().campaignToAdd = null
                                     action?.onClickClaimPromo(promoData)
                                     dismiss()
                                 }
@@ -190,49 +200,59 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                         action?.onClickClaimPromo(promoData)
                         dismissAllowingStateLoss()
                     }
-
-
-
-
-                    action?.onClickClaimPromo(promoData)
                 }
 
 
                 promoData.promotion?.attributes?.rules?.let {
 
-                    it.find { r-> r.ruleKey.equals("total.gte", ignoreCase = true)  }?.let { gte ->
+                    it.find { r -> r.ruleKey.equals("total.gte", ignoreCase = true) }?.let { gte ->
                         fmPromoCategory.visible()
                         totalGte = gte.text
                     }
-
-                    val requirements = it.filter { r -> r.ruleKey != "order-type" && !r.ruleKey.equals("total.gte", ignoreCase = true) }
-                    if (requirements.isNotEmpty()) {
-
-                        val promotionRulesAdapter = PromotionRulesAdapter(requirements)
-
-                        rvRequirements.apply {
-                            adapter = promotionRulesAdapter
-                            layoutManager = LinearLayoutManager(
-                                context,
-                                LinearLayoutManager.VERTICAL,
-                                false
-                            )
-                            setHasFixedSize(true)
-                            ContextCompat.getDrawable(context, R.drawable.divider_promo_rules)
-                                ?.let { divider ->
-                                    addItemDecoration(DividerItemDecorator(divider))
-                                }
-                        }
-                        promotionRulesAdapter.notifyDataSetChanged()
-                    } else {
-                        tvRequirements.gone()
-                        rvRequirements.gone()
-                    }
-                } ?: run {
-                    tvRequirements.gone()
-                    rvRequirements.gone()
                 }
 
+                promoData.promotion?.attributes?.requirements?.let { requirement ->
+
+                    val requirementList = arrayListOf<PromotionRequirement>()
+                    requirementList.add(
+                        PromotionRequirement(
+                            cacheUtilHelper?.getTranslations(
+                                Text.LOGIN_REGISTER_LABEL,
+                                "Login/Register"
+                            ) ?: "",
+                            requirement.isRegistered
+                        )
+                    )
+                    requirementList.add(
+                        PromotionRequirement(
+                            cacheUtilHelper?.getTranslations(
+                                Text.REPEATING_OFFER_LABEL,
+                                "Repeating Offer"
+                            ) ?: "",
+                            requirement.isRepeating
+                        )
+                    )
+
+
+                    val promotionRulesAdapter = PromotionRulesAdapter(requirementList)
+                    tvRequirements.visible()
+                    rvRequirements.visible()
+                    rvRequirements.apply {
+                        adapter = promotionRulesAdapter
+                        layoutManager = LinearLayoutManager(
+                            context,
+                            LinearLayoutManager.VERTICAL,
+                            false
+                        )
+                        setHasFixedSize(true)
+                        ContextCompat.getDrawable(context, R.drawable.divider_promo_rules)
+                            ?.let { divider ->
+                                addItemDecoration(DividerItemDecorator(divider))
+                            }
+                    }
+                    promotionRulesAdapter.notifyDataSetChanged()
+
+                }
             }
         }
 
@@ -256,40 +276,48 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
         val cacheUtil = CacheUtil.getInstance()
         promoData.promotion?.attributes?.rules?.let {
-            val orderTypeRule = it.find { rule -> rule.ruleKey.equals("order-type", ignoreCase = true) }
+            val orderTypeRule =
+                it.find { rule -> rule.ruleKey.equals("order-type", ignoreCase = true) }
             if (orderTypeRule != null) {
                 promoOrderTypeList.clear()
                 val orderTypes = orderTypeRule.text.split(Pattern.compile(","))
-                for(type in orderTypes){
+                for (type in orderTypes) {
                     var orderTypeIcon = R.drawable.ic_delivery_promo
                     var orderTypeLabel = type.trim()
-                    when(type.trim()){
+                    when (type.trim()) {
                         "delivery" -> {
                             orderTypeLabel = cacheUtil.getTranslations(Text.DELIVERY)
                             orderTypeIcon = R.drawable.ic_delivery_promo
                         }
+
                         "pickup" -> {
                             orderTypeLabel = cacheUtil.getTranslations(Text.PICKUP)
                             orderTypeIcon = R.drawable.ic_pickup_promo
                         }
+
                         "eat-in" -> {
                             orderTypeLabel = cacheUtil.getTranslations(Text.DINE_IN)
                             orderTypeIcon = R.drawable.ic_dine_in_promo
                         }
+
                         "curbside" -> {
                             orderTypeLabel = cacheUtil.getTranslations(Text.CURBSIDE_PICKUP)
                             orderTypeIcon = R.drawable.ic_drive_thru_promo
                         }
-                        "drive-thru"->{
-                            orderTypeLabel = cacheUtil.getTranslations(Text.DRIVE_THRU,"Drive Thru")
+
+                        "drive-thru" -> {
+                            orderTypeLabel =
+                                cacheUtil.getTranslations(Text.DRIVE_THRU, "Drive Thru")
                             orderTypeIcon = R.drawable.ic_drive_thru_promo
                         }
                     }
 
-                    promoOrderTypeList.add(PromotionOrderType(
-                        orderTypeLabel,
-                        orderTypeIcon
-                    ))
+                    promoOrderTypeList.add(
+                        PromotionOrderType(
+                            orderTypeLabel,
+                            orderTypeIcon
+                        )
+                    )
                 }
             }
         }

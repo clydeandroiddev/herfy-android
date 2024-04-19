@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="rule"
-            type="com.skylinedynamics.solosdk.api.models.objects.PromotionRules" />
+            name="requirement"
+            type="com.herfy.model.PromotionRequirement" />
 
 
     </data>
@@ -58,7 +58,7 @@
                 android:textColor="@color/secondaryTextColor"
                 android:textSize="14sp"
                 tools:text="Login/Register"
-                android:text="@{rule.text}"
+                android:text="@{requirement.label}"
                 style="@style/Styles.Text.Caption.Semibold"/>
 
 
@@ -74,7 +74,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:background="@drawable/cb_promo_rules_state"
                 android:button="@null"
-                android:checked="@{rule.met}"
+                android:checked="@{requirement.isRequired}"
                 tools:checked="false"/>
 
 
