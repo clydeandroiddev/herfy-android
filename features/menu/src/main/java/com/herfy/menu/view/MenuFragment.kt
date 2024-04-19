@@ -236,7 +236,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
         viewModel.apply {
             getSlides()
-            getMenu()
+            getMenuCategoriesItems()
         }
     }
 
