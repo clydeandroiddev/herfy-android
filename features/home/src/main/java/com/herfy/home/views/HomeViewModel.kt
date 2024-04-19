@@ -470,7 +470,7 @@ class HomeViewModel @Inject constructor(
                                 CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
                             )
                         )
-                        _showError.value = Event(ErrorMsgItem(true, homeResponse.message))
+                        //_showError.value = Event(ErrorMsgItem(true, homeResponse.message))
                     }
                 }
             }

@@ -17,6 +17,7 @@ import com.herfy.BuildConfig
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.database.AppDatabase
 import com.herfy.font.FontHandler
+import com.herfy.util.AppLogger
 import com.herfy.util.glide.UnsafeOkHttpClient
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
@@ -29,6 +30,8 @@ import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
 import dagger.hilt.android.HiltAndroidApp
+import io.reactivex.exceptions.UndeliverableException
+import io.reactivex.plugins.RxJavaPlugins
 import io.shipbook.shipbooksdk.ShipBook
 
 @HiltAndroidApp
@@ -77,6 +80,18 @@ class BaseApplication : Application(), ImageLoaderFactory {
         ShipBook.enableInnerLog(BuildConfig.DEBUG)
 
         MixpanelUtil(applicationContext)
+
+        RxJavaPlugins.setErrorHandler { e ->
+            if (e is UndeliverableException) {
+                // Merely log undeliverable exceptions
+                AppLogger.error(e.message)
+            } else {
+                // Forward all others to current thread's uncaught exception handler
+                Thread.currentThread().also { thread ->
+                    thread.uncaughtExceptionHandler?.uncaughtException(thread, e)
+                }
+            }
+        }
     }
 
     override fun attachBaseContext(base: Context) {
