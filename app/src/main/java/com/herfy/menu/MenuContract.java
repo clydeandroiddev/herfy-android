@@ -364,7 +364,7 @@ public interface MenuContract {
 
         void getGuestDigitalCoupons();
 
-        void getFrequentBoughtItemsByMenuId(int page,String menuId);
+        void getFrequentBoughtItemsByMenuId(int page, String menuItemId);
 
         void selectDigitalCoupon(int position);
 

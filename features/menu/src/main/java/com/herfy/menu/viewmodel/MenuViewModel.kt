@@ -40,7 +40,7 @@ class MenuViewModel @Inject constructor(
     private val _slides = MutableLiveData<Event<ArrayList<Slide>>>()
     val slides: LiveData<Event<ArrayList<Slide>>> = _slides
 
-    private val menuCategories = mutableListOf<MenuCategory>()
+    val menuCategories = mutableListOf<MenuCategory>()
     private val _showMenuCategories = MutableLiveData<Event<List<MenuCategory>>>()
     val showMenuCategories: LiveData<Event<List<MenuCategory>>> = _showMenuCategories
 

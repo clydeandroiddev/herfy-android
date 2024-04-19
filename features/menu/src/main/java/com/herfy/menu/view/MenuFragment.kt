@@ -126,7 +126,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     override fun onResume() {
         super.onResume()
-        showLoading()
+        showLoading(viewModel.menuCategories.isEmpty())
         setCartQuantity()
         viewModel.getOrderType()
     }
@@ -516,13 +516,21 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     }
 
-    private fun showLoading() {
+    private fun showLoading(show: Boolean) {
         binding.apply {
-            shimmerMenuCategories.root.visible()
-            shimmerMenuItems.root.visible()
-            layoutSearch.gone()
-            rvMenuCategories.gone()
-            rvMenuCategoriesItems.gone()
+            if(show) {
+                shimmerMenuCategories.root.visible()
+                shimmerMenuItems.root.visible()
+                layoutSearch.gone()
+                rvMenuCategories.gone()
+                rvMenuCategoriesItems.gone()
+            } else {
+                shimmerMenuCategories.root.gone()
+                shimmerMenuItems.root.gone()
+                layoutSearch.visible()
+                rvMenuCategories.visible()
+                rvMenuCategoriesItems.visible()
+            }
         }
     }
 
