@@ -797,23 +797,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuPresenter.setItemNote(itemNote)
                     }
 
-                    binding.add.setOnClickListener(View.OnClickListener {
-                        if (CacheUtil.getInstance().application.attributes.menuOnly) {
-                            FirebaseService.newNotification(
-                                CacheUtil.getInstance().getTranslations(
-                                    Text.MENU_ONLY_MESSAGE,
-                                    "Sorry, ordering is not available at the moment"
-                                ), binding.add.context
-                            )
-                            return@OnClickListener
-                        }
-                        var itemNote = binding.etItemNotes.text.toString() ?: ""
-                        if (itemNote.isEmpty()) {
-                            menuPresenter.setItemNote("")
-                        } else {
-                            menuPresenter.setItemNote(itemNote)
-                        }
-
                         if (!args.isPromo) {
                             if (cartMenuItem >= 0) {
                                 menuPresenter.updateCartItem(false, cartMenuItem)
