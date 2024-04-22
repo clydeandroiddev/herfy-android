@@ -836,10 +836,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         )
                         FacebookAppEventUtil.viewMenuItemEvent(activity, menuItem)
                     }
-                })
+                }
             }
         }
-    }
+
 
 
     private fun changeMealDeal(isSandwich: Boolean) {
