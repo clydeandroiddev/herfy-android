@@ -842,7 +842,7 @@ public class Text {
 
     public static final String CATER_WITH_HERFY = "cater_with_herfy";
     public static final String CATER_WITH_US = "cater_with_us";
-    public static final String CATER_WITH_HERFY_DESC = "cater_with_herfy_desc";
+    public static final String CATER_WITH_HERFY_DESC = "best_event";
     public static final String ORDER_CATERING = "order_catering";
     public static final String CLAIM_PROMO = "claim_promo_label";
 

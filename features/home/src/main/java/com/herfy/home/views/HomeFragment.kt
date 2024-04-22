@@ -69,6 +69,7 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             setupPromoCategory()
             setupPromotions()
             setupOrderType()
+            setupCaterWithHerfy()
             setupBottomSlider()
             layoutLoyalty.apply {
                 //progress.isEnabled = false
@@ -683,12 +684,32 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
+    private fun setupCaterWithHerfy(){
+        activity?.let{
+            binding.apply {
+                val displayMetrics = DisplayMetrics()
+                it.windowManager.defaultDisplay.getMetrics(displayMetrics)
+                val sliderHeight = (displayMetrics.widthPixels / 2.6).toInt()
+                layoutCatering.apply {
+                    cvCateringContent.layoutParams.height = sliderHeight
+                }
+            }
+        }
+    }
+
     private fun setupBottomSlider() {
         activity?.let {
             viewModel.getBottomSliders()
             binding.apply {
                 bottomSliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
-                layoutBottomBanner.vpBannerBottom.adapter = bottomSliderImageAdapter
+                layoutBottomBanner.apply {
+                    val displayMetrics = DisplayMetrics()
+                    it.windowManager.defaultDisplay.getMetrics(displayMetrics)
+                    val sliderHeight = (displayMetrics.widthPixels / 2.6).toInt()
+                    cvBannerBottom.layoutParams.height = sliderHeight
+                    shimmerBannerBottom.layoutParams.height = sliderHeight
+                    vpBannerBottom.adapter = bottomSliderImageAdapter
+                }
             }
         }
     }
