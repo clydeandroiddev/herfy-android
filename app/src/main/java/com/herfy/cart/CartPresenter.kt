@@ -1798,7 +1798,7 @@ class CartPresenter @Inject constructor(
                             }
                             getStoreOpen(_scheduleTime)
                         } else {
-                            validateOrder(false, true, scheduleTime!!)
+                            validateOrder(false, true, _scheduleTime)
                         }
                     } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
                         getAddresses(false)
