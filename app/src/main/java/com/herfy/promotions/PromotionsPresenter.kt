@@ -459,7 +459,7 @@ class PromotionsPresenter @Inject constructor(
             OrderType.NONE -> ""
             OrderType.PICKUP -> "pickup"
             OrderType.DINE_IN -> "eat-in"
-            OrderType.DELIVERY -> "delivery"
+            OrderType.DELIVERY -> "deliver"
             OrderType.CURBSIDE -> "curbside"
             OrderType.DRIVE_THRU -> "pickup"
         }
@@ -473,13 +473,13 @@ class PromotionsPresenter @Inject constructor(
                         rule.ruleKey.equals(
                             "order-type",
                             true
-                        ) && rule.text?.split(",")
+                        ) && rule.ruleValue?.replace("in:", "")?.split(",")
                             ?.find { t ->
                                 if (category.equals(
                                         "pickup",
                                         ignoreCase = true
                                     )
-                                ) (t.trim() == "pickup" || t.trim() == "to-go") else t.trim()
+                                ) (t.trim() == "pickup" || t.trim() == "to-go" || t.trim() == "drive-thru") else t.trim()
                                     .equals(category, true)
                             } != null
                     } != null

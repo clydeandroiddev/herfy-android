@@ -27,7 +27,6 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -68,10 +67,14 @@ import com.herfy.main.adapter.SwitchServerAdapter
 import com.herfy.menu.view.MenuFragment
 import com.herfy.menu.views.MenuItemFragmentDirections
 import com.herfy.newmenu.NewMenuFragmentCommonListener
-import com.herfy.newmenu.views.*
+import com.herfy.newmenu.views.NewMenuFragment
+import com.herfy.newmenu.views.NewMenuHomePageFragment
+import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
+import com.herfy.newmenu.views.PopularNowFragmentDirections
 import com.herfy.promotions.views.PromotionsFragmentDirections
 import com.herfy.splash.SplashActivity
-import com.herfy.util.*
+import com.herfy.util.StringUtil
+import com.herfy.util.ViewUtil
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
 import com.herfy.utils.analytics.MixpanelUtil
@@ -93,12 +96,15 @@ import com.herfy.utils.helper.NavigationUtils
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
-import com.skylinedynamics.solosdk.api.models.objects.*
+import com.skylinedynamics.solosdk.api.models.objects.Campaign
+import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.cms.CmsPage
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.blurry.Blurry
-import java.util.*
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonListener {
@@ -562,6 +568,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     private fun setupSideBar() {
+        binding.navigationLayout.apply {
+            val screenWidth = ViewUtil.getScreenWidth(this@MainActivity)
+            val drawerWidthMultiplier = ViewUtil.dpToPx(this@MainActivity, 129)
+            val calcDrawerWidth = (screenWidth - drawerWidthMultiplier).toInt()
+            layoutParams.width = calcDrawerWidth
+        }
         val customer = AuthUtil.getInstance().customer
         val isSubs = CacheUtil.getInstance().mode == 2
         val isSignedIn = AuthUtil.getInstance().isSignedIn
@@ -639,7 +651,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     override fun setupViews() {
         mainPresenter.getCaloriesPage()
         binding.drawerLayout.apply {
-            setScrimColor(Color.parseColor("#B30C0C0C"))
+            setScrimColor(Color.parseColor("#339C9C9C"))
             addDrawerListener(object : DrawerListener {
                 override fun onDrawerSlide(p0: View, p1: Float) {
                     if (isDrawerOpen) {
