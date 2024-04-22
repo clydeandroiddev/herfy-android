@@ -6,9 +6,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.herfy.home.R
 import com.herfy.home.databinding.ItemPromoRulesBinding
-import com.skylinedynamics.solosdk.api.models.objects.PromotionRules
+import com.herfy.model.PromotionRequirement
 
-class PromotionRulesAdapter(val rules: List<PromotionRules>) :
+class PromotionRulesAdapter(val requirements: List<PromotionRequirement>) :
     RecyclerView.Adapter<PromotionRulesAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemPromoRulesBinding) :
@@ -24,11 +24,11 @@ class PromotionRulesAdapter(val rules: List<PromotionRules>) :
         return ViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = rules.size
+    override fun getItemCount(): Int = requirements.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.apply {
-            rule = rules[position]
+            requirement = requirements[position]
         }
     }
 

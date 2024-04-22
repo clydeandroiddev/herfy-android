@@ -1318,7 +1318,7 @@ class CartPresenter @Inject constructor(
         val appDatabase = AppDatabase.getInstance()
         executor.execute {
             val data = getMenuItemData(appDatabase, menuItem.id)
-            if (data != null && !data.isEmpty()) {
+            if (!data.isNullOrEmpty()) {
                 val applicationId = CacheUtil.getInstance().application.id
                 promoMenuItem = MenuUtil.processMenuItemCustomObject(
                     GsonHelper.gsonFinal().fromJson(data, MenuItem::class.java)
@@ -1485,7 +1485,52 @@ class CartPresenter @Inject constructor(
                 }
                 menuItem.toCdn(orderStoreId)
                 menuItem.isPromo = true
-                CacheUtil.getInstance().couponMenuItem = menuItem
+                var hasPromoMenuItem = false
+                if (campaign == null) {
+                    if (menuItem.isMustBeCustomized || menuItem.isCombo) {
+                        val couponToAdd = CouponToAdd(
+                            CacheUtil.getInstance().couponCode, CacheUtil.getInstance().couponName, menuItem
+                        )
+                        CacheUtil.getInstance().couponToAdd = couponToAdd
+                        CacheUtil.getInstance().couponCode = null
+                        CacheUtil.getInstance().couponName = null
+                    } else {
+                        CacheUtil.getInstance().couponMenuItem = menuItem
+                        val couponCode = CacheUtil.getInstance().couponCode
+                        val couponName = CacheUtil.getInstance().couponName
+                        if (couponCode != null && couponName != null) {
+                            hasPromoMenuItem = true
+                            cartView.showCoupon(couponCode, couponName)
+                            cartView.addPromotionItem(menuItem)
+                        }
+                    }
+                } else {
+                    if (menuItem.isMustBeCustomized || menuItem.isCombo) {
+                        val campaignToAdd = CampaignToAdd(
+                            CacheUtil.getInstance().campaign,
+                            CacheUtil.getInstance().campaignPromotion,
+                            menuItem
+                        )
+                        CacheUtil.getInstance().campaignToAdd = campaignToAdd
+                        CacheUtil.getInstance().campaign = null
+                        CacheUtil.getInstance().campaignPromotion = null
+                    } else {
+                        CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
+                        cartView.addPromotionItem(menuItem)
+                        hasPromoMenuItem = true
+                    }
+                    cartView.showDigitalCoupon(campaign)
+                }
+                if (validatedOrderData != null) {
+                    showPrice(true, validatedOrderData!!, 0.0)
+                }
+
+                if(hasPromoMenuItem){
+                    CacheUtil.getInstance().cart = menuItems
+                    cartView.updateMenuItems(menuItems)
+                }
+
+                cartView.showPromotionItem()
             }
         }
     }
@@ -1669,6 +1714,7 @@ class CartPresenter @Inject constructor(
         }
         menuItem.toCdn(orderStoreId)
         menuItem.isPromo = true
+        var hasPromoMenuItem = false
         if (campaign == null) {
             if (menuItem.isMustBeCustomized || menuItem.isCombo) {
                 val couponToAdd = CouponToAdd(
@@ -1682,6 +1728,7 @@ class CartPresenter @Inject constructor(
                 val couponCode = CacheUtil.getInstance().couponCode
                 val couponName = CacheUtil.getInstance().couponName
                 if (couponCode != null && couponName != null) {
+                    hasPromoMenuItem = true
                     cartView.showCoupon(couponCode, couponName)
                     cartView.addPromotionItem(menuItem)
                 }
@@ -1697,6 +1744,7 @@ class CartPresenter @Inject constructor(
                 CacheUtil.getInstance().campaign = null
                 CacheUtil.getInstance().campaignPromotion = null
             } else {
+                hasPromoMenuItem = true
                 CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
                 cartView.addPromotionItem(menuItem)
             }
@@ -1704,6 +1752,10 @@ class CartPresenter @Inject constructor(
         }
         if (validatedOrderData != null) {
             showPrice(true, validatedOrderData!!, 0.0)
+        }
+        if(hasPromoMenuItem){
+            CacheUtil.getInstance().cart = menuItems
+            cartView.updateMenuItems(menuItems)
         }
         cartView.showPromotionItem()
     }

@@ -734,10 +734,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             CacheUtil.getInstance()
                 .getTranslations(Text.YOUR_CART_IS_EMPTY_LABEL, "Your cart is empty")
         )
-        binding.paymentSummaryContainer.applyCouponLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
-        binding.paymentSummaryContainer.viewCoupon.text =
-            CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
         binding.paymentSummaryContainer.apply {
             paymentSummaryLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.PAYMENT_SUMMARY, "Payment Summary")
@@ -855,6 +851,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         var itemCount = 0
         for (item in menuItems) {
             itemCount += item.attributes.quantity
+        }
+        val couponMenuItem = CacheUtil.getInstance().couponMenuItem
+        if(couponMenuItem != null){
+            itemCount += couponMenuItem.attributes.quantity
+        }
+        val campaignPromotionMenuItem = CacheUtil.getInstance().campaignPromotionMenuItem
+        if(campaignPromotionMenuItem != null){
+            itemCount += campaignPromotionMenuItem.attributes.quantity
         }
         binding.orderDetailsContainer.apply {
             clOrderDetails.visible()
@@ -1579,6 +1583,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 dismissProgressDialog()
             }
             binding.paymentSummaryContainer.apply {
+
                 campaign?.let {
                     applyCouponLabel.text = it.attributes.name
                     tvCouponDescription.visible()
@@ -1596,13 +1601,16 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     ivCoupon.loadImageFromUrl(imageUrl, isSkipMemoryCache = false)
                     viewCoupon.text = CacheUtil.getInstance().getTranslations(Text.REMOVE, "Remove")
                 } ?: run {
-                    applyCouponLabel.text = CacheUtil.getInstance()
-                        .getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
-                    tvCouponDescription.text = ""
-                    tvCouponDescription.gone()
-                    ivCoupon.setImageResource(R.drawable.ic_apply_coupon)
-                    viewCoupon.text = CacheUtil.getInstance()
-                        .getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
+                    if(CacheUtil.getInstance().couponCode == null){
+                        applyCouponLabel.text = CacheUtil.getInstance()
+                            .getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
+                        tvCouponDescription.text = ""
+                        tvCouponDescription.gone()
+                        ivCoupon.setImageResource(R.drawable.ic_apply_coupon)
+                        viewCoupon.text = CacheUtil.getInstance()
+                            .getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
+                    }
+
                 }
             }
         }
@@ -1808,7 +1816,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     }
 
                     val menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1)
-                    if(menuItemTotalPrice > 0.0 && menuItem.attributes.quantity > 0){
+                    if(menuItem.attributes.quantity > 0){
                         quantityLayout.visible()
                     }else {
                         quantityLayout.invisible()

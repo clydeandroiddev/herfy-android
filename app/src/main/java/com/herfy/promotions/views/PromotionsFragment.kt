@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -171,11 +170,24 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
 
     }
 
-    override fun showError(error: String?) {
+    override fun showError(error: String?, back: Boolean) {
         runOnMain {
             checkCampaigns()
+            try {
+                val activity = activity as BaseActivity?
+                activity?.showAlertDialog(
+                    "",
+                    error,
+                    CacheUtil.getInstance().getTranslations(Text.OK)
+                ) { dialog, which ->
+                    if (back) {
+                        activity.onBackPressed()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
-
     }
 
     override fun showPromotionsCategory(promocateglist: MutableList<PromotionCategory>) {
@@ -305,7 +317,7 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
 
     }
 
-    private fun showCart(isAvail: Boolean) {
+    override fun showCart(isAvail: Boolean) {
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
         NavigationUtils.navigateSafe(
             findNavController(),
@@ -321,59 +333,15 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
             promo,
             object : PromotionDetailBottomSheet.onAction{
                 override fun onClickClaimPromo(promo: Campaign) {
-                    MixpanelUtil.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
-                    CacheUtil.getInstance().campaign = promo
-                    CacheUtil.getInstance().campaignPromotion = promo.promotion
-                    if (promo.promotion?.attributes?.type.equals(
-                            "item",
-                            ignoreCase = true
-                        )
-                    ) {
-                        showLoadingDialog()
-                        getCampaignPromotionItem(promo)
-                    } else {
-                        showCart(isAvail = true)
-                    }
+                    showLoadingDialog()
+                    promotionsPresenter.validateDigitalCoupon(promo)
                 }
 
             }
         )
-
         promotionDetailBottomSheet?.show(
             childFragmentManager, PromotionDetailBottomSheet::class.java.simpleName
         )
-
-
-        /*promo.let {
-            setFragmentResultListener(PromotionFragment.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
-                clearFragmentResultListener(requestKey = PromotionFragment.ARGS_KEY_FRAGMENT_RESULT)
-                if (bundle.containsKey(PromotionFragment.ARGS_KEY_ACTION)) {
-                    if (bundle.getString(PromotionFragment.ARGS_KEY_ACTION) == "avail") {
-                        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
-                        CacheUtil.getInstance().campaign = it
-                        CacheUtil.getInstance().campaignPromotion = it.promotion
-                        if (it.promotion?.attributes?.type.equals(
-                                "item",
-                                ignoreCase = true
-                            )
-                        ) {
-                            showLoadingDialog()
-                            getCampaignPromotionItem(it)
-                        } else {
-                            showCart(isAvail = true)
-                        }
-                    } else {
-                        showCart(isAvail = false)
-                    }
-                }
-            }
-            NavigationUtils.navigateSafe(
-                findNavController(),
-                PromotionsFragmentDirections.actionPromotionsToPromotion(
-                    campaign = Gson().toJson(it)
-                )
-            )
-        }*/
     }
 
 

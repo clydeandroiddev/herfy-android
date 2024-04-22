@@ -11,13 +11,15 @@ interface PromotionsContract {
         fun showLoadingDialog()
         fun showPromotions(campaigns: ArrayList<Campaign>)
         fun showMessage(message: String?)
-        fun showError(error: String?)
+        fun showError(error: String?, back: Boolean)
         fun showPromotionsCategory(promocateglist: MutableList<PromotionCategory>)
         fun updatePromoCategoryList(category: PromotionCategory)
+        fun showCart(isAvail : Boolean)
     }
 
     interface Presenter : BasePresenter, PromotionCategoryAdapter.PromotionCategoryListener{
         fun loadPromotions()
         fun getPromotionCategoryList()
+        fun validateDigitalCoupon(digitalCoupon : Campaign)
     }
 }
