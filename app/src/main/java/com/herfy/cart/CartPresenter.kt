@@ -389,7 +389,6 @@ class CartPresenter @Inject constructor(
                     }
 
                     OrderType.DELIVERY -> {
-                        AppLogger.error("392")
                         orderBody.addProperty("type", "deliver")
                         //orderBody.addProperty("delivery-charge", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", deliveryCharge)));
                         val orderStoreId = CacheUtil.getOrderStoreId()
