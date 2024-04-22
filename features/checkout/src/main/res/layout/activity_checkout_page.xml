@@ -225,13 +225,6 @@
                                 app:layout_constraintTop_toTopOf="@+id/iv_mobile_number"
                                 tools:text="+966-5671982192" />
 
-<!--                            <androidx.constraintlayout.widget.Group-->
-<!--                                android:id="@+id/grp_delivery_note"-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:visibility="gone"-->
-<!--                                app:constraint_referenced_ids="view_delivery,iv_delivery_note,tv_delivery_instruction_label,tv_delivery_instruction"-->
-<!--                                tools:visibility="visible" />-->
 
                             <View
                                 android:id="@+id/view_delivery"
