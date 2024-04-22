@@ -113,9 +113,11 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
     public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
         modifierProcessor.processModifier(modifierItem);
         ModifierGroupAttributes modifierGroupAttributes = modifierGroup.getAttributes();
+        int maximum = modifierGroupAttributes.getMaximum();
+        int minimum = modifierGroupAttributes.getMinimum();
         boolean isModifierItemSelected = modifierItem.getAttributes().isSelected();
-        radioButton.setVisibility(modifierGroupAttributes.getMaximum() == 1 ? View.VISIBLE : View.GONE);
-        check.setVisibility(modifierGroup.getAttributes().getMaximum() > 1 ? View.VISIBLE : View.GONE);
+        radioButton.setVisibility(maximum == 1 && minimum == 1 ? View.VISIBLE : View.GONE);
+        check.setVisibility(maximum > 1 || (minimum == 0 && maximum == 1) ? View.VISIBLE : View.GONE);
 
         int selectedDefaultModifierItem = MenuUtil.modifierItemQuantityCount(modifierGroup);
         if (selectedDefaultModifierItem >= modifierGroup.getAttributes().getMaximum()) {
