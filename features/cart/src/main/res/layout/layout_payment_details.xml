@@ -457,15 +457,47 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
+
+
+            <LinearLayout
+                android:id="@+id/ln_minimum_cart_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/common_background_blue_minimum_cart"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:visibility="gone">
+                
+                <ImageView
+                    android:src="@drawable/ic_circle_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                
+                <TextView
+                    android:layout_marginStart="8dp"
+                    android:id="@+id/tv_minimum_cart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textColor="@color/white"
+                    style="@style/Styles.Text.Caption.Regular"
+                    tools:text="Add SAR 5 to reach minimum order value of SAR 10."/>
+                
+            </LinearLayout>
             
             <ImageView
                 android:id="@+id/iv_footer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/img_cart_footer"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@id/ln_minimum_cart_amount"/>
 
 
 
@@ -538,6 +570,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:backgroundTint="#0064AC"
+                    app:backgroundTint="#0064AC"
                     android:id="@+id/place_order"
                     android:layout_width="0dp"
                     android:layout_height="48dp"

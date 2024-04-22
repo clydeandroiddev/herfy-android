@@ -3396,6 +3396,20 @@ class CartPresenter @Inject constructor(
         }
     }
 
+    override fun minimumCartAmount(): Double {
+        var minimumCartAmount = 0.0
+        val cacheUtil = CacheUtil.getInstance()
+        val orderType = cacheUtil.orderType
+        if(orderType != OrderType.NONE){
+            if(orderType == OrderType.DELIVERY){
+                minimumCartAmount = cacheUtil.concept.deliveryMinimum
+            }else {
+                minimumCartAmount = cacheUtil.concept.pickUpMinimum
+            }
+        }
+        return minimumCartAmount
+    }
+
     override fun validateDigitalCoupon(couponCode: String, result: ((CouponResult) -> Unit)) {
         GlobalScope.launch(contextPool.IO) {
             val concept = CacheUtil.getInstance().concept

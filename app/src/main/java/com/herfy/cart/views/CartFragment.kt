@@ -55,6 +55,7 @@ import com.herfy.utils.extensions.collapse
 import com.herfy.utils.extensions.expand
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.invisible
+import com.herfy.utils.extensions.isVisible
 import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.runOnMain
@@ -307,7 +308,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             cartPresenter.showCoupon()
             cartPresenter.getUpsells()
             if (CacheUtil.getInstance().campaign != null) {
-                if((CacheUtil.getInstance().campaignPromotionMenuItem != null || CacheUtil.getInstance().couponMenuItem != null)){
+                if ((CacheUtil.getInstance().campaignPromotionMenuItem != null || CacheUtil.getInstance().couponMenuItem != null)) {
                     isFromPromotions = true
                 }
                 cartPresenter.validateDigitalCoupon(
@@ -853,11 +854,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             itemCount += item.attributes.quantity
         }
         val couponMenuItem = CacheUtil.getInstance().couponMenuItem
-        if(couponMenuItem != null){
+        if (couponMenuItem != null) {
             itemCount += couponMenuItem.attributes.quantity
         }
         val campaignPromotionMenuItem = CacheUtil.getInstance().campaignPromotionMenuItem
-        if(campaignPromotionMenuItem != null){
+        if (campaignPromotionMenuItem != null) {
             itemCount += campaignPromotionMenuItem.attributes.quantity
         }
         binding.orderDetailsContainer.apply {
@@ -926,10 +927,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             val _discountAmount = discountAmount
             var _totalPrice = totalPrice
             validatedTotalPrice = _totalPrice
-            if(subTotal > 0.0){
-                binding.paymentSummaryContainer.subtotal.text = CurrencyUtils.updateCurrency(subTotal, true, true)
-            }else {
-                binding.paymentSummaryContainer.subtotal.text = CurrencyUtils.updateCurrency(0.0, true, true)
+            if (subTotal > 0.0) {
+                binding.paymentSummaryContainer.subtotal.text =
+                    CurrencyUtils.updateCurrency(subTotal, true, true)
+            } else {
+                binding.paymentSummaryContainer.subtotal.text =
+                    CurrencyUtils.updateCurrency(0.0, true, true)
             }
             if (discountAmount > 0.0) {
                 binding.paymentSummaryContainer.discountLayout.visibility = View.VISIBLE
@@ -1003,6 +1006,49 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             if (!isEventSent && _totalPrice > 0) {
                 isEventSent = true
                 firebaseViewCartEvent()
+            }
+            binding.paymentSummaryContainer.apply {
+                val orderType = CacheUtil.getInstance().orderType
+                if (orderType != OrderType.NONE) {
+                    val minimumCart = cartPresenter.minimumCartAmount()
+                    if (minimumCart > 0.0) {
+                        ivFooter.gone()
+                        placeOrder.apply {
+                            if (totalPrice > minimumCart) {
+                                lnMinimumCartAmount.gone()
+                                alpha = 1.0f
+                                isEnabled = true
+                            } else {
+                                lnMinimumCartAmount.visible()
+                                alpha = 0.5f
+                                isEnabled = false
+
+                            }
+                        }
+                        if (tvMinimumCart.isVisible()) {
+                            val toMeetMinimum = minimumCart - totalPrice
+                            val toMeetMinimumStr = CurrencyUtils.updateCurrency(
+                                toMeetMinimum,
+                                withSpace = true,
+                                ignoreDecimalPlaces = true,
+                                isDiscount = false
+                            ).toString()
+                            val minimumCartStr = CurrencyUtils.updateCurrency(
+                                minimumCart,
+                                withSpace = true,
+                                ignoreDecimalPlaces = true,
+                                isDiscount = false
+                            ).toString()
+                            tvMinimumCart.text = CacheUtil.getInstance().getTranslations(
+                                Text.MINIMUM_CART_LABEL,
+                                "Add (x) to reach minimum order value of (y)."
+                            ).replace("(x)", toMeetMinimumStr).replace("(y)", minimumCartStr)
+                        }
+                    }else{
+                        lnMinimumCartAmount.gone()
+                        ivFooter.visible()
+                    }
+                }
             }
         }
     }
@@ -1361,7 +1407,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
     }
 
-    private fun hideRelatedCouponViews(){
+    private fun hideRelatedCouponViews() {
         binding.orderDetailsContainer.apply {
             layoutItemCoupons.contentMain.gone()
         }
@@ -1601,7 +1647,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     ivCoupon.loadImageFromUrl(imageUrl, isSkipMemoryCache = false)
                     viewCoupon.text = CacheUtil.getInstance().getTranslations(Text.REMOVE, "Remove")
                 } ?: run {
-                    if(CacheUtil.getInstance().couponCode == null){
+                    if (CacheUtil.getInstance().couponCode == null) {
                         applyCouponLabel.text = CacheUtil.getInstance()
                             .getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
                         tvCouponDescription.text = ""
@@ -1816,14 +1862,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     }
 
                     val menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1)
-                    if(menuItem.attributes.quantity > 0){
+                    if (menuItem.attributes.quantity > 0) {
                         quantityLayout.visible()
-                    }else {
+                    } else {
                         quantityLayout.invisible()
                     }
                     //quantityLayout.visibility = if (menuItem.isPromo || menuItemTotalPrice == 0.0) View.INVISIBLE else View.VISIBLE
 
-                    if(menuItem.isPromo){
+                    if (menuItem.isPromo) {
                         delete.invisible()
                         minus.gone()
                         plus.invisible()
@@ -1884,12 +1930,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 CacheUtil.getInstance().couponToAdd.menuItem
             } else if (CacheUtil.getInstance().campaignToAdd != null) {
                 CacheUtil.getInstance().campaignToAdd.menuItem
-            } else if (CacheUtil.getInstance().campaignPromotionMenuItem != null){
+            } else if (CacheUtil.getInstance().campaignPromotionMenuItem != null) {
                 CacheUtil.getInstance().campaignPromotionMenuItem
             } else {
                 null
             }
-            promoItem?.let {promoMenuItem ->
+            promoItem?.let { promoMenuItem ->
                 if (promoMenuItem.isMustBeCustomized && promoMenuItem.isCombo) {
                     NavigationUtils.navigateSafe(
                         findNavController(), CartFragmentDirections.actionCartToComboMeal(
@@ -1900,7 +1946,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             isEdit = false
                         )
                     )
-                }else if(promoMenuItem.isMustBeCustomized){
+                } else if (promoMenuItem.isMustBeCustomized) {
                     NavigationUtils.navigateSafe(
                         findNavController(), CartFragmentDirections.actionCartToMenuItem(
                             menuItemId = promoItem.id,
@@ -1926,7 +1972,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 } else {
                     null
                 }
-            promoItem?.let {promoMenuItem ->
+            promoItem?.let { promoMenuItem ->
                 if (promoMenuItem.isMustBeCustomized && promoMenuItem.isCombo) {
                     NavigationUtils.navigateSafe(
                         findNavController(), CartFragmentDirections.actionCartToComboMeal(
@@ -1937,7 +1983,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             isEdit = true
                         )
                     )
-                }else if(promoMenuItem.isMustBeCustomized){
+                } else if (promoMenuItem.isMustBeCustomized) {
                     NavigationUtils.navigateSafe(
                         findNavController(), CartFragmentDirections.actionCartToMenuItem(
                             menuItemId = promoItem.id,
@@ -2160,7 +2206,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun goToItemDetails(position: Int, upsell: MenuItem) {
-        if(upsell.isCombo){
+        if (upsell.isCombo) {
             NavigationUtils.navigateSafe(
                 findNavController(), CartFragmentDirections.actionCartToComboMeal(
                     upsell.attributes.categoryId.toString(),
@@ -2169,7 +2215,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     isUpsell = upsell.attributes.isUpsell
                 )
             )
-        }else {
+        } else {
             NavigationUtils.navigateSafe(
                 findNavController(), CartFragmentDirections.actionCartToMenuItem(
                     upsell.id,
