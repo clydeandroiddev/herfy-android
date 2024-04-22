@@ -226,14 +226,6 @@
                                 tools:text="+966-5671982192" />
 
 
-                            <androidx.constraintlayout.widget.Group
-                                android:id="@+id/grp_delivery_note"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:visibility="gone"
-                                app:constraint_referenced_ids="view_delivery,iv_delivery_note,tv_delivery_instruction_label,tv_delivery_instruction"
-                                tools:visibility="visible" />
-
                             <View
                                 android:id="@+id/view_delivery"
                                 android:layout_width="match_parent"
@@ -256,35 +248,48 @@
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/view_delivery" />
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_delivery_instruction_label"
-                                style="@style/TextAppearance.Footnote.Semi_Bold"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="12dp"
-                                android:fontFamily="@font/inter_medium"
-                                android:text="Delivery Instruction"
-                                android:textAllCaps="false"
-                                android:textColor="@color/color_dark_gray"
-                                app:layout_constraintStart_toEndOf="@+id/iv_delivery_note"
-                                app:layout_constraintTop_toTopOf="@+id/iv_delivery_note" />
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_delivery_instruction"
-                                style="@style/Styles.Text.Footnote.Medium"
+                            <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
-                                android:layout_marginStart="@dimen/_12sdp"
-                                android:ellipsize="end"
-                                android:maxLines="2"
-                                android:text="Delivery Instruction"
-                                android:textColor="@color/color_gray"
-                                app:layout_constraintBottom_toBottomOf="@+id/iv_delivery_note"
+                                android:gravity="center_vertical"
+                                android:orientation="vertical"
+                                android:layout_gravity="center"
                                 app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintBottom_toBottomOf="@+id/iv_delivery_note"
                                 app:layout_constraintStart_toEndOf="@+id/iv_delivery_note"
-                                app:layout_constraintTop_toBottomOf="@+id/tv_delivery_instruction_label"
-                                tools:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum" />
+                                app:layout_constraintTop_toTopOf="@+id/iv_delivery_note">
 
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/tv_delivery_instruction_label"
+                                    style="@style/TextAppearance.Footnote.Semi_Bold"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:fontFamily="@font/inter_medium"
+                                    tools:text="Delivery Instruction"
+                                    android:textAllCaps="false"
+                                    android:textColor="@color/color_dark_gray"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toEndOf="@+id/iv_delivery_note"
+                                    app:layout_constraintTop_toTopOf="@+id/iv_delivery_note" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/tv_delivery_instruction"
+                                    style="@style/Styles.Text.Footnote.Medium"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_12sdp"
+                                    android:ellipsize="end"
+                                    android:maxLines="2"
+                                    android:visibility="gone"
+                                    tools:visibility="visible"
+                                    android:textColor="@color/color_gray"
+                                    app:layout_constraintBottom_toBottomOf="@+id/iv_delivery_note"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@+id/iv_delivery_note"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_delivery_instruction_label"
+                                    tools:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum" />
+                            </LinearLayout>
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                     </com.google.android.material.card.MaterialCardView>

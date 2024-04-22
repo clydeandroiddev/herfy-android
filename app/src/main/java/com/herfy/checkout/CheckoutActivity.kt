@@ -540,16 +540,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             if (CacheUtil.getInstance().orderAddress != null) {
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress.attributes.line1
             }
-            binding!!.grpDeliveryNote.visibility = View.VISIBLE
-            binding!!.tvDeliveryInstruction.text =
-                CacheUtil.getInstance().orderAddress.attributes.instructions
+            val instruction = CacheUtil.getInstance().orderAddress.attributes.instructions
+            binding!!.tvDeliveryInstruction.text = instruction
+//            binding!!.tvDeliveryInstruction.setVisible(instruction.isNotEmpty())
         } else {
             /*Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
             paymentPresenter.getAddresses(geocoder);*/
             if (CacheUtil.getInstance().orderStore != null) {
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name
             }
-            binding!!.grpDeliveryNote.visibility = View.GONE
         }
         when (CacheUtil.getInstance().orderType) {
             OrderType.PICKUP -> {
