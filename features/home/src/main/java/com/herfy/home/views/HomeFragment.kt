@@ -38,6 +38,7 @@ import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.helper.ViewUtil
+import com.santalu.diagonalimageview.Direction
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -269,7 +270,7 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.showError.observeNonNull(this) {
-            it.getContentIfNotHandled()?.let{error ->
+            it.getContentIfNotHandled()?.let { error ->
                 if (error.message.isNotEmpty()) {
                     showAlertDialog(
                         title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
@@ -369,8 +370,10 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     clCustomerLoyalty.visibility = View.VISIBLE
                     rlLoyaltyContent.visible()
                     lnLoyaltyEmptyState.gone()
-                    tvPoints.text = StringUtil.localize(loyalty.attributes.pointsAccumulated.toString())
-                    val currentBalanceValue = String.format("%.2f", loyalty.attributes.currentBalanceAmount)
+                    tvPoints.text =
+                        StringUtil.localize(loyalty.attributes.pointsAccumulated.toString())
+                    val currentBalanceValue =
+                        String.format("%.2f", loyalty.attributes.currentBalanceAmount)
                     tvSarValue.text = StringUtil.localize(currentBalanceValue)
                     var loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
                     if (LocaleUtil.getInstance().isEnglish) {
@@ -527,7 +530,8 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             it.getContentIfNotHandled()?.let { orderDetails ->
                 binding.apply {
                     Glide.with(requireActivity()).asGif().load(R.drawable.cooking)
-                        .transition(DrawableTransitionOptions.withCrossFade()).into(orderTracker.ivOrderNotif)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(orderTracker.ivOrderNotif)
                     orderTracker.clOrderNotif.visibility = View.VISIBLE
                     orderTracker.tvStatusLabel.text = orderDetails.orderStatus.description
                     orderTracker.tvOrderTypeLabel.text =
@@ -684,15 +688,23 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
-    private fun setupCaterWithHerfy(){
-        activity?.let{
+    private fun setupCaterWithHerfy() {
+        activity?.let {
             binding.apply {
                 val displayMetrics = DisplayMetrics()
                 it.windowManager.defaultDisplay.getMetrics(displayMetrics)
                 val sliderHeight = (displayMetrics.widthPixels / 2.6).toInt()
                 layoutCatering.apply {
                     cvCateringContent.layoutParams.height = sliderHeight
+                    if (LocaleUtil.getInstance().isArabic) {
+                        ivCater.start = Direction.RIGHT
+                        ivCater.end = Direction.RIGHT
+                    } else {
+                        ivCater.start = Direction.LEFT
+                        ivCater.end = Direction.LEFT
+                    }
                 }
+
             }
         }
     }

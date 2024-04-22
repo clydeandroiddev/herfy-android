@@ -61,8 +61,9 @@
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     style="@style/TextAppearance.Footnote.Semi_Bold"
-                    android:gravity="top"
+                    android:gravity="top|start"
                     android:textColor="#1C1C1E"
+                    android:textAlignment="viewStart"
                     tools:text="Best event. Best budget. Order our catering."
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -103,8 +104,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:di_start="left"
-                app:di_end="left"
                 app:di_distance="20dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

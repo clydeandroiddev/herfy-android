@@ -97,7 +97,7 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationLayout"
-        android:layout_width="265dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:scrollbars="none"
