@@ -61,12 +61,9 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
                 if (lng.equals(LocaleUtil.EN_US, ignoreCase = true)) {
                     chooseEnglish.visibility = View.VISIBLE
                 } else if (lng.equals(LocaleUtil.AR_SA, ignoreCase = true)) {
-                    selectArabic()
                     chooseArabic.visibility = View.VISIBLE
                 }
             }
-
-            setupButton()
 
             chooseYourEnglishLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.CHOOSE_LANGUAGE_ENGLISH, "Choose your language to continue")
@@ -139,6 +136,7 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
             selectedArabic.setImageResource(selectedArabicDrawable)
             selectedEnglish.setImageResource(selectedEnglishDrawable)
         }
+        setupButton()
     }
 
     override fun selectArabic() {

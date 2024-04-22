@@ -7,6 +7,7 @@ import android.util.DisplayMetrics
 import android.util.TypedValue
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
+import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -36,19 +37,23 @@ fun String.formatDate(): String {
 }
 
 
-fun String.orderDetailsType(): String {
-    val type = OrderType.fromString(this.toLowerCase())
-    return when (type) {
-        OrderType.DINE_IN -> {
-            CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In") + ", "
-        }
+fun String.orderDetailsType(sequence: Int): String {
+    if (sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value) {
+        return CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled") + ", "
+    } else {
+        val type = OrderType.fromString(this.toLowerCase())
+        return when (type) {
+            OrderType.DINE_IN -> {
+                CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In") + ", "
+            }
 
-        OrderType.DELIVERY -> {
-            CacheUtil.getInstance().getTranslations(Text.DELIVERED, "Delivered") + ", "
-        }
+            OrderType.DELIVERY -> {
+                CacheUtil.getInstance().getTranslations(Text.DELIVERED, "Delivered") + ", "
+            }
 
-        else -> {
-            CacheUtil.getInstance().getTranslations(Text.PICKED, "Picked") + ", "
+            else -> {
+                CacheUtil.getInstance().getTranslations(Text.PICKED, "Picked") + ", "
+            }
         }
     }
 }

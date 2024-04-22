@@ -240,7 +240,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 }
 
                 statusDateAndTime.text =
-                    item.orderType.orderDetailsType() + item.createdAt.formatOrderTime(true)
+                    item.orderType.orderDetailsType(item.orderStatus.sequence) + item.createdAt.formatOrderTime(true)
 
                 priceSubtotal.text = StringUtil.getNewFormattedPrice(
                     item.subtotal, true

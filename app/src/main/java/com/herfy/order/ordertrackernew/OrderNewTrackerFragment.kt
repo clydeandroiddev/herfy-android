@@ -964,6 +964,11 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             CacheUtil.getInstance().getTranslations(Text.PICKED, "Picked")
                     }
 
+                    if (order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value) {
+                        finishedLabel.text =
+                            CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
+                    }
+
                     statusViewSecond.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_done))
                     statusViewThird.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_done))
 
@@ -1392,6 +1397,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     )
                     markerOptions.anchor(0.5f, 1f)
                     driverMarker = googleMap?.addMarker(markerOptions)
+                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
