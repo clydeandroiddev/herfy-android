@@ -1008,14 +1008,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 firebaseViewCartEvent()
             }
             binding.paymentSummaryContainer.apply {
-                val validatedSubTotalPrice = cartPresenter.menuItemsTotalPrice
                 val orderType = CacheUtil.getInstance().orderType
                 if (orderType != OrderType.NONE) {
                     val minimumCart = cartPresenter.minimumCartAmount()
                     if (minimumCart > 0.0) {
                         ivFooter.gone()
                         placeOrder.apply {
-                            if (validatedSubTotalPrice >= minimumCart) {
+                            if (subTotal >= minimumCart) {
                                 lnMinimumCartAmount.gone()
                                 alpha = 1.0f
                                 isEnabled = true
@@ -1026,7 +1025,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             }
                         }
                         if (tvMinimumCart.isVisible()) {
-                            val toMeetMinimum = minimumCart - validatedSubTotalPrice
+                            val toMeetMinimum = minimumCart - subTotal
                             val toMeetMinimumStr = CurrencyUtils.updateCurrency(
                                 toMeetMinimum,
                                 withSpace = true,

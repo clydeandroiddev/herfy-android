@@ -1072,38 +1072,40 @@ class CartPresenter @Inject constructor(
     }
 
     override fun changeQuantity(position: Int, add: Boolean) {
-        if (add) {
-            trackEvent(MixpanelUtil.EVENT_INCREASE_ITEM_QUANTITY_CART)
-        } else {
-            trackEvent(MixpanelUtil.EVENT_DECREASE_ITEM_QUANTITY_CART)
-        }
-        val menuItem = menuItems[position]
-        var addingItem = false
-        if (!add && menuItem.attributes.quantity != 1) {
-            if (menuItem.isFavorite) {
-                (menuItem.attributes.quantity - 1).also { menuItem.attributes.quantity = it }
+        if(position != -1){
+            if (add) {
+                trackEvent(MixpanelUtil.EVENT_INCREASE_ITEM_QUANTITY_CART)
+            } else {
+                trackEvent(MixpanelUtil.EVENT_DECREASE_ITEM_QUANTITY_CART)
+            }
+            val menuItem = menuItems[position]
+            var addingItem = false
+            if (!add && menuItem.attributes.quantity != 1) {
+                if (menuItem.isFavorite) {
+                    (menuItem.attributes.quantity - 1).also { menuItem.attributes.quantity = it }
 
-            }else {
-                (menuItem.attributes.quantity - 1).also { menuItem.attributes.quantity = it }
+                }else {
+                    (menuItem.attributes.quantity - 1).also { menuItem.attributes.quantity = it }
+                }
+                if (menuItem.attributes.isUpsell && menuItem.attributes.upsellQuantity != 1) {
+                    menuItem.attributes.upsellQuantity -= 1
+                }
+            } else if (add) {
+                addingItem = true
+                menuItem.attributes.quantity += 1
+                if (menuItem.attributes.isUpsell) {
+                    menuItem.attributes.upsellQuantity += 1
+                }
             }
-            if (menuItem.attributes.isUpsell && menuItem.attributes.upsellQuantity != 1) {
-                menuItem.attributes.upsellQuantity -= 1
-            }
-        } else if (add) {
-            addingItem = true
-            menuItem.attributes.quantity += 1
-            if (menuItem.attributes.isUpsell) {
-                menuItem.attributes.upsellQuantity += 1
-            }
-        }
-        removeMukafaaRedemption()
-        CacheUtil.getInstance().cart = menuItems
-        getTotalPrice(Values.VALIDATE_QUANTITY, false)
-        cartView.refreshMenuItems(position, true)
-        if (!Values.NO_PROMOTIONS) {
-            if (CacheUtil.getInstance().campaign != null)
-                validateDigitalCoupon(false, CacheUtil.getInstance().campaign)
+            removeMukafaaRedemption()
+            CacheUtil.getInstance().cart = menuItems
+            getTotalPrice(Values.VALIDATE_QUANTITY, false)
+            cartView.refreshMenuItems(position, true)
+            if (!Values.NO_PROMOTIONS) {
+                if (CacheUtil.getInstance().campaign != null)
+                    validateDigitalCoupon(false, CacheUtil.getInstance().campaign)
 
+            }
         }
     }
 
