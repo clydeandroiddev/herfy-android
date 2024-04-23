@@ -564,8 +564,8 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     }
 
     private fun selectMenuCategory(position: Int, menuCategoryId: String) {
-        binding.rvMenuCategories.smoothScrollToPosition(position)
         menuCategoryAdapter.select(position)
+        binding.rvMenuCategories.smoothScrollToPosition(position)
         viewModel.menuCategoryPositions[menuCategoryId]?.let {
             binding.rvMenuCategoriesItems.apply {
                 layoutManager?.cast<LinearLayoutManager> { linearLayoutManager ->
