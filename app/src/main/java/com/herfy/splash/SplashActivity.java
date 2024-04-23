@@ -131,7 +131,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         if (bundle != null) {
             if (bundle.containsKey("fromChangeLanguage")) {
                 fromChangeLanguage = bundle.getBoolean("fromChangeLanguage");
-                if (fromChangeLanguage && (!BuildUtil.splashVideoApp() || !BuildUtil.splashGIFApp())) {
+                if (fromChangeLanguage && (!BuildUtil.splashVideoApp() && !BuildUtil.splashGIFApp())) {
                     ActivitySwitcher.animationIn(findViewById(R.id.container), getWindowManager());
                 }
             }
@@ -150,24 +150,16 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 intent.putExtra("fromChangeLanguage", true);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                if (!BuildUtil.splashVideoApp() || !BuildUtil.splashGIFApp()) {
-                    ActivitySwitcher.animationOut(findViewById(R.id.container), getWindowManager(), new ActivitySwitcher.AnimationListener() {
-                        @Override
-                        public void onAnimationStarted() {
-                            startActivity(intent);
-                            overridePendingTransition(0, 0);
-                            finish();
-                        }
-
-                        @Override
-                        public void onAnimationFinished() {
-
-                        }
-                    });
-                } else {
+                if (!BuildUtil.splashVideoApp() && !BuildUtil.splashGIFApp()) {
                     startActivity(intent);
                     overridePendingTransition(0, 0);
                     finish();
+                } else {
+                    if(!BuildUtil.splashGIFApp()){
+                        startActivity(intent);
+                        overridePendingTransition(0, 0);
+                        finish();
+                    }
                 }
             }, 500);
         } else {
@@ -417,6 +409,22 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                 @Override
                 public void onAnimationEnd(@NonNull Animator animator) {
                     videoCompleted = true;
+                    Bundle bundle = getIntent().getExtras();
+                    if (bundle != null) {
+                        if (bundle.containsKey("fromChangeLanguage")) {
+                            boolean fromChangeLanguage = bundle.getBoolean("fromChangeLanguage");
+                            if(fromChangeLanguage){
+                                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                                intent.putExtra("fromChangeLanguage", true);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                startActivity(intent);
+                                overridePendingTransition(0, 0);
+                                finish();
+
+                            }
+                        }
+                    }
+
                 }
 
                 @Override
