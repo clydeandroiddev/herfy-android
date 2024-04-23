@@ -44,6 +44,7 @@ import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.ViewUtil
 import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -142,7 +143,8 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 }
 
                 sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
-                val sliderHeight = (Resources.getSystem().displayMetrics.widthPixels / 2.0).toInt()
+                val margin = ViewUtil.dpToPx(it, 16)
+                val sliderHeight = (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_MENU_ASPECT_RATIO_WIDTH / Values.SLIDER_MENU_ASPECT_RATIO_HEIGHT)).toInt() + margin
                 containerSlider.layoutParams.height = sliderHeight
                 shimmerSlider.root.layoutParams.height = sliderHeight
                 sliderViewPager.adapter = sliderImageAdapter
