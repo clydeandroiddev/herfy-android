@@ -1,6 +1,7 @@
 package com.herfy.splash;
 
 import android.Manifest;
+import android.animation.Animator;
 import android.app.AlarmManager;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -25,11 +26,13 @@ import android.widget.VideoView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -81,6 +84,9 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
     VideoView vvSplash;
     @BindView(R.id.background)
     ImageView background;
+
+    @BindView(R.id.lv_splash)
+    LottieAnimationView lvSplash;
 
     private boolean fromChangeLanguage = false;
     private boolean concepts = false;
@@ -338,12 +344,11 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             startActivity(intent, bundle);
             finish();
         } else {
-            if (BuildConfig.DISABLE_SPLASH_ANIMATION || BuildUtil.splashBackgroundApp() || videoCompleted) {
+            if (BuildConfig.DISABLE_SPLASH_ANIMATION || (BuildUtil.splashBackgroundApp() || BuildUtil.splashGIFApp()) || videoCompleted) {
                 proceedNext(false, finalIntent);
             } else {
                 animateLogo(false, finalIntent);
             }
-
         }
     }
 
@@ -379,6 +384,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             background.setVisibility(View.VISIBLE);
         } else if (BuildUtil.splashVideoApp()) {
             vvSplash.setVisibility(View.VISIBLE);
+            lvSplash.setVisibility(View.GONE);
             image.setVisibility(View.INVISIBLE);
             background.setVisibility(View.INVISIBLE);
             if (mediaControls == null) {
@@ -398,7 +404,33 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                     forceLocation = false;
                 }
             });
-        } else {
+        } else if (BuildUtil.splashGIFApp()){
+            vvSplash.setVisibility(View.GONE);
+            image.setVisibility(View.INVISIBLE);
+            background.setVisibility(View.INVISIBLE);
+            lvSplash.setVisibility(View.VISIBLE);
+            lvSplash.setAnimation(R.raw.splash_gif);
+            lvSplash.requestFocus();
+            lvSplash.playAnimation();
+            lvSplash.addAnimatorListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(@NonNull Animator animator) {
+                }
+
+                @Override
+                public void onAnimationEnd(@NonNull Animator animator) {
+                    videoCompleted = true;
+                }
+
+                @Override
+                public void onAnimationCancel(@NonNull Animator animator) {
+                }
+
+                @Override
+                public void onAnimationRepeat(@NonNull Animator animator) {
+                }
+            });
+        }else {
             image.setImageResource(BuildUtil.splashImage());
         }
 

@@ -179,7 +179,8 @@ android {
             buildConfigField "String", "SPLASH_COLOR", "\"#FAFBFC\""
             buildConfigField "boolean", "SPLASH_LOGO", "false"
             buildConfigField "boolean", "SPLASH_BACKGROUND", "false"
-            buildConfigField "boolean", "SPLASH_VIDEO", "true"
+            buildConfigField "boolean", "SPLASH_VIDEO", "false"
+            buildConfigField "boolean", "SPLASH_GIF" , "true"
             buildConfigField "boolean", "ONBOARDING_ENABLED", "true"
             buildConfigField "String", "SOLO_APP_TYPE", "\"Restaurant\""
             buildConfigField "boolean", "SOLO_LOGO", "false"
@@ -440,6 +441,10 @@ dependencies {
 
     //SwitchView
     implementation 'com.github.iielse:switchbutton:1.0.4'
+
+    //LottieAnimation
+    def lottieVersion = "6.0.0"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 }
 
 
