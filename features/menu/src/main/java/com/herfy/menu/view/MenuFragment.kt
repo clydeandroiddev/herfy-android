@@ -36,15 +36,14 @@ import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.event.AddToCartEvent
+import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.isVisible
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.observeNonNull
-import com.herfy.utils.extensions.smoothSnapToPosition
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
-import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -61,11 +60,6 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     override val layout: Int = R.layout.fragment_menu
     private lateinit var sliderImageAdapter: SliderImageAdapter
     private var sliderHandler: Handler? = null
-    private val cacheUtilHelper by lazy {
-        context?.let {
-            CacheUtilHelper(it)
-        }
-    }
     private var isCartEmpty = true
 
     private var orderTypeLauncher =
@@ -237,15 +231,6 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         viewModel.apply {
             getSlides()
             getMenuCategoriesItems()
-        }
-    }
-
-    override fun initTranslations() {
-        super.initTranslations()
-        binding.apply {
-            cacheUtilHelper?.let { cacheHelper ->
-
-            }
         }
     }
 
@@ -572,7 +557,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         menuCategoryAdapter.getPosition(menuCategoryId)?.let {
             if(it != menuCategoryAdapter.getSelected() &&
                 it < menuCategoryAdapter.itemCount) {
-                binding.rvMenuCategories.smoothScrollToPosition(it)
+                binding.rvMenuCategories.scrollToPosition(it)
                 menuCategoryAdapter.select(it)
             }
         }
@@ -583,7 +568,9 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         menuCategoryAdapter.select(position)
         viewModel.menuCategoryPositions[menuCategoryId]?.let {
             binding.rvMenuCategoriesItems.apply {
-                smoothSnapToPosition(it)
+                layoutManager?.cast<LinearLayoutManager> { linearLayoutManager ->
+                    linearLayoutManager.scrollToPositionWithOffset(it, layoutParams.height)
+                }
                 removeOnScrollListener(menuOnScrollListener)
                 clearOnScrollListeners()
                 activity?.apply {
