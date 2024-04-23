@@ -52,6 +52,7 @@ import com.herfy.base.BaseFragment
 import com.herfy.common.cancelTime
 import com.herfy.common.formatSecondsToMinutesAndSeconds
 import com.herfy.common.getCurrentTime
+import com.herfy.common.getDisplayId
 import com.herfy.common.showTime
 import com.herfy.common.statusTime
 import com.herfy.ext.cast
@@ -1185,7 +1186,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 processCancel()
                 orderAddressDetails.orderNumberLabel.text =
                     CacheUtil.getInstance().getTranslations(Text.ORDER_NUM, "Order #")
-                orderAddressDetails.orderNumber.text = item.id
+                orderAddressDetails.orderNumber.text = getDisplayId(item)
 
                 orderPaymentDetails.priceSubtotal.text = StringUtil.getNewFormattedPrice(
                     item.subtotal, true

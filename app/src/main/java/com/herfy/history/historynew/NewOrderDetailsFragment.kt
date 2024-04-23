@@ -1,5 +1,6 @@
 package com.herfy.history.historynew
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.common.deviceHeight
 import com.herfy.common.formatOrderTime
+import com.herfy.common.getDisplayId
 import com.herfy.common.orderDetailsType
 import com.herfy.common.orderTypeString
 import com.herfy.ext.cast
@@ -214,6 +216,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
             })
     }
 
+    @SuppressLint("SetTextI18n")
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {
         dismissDialogs()
         order?.let { item ->
@@ -224,7 +227,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 blocker.gone()
                 dateAndTime.text = item.createdAt.formatOrderTime()
                 orderNumber.text = CacheUtil.getInstance()
-                    .getTranslations(Text.ORDER_NUM, "Order #") + " " + item.id
+                    .getTranslations(Text.ORDER_NUM, "Order #") + " " + getDisplayId(item)
                 if (order.orderType.equals("deliver") || order.orderType.equals("delivery")) {
                     address?.let {
                         locationName.text = address.attributes.label
@@ -240,7 +243,9 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 }
 
                 statusDateAndTime.text =
-                    item.orderType.orderDetailsType(item.orderStatus.sequence) + item.createdAt.formatOrderTime(true)
+                    item.orderType.orderDetailsType(item.orderStatus.sequence) + item.createdAt.formatOrderTime(
+                        true
+                    )
 
                 priceSubtotal.text = StringUtil.getNewFormattedPrice(
                     item.subtotal, true
