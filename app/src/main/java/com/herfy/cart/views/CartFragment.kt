@@ -1014,7 +1014,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     if (minimumCart > 0.0) {
                         ivFooter.gone()
                         placeOrder.apply {
-                            if (totalPrice > minimumCart) {
+                            if (totalPrice >= minimumCart) {
                                 lnMinimumCartAmount.gone()
                                 alpha = 1.0f
                                 isEnabled = true
@@ -1022,7 +1022,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                 lnMinimumCartAmount.visible()
                                 alpha = 0.5f
                                 isEnabled = false
-
                             }
                         }
                         if (tvMinimumCart.isVisible()) {
