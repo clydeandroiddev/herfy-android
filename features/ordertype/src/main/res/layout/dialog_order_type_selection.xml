@@ -138,12 +138,16 @@
 
             </androidx.cardview.widget.CardView>
 
+            <View
+                android:id="@+id/pickupContainerView"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"/>
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/curbsideContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_20dp"
-                android:layout_marginTop="16dp"
                 android:layout_marginEnd="@dimen/margin_20dp"
                 app:cardCornerRadius="@dimen/category_icon_12dp">
 
@@ -216,12 +220,16 @@
 
             </androidx.cardview.widget.CardView>
 
+            <View
+                android:id="@+id/curbsideContainerView"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"/>
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/chooseDriveThruContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_20dp"
-                android:layout_marginTop="16dp"
                 android:layout_marginEnd="@dimen/margin_20dp"
                 android:layout_marginBottom="20dp"
                 app:cardCornerRadius="@dimen/category_icon_12dp">

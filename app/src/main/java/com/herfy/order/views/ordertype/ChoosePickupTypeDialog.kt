@@ -112,8 +112,10 @@ class ChoosePickupTypeDialog : BottomSheetDialogFragment() {
             }
 
             store?.let {
+                pickupContainerView.isVisible = it.attributes.pickupEnabled == 1
                 chooseDriveThruContainer.isVisible = it.attributes.isDriveThruEnabled
                 curbsideContainer.isVisible = it.attributes.curbsideEnabled == 1
+                curbsideContainerView.isVisible = it.attributes.curbsideEnabled == 1
                 pickupContainer.isVisible = it.attributes.pickupEnabled == 1
             }
         }
