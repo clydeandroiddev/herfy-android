@@ -542,7 +542,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
             val instruction = CacheUtil.getInstance().orderAddress.attributes.instructions
             binding!!.tvDeliveryInstruction.text = instruction
-//            binding!!.tvDeliveryInstruction.setVisible(instruction.isNotEmpty())
+            binding!!.tvDeliveryInstruction.setVisible(instruction.isNotEmpty())
         } else {
             /*Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
             paymentPresenter.getAddresses(geocoder);*/
