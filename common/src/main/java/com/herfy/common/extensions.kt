@@ -7,6 +7,7 @@ import android.util.DisplayMetrics
 import android.util.TypedValue
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
+import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import java.text.ParseException
@@ -56,6 +57,25 @@ fun String.orderDetailsType(sequence: Int): String {
             }
         }
     }
+}
+
+fun getDisplayId(order: OrderDetails): String {
+    var displayId = order.displayId
+    if (displayId == null || displayId.isEmpty() || displayId.equals(
+            "null",
+            ignoreCase = true
+        )
+    ) {
+        displayId = order.code
+    }
+    if (displayId == null || displayId.isEmpty() || displayId.equals(
+            "null",
+            ignoreCase = true
+        )
+    ) {
+        displayId = order.id
+    }
+    return displayId
 }
 
 fun String.orderTypeString(): String {

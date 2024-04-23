@@ -245,13 +245,13 @@ public class AccountPresenter implements AccountContract.Presenter {
             accountView.showErrorFirstName(CacheUtil.getInstance().getTranslations(Text.NAME_VALIDATION, "Name fields should not accept numbers and special character."));
         }
 
-        if (lastName.isEmpty()) {
-            valid = false;
-            accountView.showErrorLastName(CacheUtil.getInstance().getTranslations(Text.LAST_NAME_EMPTY));
-        } else if (!StringUtil.isValidName(lastName)) {
-            valid = false;
-            accountView.showErrorFirstName(CacheUtil.getInstance().getTranslations(Text.NAME_VALIDATION, "Name fields should not accept numbers and special character."));
-        }
+//        if (lastName.isEmpty()) {
+//            valid = false;
+//            accountView.showErrorLastName(CacheUtil.getInstance().getTranslations(Text.LAST_NAME_EMPTY));
+//        } else if (!StringUtil.isValidName(lastName)) {
+//            valid = false;
+//            accountView.showErrorFirstName(CacheUtil.getInstance().getTranslations(Text.NAME_VALIDATION, "Name fields should not accept numbers and special character."));
+//        }
 
         String birthDate = "";
         if (!dateOfBirth.isEmpty()) {

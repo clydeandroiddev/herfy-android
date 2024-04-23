@@ -97,20 +97,14 @@ class LoginOTPViewModel @Inject constructor(
                             error
                         )
                     )
-                } else if (fullname.size == 1) {
-                    val error = CacheUtil.getInstance()
-                        .getTranslations(Text.LAST_NAME_EMPTY, "Please complete your full name")
-                    _state.emit(
-                        LoginOTPPageViewState.ShowError(
-                            error
-                        )
-                    )
                 } else {
                     var firstName = ""
                     var lastName = ""
                     if (fullname.size >= 2) {
                         firstName = fullname[0]
                         lastName = fullname.drop(1).joinToString(" ")
+                    } else if (fullname.size == 1) {
+                        firstName = fullname[0]
                     }
                     _state.emit(LoginOTPPageViewState.ShowLoading(true))
                     authRepository.updateName(customerId, firstName, lastName) {
