@@ -218,6 +218,8 @@ public interface CartContract {
                 Boolean show ,
                 Boolean fromButtonClick
         );
+
+        double minimumCartAmount();
     }
 
 }

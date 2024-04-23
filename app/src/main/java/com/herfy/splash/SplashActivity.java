@@ -343,7 +343,6 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             } else {
                 animateLogo(false, finalIntent);
             }
-
         }
     }
 
