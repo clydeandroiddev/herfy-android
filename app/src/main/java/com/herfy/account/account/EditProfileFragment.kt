@@ -132,14 +132,17 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
             )
             showError(error)
             return
-        } else if (fName.size == 1) {
+        } else if (fullName.isNotEmpty()) {
             val error = CacheUtil.getInstance()
-                .getTranslations(Text.LAST_NAME_EMPTY, "Please complete your full name")
+                .getTranslations(Text.FIRST_NAME_EMPTY, "First name cannot be empty")
             showError(error)
         } else {
             showLoadingDialog()
             val firstName = fName[0]
-            val lastName = fName.drop(1).joinToString(" ")
+            var lastName = ""
+            if (fName.size > 1) {
+                lastName = fName.drop(1).joinToString(" ")
+            }
             accountPresenter?.save(
                 firstName,
                 lastName,
