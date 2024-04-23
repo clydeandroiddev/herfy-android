@@ -359,17 +359,9 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                                 Intent(this@MainActivity, SplashActivity::class.java)
                             intent.putExtra("fromChangeLanguage", true)
                             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                            ActivitySwitcher.animationOut(this@MainActivity.findViewById(R.id.drawer_layout),
-                                windowManager,
-                                object : ActivitySwitcher.AnimationListener {
-                                    override fun onAnimationStarted() {
-                                        startActivity(intent)
-                                        overridePendingTransition(0, 0)
-                                        finish()
-                                    }
-
-                                    override fun onAnimationFinished() {}
-                                })
+                            startActivity(intent)
+                            overridePendingTransition(0, 0)
+                            finish()
                         }
                     }
 

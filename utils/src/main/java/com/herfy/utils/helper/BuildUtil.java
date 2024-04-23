@@ -5,7 +5,6 @@ import android.content.Context;
 import com.herfy.model.SupportedCountry;
 import com.herfy.utils.BuildConfig;
 import com.herfy.utils.R;
-import com.herfy.utils.helper.CacheUtil;
 
 
 public class BuildUtil {
@@ -126,4 +125,11 @@ public class BuildUtil {
                 || BuildConfig.SOLO_APP.equalsIgnoreCase("ERZolT6uapgMH1cC");
     }
 
+    public static boolean splashGIFApp() {
+        SupportedCountry country = CacheUtil.getInstance().getCountry();
+        boolean app = BuildConfig.SPLASH_GIF;
+        if (country != null) {
+        }
+        return app;
+    }
 }
