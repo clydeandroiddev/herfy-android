@@ -245,12 +245,15 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
     }
 
     private fun observe() {
-        viewModel.showProgressBar.observe(this) {
-            if (it) {
-                showLoadingDialog()
-            } else {
-                dismissLoadingDialog()
+        viewModel.isLoading.observe(this) {
+            it.getContentIfNotHandled()?.let { loading->
+                if (loading) {
+                    showLoadingDialog()
+                } else {
+                    dismissLoadingDialog()
+                }
             }
+
         }
         viewModel.showError.observe(this) {
             showInvalidOTPDialog(it)
