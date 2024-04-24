@@ -42,6 +42,8 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
     private var keyboardShown = false
 
+    private var googleName = ""
+
     private var addIsShown = false
 
     private var googleSignInClient: GoogleSignInClient? = null
@@ -56,6 +58,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     ApiException::class.java
                 )
                 if (account != null) {
+                    googleName = account.givenName.orEmpty()
                     viewModel.loginViaGoogle(account.email.orEmpty(), account.idToken.orEmpty())
                 } else {
                     showAlertDialog(
@@ -177,7 +180,8 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     phoneNumber = customer.attributes.mobile ?: "",
                     customerId = customer.id,
                     isVerified = status == Values.STATUS_VERIFIED,
-                    isGuest = false
+                    isGuest = false,
+                    givenName = googleName
                 )
             )
         }, 100)
@@ -224,8 +228,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
                 is LoginViewState.ShowError -> {
                     showAlertDialog(
-                        title = "",
-                        message = it.error
+                        title = "", message = it.error
                     )
                 }
 
@@ -235,7 +238,8 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                             phoneNumber = it.phoneNumber,
                             customerId = it.customerId,
                             isVerified = false,
-                            isGuest = true
+                            isGuest = true,
+                            givenName = googleName
                         )
                     )
                 }
@@ -246,7 +250,8 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                             phoneNumber = it.mobile,
                             customerId = it.customer.id,
                             isVerified = false,
-                            isGuest = false
+                            isGuest = false,
+                            givenName = googleName
                         )
                     )
                 }

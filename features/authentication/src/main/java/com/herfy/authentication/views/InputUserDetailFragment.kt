@@ -39,6 +39,9 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
                 requireActivity().finish()
             }
 
+            fullName.setText(args.givenName)
+            fullName.setSelection(fullName.text.toString().length)
+
             fullName.setOnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     continueButton.performClick()

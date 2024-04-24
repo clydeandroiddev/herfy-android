@@ -41,6 +41,11 @@
             app:argType="string"
             app:nullable="false" />
 
+        <argument
+            android:name="givenName"
+            app:argType="string"
+            app:nullable="false" />
+
         <action
             android:id="@+id/action_otp_to_inputUser"
             app:destination="@id/inputUserDetailFragment"
@@ -70,6 +75,12 @@
 
         <argument
             android:name="customerId"
+            app:argType="string"
+            app:nullable="false" />
+
+
+        <argument
+            android:name="givenName"
             app:argType="string"
             app:nullable="false" />
 
