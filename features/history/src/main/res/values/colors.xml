@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="delivered_color">#248A3D</color>
+    <color name="picked_color">#0064AC</color>
+    <color name="cancelled_color">#D42211</color>
+</resources>

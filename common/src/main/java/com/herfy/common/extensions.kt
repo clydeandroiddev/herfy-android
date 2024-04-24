@@ -62,15 +62,13 @@ fun String.orderDetailsType(sequence: Int): String {
 fun getDisplayId(order: OrderDetails): String {
     var displayId = order.displayId
     if (displayId == null || displayId.isEmpty() || displayId.equals(
-            "null",
-            ignoreCase = true
+            "null", ignoreCase = true
         )
     ) {
         displayId = order.code
     }
     if (displayId == null || displayId.isEmpty() || displayId.equals(
-            "null",
-            ignoreCase = true
+            "null", ignoreCase = true
         )
     ) {
         displayId = order.id
@@ -78,16 +76,34 @@ fun getDisplayId(order: OrderDetails): String {
     return displayId
 }
 
+fun String.orderTypeStatus(): String {
+    return when (OrderType.fromString(this.toLowerCase(Locale.ROOT))) {
+        OrderType.DELIVERY -> {
+            CacheUtil.getInstance().getTranslations(Text.DELIVERED, "Delivered")
+        }
+
+        else -> {
+            CacheUtil.getInstance().getTranslations(Text.PICKED_UP, "Picked up")
+        }
+    }
+}
+
+fun String.orderTypeStatusIcon(): Int {
+    return when (OrderType.fromString(this.toLowerCase(Locale.ROOT))) {
+        OrderType.DELIVERY -> {
+            R.drawable.ic_checkbox_input_green
+        }
+
+        else -> {
+            R.drawable.ic_checkbox_input_blue
+        }
+    }
+}
+
 fun String.orderTypeString(): String {
-    val type = OrderType.fromString(this.toLowerCase())
-    when (type) {
+    when (OrderType.fromString(this.toLowerCase(Locale.ROOT))) {
         OrderType.PICKUP, OrderType.DRIVE_THRU -> {
-            val headerText: String? = if (type == OrderType.DRIVE_THRU) {
-                CacheUtil.getInstance().getTranslations(Text.DRIVE_THRU, "Drive Thru")
-            } else {
-                CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
-            }
-            return headerText.orEmpty()
+            return CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
         }
 
         OrderType.DINE_IN -> {
