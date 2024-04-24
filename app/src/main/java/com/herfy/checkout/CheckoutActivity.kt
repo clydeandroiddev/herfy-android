@@ -534,6 +534,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             )
         }
         if (orderType === OrderType.DELIVERY) {
+            binding!!.groupDeliveryInstruction.visible()
             /*showLoadingDialog();
             Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
             paymentPresenter.getStore(geocoder);*/
@@ -544,6 +545,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.tvDeliveryInstruction.text = instruction
             binding!!.tvDeliveryInstruction.setVisible(instruction.isNotEmpty())
         } else {
+            binding!!.groupDeliveryInstruction.gone()
             /*Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
             paymentPresenter.getAddresses(geocoder);*/
             if (CacheUtil.getInstance().orderStore != null) {
