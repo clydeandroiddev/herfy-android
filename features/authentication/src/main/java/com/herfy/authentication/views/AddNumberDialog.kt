@@ -6,6 +6,9 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +27,8 @@ class AddNumberDialog : BottomSheetDialogFragment() {
 
     private var onSubmit: OnSubmit? = null
 
+    private var isMaxTen = false
+
     private lateinit var binding: FragmentAddNumberDialogBinding
 
     interface OnSubmit {
@@ -36,7 +41,7 @@ class AddNumberDialog : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         binding = FragmentAddNumberDialogBinding.inflate(layoutInflater)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
-        dialog?.window?.decorView?.layoutDirection = if(LocaleUtil.getInstance().isArabic) {
+        dialog?.window?.decorView?.layoutDirection = if (LocaleUtil.getInstance().isArabic) {
             View.LAYOUT_DIRECTION_RTL
         } else {
             View.LAYOUT_DIRECTION_LTR
@@ -75,12 +80,16 @@ class AddNumberDialog : BottomSheetDialogFragment() {
 
             sendCodeButton.setOnClickListener {
                 hideKeyboard(it)
-                if (phoneNumberEdit.text.toString().isEmpty()) {
+                var phoneNumber = phoneNumberEdit.text.toString()
+                if (phoneNumber.isEmpty()) {
                     onSubmit?.onError(
                         CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_REQUIRED)
                     )
                 } else {
-                    onSubmit?.onSubmit(mobileNumberDialCode.text.toString() + phoneNumberEdit.text.toString())
+                    if (isMaxTen && phoneNumber.startsWith("0")) {
+                        phoneNumber = phoneNumber.removePrefix(phoneNumber.substring(0, 1))
+                    }
+                    onSubmit?.onSubmit(mobileNumberDialCode.text.toString() + phoneNumber)
                 }
             }
 
@@ -105,7 +114,34 @@ class AddNumberDialog : BottomSheetDialogFragment() {
                     true
                 } else false
             }
+
+            phoneNumberEdit.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    if (s != null) {
+                        if (s.toString().startsWith("0")) {
+                            setPhoneNumberLength(10)
+                            isMaxTen = true
+                        } else {
+                            isMaxTen = false
+                            setPhoneNumberLength(9)
+                        }
+                    }
+                }
+            })
         }
+    }
+
+    fun setPhoneNumberLength(length: Int) {
+        val fArray = arrayOfNulls<InputFilter>(1)
+        fArray[0] = InputFilter.LengthFilter(length)
+        binding.phoneNumberEdit.filters = fArray
     }
 
     companion object {
