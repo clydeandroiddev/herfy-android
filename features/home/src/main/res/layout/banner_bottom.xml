@@ -27,13 +27,12 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_banner_bottom"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:cardCornerRadius="20dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_banner_bottom"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:cardElevation="0dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_banner_bottom">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vp_banner_bottom"
@@ -42,10 +41,7 @@
             android:layoutDirection="locale"
             android:visibility="visible"/>
 
-
-
     </com.google.android.material.card.MaterialCardView>
-
 
     <com.tbuonomo.viewpagerdotsindicator.StrokeDotsIndicator
         android:id="@+id/sdi_banner_bottom"
@@ -68,7 +64,6 @@
         app:layout_constraintTop_toBottomOf="@id/cv_banner_bottom"
         app:progressMode="false"
         app:selectedDotColor="#9F301F"/>
-
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer_banner_bottom"
@@ -103,7 +98,5 @@
         </LinearLayout>
 
     </com.facebook.shimmer.ShimmerFrameLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

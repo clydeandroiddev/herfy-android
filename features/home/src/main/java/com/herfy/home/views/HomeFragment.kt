@@ -3,10 +3,10 @@ package com.herfy.home.views
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.util.DisplayMetrics
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -197,13 +197,13 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             viewModel.getSliders()
             binding.apply {
                 sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
-                val displayMetrics = DisplayMetrics()
-                it.windowManager.defaultDisplay.getMetrics(displayMetrics)
-                val sliderHeight = (displayMetrics.widthPixels / 1.1).toInt()
-                layoutBanner.mainToolbar.layoutParams.height = sliderHeight
-                layoutBanner.sliderViewPager.layoutParams.height = sliderHeight
-                layoutBanner.newMenuBannerShimmer.layoutParams.height = sliderHeight
-                layoutBanner.sliderViewPager.adapter = sliderImageAdapter
+                val sliderHeight = (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_HOME_TOP_ASPECT_RATIO_WIDTH / Values.SLIDER_HOME_TOP_ASPECT_RATIO_HEIGHT)).toInt()
+                layoutBanner.apply {
+                    mainToolbar.layoutParams.height = sliderHeight
+                    sliderViewPager.layoutParams.height = sliderHeight
+                    newMenuBannerShimmer.layoutParams.height = sliderHeight
+                    sliderViewPager.adapter = sliderImageAdapter
+                }
             }
         }
 
@@ -691,11 +691,10 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private fun setupCaterWithHerfy() {
         activity?.let {
             binding.apply {
-                val displayMetrics = DisplayMetrics()
-                it.windowManager.defaultDisplay.getMetrics(displayMetrics)
-                val sliderHeight = (displayMetrics.widthPixels / 2.6).toInt()
+                val sliderHeight = (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_WIDTH / Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_HEIGHT)).toInt()
                 layoutCatering.apply {
                     cvCateringContent.layoutParams.height = sliderHeight
+                    ivCater.layoutParams.height = sliderHeight
                     if (LocaleUtil.getInstance().isArabic) {
                         ivCater.start = Direction.RIGHT
                         ivCater.end = Direction.RIGHT
@@ -715,11 +714,11 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             binding.apply {
                 bottomSliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
                 layoutBottomBanner.apply {
-                    val displayMetrics = DisplayMetrics()
-                    it.windowManager.defaultDisplay.getMetrics(displayMetrics)
-                    val sliderHeight = (displayMetrics.widthPixels / 2.6).toInt()
-                    cvBannerBottom.layoutParams.height = sliderHeight
-                    shimmerBannerBottom.layoutParams.height = sliderHeight
+                    val sliderHeight = (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_WIDTH / Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_HEIGHT)).toInt()
+                    layoutBottomBanner.apply {
+                        cvBannerBottom.layoutParams.height = sliderHeight
+                        shimmerBannerBottom.layoutParams.height = sliderHeight
+                    }
                     vpBannerBottom.adapter = bottomSliderImageAdapter
                 }
             }

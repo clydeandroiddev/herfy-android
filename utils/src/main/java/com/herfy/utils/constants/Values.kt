@@ -100,4 +100,10 @@ object Values {
     const val KEY_IS_ADDED_TO_CART = "is_added_to_cart"
     const val KEY_IS_SOLD_OUT = "is_sold_out"
     const val CATER_WITH_HERFY_URL = "https://www.herfy.com/"
+    const val SLIDER_HOME_TOP_ASPECT_RATIO_WIDTH = 393.0
+    const val SLIDER_HOME_TOP_ASPECT_RATIO_HEIGHT = 472.0
+    const val SLIDER_HOME_BOTTOM_ASPECT_RATIO_WIDTH = 361.0
+    const val SLIDER_HOME_BOTTOM_ASPECT_RATIO_HEIGHT = 152.0
+    const val SLIDER_MENU_ASPECT_RATIO_WIDTH = 361.0
+    const val SLIDER_MENU_ASPECT_RATIO_HEIGHT = 128.0
 }
