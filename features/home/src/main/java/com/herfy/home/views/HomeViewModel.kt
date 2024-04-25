@@ -591,6 +591,10 @@ class HomeViewModel @Inject constructor(
         validateDigitalCoupon(promo)
     }
 
+    override fun onRemovePromo() {
+        _showCart.value = Event(false)
+    }
+
     private fun getCampaignPromotionItem(digitalCoupon: Campaign?) {
         invoke {
             digitalCoupon?.promotion?.let { promotion ->
