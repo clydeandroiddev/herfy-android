@@ -44,6 +44,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItemCdn
 import com.skylinedynamics.solosdk.api.models.requestbodies.AddFavoriteItemBody
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.Observable
 import java.util.LinkedList
 import javax.inject.Inject
 
@@ -654,36 +655,108 @@ class ComboViewModel @Inject constructor(
                                             )
                                         )
                                     val mapModifierGroup = modifierGroupIds[modifierGroupCdn.id]
-                                    val excludeModifiers: Set<String> = HashSet<String>()
-                                    if (mapModifierGroup != null && mapModifierGroup.excludeModifiers != null && !mapModifierGroup.excludeModifiers.isEmpty()) {
-                                        for (excludeModifierId in mapModifierGroup.excludeModifiers) {
-                                            excludeModifiers.plus(excludeModifierId.toString())
-                                            //excludeModifiers.add()
+                                    val modifierGroupModifierItems =
+                                        modifierGroupIds[modifierGroupCdn.id]!!.modifiers
+                                    val modifierGroupModifierItemIds = arrayListOf<String>()
+                                    val excludedModifierItems = HashSet<String>()
+                                    mapModifierGroup?.let {
+                                        val excludedModifierIds = it.excludeModifiers.map { t-> t.toString() }
+                                        excludedModifierItems.addAll(excludedModifierIds)
+                                    }
+
+
+                                    // Exclude by location
+                                    val orderStore = CacheUtil.getInstance().getOrderStore()
+                                    val excludedItemsByLocationId = Observable.fromArray(
+                                        modifierGroupIds[modifierGroupCdn.id]
+                                    )
+                                        .map { modifierGroup: ModifierGroup? ->
+                                            if (orderStore == null) return@map java.util.ArrayList<ModifierItem>()
+                                            // if group contains store id in included location, add all modifiers within it to the excluded items
+                                            // else check modifier item excluded location if it contains store id
+                                            if (Observable.fromIterable(modifierGroup!!.excludedLocations)
+                                                    .map { obj: Int -> obj.toString() }
+                                                    .any { excludedLocation: String -> excludedLocation == orderStore.id }
+                                                    .blockingGet()
+                                            ) {
+                                                return@map modifierGroup!!.modifiers
+                                            } else {
+                                                return@map Observable.fromIterable<ModifierItem>(
+                                                    modifierGroup!!.modifierItems
+                                                )
+                                                    .filter { modifierItem: ModifierItem ->
+                                                        Observable.fromIterable<Int>(
+                                                            modifierItem.attributes.excludedLocations
+                                                        )
+                                                            .any { item: Int -> item.toString() == orderStore.id }
+                                                            .blockingGet()
+                                                    }
+                                                    .toList()
+                                                    .blockingGet()
+                                            }
+                                        }
+                                        .flatMap { source: List<ModifierItem>? ->
+                                            Observable.fromIterable(
+                                                source
+                                            )
+                                        }
+                                        .map { obj: ModifierItem -> obj.id }
+                                        .toList()
+                                        .blockingGet()
+                                    excludedModifierItems.addAll(excludedItemsByLocationId)
+
+
+                                    val modifierGroupModifierItemDisplayOrders =
+                                        hashMapOf<String, Int>()
+                                    for (modifierGroupModifierItem in modifierGroupModifierItems) {
+                                        if (!excludedModifierItems.contains(
+                                                modifierGroupModifierItem.id
+                                            )
+                                        ) {
+                                            modifierGroupModifierItemIds.add(
+                                                modifierGroupModifierItem.id
+                                            )
+                                            modifierGroupModifierItemDisplayOrders[modifierGroupModifierItem.id] =
+                                                modifierGroupModifierItems.indexOf(
+                                                    modifierGroupModifierItem
+                                                )
                                         }
                                     }
+
                                     val modifierItems = LinkedList<ModifierItem>()
-                                    val modifiers = LinkedList<ModifierItem>()
                                     menuRepository.getModifierItemBy(
                                         applicationId,
-                                        modifierGroupCdn.attributes.modifiers.toTypedArray()
+                                        modifierGroupModifierItemIds.toTypedArray()
                                     ) { modifierItemDbs ->
                                         for (modifierItemDb in modifierItemDbs) {
-                                            if (!excludeModifiers.contains(modifierItemDb.id)) {
-                                                val modifierItemCdn =
-                                                    GsonHelper.gsonFinal().fromJson(
-                                                        modifierItemDb.data,
-                                                        ModifierItemCdn::class.java
-                                                    )
-                                                val modifierItem = ModifierItemCdn.convert(
-                                                    modifierItemCdn,
-                                                    LocaleUtil.getInstance().language
+                                            val modifierItemCdn =
+                                                GsonHelper.gsonFinal().fromJson(
+                                                    modifierItemDb.data,
+                                                    ModifierItemCdn::class.java
                                                 )
 
-                                                modifierItem.attributes.isSelected =
-                                                    modifierItem.attributes.minimum == 1
+                                            val modifierItem = ModifierItemCdn.convert(
+                                                modifierItemCdn,
+                                                LocaleUtil.getInstance().language
+                                            )
+                                            modifierItem.attributes.isSelected = modifierItem.attributes.minimum == 1
+                                            if (modifierGroupModifierItemDisplayOrders.containsKey(
+                                                    modifierItem.id
+                                                ) && modifierGroupModifierItemDisplayOrders[modifierItem.id] != null
+                                            ) {
+                                                modifierGroupModifierItemDisplayOrders[modifierItem.id]?.let {
+                                                    modifierItem.attributes.displayOrder = it
+                                                }
+                                            }
+                                            val isExcluded =
+                                                orderStore != null && Observable.fromIterable(
+                                                    modifierItem.attributes.excludedLocations
+                                                )
+                                                    .any { item: Int -> item.toString() == orderStore.id }
+                                                    .blockingGet()
 
+                                            if (!isExcluded) {
                                                 modifierItems.add(modifierItem)
-
                                             }
                                         }
 
@@ -709,24 +782,7 @@ class ComboViewModel @Inject constructor(
                                             modifierGroup.attributes.visibilityConfig =
                                                 mapModifierGroup.visibilityConfig
                                         }
-                                        val size = modifierItems.size
-                                        val modifierItemsFinal = ArrayList<ModifierItem>()
-                                        for (i in 0 until size) {
-                                            var found = false
-                                            for (a in modifierGroup.excludeModifiers.indices) {
-                                                if (modifierItems[i].id.equals(
-                                                        modifierGroup.excludeModifiers[a].toString(),
-                                                        ignoreCase = true
-                                                    )
-                                                ) {
-                                                    found = true
-                                                    break
-                                                }
-                                            }
-                                            if (!found) {
-                                                modifierItemsFinal.add(modifierItems[i])
-                                            }
-                                        }
+                                        val modifierItemsFinal = ArrayList<ModifierItem>(modifierItems)
                                         if (modifierItemsFinal.size > 0) {
                                             val defaultModifiers =
                                                 modifierGroup.defaultModifiers
@@ -1927,7 +1983,7 @@ class ComboViewModel @Inject constructor(
             }
             menuRepository.getMenuCategory(menuCategoryId, appId) { menuCategory ->
                 menuItem?.let {
-                    _navigateToMenuItemDetails.value = Event(Triple(menuCategory, it,position))
+                    _navigateToMenuItemDetails.value = Event(Triple(menuCategory, it, position))
                 }
             }
         }
@@ -1992,13 +2048,14 @@ class ComboViewModel @Inject constructor(
             addFrequentBoughtItem(addToBag, position)
         } else {
             _showLoading.value = false
-            _navigateToMenuItemDetails.value = Event(Triple(menuCategory, frequentlyMenuItem, position))
+            _navigateToMenuItemDetails.value =
+                Event(Triple(menuCategory, frequentlyMenuItem, position))
         }
     }
 
-    fun updateFrequentlyBoughtItems(position: Int, isAddedToCart : Boolean){
-        if(frequentBoughtItemList.isNotEmpty()){
-            if(isAddedToCart){
+    fun updateFrequentlyBoughtItems(position: Int, isAddedToCart: Boolean) {
+        if (frequentBoughtItemList.isNotEmpty()) {
+            if (isAddedToCart) {
                 frequentBoughtItemList[position].isAddedToCart = true
             }
             val favorites = CacheUtil.getInstance().favorites
