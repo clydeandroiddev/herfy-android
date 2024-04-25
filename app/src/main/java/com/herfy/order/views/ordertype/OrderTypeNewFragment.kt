@@ -1152,7 +1152,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
 
-    fun deletePolyline() {
+    private fun deletePolyline() {
         myPolyline?.remove()
         myPolyline = null  // Clear the reference
     }

@@ -100,6 +100,18 @@ fun String.orderTypeStatusIcon(): Int {
     }
 }
 
+fun String.orderTypeStatusColor(): Int {
+    return when (OrderType.fromString(this.toLowerCase(Locale.ROOT))) {
+        OrderType.DELIVERY -> {
+            R.color.delivered_color
+        }
+
+        else -> {
+            R.color.picked_color
+        }
+    }
+}
+
 fun String.orderTypeString(): String {
     when (OrderType.fromString(this.toLowerCase(Locale.ROOT))) {
         OrderType.PICKUP, OrderType.DRIVE_THRU -> {

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.herfy.common.R
 import com.herfy.common.formatOrderTime
 import com.herfy.common.orderTypeStatus
+import com.herfy.common.orderTypeStatusColor
 import com.herfy.common.orderTypeStatusIcon
 import com.herfy.common.orderTypeString
 import com.herfy.history.databinding.ItemNewOrderHistoryBinding
@@ -60,7 +61,9 @@ class HistoryListAdapter(
             if (item.sequence < OrderStatusType.CANCELLED_BY_CUSTOMER.value) {
                 status.text = item.attrType.orderTypeStatus()
                 statusIcon.setImageResource(item.attrType.orderTypeStatusIcon())
+                status.setTextColor(status.context.resources.getColor(item.attrType.orderTypeStatusColor()))
             } else {
+                status.setTextColor(status.context.resources.getColor(R.color.cancelled_color))
                 statusIcon.setImageResource(R.drawable.ic_circle_xmark)
                 status.text = CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
             }

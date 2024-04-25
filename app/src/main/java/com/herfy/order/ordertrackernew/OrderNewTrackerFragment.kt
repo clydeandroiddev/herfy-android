@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -46,6 +47,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
@@ -128,6 +131,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     private var orderId = ""
 
     private var isOverHeadFrameShows = false
+
+    private var myPolyline: Polyline? = null
 
     private val gpsLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
@@ -333,6 +338,11 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         resources.configuration.setLocale(locale)
     }
 
+    private fun deletePolyline() {
+        myPolyline?.remove()
+        myPolyline = null  // Clear the reference
+    }
+
     override fun setupFonts() {
 
     }
@@ -482,6 +492,19 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             binding.orderAddressDetails.addressKm.text = distanceValue.toLowerCase()
                         }
                     }
+
+                    if (userLatLng != null) {
+                        myPolyline = googleMap?.addPolyline(
+                            PolylineOptions().add(store.attributes?.lat?.let {
+                                store.attributes?.lng?.let { it1 ->
+                                    LatLng(
+                                        it, it1
+                                    )
+                                }
+                            }, userLatLng).width(8f).color(Color.parseColor("#0064AC"))
+                        )
+                    }
+
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -1369,6 +1392,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     distanceValue = StringUtil.getDistance(
                         currentDistance ?: 0.0
                     )
+
                     textView.text =
                         CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
                             .replace("(x)", distanceValue).toLowerCase()
@@ -1379,6 +1403,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             textView.isVisible = true
                         }
                     }
+
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -1407,9 +1432,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     override fun cancel() {
-        activity?.cast<BaseActivity> {
-            it.showLoadingDialog()
-        }
         orderPresenter?.getOrderStatuses()
     }
 
