@@ -106,8 +106,6 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
             customerCar?.let {
                 binding.plateNumberEdit.setText(it.attributes.plateNumber)
                 binding.plateNumberEdit.setSelection(binding.plateNumberEdit.length())
-                binding.confirmContainer.isVisible =
-                    binding.plateNumberEdit.text.toString().isNotEmpty()
                 try {
                     val carMake = CarMaker()
                     val carAtt = CarMakerAttributes()
@@ -185,15 +183,13 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 }
 
                 override fun afterTextChanged(editable: Editable?) {
-                    confirmContainer.isVisible = plateNumberEdit.text.toString().isNotEmpty()
+
                 }
             })
 
             plateNumberEdit.setOnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (confirmContainer.isVisible) {
-                        continueButton.performClick()
-                    }
+                    continueButton.performClick()
                     true
                 } else false
             }
@@ -277,8 +273,8 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
             optionalBrand.text =
                 CacheUtil.getInstance().getTranslations(Text.OPTIONAL_LABEL, "(Optional)")
             licensePlateNumberLabel.text = CacheUtil.getInstance().getTranslations(
-                    Text.LICENSE_PLATE_NUMBER, "License Plate Number"
-                ) + " " + CacheUtil.getInstance().getTranslations(Text.OPTIONAL_LABEL, "(Optional)")
+                Text.LICENSE_PLATE_NUMBER, "License Plate Number"
+            ) + " " + CacheUtil.getInstance().getTranslations(Text.OPTIONAL_LABEL, "(Optional)")
             plateNumberEdit.hint =
                 CacheUtil.getInstance().getTranslations(Text.PLATE_NUMBER_HINT, "e.g. KLK98898")
         }

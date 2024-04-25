@@ -296,12 +296,10 @@
                 android:id="@+id/confirm_container"
                 android:layout_width="match_parent"
                 android:layout_height="68dp"
-                android:visibility="gone"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardElevation="6dp"
                 app:cardUseCompatPadding="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                tools:visibility="visible">
+                app:layout_constraintBottom_toBottomOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

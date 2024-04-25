@@ -6,6 +6,10 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.ActivityResultLauncher
@@ -46,6 +50,8 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
     private var addIsShown = false
 
+    private var isMaxTen = false
+
     private var googleSignInClient: GoogleSignInClient? = null
 
     private var googleLauncher: ActivityResultLauncher<Intent>? = registerForActivityResult(
@@ -58,7 +64,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     ApiException::class.java
                 )
                 if (account != null) {
-                    googleName = account.givenName.orEmpty()
+                    googleName = account.displayName.orEmpty()
                     viewModel.loginViaGoogle(account.email.orEmpty(), account.idToken.orEmpty())
                 } else {
                     showAlertDialog(
@@ -110,8 +116,12 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
             loginButton.setOnClickListener {
                 hideKeyboard(binding.root)
+                var phoneNumber = phoneNumberEdit.text.toString()
+                if (isMaxTen && phoneNumber.startsWith("0")) {
+                    phoneNumber = phoneNumber.removePrefix(phoneNumber.substring(0, 1))
+                }
                 viewModel.login(
-                    mobileNumberDialCode.text.toString(), binding.phoneNumberEdit.text.toString()
+                    mobileNumberDialCode.text.toString(), phoneNumber
                 )
             }
 
@@ -141,7 +151,34 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     true
                 } else false
             }
+
+            phoneNumberEdit.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    if (s != null) {
+                        if (s.toString().startsWith("0")) {
+                            setPhoneNumberLength(10)
+                            isMaxTen = true
+                        } else {
+                            isMaxTen = false
+                            setPhoneNumberLength(9)
+                        }
+                    }
+                }
+            })
         }
+    }
+
+    fun setPhoneNumberLength(length: Int) {
+        val fArray = arrayOfNulls<InputFilter>(1)
+        fArray[0] = InputFilter.LengthFilter(length)
+        binding.phoneNumberEdit.filters = fArray
     }
 
     override fun initTranslations() {

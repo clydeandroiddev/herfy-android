@@ -202,6 +202,7 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
     public void selectAddressHome(Address address, boolean redownloadMenu) {
 
     }
+
     @Override
     public void navigateMenuItemDetails(MenuItem menuItem) {
 
@@ -275,6 +276,13 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
                 pickupMethodsContainer.setVisibility(View.GONE);
                 directionsImage.setImageResource(R.drawable.ic_direction_unselected);
             }
+
+            directionsImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    orderPresenter.goToDirection(store);
+                }
+            });
 
             if (!isDineIn) {
                 pickupMethodsContainer.setVisibility(View.VISIBLE);
