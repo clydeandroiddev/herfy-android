@@ -42,6 +42,7 @@ import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.ViewUtil
@@ -264,7 +265,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
             layoutBottomSheetComboDetail.apply {
                 tvTotalLabel.text = cacheUtilHelper.getTranslations(
-                    Text.TOTAL_IS_INCLUSIVE_OF_VAT,
+                    Text.TOTAL_INCLUSIVE_VAT,
                     "Total is inclusive of VAT"
                 )
                 btnAddDetails.text = cacheUtilHelper.getTranslations(Text.ADD, "Add")
@@ -388,7 +389,10 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     )
                 } else {
                     _totalPrice = totalPrice
-                    val formattedPrice = StringUtil.getFormattedPrice(totalPrice)
+                    val formattedPrice = CurrencyUtils.updateCurrency(totalPrice,
+                        withSpace = true,
+                        ignoreDecimalPlaces = false
+                    )
                     binding.tvTotal.text = formattedPrice
                     binding.add.text =
                         cacheUtilHelper.getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
@@ -444,12 +448,13 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 comboItemDetailsModifierGroupAdapter?.apply {
                     viewModel.getComponentModifierItemTotalPrice(this.getUpdateModifierGroupList())
                     shouldShowCheckBox(it.first, it.second)
-                    updateComboModifierItemsPerModifierGroup(it.second)
+                    //updateComboModifierItemsPerModifierGroup(it.second)
                 }
             }
             showComponentModifierItemTotal.observe(this@ComboMealFragment) {
-                binding.layoutBottomSheetComboDetail.tvTotalValue.text =
-                    StringUtil.getFormattedPrice(it)
+                binding.layoutBottomSheetComboDetail.tvTotalValue.text = CurrencyUtils.updateCurrency(it,
+                    withSpace = true,
+                    ignoreDecimalPlaces = false)
             }
             showToastMessage.observe(this@ComboMealFragment) {
                 showToastMessage(it)
