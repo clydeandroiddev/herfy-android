@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.BuildConfig;
 import com.herfy.R;
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
 import com.herfy.menu.adapters.ModifierItemsRecyclerViewAdapter;
 import com.herfy.utils.constants.Text;
 import com.herfy.menu.MenuContract;
@@ -196,7 +197,7 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, ModifierItemsNewRecyclerViewAdapter> modifierItemsRecyclerViewAdapterNewHashMap) {
         boolean visible = false;
         VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
         if(visibilityConfig != null) {
@@ -359,7 +360,7 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility) {
 
     }
 

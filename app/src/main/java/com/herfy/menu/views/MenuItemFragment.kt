@@ -22,7 +22,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,6 +51,7 @@ import com.herfy.menu.adapters.CombosListAdapter
 import com.herfy.menu.adapters.FrequentBoughItemsAdapter
 import com.herfy.menu.adapters.IngredientsRecyclerViewAdapter
 import com.herfy.menu.adapters.ModifierGroupsNewRecyclerViewAdapter
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter
 import com.herfy.menu.adapters.SizesRecyclerViewAdapter
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet
@@ -102,7 +102,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     private lateinit var menuPresenter: MenuContract.Presenter
     private var cartMenuItem = -1
-    private var  fromFavorite = false
+    private var fromFavorite = false
 
     private var originalMenuItem: String? = null
     private var sizeId: String? = null
@@ -129,6 +129,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     private val cacheUtilHelper by lazy {
         CacheUtilHelper(requireContext())
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.cast<MainActivity> {
@@ -184,19 +185,19 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             menuPresenter.menuItem = menuItem
                             setMenuItemDetails(menuPresenter.menuItem)
                             setMenuItem(menuPresenter.menuCategory, menuPresenter.menuItem)
-                            menuPresenter.getFrequentBoughtItemsByMenuId(1,args.menuItemId)
+                            menuPresenter.getFrequentBoughtItemsByMenuId(1, args.menuItemId)
                             menuPresenter.showHideModifierItemPrice()
                             return
                         }
                     }
                 }
                 val isUpsell = args.isUpsell
-                if(isUpsell){
+                if (isUpsell) {
                     menuPresenter.getMenuItem(false, args.menuItemId, isUpsell)
-                }else {
+                } else {
                     menuPresenter.getMenuItem(false, args.menuItemId)
                 }
-                menuPresenter.getFrequentBoughtItemsByMenuId(1,args.menuItemId)
+                menuPresenter.getFrequentBoughtItemsByMenuId(1, args.menuItemId)
             }
         } else {
             val menuItem: MenuItem? = if (!args.isEdit) {
@@ -325,7 +326,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             }
 
         }
-        CacheUtil.getInstance().setFrequentlyQuantityShouldShow(false,"")
+        CacheUtil.getInstance().setFrequentlyQuantityShouldShow(false, "")
         CacheUtil.getInstance().cart = updatedCart
     }
 
@@ -367,18 +368,21 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         try {
             val activity: Activity? = activity
             if (activity != null) {
-                binding.sizesRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-                binding.frequentlyBoughRecycleview.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-                binding.modifierGroupsRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-            /*    (binding.modifierGroupsRecyclerView.itemAnimator as SimpleItemAnimator?)!!.supportsChangeAnimations =
-                    false*/
+                binding.sizesRecyclerView.layoutManager =
+                    LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+                binding.frequentlyBoughRecycleview.layoutManager =
+                    LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+                binding.modifierGroupsRecyclerView.layoutManager =
+                    LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+                /*    (binding.modifierGroupsRecyclerView.itemAnimator as SimpleItemAnimator?)!!.supportsChangeAnimations =
+                        false*/
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
         binding.icClose.setOnClickListener {
-           requireActivity().onBackPressed()
+            requireActivity().onBackPressed()
         }
         if (CacheUtil.getInstance().concept.isCartItemsNotesEnabled) {
             binding.notesLabel.visibility = View.VISIBLE
@@ -386,7 +390,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             binding.notesLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.SPECIAL_INSTRUCTION, "Special Instruction")
             binding.notesDescription.text = CacheUtil.getInstance()
-                .getTranslations(Text.NOTES_DESCRIPTION,"Please let us know if you are allergic to anything or if we need to avoid anything." )
+                .getTranslations(
+                    Text.NOTES_DESCRIPTION,
+                    "Please let us know if you are allergic to anything or if we need to avoid anything."
+                )
 
             binding.etItemNotes.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -420,12 +427,14 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
         binding.txtMoreInfo.text = CacheUtil.getInstance()
             .getTranslations(Text.MORE_INFO, "More Info")
-        val originalQuantityWithColon = CacheUtil.getInstance().getTranslations(Text.ITEM_QUANTITY,"Item quantity")
+        val originalQuantityWithColon =
+            CacheUtil.getInstance().getTranslations(Text.ITEM_QUANTITY, "Item quantity")
         val formattedQuantityWithoutColon = originalQuantityWithColon.replace(":", "")
         binding.txtQuantity.text = formattedQuantityWithoutColon
-        binding.txtFrequntlyBought.text = CacheUtil.getInstance().getTranslations(Text.FREQUENTLY_BOUGHT,"Frequently bought together")
+        binding.txtFrequntlyBought.text = CacheUtil.getInstance()
+            .getTranslations(Text.FREQUENTLY_BOUGHT, "Frequently bought together")
         binding.notesLabel.text = CacheUtil
-            .getInstance().getTranslations(Text.SPECIAL_INSTRUCTION,"Special Instruction")
+            .getInstance().getTranslations(Text.SPECIAL_INSTRUCTION, "Special Instruction")
     }
 
     override fun showStore(store: Store) {}
@@ -433,7 +442,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         menuCategory: MenuCategory?,
         menuItem: MenuItem?
     ) {
-        navMenuItem(menuCategory?.id.orEmpty(), menuItemId = menuItem?.id.orEmpty(),menuItem?.isCombo == true,true)
+        navMenuItem(
+            menuCategory?.id.orEmpty(),
+            menuItemId = menuItem?.id.orEmpty(),
+            menuItem?.isCombo == true,
+            true
+        )
     }
 
     override fun showStoreOpen(open: Boolean, message: String) {}
@@ -461,30 +475,39 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         activity?.cast<BaseActivity> {
             it.runOnUiThread {
 //                binding.mealDealsContainer.visibility = View.GONE
-                binding.txtMoreInfo.isVisible = !menuItem.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
+                binding.txtMoreInfo.isVisible =
+                    !menuItem.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
                 binding.txtMoreInfo.ninjaTap(viewLifecycleScope) {
                     val bundle = Bundle()
-                    bundle.putParcelable(NAV_ARGS_INFO_KEY,  NutritionInfoParams(
-                        nutritionImageUrl = menuItem.customFieldObjectMap.nutritionInfoImageUrl.orEmpty(),
-                        nutritionStory = menuItem.customFieldObjectMap.nutritionInfoStory.orEmpty(),
-                        menuName = menuItem.getName(LocaleUtil.getInstance().language)
+                    bundle.putParcelable(
+                        NAV_ARGS_INFO_KEY, NutritionInfoParams(
+                            nutritionImageUrl = menuItem.customFieldObjectMap.nutritionInfoImageUrl.orEmpty(),
+                            nutritionStory = menuItem.customFieldObjectMap.nutritionInfoStory.orEmpty(),
+                            menuName = menuItem.getName(LocaleUtil.getInstance().language)
+                        )
                     )
-                    )
-                    NutritionInfoFragmentBottomSheet.newInstance(bundle).show(childFragmentManager,NutritionInfoFragmentBottomSheet.TAG)
+                    NutritionInfoFragmentBottomSheet.newInstance(bundle)
+                        .show(childFragmentManager, NutritionInfoFragmentBottomSheet.TAG)
                 }
                 if (menuItem.attributes.notes.isNotEmpty()) {
                     binding.etItemNotes.setText(menuItem.attributes.notes)
                 }
                 binding.name.text = menuItem.getName(LocaleUtil.getInstance().language)
-                val test =  CacheUtil
+                val test = CacheUtil
                     .getInstance()
-                    .getTranslations(Text.FREQUETLY_BOUGHT_TOGETHER,"Frequently bought together")
+                    .getTranslations(Text.FREQUETLY_BOUGHT_TOGETHER, "Frequently bought together")
                 binding.txtFrequntlyBought
                     .text = test
                 val caloriesValue = menuItem.calories
                 val calorieCount = menuItem.calorieCount
 
-                System.out.println("Frequent bought $test and $caloriesValue and count $calorieCount and Name ${menuItem.getName(LocaleUtil.getInstance().language)}")
+                System.out.println(
+                    "Frequent bought $test and $caloriesValue and count $calorieCount and Name ${
+                        menuItem.getName(
+                            LocaleUtil.getInstance().language
+                        )
+                    }"
+                )
                 if (caloriesValue != null && !caloriesValue.isEmpty() && caloriesValue.trim { it <= ' ' } != "null" && caloriesValue.trim { it <= ' ' } != "0") {
                     binding.calories.text = MenuUtil.getCaloriesText(caloriesValue, calorieCount)
                     binding.calories.visibility = View.VISIBLE
@@ -553,7 +576,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 binding.txtFrequntlyBought
                     .text = CacheUtil
                     .getInstance()
-                    .getTranslations(Text.FREQUETLY_BOUGHT_TOGETHER,"Frequently bought together")
+                    .getTranslations(Text.FREQUETLY_BOUGHT_TOGETHER, "Frequently bought together")
 //                binding.detailsShimmer.visibility = View.GONE
             }
         }
@@ -680,9 +703,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             )
                             setSizes(menuItem)
                             shouldReset = false
-                            if (modifierGroupsAdapter != null) {
+                            /*if (modifierGroupsAdapter != null) {
                                 modifierGroupsAdapter!!.notifyDataSetChanged()
-                            }
+                            }*/
 
 
                         }
@@ -797,49 +820,48 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuPresenter.setItemNote(itemNote)
                     }
 
-                        if (!args.isPromo) {
-                            if (cartMenuItem >= 0) {
-                                menuPresenter.updateCartItem(false, cartMenuItem)
-                            } else {
-                                menuPresenter.getCartMenuItem(args.isFavorite)
-                            }
+                    if (!args.isPromo) {
+                        if (cartMenuItem >= 0) {
+                            menuPresenter.updateCartItem(false, cartMenuItem)
                         } else {
-                            menuPresenter.updateCartItem(true, cartMenuItem)
+                            menuPresenter.getCartMenuItem(args.isFavorite)
                         }
-                        FirebaseECommerceEventUtil.addToCartEvent(
-                            activity,
-                            menuItem,
-                            menuCategory,
-                            _totalPrice,
-                            Integer.parseInt(binding.quantity.text.toString())
-                        );
-                        FacebookAppEventUtil.addToCartEvent(baseActivity, menuItem, _totalPrice)
-                        com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent(EventType.ADD_TO_CART)
-                    })
-                    baseActivity.dismissDialogs()
-                    menuItemSelected = menuItem
-                    menuCategorySelected = menuCategory
-                    baseActivity.dismissDialogs()
-                    menuItemSelected = menuItem
-                    menuCategorySelected = menuCategory
+                    } else {
+                        menuPresenter.updateCartItem(true, cartMenuItem)
+                    }
+                    FirebaseECommerceEventUtil.addToCartEvent(
+                        activity,
+                        menuItem,
+                        menuCategory,
+                        _totalPrice,
+                        Integer.parseInt(binding.quantity.text.toString())
+                    );
+                    FacebookAppEventUtil.addToCartEvent(baseActivity, menuItem, _totalPrice)
+                    com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent(EventType.ADD_TO_CART)
+                })
+                baseActivity.dismissDialogs()
+                menuItemSelected = menuItem
+                menuCategorySelected = menuCategory
+                baseActivity.dismissDialogs()
+                menuItemSelected = menuItem
+                menuCategorySelected = menuCategory
 //                setupCombos(menuItem)
-                    menuPresenter!!.getMenuItemTotalPrice(menuPresenter!!.menuItem, -1)
-                    if (!menuItem.isSandwichOnly) {
-                        previousMenuItem = menuItem
-                    }
-                    if (!viewEventSent) {
-                        viewEventSent = true
-                        FirebaseECommerceEventUtil.viewItemEvent(
-                            activity,
-                            menuItem,
-                            menuCategory
-                        )
-                        FacebookAppEventUtil.viewMenuItemEvent(activity, menuItem)
-                    }
+                menuPresenter!!.getMenuItemTotalPrice(menuPresenter!!.menuItem, -1)
+                if (!menuItem.isSandwichOnly) {
+                    previousMenuItem = menuItem
+                }
+                if (!viewEventSent) {
+                    viewEventSent = true
+                    FirebaseECommerceEventUtil.viewItemEvent(
+                        activity,
+                        menuItem,
+                        menuCategory
+                    )
+                    FacebookAppEventUtil.viewMenuItemEvent(activity, menuItem)
                 }
             }
         }
-
+    }
 
 
     private fun changeMealDeal(isSandwich: Boolean) {
@@ -967,11 +989,13 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         } else {
             binding.favoriteIcon.setImageResource(R.drawable.ic_heart_unselected)
         }
-        if(args.isFrequentlyBoughtItem){
+        if (args.isFrequentlyBoughtItem) {
             val bundle = Bundle()
             bundle.putBoolean(Values.KEY_IS_ADDED_TO_FAVORITES, true)
-            setFragmentResult(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER,
-                bundle)
+            setFragmentResult(
+                Values.FREQUENTLY_BOUGHT_ITEM_LISTENER,
+                bundle
+            )
         }
     }
 
@@ -1035,31 +1059,86 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             card.findViewById<ImageView>(R.id.radioButton)
                         if (modifierItem.getAttributes().isSelected) {
                             if (!initialSelectedEncountered) {
-                                card.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_blue)
+                                card.strokeColor =
+                                    ContextCompat.getColor(requireContext(), R.color.color_blue)
                                 card.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
-                                card.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
-                                txtSizesName.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                                txtPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.white))
-                                card.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_blue))
+                                card.radius =
+                                    resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
+                                txtSizesName.setTextColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.white
+                                    )
+                                )
+                                txtPrice.setTextColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.white
+                                    )
+                                )
+                                card.setCardBackgroundColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.color_blue
+                                    )
+                                )
                                 sizesRadiButton.setImageResource(R.drawable.ic_size_drawable_checked)
-                                initialSelectedEncountered =true
+                                initialSelectedEncountered = true
                             } else {
-                                card.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade)
+                                card.strokeColor = ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.color_light_blue_shade
+                                )
                                 card.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
-                                card.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
-                                txtSizesName.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                                txtPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.color_gray))
-                                card.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade))
+                                card.radius =
+                                    resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
+                                txtSizesName.setTextColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.black
+                                    )
+                                )
+                                txtPrice.setTextColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.color_gray
+                                    )
+                                )
+                                card.setCardBackgroundColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.color_light_blue_shade
+                                    )
+                                )
                                 sizesRadiButton.setImageResource(R.drawable.modifier_item_radio_unselected)
                             }
 
                         } else {
-                            card.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade)
+                            card.strokeColor = ContextCompat.getColor(
+                                requireContext(),
+                                R.color.color_light_blue_shade
+                            )
                             card.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
-                            card.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
-                            txtSizesName.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                            txtPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.color_gray))
-                            card.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade))
+                            card.radius =
+                                resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
+                            txtSizesName.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.black
+                                )
+                            )
+                            txtPrice.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.color_gray
+                                )
+                            )
+                            card.setCardBackgroundColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.color_light_blue_shade
+                                )
+                            )
                             sizesRadiButton.setImageResource(R.drawable.modifier_item_radio_unselected)
 
                         }
@@ -1071,38 +1150,79 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 val childCard: MaterialCardView = childView.findViewById(R.id.card)
                                 val txtModifierSizes =
                                     childView.findViewById<MaterialTextView>(R.id.name)
-                                val txtModifierPrice = childView.findViewById<MaterialTextView>(R.id.txtSizesPrice)
-                                val sizesRadioBtn = childView.findViewById<ImageView>(R.id.radioButton)
+                                val txtModifierPrice =
+                                    childView.findViewById<MaterialTextView>(R.id.txtSizesPrice)
+                                val sizesRadioBtn =
+                                    childView.findViewById<ImageView>(R.id.radioButton)
                                 if (childView.tag == view1.tag) {
-                                    childCard.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_blue)
+                                    childCard.strokeColor =
+                                        ContextCompat.getColor(requireContext(), R.color.color_blue)
                                     childCard.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
-                                    childCard.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
-                                    txtModifierSizes.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade))
-                                    txtModifierPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.white))
-                                    childCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_blue))
+                                    childCard.radius =
+                                        resources.getDimensionPixelSize(R.dimen.radius_large)
+                                            .toFloat()
+                                    txtModifierSizes.setTextColor(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.color_light_blue_shade
+                                        )
+                                    )
+                                    txtModifierPrice.setTextColor(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.white
+                                        )
+                                    )
+                                    childCard.setCardBackgroundColor(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.color_blue
+                                        )
+                                    )
                                     sizesRadioBtn.setImageResource(R.drawable.ic_size_drawable_checked)
                                     binding.checkBox.setVisible(true)
 
                                 } else {
 //
-                                    childCard.strokeColor = ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade)
+                                    childCard.strokeColor = ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.color_light_blue_shade
+                                    )
                                     childCard.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
-                                    childCard.radius = resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
-                                    txtModifierSizes.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                                    txtModifierPrice.setTextColor(ContextCompat.getColor(requireContext(),R.color.color_gray))
-                                    childCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_light_blue_shade))
+                                    childCard.radius =
+                                        resources.getDimensionPixelSize(R.dimen.radius_large)
+                                            .toFloat()
+                                    txtModifierSizes.setTextColor(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.black
+                                        )
+                                    )
+                                    txtModifierPrice.setTextColor(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.color_gray
+                                        )
+                                    )
+                                    childCard.setCardBackgroundColor(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.color_light_blue_shade
+                                        )
+                                    )
                                     sizesRadioBtn.setImageResource(R.drawable.modifier_item_radio_unselected)
 
-                                    }
                                 }
-                              menuPresenter.selectSize(view1.tag as String)
                             }
+                            menuPresenter.selectSize(view1.tag as String)
+                        }
 
                         val txtModifierSizes = view.findViewById<MaterialTextView>(R.id.name)
                         val txtModifierPrice =
                             view.findViewById<MaterialTextView>(R.id.txtSizesPrice)
                         txtModifierPrice.setVisible(modifierItem.attributes.price != 0.0)
-                        txtModifierPrice.text = StringUtil.getFormattedPrice(modifierItem.attributes.price)
+                        txtModifierPrice.text =
+                            StringUtil.getFormattedPrice(modifierItem.attributes.price)
                         txtModifierSizes.text = modifierItem.attributes.name
                         binding.sizesContainer.addView(view)
                     }
@@ -1165,13 +1285,13 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
 
-
     override fun setIngredient(ingredient: Ingredient) {}
     override fun setModifierGroup(
         position: Int,
         modifierGroup: ModifierGroup,
         showModifierItemPrice: Boolean,
-        showShowModifierCheckBox: Boolean
+        showShowModifierCheckBox: Boolean,
+        modifierItemsRecyclerViewAdapterNewHashMap: java.util.HashMap<Int, ModifierItemsNewRecyclerViewAdapter>
     ) {
     }
 
@@ -1190,8 +1310,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             )
         } else {
             binding.total.text = StringUtil.getFormattedPrice(menuItemPrice)
-            binding.add.text = CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
-                .replace("(x)","${StringUtil.getFormattedPrice(totalPrice)}")
+            binding.add.text =
+                CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
+                    .replace("(x)", "${StringUtil.getFormattedPrice(totalPrice)}")
 
         }
         _totalPrice = totalPrice
@@ -1269,13 +1390,15 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         menuItem: MenuItem,
         view: ImageView,
         isShouldBackPressed: Boolean
-    ) {}
+    ) {
+    }
 
 
     override fun updateCartItem() {
         var message = CacheUtil.getInstance().getTranslations(Text.ITEM_UPDATED, "Item updated")
         if (args.isPromo && !args.isEdit) {
-            message = CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart")
+            message = CacheUtil.getInstance()
+                .getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart")
         }
         activity?.cast<BaseActivity> {
             it.dismissDialogs()
@@ -1303,21 +1426,36 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             }
         }
     }
+
     override fun updateFavoriteByPosition(
         position: Int,
         menuItem: MenuItem?
     ) {
-        frequentBoughItemsAdapter?.notifyItemChanged(position,menuItem)
+        frequentBoughItemsAdapter?.notifyItemChanged(position, menuItem)
     }
+
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {
+        //menuPResenter.visibilityModifierGroup
         modifierGroupsAdapter!!.showModifierItemPrice(show, modifierGroupPosition)
     }
 
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean,
-        modifierGroupPosition: Int
+        modifierGroupPosition: Int,
+        modifierGroupIndexVisibility: HashMap<String, Int>
     ) {
-       modifierGroupsAdapter!!.shouldShowCheckBox(hasAtleastOneSelectedItem,modifierGroupPosition)
+        val indexOfRelatedModifierGroupPos =
+            menuPresenter.menuItem?.modifierGroups?.indexOfFirst { grp ->
+                modifierGroupIndexVisibility.containsValue(modifierGroupPosition) &&
+                grp.id.equals(modifierGroupIndexVisibility.entries.find { t-> t.value == modifierGroupPosition }?.key)
+            } ?: -1
+
+        modifierGroupsAdapter!!.shouldShowCheckBox(
+            hasAtleastOneSelectedItem,
+            modifierGroupPosition,
+            modifierGroupIndexVisibility,
+            indexOfRelatedModifierGroupPos
+        )
     }
 
     override fun showFavorites(fromAddRemove: Boolean, favorites: ArrayList<Favorite>) {}
@@ -1450,9 +1588,16 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     override fun updateFloatingTotalPrice() {
 
     }
-    private fun navMenuItem(menuCategoryId: String, menuItemId: String, isCombo : Boolean, isFromFrequentBoughtMenuItem: Boolean) {
-        val destinationLink = if(isCombo) "nav_combo" else "nav_menu_item"
-        val destinationUri = "${destinationLink}/$menuCategoryId/$menuItemId?is_frequently_bought_item=$isFromFrequentBoughtMenuItem"
+
+    private fun navMenuItem(
+        menuCategoryId: String,
+        menuItemId: String,
+        isCombo: Boolean,
+        isFromFrequentBoughtMenuItem: Boolean
+    ) {
+        val destinationLink = if (isCombo) "nav_combo" else "nav_menu_item"
+        val destinationUri =
+            "${destinationLink}/$menuCategoryId/$menuItemId?is_frequently_bought_item=$isFromFrequentBoughtMenuItem"
         findNavController().navigateToDeepLink(destinationUri)
     }
 

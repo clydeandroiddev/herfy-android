@@ -12,6 +12,8 @@ import com.herfy.BuildConfig;
 import com.herfy.analytics.kochava.KochavaTrackerUtil;
 import com.herfy.base.BaseView;
 import com.herfy.database.AppDatabase;
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
+import com.herfy.menu.adapters.ModifierItemsRecyclerViewAdapterNew;
 import com.herfy.menu.viewholders.FrequentBoughtViewHolder;
 import com.herfy.model.CampaignToAdd;
 import com.herfy.model.CouponToAdd;
@@ -175,7 +177,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     private boolean isStoreOrderTypePreselected = false;
     public List<MenuCategory> excludedMenu = new ArrayList<>();
     private HashMap<String, HashSet<MenuCategory>> excludedCategories = new HashMap<>();
-
+    private HashMap<String, Integer> visibilityModifierGroup = new HashMap<>();
     public MenuPresenter(BaseView baseView) {
 
         menuView = (MenuContract.View) baseView;
@@ -356,7 +358,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     public void updateModifierGroupSelectionIndicator(Boolean hasSelectedModifierItem, int modifierGroupPosition) {
         int selectedModifierItemCount = countSelectedModifierItems(modifierGroupPosition);
         boolean shouldShowIndicator = hasSelectedModifierItem || selectedModifierItemCount >= 1;
-        menuView.showModifierSelectionIndicator(shouldShowIndicator, modifierGroupPosition);
+        menuView.showModifierSelectionIndicator(shouldShowIndicator, modifierGroupPosition,visibilityModifierGroup);
     }
 
     private int countSelectedModifierItems(int modifierGroupPosition) {
@@ -4192,7 +4194,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 }
             }
 
-        updateModifierVisibility();
+        updateModifierVisibility(modifierGroupPosition);
 
         getMenuItemTotalPrice(menuItem, modifierGroupPosition);
     }
@@ -4303,6 +4305,132 @@ public class MenuPresenter implements MenuContract.Presenter {
                                 group.getAttributes().getVisibilityConfig().setInitialValue("hidden");
                             }
 
+                        }
+                    }
+
+                }
+            }
+        }
+
+    }
+
+    public void updateModifierVisibility(int modifierGroupPosition) {
+        VisibilityConfig visibilityConfig = menuItem.getSizes().getAttributes().getVisibilityConfig();
+        if (visibilityConfig != null) {
+            List<VisibilityConfigRule> rules = visibilityConfig.getRules();
+            if (rules != null && rules.size() > 0) {
+                VisibilityConfigRule rule = rules.get(0);
+                if (rule.getTargetType() != null && rule.getTargetType().equalsIgnoreCase("modifier-group")) {
+
+                    for (ModifierGroup modGroup : menuItem.getModifierGroups()) {
+                        if (!menuItem.getSizes().getId().equals(modGroup.getId()) && rule.getTargetId().equals(modGroup.getId())) {
+                            if (rule.getTargetIs() != null && rule.getTargetIs().equalsIgnoreCase("selected")) {
+                                int selected = 0;
+                                for (ModifierItem modItem : modGroup.getModifierItems()) {
+                                    if (modItem.getAttributes().isSelected()) {
+                                        selected += 1;
+                                    }
+                                }
+                                if (selected > 0) {
+                                    menuItem.getSizes().getAttributes().getVisibilityConfig().setInitialValue("");
+                                } else {
+                                    menuItem.getSizes().getAttributes().getVisibilityConfig().setInitialValue("hidden");
+                                }
+                                if(!visibilityModifierGroup.containsKey(modGroup.getId())){
+                                    visibilityModifierGroup.put(modGroup.getId(), modifierGroupPosition);
+                                }
+
+                            }
+                            break;
+                        }
+
+                    }
+                }
+            }
+        }
+
+        for (ModifierGroup group : menuItem.getModifierGroups()) {
+            visibilityConfig = group.getAttributes().getVisibilityConfig();
+            if (visibilityConfig != null) {
+                List<VisibilityConfigRule> rules = visibilityConfig.getRules();
+                if (rules != null && rules.size() > 0) {
+                    VisibilityConfigRule rule = rules.get(0);
+                    if (rule.getTargetType() != null) {
+                        if (rule.getTargetType().equalsIgnoreCase("modifier-group")) {
+                            for (ModifierGroup modGroup : menuItem.getModifierGroups()) {
+                                if (!group.getId().equals(menuItem.getSizes().getId()) && rule.getTargetId().equals(menuItem.getSizes().getId())) {
+                                    if (rule.getTargetIs() != null && rule.getTargetIs().equalsIgnoreCase("selected")) {
+                                        int selected = 0;
+                                        for (ModifierItem modItem : menuItem.getSizes().getModifierItems()) {
+                                            if (modItem.getAttributes().isSelected()) {
+                                                selected += 1;
+                                            }
+                                        }
+                                        if (selected > 0) {
+                                            group.getAttributes().getVisibilityConfig().setInitialValue("");
+                                        } else {
+                                            group.getAttributes().getVisibilityConfig().setInitialValue("hidden");
+                                        }
+                                        if(!visibilityModifierGroup.containsKey(group.getId())){
+                                            visibilityModifierGroup.put(group.getId(), modifierGroupPosition);
+                                        }
+                                    }
+                                    break;
+                                }
+
+                                if (!group.getId().equals(modGroup.getId()) && rule.getTargetId().equals(modGroup.getId())) {
+                                    if (rule.getTargetIs() != null && rule.getTargetIs().equalsIgnoreCase("selected")) {
+                                        int selected = 0;
+                                        for (ModifierItem modItem : modGroup.getModifierItems()) {
+                                            if (modItem.getAttributes().isSelected()) {
+                                                selected += 1;
+                                            }
+                                        }
+                                        if (selected > 0) {
+                                            group.getAttributes().getVisibilityConfig().setInitialValue("");
+                                        } else {
+                                            group.getAttributes().getVisibilityConfig().setInitialValue("hidden");
+                                        }
+                                        if(!visibilityModifierGroup.containsKey(group.getId())){
+                                            visibilityModifierGroup.put(group.getId(), modifierGroupPosition);
+                                        }
+                                    }
+                                    break;
+                                }
+
+                            }
+                        } else if (rule.getTargetType().equalsIgnoreCase("modifier")) {
+
+                            Set<String> selectedModifiers = new HashSet<>();
+                            for (ModifierItem modItem : menuItem.getSizes().getModifierItems()) {
+                                if (modItem.getAttributes().isSelected()) {
+                                    selectedModifiers.add(modItem.getId());
+                                    break;
+                                }
+                            }
+
+                            for (ModifierGroup modGroup : menuItem.getModifierGroups()) {
+                                if (!group.getId().equals(modGroup.getId())) {
+                                    for (ModifierItem modItem : modGroup.getModifierItems()) {
+                                        if (modItem.getAttributes().isSelected()) {
+                                            selectedModifiers.add(modItem.getId());
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (rule.getTargetId() != null && selectedModifiers.contains(rule.getTargetId())) {
+                                if (rule.getTargetIs() != null && rule.getTargetIs().equalsIgnoreCase("selected")) {
+                                    group.getAttributes().getVisibilityConfig().setInitialValue("");
+                                } else {
+                                    group.getAttributes().getVisibilityConfig().setInitialValue("hidden");
+                                }
+                            } else if (!rule.getTargetId().isEmpty()) {
+                                group.getAttributes().getVisibilityConfig().setInitialValue("hidden");
+                            }
+                            if(!visibilityModifierGroup.containsKey(group.getId())){
+                                visibilityModifierGroup.put(group.getId(), modifierGroupPosition);
+                            }
                         }
                     }
 
@@ -4436,10 +4564,10 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity) {
+    public void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity, HashMap<Integer, ModifierItemsNewRecyclerViewAdapter> modifierItemsRecyclerViewAdapterNewHashMap) {
        /* ModifierGroup modifierGroup = menuItemModifierGroups.get(menuItem.getModifierGroups().get(position).getId());
         if(modifierGroup != null) {*/
-        modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice,showShowModifierCheckBox);
+        modifierGroupViewHolder.setModifierGroup(position, menuItem.getModifierGroups().get(position), menuItem.getModifierGroups().get(position).getAttributes().getFreeModifiersCount() == 0 || showModifierItemPrice,showShowModifierCheckBox, modifierItemsRecyclerViewAdapterNewHashMap);
         //}
     }
 
@@ -5644,5 +5772,6 @@ public class MenuPresenter implements MenuContract.Presenter {
     public boolean isPreselectedBranch() {
         return isStoreOrderTypePreselected;
     }
+
 
 }

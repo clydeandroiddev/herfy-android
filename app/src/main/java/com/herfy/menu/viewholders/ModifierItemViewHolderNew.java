@@ -19,6 +19,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.herfy.BuildConfig;
 import com.herfy.R;
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
 import com.herfy.utils.constants.Text;
 import com.herfy.menu.MenuContract;
 import com.herfy.utils.helper.CacheUtil;
@@ -414,7 +415,7 @@ public class ModifierItemViewHolderNew extends RecyclerView.ViewHolder implement
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, ModifierItemsNewRecyclerViewAdapter> modifierItemsRecyclerViewAdapterNewHashMap) {
 
     }
 
@@ -471,7 +472,7 @@ public class ModifierItemViewHolderNew extends RecyclerView.ViewHolder implement
     }
 
     @Override
-    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility) {
 
     }
 

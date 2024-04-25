@@ -22,6 +22,7 @@ import com.herfy.databinding.FragmentPopularNowBinding
 import com.herfy.main.MainActivity
 import com.herfy.menu.MenuContract
 import com.herfy.menu.MenuPresenter
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter
 import com.herfy.newmenu.adapter.PopularMenuItemAdapter
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
@@ -132,7 +133,8 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
         position: Int,
         modifierGroup: ModifierGroup,
         showModifierItemPrice: Boolean,
-        showShowModifierCheckBox: Boolean
+        showShowModifierCheckBox: Boolean,
+        modifierItemsRecyclerViewAdapterNewHashMap: java.util.HashMap<Int, ModifierItemsNewRecyclerViewAdapter>
     ) {
     }
 
@@ -195,9 +197,10 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean,
-        modifierGroupPosition: Int
+        modifierGroupPosition: Int,
+        modifierGroupIndexVisibility: java.util.HashMap<String, Int>?
     ) {
-
+        TODO("Not yet implemented")
     }
 
     override fun showFavorites(fromAddRemove: Boolean, favorites: ArrayList<Favorite>) {}

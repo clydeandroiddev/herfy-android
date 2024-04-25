@@ -32,6 +32,7 @@ import com.herfy.R;
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil;
 import com.herfy.analytics.firebase.FirebaseService;
 import com.herfy.auth.views.SignInActivity;
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
 import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.main.MainActivity;
@@ -250,7 +251,7 @@ public class MenuRecentViewHolder extends RecyclerView.ViewHolder implements Men
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, ModifierItemsNewRecyclerViewAdapter> modifierItemsRecyclerViewAdapterNewHashMap) {
 
     }
 
@@ -307,7 +308,7 @@ public class MenuRecentViewHolder extends RecyclerView.ViewHolder implements Men
     }
 
     @Override
-    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility) {
 
     }
 

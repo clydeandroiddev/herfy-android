@@ -12,6 +12,9 @@ import com.herfy.menu.MenuContract;
 import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.ModifierNewGroupViewHolder;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<ModifierNewGroupViewHolder> {
@@ -23,6 +26,8 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
     private HashMap<Integer, Boolean> shouldShowModifierGroupCheckbox = new HashMap<>();
 
     private HashMap<Integer, Boolean> shouldShowQuantity = new HashMap<>();
+    private HashMap<Integer, ModifierItemsNewRecyclerViewAdapter> modifierItemsRecyclerViewAdapterNewHashMap = new HashMap<>();
+
     BaseModifierItemViewHolder.OnAction onAction;
 
     public void setOnAction(BaseModifierItemViewHolder.OnAction  onAction) {
@@ -48,7 +53,7 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     @Override
     public void onBindViewHolder(@NonNull ModifierNewGroupViewHolder holder, int position) {
-        menuPresenter.onBindModifierGroupViewAtPosition(position, holder, showModifierItemPrice.get(position),shouldShowModifierGroupCheckbox.get(position),shouldShowQuantity);
+        menuPresenter.onBindModifierGroupViewAtPosition(position, holder, showModifierItemPrice.get(position),shouldShowModifierGroupCheckbox.get(position),shouldShowQuantity, modifierItemsRecyclerViewAdapterNewHashMap);
     }
 
     @Override
@@ -58,14 +63,23 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     public void showModifierItemPrice(boolean show, int position) {
         showModifierItemPrice.put(position, show);
-       notifyDataSetChanged();
+        notifyItemChanged(position);
     }
-    public void shouldShowCheckBox(boolean show, int position) {
-        shouldShowModifierGroupCheckbox.put(position, show);
-        notifyDataSetChanged();
-    }
+
     public void shouldShowQuantity(boolean show, int position) {
         shouldShowQuantity.put(position, show);
         notifyItemChanged(position);
+    }
+
+    public void shouldShowCheckBox(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility, int indexOfRelatedModifierGroup) {
+        //modifierItemsRecyclerViewAdapterNewHashMap.get(modifierGroupPosition).updateItem();
+        shouldShowModifierGroupCheckbox.put(modifierGroupPosition, hasAtleastOneSelectedItem);
+        if(indexOfRelatedModifierGroup != -1){
+            notifyItemChanged(indexOfRelatedModifierGroup);
+            if(!hasAtleastOneSelectedItem){
+                modifierGroupIndexVisibility.remove(modifierGroupPosition);
+            }
+        }
+        notifyItemChanged(modifierGroupPosition);
     }
 }

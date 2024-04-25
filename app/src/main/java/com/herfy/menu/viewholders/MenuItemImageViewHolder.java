@@ -19,6 +19,7 @@ import com.dinuscxj.pullzoom.PullZoomRecyclerView;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.herfy.R;
 import com.herfy.menu.MenuContract;
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
 import com.herfy.menu.adapters.RecyclerListAdapter;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
@@ -173,7 +174,7 @@ public class MenuItemImageViewHolder extends RecyclerListAdapter.ViewHolder<Obje
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, ModifierItemsNewRecyclerViewAdapter> modifierItemsRecyclerViewAdapterNewHashMap) {
 
     }
 
@@ -230,7 +231,7 @@ public class MenuItemImageViewHolder extends RecyclerListAdapter.ViewHolder<Obje
     }
 
     @Override
-    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility) {
 
     }
 
