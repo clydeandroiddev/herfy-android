@@ -1408,9 +1408,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     override fun cancel() {
         activity?.cast<BaseActivity> {
-            it.dismissDialogs()
+            it.showLoadingDialog()
         }
-        navigateUp()
+        orderPresenter?.getOrderStatuses()
     }
 
     override fun showRatings(orderStatus: OrderStatus?, ratings: MutableList<Rating>?) {
