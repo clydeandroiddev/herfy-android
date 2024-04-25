@@ -34,17 +34,16 @@
             android:layout_marginStart="12dp"
             app:cardPreventCornerOverlap="false"
             app:cardUseCompatPadding="false"
-            app:cardBackgroundColor="#E6F0F7"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             android:elevation="0dp">
 
             <ImageView
                 android:id="@+id/ivImage"
-                android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
+                android:scaleType="fitXY" />
 
         </com.google.android.material.card.MaterialCardView>
 
