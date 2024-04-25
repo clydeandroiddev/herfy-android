@@ -318,6 +318,7 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
     }
 
     override fun showCart(isAvail: Boolean) {
+        promotionDetailBottomSheet?.dismissAllowingStateLoss()
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
         NavigationUtils.navigateSafe(
             findNavController(),
@@ -335,6 +336,10 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
                 override fun onClickClaimPromo(promo: Campaign) {
                     showLoadingDialog()
                     promotionsPresenter.validateDigitalCoupon(promo)
+                }
+
+                override fun onRemovePromo() {
+                    showCart(false)
                 }
 
             }

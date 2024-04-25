@@ -3,11 +3,13 @@ package com.herfy.home.views
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
+import android.content.DialogInterface.OnShowListener
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +27,7 @@ import com.herfy.home.databinding.BottomSheetPromotionDetailBinding
 import com.herfy.model.PromotionOrderType
 import com.herfy.model.PromotionRequirement
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.isMet
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
@@ -136,78 +139,94 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                 val cacheUtil = CacheUtil.getInstance()
                 val cacheCampaign = cacheUtil.campaign
                 var toRemove = false
-                cacheUtilHelper?.getCartQuantity { qty ->
-                    if (qty > 0) {
-                        btnClaim.visible()
-                        if (cacheCampaign != null && promoData.id.equals(
-                                cacheCampaign.id,
-                                ignoreCase = true
-                            )
-                        ) {
-                            toRemove = true
-                            btnClaim.text = CacheUtil.getInstance()
-                                .getTranslations(Text.REMOVE_PROMO_LABEL, "Remove Promo")
-                        }
-                    }
+                if (cacheCampaign != null && promoData.id.equals(
+                        cacheCampaign.id,
+                        ignoreCase = true
+                    )
+                ) {
+                    toRemove = true
+                    btnClaim.text = CacheUtil.getInstance()
+                        .getTranslations(Text.REMOVE_PROMO_LABEL, "Remove Promo")
                 }
 
-                btnClaim.setOnClickListener {
-                    if (!toRemove) {
-                        if (CacheUtil.getInstance().couponCode != null || CacheUtil.getInstance().campaign != null) {
-                            try {
-                                showPromptAlertDialog(
-                                    "",
-                                    CacheUtil.getInstance().getTranslations(
-                                        Text.ONE_DISCOUNT_ONLY_MESSAGE,
-                                        "You can only apply one discount at a time. Currently applied discount will be removed."
-                                    ),
-                                    CacheUtil.getInstance().getTranslations(
-                                        Text.YES_CAPS
-                                    ),
-                                    { dialogInterface, i ->
-                                        CacheUtil.getInstance().couponCode = null
-                                        CacheUtil.getInstance().couponName = null
-                                        CacheUtil.getInstance().couponMenuItem = null
-                                        CacheUtil.getInstance().couponToAdd = null
-                                        CacheUtil.getInstance().digitalCoupons = ""
-                                        CacheUtil.getInstance().campaign = null
-                                        CacheUtil.getInstance().campaignPromotion = null
-                                        CacheUtil.getInstance().campaignPromotionMenuItem = null
-                                        CacheUtil.getInstance().campaignToAdd = null
-                                        action?.onClickClaimPromo(promoData)
-                                        dismiss()
-                                    },
-                                    CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
-                                ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
-                            } catch (e: Exception) {
-                                if (CacheUtil.getInstance().couponCode != null) {
-                                    CacheUtil.getInstance().couponCode = null
-                                    CacheUtil.getInstance().couponName = null
-                                    CacheUtil.getInstance().couponMenuItem = null
-                                    CacheUtil.getInstance().couponToAdd = null
-                                    CacheUtil.getInstance().digitalCoupons = ""
-                                    CacheUtil.getInstance().campaign = null
-                                    CacheUtil.getInstance().campaignPromotion = null
-                                    CacheUtil.getInstance().campaignPromotionMenuItem = null
-                                    CacheUtil.getInstance().campaignToAdd = null
-                                    action?.onClickClaimPromo(promoData)
-                                    dismiss()
-                                }
-                                e.printStackTrace()
-                            }
-                        }
-                    } else {
-                        action?.onClickClaimPromo(promoData)
-                        dismissAllowingStateLoss()
-                    }
-                }
-
+                val cartQuantity = cacheUtilHelper?.getCartQuantity() ?: 0
 
                 promoData.promotion?.attributes?.rules?.let {
-
                     it.find { r -> r.ruleKey.equals("total.gte", ignoreCase = true) }?.let { gte ->
                         fmPromoCategory.visible()
                         totalGte = gte.text
+                    }
+
+                    if(it.isMet()){
+                        btnClaim.setOnClickListener {
+                            if (!toRemove) {
+                                if(cartQuantity > 0){
+                                    if (CacheUtil.getInstance().couponCode != null || CacheUtil.getInstance().campaign != null) {
+                                        try {
+                                            showPromptAlertDialog(
+                                                "",
+                                                CacheUtil.getInstance().getTranslations(
+                                                    Text.ONE_DISCOUNT_ONLY_MESSAGE,
+                                                    "You can only apply one discount at a time. Currently applied discount will be removed."
+                                                ),
+                                                CacheUtil.getInstance().getTranslations(
+                                                    Text.YES_CAPS
+                                                ),
+                                                { dialogInterface, i ->
+                                                    CacheUtil.getInstance().couponCode = null
+                                                    CacheUtil.getInstance().couponName = null
+                                                    CacheUtil.getInstance().couponMenuItem = null
+                                                    CacheUtil.getInstance().couponToAdd = null
+                                                    CacheUtil.getInstance().digitalCoupons = ""
+                                                    CacheUtil.getInstance().campaign = null
+                                                    CacheUtil.getInstance().campaignPromotion = null
+                                                    CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                                    CacheUtil.getInstance().campaignToAdd = null
+                                                    action?.onClickClaimPromo(promoData)
+                                                },
+                                                CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
+                                            ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
+                                        } catch (e: Exception) {
+                                            if (CacheUtil.getInstance().couponCode != null) {
+                                                CacheUtil.getInstance().couponCode = null
+                                                CacheUtil.getInstance().couponName = null
+                                                CacheUtil.getInstance().couponMenuItem = null
+                                                CacheUtil.getInstance().couponToAdd = null
+                                                CacheUtil.getInstance().digitalCoupons = ""
+                                                CacheUtil.getInstance().campaign = null
+                                                CacheUtil.getInstance().campaignPromotion = null
+                                                CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                                CacheUtil.getInstance().campaignToAdd = null
+                                                action?.onClickClaimPromo(promoData)
+                                            }
+                                            e.printStackTrace()
+                                        }
+                                    }else {
+                                        action?.onClickClaimPromo(promoData)
+                                    }
+                                }else {
+                                    showError(CacheUtil.getInstance().getTranslations(
+                                        Text.PLEASE_ADD_ITEMS_TO_YOUR_CART,
+                                        "Please add items to your cart to avail this offer"
+                                    ))
+                                }
+                            } else {
+                                CacheUtil.getInstance().couponCode = null
+                                CacheUtil.getInstance().couponName = null
+                                CacheUtil.getInstance().couponMenuItem = null
+                                CacheUtil.getInstance().couponToAdd = null
+                                CacheUtil.getInstance().digitalCoupons = ""
+                                CacheUtil.getInstance().campaign = null
+                                CacheUtil.getInstance().campaignPromotion = null
+                                CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                CacheUtil.getInstance().campaignToAdd = null
+                                action?.onRemovePromo()
+                            }
+                        }
+                    }else {
+                        activity?.let {
+                            btnClaim.backgroundTintList = ContextCompat.getColorStateList(it, R.color.disabled)
+                        }
                     }
                 }
 
@@ -348,6 +367,8 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
     interface onAction {
         fun onClickClaimPromo(promo: Campaign)
+
+        fun onRemovePromo()
     }
 
 
@@ -377,6 +398,37 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
         }
         bottomSheet.layoutParams = layoutParams
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    fun showError(error: String) {
+        try {
+            activity?.let {act ->
+                val builder = AlertDialog.Builder(act)
+                builder.setCancelable(true)
+                builder.setMessage(error)
+                val alertDialog = builder.create()
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, CacheUtil.getInstance().getTranslations(Text.OK)
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                alertDialog.setOnShowListener(OnShowListener {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setAllCaps(false)
+                    if (CacheUtil.getInstance().colorMain != "#FFFFFF") {
+                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                            .setTextColor(ViewUtil.getColorMain(act))
+                    } else {
+                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                            ContextCompat.getColor(act, R.color.primary_text)
+                        )
+                    }
+                })
+                alertDialog.show()
+            }
+
+
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
+        }
     }
 
 

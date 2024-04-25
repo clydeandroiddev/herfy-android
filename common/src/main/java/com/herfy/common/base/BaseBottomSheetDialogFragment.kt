@@ -46,9 +46,11 @@ open class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //ViewUtil.overrideFonts(view);
-        initViews()
         initTranslations()
+        initViews()
+        //ViewUtil.overrideFonts(view);
+
+
     }
 
     open fun initViews() {
