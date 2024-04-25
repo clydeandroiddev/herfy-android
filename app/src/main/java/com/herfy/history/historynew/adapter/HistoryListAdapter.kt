@@ -6,13 +6,18 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.herfy.common.R
 import com.herfy.common.formatOrderTime
+import com.herfy.common.orderTypeStatus
+import com.herfy.common.orderTypeStatusColor
+import com.herfy.common.orderTypeStatusIcon
 import com.herfy.common.orderTypeString
 import com.herfy.history.databinding.ItemNewOrderHistoryBinding
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
+import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 
 
 class HistoryListAdapter(
@@ -52,6 +57,16 @@ class HistoryListAdapter(
             itemPrice.text = StringUtil.getNewFormattedPrice(
                 item.total, true
             )
+
+            if (item.sequence < OrderStatusType.CANCELLED_BY_CUSTOMER.value) {
+                status.text = item.attrType.orderTypeStatus()
+                statusIcon.setImageResource(item.attrType.orderTypeStatusIcon())
+                status.setTextColor(status.context.resources.getColor(item.attrType.orderTypeStatusColor()))
+            } else {
+                status.setTextColor(status.context.resources.getColor(R.color.cancelled_color))
+                statusIcon.setImageResource(R.drawable.ic_circle_xmark)
+                status.text = CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
+            }
 
             deliveryAndStore.text = item.attrType.orderTypeString() + " - " + item.locationName
 

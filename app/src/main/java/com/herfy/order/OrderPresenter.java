@@ -634,6 +634,8 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         }
     }
 
+
+
     @Override
     public void selectStore(boolean isDineIn, int position) {
         if (position >= 0) {
@@ -2424,6 +2426,11 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     @Override
     public void setSelectedAddress(@NonNull com.skylinedynamics.solosdk.api.models.objects.Address address) {
         this.selectedAddress = address;
+    }
+
+    @Override
+    public void goToDirection(Store store) {
+        orderView.callStore(store);
     }
 
     private Unit onOrderStatusUpdate(Message message) {

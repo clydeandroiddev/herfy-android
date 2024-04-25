@@ -258,6 +258,8 @@ public interface OrderContract {
         void parseMenu(JSONObject data, Address address);
 
         void setSelectedAddress(@NotNull Address address);
+
+        void goToDirection(Store store);
     }
 
 }

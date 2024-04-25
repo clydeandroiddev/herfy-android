@@ -168,7 +168,8 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
                     phoneNumber = args.phoneNumber,
                     customerId = args.customerId,
                     isVerified = args.isVerified,
-                    isGuest = args.isGuest
+                    isGuest = args.isGuest,
+                    givenName = args.givenName
                 )
             )
         }

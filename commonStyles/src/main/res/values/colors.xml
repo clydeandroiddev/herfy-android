@@ -80,6 +80,9 @@
     <color name="text_color_blue">#2266A7</color>
     <color name="text_color_red_points">#BE3624</color>
     <color name="scrim_color">#339C9C9C</color>
+    <color name="delivered_color">#248A3D</color>
+    <color name="picked_color">#0064AC</color>
+    <color name="cancelled_color">#D42211</color>
 </resources>
 
 

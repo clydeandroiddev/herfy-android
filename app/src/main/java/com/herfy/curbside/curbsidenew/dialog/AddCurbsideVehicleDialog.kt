@@ -1,5 +1,6 @@
 package com.herfy.curbside.curbsidenew.dialog
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -105,8 +106,6 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
             customerCar?.let {
                 binding.plateNumberEdit.setText(it.attributes.plateNumber)
                 binding.plateNumberEdit.setSelection(binding.plateNumberEdit.length())
-                binding.confirmContainer.isVisible =
-                    binding.plateNumberEdit.text.toString().isNotEmpty()
                 try {
                     val carMake = CarMaker()
                     val carAtt = CarMakerAttributes()
@@ -184,15 +183,13 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 }
 
                 override fun afterTextChanged(editable: Editable?) {
-                    confirmContainer.isVisible = plateNumberEdit.text.toString().isNotEmpty()
+
                 }
             })
 
             plateNumberEdit.setOnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (confirmContainer.isVisible) {
-                        continueButton.performClick()
-                    }
+                    continueButton.performClick()
                     true
                 } else false
             }
@@ -260,6 +257,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun setupTranslations() {
         binding.apply {
             continueButton.text =
@@ -274,8 +272,9 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 CacheUtil.getInstance().getTranslations(Text.OPTIONAL_LABEL, "(Optional)")
             optionalBrand.text =
                 CacheUtil.getInstance().getTranslations(Text.OPTIONAL_LABEL, "(Optional)")
-            licensePlateNumberLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.LICENSE_PLATE_NUMBER, "License Plate Number")
+            licensePlateNumberLabel.text = CacheUtil.getInstance().getTranslations(
+                Text.LICENSE_PLATE_NUMBER, "License Plate Number"
+            ) + " " + CacheUtil.getInstance().getTranslations(Text.OPTIONAL_LABEL, "(Optional)")
             plateNumberEdit.hint =
                 CacheUtil.getInstance().getTranslations(Text.PLATE_NUMBER_HINT, "e.g. KLK98898")
         }

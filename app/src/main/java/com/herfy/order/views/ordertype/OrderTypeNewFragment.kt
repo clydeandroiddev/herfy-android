@@ -104,6 +104,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private lateinit var orderPresenter: OrderContract.Presenter
 
+    private var userLatLng: LatLng? = null
+    private var myPolyline: Polyline? = null
     private var currentSelectedStore: Store? = null
     private var isSingleOrderType = false
     private var isDeliveryAvailable = false
@@ -328,7 +330,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
 
-    private fun navigateUp(proceed: Boolean, isUserClickBack:Boolean = false) {
+    private fun navigateUp(proceed: Boolean, isUserClickBack: Boolean = false) {
         dismissDialogs()
         val isFromFavorites = args.isFromFavorites
         if (isFromFavorites && !isUserClickBack) {
@@ -636,9 +638,9 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun navigateToFavourites() {
         NavigationUtils.navigateSafe(
-                findNavController(),
-                OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true)
-            )
+            findNavController(),
+            OrderTypeNewFragmentDirections.actionOrderTypeToFavourites(isFromOrderType = true)
+        )
     }
 
     private fun initialTypeState() {
@@ -826,6 +828,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+            userLatLng = latLng
             markerOptions.anchor(0.5f, 0.5f)
             locationMarker = googleMap?.addMarker(markerOptions)
             googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
@@ -856,9 +859,13 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             diffMenuSaved(address)
         }
     }
+
     override fun navigateMenuItemDetails(menuItem: MenuItem?) {
-        findNavController().navigate(OrderTypeNewFragmentDirections.actionOrderTypeToMenuItem(menuItemId = menuItem
-            ?.id.orEmpty(), isFavorite = true, isFromOrderType = true))
+        findNavController().navigate(
+            OrderTypeNewFragmentDirections.actionOrderTypeToMenuItem(
+                menuItemId = menuItem?.id.orEmpty(), isFavorite = true, isFromOrderType = true
+            )
+        )
     }
 
     override fun selectAddressWork(position: Int) {
@@ -964,8 +971,27 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         }
     }
 
-    override fun setStore(store: Store, selected: Boolean) {}
-    override fun callStore(store: Store) {}
+    override fun setStore(store: Store, selected: Boolean) {
+
+    }
+
+    override fun callStore(store: Store) {
+        val directionsBuilder =
+            Uri.Builder().scheme("https").authority("www.google.com").appendPath("maps")
+                .appendPath("dir").appendPath("").appendQueryParameter("api", "1")
+                .appendQueryParameter("travelmode", "driving").appendQueryParameter(
+                    "destination", store.attributes.lat.toString() + "," + store.attributes.lng
+                )
+
+        if (StringUtil.hasOrderLatLong()) {
+            directionsBuilder.appendQueryParameter(
+                "origin",
+                CacheUtil.getInstance().orderLatitude + "," + CacheUtil.getInstance().orderLongitude
+            )
+        }
+        startActivity(Intent(Intent.ACTION_VIEW, directionsBuilder.build()))
+    }
+
     override fun selectStore(position: Int, store: Store, initialLoad: Boolean) {
         currentSelectedStore = store
         if (!curbsideTabSelected) {
@@ -1094,6 +1120,20 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                                     storeMarker.position, 11f
                                 )
                             )
+
+                            if (userLatLng != null) {
+                                deletePolyline()
+                                myPolyline = googleMap?.addPolyline(
+                                    PolylineOptions().add(store?.attributes?.lat?.let {
+                                        store?.attributes?.lng?.let { it1 ->
+                                            LatLng(
+                                                it, it1
+                                            )
+                                        }
+                                    }, userLatLng).width(8f).color(Color.parseColor("#0064AC"))
+                                )
+                            }
+
                         }
                     } catch (e: NumberFormatException) {
                         e.printStackTrace()
@@ -1109,6 +1149,12 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 }
             }
         }
+    }
+
+
+    private fun deletePolyline() {
+        myPolyline?.remove()
+        myPolyline = null  // Clear the reference
     }
 
     override fun showStore(open: Boolean, store: Store, error: String) {

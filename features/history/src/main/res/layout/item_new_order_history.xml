@@ -50,6 +50,32 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="Yesterday, 2 Feb, 07:00PM" />
 
+                    <ImageView
+                        android:id="@+id/statusIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:src="@drawable/ic_circle_xmark"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/dateAndTime" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/status"
+                        style="@style/Styles.Text.Caption.Regular"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textColor="@color/picked_color"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="@id/statusIcon"
+                        app:layout_constraintStart_toEndOf="@id/statusIcon"
+                        app:layout_constraintTop_toTopOf="@id/statusIcon"
+                        tools:text="Cancelled" />
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/rated"
                         style="@style/Styles.Text.Caption"
@@ -77,6 +103,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:includeFontPadding="false"
