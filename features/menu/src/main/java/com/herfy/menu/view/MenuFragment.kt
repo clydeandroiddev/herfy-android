@@ -80,7 +80,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }, onFavorite = { menuItem ->
             viewModel.addRemoveFavorite(menuItem)
         }, onAdd = { menuCategory, menuItem ->
-            if (menuItem.isMustBeCustomized) {
+            if (MenuUtil.isCustomizeable(menuItem)) {
                 navMenuItem(menuCategory.id, menuItem.id, menuItem)
             } else {
                 viewModel.getMenuItem(menuCategory, menuItem)
