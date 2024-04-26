@@ -94,15 +94,24 @@
 
                     <ImageView
                         android:id="@+id/nutritionImage"
-                        android:layout_width="334dp"
+                        android:layout_width="match_parent"
                         android:layout_height="387dp"
-                        android:layout_marginTop="@dimen/margin_xlarge"
+                        android:layout_marginTop="@dimen/margin_large"
+                        android:layout_marginStart="@dimen/margin_large"
+                        android:layout_marginEnd="@dimen/margin_large"
                         android:scaleType="fitXY"
-                        app:layout_constraintEnd_toEndOf="@+id/guidelineRight"
-                        app:layout_constraintHorizontal_bias="0.505"
-                        app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
                         app:layout_constraintTop_toBottomOf="@+id/txtNutritionLabel"
                         tools:src="@tools:sample/avatars" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/txtNutritionLabel"
+                        app:layout_constraintBottom_toTopOf="@+id/imageSeparator" />
 
                     <View
                         android:id="@+id/imageSeparator"
