@@ -1332,10 +1332,14 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         CacheUtil.getInstance().setDineInTableNumber("");
                         CacheUtil.getInstance().setLoyaltyPointsEarnable(orderId, pointsEarnable);
 
-                        if (orderType == OrderType.DELIVERY) {
-                            CacheUtil.getInstance().setPromisedTime(CacheUtil.getInstance().getOrderStore().getAttributes().getPromisedTimeDelta().getDelivery().toString());
-                        } else {
-                            CacheUtil.getInstance().setPromisedTime(CacheUtil.getInstance().getOrderStore().getAttributes().getPromisedTimeDelta().getPickup().toString());
+                        Store store = CacheUtil.getInstance().getOrderStore();
+
+                        if(store != null && store.getAttributes() != null && store.getAttributes().getPromisedTimeDelta() != null){
+                            String promisedTime = store.getAttributes().getPromisedTimeDelta().getPickup().toString();
+                            if (orderType == OrderType.DELIVERY) {
+                                promisedTime = store.getAttributes().getPromisedTimeDelta().getDelivery().toString();
+                            }
+                            CacheUtil.getInstance().setPromisedTime(promisedTime);
                         }
 
                         paymentView.setOrderId(orderId);
