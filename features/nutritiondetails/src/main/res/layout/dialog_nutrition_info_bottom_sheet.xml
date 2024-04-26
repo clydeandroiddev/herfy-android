@@ -94,10 +94,10 @@
 
                     <ImageView
                         android:id="@+id/nutritionImage"
-                        android:layout_width="0dp"
-                        android:layout_height="400dp"
+                        android:layout_width="334dp"
+                        android:layout_height="387dp"
                         android:layout_marginTop="@dimen/margin_xlarge"
-                        android:scaleType="centerInside"
+                        android:scaleType="fitXY"
                         app:layout_constraintEnd_toEndOf="@+id/guidelineRight"
                         app:layout_constraintHorizontal_bias="0.505"
                         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"

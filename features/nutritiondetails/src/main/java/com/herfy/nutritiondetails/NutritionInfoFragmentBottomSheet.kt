@@ -2,6 +2,7 @@ package com.herfy.nutritiondetails
 
 import android.app.Dialog
 import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -14,12 +15,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.herfy.common.base.BaseBottomSheetDialog
 import com.herfy.nutritiondetails.databinding.DialogNutritionInfoBottomSheetBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.getParcelableValue
 import com.herfy.utils.extensions.loadImage
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.ViewUtil
 import com.herfy.utils.helper.viewLifecycleScope
 
 class NutritionInfoFragmentBottomSheet: BottomSheetDialogFragment() {
@@ -65,6 +68,12 @@ class NutritionInfoFragmentBottomSheet: BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.let {
+
+            val nutritionInfoHeight =
+                (Resources.getSystem().displayMetrics.widthPixels / (Values.NUTRITION_INFO_TOP_ASPECT_RATIO_WIDTH / Values.NUTRITION_INFO_TOP_ASPECT_RATIO_HEIGHT)).toInt()
+            binding.nutritionImage.layoutParams.height = nutritionInfoHeight
+        }
         setupDialog()
         setupViews()
     }
