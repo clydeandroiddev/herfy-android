@@ -175,7 +175,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             cartPresenter.validateOrder(false, false, null)
         }
         if (cartPresenter.menuItemsCount > 0) {
-            binding.paymentSummaryContainer.placeOrder.isEnabled = true
+            binding.placeOrder.isEnabled = true
         }
         if (Values.fromAddAddressBool || Values.fromUpsell) {
             Values.fromAddAddressBool = false
@@ -300,7 +300,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             if (!dontShowDigitalCoupons) {
                 cartPresenter.getMenuItems()
             } else {
-                binding.paymentSummaryContainer.placeOrder.isEnabled =
+                binding.placeOrder.isEnabled =
                     cartPresenter.menuItemsCount > 0
             }
             cartPresenter.getIntegrations()
@@ -659,8 +659,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 cartPresenter!!.removeCoupon()
             }
         }*/
-        binding.paymentSummaryContainer.placeOrder.setOnClickListener { view: View? ->
-            binding.paymentSummaryContainer.placeOrder.isEnabled = false
+        binding.placeOrder.setOnClickListener { view: View? ->
+            binding.placeOrder.isEnabled = false
             activity?.cast<BaseActivity> {
                 it.showLoadingDialog()
             }
@@ -719,9 +719,9 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery charge")
         binding.paymentSummaryContainer.couponDiscountLabel.text =
             CacheUtil.getInstance().getTranslations(Text.COUPON_DISCOUNT_LABEL, "Coupon Discount")
-        binding.paymentSummaryContainer.placeOrder.text =
+        binding.placeOrder.text =
             CacheUtil.getInstance().getTranslations(Text.CHECKOUT_LABEL, "Checkout")
-        binding.paymentSummaryContainer.totalVatLabel.text = CacheUtil.getInstance()
+        binding.totalVatLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.TOTAL_INCLUSIVE_VAT, "(Total is inclusive of VAT)");
         binding.upsellContainer.upsellLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.WOULD_YOU_LIKE_TO_ADD_THESE, "Would you like to add these?")
@@ -739,8 +739,9 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             paymentSummaryLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.PAYMENT_SUMMARY, "Payment Summary")
             totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL, "Total")
-            placeOrder.text = CacheUtil.getInstance().getTranslations(Text.CHECKOUT, "Checkout")
+
         }
+        binding.placeOrder.text = CacheUtil.getInstance().getTranslations(Text.CHECKOUT, "Checkout")
     }
 
     override fun showProgressDialog() {
@@ -824,7 +825,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
         dontShowDigitalCoupons = false
         cartPresenter!!.getTotalPrice(false, false)
-        binding.paymentSummaryContainer.placeOrder.isEnabled = menuItems.size > 0
+        binding.placeOrder.isEnabled = menuItems.size > 0
         setCartQuantity(menuItems)
 
 
@@ -924,6 +925,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         alrajhiAmount: Double
     ) {
         activity?.runOnUiThread {
+            binding.footerTotalPrice.visible()
+            binding.paymentSummaryContainer.total.visible()
             val _discountAmount = discountAmount
             var _totalPrice = totalPrice
             validatedTotalPrice = _totalPrice
@@ -988,7 +991,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     withSpace = true,
                     ignoreDecimalPlaces = true
                 )
-                binding.paymentSummaryContainer.totalPrice.text = CurrencyUtils.updateCurrency(
+                binding.footerTotalPrice.text = CurrencyUtils.updateCurrency(
                     0.0,
                     withSpace = true,
                     ignoreDecimalPlaces = true
@@ -997,17 +1000,16 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 binding.paymentSummaryContainer.total.text = CurrencyUtils.updateCurrency(
                     _totalPrice, withSpace = true, ignoreDecimalPlaces = true
                 )
-                binding.paymentSummaryContainer.totalPrice.text = CurrencyUtils.updateCurrency(
+                binding.footerTotalPrice.text = CurrencyUtils.updateCurrency(
                     _totalPrice, withSpace = true, ignoreDecimalPlaces = false
                 )
             }
-            binding.paymentSummaryContainer.totalPrice.visible()
-            binding.paymentSummaryContainer.total.visible()
+
             if (!isEventSent && _totalPrice > 0) {
                 isEventSent = true
                 firebaseViewCartEvent()
             }
-            binding.paymentSummaryContainer.apply {
+            binding.apply {
                 val orderType = CacheUtil.getInstance().orderType
                 if (orderType != OrderType.NONE) {
                     val minimumCart = cartPresenter.minimumCartAmount()
@@ -1180,7 +1182,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             }
             if (continueCheckout && CacheUtil.getInstance().cart.isNotEmpty()) {
                 dontShowDigitalCoupons = true
-                binding.paymentSummaryContainer.placeOrder.performClick()
+                binding.placeOrder.performClick()
             } else {
                 continueCheckout = false
             }
@@ -1207,7 +1209,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             if (continueCheckout && CacheUtil.getInstance().cart.isNotEmpty()) {
                 dontShowDigitalCoupons = true
                 if (AuthUtil.getInstance().isSignedIn) {
-                    binding.paymentSummaryContainer.placeOrder.performClick()
+                    binding.placeOrder.performClick()
                 }
             } else {
                 dontShowDigitalCoupons = true
@@ -1232,14 +1234,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 if (AuthUtil.getInstance().isSignedIn) {
-                    binding.paymentSummaryContainer.placeOrder.performClick()
+                    binding.placeOrder.performClick()
                 }
             }
         }
 
     override fun showMessage(message: String) {
         activity?.runOnUiThread {
-            binding.paymentSummaryContainer.placeOrder.isEnabled =
+            binding.placeOrder.isEnabled =
                 cartPresenter!!.menuItemsCount > 0
             activity?.cast<BaseActivity> {
                 it.dismissDialogs()
@@ -1251,7 +1253,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showError(error: String) {
         activity?.runOnUiThread {
             continueCheckout = false
-            binding.paymentSummaryContainer.placeOrder.isEnabled =
+            binding.placeOrder.isEnabled =
                 CacheUtil.getInstance().cartQuantity > 0
             showAlertDialog("", error)
         }
@@ -1259,7 +1261,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun showValidateOrderError(errors: List<String>) {
         continueCheckout = false
-        binding.paymentSummaryContainer.placeOrder.isEnabled =
+        binding.placeOrder.isEnabled =
             CacheUtil.getInstance().cartQuantity > 0
         val builder = StringBuilder()
         builder.append("")
@@ -1276,7 +1278,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showUnavailableMenuItems() {
         activity?.runOnUiThread {
             continueCheckout = false
-            binding.paymentSummaryContainer.placeOrder.isEnabled =
+            binding.placeOrder.isEnabled =
                 cartPresenter!!.menuItemsCount > 0
             activity?.cast<BaseActivity> { baseActivity ->
                 baseActivity.dismissDialogs()
@@ -1317,7 +1319,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     object : PaymentOrderTimeDialog.OnAction {
                         override fun close() {
                             continueCheckout = false
-                            binding.paymentSummaryContainer.placeOrder.isEnabled = true
+                            binding.placeOrder.isEnabled = true
                         }
 
                         override fun change() {
@@ -1334,7 +1336,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             }
                             continueCheckout = false
                             firebaseCheckoutEvent()
-                            binding.paymentSummaryContainer.placeOrder.isEnabled = true
+                            binding.placeOrder.isEnabled = true
                             cartPresenter!!.proceed(scheduleTime)
                         }
                     })
@@ -1362,7 +1364,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         )
         adapter!!.notifyDataSetChanged()
         if (cartQuantity > 0) {
-            binding.paymentSummaryContainer.placeOrder.performClick()
+            binding.placeOrder.performClick()
         }
     }
 
@@ -2000,7 +2002,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun showPromoError(error: String) {
         continueCheckout = false
-        binding.paymentSummaryContainer.placeOrder.isEnabled = cartPresenter.menuItemsCount > 0
+        binding.placeOrder.isEnabled = cartPresenter.menuItemsCount > 0
         activity?.cast<BaseActivity> {
             val builder = AlertDialog.Builder(it)
             builder.setCancelable(true)
@@ -2041,9 +2043,9 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun validatingOrder(subtotal: Double) {
         runOnMain {
             binding.paymentSummaryContainer.subtotal.text = StringUtil.getFormattedPrice(subtotal)
-            binding.paymentSummaryContainer.dashed.visibility = View.GONE
-            binding.paymentSummaryContainer.originalPrice.visibility = View.GONE
-            binding.paymentSummaryContainer.totalPrice.visibility = View.INVISIBLE
+            binding.dashed.visibility = View.GONE
+            binding.originalPrice.visibility = View.GONE
+            binding.footerTotalPrice.invisible()
         }
     }
 
