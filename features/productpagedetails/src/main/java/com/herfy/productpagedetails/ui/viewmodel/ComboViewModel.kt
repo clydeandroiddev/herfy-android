@@ -10,7 +10,10 @@ import com.herfy.database.entities.MenuItemDb
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.EventAttributesMetric
 import com.herfy.model.ShowComboMealItemDetails
-import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder
+import com.herfy.model.modifiers.ModifierAdapterItem
+import com.herfy.model.modifiers.ModifierGroupAdapterItem
+import com.herfy.model.modifiers.ModifierItemAdapterItem
+import com.herfy.productpagedetails.ui.adapter.ComboItemDetailsModifierAdapter
 import com.herfy.productpagedetails.ui.viewholder.ComboMealModifierItemViewHolder
 import com.herfy.productpagedetails.ui.viewholder.FrequentlyBoughtItemViewholder
 import com.herfy.productpagedetails.ui.viewholder.SizesItemViewholder
@@ -55,7 +58,8 @@ class ComboViewModel @Inject constructor(
     private val menuRepository: MenuRepository
 ) : BaseViewModel(), SizesItemViewholder.OnClickListener,
     FrequentlyBoughtItemViewholder.OnClickListener,
-    BaseModifierItemViewHolder.OnAction, ComboMealModifierItemViewHolder.onClickListener {
+    ComboItemDetailsModifierAdapter.ComboItemDetailsModifierListener,
+    ComboMealModifierItemViewHolder.onClickListener {
 
 
     init {
@@ -131,8 +135,10 @@ class ComboViewModel @Inject constructor(
     val showMenuItemCalories: LiveData<String> = _showMenuItemCalories
     private val _updateComboSizeList = MutableLiveData<Pair<Int, Int>>()
     val updateComboSizeList: LiveData<Pair<Int, Int>> = _updateComboSizeList
-    private val _updateComboItemDetailModifier = MutableLiveData<Pair<Boolean, Int>>()
-    val updateComboItemDetailModifier: LiveData<Pair<Boolean, Int>> = _updateComboItemDetailModifier
+    private val _updateComboItemDetailModifier =
+        MutableLiveData<Triple<Boolean, ModifierGroup, ModifierItem>>()
+    val updateComboItemDetailModifier: LiveData<Triple<Boolean, ModifierGroup, ModifierItem>> =
+        _updateComboItemDetailModifier
     private val _showToastMessage = MutableLiveData<String>()
     val showToastMessage: LiveData<String> = _showToastMessage
     private val _showComponentModifierItemTotal = MutableLiveData<Double>()
@@ -163,6 +169,8 @@ class ComboViewModel @Inject constructor(
     val updateFavoriteByPosition: LiveData<Pair<Int, MenuItem>> = _updateFavoriteByPosition
     private val _showLoading = MutableLiveData<Boolean>()
     val showLoading: LiveData<Boolean> = _showLoading
+    private val _modifierAdapterItems = MutableLiveData<Event<List<ModifierAdapterItem>>>()
+    val modifierAdapterItems: LiveData<Event<List<ModifierAdapterItem>>> = _modifierAdapterItems
 
 
     /**Function for retrieving data of menu item from db**/
@@ -660,7 +668,8 @@ class ComboViewModel @Inject constructor(
                                     val modifierGroupModifierItemIds = arrayListOf<String>()
                                     val excludedModifierItems = HashSet<String>()
                                     mapModifierGroup?.let {
-                                        val excludedModifierIds = it.excludeModifiers.map { t-> t.toString() }
+                                        val excludedModifierIds =
+                                            it.excludeModifiers.map { t -> t.toString() }
                                         excludedModifierItems.addAll(excludedModifierIds)
                                     }
 
@@ -739,7 +748,8 @@ class ComboViewModel @Inject constructor(
                                                 modifierItemCdn,
                                                 LocaleUtil.getInstance().language
                                             )
-                                            modifierItem.attributes.isSelected = modifierItem.attributes.minimum == 1
+                                            modifierItem.attributes.isSelected =
+                                                modifierItem.attributes.minimum == 1
                                             if (modifierGroupModifierItemDisplayOrders.containsKey(
                                                     modifierItem.id
                                                 ) && modifierGroupModifierItemDisplayOrders[modifierItem.id] != null
@@ -782,7 +792,8 @@ class ComboViewModel @Inject constructor(
                                             modifierGroup.attributes.visibilityConfig =
                                                 mapModifierGroup.visibilityConfig
                                         }
-                                        val modifierItemsFinal = ArrayList<ModifierItem>(modifierItems)
+                                        val modifierItemsFinal =
+                                            ArrayList<ModifierItem>(modifierItems)
                                         if (modifierItemsFinal.size > 0) {
                                             val defaultModifiers =
                                                 modifierGroup.defaultModifiers
@@ -1048,13 +1059,11 @@ class ComboViewModel @Inject constructor(
 
     override fun onCheckedChanged(
         isSelected: Boolean,
-        modifierGroupPosition: Int,
-        modifierGroup: ModifierGroup?,
-        modifierItemPosition: Int,
-        modifierItem: ModifierItem?
+        modifierGroup: ModifierGroup,
+        modifierItem: ModifierItem
     ) {
         var _isSelected = isSelected
-        modifierGroup?.let { group ->
+        modifierGroup.let { group ->
             if (group.attributes.maximum == 1) {
                 if (group.attributes.minimum == 1) {
                     _isSelected = true
@@ -1083,30 +1092,28 @@ class ComboViewModel @Inject constructor(
                         cacheUtilHelper.getTranslations(Text.MODIFIER_MAXIMUM_LIMIT)
                     )
                 } else {
-                    val item = group.modifierItems[modifierItemPosition]
-                    if (item.id == modifierItem!!.id) {
-                        item.attributes.isSelected = isSelected
-                        if (!isSelected) {
-                            item.attributes.quantity = 1
+                    group.modifierItems.map { _modifierItem ->
+                        if (_modifierItem.id == modifierItem.id) {
+                            _modifierItem.attributes.isSelected = isSelected
+                            if (!isSelected) {
+                                _modifierItem.attributes.quantity = 1
+                            }
                         }
                     }
                 }
             }
-            updateModifierGroupSelectionIndicator(isSelected, modifierGroupPosition)
+            updateModifierGroupSelectionIndicator(isSelected, modifierGroup, modifierItem)
         }
     }
 
+
     override fun onQuantityChanged(
         add: Boolean,
-        modifierGroupPosition: Int,
         modifierGroup: ModifierGroup,
-        modifierItemPosition: Int,
         modifierItem: ModifierItem,
         isQuantityVisible: Boolean,
-        clickCount: Int?
     ) {
         if (add) {
-
             var proceed = true
             var quantity = modifierItem.attributes.quantity
             if (modifierItem.attributes.quantity < modifierItem.attributes.maximum) {
@@ -1140,10 +1147,10 @@ class ComboViewModel @Inject constructor(
 
             if (proceed) {
                 val group = modifierGroup
-                val item = group.modifierItems[modifierItemPosition]
+                val item = group.modifierItems.find { it.id == modifierItem.id }
                 var modifierTotal = 0
                 var currentModifierTotal = 0
-                if (item.id == modifierItem.id) {
+                if (item != null && item.id == modifierItem.id) {
                     modifierItem.attributes.isShouldShowQuantity = true
                     for (eachModifierItem in group.modifierItems) {
                         if (eachModifierItem.attributes.isShouldShowQuantity) {
@@ -1173,20 +1180,29 @@ class ComboViewModel @Inject constructor(
                 }
                 updateModifierGroupSelectionIndicator(
                     modifierItem.attributes.isSelected,
-                    modifierGroupPosition
+                    modifierGroup,
+                    modifierItem
                 )
             }
         } else {
             var selectedItemMinusTotal = 0
             val group = modifierGroup
-            val item = group.modifierItems[modifierItemPosition]
+            val modifierGroupMax = modifierGroup.attributes.maximum
+            val item = group.modifierItems.find { it.id == modifierItem.id }
             if (modifierItem.attributes.quantity == 1) {
-                if (item.id == modifierItem.id) {
-                    item.attributes.isShouldShowQuantity = false
-                    for (eachModifierItem in group.modifierItems) {
-                        if (eachModifierItem.attributes.hasUserInteractedWithModifierItem()) {
-                            eachModifierItem.attributes.setModifierItemQuantityExceedsMaximum(false)
-                            eachModifierItem.attributes.setModifierItemInteraction(false)
+                if (item != null && MenuUtil.areModifiersSame(item, modifierItem)) {
+                    modifierItem.attributes.isSelected = false
+                    modifierItem.attributes.isShouldShowQuantity = false
+
+                    val selectedItemQuantity = MenuUtil.modifierItemQuantityCount(group)
+                    if (selectedItemQuantity < modifierGroupMax) {
+                        for (eachModifierItem in group.modifierItems) {
+                            if (eachModifierItem.attributes.maximum > 1 && modifierGroupMax > 1 && eachModifierItem.id != item.id && !modifierItem.attributes.isSelected) {
+                                eachModifierItem.attributes.setModifierItemQuantityExceedsMaximum(
+                                    true
+                                )
+                                eachModifierItem.attributes.setModifierItemInteraction(true)
+                            }
                         }
                     }
                 }
@@ -1211,14 +1227,12 @@ class ComboViewModel @Inject constructor(
             }
             updateModifierGroupSelectionIndicator(
                 modifierItem.attributes.isSelected,
-                modifierGroupPosition
+                modifierGroup,
+                modifierItem
             )
         }
     }
 
-    override fun showMessage() {
-
-    }
 
     fun isAboveMax(group: ModifierGroup, count: Int): Boolean {
         return group.attributes.maximum - 1 < count
@@ -1247,7 +1261,20 @@ class ComboViewModel @Inject constructor(
         } ?: run {
             shouldShowIndicator = hasSelectedModifierItem || selectedModifierItemCount >= 1
         }
-        _updateComboItemDetailModifier.value = Pair(shouldShowIndicator, modifierGroupPosition)
+        //_updateComboItemDetailModifier.value = Pair(shouldShowIndicator, modifierGroupPosition)
+    }
+
+
+    private fun updateModifierGroupSelectionIndicator(
+        hasSelectedModifierItem: Boolean,
+        modifierGroup: ModifierGroup,
+        modifierItem: ModifierItem
+    ) {
+
+        val shouldShowIndicator = hasSelectedModifierItemsBy(modifierGroup)
+
+        _updateComboItemDetailModifier.value =
+            Triple(shouldShowIndicator, modifierGroup, modifierItem)
     }
 
     private fun countSelectedModifierItems(modifierGroupPosition: Int): Int {
@@ -1274,7 +1301,7 @@ class ComboViewModel @Inject constructor(
     }
 
     fun showModifierItemCheckBoxPer(componentModifierItem: ComponentModifierItem): HashMap<Int, Boolean> {
-        val shouldShowModifierCheckbox = java.util.HashMap<Int, Boolean>()
+        val shouldShowModifierCheckbox = HashMap<Int, Boolean>()
         componentModifierItem.modifierGroups.forEachIndexed { index, group ->
             shouldShowModifierCheckbox[index] = group.modifierItems.any { it.attributes.isSelected }
         }
@@ -2065,4 +2092,25 @@ class ComboViewModel @Inject constructor(
             _showFrequentBoughtItems.value = Event(frequentBoughtItemList)
         }
     }
+
+    fun getModifierAdapterItem(modifierGroups: ArrayList<ModifierGroup>) {
+        val adapterItems = mutableListOf<ModifierAdapterItem>()
+        modifierGroups.forEach { modifierGroup ->
+            adapterItems.add(
+                ModifierGroupAdapterItem(
+                    modifierGroup,
+                    hasSelectedModifierItemsBy(modifierGroup)
+                )
+            )
+            modifierGroup.modifierItems.forEach { modifierItem ->
+                adapterItems.add(
+                    ModifierItemAdapterItem(modifierGroup, modifierItem)
+                )
+            }
+        }
+        _modifierAdapterItems.value = Event(adapterItems)
+    }
+
+    private fun hasSelectedModifierItemsBy(modifierGroup: ModifierGroup): Boolean =
+        modifierGroup.modifierItems.any { it.attributes.isSelected }
 }

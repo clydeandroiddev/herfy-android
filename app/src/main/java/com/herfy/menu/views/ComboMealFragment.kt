@@ -23,7 +23,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.model.ShowComboMealItemDetails
 import com.herfy.productpagedetails.R
 import com.herfy.productpagedetails.databinding.FragmentComboMealBinding
-import com.herfy.productpagedetails.ui.adapter.ComboItemDetailsModifierGroupAdapter
+import com.herfy.productpagedetails.ui.adapter.ComboItemDetailsModifierAdapter
 import com.herfy.productpagedetails.ui.adapter.ComboMealModifierGroupAdapter
 import com.herfy.productpagedetails.ui.adapter.FrequentlyBoughtItemAdapter
 import com.herfy.productpagedetails.ui.adapter.SizesItemAdapter
@@ -72,7 +72,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     private var sizesAdapter: SizesItemAdapter? = null
     private var frequentBoughItemsAdapter: FrequentlyBoughtItemAdapter? = null
     private var comboMealModifierGroupAdapter: ComboMealModifierGroupAdapter? = null
-    private var comboItemDetailsModifierGroupAdapter: ComboItemDetailsModifierGroupAdapter? = null
+    private var comboItemDetailsModifierAdapter : ComboItemDetailsModifierAdapter? = null
     private var _totalPrice = 0.0
 
     private val isPromo: Boolean by lazy {
@@ -285,13 +285,13 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 icClose.setOnClickListener {
                     collapseComboItemDetails()
                 }
-                comboItemDetailsModifierGroupAdapter = ComboItemDetailsModifierGroupAdapter()
-                comboItemDetailsModifierGroupAdapter?.setOnAction(this@ComboMealFragment.viewModel)
+                comboItemDetailsModifierAdapter = ComboItemDetailsModifierAdapter()
+                comboItemDetailsModifierAdapter?.setOnAction(this@ComboMealFragment.viewModel)
                 context?.let { ctx ->
                     val linearLayoutManager =
                         LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
                     rvModifiers.apply {
-                        adapter = comboItemDetailsModifierGroupAdapter
+                        adapter = comboItemDetailsModifierAdapter
                         layoutManager = linearLayoutManager
                         setHasFixedSize(true)
                         isNestedScrollingEnabled = false
@@ -311,8 +311,6 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 add.setOnClickListener {
                     collapseComboItemDetails()
                 }
-
-
             }
 
             mBottomSheetBehavior?.addBottomSheetCallback(object :
@@ -322,11 +320,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                         binding.viewBgTransparent.gone()
                         this@ComboMealFragment.viewModel.currentSelectedModifierItem = null
                         binding.layoutBottomSheetComboDetail.btnAddDetails.setOnClickListener(null)
-                        comboItemDetailsModifierGroupAdapter?.updateList(
-                            arrayListOf(),
-                            hashMapOf(),
-                            hashMapOf()
-                        )
+                        comboItemDetailsModifierAdapter?.addData(arrayListOf())
                     }
                 }
 
@@ -445,11 +439,11 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 sizesAdapter?.updateSelectedSize(it.second, it.first)
             }
             updateComboItemDetailModifier.observe(this@ComboMealFragment) {
-                comboItemDetailsModifierGroupAdapter?.apply {
-                    viewModel.getComponentModifierItemTotalPrice(this.getUpdateModifierGroupList())
-                    shouldShowCheckBox(it.first, it.second)
-                    //updateComboModifierItemsPerModifierGroup(it.second)
-                }
+                comboItemDetailsModifierAdapter?.updateSelectedModifierItem(
+                    hasModifierItemsSelected = it.first,
+                    modifierGroup = it.second,
+                    modifierItem = it.third
+                )
             }
             showComponentModifierItemTotal.observe(this@ComboMealFragment) {
                 binding.layoutBottomSheetComboDetail.tvTotalValue.text = CurrencyUtils.updateCurrency(it,
@@ -594,7 +588,11 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             showLoading.observe(this@ComboMealFragment){
                 if(it) showLoading() else dismissLoading()
             }
-
+            modifierAdapterItems.observe(this@ComboMealFragment){
+                it.getContentIfNotHandled()?.let { modifierAdapterItems ->
+                    comboItemDetailsModifierAdapter?.addData(modifierAdapterItems)
+                }
+            }
         }
     }
     private fun showToastMessage(message: String) {
@@ -672,17 +670,9 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             data.componentModifierItem.apply {
                 val modifierGroupsCopy = modifierGroups.deepCopy(ModifierGroup::class.java)
                 this@ComboMealFragment.viewModel.currentSelectedModifierItem = this
-                val showModifierItemPrice = viewModel.showModifierItemPricePer(this)
-                val showModifierCheckBox = viewModel.showModifierItemCheckBoxPer(this)
+                viewModel.getModifierAdapterItem(modifierGroupsCopy)
                 tvTitle.text = name.toTranslate()
-                this@ComboMealFragment.viewModel.getComponentModifierItemTotalPrice(
-                    modifierGroupsCopy
-                )
-                comboItemDetailsModifierGroupAdapter?.updateList(
-                    modifierGroupsCopy,
-                    showModifierItemPrice,
-                    showModifierCheckBox
-                )
+                this@ComboMealFragment.viewModel.getComponentModifierItemTotalPrice(modifierGroupsCopy)
                 btnAddDetails.setOnClickListener {
                     if (data.previousComponentModifierIndex != data.componentModifierItemIndex) {
                         viewModel.updatePreviousComponentModifierItem(
@@ -690,12 +680,12 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                             data.previousComponentModifierIndex
                         )
                     }
-                    viewModel.updateSelectedModifierItem(
+                   /* viewModel.updateSelectedModifierItem(
                         data.menuItemComponentIndex,
                         data.componentModifierItemIndex,
                         this,
-                        comboItemDetailsModifierGroupAdapter?.getUpdateModifierGroupList()
-                    )
+                        comboItemDetailsModifierAdapter?.getC
+                    )*/
                     comboMealModifierGroupAdapter?.updateComboMealModifierItem(
                         data.menuItemComponentIndex,
                         data.componentModifierItemIndex

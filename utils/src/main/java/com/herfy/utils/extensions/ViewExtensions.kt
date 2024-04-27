@@ -150,3 +150,16 @@ fun View.headerVisibility(isVisible: Boolean){
     }
 
 }
+
+
+fun View.visibility(isVisible: Boolean){
+    val param = layoutParams
+    if (isVisible) {
+        param.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
+        visible()
+    } else {
+        gone()
+        param.height = 0
+    }
+    layoutParams = param
+}
