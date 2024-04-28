@@ -113,8 +113,8 @@ class ComboViewModel @Inject constructor(
     var calories: String = ""
 
     //LiveData
-    private val _showError = MutableLiveData<ErrorMsgItem>()
-    val showError: LiveData<ErrorMsgItem> = _showError
+    private val _showError = MutableLiveData<Event<ErrorMsgItem>>()
+    val showError: LiveData<Event<ErrorMsgItem>> = _showError
     private val _showMenuItemDetails = MutableLiveData<MenuItem>()
     val showMenuItemDetails: LiveData<MenuItem> = _showMenuItemDetails
     private val _showHideModifierItemPrice = MutableLiveData<Pair<Boolean, Int>>()
@@ -838,7 +838,8 @@ class ComboViewModel @Inject constructor(
                 } catch (e: Exception) {
                     runOnMain {
                         _showError.value =
-                            ErrorMsgItem(true, "There is a problem parsing the combo meal")
+                            Event(ErrorMsgItem(true, "There is a problem parsing the combo meal"))
+
                     }
                     e.printStackTrace()
                 }
@@ -1087,10 +1088,11 @@ class ComboViewModel @Inject constructor(
                 }
 
                 if (isSelected && selectedItems >= modifierGroup.attributes.maximum) {
-                    _showError.value = ErrorMsgItem(
-                        true,
-                        cacheUtilHelper.getTranslations(Text.MODIFIER_MAXIMUM_LIMIT)
-                    )
+                    _showToastMessage.value =
+                        modifierGroup.attributes.name + " " + CacheUtil.getInstance()
+                            .getTranslations(
+                                Text.MODIFIER_LIMIT_REACHED, "Options limit reached"
+                            )
                 } else {
                     group.modifierItems.map { _modifierItem ->
                         if (_modifierItem.id == modifierItem.id) {
@@ -1146,34 +1148,37 @@ class ComboViewModel @Inject constructor(
             }
 
             if (proceed) {
-                val group = modifierGroup
-                val item = group.modifierItems.find { it.id == modifierItem.id }
+                val item = modifierGroup.modifierItems.find { it.id == modifierItem.id }
                 var modifierTotal = 0
                 var currentModifierTotal = 0
                 if (item != null && item.id == modifierItem.id) {
                     modifierItem.attributes.isShouldShowQuantity = true
-                    for (eachModifierItem in group.modifierItems) {
+                    for (eachModifierItem in modifierGroup.modifierItems) {
                         if (eachModifierItem.attributes.isShouldShowQuantity) {
                             currentModifierTotal += eachModifierItem.attributes.quantity
                         }
                     }
                     if (currentModifierTotal < modifierGroup.attributes.maximum) {
+
+                        if(!modifierItem.attributes.isSelected && modifierItem.attributes.quantity < 1)  modifierItem.attributes.quantity = 1 else modifierItem.attributes.quantity +=1
+
                         if (!modifierItem.attributes.isSelected) {
                             modifierItem.attributes.isSelected = true
                         }
-                        modifierItem.attributes.quantity += 1
+
                     }
+
                 }
 
 
-                for (eachModifierItem in group.modifierItems) {
+                for (eachModifierItem in modifierGroup.modifierItems) {
                     if (eachModifierItem.attributes.isShouldShowQuantity) {
                         modifierTotal += eachModifierItem.attributes.quantity
                     }
                 }
 
                 if (modifierTotal >= modifierGroup.attributes.maximum) {
-                    for (eachItems in group.modifierItems) {
+                    for (eachItems in modifierGroup.modifierItems) {
                         eachItems.attributes.setModifierItemInteraction(true)
                         eachItems.attributes.setModifierItemQuantityExceedsMaximum(eachItems.attributes.isShouldShowQuantity || eachItems.attributes.isSelected)
                     }
@@ -1562,9 +1567,11 @@ class ComboViewModel @Inject constructor(
         }
         val store = CacheUtil.getInstance().orderStore
         if (store != null && menuItem!!.disabledStores.containsKey(store.id)) {
-            _showError.value = ErrorMsgItem(
-                true, CacheUtil.getInstance().getTranslations(Text.LOCATION_AVAILABLE)
-                    .replace("(x)", store.attributes.name)
+            _showError.value = Event(
+                ErrorMsgItem(
+                    true, CacheUtil.getInstance().getTranslations(Text.LOCATION_AVAILABLE)
+                        .replace("(x)", store.attributes.name)
+                )
             )
 
         } else {
@@ -1580,7 +1587,6 @@ class ComboViewModel @Inject constructor(
                         _addCartItem.value = it
                     }
                 }
-
             }
             val eventAttributes = java.util.HashMap<String, String>()
             eventAttributes["Item Name"] = menuItem!!.getName(LocaleUtil.getInstance().language)
@@ -1694,12 +1700,14 @@ class ComboViewModel @Inject constructor(
 
                         override fun onError(o: Any) {
                             AppLogger.printRetrofitError(o)
-                            _showError.value = ErrorMsgItem(
-                                true, getErrorMessage(
-                                    o,
-                                    CacheUtil.getInstance()
-                                        .getTranslations(Text.ERROR_ADD_TO_FAVORITES),
-                                    null
+                            _showError.value = Event(
+                                ErrorMsgItem(
+                                    true, getErrorMessage(
+                                        o,
+                                        CacheUtil.getInstance()
+                                            .getTranslations(Text.ERROR_ADD_TO_FAVORITES),
+                                        null
+                                    )
                                 )
                             )
                         }
@@ -1722,13 +1730,15 @@ class ComboViewModel @Inject constructor(
 
                         override fun onError(o: Any) {
                             AppLogger.printRetrofitError(o)
-                            _showError.value = ErrorMsgItem(
-                                true,
-                                getErrorMessage(
-                                    o,
-                                    CacheUtil.getInstance()
-                                        .getTranslations(Text.ERROR_REMOVE_FROM_FAVORITES),
-                                    null
+                            _showError.value = Event(
+                                ErrorMsgItem(
+                                    true,
+                                    getErrorMessage(
+                                        o,
+                                        CacheUtil.getInstance()
+                                            .getTranslations(Text.ERROR_REMOVE_FROM_FAVORITES),
+                                        null
+                                    )
                                 )
                             )
                         }
@@ -1746,9 +1756,9 @@ class ComboViewModel @Inject constructor(
         val store = CacheUtil.getInstance().getOrderStore()
         if (store != null && frequentlyMenuItem.disabledStores.containsKey(store.id)) {
             _showLoading.value = false
-            _showError.value = ErrorMsgItem(
+            _showError.value = Event(ErrorMsgItem(
                 true, CacheUtil.getInstance().getTranslations(Text.LOCATION_AVAILABLE)
-                    .replace("(x)", store.attributes.name)
+                    .replace("(x)", store.attributes.name))
             )
         } else {
             val eventAttributes = HashMap<String, String>()

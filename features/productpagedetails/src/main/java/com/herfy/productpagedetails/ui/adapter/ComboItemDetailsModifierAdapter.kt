@@ -2,7 +2,6 @@ package com.herfy.productpagedetails.ui.adapter
 
 import android.text.Html
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -29,7 +28,6 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.ModifierProcessor
 import com.herfy.utils.helper.ModifierProcessorCallback
-import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.StringUtil.localize
 import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
@@ -42,9 +40,10 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
 
 
     private var onAction: ComboItemDetailsModifierListener? = null
-    fun setOnAction(onAction : ComboItemDetailsModifierListener){
+    fun setOnAction(onAction: ComboItemDetailsModifierListener) {
         this.onAction = onAction
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ModifierAdapterItem.VIEW_TYPE_MODIFIER_GROUP -> {
@@ -88,17 +87,21 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                     it.bind(item)
                     it.binding.apply {
                         clickableLayout.setOnClickListener {
-                            if(item.modifierItem.attributes.minimum != 1){
-                                onAction?.onCheckedChanged(!item.modifierItem.attributes.isSelected,
+                            if (item.modifierItem.attributes.minimum != 1) {
+                                onAction?.onCheckedChanged(
+                                    !item.modifierItem.attributes.isSelected,
                                     modifierGroup = item.modifierGroup,
-                                    modifierItem = item.modifierItem)
+                                    modifierItem = item.modifierItem
+                                )
                             }
                         }
                         checkLayout.setOnClickListener {
-                            if(item.modifierItem.attributes.minimum != 1){
-                                onAction?.onCheckedChanged(!item.modifierItem.attributes.isSelected,
+                            if (item.modifierItem.attributes.minimum != 1) {
+                                onAction?.onCheckedChanged(
+                                    !item.modifierItem.attributes.isSelected,
                                     modifierGroup = item.modifierGroup,
-                                    modifierItem = item.modifierItem)
+                                    modifierItem = item.modifierItem
+                                )
                             }
                         }
                         quantityUp.setOnClickListener {
@@ -212,10 +215,10 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                     visible()
                     text = when (data.attributes.maximum > 1) {
                         true -> cacheUtil.getTranslations(Text.SELECT_UP_TO_X, "Select up to (x)")
-                            .replace("(x)", StringUtil.localize(data.attributes.maximum.toString()))
+                            .replace("(x)", localize(data.attributes.maximum.toString()))
 
                         false -> cacheUtil.getTranslations(Text.SELECT_X, "Select (x)")
-                            .replace("(x)", StringUtil.localize(data.attributes.maximum.toString()))
+                            .replace("(x)", localize(data.attributes.maximum.toString()))
                     }
                 }
                 minimum.text = cacheUtil.getTranslations(Text.REQUIRED, "Required")
@@ -253,41 +256,24 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 modifierProcessor.processModifier(item.modifierItem)
 
                 val modifierGroupAttributes: ModifierGroupAttributes = modifierGroup.attributes
+                val isModifierItemSelected: Boolean = modifierItem.attributes.isSelected
                 val maximum = modifierGroupAttributes.maximum
                 val minimum = modifierGroupAttributes.minimum
-                val isModifierItemSelected: Boolean = modifierItem.attributes.isSelected
-                radioButton.visibility =
-                    if (maximum == 1 && minimum == 1) View.VISIBLE else View.GONE
-                checkBox.visibility =
-                    if (maximum > 1 || minimum == 0 && maximum == 1) View.VISIBLE else View.GONE
+                val shouldShowQuantity = MenuUtil.shouldShowQuantity(modifierGroup, modifierItem)
+                val isCheckBoxVisible = !shouldShowQuantity && (maximum > 1 || minimum == 0)
+                val isRadioButtonVisible = !shouldShowQuantity && (maximum == 1 && minimum == 1)
+                val isQuantityLayoutVisible = shouldShowQuantity
+                val isQuantityDownLayout =  (modifierGroup.attributes.maximum > 1 &&
+                        modifierItem.attributes.isSelected && modifierItem.attributes.maximum > 1)
+                updateSideButtons(isCheckBoxVisible, isRadioButtonVisible, isQuantityLayoutVisible,isQuantityDownLayout,isModifierItemSelected, modifierGroup,modifierItem, item.isAboveMax)
 
-                if (isModifierItemSelected) {
-                    optionCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state)
-                    radioButton.setImageResource(R.drawable.modifier_radio_item_selected)
-                    checkBox.setImageResource(R.drawable.modifier_item_checked_selected)
-                } else {
-                    optionCardView.setBackgroundResource(R.drawable.modifier_item_bg_unselected_state)
-                    radioButton.setImageResource(R.drawable.modifier_item_radio_unselected)
-                    checkBox.setImageResource(R.drawable.modifier_item_unselected)
-                }
-                val isQuantityShouldShow = modifierGroup.attributes.maximum > 1 &&
-                        modifierItem.attributes.isSelected && modifierItem.attributes.maximum > 1
 
-                quantityDownLayout.visibility =
-                    if (isQuantityShouldShow) View.VISIBLE else View.GONE
-
-                val quantityUpIsClickable =
-                    modifierItem.attributes.quantity < modifierGroup.attributes.maximum
-                quantityUp.apply {
-                    isFocusable = quantityUpIsClickable
-                    isClickable = quantityUpIsClickable
-                }
                 quantity.text = localize(("0" + modifierItem.attributes.quantity))
                 val imageUrl = modifierItem.attributes.image
                 if (imageUrl != null && !imageUrl.equals(
                         "null",
                         ignoreCase = true
-                    ) && !imageUrl.isEmpty() && !imageUrl.lowercase(
+                    ) && imageUrl.isNotEmpty() && !imageUrl.lowercase(
                         Locale.getDefault()
                     ).contains("default-image.png")
                 ) {
@@ -299,28 +285,89 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 } else {
                     image.gone()
                 }
-                if (modifierItem.attributes.hasModifierItemExceedMaximum() && modifierItem.attributes.hasUserInteractedWithModifierItem()) {
-                    val shouldShowQuantityLayout =
-                        MenuUtil.shouldShowQuantity(modifierGroup, modifierItem)
-                    if (shouldShowQuantityLayout) {
-                        quantityUp.isEnabled = true
-                        quantityUp.setImageResource(R.drawable.quantity_up_blue)
-                        optionCardView.isEnabled = true
+
+
+            }
+        }
+
+        private fun updateSideButtons(
+            isCheckBoxVisible: Boolean,
+            isRadioButtonVisible: Boolean,
+            isQuantityLayoutVisible: Boolean,
+            isQuantityDownVisible : Boolean,
+            isModifierItemSelected: Boolean,
+            modifierGroup : ModifierGroup,
+            modifierItem: ModifierItem,
+            isAboveMax : Boolean
+        ) {
+            binding.apply {
+                if(isRadioButtonVisible){
+                    radioButton.visible()
+                    checkBox.gone()
+                    quantityUp.gone()
+                    quantityDownLayout.gone()
+                }else if(isCheckBoxVisible){
+                    checkBox.visible()
+                    radioButton.gone()
+                    quantityUp.gone()
+                    quantityDownLayout.gone()
+                }else if(isQuantityLayoutVisible){
+                    quantityDownLayout.gone()
+                    radioButton.gone()
+                    checkBox.gone()
+                    quantityUp.visible()
+                    quantityDownLayout.apply {
+                        if(isQuantityDownVisible) visible() else gone()
+                    }
+                }else {
+                    radioButton.gone()
+                    checkBox.gone()
+                    quantityUp.gone()
+                    quantityDownLayout.gone()
+                }
+
+                if (!isAboveMax) {
+                    quantityUp.isEnabled = true
+                    quantityUp.setImageResource(R.drawable.quantity_up_blue)
+                    optionCardView.isEnabled = true
+                } else {
+                    quantityUp.isEnabled = false
+                    quantityUp.setImageResource(R.drawable.quantity_up_blue_gray)
+                    optionCardView.isEnabled = false
+                }
+
+                if (isModifierItemSelected) {
+                    optionCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state)
+                    radioButton.apply {
+                        if(isVisible()) setImageResource(R.drawable.modifier_radio_item_selected)
+                    }
+                    checkBox.apply {
+                        if(isVisible()) setImageResource(R.drawable.modifier_item_checked_selected)
                     }
                 } else {
-                    val shouldShowQuantityLayout =
-                        MenuUtil.shouldShowQuantity(modifierGroup, modifierItem)
-                    if (shouldShowQuantityLayout) {
-                        quantityUp.setEnabled(false)
-                        quantityUp.setImageResource(R.drawable.quantity_up_blue_gray)
-                        optionCardView.setEnabled(false)
+                    optionCardView.setBackgroundResource(R.drawable.modifier_item_bg_unselected_state)
+                    radioButton.apply {
+                        if(isVisible()) setImageResource(R.drawable.modifier_item_radio_unselected)
+                    }
+                    checkBox.apply {
+                        if(isVisible()) setImageResource(R.drawable.modifier_item_unselected)
                     }
                 }
+
+                val quantityUpIsClickable =
+                    modifierItem.attributes.quantity < modifierGroup.attributes.maximum
+                quantityUp.apply {
+                    isFocusable = quantityUpIsClickable
+                    isClickable = quantityUpIsClickable
+                }
+
                 val quantityDownIsClickable = modifierItem.attributes.quantity != 1
                 quantityDown.apply {
                     isFocusable = quantityDownIsClickable
                     isClickable = quantityDownIsClickable
                 }
+
+
             }
         }
 
@@ -346,14 +393,16 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
         }
     }
 
-
     fun updateSelectedModifierItem(
         hasModifierItemsSelected: Boolean,
         modifierGroup: ModifierGroup,
-        modifierItem: ModifierItem
+        modifierItem: ModifierItem,
+        isAboveMax: Boolean
     ) {
-        val firstIndex =
-            itemList.indexOfFirst { modifierAdapterItem -> modifierAdapterItem.viewType == ModifierAdapterItem.VIEW_TYPE_MODIFIER_GROUP && (modifierAdapterItem as ModifierGroupAdapterItem).modifierGroup.id == modifierGroup.id }
+        val firstIndex = itemList.indexOfFirst { modifierAdapterItem ->
+            modifierAdapterItem.viewType == ModifierAdapterItem.VIEW_TYPE_MODIFIER_GROUP &&
+                    (modifierAdapterItem as ModifierGroupAdapterItem).modifierGroup.id == modifierGroup.id
+        }
 
         itemList.map { modifierAdapterItem ->
             if (modifierAdapterItem is ModifierGroupAdapterItem && modifierAdapterItem.modifierGroup.id == modifierGroup.id) {
@@ -364,15 +413,34 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
         itemList.map { modifierAdapterItem ->
             if (modifierAdapterItem is ModifierItemAdapterItem && modifierAdapterItem.modifierGroup.id == modifierGroup.id) {
                 modifierAdapterItem.modifierGroup = modifierGroup
-                if(modifierAdapterItem.modifierItem.id == modifierItem.id){
+                if (modifierAdapterItem.modifierItem.id == modifierItem.id) {
                     modifierAdapterItem.modifierItem = modifierItem
                 }
+                modifierAdapterItem.isAboveMax = isAboveMax
             }
         }
-
         notifyItemRangeChanged(firstIndex, modifierGroup.modifierItems.size)
     }
+    fun getUpdatedModifierList() : List<ModifierGroup>{
+        return when(itemList.isNotEmpty()) {
+            true -> {
+                val modifierGroupLists = arrayListOf<ModifierGroup>()
+                val modifierGroups = itemList.filter { modifierAdapterItem -> modifierAdapterItem.viewType == ModifierAdapterItem.VIEW_TYPE_MODIFIER_GROUP }
+                modifierGroups.forEach {
+                    it.cast<ModifierGroupAdapterItem> { modifierGroupAdapterItem ->
+                        modifierGroupAdapterItem.modifierGroup.modifierItems = getModifierItemsPerModifierGroup(modifierGroupAdapterItem.modifierGroup.id)
+                        modifierGroupLists.add(modifierGroupAdapterItem.modifierGroup)
+                    }
+                }
+                modifierGroupLists
+            }
+            else -> arrayListOf()
+        }
+    }
 
+    private fun getModifierItemsPerModifierGroup(id : String) : List<ModifierItem>{
+       return itemList.filter { modifierAdapterItem -> modifierAdapterItem is ModifierItemAdapterItem && modifierAdapterItem.modifierGroup.id == id }.map { modifierAdapterItem -> (modifierAdapterItem as ModifierItemAdapterItem).modifierItem }.toList()
+    }
 
     //Event
     interface ComboItemDetailsModifierListener {

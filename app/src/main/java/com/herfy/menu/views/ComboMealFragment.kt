@@ -37,6 +37,7 @@ import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.invisible
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.observeNonNull
+import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.toTranslate
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
@@ -366,6 +367,21 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     override fun observe() {
         super.observe()
         viewModel.apply {
+            showError.observeNonNull(this@ComboMealFragment){
+                it.getContentIfNotHandled()?.let {
+                    runOnMain {
+                        dismissLoading()
+                        showAlertDialog(title = "", message = it.message,
+                            neutral = CacheUtil.getInstance().getTranslations(Text.OK, "Ok")){ dialog, _ ->
+                                if(it.closePage){
+                                    navigateUp()
+                                }
+                                dialog.dismiss()
+                            }
+                    }
+
+                }
+            }
             showMenuItemDetails.observeNonNull(this@ComboMealFragment) {
                 setupMenuItemDetails(it)
             }
@@ -439,11 +455,17 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 sizesAdapter?.updateSelectedSize(it.second, it.first)
             }
             updateComboItemDetailModifier.observe(this@ComboMealFragment) {
-                comboItemDetailsModifierAdapter?.updateSelectedModifierItem(
-                    hasModifierItemsSelected = it.first,
-                    modifierGroup = it.second,
-                    modifierItem = it.third
-                )
+                val modifierItemsQuantity = this@ComboMealFragment.viewModel.modifierItemQuantityCount(it.second.modifierItems)
+                val isAboveMax = this@ComboMealFragment.viewModel.isAboveMax(it.second,modifierItemsQuantity)
+                comboItemDetailsModifierAdapter?.apply {
+                    this@ComboMealFragment.viewModel.getComponentModifierItemTotalPrice(getUpdatedModifierList())
+                    updateSelectedModifierItem(
+                        hasModifierItemsSelected = it.first,
+                        modifierGroup = it.second,
+                        modifierItem = it.third,
+                        isAboveMax = isAboveMax
+                    )
+                }
             }
             showComponentModifierItemTotal.observe(this@ComboMealFragment) {
                 binding.layoutBottomSheetComboDetail.tvTotalValue.text = CurrencyUtils.updateCurrency(it,
@@ -680,12 +702,12 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                             data.previousComponentModifierIndex
                         )
                     }
-                   /* viewModel.updateSelectedModifierItem(
+                    viewModel.updateSelectedModifierItem(
                         data.menuItemComponentIndex,
                         data.componentModifierItemIndex,
                         this,
-                        comboItemDetailsModifierAdapter?.getC
-                    )*/
+                        comboItemDetailsModifierAdapter?.getUpdatedModifierList()
+                    )
                     comboMealModifierGroupAdapter?.updateComboMealModifierItem(
                         data.menuItemComponentIndex,
                         data.componentModifierItemIndex
