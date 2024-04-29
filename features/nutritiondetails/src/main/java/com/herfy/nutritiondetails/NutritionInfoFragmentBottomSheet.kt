@@ -2,6 +2,7 @@ package com.herfy.nutritiondetails
 
 import android.app.Dialog
 import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -11,15 +12,16 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.herfy.common.base.BaseBottomSheetDialog
 import com.herfy.nutritiondetails.databinding.DialogNutritionInfoBottomSheetBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.getParcelableValue
-import com.herfy.utils.extensions.loadImage
+import com.herfy.utils.extensions.loadImageWithProgress
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.ViewUtil
 import com.herfy.utils.helper.viewLifecycleScope
 
 class NutritionInfoFragmentBottomSheet: BottomSheetDialogFragment() {
@@ -65,6 +67,12 @@ class NutritionInfoFragmentBottomSheet: BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.let {
+            val margin = ViewUtil.dpToPx(it, 16)
+            val nutritionInfoHeight =
+                (Resources.getSystem().displayMetrics.widthPixels / (Values.NUTRITION_INFO_ASPECT_RATIO_WIDTH / Values.NUTRITION_INFO_ASPECT_RATIO_HEIGHT)).toInt() - margin
+            binding.nutritionImage.layoutParams.height = nutritionInfoHeight
+        }
         setupDialog()
         setupViews()
     }
@@ -87,7 +95,7 @@ class NutritionInfoFragmentBottomSheet: BottomSheetDialogFragment() {
             nutritionInfoParams?.let { params ->
                 with(binding) {
                     txtNutritionInfo.text = params.menuName
-                    loadImage(nutritionImage, params.nutritionImageUrl)
+                    loadImageWithProgress(nutritionImage, params.nutritionImageUrl, progressBar)
                     storyLayout.setVisible(params.nutritionStory.isNotEmpty())
                     txtStoryDescription.text = params.nutritionStory
                     cacheUtilHelper.let { cacheHelper ->

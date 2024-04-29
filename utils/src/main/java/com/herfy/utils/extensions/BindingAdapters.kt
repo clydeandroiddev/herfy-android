@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
@@ -109,6 +110,38 @@ fun loadImage(imageView: ImageView, imageSrc: String?){
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
+                return false
+            }
+
+        })
+        .into(imageView)
+}
+
+fun loadImageWithProgress(imageView: ImageView, imageSrc: String?, progressBar: ProgressBar){
+    val imageURL : String =  if(imageSrc.isNullOrEmpty()) Values.DEFAULT_IMAGE_URL else imageSrc
+    Glide.with(imageView.context).load(imageURL)
+        .skipMemoryCache(false)
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .listener(object : RequestListener<Drawable>{
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<Drawable>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                progressBar.gone()
+                AppLogger.error(e.toString())
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: Drawable?,
+                model: Any?,
+                target: Target<Drawable>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                progressBar.gone()
                 return false
             }
 
