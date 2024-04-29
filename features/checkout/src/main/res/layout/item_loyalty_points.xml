@@ -34,8 +34,7 @@
                 android:paddingEnd="8dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:background="@drawable/background_loyalty"
-                android:src="@drawable/ic_loyalty_white"
+                android:src="@drawable/ic_checkout_loyalty"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_loyalty_points"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_loyalty_points_label" />
