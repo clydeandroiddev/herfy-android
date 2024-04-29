@@ -360,7 +360,7 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility) {
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility, int modifierItemPosition) {
 
     }
 

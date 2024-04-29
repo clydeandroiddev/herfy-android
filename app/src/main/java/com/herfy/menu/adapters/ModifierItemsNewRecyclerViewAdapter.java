@@ -107,4 +107,8 @@ public class ModifierItemsNewRecyclerViewAdapter extends RecyclerView.Adapter<Ba
         return menuPresenter.getModifierItemsCount(modifierGroup);
     }
 
+    public void updateModifierItem(int modifierItemPosition) {
+        notifyItemChanged(modifierItemPosition);
+    }
+
 }

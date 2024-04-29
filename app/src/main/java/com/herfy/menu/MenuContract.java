@@ -105,7 +105,7 @@ public interface MenuContract {
         void showError(String error);
 
         void showHideModifierItemPrice(boolean show, int modifierGroupPosition);
-        void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility);
+        void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility, int modifierItemPosition);
 
         void showFavorites(boolean fromAddRemove, ArrayList<Favorite> favorites);
 
@@ -158,7 +158,7 @@ public interface MenuContract {
     }
 
     interface Presenter extends BasePresenter {
-        public void updateModifierGroupSelectionIndicator(Boolean hasSelectedModifierItem, int modifierGroupPosition);
+        public void updateModifierGroupSelectionIndicator(Boolean hasSelectedModifierItem, int modifierGroupPosition, int modifierItemPosition);
         MenuItem getMenuItemSingle(String id);
 
         void getFavorites(boolean fromAddRemove, int page);

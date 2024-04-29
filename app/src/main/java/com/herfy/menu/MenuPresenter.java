@@ -13,7 +13,6 @@ import com.herfy.analytics.kochava.KochavaTrackerUtil;
 import com.herfy.base.BaseView;
 import com.herfy.database.AppDatabase;
 import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
-import com.herfy.menu.adapters.ModifierItemsRecyclerViewAdapterNew;
 import com.herfy.menu.viewholders.FrequentBoughtViewHolder;
 import com.herfy.model.CampaignToAdd;
 import com.herfy.model.CouponToAdd;
@@ -355,10 +354,10 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void updateModifierGroupSelectionIndicator(Boolean hasSelectedModifierItem, int modifierGroupPosition) {
+    public void updateModifierGroupSelectionIndicator(Boolean hasSelectedModifierItem, int modifierGroupPosition, int modifierItemPosition) {
         int selectedModifierItemCount = countSelectedModifierItems(modifierGroupPosition);
         boolean shouldShowIndicator = hasSelectedModifierItem || selectedModifierItemCount >= 1;
-        menuView.showModifierSelectionIndicator(shouldShowIndicator, modifierGroupPosition,visibilityModifierGroup);
+        menuView.showModifierSelectionIndicator(shouldShowIndicator, modifierGroupPosition,visibilityModifierGroup,modifierItemPosition);
     }
 
     private int countSelectedModifierItems(int modifierGroupPosition) {
@@ -4452,7 +4451,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                     item.getAttributes().setShouldShowQuantity(false);
                     for (ModifierItem eachModifier: group.getModifierItems()) {
                         if (!eachModifier.getAttributes().isSelected() && Objects.equals(group.getId(), modifierGroup.getId())) {
-                            updateModifierGroupSelectionIndicator(false,modifierGroupPosition);
+                            updateModifierGroupSelectionIndicator(false,modifierGroupPosition, modifierItemPosition);
                         }
                     }
                     int selectedItemQuantity = MenuUtil.modifierItemQuantityCount(group);
@@ -4508,7 +4507,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                             item.getAttributes().setSelected(true);
                             for (ModifierItem eachModifier: group.getModifierItems()) {
                                 if (eachModifier.getAttributes().isSelected() && Objects.equals(group.getId(), modifierGroup.getId())) {
-                                    updateModifierGroupSelectionIndicator(true,modifierGroupPosition);
+                                    updateModifierGroupSelectionIndicator(true,modifierGroupPosition, modifierItemPosition);
                                 }
                             }
                             item.getAttributes().setModifierItemInteraction(true);

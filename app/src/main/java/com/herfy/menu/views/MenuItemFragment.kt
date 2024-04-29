@@ -50,6 +50,7 @@ import com.herfy.menu.adapters.ComboMainYourWayListAdapter
 import com.herfy.menu.adapters.CombosListAdapter
 import com.herfy.menu.adapters.FrequentBoughItemsAdapter
 import com.herfy.menu.adapters.IngredientsRecyclerViewAdapter
+import com.herfy.menu.adapters.ModifierGroupNewRecycleAdapterKotlin
 import com.herfy.menu.adapters.ModifierGroupsNewRecyclerViewAdapter
 import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter
 import com.herfy.menu.adapters.SizesRecyclerViewAdapter
@@ -58,7 +59,6 @@ import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet
 import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet.Companion.NAV_ARGS_INFO_KEY
 import com.herfy.nutritiondetails.NutritionInfoParams
 import com.herfy.productpagedetails.databinding.FragmentMenuItemDetailsBinding
-import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.herfy.utils.constants.Text
@@ -68,6 +68,7 @@ import com.herfy.utils.extensions.invisible
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
+import com.herfy.utils.extensions.showToast
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
@@ -90,7 +91,6 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import com.skylinedynamics.solosdk.api.models.objects.Translated
 import com.skylinedynamics.solosdk.util.GsonHelper
-import io.shipbook.shipbooksdk.Log
 import java.util.Locale
 
 
@@ -117,6 +117,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     private var sandwichId = ""
     private var sizesAdapter: SizesRecyclerViewAdapter? = null
     private var modifierGroupsAdapter: ModifierGroupsNewRecyclerViewAdapter? = null
+    private var modifierGroupsAdapters: ModifierGroupNewRecycleAdapterKotlin? = null
     private var frequentBoughItemsAdapter: FrequentBoughItemsAdapter? = null
     private var ingredientsAdapter: IngredientsRecyclerViewAdapter? = null
     private var initialModifierId = ""
@@ -664,95 +665,50 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         shouldShowModifierCheckbox[index] =
                             group.modifierItems.any { it.attributes.isSelected }
                     }
+                    val adapterItems =
+                        mutableListOf<ModifierGroupNewRecycleAdapterKotlin.ModifierAdapterType>()
                     shouldReset = false
-                    modifierGroupsAdapter =
-                        ModifierGroupsNewRecyclerViewAdapter(
-                            activity,
-                            menuPresenter,
-                            showModifierItemPrice,
-                            shouldShowModifierCheckbox,
-                        )
-                    modifierGroupsAdapter!!.setOnAction(object :
-                        BaseModifierItemViewHolder.OnAction {
-                        @SuppressLint("NotifyDataSetChanged")
-                        override fun onCheckedChanged(
-                            isSelected: Boolean,
-                            modifierGroupPosition: Int,
-                            modifierGroup: ModifierGroup,
-                            modifierItemPosition: Int,
-                            modifierItem: ModifierItem
-                        ) {
+                    modifierGroupsAdapters =
+                        ModifierGroupNewRecycleAdapterKotlin(
+                            onUserClickModifierItem = { params ->
+                                modifierGroupsAdapters?.updateModifierItem(
+                                    params
+                                )
 
-                            Log.d(
-                                "OnAction", "onCheckedChanged - isSelected: " + isSelected +
-                                        ", modifierGroupPosition: " + modifierGroupPosition +
-                                        ", modifierGroup: " + modifierGroup +
-                                        ", modifierItemPosition: " + modifierItemPosition +
-                                        ", modifierItem: " + modifierItem.name
-                            );
-
-                            menuPresenter!!.selectModifierItem(
-                                isSelected,
-                                modifierGroupPosition,
-                                modifierGroup,
-                                modifierItemPosition,
-                                modifierItem
-                            )
-                            menuPresenter.updateModifierGroupSelectionIndicator(
-                                isSelected, modifierGroupPosition,
-                            )
-                            setSizes(menuItem)
-                            shouldReset = false
-                            /*if (modifierGroupsAdapter != null) {
-                                modifierGroupsAdapter!!.notifyDataSetChanged()
-                            }*/
-
-
-                        }
-
-                        override fun showMessage() {
-                            activity?.cast<BaseActivity> {
-                                it.dismissDialogs()
-                                Toast.makeText(
-                                    it,
-                                    CacheUtil.getInstance()
-                                        .getTranslations(Text.MODIFIER_MAXIMUM_LIMIT),
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                            },
+                            showModifierMaximumLimit = { message ->
+                                requireContext().showToast(message)
+                            },
+                            onUserAddMoreModifierItemQuantity = {
+                                modifierGroupsAdapters?.updateModifierItemQuantity(it)
                             }
-                        }
-
-                        override fun onQuantityChanged(
-                            add: Boolean,
-                            modifierGroupPosition: Int,
-                            modifierGroup: ModifierGroup,
-                            modifierItemPosition: Int,
-                            modifierItem: ModifierItem,
-                            isQuantityVisible: Boolean,
-                            clickCount: Int
-                        ) {
-                            menuPresenter.changeModifierItemQuantity(
-                                add,
-                                modifierGroupPosition,
-                                modifierGroup,
-                                modifierItemPosition,
-                                modifierItem,
-                                isQuantityVisible,
-                                clickCount
+                        )
+                    menuPresenter.modifierGroupList.forEachIndexed { modifierGroupIndex, eachModifierGroup ->
+                        println("Each modifier $modifierGroupIndex and name ${eachModifierGroup.attributes.name}")
+                        adapterItems.add(
+                            ModifierGroupNewRecycleAdapterKotlin.ModifierGroupAdapterItem(
+                                modifierGroup = eachModifierGroup,
+                                modifierGroupIndex = modifierGroupIndex,
                             )
-                            setSizes(menuItem)
-                            shouldReset = false
-
-                            //Trigger calorie count
+                        )
+                        eachModifierGroup.modifierItems.forEachIndexed { itemIndex, modifierItem ->
+                            adapterItems.add(
+                                ModifierGroupNewRecycleAdapterKotlin.ModifierItemAdapterItem(
+                                    modifierItem = modifierItem,
+                                    modifierGroup = eachModifierGroup,
+                                    modifierGroupPosition = modifierGroupIndex
+                                )
+                            )
                         }
-                    })
-                    modifierGroupsAdapter?.notifyDataSetChanged()
+                    }
+                    modifierGroupsAdapters?.submitList(adapterItems)
+
                     binding.modifierGroupsRecyclerView.visible()
                     binding.modifierGroupsRecyclerView.setHasFixedSize(true)
                     binding.modifierGroupsRecyclerView.isNestedScrollingEnabled = false
                     binding.modifierGroupsRecyclerView.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                    binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapter
+                    binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapters
 //
                 } else {
                     println("Modifier gorup item count disabled")
@@ -1436,26 +1392,28 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {
         //menuPResenter.visibilityModifierGroup
-        modifierGroupsAdapter!!.showModifierItemPrice(show, modifierGroupPosition)
+//        modifierGroupsAdapter!!.showModifierItemPrice(show, modifierGroupPosition)
     }
 
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean,
         modifierGroupPosition: Int,
-        modifierGroupIndexVisibility: HashMap<String, Int>
+        modifierGroupIndexVisibility: HashMap<String, Int>,
+        modifierItemPosition: Int
     ) {
         val indexOfRelatedModifierGroupPos =
             menuPresenter.menuItem?.modifierGroups?.indexOfFirst { grp ->
                 modifierGroupIndexVisibility.containsValue(modifierGroupPosition) &&
-                grp.id.equals(modifierGroupIndexVisibility.entries.find { t-> t.value == modifierGroupPosition }?.key)
+                        grp.id.equals(modifierGroupIndexVisibility.entries.find { t -> t.value == modifierGroupPosition }?.key)
             } ?: -1
 
-        modifierGroupsAdapter!!.shouldShowCheckBox(
-            hasAtleastOneSelectedItem,
-            modifierGroupPosition,
-            modifierGroupIndexVisibility,
-            indexOfRelatedModifierGroupPos
-        )
+//        modifierGroupsAdapter!!.shouldShowCheckBox(
+//            hasAtleastOneSelectedItem,
+//            modifierGroupPosition,
+//            modifierGroupIndexVisibility,
+//            indexOfRelatedModifierGroupPos,
+//            modifierItemPosition
+//        )
     }
 
     override fun showFavorites(fromAddRemove: Boolean, favorites: ArrayList<Favorite>) {}

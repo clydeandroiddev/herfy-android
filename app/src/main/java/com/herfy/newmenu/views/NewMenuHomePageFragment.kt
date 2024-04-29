@@ -1140,7 +1140,8 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean,
         modifierGroupPosition: Int,
-        modifierGroupIndexVisibility: java.util.HashMap<String, Int>?
+        modifierGroupIndexVisibility: java.util.HashMap<String, Int>?,
+        modifierItemPosition: Int
     ) {
 
     }

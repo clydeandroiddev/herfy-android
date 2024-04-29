@@ -71,8 +71,11 @@ public class ModifierGroupsNewRecyclerViewAdapter extends RecyclerView.Adapter<M
         notifyItemChanged(position);
     }
 
-    public void shouldShowCheckBox(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility, int indexOfRelatedModifierGroup) {
-        //modifierItemsRecyclerViewAdapterNewHashMap.get(modifierGroupPosition).updateItem();
+    public void shouldShowCheckBox(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility, int indexOfRelatedModifierGroup,int modifierItemPosition) {
+        ModifierItemsNewRecyclerViewAdapter adapter = modifierItemsRecyclerViewAdapterNewHashMap.get(modifierGroupPosition);
+        if (adapter != null) {
+            adapter.updateModifierItem(modifierItemPosition);
+        }
         shouldShowModifierGroupCheckbox.put(modifierGroupPosition, hasAtleastOneSelectedItem);
         if(indexOfRelatedModifierGroup != -1){
             notifyItemChanged(indexOfRelatedModifierGroup);

@@ -269,7 +269,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
                 modifierItemsRecyclerViewAdapterNewHashMap.put(position,modifierItemsNewRecyclerViewAdapter);
                 recyclerView.setAdapter(modifierItemsNewRecyclerViewAdapter);
             }else {
-                //recyclerView.setAdapter(modifierItemsRecyclerViewAdapterNewHashMap.get(position));
+                recyclerView.setAdapter(modifierItemsRecyclerViewAdapterNewHashMap.get(position));
             }
         }
     }
@@ -331,7 +331,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     }
 
     @Override
-    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String,Integer> modifierGroupIndexVisibility) {
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String,Integer> modifierGroupIndexVisibility, int modifierItemPosition) {
 
     }
 

@@ -198,7 +198,8 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean,
         modifierGroupPosition: Int,
-        modifierGroupIndexVisibility: java.util.HashMap<String, Int>?
+        modifierGroupIndexVisibility: java.util.HashMap<String, Int>?,
+        modifierItemPosition: Int
     ) {
         TODO("Not yet implemented")
     }
