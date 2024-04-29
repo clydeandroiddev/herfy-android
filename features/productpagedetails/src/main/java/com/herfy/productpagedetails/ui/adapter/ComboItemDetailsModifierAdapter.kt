@@ -419,7 +419,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 modifierAdapterItem.isAboveMax = isAboveMax
             }
         }
-        notifyItemRangeChanged(firstIndex, modifierGroup.modifierItems.size)
+        notifyItemRangeChanged(firstIndex, modifierGroup.modifierItems.size + 1)
     }
     fun getUpdatedModifierList() : List<ModifierGroup>{
         return when(itemList.isNotEmpty()) {

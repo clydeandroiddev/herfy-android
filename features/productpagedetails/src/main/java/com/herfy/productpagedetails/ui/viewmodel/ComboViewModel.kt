@@ -1071,6 +1071,8 @@ class ComboViewModel @Inject constructor(
                 }
                 for (item in modifierGroup.modifierItems) {
                     if (item.id == modifierItem?.id) {
+                        item.attributes.isSelected = _isSelected
+                        item.attributes.quantity = 1
                         modifierItem?.attributes?.isSelected = _isSelected
                         modifierItem?.attributes?.quantity = 1
                     } else {
