@@ -509,10 +509,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     e.printStackTrace()
                 }
 
-                view.setOnClickListener {
-                    goToStoreInMap(store)
-                }
-
                 Handler(Looper.getMainLooper()).post {
                     if (storeMarker != null) {
                         storeMarker?.remove()
@@ -536,8 +532,16 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         )
                     )
                     markerOptions.anchor(0.5f, 1f)
-                    markerOptions.title(store.toString())
                     storeMarker = googleMap?.addMarker(markerOptions)
+                    storeMarker?.tag = "storeTag"
+                    googleMap?.setOnMarkerClickListener { marker ->
+                        if (marker.tag == "storeTag") {
+                            goToStoreInMap(store)
+                            true // Consume the click event
+                        } else {
+                            false // Default behavior (showing the InfoWindow)
+                        }
+                    }
                     if (isMoveCamera) {
                         latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
                             ?.let { googleMap?.animateCamera(it) }
