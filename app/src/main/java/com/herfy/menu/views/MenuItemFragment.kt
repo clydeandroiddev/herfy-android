@@ -684,11 +684,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             }
                         )
                     menuPresenter.modifierGroupList.forEachIndexed { modifierGroupIndex, eachModifierGroup ->
-                        println("Each modifier $modifierGroupIndex and name ${eachModifierGroup.attributes.name}")
+                        println("Each modifier $modifierGroupIndex and name ${eachModifierGroup.attributes.name} and has group ${hasSelectedModifierItemsBy(eachModifierGroup)}")
                         adapterItems.add(
                             ModifierGroupNewRecycleAdapterKotlin.ModifierGroupAdapterItem(
                                 modifierGroup = eachModifierGroup,
                                 modifierGroupIndex = modifierGroupIndex,
+                                hasSelectedItems = hasSelectedModifierItemsBy(eachModifierGroup)
                             )
                         )
                         eachModifierGroup.modifierItems.forEachIndexed { itemIndex, modifierItem ->
@@ -818,7 +819,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             }
         }
     }
-
+    private fun hasSelectedModifierItemsBy(modifierGroup: ModifierGroup): Boolean =
+        modifierGroup.modifierItems.any { it.attributes.isSelected }
 
     private fun changeMealDeal(isSandwich: Boolean) {
         val menuItem1: MenuItem? = if (previousMenuItem != null) {

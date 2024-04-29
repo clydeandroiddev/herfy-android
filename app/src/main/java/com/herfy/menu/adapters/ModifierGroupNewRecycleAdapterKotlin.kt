@@ -103,8 +103,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ModifierGroupAdapterItem) {
             val modifierGroup = item.modifierGroup
-            val isModifierGroupRequired =
-                !modifierGroup.isHasSelectedModifierItems && modifierGroup.attributes.minimum >= 1
+            val isModifierGroupRequired = !item.hasSelectedItems && modifierGroup.attributes.minimum >= 1
             val imageUrl = item.modifierGroup.attributes.image
             val isImageUrl = imageUrl != null &&
                     imageUrl.isNotBlank() &&
@@ -122,7 +121,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
             binding.btnMinimum.setVisible(isModifierGroupRequired)
             binding.minimum.text =
                 CacheUtil.getInstance().getTranslations(Text.REQUIRED, "Required")
-            binding.checkBox.setVisible(modifierGroup.isHasSelectedModifierItems)
+            binding.checkBox.setVisible(modifierGroup.isHasSelectedModifierItems || item.hasSelectedItems)
 
         }
     }
@@ -189,27 +188,32 @@ class ModifierGroupNewRecycleAdapterKotlin(
     private fun updateModifierGroup(currentModifierGroupIndex: Int, modifierGroup: ModifierGroup) {
         val item = itemList[currentModifierGroupIndex]
         val modifierGroupItem = itemList.find {
-            it is ModifierGroupAdapterItem && currentModifierGroupIndex == it.modifierGroupIndex
+            it is ModifierGroupAdapterItem
         }
 
 
-        if (item is ModifierGroupAdapterItem && item.modifierGroup.id == modifierGroup.id) {
-            val hasSelectedItemModifiers = modifierGroup.modifierItems.any {
-                it.attributes.isSelected
+        if (modifierGroupItem is ModifierGroupAdapterItem) {
+            try {
+                val hasSelectedItemModifiers = modifierGroup.modifierItems.any {
+                    it.attributes.isSelected
+                }
+                modifierGroupItem.hasSelectedItems = hasSelectedItemModifiers
+                notifyItemChanged(currentModifierGroupIndex)
+                modifierGroupItem.modifierGroup = modifierGroup
+
+            }catch (e :Exception) {
+                println("Error message $e")
             }
-            item.modifierGroup = modifierGroup
-            item.modifierGroup.isHasSelectedModifierItems = hasSelectedItemModifiers
-            notifyItemChanged(currentModifierGroupIndex)
         }
 
-        if (item is ModifierItemAdapterItem) {
-            val hasSelectedItemModifiers = modifierGroup.modifierItems.any {
-                it.attributes.isSelected
-            }
-            item.modifierGroup = modifierGroup
-            item.modifierGroup.isHasSelectedModifierItems = hasSelectedItemModifiers
-            notifyItemChanged(currentModifierGroupIndex)
-        }
+//        if (item is ModifierItemAdapterItem) {
+//            val hasSelectedItemModifiers = modifierGroup.modifierItems.any {
+//                it.attributes.isSelected
+//            }
+//            item.modifierGroup = modifierGroup
+//            item.modifierGroup.isHasSelectedModifierItems = hasSelectedItemModifiers
+//            notifyItemChanged(currentModifierGroupIndex)
+//        }
     }
 
 
@@ -490,7 +494,8 @@ class ModifierGroupNewRecycleAdapterKotlin(
 
     data class ModifierGroupAdapterItem(
         var modifierGroup: ModifierGroup,
-        val modifierGroupIndex: Int
+        val modifierGroupIndex: Int,
+        var hasSelectedItems: Boolean = false,
     ) : ModifierAdapterType() {
         override val viewType: Int = VIEW_TYPE_MODIFIER_GROUP
     }
