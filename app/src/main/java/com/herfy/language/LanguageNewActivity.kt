@@ -1,8 +1,21 @@
 package com.herfy.language
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.media3.common.C
+import androidx.media3.common.C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+import androidx.media3.common.C.VideoScalingMode
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import com.herfy.base.BaseActivity
 import com.herfy.changelanguage.R
 import com.herfy.changelanguage.databinding.ActivityChangeLanguageBinding
@@ -22,6 +35,13 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
     private var isArabicSelected = false
 
     private var isLanguageSelected = false
+
+    private val playbackStateListener: Player.Listener = playbackStateListener()
+    private var player: Player? = null
+
+    private var playWhenReady = true
+    private var mediaItemIndex = 0
+    private var playbackPosition = 0L
 
     override fun setPresenter(presenter: LanguageContract.Presenter) {
         languagePresenter = presenter
@@ -161,6 +181,100 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
             R.drawable.ic_language_circle_unselected,
             R.drawable.ic_language_circle_selected
         )
+    }
+
+
+    private fun initializePlayer() {
+        // ExoPlayer implements the Player interface
+        player = ExoPlayer.Builder(this)
+            .build()
+            .also { exoPlayer ->
+                binding.videoView.player = exoPlayer
+                // Update the track selection parameters to only pick standard definition tracks
+              /*  exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
+                    .buildUpon()
+                    .setMaxVideoSizeSd()
+                    .build()*/
+
+                val mediaItem = MediaItem.Builder()
+                    .setUri("https://customer-k8n892ut7y8lpez5.cloudflarestream.com/79e15cb36a7411cd45513b69abab8fed/manifest/video.mpd")
+                    .setMimeType(MimeTypes.APPLICATION_MPD)
+                    .build()
+
+                //exoPlayer.setMediaItem(MediaItem.fromUri("https://customer-k8n892ut7y8lpez5.cloudflarestream.com/79e15cb36a7411cd45513b69abab8fed/manifest/video.m3u8"))
+
+
+                exoPlayer.setMediaItems(listOf(mediaItem), mediaItemIndex, playbackPosition)
+                exoPlayer.playWhenReady = playWhenReady
+                exoPlayer.addListener(playbackStateListener)
+                exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+                exoPlayer.prepare()
+                exoPlayer.play()
+                hideSystemUi()
+            }
+    }
+
+    private fun releasePlayer() {
+        player?.let { player ->
+            playbackPosition = player.currentPosition
+            mediaItemIndex = player.currentMediaItemIndex
+            playWhenReady = player.playWhenReady
+            player.removeListener(playbackStateListener)
+            player.release()
+        }
+        player = null
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        if (Build.VERSION.SDK_INT > 23) {
+            initializePlayer()
+        }
+    }
+
+    public override fun onResume() {
+        super.onResume()
+        hideSystemUi()
+        if (Build.VERSION.SDK_INT <= 23 || player == null) {
+            initializePlayer()
+        }
+    }
+
+    public override fun onPause() {
+        super.onPause()
+        if (Build.VERSION.SDK_INT <= 23) {
+            releasePlayer()
+        }
+    }
+
+    public override fun onStop() {
+        super.onStop()
+        if (Build.VERSION.SDK_INT > 23) {
+            releasePlayer()
+        }
+    }
+
+    private fun playbackStateListener() = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            val stateString: String = when (playbackState) {
+                ExoPlayer.STATE_IDLE -> "ExoPlayer.STATE_IDLE      -"
+                ExoPlayer.STATE_BUFFERING -> "ExoPlayer.STATE_BUFFERING -"
+                ExoPlayer.STATE_READY -> "ExoPlayer.STATE_READY     -"
+                ExoPlayer.STATE_ENDED -> "ExoPlayer.STATE_ENDED     -"
+                else -> "UNKNOWN_STATE             -"
+            }
+            Log.d("Test", "changed state to $stateString")
+        }
+    }
+
+    @SuppressLint("InlinedApi")
+    private fun hideSystemUi() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, binding.videoView).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
     }
 
 }
