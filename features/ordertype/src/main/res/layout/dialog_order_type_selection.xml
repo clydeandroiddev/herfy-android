@@ -78,9 +78,10 @@
 
                     <ImageView
                         android:id="@+id/pickupEllipse"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_choose_pickup"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_choose_pickup_new"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -99,11 +100,11 @@
                         style="@style/Styles.Text.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:gravity="start"
                         android:includeFontPadding="false"
                         android:paddingStart="12dp"
                         android:paddingTop="10dp"
                         android:paddingEnd="12dp"
-                        android:gravity="start"
                         android:textAlignment="viewStart"
                         android:textColor="#101010"
                         android:textSize="16sp"
@@ -120,12 +121,12 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
                         android:includeFontPadding="false"
                         android:maxLines="2"
                         android:paddingStart="12dp"
                         android:paddingTop="5dp"
                         android:paddingEnd="12dp"
-                        android:gravity="start"
                         android:textAlignment="viewStart"
                         android:textColor="#101010"
                         android:textSize="14sp"
@@ -141,7 +142,7 @@
             <View
                 android:id="@+id/pickupContainerView"
                 android:layout_width="match_parent"
-                android:layout_height="16dp"/>
+                android:layout_height="16dp" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/curbsideContainer"
@@ -161,9 +162,10 @@
 
                     <ImageView
                         android:id="@+id/curbsideEllipse"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_choose_curbside"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_choose_curbside_new"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -182,11 +184,11 @@
                         style="@style/Styles.Text.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:gravity="start"
                         android:includeFontPadding="false"
                         android:paddingStart="12dp"
                         android:paddingTop="10dp"
                         android:paddingEnd="12dp"
-                        android:gravity="start"
                         android:textAlignment="viewStart"
                         android:textColor="#101010"
                         android:textSize="16sp"
@@ -202,12 +204,12 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
+                        android:gravity="start"
                         android:includeFontPadding="false"
                         android:maxLines="2"
                         android:paddingStart="12dp"
                         android:paddingTop="5dp"
                         android:paddingEnd="12dp"
-                        android:gravity="start"
                         android:textAlignment="viewStart"
                         android:textColor="#101010"
                         android:textSize="14sp"
@@ -223,7 +225,7 @@
             <View
                 android:id="@+id/curbsideContainerView"
                 android:layout_width="match_parent"
-                android:layout_height="16dp"/>
+                android:layout_height="16dp" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/chooseDriveThruContainer"
@@ -244,9 +246,10 @@
 
                     <ImageView
                         android:id="@+id/driveThruEllipse"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_choose_drive_thru"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_choose_drive_thru_new"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -265,11 +268,11 @@
                         style="@style/Styles.Text.Caption"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:gravity="start"
                         android:includeFontPadding="false"
                         android:paddingStart="12dp"
                         android:paddingTop="10dp"
                         android:paddingEnd="12dp"
-                        android:gravity="start"
                         android:textAlignment="viewStart"
                         android:textColor="#101010"
                         android:textSize="16sp"
@@ -286,12 +289,12 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
                         android:includeFontPadding="false"
                         android:maxLines="2"
                         android:paddingStart="12dp"
                         android:paddingTop="5dp"
                         android:paddingEnd="12dp"
-                        android:gravity="start"
                         android:textAlignment="viewStart"
                         android:textColor="#101010"
                         android:textSize="14sp"

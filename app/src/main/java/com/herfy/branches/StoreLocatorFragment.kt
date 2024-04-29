@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -32,6 +33,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.herfy.base.BaseFragment
 import com.herfy.main.MainActivity
 import com.herfy.ordertype.R
@@ -67,6 +70,9 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
     private var dontAnimate = false
 
     private val branchMarkers = ArrayList<Marker?>()
+
+    private var userLatLng: LatLng? = null
+    private var myPolyline: Polyline? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,6 +117,11 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
 
     override fun setPresenter(presenter: BranchesContract.Presenter) {
         branchesPresenter = presenter
+    }
+
+    private fun deletePolyline() {
+        myPolyline?.remove()
+        myPolyline = null  // Clear the reference
     }
 
     override fun logEvent(
@@ -236,6 +247,7 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+            userLatLng = latLng
             markerOptions.anchor(0.5f, 0.5f)
             locationMarker = map?.addMarker(markerOptions)
             map?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
@@ -260,7 +272,7 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                     markerOptions.title(i.toString())
                     markerOptions.position(LatLng(store.attributes.lat, store.attributes.lng))
                     val icon = com.herfy.util.ViewUtil.vectorDrawableToBitmapDescriptor(
-                        it, R.drawable.ic_new_store_locator_store_icon
+                        it, R.drawable.branch_unselected
                     )
                     markerOptions.icon(icon)
                     markerOptions.anchor(0.5f, 1f)
@@ -372,6 +384,19 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                                 )
                             }
                             dontAnimate = false
+
+                            if (userLatLng != null) {
+                                deletePolyline()
+                                myPolyline = map?.addPolyline(
+                                    PolylineOptions().add(branch.attributes?.lat?.let {
+                                        branch.attributes?.lng?.let { it1 ->
+                                            LatLng(
+                                                it, it1
+                                            )
+                                        }
+                                    }, userLatLng).width(8f).color(Color.parseColor("#0064AC"))
+                                )
+                            }
                         }
                     }
                 } else {
