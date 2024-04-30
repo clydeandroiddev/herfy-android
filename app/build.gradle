@@ -265,6 +265,7 @@ dependencies {
     implementation(project(":features:notification"))
     implementation(project(":features:favourites"))
     implementation project(path: ':features:promotions')
+    implementation project(path: ':common')
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
     implementation 'com.google.android.play:review-ktx:2.0.1'
 

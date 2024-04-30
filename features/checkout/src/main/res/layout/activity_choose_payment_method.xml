@@ -81,11 +81,12 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_cards"
                     android:layout_width="match_parent"
-                    android:layout_marginTop="@dimen/margin_large"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_large"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="3"
                     tools:listitem="@layout/item_payment_card" />
+
                 <View
                     android:id="@+id/notesDivider"
                     android:layout_width="match_parent"
