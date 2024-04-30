@@ -1280,6 +1280,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     override fun showOrderStatuses(orderStatuses: ArrayList<OrderStatus>?, isDone: Boolean) {
+        dismissDialogs()
         binding.statusTrackerLayout.apply {
             orderDetails?.let { order ->
                 var currentStatus = getCurrentStatus(orderStatuses)
