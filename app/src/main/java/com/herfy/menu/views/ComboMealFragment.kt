@@ -470,15 +470,23 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 val isAboveMax =
                     this@ComboMealFragment.viewModel.isAboveMax(it.second, modifierItemsQuantity)
                 comboItemDetailsModifierAdapter?.apply {
-                    this@ComboMealFragment.viewModel.getComponentModifierItemTotalPrice(
-                        getUpdatedModifierList()
-                    )
+                    this@ComboMealFragment.viewModel.apply {
+                        getComponentModifierItemTotalPrice(
+                            getUpdatedModifierList()
+                        )
+                        updateModifierVisibilityBy(it.second){mapOfModifierVisibilityConfig ->
+                            if(mapOfModifierVisibilityConfig.size > 0){
+                                updateModifierVisibilityWith(mapOfModifierVisibilityConfig)
+                            }
+                        }
+                    }
                     updateSelectedModifierItem(
                         hasModifierItemsSelected = it.first,
                         modifierGroup = it.second,
                         modifierItem = it.third,
                         isAboveMax = isAboveMax
                     )
+
                 }
             }
             showComponentModifierItemTotal.observe(this@ComboMealFragment) {

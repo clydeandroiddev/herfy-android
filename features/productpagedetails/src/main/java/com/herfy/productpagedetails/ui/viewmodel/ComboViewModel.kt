@@ -106,6 +106,7 @@ class ComboViewModel @Inject constructor(
     private var menuItemComboList = HashMap<Int, HashMap<Int, MenuItemComponents>>()
     private val selectedComponents = HashMap<String, Any>()
     val frequentBoughtItemList = arrayListOf<MenuItem>()
+    private val modifierGroupVisibilityHash = HashMap<String, String>()
 
 
     //Observalbles
@@ -171,6 +172,9 @@ class ComboViewModel @Inject constructor(
     val showLoading: LiveData<Boolean> = _showLoading
     private val _modifierAdapterItems = MutableLiveData<Event<List<ModifierAdapterItem>>>()
     val modifierAdapterItems: LiveData<Event<List<ModifierAdapterItem>>> = _modifierAdapterItems
+
+
+
 
 
     /**Function for retrieving data of menu item from db**/
@@ -1162,7 +1166,8 @@ class ComboViewModel @Inject constructor(
                     }
                     if (currentModifierTotal < modifierGroup.attributes.maximum) {
 
-                        if(!modifierItem.attributes.isSelected && modifierItem.attributes.quantity < 1)  modifierItem.attributes.quantity = 1 else modifierItem.attributes.quantity +=1
+                        if (!modifierItem.attributes.isSelected && modifierItem.attributes.quantity <= 1) modifierItem.attributes.quantity =
+                            1 else modifierItem.attributes.quantity += 1
 
                         if (!modifierItem.attributes.isSelected) {
                             modifierItem.attributes.isSelected = true
@@ -1758,9 +1763,11 @@ class ComboViewModel @Inject constructor(
         val store = CacheUtil.getInstance().getOrderStore()
         if (store != null && frequentlyMenuItem.disabledStores.containsKey(store.id)) {
             _showLoading.value = false
-            _showError.value = Event(ErrorMsgItem(
-                true, CacheUtil.getInstance().getTranslations(Text.LOCATION_AVAILABLE)
-                    .replace("(x)", store.attributes.name))
+            _showError.value = Event(
+                ErrorMsgItem(
+                    true, CacheUtil.getInstance().getTranslations(Text.LOCATION_AVAILABLE)
+                        .replace("(x)", store.attributes.name)
+                )
             )
         } else {
             val eventAttributes = HashMap<String, String>()
@@ -2125,4 +2132,70 @@ class ComboViewModel @Inject constructor(
 
     private fun hasSelectedModifierItemsBy(modifierGroup: ModifierGroup): Boolean =
         modifierGroup.modifierItems.any { it.attributes.isSelected }
+
+    fun updateModifierVisibilityBy(modGroup: ModifierGroup , result: (HashMap<String, String>) -> Unit) {
+        currentSelectedModifierItem?.let { componentModifierItem ->
+            for (group in componentModifierItem.modifierGroups) {
+                val visibilityConfig = group.attributes.visibilityConfig
+                if (visibilityConfig != null) {
+                    val rules = visibilityConfig.rules
+                    if (rules != null && rules.size > 0) {
+                        val rule = rules[0]
+                        if (rule.targetType != null) {
+                            if (rule.targetType.equals("modifier-group", ignoreCase = true)) {
+                                if (group.id != modGroup.id && rule.targetId == modGroup.id) {
+                                    if (rule.targetIs != null && rule.targetIs.equals(
+                                            "selected",
+                                            ignoreCase = true
+                                        )
+                                    ) {
+                                        var selected = 0
+                                        for (modItem in modGroup.modifierItems) {
+                                            if (modItem.attributes.isSelected) {
+                                                selected += 1
+                                            }
+                                        }
+                                        if (selected > 0) {
+                                            group.attributes.visibilityConfig.initialValue = ""
+                                        } else {
+                                            group.attributes.visibilityConfig.initialValue =
+                                                "hidden"
+                                        }
+                                    }
+                                    break
+                                }
+                            } else if (rule.targetType.equals("modifier", ignoreCase = true)) {
+                                val selectedModifiers: MutableSet<String> = java.util.HashSet()
+                                if (group.id != modGroup.id) {
+                                    for (modItem in modGroup.modifierItems) {
+                                        if (modItem.attributes.isSelected) {
+                                            selectedModifiers.add(modItem.id)
+                                        }
+                                    }
+                                }
+                                if (rule.targetId != null && selectedModifiers.contains(rule.targetId)) {
+                                    if (rule.targetIs != null && rule.targetIs.equals(
+                                            "selected",
+                                            ignoreCase = true
+                                        )
+                                    ) {
+                                        group.attributes.visibilityConfig.initialValue = ""
+                                    } else {
+                                        group.attributes.visibilityConfig.initialValue = "hidden"
+                                    }
+                                } else if (rule.targetId.isNotEmpty()) {
+                                    group.attributes.visibilityConfig.initialValue = "hidden"
+                                }
+                            }
+                        }
+                    }
+                }
+                if(visibilityConfig != null && visibilityConfig.initialValue != null){
+                    modifierGroupVisibilityHash[group.id] = group.attributes.visibilityConfig.initialValue
+                }
+            }
+            result(modifierGroupVisibilityHash)
+        }
+    }
+
 }

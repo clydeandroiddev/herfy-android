@@ -421,6 +421,37 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
         }
         notifyItemRangeChanged(firstIndex, modifierGroup.modifierItems.size + 1)
     }
+
+    fun updateModifierVisibilityWith(modifierVisibilityHashMap : HashMap<String, String>){
+        modifierVisibilityHashMap.forEach { (groupId, visiblityValue) ->
+            val firstIndex = itemList.indexOfFirst { modifierAdapterItem ->
+                modifierAdapterItem.viewType == ModifierAdapterItem.VIEW_TYPE_MODIFIER_GROUP &&
+                        (modifierAdapterItem as ModifierGroupAdapterItem).modifierGroup.id == groupId }
+
+            var modifierGroup: ModifierGroup? = null
+            var hasChanges = false
+            itemList.map {
+                    modifierAdapterItem ->
+                if (modifierAdapterItem is ModifierGroupAdapterItem && modifierAdapterItem.modifierGroup.id == groupId &&  modifierAdapterItem.modifierGroup.visibilityConfig.initialValue != visiblityValue) {
+                    modifierAdapterItem.modifierGroup.visibilityConfig.initialValue = visiblityValue
+                    modifierGroup = modifierAdapterItem.modifierGroup
+                    hasChanges = true
+                }
+            }
+
+            itemList.map { modifierAdapterItem ->
+                if (modifierAdapterItem is ModifierItemAdapterItem && modifierAdapterItem.modifierGroup.id == groupId &&  modifierAdapterItem.modifierGroup.visibilityConfig.initialValue != visiblityValue) {
+                    modifierAdapterItem.modifierGroup.visibilityConfig.initialValue = visiblityValue
+                }
+            }
+            if(hasChanges){
+                val count = (modifierGroup?.modifierItems?.size ?: 0) + 1
+                notifyItemRangeChanged(firstIndex, count)
+            }
+        }
+        modifierVisibilityHashMap.entries.removeIf{e -> e.value == "hidden" }
+    }
+
     fun getUpdatedModifierList() : List<ModifierGroup>{
         return when(itemList.isNotEmpty()) {
             true -> {
