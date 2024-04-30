@@ -384,6 +384,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             orderCurbsideDetails.serveOrder.text = CacheUtil.getInstance().getTranslations(
                 Text.ARRIVED_SERVE_ORDER, "Arrived - Serve my order"
             )
+            cancelledText.text =
+                CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
             orderHelpDetails.callHelpLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.CALL, "Call")
             orderHelpDetails.whatsAppHelpMessageLabel.text =
@@ -993,8 +995,13 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     }
 
                     if (order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value) {
+                        binding.estimateLayout.isVisible = false
+                        binding.cancelledText.isVisible = true
                         finishedLabel.text =
                             CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
+                    } else {
+                        binding.estimateLayout.isVisible = true
+                        binding.cancelledText.isVisible = false
                     }
 
                     statusViewSecond.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_done))
@@ -1012,7 +1019,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             preparingTime.setTextColor(resources.getColor(R.color.time_status_color_current))
 
                             frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready_done)
+                            imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_delivery_done)
                             onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
                             onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             onWayTime.setTextColor(resources.getColor(R.color.time_status_color_past))
@@ -1051,7 +1058,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             preparingTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
                             frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready_done)
+                            imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_delivery_done)
                             onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
                             onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
                             onWayTime.setTextColor(resources.getColor(R.color.time_status_color_past))
