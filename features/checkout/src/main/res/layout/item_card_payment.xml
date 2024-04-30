@@ -29,6 +29,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:padding="16dp"
+            android:background="@drawable/unselected_image_bg"
             android:src="@drawable/ic_common_payment_type_card"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

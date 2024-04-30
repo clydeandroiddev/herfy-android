@@ -413,11 +413,13 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
         radioButton.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
         cardView.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
         constraintLayout.setBackgroundColor(Color.WHITE)
+        imageView.background = resources.getDrawable(R.drawable.unselected_image_bg)
     }
     private fun selectedView(radioButton: ImageView, imageView: ImageView, constraintLayout: ConstraintLayout, cardView: MaterialCardView) {
         radioButton.setImageResource(checkoutR.drawable.ic_payment_radio_selected)
         cardView.strokeColor = ContextCompat.getColor(this,R.color.border_color_light)
         constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.card_selected_bg))
+        imageView.background = resources.getDrawable(R.drawable.selected_image_bg)
     }
 
     private val activityResultLauncher = registerForActivityResult(PaymentResultContract()) { result ->
