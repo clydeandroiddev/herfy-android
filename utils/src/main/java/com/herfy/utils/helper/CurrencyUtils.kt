@@ -54,18 +54,14 @@ class CurrencyUtils {
             val concept = CacheUtil.getInstance().concept
             val symbols = DecimalFormatSymbols(LocaleUtil.getLocale())
 
-            val pattern = if(ignoreDecimalPlaces) {
-                if(amount.hasDecimalPart()) {
-                    "#,##0.${"0".repeat(2)}"
-                } else {
-                    "#"
-                }
-            } else {
+            val pattern = if(amount.hasDecimalPart()) {
                 if (concept.decimalPlaces > 0) {
                     "#,##0.${"0".repeat(concept.decimalPlaces)}"
                 } else {
-                    "#"
+                    "#,##0.${"0".repeat(2)}"
                 }
+            } else {
+                "#"
             }
 
             val decimalFormat = DecimalFormat(pattern, symbols)
@@ -83,18 +79,14 @@ class CurrencyUtils {
             val concept = CacheUtil.getInstance().concept
             val symbols = DecimalFormatSymbols(LocaleUtil.getLocale())
 
-            val pattern = if(ignoreDecimalPlaces) {
-                if(amount.hasDecimalPart()) {
-                    "#,##0.${"0".repeat(2)}"
-                } else {
-                    "#"
-                }
-            } else {
+            val pattern = if(amount.hasDecimalPart()) {
                 if (concept.decimalPlaces > 0) {
                     "#,##0.${"0".repeat(concept.decimalPlaces)}"
                 } else {
-                    "#"
+                    "#,##0.${"0".repeat(2)}"
                 }
+            } else {
+                "#"
             }
 
             val decimalFormat = DecimalFormat(pattern, symbols)
@@ -147,8 +139,12 @@ class CurrencyUtils {
             val concept = CacheUtil.getInstance().concept
             val symbols = DecimalFormatSymbols(LocaleUtil.getLocale())
 
-            val pattern = if (concept.decimalPlaces > 0) {
-                "#,##0.${"0".repeat(concept.decimalPlaces)}"
+            val pattern = if(amount.hasDecimalPart()) {
+                if (concept.decimalPlaces > 0) {
+                    "#,##0.${"0".repeat(concept.decimalPlaces)}"
+                } else {
+                    "#,##0.${"0".repeat(2)}"
+                }
             } else {
                 "#"
             }
@@ -192,8 +188,12 @@ class CurrencyUtils {
         fun updateAmountWithCurrency(amount: Double, withSpace: Boolean = false): SpannedString {
             val concept = CacheUtil.getInstance().concept
             val symbols = DecimalFormatSymbols(LocaleUtil.getLocale())
-            val pattern = if (concept.decimalPlaces > 0) {
-                "#,##0.${"0".repeat(concept.decimalPlaces)}"
+            val pattern = if(amount.hasDecimalPart()) {
+                if (concept.decimalPlaces > 0) {
+                    "#,##0.${"0".repeat(concept.decimalPlaces)}"
+                } else {
+                    "#,##0.${"0".repeat(2)}"
+                }
             } else {
                 "#"
             }
