@@ -163,7 +163,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
                 val modifierItem = modifierGroup.modifierItems[selectedModifierIndex]
                 if (!params.isSelected) {
                     modifierItem.attributes.quantity = 1
-                    notifyItemChanged(selectedModifierIndex)
+                    notifyItemChanged(modifierPosition)
                 }
                 val isExceedingLimit = isUserExceedTheModifierGroupMax(modifierGroup = params.modifierGroup)
                 if (isSelected && isExceedingLimit) {
@@ -294,7 +294,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
     private fun selectNewItem(
         selectedPosition: Int,
         isSelected: Boolean,
-        selectedModifierGroupIndex: Int,
+        selectedModifierGroupIndex: Int
     ) {
         val item = itemList[selectedPosition]
         if (item is ModifierItemAdapterItem) {
@@ -545,6 +545,8 @@ class ModifierGroupNewRecycleAdapterKotlin(
             }
             if (formattedPrice.isNotEmpty()) {
                 binding.txtmodifierPrice.text = formattedPrice
+            }else {
+                binding.txtmodifierPrice.text = ""
             }
         }
 
