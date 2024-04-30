@@ -674,6 +674,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 modifierGroupsAdapters?.updateModifierItem(
                                     params
                                 )
+                                menuPresenter.getMenuItemTotalPrice(menuPresenter.menuItem,params.modifierGroupPosition)
 
                             },
                             showModifierMaximumLimit = { message ->
@@ -681,10 +682,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             },
                             onUserAddMoreModifierItemQuantity = {
                                 modifierGroupsAdapters?.updateModifierItemQuantity(it)
+                                menuPresenter.getMenuItemTotalPrice(menuPresenter.menuItem,it.modifierGroupPosition)
                             }
                         )
                     menuPresenter.modifierGroupList.forEachIndexed { modifierGroupIndex, eachModifierGroup ->
-                        println("Each modifier $modifierGroupIndex and name ${eachModifierGroup.attributes.name} and has group ${hasSelectedModifierItemsBy(eachModifierGroup)}")
                         adapterItems.add(
                             ModifierGroupNewRecycleAdapterKotlin.ModifierGroupAdapterItem(
                                 modifierGroup = eachModifierGroup,

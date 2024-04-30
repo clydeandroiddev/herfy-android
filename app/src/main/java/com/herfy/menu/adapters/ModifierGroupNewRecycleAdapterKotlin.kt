@@ -14,13 +14,13 @@ import com.herfy.menu.adapters.model.ModifierItemClickParams
 import com.herfy.productpagedetails.databinding.ItemModifierGroupNewBinding
 import com.herfy.productpagedetails.databinding.ItemModifierOptionTypeBinding
 import com.herfy.utils.constants.Text
-import com.herfy.utils.extensions.isVisible
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.ArabicUtils
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.ModifierProcessor
 import com.herfy.utils.helper.ModifierProcessorCallback
+import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.StringUtil.localize
 import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
@@ -36,7 +36,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var itemList: List<ModifierAdapterType> = mutableListOf()
-    private val clickCountMap = HashMap<String, Int>()
+
 
     companion object {
         const val VIEW_TYPE_MODIFIER_GROUP = 0
@@ -106,12 +106,33 @@ class ModifierGroupNewRecycleAdapterKotlin(
             val modifierGroup = item.modifierGroup
             val isModifierGroupRequired =
                 !item.hasSelectedItems && modifierGroup.attributes.minimum >= 1
+            println("Check box name ${modifierGroup.attributes.name} ${item.hasSelectedItems} and ${modifierGroup.attributes.minimum} a")
             val imageUrl = item.modifierGroup.attributes.image
             val isImageUrl = imageUrl != null &&
                     imageUrl.isNotBlank() &&
                     !imageUrl.lowercase().contains("default-image.png") &&
                     !imageUrl.lowercase().contains("default_category.png")
-
+            val visibilityConfig = modifierGroup.attributes.visibilityConfig
+            val isModifierGroupHasNoVisibilityRules = visibilityConfig?.initialValue?.lowercase() != "hidden"
+            itemView.setVisible(isModifierGroupHasNoVisibilityRules)
+            val minimum = modifierGroup.attributes.minimum
+            val maximum = modifierGroup.attributes.maximum
+            when {
+                minimum > 0 -> {
+                    binding.select.text = when {
+                        maximum > minimum -> CacheUtil.getInstance().getTranslations(Text.SELECT_ATLEAST, "(Select at least (x))")
+                        maximum == minimum -> CacheUtil.getInstance().getTranslations(Text.SELECT_X, "(Select (x))")
+                        else -> ""
+                    }.replace("(x)", StringUtil.localize(minimum.toString()))
+                    binding.select.visibility = if (binding.select.text.isNotBlank()) View.VISIBLE else View.INVISIBLE
+                }
+                minimum == 0 && maximum > 0 -> {
+                    binding.select.text = CacheUtil.getInstance().getTranslations(Text.SELECT_UP_TO_X, "(Select up to (x))")
+                        .replace("(x)", StringUtil.localize(maximum.toString()))
+                    binding.select.visibility = View.VISIBLE
+                }
+                else -> binding.select.visibility = View.INVISIBLE
+            }
             binding.modifierImage.setVisible(isImageUrl)
             Glide.with(itemView.context)
                 .load(imageUrl)
@@ -124,8 +145,6 @@ class ModifierGroupNewRecycleAdapterKotlin(
             binding.minimum.text =
                 CacheUtil.getInstance().getTranslations(Text.REQUIRED, "Required")
             binding.checkBox.setVisible(modifierGroup.isHasSelectedModifierItems || item.hasSelectedItems && binding.btnMinimum.visibility == View.GONE)
-            binding.checkBox.setImageResource(R.drawable.ic_modifier_group_checked_selected)
-            println("Check box ${binding.checkBox.isVisible()} by name ${modifierGroup.attributes.name} Has selected ${(modifierGroup.isHasSelectedModifierItems || item.hasSelectedItems)} and is gone ${binding.btnMinimum.visibility == View.GONE}")
         }
     }
 
@@ -136,19 +155,18 @@ class ModifierGroupNewRecycleAdapterKotlin(
             val modifierGroupMinimum = modifierGroupAttributes.minimum
             if (modifierGroupMinimum == 0 && modifierGroupMaximum == 1) {
                 deselectPreviouslySelectedItems(modifierPosition, params.modifierGroup)
-                selectNewItem(modifierPosition, isSelected, modifierGroupPosition, modifierGroup)
+                selectNewItem(modifierPosition, isSelected, modifierGroupPosition)
 
             } else if (modifierGroupMaximum > 1) {
-                var selectedModifierItem = 0
-                val modifierItem = modifierGroup.modifierItems[modifierPosition - 1]
-
-                for ((index, listItem) in itemList.withIndex()) {
-                    if (listItem is ModifierItemAdapterItem && listItem.modifierItem.attributes.isSelected) {
-                        selectedModifierItem += listItem.modifierItem.attributes.quantity
-
-                    }
+                val selectedModifierIndex =
+                    modifierGroup.modifierItems.indexOfFirst { it.id == params.modifierItem.id }
+                val modifierItem = modifierGroup.modifierItems[selectedModifierIndex]
+                if (!params.isSelected) {
+                    modifierItem.attributes.quantity = 1
+                    notifyItemChanged(selectedModifierIndex)
                 }
-                if (isSelected && selectedModifierItem >= modifierGroupMaximum) {
+                val isExceedingLimit = isUserExceedTheModifierGroupMax(modifierGroup = params.modifierGroup)
+                if (isSelected && isExceedingLimit) {
                     showModifierMaximumLimit(
                         CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT)
                     )
@@ -157,8 +175,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
                         selectNewItem(
                             modifierPosition,
                             isSelected,
-                            modifierGroupPosition,
-                            modifierGroup
+                            modifierGroupPosition
                         )
                     }
                 }
@@ -175,54 +192,77 @@ class ModifierGroupNewRecycleAdapterKotlin(
                     updateModifierItemQuantity(
                         selectedPosition = modifierPosition,
                         isSelected = false,
-                        modifierGroupPosition
+                        modifierGroupPosition,
+                        false,
+                        currentModifierQuantity = quantity
+                    )
+                }else {
+                    updateModifierItemQuantity(
+                        selectedPosition = modifierPosition,
+                        isSelected = modifierItemClickParams.isSelected,
+                        modifierGroupPosition,
+                        false,
+                        currentModifierQuantity = quantity
                     )
                 }
             } else {
+                val isUserAlreadyExceed =
+                    isUserExceedTheModifierGroupMax(modifierGroup = modifierItemClickParams.modifierGroup)
+                if (isUserAlreadyExceed) {
+                    showModifierMaxLimitMessage()
+                    itemList.filterIsInstance<ModifierItemAdapterItem>()
+                        .filterIndexed { index, listItem ->
+                            index != modifierItemClickParams.modifierPosition &&
+                                    !listItem.modifierItem.attributes.isSelected &&
+                                    listItem.modifierGroup.id == modifierGroup.id
+                        }
+                        .forEach { eachModifierIndex ->
+                            eachModifierIndex.modifierItem.attributes.setModifierItemQuantityExceedsMaximum(
+                                true
+                            )
+                            notifyItemChanged(itemList.indexOf(eachModifierIndex))
+                        }
+                    return
+                }
                 updateModifierItemQuantity(
                     selectedPosition = modifierPosition,
                     isSelected = true,
-                    modifierGroupPosition
+                    selectedModifierGroupIndex = modifierGroupPosition,
+                    true,
+                    currentModifierQuantity = quantity
                 )
             }
         }
     }
 
+    private fun isUserExceedTheModifierGroupMax(modifierGroup: ModifierGroup): Boolean {
+        val maximumModifierGroup = modifierGroup.attributes.maximum
+        val selectedModifierItemByGroup = itemList.filterIsInstance<ModifierItemAdapterItem>()
+            .filter { it.modifierGroup.id == modifierGroup.id }
+            .groupBy { it.modifierGroup }
+            .mapValues { (_, items) ->
+                items.sumOf { if (it.modifierItem.attributes.isSelected) it.modifierItem.attributes.quantity else 0 }
+            }
+        return selectedModifierItemByGroup.any<ModifierGroup, Int> { (_, sum) -> sum >= maximumModifierGroup }
+    }
+
     private fun updateModifierGroup(currentModifierGroupIndex: Int, modifierGroup: ModifierGroup) {
-        val item = itemList[currentModifierGroupIndex]
-        val modifierGroupItem = itemList.find {
-            it is ModifierGroupAdapterItem
-        }
         val firstIndex = itemList.indexOfFirst { modifierAdapterItem ->
             modifierAdapterItem.viewType == VIEW_TYPE_MODIFIER_GROUP &&
                     (modifierAdapterItem as ModifierGroupAdapterItem).modifierGroup.id == modifierGroup.id
         }
-        itemList.
-        filter {  it.viewType == VIEW_TYPE_MODIFIER_GROUP && it as ModifierGroupAdapterItem }.forEach { eachModifierGroup ->
-            if (eachModifierGroup is ModifierGroupAdapterItem && eachModifierGroup.modifierGroupIndex == currentModifierGroupIndex) {
-                try {
-                    val hasSelectedItemModifiers = modifierGroup.modifierItems.any {
-                        it.attributes.isSelected
-                    }
-                    eachModifierGroup.hasSelectedItems = hasSelectedItemModifiers
-                    notifyItemChanged(currentModifierGroupIndex)
-                    eachModifierGroup.modifierGroup = modifierGroup
-//                println("Check box group " + hasSelectedItemModifiers + " Name  " + modifierGroup.attributes.name + " Selected " + modifierGroupItem.hasSelectedItems)
+        itemList.filterIsInstance<ModifierGroupAdapterItem>().forEach { eachModifierGroup ->
+            if (eachModifierGroup.modifierGroupIndex == currentModifierGroupIndex) {
+                val currentSelectedModifierGroup = eachModifierGroup.modifierGroup
 
-                } catch (e: Exception) {
-                    println("Error message $e")
+                val hasSelectedItemModifiers = currentSelectedModifierGroup.modifierItems.any {
+                    it.attributes.isSelected
                 }
-
+                eachModifierGroup.hasSelectedItems = hasSelectedItemModifiers
+                notifyItemRangeChanged(firstIndex, currentModifierGroupIndex)
+                eachModifierGroup.modifierGroup = currentSelectedModifierGroup
             }
         }
-//        if (item is ModifierItemAdapterItem) {
-//            val hasSelectedItemModifiers = modifierGroup.modifierItems.any {
-//                it.attributes.isSelected
-//            }
-//            item.modifierGroup = modifierGroup
-//            item.modifierGroup.isHasSelectedModifierItems = hasSelectedItemModifiers
-//            notifyItemChanged(currentModifierGroupIndex)
-//        }
     }
 
 
@@ -230,26 +270,31 @@ class ModifierGroupNewRecycleAdapterKotlin(
         selectedPosition: Int,
         currentSelectedModifierGroup: ModifierGroup
     ) {
-        for ((index, listItem) in itemList.withIndex()) {
-            if (listItem is ModifierItemAdapterItem && listItem.modifierItem.attributes.isSelected && index != selectedPosition && listItem.modifierGroup.id == currentSelectedModifierGroup.id) {
-                listItem.modifierItem.attributes.isSelected = false
-                println(
-                    "Check box selected ${
-                        listItem.modifierItem.attributes.translatedName.getValue(
-                            LocaleUtil.getInstance().language
-                        )
-                    } "
-                )
-                notifyItemChanged(index)
+        itemList.filterIsInstance<ModifierItemAdapterItem>()
+            .filterIndexed { index, listItem ->
+                val attributes =  listItem
+                    .modifierItem.attributes
+                index != selectedPosition &&
+                        listItem.modifierItem.attributes.isSelected &&
+                        listItem.modifierGroup.id == currentSelectedModifierGroup.id &&
+                    attributes.minimum != 1 && attributes.maximum != 1
             }
-        }
+            .forEach { listItem ->
+                listItem.modifierItem.attributes.isSelected = false
+                notifyItemChanged(itemList.indexOf(listItem))
+            }
+    }
+
+    private fun showModifierMaxLimitMessage() {
+        showModifierMaximumLimit(
+            CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT)
+        )
     }
 
     private fun selectNewItem(
         selectedPosition: Int,
         isSelected: Boolean,
         selectedModifierGroupIndex: Int,
-        modifierGroup: ModifierGroup
     ) {
         val item = itemList[selectedPosition]
         if (item is ModifierItemAdapterItem) {
@@ -262,51 +307,46 @@ class ModifierGroupNewRecycleAdapterKotlin(
     private fun updateModifierItemQuantity(
         selectedPosition: Int,
         isSelected: Boolean,
-        selectedModifierGroupIndex: Int
+        selectedModifierGroupIndex: Int,
+        isUserIncreaseModifierQuantity:Boolean,
+        currentModifierQuantity: Int,
     ) {
         val item = itemList[selectedPosition]
         if (item !is ModifierItemAdapterItem) return
 
         val modifierItem = item.modifierItem
         val attributes = modifierItem.attributes
-        increaseQuantity(attributes)
+        if (isUserIncreaseModifierQuantity) {
+            increaseQuantity(attributes)
+        } else {
+            if (currentModifierQuantity == 1) {
+                updateQuantityAndNotify(attributes, isSelected, selectedPosition, selectedModifierGroupIndex, item.modifierGroup)
+                return
+            }
+            decreaseModifierQuantity(attributes)
+        }
+        updateQuantityAndNotify(attributes, isSelected, selectedPosition, selectedModifierGroupIndex, item.modifierGroup)
+    }
+    private fun updateQuantityAndNotify(
+        attributes: ModifierItemAttributes,
+        isSelected: Boolean,
+        selectedPosition: Int,
+        selectedModifierGroupIndex: Int,
+        modifierGroup: ModifierGroup
+    ) {
         attributes.isSelected = isSelected
         notifyItemChanged(selectedPosition)
-        updateModifierGroup(selectedModifierGroupIndex, modifierGroup = item.modifierGroup)
+        updateModifierGroup(selectedModifierGroupIndex, modifierGroup)
     }
 
-    //    fun updateSelectedModifierItem(
-//        hasModifierItemsSelected: Boolean,
-//        modifierGroup: ModifierGroup,
-//        modifierItem: ModifierItem,
-//        isAboveMax: Boolean
-//    ) {
-//        val firstIndex = itemList.indexOfFirst { modifierAdapterItem ->
-//            modifierAdapterItem.viewType == VIEW_TYPE_MODIFIER_ITEM &&
-//                    (modifierAdapterItem as ModifierGroupAdapterItem).modifierGroup.id == modifierGroup.id
-//        }
-//
-//        itemList.map { modifierAdapterItem ->
-//            if (modifierAdapterItem is ModifierGroupAdapterItem && modifierAdapterItem.modifierGroup.id == modifierGroup.id) {
-//                modifierAdapterItem.modifierGroup = modifierGroup
-//                modifierAdapterItem.hasSelectedModifierItems = hasModifierItemsSelected
-//            }
-//        }
-//        itemList.map { modifierAdapterItem ->
-//            if (modifierAdapterItem is ModifierItemAdapterItem && modifierAdapterItem.modifierGroup.id == modifierGroup.id) {
-//                modifierAdapterItem.modifierGroup = modifierGroup
-//                if (modifierAdapterItem.modifierItem.id == modifierItem.id) {
-//                    modifierAdapterItem.modifierItem = modifierItem
-//                }
-//                modifierAdapterItem.isAboveMax = isAboveMax
-//            }
-//        }
-//        notifyItemRangeChanged(firstIndex, modifierGroup.modifierItems.size)
-//    }
     private fun increaseQuantity(attributes: ModifierItemAttributes) {
         var quantity = attributes.quantity
         if (!attributes.isSelected && quantity <= 1) quantity else quantity += 1
         attributes.quantity = quantity
+    }
+
+    private fun decreaseModifierQuantity(attributes: ModifierItemAttributes) {
+        attributes.quantity--
     }
 
     inner class ModifierItemViewHolder(private val binding: ItemModifierOptionTypeBinding) :
@@ -335,8 +375,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
             val shouldShowQuantityLayout = MenuUtil.shouldShowQuantity(
                 modifierGroup,
                 modifierItem
-            ) && (binding.checkLayout.visibility == View.GONE
-                    && binding.radioButton.visibility == View.GONE)
+            )
             val isQuantityShouldShow =
                 isModifierItemSelected && shouldShowQuantityLayout
             val isUserCanAddMoreQuantity = modifierItemAttributes.quantity < modifierGroupMaximum
@@ -345,11 +384,15 @@ class ModifierGroupNewRecycleAdapterKotlin(
                     imageUrl.isNotBlank() &&
                     !imageUrl.lowercase().contains("default-image.png") &&
                     !imageUrl.lowercase().contains("default_category.png")
-
+            updateView(
+                isModifierItemSelected = isModifierItemSelected,
+                shouldShowQuantityLayout = shouldShowQuantityLayout,
+                hasExceededTheModifierMax = modifierItemAttributes.hasModifierItemExceedMaximum()
+            )
             binding.quantityDownLayout.setVisible(isQuantityShouldShow)
             binding.quantity.text = localize("0" + modifierItem.attributes.quantity)
             binding.radioButton.setVisible(modifierGroupMaximum == 1 && modifierGroupMinimum == 1)
-            binding.checkBox.setVisible(modifierGroupMaximum > 1 || modifierGroupMinimum == 0)
+            binding.checkBox.setVisible(modifierGroupMaximum > 1 && modifierMaximum == 1 || modifierGroupMinimum == 0)
             binding.image.setVisible(isImageUrl)
             binding.quantityUp.isFocusable = isUserCanAddMoreQuantity
             binding.quantity.isClickable = isUserCanAddMoreQuantity
@@ -417,7 +460,6 @@ class ModifierGroupNewRecycleAdapterKotlin(
                         onUserClickModifierItem(params)
                     }
                 }
-            updateView(isModifierItemSelected, shouldShowQuantityLayout, modifierItem)
             binding
                 .quantityUp.setOnClickListener {
                     val isUserCanAddMoreModifierQuantity =
@@ -434,18 +476,33 @@ class ModifierGroupNewRecycleAdapterKotlin(
                         )
                         onUserAddMoreModifierItemQuantity(params)
                     } else {
-                        showModifierMaximumLimit(
-                            CacheUtil.getInstance().getTranslations(Text.MODIFIER_MAXIMUM_LIMIT)
-                        )
+                        showModifierMaxLimitMessage()
                     }
                 }
+            binding
+                .quantityDown.setOnClickListener {
+                    val isModifierItemAboveSingleOrGroupMax = modifierItemQuantity > 1 || modifierGroupMaximum != 1
 
+                    if (isModifierItemAboveSingleOrGroupMax) {
+                        val params = ModifierItemClickParams(
+                            isSelected = true,
+                            modifierGroupPosition = item.modifierGroupPosition,
+                            group = item.modifierGroup,
+                            modifierPosition = absoluteAdapterPosition,
+                            modifierItem = modifierItem,
+                            isAdd = false,
+                            modifierGroup = modifierGroup
+                        )
+                        onUserAddMoreModifierItemQuantity(params)
+                    }
+                }
         }
+
 
         private fun updateView(
             isModifierItemSelected: Boolean,
             shouldShowQuantityLayout: Boolean,
-            modifierItem: ModifierItem
+            hasExceededTheModifierMax: Boolean,
         ) {
             if (isModifierItemSelected) {
                 binding.optionCardView.setBackgroundResource(productPageR.drawable.modifier_item_bg_selected_state)
@@ -458,7 +515,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
 
             }
             binding.quantityUp.setVisible(shouldShowQuantityLayout)
-            if (shouldShowQuantityLayout) {
+            if (shouldShowQuantityLayout && hasExceededTheModifierMax.not()) {
                 binding.quantityUp.isEnabled = true
                 binding.quantityUp.setImageResource(productPageR.drawable.quantity_up_blue)
                 binding.optionCardView.isEnabled = true
