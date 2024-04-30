@@ -34,10 +34,7 @@ class PaymentMethodsAdapter(
                 cardListener.onSelectCard(item, position)
             }
             cardNumber.text = item.attributes.brand + " ****" + item.attributes.last4Digits
-            var res: Int = R.drawable.ic_card_new
-            if ("visa".equals(item.attributes.brand, ignoreCase = true)) {
-                res = R.drawable.ic_card_visa_common
-            }
+            val res: Int = R.drawable.ic_common_payment_type_card
             cardImage.setImageResource(res)
         }
     }
