@@ -587,7 +587,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private fun updateStatusGIF(image: Int) {
         try {
             activity?.let {
-                Glide.with(requireActivity()).asGif().load(image)
+                Glide.with(it).asGif().load(image)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(binding.layoutBanner.orderTracker.ivOrderNotif)
             }
