@@ -1587,7 +1587,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             if (selectedPayment == PaymentType.CASH) {
                 binding!!.layoutPayment.tvSelectedPayment.text =
                     CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
-                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_cash)
             } else if (selectedPayment == PaymentType.CARD) {
                 if (selectedCard != null ) {
                     val cardPair = setupSaveCard(selectedCard)
@@ -1596,13 +1596,13 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 } else {
                     binding!!.layoutPayment.tvSelectedPayment.text =
                         CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
-                    binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
+                    binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_card)
                 }
             } else if (selectedPayment == PaymentType.CARD_ON_DELIVERY || selectedPayment == PaymentType.CARD_ON_PICKUP) {
                 binding!!.layoutPayment.tvSelectedPayment.text =  if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
                     CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
                 } else CacheUtil.getInstance().getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
-                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_type_card_v2)
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_cod)
             }
         }
     }
