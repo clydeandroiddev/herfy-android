@@ -75,7 +75,12 @@ class CurbsideVehicleAdapter(
                 deleteItem.gone()
             }
 
-            curbsidePlateNumber.text = item.attributes.plateNumber
+            if (item.attributes.plateNumber.isNullOrEmpty()) {
+                curbsidePlateNumber.text =
+                    item.attributes.carMakerName + " - " + item.attributes.colorName
+            } else {
+                curbsidePlateNumber.text = item.attributes.plateNumber
+            }
 
             chooseCurbside.setOnClickListener {
                 curbsideListener.onSelectedCar(item, position)

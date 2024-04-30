@@ -197,7 +197,8 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             viewModel.getSliders()
             binding.apply {
                 sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
-                val sliderHeight = (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_HOME_TOP_ASPECT_RATIO_WIDTH / Values.SLIDER_HOME_TOP_ASPECT_RATIO_HEIGHT)).toInt()
+                val sliderHeight =
+                    (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_HOME_TOP_ASPECT_RATIO_WIDTH / Values.SLIDER_HOME_TOP_ASPECT_RATIO_HEIGHT)).toInt()
                 layoutBanner.apply {
                     mainToolbar.layoutParams.height = sliderHeight
                     sliderViewPager.layoutParams.height = sliderHeight
@@ -528,23 +529,34 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.showOrderTrackerNotif.observe(this) {
             it.getContentIfNotHandled()?.let { orderDetails ->
-                binding.apply {
+                binding.layoutBanner.orderTracker.apply {
                     Glide.with(requireActivity()).asGif().load(R.drawable.cooking)
                         .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(orderTracker.ivOrderNotif)
-                    orderTracker.clOrderNotif.visibility = View.VISIBLE
-                    orderTracker.tvStatusLabel.text = orderDetails.orderStatus.description
-                    orderTracker.tvOrderTypeLabel.text =
+                        .into(ivOrderNotif)
+                    clOrderNotif.visibility = View.VISIBLE
+                    tvStatusLabel.text =
+                        orderDetails.orderStatus.description
+                    tvOrderTypeLabel.text =
                         CacheUtil.getInstance().getTranslations(
                             Text.YOUR_ORDER_FROM,
                             "Your (x) order from Herfy"
                         ).replace("(x)", orderDetails.orderType)
-                    orderTracker.tvEstimateValue.text =
-                        CacheUtil.getInstance().getTranslations(Text.MIN, "(x) mins")
-                            .replace("(x)", CacheUtil.getInstance().promisedTime)
-                    orderTracker.tvEstimateLabel.text =
-                        CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
-                    orderTracker.otherDetails.setOnClickListener {
+
+                    val promisedTime = CacheUtil.getInstance().promisedTime
+                    if (promisedTime == "0" || promisedTime == "") {
+                        tvEstimateValue.gone()
+                        tvEstimateLabel.gone()
+                    } else {
+                        tvEstimateValue.visible()
+                        tvEstimateLabel.visible()
+                        tvEstimateValue.text =
+                            CacheUtil.getInstance().getTranslations(Text.MIN, "(x) mins")
+                                .replace("(x)", CacheUtil.getInstance().promisedTime)
+                        tvEstimateLabel.text =
+                            CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
+                    }
+
+                    otherDetails.setOnClickListener {
                         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_DETAILS)
                         findNavController().navigateToDeepLink("nav_new_order_tracker/${orderDetails.id}")
                     }
@@ -555,10 +567,10 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.updateOrderTrackerNotif.observe(this) { orderData ->
             binding.apply {
                 if (orderData.orderStatus.sequence < 9) {
-                    orderTracker.tvStatusLabel.text = orderData.orderStatus.description
+                    layoutBanner.orderTracker.tvStatusLabel.text = orderData.orderStatus.description
                 } else {
                     CacheUtil.getInstance().promisedTime = ""
-                    orderTracker.clOrderNotif.visibility = View.GONE
+                    layoutBanner.orderTracker.clOrderNotif.visibility = View.GONE
                 }
             }
         }
@@ -654,7 +666,7 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 viewModel.getLastOrder()
             }
         } else {
-            binding.orderTracker.clOrderNotif.visibility = View.GONE
+            binding.layoutBanner.orderTracker.clOrderNotif.visibility = View.GONE
         }
     }
 
@@ -691,7 +703,8 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private fun setupCaterWithHerfy() {
         activity?.let {
             binding.apply {
-                val sliderHeight = (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_WIDTH / Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_HEIGHT)).toInt()
+                val sliderHeight =
+                    (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_WIDTH / Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_HEIGHT)).toInt()
                 layoutCatering.apply {
                     cvCateringContent.layoutParams.height = sliderHeight
                     ivCater.layoutParams.height = sliderHeight
@@ -714,7 +727,8 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             binding.apply {
                 bottomSliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
                 layoutBottomBanner.apply {
-                    val sliderHeight = (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_WIDTH / Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_HEIGHT)).toInt()
+                    val sliderHeight =
+                        (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_WIDTH / Values.SLIDER_HOME_BOTTOM_ASPECT_RATIO_HEIGHT)).toInt()
                     layoutBottomBanner.apply {
                         cvBannerBottom.layoutParams.height = sliderHeight
                         shimmerBannerBottom.layoutParams.height = sliderHeight
