@@ -170,6 +170,7 @@
                                 </FrameLayout>
 
                                 <LinearLayout
+                                    android:id="@+id/estimateLayout"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
@@ -215,6 +216,25 @@
                                         tools:text="20 - 30 mins" />
 
                                 </LinearLayout>
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/cancelledText"
+                                    style="@style/Styles.Text.Caption"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:gravity="start"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:paddingStart="20dp"
+                                    android:textColor="#DB2627"
+                                    android:textSize="20sp"
+                                    android:visibility="gone"
+                                    app:layout_constraintBottom_toBottomOf="@id/cookingLayout"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@id/cookingLayout"
+                                    app:layout_constraintTop_toTopOf="@id/cookingLayout"
+                                    tools:text="Cancelled" />
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
 

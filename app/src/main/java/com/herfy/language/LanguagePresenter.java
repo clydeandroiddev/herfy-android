@@ -1,9 +1,9 @@
 package com.herfy.language;
 
 import com.herfy.util.AppLogger;
-import com.herfy.utils.helper.DeviceUtil;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.DeviceUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.UtilitiesApiCall;
@@ -31,10 +31,10 @@ public class LanguagePresenter implements LanguageContract.Presenter {
     @Override
     public void getLanguage() {
         String language = Locale.getDefault().getLanguage();
-        if (language.equalsIgnoreCase("ar") || language.equalsIgnoreCase(LocaleUtil.AR_SA)) {
-            languageView.selectArabic();
-        } else {
+        if (language.equalsIgnoreCase("en") || language.equalsIgnoreCase(LocaleUtil.EN_US)) {
             languageView.selectEnglish();
+        } else {
+            languageView.selectArabic();
         }
     }
 

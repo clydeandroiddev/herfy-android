@@ -13,7 +13,6 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.BitmapDrawable
-import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -45,6 +44,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.model.mutation.Overlay
@@ -141,7 +142,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private var binding: ActivityCheckoutPageBinding? = null
     var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private var mMap: GoogleMap? = null
-    private val currentLocation: Location? = null
     var isBranchImageAvailable = false
     var mukafaaSelected = false
     var dialogCheckout: CustomCheckoutDialog? = null
@@ -175,6 +175,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private var orderServiceChargeRecyclerViewAdapter: OrderServiceChargeRecyclerViewAdapter? = null
     var firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
 
+    private var myPolyline: Polyline? = null
+
     var isFromCheckout = false
     private var moyasarActivityResultLauncher: ActivityResultLauncher<Intent>? = null
     private var isShowCardFailed = false
@@ -206,13 +208,19 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     if (result.resultCode == RESULT_OK) {
                         val intent = result.data
                         if (intent != null) {
-                            if (intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID) && intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)) {
+                            if (intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID) && intent.hasExtra(
+                                    MoyasarActivity.EXTRA_MOYASAR_STATUS
+                                )
+                            ) {
                                 if (!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
                                         .equals(
                                             MoyasarActivity.STATUS_FAILED,
                                             ignoreCase = true
                                         ) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
-                                        .equals(MoyasarActivity.STATUS_CANCELLED, ignoreCase = true) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
+                                        .equals(
+                                            MoyasarActivity.STATUS_CANCELLED,
+                                            ignoreCase = true
+                                        ) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
                                         .equals(MoyasarActivity.STATUS_FAILED, ignoreCase = true)
                                 ) {
                                     paymentPresenter!!.sendUpsells()
@@ -240,6 +248,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 }
             }
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+    }
+
+    private fun deletePolyline() {
+        myPolyline?.remove()
+        myPolyline = null  // Clear the reference
     }
 
     private fun popupUpsellBackStack() {
@@ -390,7 +403,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             val currentLocationMarker = MarkerOptions()
                             currentLocationMarker.icon(currentMarkerIcon)
                             currentLocationMarker.position(addressLocation)
-                            currentLocationMarker.anchor(0.5f, 1f)
+                            currentLocationMarker.anchor(0.5f, 0.5f)
                             markerOptionsList.add(currentLocationMarker)
                             mMap?.addMarker(currentLocationMarker)
 
@@ -416,6 +429,19 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                     mMap?.animateCamera(zout)
                                 }
                             })
+
+                            try {
+                                deletePolyline()
+                                myPolyline = mMap?.addPolyline(
+                                    PolylineOptions().add(
+                                        LatLng(
+                                            storeLocation.latitude, storeLocation.longitude
+                                        ), currentLocation
+                                    ).width(8f).color(Color.parseColor("#0064AC"))
+                                )
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
                         }
                     }.addOnFailureListener {
                         it.printStackTrace()
@@ -452,10 +478,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             val currentLocationMarker = MarkerOptions()
                             currentLocationMarker.icon(currentMarkerIcon)
                             currentLocationMarker.position(currentLocation)
-                            currentLocationMarker.anchor(0.5f, 1f)
+                            currentLocationMarker.anchor(0.5f, 0.5f)
                             markerOptionsList.add(currentLocationMarker)
                             mMap?.addMarker(currentLocationMarker)
-
 
                             val storeLocationMarker = MarkerOptions()
                             storeLocationMarker.icon(icon)
@@ -479,6 +504,19 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                     mMap?.animateCamera(zout)
                                 }
                             })
+
+                            try {
+                                deletePolyline()
+                                myPolyline = mMap?.addPolyline(
+                                    PolylineOptions().add(
+                                        LatLng(
+                                            storeLocation.latitude, storeLocation.longitude
+                                        ), currentLocation
+                                    ).width(8f).color(Color.parseColor("#0064AC"))
+                                )
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
 
                         }
                     }?.addOnFailureListener {
@@ -909,14 +947,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             val mins =
                 CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.delivery.toString()
             binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)",mins)
+                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)", mins)
         } else {
             binding!!.tvTimeLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.PICKUP_TIME, "Pickup Time")
             val mins =
                 CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString()
             binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)",mins)
+                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)", mins)
         }
         binding!!.placeOrder.text = CacheUtil.getInstance()
             .getTranslations(Text.PLACE_ORDER, "Place Order")
@@ -1559,12 +1597,13 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun showSelectedPayment() {
         val selectedPayment = CacheUtil.getInstance().orderPayment
         val selectedCard = CacheUtil.getInstance().customCard
-        if (selectedCard != null && selectedCard.attributes.isDefault && isCardPaymentAllowed() ) {
+        if (selectedCard != null && selectedCard.attributes.isDefault && isCardPaymentAllowed()) {
             val cardPair = setupSaveCard(selectedCard)
             CacheUtil.getInstance().setCustomerCards(Gson().toJson(selectedCard))
             CacheUtil.getInstance().orderPayment = PaymentType.CARD
             binding!!.layoutPayment.ivSelectedPayment.setImageResource(cardPair.first)
-            binding!!.layoutPayment.tvSelectedPayment.text =  cardPair.second+selectedCard.attributes.last4Digits
+            binding!!.layoutPayment.tvSelectedPayment.text =
+                cardPair.second + selectedCard.attributes.last4Digits
         } else {
             val isUserNotSelectedAnyPaymentMethod =
                 selectedPayment == PaymentType.NONE  // && CacheUtil.getInstance().customCard == null
@@ -1589,10 +1628,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_cash)
             } else if (selectedPayment == PaymentType.CARD) {
-                if (selectedCard != null ) {
+                if (selectedCard != null) {
                     val cardPair = setupSaveCard(selectedCard)
                     binding!!.layoutPayment.ivSelectedPayment.setImageResource(cardPair.first)
-                    binding!!.layoutPayment.tvSelectedPayment.text =  cardPair.second+selectedCard.attributes.last4Digits
+                    binding!!.layoutPayment.tvSelectedPayment.text =
+                        cardPair.second + selectedCard.attributes.last4Digits
                 } else {
                     binding!!.layoutPayment.tvSelectedPayment.text =
                         CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
@@ -1607,20 +1647,20 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
     }
 
-    private fun setupSaveCard(selectedCard: CustomerCard) : Pair<Int, String> {
+    private fun setupSaveCard(selectedCard: CustomerCard): Pair<Int, String> {
         var res = R.drawable.ic_card_new
         var cardLabel = "Visa ****"
         if (selectedCard.attributes.brand.equals("visa", true)) {
             res = R.drawable.ic_visa
             cardLabel = "Visa ****"
-        } else if (selectedCard.attributes.brand.endsWith("mastercard", true)){
+        } else if (selectedCard.attributes.brand.endsWith("mastercard", true)) {
             res = R.drawable.ic_mastercard
             cardLabel = "Master ****"
-        }else if (selectedCard.attributes.brand.endsWith("amex", true)){
+        } else if (selectedCard.attributes.brand.endsWith("amex", true)) {
             res = R.drawable.ic_amex_card
             cardLabel = "Amex ****"
         }
-        return Pair(res,cardLabel)
+        return Pair(res, cardLabel)
     }
 
     private fun showPaymentMethod() {
