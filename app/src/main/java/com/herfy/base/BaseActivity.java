@@ -40,6 +40,8 @@ import androidx.dynamicanimation.animation.SpringForce;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.firebase.perf.FirebasePerformance;
@@ -503,9 +505,18 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
 
         try {
             dismissDialogs();
+            View view = getLayoutInflater().inflate(R.layout.loading, null);
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setCancelable(false);
-            builder.setView(getLayoutInflater().inflate(R.layout.loading, null));
+            builder.setView(view);
+
+            ImageView ivLoader = view.findViewById(R.id.ivLoader);
+            Glide.with(this)
+                .asGif()
+                .load(R.drawable.loader)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(ivLoader);
 
             loadingDialog = builder.create();
             loadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

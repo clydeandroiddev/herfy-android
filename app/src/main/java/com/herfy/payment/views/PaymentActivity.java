@@ -1391,7 +1391,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
             dialogCheckout.setOnActionSelectedListener(new CustomCheckoutDialog.OnActionSelectedListener() {
                 @Override
                 public void onFormSubmit() {
-                    showProgressDialog(CacheUtil.getInstance().getTranslations(Text.LOADING));
+                    showLoadingDialog();
                 }
 
                 @Override

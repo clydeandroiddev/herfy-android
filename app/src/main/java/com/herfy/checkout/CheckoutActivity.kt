@@ -1044,7 +1044,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             dialogCheckout = CustomCheckoutDialog(this)
             dialogCheckout!!.setOnActionSelectedListener(object : OnActionSelectedListener {
                 override fun onFormSubmit() {
-                    showProgressDialog(CacheUtil.getInstance().getTranslations(Text.LOADING))
+                    showLoadingDialog()
                 }
 
                 override fun onTokenGenerated(response: TokenDetails?) {
