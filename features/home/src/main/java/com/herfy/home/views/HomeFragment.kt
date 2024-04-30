@@ -39,13 +39,13 @@ import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.helper.ViewUtil
 import com.santalu.diagonalimageview.Direction
+import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class
-HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
+class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     override val viewModel: HomeViewModel by viewModels()
     override val layout: Int = R.layout.fragment_home
@@ -98,8 +98,7 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 activity?.apply {
                     try {
                         val intent = Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(Values.CATER_WITH_HERFY_URL)
+                            Intent.ACTION_VIEW, Uri.parse(Values.CATER_WITH_HERFY_URL)
                         )
                         startActivity(intent)
                     } catch (e: ActivityNotFoundException) {
@@ -133,8 +132,7 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         binding.apply {
             val authUtil = AuthUtil.getInstance()
             if (authUtil.isSignedIn && authUtil.customer != null) {
-                tvHomeGreetings.text =
-                    TimeUtil.getGreetings(authUtil.customer.attributes.firstName)
+                tvHomeGreetings.text = TimeUtil.getGreetings(authUtil.customer.attributes.firstName)
                 tvHomeGreetingsEmoji.visible()
                 tvHomeGreetingsEmoji.text = resources.getString(TimeUtil.getGreetingsIcon())
             } else {
@@ -175,8 +173,7 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         cacheHelper.getTranslations(Text.ASHAB_HERFY, "Ashab Herfy")
                     tvLabelYourPoints.text =
                         cacheHelper.getTranslations(Text.TOTAL_POINTS, "Total Points")
-                    tvSarLabel.text =
-                        cacheHelper.getTranslations(Text.SAR_VALUE_LABEL, "SR VALUE")
+                    tvSarLabel.text = cacheHelper.getTranslations(Text.SAR_VALUE_LABEL, "SR VALUE")
                     tvSeeRewards.text =
                         cacheHelper.getTranslations(Text.SEE_MY_REWARDS, "See my rewards")
                     tvTitleEmptyState.text = cacheHelper.getTranslations(
@@ -393,8 +390,7 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         ) {
                             tierBackground = R.drawable.background_gold_tier
                         } else if (loyaltyTier.equals(
-                                "Diamond",
-                                true
+                                "Diamond", true
                             ) || loyaltyTier == "البلاتين"
                         ) {
                             tierBackground = R.drawable.background_diamond_tier
@@ -530,17 +526,29 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.showOrderTrackerNotif.observe(this) {
             it.getContentIfNotHandled()?.let { orderDetails ->
                 binding.layoutBanner.orderTracker.apply {
-                    Glide.with(requireActivity()).asGif().load(R.drawable.cooking)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(ivOrderNotif)
+                    if (orderDetails.orderType == OrderType.convertOrderTypeToString(OrderType.DELIVERY)) {
+                        if (orderDetails.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
+                            updateStatusGIF(R.drawable.make_order)
+                        } else if (orderDetails.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && orderDetails.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                            updateStatusGIF(R.drawable.delivered_order)
+                        } else {
+                            updateStatusGIF(R.drawable.delivered_order)
+                        }
+                    } else {
+                        if (orderDetails.orderStatus.sequence <= OrderStatusType.IN_KITCHEN.value) {
+                            updateStatusGIF(R.drawable.make_order)
+                        } else if (orderDetails.orderStatus.sequence >= OrderStatusType.READY.value && orderDetails.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                            updateStatusGIF(R.drawable.collected_order)
+                        } else {
+                            updateStatusGIF(R.drawable.collected_order)
+                        }
+                    }
+
                     clOrderNotif.visibility = View.VISIBLE
-                    tvStatusLabel.text =
-                        orderDetails.orderStatus.description
-                    tvOrderTypeLabel.text =
-                        CacheUtil.getInstance().getTranslations(
-                            Text.YOUR_ORDER_FROM,
-                            "Your (x) order from Herfy"
-                        ).replace("(x)", orderDetails.orderType)
+                    tvStatusLabel.text = orderDetails.orderStatus.description
+                    tvOrderTypeLabel.text = CacheUtil.getInstance().getTranslations(
+                        Text.YOUR_ORDER_FROM, "Your (x) order from Herfy"
+                    ).replace("(x)", orderDetails.orderType)
 
                     val promisedTime = CacheUtil.getInstance().promisedTime
                     if (promisedTime == "0" || promisedTime == "") {
@@ -576,6 +584,17 @@ HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
+    private fun updateStatusGIF(image: Int) {
+        try {
+            activity?.let {
+                Glide.with(requireActivity()).asGif().load(image)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(binding.layoutBanner.orderTracker.ivOrderNotif)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     private fun orderTypeClick(orderType: OrderType) {
         activity?.let {

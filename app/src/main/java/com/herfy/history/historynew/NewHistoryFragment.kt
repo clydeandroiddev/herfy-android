@@ -40,6 +40,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatus
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
@@ -109,8 +110,6 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
 
     override fun setupViews() {
         binding.apply {
-            Glide.with(requireActivity()).asGif().load(R.drawable.cooking)
-                .transition(DrawableTransitionOptions.withCrossFade()).into(cookingImage)
 
             back.setOnClickListener {
                 navigateUp()
@@ -204,6 +203,18 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         }
     }
 
+    private fun updateStatusGIF(image: Int) {
+        try {
+            activity?.cast<BaseActivity> {
+                Glide.with(it).asGif().load(image)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(binding.cookingImage)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     private fun processInProgress(orders: ArrayList<OrderHistory>): String? {
         val order = orders.firstOrNull {
@@ -211,6 +222,24 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         }
         order?.let { history ->
             binding.apply {
+                if (order.orderType == OrderType.convertOrderTypeToString(OrderType.DELIVERY)) {
+                    if (order.sequence <= OrderStatusType.DISPATCHED.value) {
+                        updateStatusGIF(R.drawable.make_order)
+                    } else if (order.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && order.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                        updateStatusGIF(R.drawable.delivered_order)
+                    } else {
+                        updateStatusGIF(R.drawable.delivered_order)
+                    }
+                } else {
+                    if (order.sequence <= OrderStatusType.IN_KITCHEN.value) {
+                        updateStatusGIF(R.drawable.make_order)
+                    } else if (order.sequence >= OrderStatusType.READY.value && order.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                        updateStatusGIF(R.drawable.collected_order)
+                    } else {
+                        updateStatusGIF(R.drawable.collected_order)
+                    }
+                }
+
                 inProgressLayout.isVisible = true
                 itemPrice.text = StringUtil.getNewFormattedPrice(
                     history.total, true

@@ -994,21 +994,13 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             CacheUtil.getInstance().getTranslations(Text.PICKED, "Picked")
                     }
 
-                    if (order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value) {
-                        binding.estimateLayout.isVisible = false
-                        binding.cancelledText.isVisible = true
-                        finishedLabel.text =
-                            CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
-                    } else {
-                        binding.estimateLayout.isVisible = true
-                        binding.cancelledText.isVisible = false
-                    }
-
                     statusViewSecond.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_done))
                     statusViewThird.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_done))
 
                     if (ot == OrderType.DELIVERY) {
                         if (status.sequence <= OrderStatusType.DISPATCHED.value) {
+                            updateStatusGIF(R.drawable.make_order)
+
                             statusViewSecond.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
                             statusViewThird.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
 
@@ -1032,6 +1024,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
                         } else if (status.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && status.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
 
+                            updateStatusGIF(R.drawable.delivered_order)
+
                             frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
                             preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
@@ -1051,6 +1045,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
                         } else {
+                            updateStatusGIF(R.drawable.delivered_order)
                             frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
                             preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
@@ -1072,6 +1067,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         }
                     } else {
                         if (status.sequence <= OrderStatusType.IN_KITCHEN.value) {
+                            updateStatusGIF(R.drawable.make_order)
                             statusViewSecond.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
                             statusViewThird.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
 
@@ -1094,7 +1090,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
                         } else if (status.sequence >= OrderStatusType.READY.value && status.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-
+                            updateStatusGIF(R.drawable.collected_order)
                             frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
                             preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
@@ -1114,6 +1110,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
                         } else {
+                            updateStatusGIF(R.drawable.collected_order)
                             frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
                             preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
@@ -1133,6 +1130,18 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             finishedTime.setTextColor(resources.getColor(R.color.time_status_color_current))
 
                         }
+                    }
+
+                    if (order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value) {
+                        binding.cookingImage.setImageResource(R.drawable.ic_cancelled_order)
+                        imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_cancelled_order)
+                        binding.estimateLayout.isVisible = false
+                        binding.cancelledText.isVisible = true
+                        finishedLabel.text =
+                            CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
+                    } else {
+                        binding.estimateLayout.isVisible = true
+                        binding.cancelledText.isVisible = false
                     }
                 }
             }
@@ -1209,8 +1218,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             orderAddress = address
             binding.apply {
                 blocker.gone()
-                Glide.with(requireActivity()).asGif().load(R.drawable.cooking)
-                    .transition(DrawableTransitionOptions.withCrossFade()).into(cookingImage)
                 showStoreMarker()
                 showStoreDeliveryTime()
                 showDeliveryDetails()
@@ -1487,6 +1494,18 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 it.showLoadingDialog()
             }
             orderPresenter?.cancel()
+        }
+    }
+
+    private fun updateStatusGIF(image: Int) {
+        try {
+            activity?.cast<BaseActivity> {
+                Glide.with(it).asGif().load(image)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(binding.cookingImage)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
