@@ -180,6 +180,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
             if (modifierGroupMinimum == 0 && modifierGroupMaximum == 1) {
                 deselectPreviouslySelectedItems(modifierPosition, params.modifierGroup)
                 selectNewItem(modifierPosition, isSelected, modifierGroupPosition)
+                updateVisibilityConfig()
 
             } else if (modifierGroupMaximum > 1) {
                 val selectedModifierIndex =
@@ -201,6 +202,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
                             isSelected,
                             modifierGroupPosition
                         )
+                        updateVisibilityConfig()
                     }
                 }
             }
@@ -208,27 +210,67 @@ class ModifierGroupNewRecycleAdapterKotlin(
     }
     private fun updateVisibilityConfig() {
         itemList.filterIsInstance<ModifierGroupAdapterItem>()
-            .forEach {
-                val attributes = it.modifierGroup.attributes
+            .forEachIndexed { index, item ->
+                val attributes = item.modifierGroup.attributes
                 val visibilityConfig = attributes.visibilityConfig
                 if (visibilityConfig != null) {
                     val rules = visibilityConfig.rules
-                    if (rules != null && rules.size > 0) {
+                    if (rules != null && rules.isNotEmpty()) {
                         val rule: VisibilityConfigRule = rules[0]
                         if (rule.targetType != null && rule.targetType.equals(
                                 "modifier-group",
                                 ignoreCase = true
-                            )) {
-                            val hasAnySelectedItems = it.modifierGroup
+                            )
+                        ) {
+                            val hasAnySelectedItems = item.modifierGroup
                                 .modifierItems.any { it.attributes.isSelected }
-                            if (hasAnySelectedItems) {
 
+                            if (rule.targetId == item.modifierGroup.id) {
+                                if (hasAnySelectedItems) {
+                                    attributes.visibilityConfig.initialValue = ""
+                                } else {
+                                    attributes.visibilityConfig.initialValue = "hidden"
+                                }
+                                notifyItemChanged(index)
+                                return@forEachIndexed // exit the lambda expression
+                            }
+                        }
+                    }
+                }
+            }
+        itemList
+            .filterIsInstance<ModifierItemAdapterItem>()
+            .forEachIndexed { index, item ->
+                val attributes = item.modifierGroup.attributes
+                val visibilityConfig = attributes.visibilityConfig
+                if (visibilityConfig != null) {
+                    val rules = visibilityConfig.rules
+                    if (rules != null && rules.isNotEmpty()) {
+                        val rule: VisibilityConfigRule = rules[0]
+                        if (rule.targetType != null && rule.targetType.equals(
+                                "modifier-group",
+                                ignoreCase = true
+                            )
+                        ) {
+                            val hasAnySelectedItems = item.modifierGroup
+                                .modifierItems.any { it.attributes.isSelected }
+
+                            if (rule.targetId == item.modifierGroup.id) {
+                                if (hasAnySelectedItems) {
+                                    attributes.visibilityConfig.initialValue = ""
+                                } else {
+                                    attributes.visibilityConfig.initialValue = "hidden"
+                                }
+                                notifyItemChanged(index)
+                                return@forEachIndexed // exit the lambda expression
                             }
                         }
                     }
                 }
             }
     }
+
+
 
     private fun updateVisibilityByRule(rule: VisibilityConfigRule, modifierGroup: ModifierGroup, menuItem: MenuItem) {
         if (!modifierGroup.id.equals(menuItem.sizes.id) && rule.targetId == menuItem.sizes.id) {
