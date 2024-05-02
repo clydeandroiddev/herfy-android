@@ -2,6 +2,7 @@ package com.herfy.popup
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -28,9 +29,10 @@ import org.json.JSONException
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.model.Popup
 import com.herfy.analytics.kochava.KochavaTrackerUtil
+import com.herfy.utils.constants.Values
 import com.kochava.tracker.events.EventType
 
-class PopupFragment: BaseDialogFragment() {
+class PopupFragment : BaseDialogFragment() {
 
     companion object {
         const val ARGS_KEY_FRAGMENT_RESULT = "fragmentResult"
@@ -44,10 +46,21 @@ class PopupFragment: BaseDialogFragment() {
 
     private val popup: Popup = CacheUtil.getInstance().popup
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // create ContextThemeWrapper from the original Activity Context with the custom theme
         val mainColorString = CacheUtil.getInstance().colorMain.replace("#", "")
-        val contextThemeWrapper: Context = ContextThemeWrapper(activity, requireContext().resources.getIdentifier("T_${mainColorString}", "style", requireContext().packageName))
+        val contextThemeWrapper: Context = ContextThemeWrapper(
+            activity,
+            requireContext().resources.getIdentifier(
+                "T_${mainColorString}",
+                "style",
+                requireContext().packageName
+            )
+        )
 
         // clone the inflater using the ContextThemeWrapper
         val localInflater = inflater.cloneInContext(contextThemeWrapper)
@@ -55,7 +68,8 @@ class PopupFragment: BaseDialogFragment() {
 
         dialog?.window?.run {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             statusBarColor = Color.TRANSPARENT
         }
         return binding.root
@@ -63,11 +77,7 @@ class PopupFragment: BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnAction.isVisible = !popup.buttonLabel.isNullOrBlank() && !popup.actionType.isNullOrBlank() && !popup.actionValue.isNullOrBlank()
-        binding.tvLabel.isVisible = !popup.label.isNullOrEmpty()
 
-        binding.tvLabel.text = popup.label
-        binding.btnAction.text = popup.buttonLabel
         popup.imageUri?.let {
             context?.let { ctx ->
                 Glide.with(ctx)
@@ -75,7 +85,7 @@ class PopupFragment: BaseDialogFragment() {
                     .skipMemoryCache(false)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .apply(RequestOptions.centerCropTransform())
-                    .listener(object : RequestListener<Drawable>{
+                    .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,
                             model: Any?,
@@ -102,6 +112,9 @@ class PopupFragment: BaseDialogFragment() {
 
         }
         binding.btnAction.setOnClickListener {
+            dismiss()
+        }
+        binding.image.setOnClickListener {
             com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent(EventType.AD_VIEW)
             dismiss()
             setFragmentResult(
@@ -118,7 +131,7 @@ class PopupFragment: BaseDialogFragment() {
         super.onStart()
         dialog?.window?.apply {
             val width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = ViewGroup.LayoutParams.WRAP_CONTENT
+            val height = ViewGroup.LayoutParams.MATCH_PARENT
             setLayout(width, height)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)

@@ -240,7 +240,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
             currentDestination = destination.id
             binding.toolbarMain.apply {
-                if (currentDestination == R.id.nav_herfy_home) {
+                if (currentDestination == R.id.nav_herfy_home || currentDestination == R.id.nav_dialog_popup) {
                     hide(false)
                     setCartQuantity()
                     setupSideBar()

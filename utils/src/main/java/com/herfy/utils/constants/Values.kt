@@ -110,4 +110,8 @@ object Values {
     const val NUTRITION_INFO_ASPECT_RATIO_HEIGHT = 387.0
 
     const val LANGUAGE_BACKGROUND_VIDEO_URL = "https://customer-k8n892ut7y8lpez5.cloudflarestream.com/79e15cb36a7411cd45513b69abab8fed/manifest/video.mpd"
+
+    const val ARGS_KEY_FRAGMENT_RESULT = "fragmentResult"
+    const val ARGS_KEY_ACTION_TYPE = "action_type"
+    const val ARGS_KEY_ACTION_VALUE = "action_value"
 }

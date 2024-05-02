@@ -282,7 +282,7 @@ class HomeViewModel @Inject constructor(
         return excludedMenu
     }
 
-    private fun getMenuItemWith(menuItemId: String) {
+    fun getMenuItemWith(menuItemId: String) {
         invokeAtBackground {
             homeRepository.getMenuItemWith(menuItemId) { homeResponse ->
                 homeResponse.data?.cast<MenuItemEntity> { menuItemEntity ->
