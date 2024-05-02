@@ -9,6 +9,8 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.fragment.app.clearFragmentResultListener
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -66,6 +68,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         super.initViews()
         viewModel.getMenuCategory()
         binding.apply {
+            showPopup()
             setupSlider()
             setupPromoCategory()
             setupPromotions()
@@ -106,6 +109,41 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     }
                 }
             }
+        }
+    }
+
+    private fun showPopup() {
+        CacheUtil.getInstance().popup?.let {
+            Glide.with(requireContext()).load(CacheUtil.getInstance().popup.imageUri)
+                .preload()
+            setFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
+                clearFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT)
+                val actionValue = bundle.getString(Values.ARGS_KEY_ACTION_VALUE) ?: ""
+                if(actionValue.isNotEmpty()){
+                    when (bundle.getString(Values.ARGS_KEY_ACTION_TYPE)) {
+                        "url" -> {
+                            try {
+                                val activity = activity
+                                if (activity != null) {
+                                    val intent = Intent(Intent.ACTION_VIEW)
+                                    intent.data = Uri.parse(actionValue)
+                                    activity.startActivity(intent)
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                        "category" -> {
+                            MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
+                            findNavController().navigateToDeepLink("nav_menu/$actionValue")
+                        }
+
+                        "item", "product" -> viewModel.getMenuItemWith(actionValue)
+                    }
+                }
+
+            }
+            findNavController().navigateToDeepLink("nav_dialog_popup")
         }
     }
 

@@ -50,6 +50,11 @@
 
         </action>
 
+        <action
+            android:id="@+id/action_home_to_dialog_popup"
+            app:destination="@id/nav_dialog_popup"
+            app:popUpTo="@+id/nav_home" />
+
     </fragment>
 
     <fragment
@@ -774,8 +779,12 @@
 
     <dialog
         android:id="@+id/nav_dialog_popup"
-        android:name="com.skylinedynamics.popup.PopupFragment"
-        tools:layout="@layout/fragment_dialog_popup" />
+        android:name="com.herfy.popup.PopupFragment"
+        tools:layout="@layout/fragment_dialog_popup" >
+
+        <deepLink app:uri="android-app://com.herfy/nav_dialog_popup" />
+
+    </dialog>
 
     <dialog
         android:id="@+id/nav_dialog_order_type"
