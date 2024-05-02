@@ -109,7 +109,6 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                     checkLoading()
                 }
                 loyaltyPresenter.getLoyalty()
-                loyaltyPresenter.getCustomerLoyalty()
             }
         }, 350)
     }
@@ -258,23 +257,23 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
 
     override fun showTiers(loyalty: Loyalty) {
         binding.apply {
-            val tiers = loyaltyPresenter.tiers
+            val tiers = loyalty.attributes.tiers
             if(tiers.size > 0){
-                rewardsTierAdapter.updateList(loyaltyPresenter.tiers)
+                rewardsTierAdapter.updateList(tiers)
                 layoutRewardsTier.apply {
                     rvRewardTier.OnLayoutLoadingCompleted {
                         placeholderRewardTier.shimmerRewardTier.gone()
                         clRewardTier.visible()
                     }
                 }
-                tiers.find { t -> t.name.equals(loyalty.attributes.loyaltyTier.name?:"")}?.let {
+                /*tiers.find { t -> t.name.equals(loyalty.attributes.loyaltyTier.name?:"")}?.let {
                     it.collectRules?.let {collectRules ->
                         layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
                             .replace("(x)", collectRules.earnPoint.toString())
                             .replace("(y)", collectRules.perSar.toString())
                     }
 
-                }
+                }*/
             }else {
                 fmRewardsTier.gone()
             }
