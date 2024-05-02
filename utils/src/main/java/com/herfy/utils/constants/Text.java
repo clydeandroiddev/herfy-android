@@ -1187,6 +1187,8 @@ public class Text {
     public static final String LOGIN_REGISTER_LABEL ="login_register";
     public static final String REPEATING_OFFER_LABEL="repeating_offer_label";
     public static final String CANCELLED = "cancelled";
+
+    public static final String FAILED = "failed";
     public static final String MINIMUM_CART_LABEL="minimum_cart_label";
 
     public static final String PICKED_UP = "picked_up";

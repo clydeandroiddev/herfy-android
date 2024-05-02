@@ -39,8 +39,10 @@ fun String.formatDate(): String {
 
 
 fun String.orderDetailsType(sequence: Int): String {
-    if (sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value) {
+    if (sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value && sequence <= OrderStatusType.CANCELLED_BY_EMPLOYEE.value) {
         return CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled") + ", "
+    } else if (sequence > OrderStatusType.CANCELLED_BY_EMPLOYEE.value) {
+        return CacheUtil.getInstance().getTranslations(Text.FAILED, "Failed") + ", "
     } else {
         val type = OrderType.fromString(this.toLowerCase())
         return when (type) {

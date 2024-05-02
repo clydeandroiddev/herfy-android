@@ -141,7 +141,7 @@
                                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Circle"
                                 app:strokeColor="@color/background_color_light_blue"
                                 app:strokeWidth="@dimen/_2sdp"
-                                tools:src="@tools:sample/avatars" />
+                                tools:src="@drawable/ic_delivery_medium" />
 
                             <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/tv_order_type"

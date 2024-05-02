@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.clearFragmentResultListener
@@ -51,6 +52,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     override val viewModel: HomeViewModel by viewModels()
     override val layout: Int = R.layout.fragment_home
+    private var orderType = ""
     private lateinit var sliderImageAdapter: SliderImageAdapter
     private lateinit var promotionsAdapter: PromotionsAdapter
     private lateinit var promotionCategoryAdapter: PromotionCategoryAdapter
@@ -119,7 +121,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             setFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
                 clearFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT)
                 val actionValue = bundle.getString(Values.ARGS_KEY_ACTION_VALUE) ?: ""
-                if(actionValue.isNotEmpty()){
+                if (actionValue.isNotEmpty()) {
                     when (bundle.getString(Values.ARGS_KEY_ACTION_TYPE)) {
                         "url" -> {
                             try {
@@ -133,6 +135,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                 e.printStackTrace()
                             }
                         }
+
                         "category" -> {
                             MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
                             findNavController().navigateToDeepLink("nav_menu/$actionValue")
@@ -563,8 +566,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.showOrderTrackerNotif.observe(this) {
             it.getContentIfNotHandled()?.let { orderDetails ->
+                orderType = orderDetails.orderType
+                Log.e("ADADADADADOrderTracker", "ADADADADAD1:" + orderDetails.orderType)
                 binding.layoutBanner.orderTracker.apply {
-                    if (orderDetails.orderType == OrderType.convertOrderTypeToString(OrderType.DELIVERY)) {
+                    if (orderDetails.orderType.equals(
+                            OrderType.convertOrderTypeToString(OrderType.DELIVERY),
+                            ignoreCase = true
+                        )
+                    ) {
                         if (orderDetails.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
                             updateStatusGIF(R.drawable.make_order)
                         } else if (orderDetails.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && orderDetails.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
@@ -612,11 +621,33 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.updateOrderTrackerNotif.observe(this) { orderData ->
             binding.apply {
-                if (orderData.orderStatus.sequence < 9) {
+                if (orderData.orderStatus.sequence < OrderStatusType.FINISHED.value) {
                     layoutBanner.orderTracker.tvStatusLabel.text = orderData.orderStatus.description
                 } else {
                     CacheUtil.getInstance().promisedTime = ""
                     layoutBanner.orderTracker.clOrderNotif.visibility = View.GONE
+                }
+
+                if (orderType.equals(
+                        OrderType.convertOrderTypeToString(OrderType.DELIVERY),
+                        ignoreCase = true
+                    )
+                ) {
+                    if (orderData.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
+                        updateStatusGIF(R.drawable.make_order)
+                    } else if (orderData.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && orderData.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                        updateStatusGIF(R.drawable.delivered_order)
+                    } else {
+                        updateStatusGIF(R.drawable.delivered_order)
+                    }
+                } else {
+                    if (orderData.orderStatus.sequence <= OrderStatusType.IN_KITCHEN.value) {
+                        updateStatusGIF(R.drawable.make_order)
+                    } else if (orderData.orderStatus.sequence >= OrderStatusType.READY.value && orderData.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                        updateStatusGIF(R.drawable.collected_order)
+                    } else {
+                        updateStatusGIF(R.drawable.collected_order)
+                    }
                 }
             }
         }

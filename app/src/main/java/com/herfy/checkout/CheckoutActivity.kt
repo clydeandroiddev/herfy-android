@@ -13,6 +13,7 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -97,7 +98,6 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CurrencyUtils.Companion.updateCurrency
 import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.DistanceCalculator
-import com.herfy.utils.helper.GlideUtils
 import com.herfy.utils.helper.launchWithTimber
 import com.herfy.utils.permission.PermissionManager
 import com.herfy.utils.permission.PermissionResult
@@ -412,7 +412,16 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             storeLocationMarker.position(storeLocation)
                             storeLocationMarker.anchor(0.5f, 1f)
                             markerOptionsList.add(storeLocationMarker)
-                            mMap?.addMarker(storeLocationMarker)
+                            val markerStore = mMap?.addMarker(storeLocationMarker)
+                            markerStore?.tag = "storeMarker"
+                            mMap?.setOnMarkerClickListener { marker ->
+                                if (marker.tag == "storeMarker") {
+                                    goToStoreInMap(storeLocation)
+                                    true // Consume the click event
+                                } else {
+                                    false // Default behavior (showing the InfoWindow)
+                                }
+                            }
 
                             val builder = LatLngBounds.Builder()
                             builder.include(addressLocation)
@@ -487,7 +496,16 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             storeLocationMarker.position(storeLocation)
                             storeLocationMarker.anchor(0.5f, 1f)
                             markerOptionsList.add(storeLocationMarker)
-                            mMap?.addMarker(storeLocationMarker)
+                            val markerStore = mMap?.addMarker(storeLocationMarker)
+                            markerStore?.tag = "storeMarker"
+                            mMap?.setOnMarkerClickListener { marker ->
+                                if (marker.tag == "storeMarker") {
+                                    goToStoreInMap(storeLocation)
+                                    true // Consume the click event
+                                } else {
+                                    false // Default behavior (showing the InfoWindow)
+                                }
+                            }
 
                             val builder = LatLngBounds.Builder()
                             builder.include(currentLocation)
@@ -530,6 +548,35 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
 
 
+    }
+
+    private fun goToStoreInMap(store: LatLng) {
+        store.let {
+            val directionsBuilder =
+                Uri.Builder().scheme("https").authority("www.google.com").appendPath("maps")
+                    .appendPath("dir").appendPath("").appendQueryParameter("api", "1")
+                    .appendQueryParameter("travelmode", "driving").appendQueryParameter(
+                        "destination",
+                        it.latitude.toString() + "," + it.longitude.toString()
+                    )
+
+            if (StringUtil.hasOrderLatLong()) {
+                directionsBuilder.appendQueryParameter(
+                    "origin",
+                    CacheUtil.getInstance().orderLatitude + "," + CacheUtil.getInstance().orderLongitude
+                )
+            }
+
+            try {
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW, directionsBuilder.build()
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
 
@@ -802,10 +849,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 isEligibleForLoyaltyDiscount
             )
             binding!!.ivOrderType.setVisible(isBranchImageAvailable)
-            GlideUtils.loadImageUrl(
-                binding!!.ivOrderType, url = CacheUtil.getInstance().orderStore.attributes.image,
-                this
-            )
+            // TODO I commented this for now. QA has a card to change it to static icon
+            /**GlideUtils.loadImageUrl(
+            binding!!.ivOrderType, url = CacheUtil.getInstance().orderStore.attributes.image,
+            this
+            )**/
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -1639,9 +1687,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_card)
                 }
             } else if (selectedPayment == PaymentType.CARD_ON_DELIVERY || selectedPayment == PaymentType.CARD_ON_PICKUP) {
-                binding!!.layoutPayment.tvSelectedPayment.text =  if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
-                    CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
-                } else CacheUtil.getInstance().getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
+                binding!!.layoutPayment.tvSelectedPayment.text =
+                    if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
+                        CacheUtil.getInstance()
+                            .getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
+                    } else CacheUtil.getInstance()
+                        .getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_cod)
             }
         }

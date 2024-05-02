@@ -14,12 +14,12 @@
             android:id="@+id/video_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:resize_mode="zoom"
-            app:use_controller="false"
             app:layout_constraintBottom_toTopOf="@id/view"
             app:layout_constraintStart_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:resize_mode="zoom"
+            app:use_controller="false" />
 
         <View
             android:id="@+id/view"
@@ -91,16 +91,17 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/arabicName"
                     style="@style/Styles.Text.Caption"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:gravity="left"
                     android:includeFontPadding="false"
                     android:paddingStart="14dp"
                     android:paddingEnd="7dp"
-                    android:layoutDirection="ltr"
                     android:text="@string/arabic_label"
                     android:textColor="#101010"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/selectedArabic"
                     app:layout_constraintStart_toEndOf="@id/arabicFlag"
                     app:layout_constraintTop_toTopOf="parent" />
 

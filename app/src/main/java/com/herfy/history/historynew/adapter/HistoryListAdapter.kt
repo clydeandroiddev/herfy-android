@@ -62,10 +62,16 @@ class HistoryListAdapter(
                 status.text = item.attrType.orderTypeStatus()
                 statusIcon.setImageResource(item.attrType.orderTypeStatusIcon())
                 status.setTextColor(status.context.resources.getColor(item.attrType.orderTypeStatusColor()))
-            } else {
+            } else if (item.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value &&
+                item.sequence <= OrderStatusType.CANCELLED_BY_EMPLOYEE.value
+            ) {
                 status.setTextColor(status.context.resources.getColor(R.color.cancelled_color))
                 statusIcon.setImageResource(R.drawable.ic_circle_xmark)
                 status.text = CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
+            } else {
+                status.setTextColor(status.context.resources.getColor(R.color.cancelled_color))
+                statusIcon.setImageResource(R.drawable.ic_circle_xmark)
+                status.text = CacheUtil.getInstance().getTranslations(Text.FAILED, "Failed")
             }
 
             deliveryAndStore.text = item.attrType.orderTypeString() + " - " + item.locationName
