@@ -20,9 +20,10 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.headerVisibility
 import com.herfy.utils.extensions.isVisible
+import com.herfy.utils.extensions.itemVisibility
 import com.herfy.utils.extensions.loadImageFromUrl
-import com.herfy.utils.extensions.visibility
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
@@ -190,7 +191,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 ) {
                     isVisibileByConfig = false
                 }
-                itemView.visibility(isVisibileByConfig)
+                itemView.headerVisibility(isVisibileByConfig)
                 name.text = data.attributes.name
 
                 var imageUrl: String? = data.attributes.image
@@ -252,7 +253,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 ) {
                     isVisibileByConfig = false
                 }
-                itemView.visibility(isVisibileByConfig)
+                itemView.itemVisibility(isVisibileByConfig)
                 modifierProcessor.processModifier(item.modifierItem)
 
                 val modifierGroupAttributes: ModifierGroupAttributes = modifierGroup.attributes
@@ -404,14 +405,14 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                     (modifierAdapterItem as ModifierGroupAdapterItem).modifierGroup.id == modifierGroup.id
         }
 
-        itemList.map { modifierAdapterItem ->
-            if (modifierAdapterItem is ModifierGroupAdapterItem && modifierAdapterItem.modifierGroup.id == modifierGroup.id) {
+        itemList.filterIsInstance<ModifierGroupAdapterItem>().map { modifierAdapterItem ->
+            if (modifierAdapterItem.modifierGroup.id == modifierGroup.id) {
                 modifierAdapterItem.modifierGroup = modifierGroup
                 modifierAdapterItem.hasSelectedModifierItems = hasModifierItemsSelected
             }
         }
-        itemList.map { modifierAdapterItem ->
-            if (modifierAdapterItem is ModifierItemAdapterItem && modifierAdapterItem.modifierGroup.id == modifierGroup.id) {
+        itemList.filterIsInstance<ModifierItemAdapterItem>().map { modifierAdapterItem ->
+            if (modifierAdapterItem.modifierGroup.id == modifierGroup.id) {
                 modifierAdapterItem.modifierGroup = modifierGroup
                 if (modifierAdapterItem.modifierItem.id == modifierItem.id) {
                     modifierAdapterItem.modifierItem = modifierItem
@@ -430,20 +431,22 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
 
             var modifierGroup: ModifierGroup? = null
             var hasChanges = false
-            itemList.map {
-                    modifierAdapterItem ->
-                if (modifierAdapterItem is ModifierGroupAdapterItem && modifierAdapterItem.modifierGroup.id == groupId &&  modifierAdapterItem.modifierGroup.visibilityConfig.initialValue != visiblityValue) {
-                    modifierAdapterItem.modifierGroup.visibilityConfig.initialValue = visiblityValue
-                    modifierGroup = modifierAdapterItem.modifierGroup
+            itemList.filterIsInstance<ModifierGroupAdapterItem>().map { modifierGroupItem ->
+                val currentVisibilityModifierValue = modifierGroupItem.modifierGroup.attributes.visibilityConfig?.initialValue
+                if(modifierGroupItem.modifierGroup.id == groupId && currentVisibilityModifierValue != null && currentVisibilityModifierValue != visiblityValue) {
+                    modifierGroupItem.modifierGroup.attributes.visibilityConfig.initialValue = visiblityValue
+                    modifierGroup = modifierGroupItem.modifierGroup
                     hasChanges = true
                 }
             }
-
-            itemList.map { modifierAdapterItem ->
-                if (modifierAdapterItem is ModifierItemAdapterItem && modifierAdapterItem.modifierGroup.id == groupId &&  modifierAdapterItem.modifierGroup.visibilityConfig.initialValue != visiblityValue) {
-                    modifierAdapterItem.modifierGroup.visibilityConfig.initialValue = visiblityValue
+            if(hasChanges){
+                itemList.filterIsInstance<ModifierItemAdapterItem>().map { modifierItemAdapterItem ->
+                    if (modifierItemAdapterItem.modifierGroup.id == groupId) {
+                        modifierItemAdapterItem.modifierGroup.attributes.visibilityConfig.initialValue = visiblityValue
+                    }
                 }
             }
+
             if(hasChanges){
                 val count = (modifierGroup?.modifierItems?.size ?: 0) + 1
                 notifyItemRangeChanged(firstIndex, count)

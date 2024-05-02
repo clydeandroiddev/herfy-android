@@ -152,14 +152,37 @@ fun View.headerVisibility(isVisible: Boolean){
 }
 
 
-fun View.visibility(isVisible: Boolean){
-    val param = layoutParams
+fun View.itemVisibility(isVisible: Boolean){
     if (isVisible) {
-        param.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
+        val param = RecyclerView.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT )
         visible()
+        param.bottomMargin = context.resources.getDimensionPixelSize(R.dimen.margin_large)
+        layoutParams = param
     } else {
+        val param = RecyclerView.LayoutParams(0,0)
         gone()
-        param.height = 0
+        param.bottomMargin = 0
+        layoutParams = param
     }
-    layoutParams = param
+
+}
+
+fun View.headerVisibility(isVisible: Boolean){
+
+    if (isVisible) {
+        val param = RecyclerView.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT )
+        visible()
+        param.topMargin = context.resources.getDimensionPixelSize(R.dimen.margin_xlarge)
+        param.bottomMargin = context.resources.getDimensionPixelSize(R.dimen.margin_large)
+        layoutParams = param
+    } else {
+        val param = RecyclerView.LayoutParams(0,0)
+        gone()
+        param.width = 0
+        param.height = 0
+        param.bottomMargin = 0
+        param.topMargin = 0
+        layoutParams = param
+    }
+
 }

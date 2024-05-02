@@ -171,6 +171,7 @@ dependencies {
     implementation project(':imagepicker')
     implementation project(path: ':solosdk')
     implementation project(path: ':data:model')
+    implementation project(path: ':commonStyles')
 
     def flowBindingVersion = "1.2.0"
     implementation "io.github.reactivecircus.flowbinding:flowbinding-android:$flowBindingVersion"
