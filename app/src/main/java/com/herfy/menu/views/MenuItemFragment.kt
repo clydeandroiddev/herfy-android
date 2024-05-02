@@ -686,11 +686,13 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             }
                         )
                     menuPresenter.modifierGroupList.forEachIndexed { modifierGroupIndex, eachModifierGroup ->
+                        println("Modifier group ${menuPresenter.modifierGroupList}")
                         adapterItems.add(
                             ModifierGroupNewRecycleAdapterKotlin.ModifierGroupAdapterItem(
                                 modifierGroup = eachModifierGroup,
                                 modifierGroupIndex = modifierGroupIndex,
-                                hasSelectedItems = hasSelectedModifierItemsBy(eachModifierGroup)
+                                hasSelectedItems = hasSelectedModifierItemsBy(eachModifierGroup),
+                                listOfModifierGroups = menuPresenter.modifierGroupList
                             )
                         )
                         eachModifierGroup.modifierItems.forEachIndexed { itemIndex, modifierItem ->
