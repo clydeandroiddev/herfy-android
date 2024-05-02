@@ -1,7 +1,6 @@
 package com.herfy.loyalty
 
 import android.annotation.SuppressLint
-import android.util.Pair
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.herfy.util.AppLogger
@@ -22,7 +21,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -180,7 +178,61 @@ class LoyaltyPresenter @Inject constructor(
 
     override fun getLoyalty() {
         // Ensures that there will always be a tier when loyalty is shown
-        Single.zip(
+        CustomersApiCall.getInstance().getCustomerLoyalty(
+            AuthUtil.getInstance().customer.id,
+            object : ApiRequestListener {
+                override fun onSuccess(o: Any) {
+                    try {
+                        val `object` = JSONObject(o.toString())
+                        val data = `object`.getJSONObject("data")
+                        if (data.getJSONObject("attributes")
+                                .optJSONObject("tier") == null || data.getJSONObject("attributes")["tier"] is JSONObject
+                        ) {
+                            val loyalty = GsonHelper.gsonFinal()
+                                .fromJson(data.toString(), Loyalty::class.java)
+                            AuthUtil.getInstance().customerLoyalty = loyalty
+                            loyaltyView.showLoyalty(
+                                loyalty,
+                                AuthUtil.getInstance().customer.attributes.firstName + " " + AuthUtil.getInstance().customer.attributes.lastName
+                            )
+                            loyaltyView.showTiers(loyalty)
+                            //source.onSuccess(loyalty)
+                        } else {
+                           loyaltyView.showLoyaltyError( CacheUtil.getInstance()
+                               .getTranslations(Text.AN_ERROR_OCCURRED))
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                        onError(e)
+                    }
+                }
+
+                override fun onError(o: Any) {
+                    AppLogger.printRetrofitError(o)
+                    if (o is JSONObject) {
+                        try {
+                            val error = o["error"]
+                            var detail =
+                                CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
+                            if (error is JSONObject) {
+                                detail = error.getString("detail")
+                            } else if (error is JSONArray) {
+                                val errorObject = error.getJSONObject(0)
+                                detail = errorObject.getString("detail")
+                            }
+                            loyaltyView.showLoyaltyError(detail)
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                            loyaltyView.showLoyaltyError( CacheUtil.getInstance()
+                                .getTranslations(Text.AN_ERROR_OCCURRED))
+                        }
+                    } else {
+                        loyaltyView.showLoyaltyError( CacheUtil.getInstance()
+                            .getTranslations(Text.AN_ERROR_OCCURRED))
+                    }
+                }
+            })
+        /*Single.zip(
             tiersObservable, loyaltyObservable
         ) { tiers: List<Tier>, loyalty: Loyalty -> Pair(loyalty, tiers) }
             .doOnSubscribe { disposable: Disposable? ->
@@ -226,7 +278,10 @@ class LoyaltyPresenter @Inject constructor(
                     )
                 })
             { error: Throwable? ->
-                val loyalty = Loyalty()
+                var loyalty = Loyalty()
+                if(AuthUtil.getInstance().customerLoyalty != null){
+                   loyalty = AuthUtil.getInstance().customerLoyalty
+                }
                 val nextTier = Tier()
                 tiers = ArrayList()
                 loyaltyView.showLoyalty(
@@ -235,7 +290,7 @@ class LoyaltyPresenter @Inject constructor(
                 )
                 loyaltyView.showTiers(loyalty)
                 loyaltyView.showNextTier(nextTier, 0, 100, 100)
-            }
+            }*/
     }
 
     override fun getCustomerLoyalty() {
