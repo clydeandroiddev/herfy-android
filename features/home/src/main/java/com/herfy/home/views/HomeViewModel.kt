@@ -377,7 +377,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /** Remove Single call for loyalty and tiers
+    /* Remove Single call for loyalty and tiers
     /*// Ensures that there will always be a tier when loyalty is shown
     Single.zip<List<Tier>, Loyalty, android.util.Pair<Loyalty, List<Tier>>>(
         getTiersObservable(), getLoyaltyObservable()
@@ -437,7 +437,7 @@ class HomeViewModel @Inject constructor(
         _pointsToNextTier.value = 100
         _startPoints.value = 100
 
-    }*/**/
+    }*/*/
 
 
     private fun getTiersObservable(): Single<List<Tier>?>? {
