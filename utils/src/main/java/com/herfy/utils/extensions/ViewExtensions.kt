@@ -114,15 +114,17 @@ fun Window.setInteractionDisabled(disabled : Boolean) {
     }
 }
 fun View.visibility(isVisible: Boolean){
-    val param = layoutParams
     if (isVisible) {
-        param.height = RecyclerView.LayoutParams.WRAP_CONTENT
+        val param = RecyclerView.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT )
         layoutParams = param
         visible()
     } else {
         gone()
         visibility = View.GONE // Set visibility to View.GONE
-        layoutParams = RecyclerView.LayoutParams(0,0)
+        val param = RecyclerView.LayoutParams(0,0)
+        param.bottomMargin = 0
+        layoutParams = param
+
     }
 
 }

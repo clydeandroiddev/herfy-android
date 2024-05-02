@@ -29,6 +29,7 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemAttributes
+import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfigRule
 import com.herfy.productpagedetails.R as productPageR
 
@@ -127,7 +128,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
             ) {
                 isVisibleByConfig = false
             }
-            itemView.visibility(isVisibleByConfig)
+            binding.modifierGroupLayout.visibility(isVisibleByConfig)
             val minimum = modifierGroup.attributes.minimum
             val maximum = modifierGroup.attributes.maximum
             when {
@@ -220,12 +221,13 @@ class ModifierGroupNewRecycleAdapterKotlin(
     }
 
     private fun updateVisibilityConfig() {
+        var visibilityConfig: VisibilityConfig? = null
         itemList.filterIsInstance<ModifierGroupAdapterItem>()
             .forEachIndexed { index, item ->
                 val attributes = item.modifierGroup.attributes
-                val visibilityConfig = attributes.visibilityConfig
+                visibilityConfig = attributes.visibilityConfig
                 if (visibilityConfig != null) {
-                    val rules = visibilityConfig.rules
+                    val rules = visibilityConfig?.rules
                     if (rules != null && rules.isNotEmpty()) {
                         val rule: VisibilityConfigRule = rules[0]
                         if (rule.targetType != null && rule.targetType.equals(
@@ -236,32 +238,113 @@ class ModifierGroupNewRecycleAdapterKotlin(
                             item.listOfModifierGroups
                                 .forEachIndexed { eachModifierGroupIndex, modifierGroup ->
                                     val eachModifierGroupAttributes = modifierGroup.attributes
-                                    val modifierGroupVisibilityConfig =
+                                    visibilityConfig =
                                         eachModifierGroupAttributes.visibilityConfig
-                                    if (modifierGroupVisibilityConfig != null) {
-                                        val eachModifierRules = modifierGroupVisibilityConfig.rules
-                                        if (eachModifierRules != null && eachModifierRules.isNotEmpty()) {
+                                    if (visibilityConfig != null) {
+                                        val eachModifierRules = visibilityConfig?.rules
+                                        if (!eachModifierRules.isNullOrEmpty()) {
                                             val eachModifierRule: VisibilityConfigRule = rules[0]
-                                            if (eachModifierRule.targetType != null && rule.targetIs.equals(
-                                                    "selected",
+                                            if (eachModifierRule.targetType != null && rule.targetType.equals(
+                                                    "modifier-group",
                                                     ignoreCase = true
                                                 )
                                             ) {
-                                                val hasAnySelectedItems = modifierGroup
-                                                    .modifierItems.any { it.attributes.isSelected }
+                                                item
+                                                    .listOfModifierGroups
+                                                    .forEachIndexed { eachModifierIndex, eachModiifierGroup ->
 
-                                                if (rule.targetId == modifierGroup.id) {
-                                                    if (hasAnySelectedItems) {
-                                                        modifierGroupVisibilityConfig.initialValue =
-                                                            ""
-                                                    } else {
-                                                        modifierGroupVisibilityConfig.initialValue =
-                                                            "hidden"
+                                                        if (eachModiifierGroup.id != modifierGroup.id && eachModifierRule.targetId.equals(
+                                                                eachModiifierGroup.getId()
+                                                            )
+                                                        ) {
+                                                            val hasAnySelectedItems =
+                                                                eachModiifierGroup
+                                                                    .modifierItems.any { it.attributes.isSelected }
+                                                            if (hasAnySelectedItems) {
+                                                                modifierGroup.attributes
+                                                                    .visibilityConfig
+                                                                    .initialValue = ""
+                                                            } else {
+                                                                modifierGroup.attributes
+                                                                    .visibilityConfig.initialValue =
+                                                                    "hidden"
+                                                            }
+                                                           notifyItemChanged(eachModifierGroupIndex)
+                                                            return@forEachIndexed
+                                                        }
                                                     }
-                                                    notifyItemChanged(eachModifierGroupIndex)
-                                                    return@forEachIndexed // exit the lambda expression
-                                                }
+
                                             }
+                                        }
+                                    }
+                                }
+                        }
+                    }
+                }
+            }
+
+        itemList.filterIsInstance<ModifierItemAdapterItem>()
+            .forEach { eachModifierItem ->
+                val attributes = eachModifierItem.modifierGroup.attributes
+                visibilityConfig = attributes.visibilityConfig
+                if (visibilityConfig != null) {
+                    val rules = visibilityConfig?.rules
+                    if (rules != null && rules.isNotEmpty()) {
+                        val rule: VisibilityConfigRule = rules[0]
+                        if (rule.targetType != null && rule.targetType.equals(
+                                "modifier-group",
+                                ignoreCase = true
+                            )
+                        ) {
+                            eachModifierItem.listOfModifierGroups
+                                .forEachIndexed { eachModifierGroupIndex, modifierGroup ->
+                                    val eachModifierGroupAttributes = modifierGroup.attributes
+                                    visibilityConfig =
+                                        eachModifierGroupAttributes.visibilityConfig
+                                    if (visibilityConfig != null) {
+                                        val eachModifierRules = visibilityConfig?.rules
+                                        if (!eachModifierRules.isNullOrEmpty()) {
+                                            val eachModifierRule: VisibilityConfigRule = rules[0]
+                                            if (eachModifierRule.targetType != null && rule.targetType.equals(
+                                                    "modifier-group",
+                                                    ignoreCase = true
+                                                )
+                                            ) {
+                                                eachModifierItem
+                                                    .listOfModifierGroups
+                                                    .forEachIndexed { eachModifierIndex, eachModiifierGroup ->
+
+                                                        if (eachModiifierGroup.id != modifierGroup.id && eachModifierRule.targetId.equals(
+                                                                eachModiifierGroup.getId()
+                                                            )
+                                                        ) {
+                                                            val hasAnySelectedItems =
+                                                                eachModiifierGroup
+                                                                    .modifierItems.any { it.attributes.isSelected }
+                                                            if (hasAnySelectedItems) {
+                                                                modifierGroup.attributes
+                                                                    .visibilityConfig
+                                                                    .initialValue = ""
+                                                            } else {
+                                                                modifierGroup.attributes
+                                                                    .visibilityConfig.initialValue =
+                                                                    "hidden"
+                                                            }
+                                                          if (modifierGroup.id == eachModifierItem.modifierGroup.id) {
+                                                              val modifierItems = eachModifierItem.modifierGroup.modifierItems
+                                                              if (modifierItems.isNotEmpty()) {
+                                                                  notifyItemRangeChanged(
+                                                                      0,
+                                                                      modifierItems.size
+                                                                  )
+                                                              }
+                                                              return@forEachIndexed
+                                                          }
+
+                                                        }
+                                                    }
+                                            }
+
                                         }
                                     }
                                 }
@@ -527,7 +610,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
             ) {
                 isVisibleByConfig = false
             }
-            binding.optionCardView.visibility(isVisibleByConfig)
+            itemView.visibility(isVisibleByConfig)
             binding.quantityDownLayout.setVisible(isQuantityShouldShow)
             binding.quantity.text = localize("0" + modifierItem.attributes.quantity)
             binding.radioButton.setVisible(modifierGroupMaximum == 1 && modifierGroupMinimum == 1)
@@ -763,6 +846,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
         val modifierItem: ModifierItem,
         var modifierGroup: ModifierGroup,
         val modifierGroupPosition: Int,
+        val listOfModifierGroups: List<ModifierGroup>
     ) : ModifierAdapterType() {
         override val viewType: Int = VIEW_TYPE_MODIFIER_ITEM
     }

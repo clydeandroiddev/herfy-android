@@ -700,7 +700,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 ModifierGroupNewRecycleAdapterKotlin.ModifierItemAdapterItem(
                                     modifierItem = modifierItem,
                                     modifierGroup = eachModifierGroup,
-                                    modifierGroupPosition = modifierGroupIndex
+                                    modifierGroupPosition = modifierGroupIndex,
+                                    listOfModifierGroups = menuPresenter.modifierGroupList
                                 )
                             )
                         }
