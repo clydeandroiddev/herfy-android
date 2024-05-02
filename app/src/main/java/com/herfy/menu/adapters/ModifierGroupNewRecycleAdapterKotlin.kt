@@ -233,81 +233,38 @@ class ModifierGroupNewRecycleAdapterKotlin(
                                 ignoreCase = true
                             )
                         ) {
-                            val hasAnySelectedItems = item.modifierGroup
-                                .modifierItems.any { it.attributes.isSelected }
+                            item.listOfModifierGroups
+                                .forEachIndexed { eachModifierGroupIndex, modifierGroup ->
+                                    val eachModifierGroupAttributes = modifierGroup.attributes
+                                    val modifierGroupVisibilityConfig =
+                                        eachModifierGroupAttributes.visibilityConfig
+                                    if (modifierGroupVisibilityConfig != null) {
+                                        val eachModifierRules = modifierGroupVisibilityConfig.rules
+                                        if (eachModifierRules != null && eachModifierRules.isNotEmpty()) {
+                                            val eachModifierRule: VisibilityConfigRule = rules[0]
+                                            if (eachModifierRule.targetType != null && rule.targetIs.equals(
+                                                    "selected",
+                                                    ignoreCase = true
+                                                )
+                                            ) {
+                                                val hasAnySelectedItems = modifierGroup
+                                                    .modifierItems.any { it.attributes.isSelected }
 
-                            if (rule.targetId == item.modifierGroup.id) {
-                                if (hasAnySelectedItems) {
-                                    attributes.visibilityConfig.initialValue = ""
-                                } else {
-                                    attributes.visibilityConfig.initialValue = "hidden"
-                                }
-                                notifyItemChanged(index)
-                                return@forEachIndexed // exit the lambda expression
-                            }
-                        }
-                    }
-                }
-                item.listOfModifierGroups
-                    .forEachIndexed { eachModifierGroupIndex, modifierGroup ->
-                        val eachModifierGroupAttributes = modifierGroup.attributes
-                        val modifierGroupVisibilityConfig = eachModifierGroupAttributes.visibilityConfig
-                        if (modifierGroupVisibilityConfig != null) {
-                            val rules = modifierGroupVisibilityConfig.rules
-                            if (rules != null && rules.isNotEmpty()) {
-                                val rule: VisibilityConfigRule = rules[0]
-                                if (rule.targetType != null && rule.targetType.equals(
-                                        "modifier-group",
-                                        ignoreCase = true
-                                    )
-                                ) {
-                                    val hasAnySelectedItems = modifierGroup
-                                        .modifierItems.any { it.attributes.isSelected }
-
-                                    if (rule.targetId == modifierGroup.id) {
-                                        if (hasAnySelectedItems) {
-                                            modifierGroupVisibilityConfig.initialValue = ""
-                                        } else {
-                                            modifierGroupVisibilityConfig.initialValue =
-                                                "hidden"
+                                                if (rule.targetId == modifierGroup.id) {
+                                                    if (hasAnySelectedItems) {
+                                                        modifierGroupVisibilityConfig.initialValue =
+                                                            ""
+                                                    } else {
+                                                        modifierGroupVisibilityConfig.initialValue =
+                                                            "hidden"
+                                                    }
+                                                    notifyItemChanged(eachModifierGroupIndex)
+                                                    return@forEachIndexed // exit the lambda expression
+                                                }
+                                            }
                                         }
-                                        notifyItemChanged(eachModifierGroupIndex)
-                                        return@forEachIndexed // exit the lambda expression
                                     }
                                 }
-                            }
-                        }
-                    }
-            }
-
-
-
-        itemList
-            .filterIsInstance<ModifierItemAdapterItem>()
-            .forEachIndexed { index, item ->
-                val attributes = item.modifierGroup.attributes
-                val visibilityConfig = attributes.visibilityConfig
-                if (visibilityConfig != null) {
-                    val rules = visibilityConfig.rules
-                    if (rules != null && rules.isNotEmpty()) {
-                        val rule: VisibilityConfigRule = rules[0]
-                        if (rule.targetType != null && rule.targetType.equals(
-                                "modifier-group",
-                                ignoreCase = true
-                            )
-                        ) {
-                            val hasAnySelectedItems = item.modifierGroup
-                                .modifierItems.any { it.attributes.isSelected }
-
-                            if (rule.targetId == item.modifierGroup.id) {
-                                if (hasAnySelectedItems) {
-                                    attributes.visibilityConfig.initialValue = ""
-                                } else {
-                                    attributes.visibilityConfig.initialValue = "hidden"
-                                }
-                                notifyItemChanged(index)
-                                return@forEachIndexed // exit the lambda expression
-                            }
                         }
                     }
                 }
