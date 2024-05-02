@@ -706,7 +706,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     modifierGroupsAdapters?.submitList(adapterItems)
 
                     binding.modifierGroupsRecyclerView.visible()
-                    binding.modifierGroupsRecyclerView.setHasFixedSize(true)
+//                    binding.modifierGroupsRecyclerView.setHasFixedSize(true)
                     binding.modifierGroupsRecyclerView.isNestedScrollingEnabled = false
                     binding.modifierGroupsRecyclerView.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)

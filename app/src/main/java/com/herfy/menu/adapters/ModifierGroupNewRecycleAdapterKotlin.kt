@@ -4,6 +4,7 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -11,10 +12,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.herfy.R
 import com.herfy.menu.adapters.model.ModifierItemClickParams
-import com.herfy.productpagedetails.databinding.ItemModifierGroupNewBinding
+import com.herfy.productpagedetails.databinding.ItemModifierGroupHeaderBinding
 import com.herfy.productpagedetails.databinding.ItemModifierOptionTypeBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.setVisible
+import com.herfy.utils.extensions.visibility
 import com.herfy.utils.helper.ArabicUtils
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
@@ -23,9 +25,11 @@ import com.herfy.utils.helper.ModifierProcessorCallback
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.StringUtil.localize
 import com.herfy.utils.menu.MenuUtil
+import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemAttributes
+import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfigRule
 import com.herfy.productpagedetails.R as productPageR
 
 
@@ -51,7 +55,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_MODIFIER_GROUP -> {
-                val binding = ItemModifierGroupNewBinding.inflate(
+                val binding = ItemModifierGroupHeaderBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -100,7 +104,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
     }
 
 
-    class ModifierGroupViewHolder(private val binding: ItemModifierGroupNewBinding) :
+    inner class ModifierGroupViewHolder(private val binding: ItemModifierGroupHeaderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ModifierGroupAdapterItem) {
             val modifierGroup = item.modifierGroup
@@ -113,8 +117,17 @@ class ModifierGroupNewRecycleAdapterKotlin(
                     !imageUrl.lowercase().contains("default-image.png") &&
                     !imageUrl.lowercase().contains("default_category.png")
             val visibilityConfig = modifierGroup.attributes.visibilityConfig
-            val isModifierGroupHasNoVisibilityRules = visibilityConfig?.initialValue?.lowercase() != "hidden"
-            itemView.setVisible(isModifierGroupHasNoVisibilityRules)
+
+// Check if visibilityConfig is not null before accessing its properties
+            var isVisibleByConfig = true
+            if (visibilityConfig != null && visibilityConfig.initialValue != null && visibilityConfig.initialValue.equals(
+                    "hidden",
+                    ignoreCase = true
+                )
+            ) {
+                isVisibleByConfig = false
+            }
+            itemView.visibility(isVisibleByConfig)
             val minimum = modifierGroup.attributes.minimum
             val maximum = modifierGroup.attributes.maximum
             when {
@@ -145,6 +158,17 @@ class ModifierGroupNewRecycleAdapterKotlin(
             binding.minimum.text =
                 CacheUtil.getInstance().getTranslations(Text.REQUIRED, "Required")
             binding.checkBox.setVisible(modifierGroup.isHasSelectedModifierItems || item.hasSelectedItems && binding.btnMinimum.visibility == View.GONE)
+        }
+        fun setVisibility(isVisible: Boolean) {
+            val param = binding.root.layoutParams as RecyclerView.LayoutParams
+            if (isVisible) {
+                param.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
+                binding.root.visibility = View.VISIBLE
+            } else {
+                binding.root.visibility = View.GONE
+                param.height = 0
+            }
+            binding.root.layoutParams = param
         }
     }
 
@@ -181,6 +205,51 @@ class ModifierGroupNewRecycleAdapterKotlin(
                 }
             }
         }
+    }
+    private fun updateVisibilityConfig() {
+        itemList.filterIsInstance<ModifierGroupAdapterItem>()
+            .forEach {
+                val attributes = it.modifierGroup.attributes
+                val visibilityConfig = attributes.visibilityConfig
+                if (visibilityConfig != null) {
+                    val rules = visibilityConfig.rules
+                    if (rules != null && rules.size > 0) {
+                        val rule: VisibilityConfigRule = rules[0]
+                        if (rule.targetType != null && rule.targetType.equals(
+                                "modifier-group",
+                                ignoreCase = true
+                            )) {
+                            val hasAnySelectedItems = it.modifierGroup
+                                .modifierItems.any { it.attributes.isSelected }
+                            if (hasAnySelectedItems) {
+
+                            }
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun updateVisibilityByRule(rule: VisibilityConfigRule, modifierGroup: ModifierGroup, menuItem: MenuItem) {
+        if (!modifierGroup.id.equals(menuItem.sizes.id) && rule.targetId == menuItem.sizes.id) {
+            if (rule.targetIs.equals("selected", ignoreCase = true)) {
+                var selected = 0
+                for (modItem in menuItem.sizes.modifierItems) {
+                    if (modItem.attributes.isSelected) {
+                        selected += 1
+                    }
+                }
+                if (selected > 0) {
+                    modifierGroup.attributes.visibilityConfig.initialValue = ""
+                } else {
+                    modifierGroup.attributes.visibilityConfig.initialValue = "hidden"
+                }
+            }
+        }
+        itemList.filterIsInstance<ModifierGroupAdapterItem>()
+            .forEach {
+
+            }
     }
 
     fun updateModifierItemQuantity(modifierItemClickParams: ModifierItemClickParams) {
@@ -389,6 +458,17 @@ class ModifierGroupNewRecycleAdapterKotlin(
                 shouldShowQuantityLayout = shouldShowQuantityLayout,
                 hasExceededTheModifierMax = modifierItemAttributes.hasModifierItemExceedMaximum()
             )
+            val visibilityConfig = modifierGroup.attributes.visibilityConfig
+
+            var isVisibleByConfig = true
+            if (visibilityConfig != null && visibilityConfig.initialValue != null && visibilityConfig.initialValue.equals(
+                    "hidden",
+                    ignoreCase = true
+                )
+            ) {
+                isVisibleByConfig = false
+            }
+            binding.optionCardView.visibility(isVisibleByConfig)
             binding.quantityDownLayout.setVisible(isQuantityShouldShow)
             binding.quantity.text = localize("0" + modifierItem.attributes.quantity)
             binding.radioButton.setVisible(modifierGroupMaximum == 1 && modifierGroupMinimum == 1)
@@ -552,6 +632,17 @@ class ModifierGroupNewRecycleAdapterKotlin(
 
         override fun onModifierProcessed(name: String, formattedPrice: String) {
             setModifierNameAndPrice(name = name, formattedPrice = formattedPrice)
+        }
+        fun setVisibility(isVisible: Boolean) {
+            val param = binding.root.layoutParams as RecyclerView.LayoutParams
+            if (isVisible) {
+                param.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
+                binding.root.visibility = View.VISIBLE
+            } else {
+                binding.root.visibility = View.GONE
+                param.height = 0
+            }
+            binding.root.layoutParams = param
         }
     }
 

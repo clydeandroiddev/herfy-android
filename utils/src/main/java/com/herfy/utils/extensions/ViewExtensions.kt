@@ -8,6 +8,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.Transformation
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.herfy.utils.helper.throttleFirst
@@ -111,4 +112,17 @@ fun Window.setInteractionDisabled(disabled : Boolean) {
     } else {
         clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
+}
+fun View.visibility(isVisible: Boolean){
+    val param = layoutParams
+    if (isVisible) {
+        param.height = RecyclerView.LayoutParams.WRAP_CONTENT
+        layoutParams = param
+        visible()
+    } else {
+        gone()
+        visibility = View.GONE // Set visibility to View.GONE
+        layoutParams = RecyclerView.LayoutParams(0,0)
+    }
+
 }
