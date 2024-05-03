@@ -325,7 +325,9 @@ class ModifierGroupNewRecycleAdapterKotlin(
 
 
     fun updateModifierItemQuantity(modifierItemClickParams: ModifierItemClickParams) {
+
         with(modifierItemClickParams) {
+            val selectedItemTotal = isCurrentSelectionEqualToMax(modifierGroup)
             val modifierAttributes = modifierItem.attributes
             val quantity = modifierAttributes.quantity
             if (isAdd.not()) {
@@ -335,7 +337,8 @@ class ModifierGroupNewRecycleAdapterKotlin(
                         isSelected = false,
                         modifierGroupPosition,
                         false,
-                        currentModifierQuantity = quantity
+                        currentModifierQuantity = quantity,
+                        params = modifierItemClickParams
                     )
                 } else {
                     updateModifierItemQuantity(
@@ -343,13 +346,14 @@ class ModifierGroupNewRecycleAdapterKotlin(
                         isSelected = modifierItemClickParams.isSelected,
                         modifierGroupPosition,
                         false,
-                        currentModifierQuantity = quantity
+                        currentModifierQuantity = quantity,
+                        params = modifierItemClickParams
                     )
                 }
             } else {
                 val isUserAlreadyExceed =
                     isUserExceedTheModifierGroupMax(modifierGroup = modifierItemClickParams.modifierGroup)
-                val selectedItemTotal = isCurrentSelectionEqualToMax(modifierGroup)
+
                 if (isUserAlreadyExceed) {
                     updateNonSelectedModifiersExceedingMaximum(
                         params = modifierItemClickParams,
@@ -369,7 +373,8 @@ class ModifierGroupNewRecycleAdapterKotlin(
                     isSelected = true,
                     selectedModifierGroupIndex = modifierGroupPosition,
                     true,
-                    currentModifierQuantity = quantity
+                    currentModifierQuantity = quantity,
+                    params = modifierItemClickParams
                 )
             }
         }
@@ -404,6 +409,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
 
     private fun updateModifierItem(item: ModifierItemAdapterItem, isSelected: Boolean) {
         item.modifierItem.attributes.setModifierItemQuantityExceedsMaximum(isSelected)
+        println("Not max out ${item.modifierItem.attributes.name}  and $isSelected")
         notifyItemChanged(itemList.indexOf(item))
     }
 
@@ -490,6 +496,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
         selectedModifierGroupIndex: Int,
         isUserIncreaseModifierQuantity: Boolean,
         currentModifierQuantity: Int,
+        params: ModifierItemClickParams
     ) {
         val item = itemList[selectedPosition]
         if (item !is ModifierItemAdapterItem) return
@@ -507,6 +514,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
                     selectedModifierGroupIndex,
                     item.modifierGroup
                 )
+                updateNonSelectedModifiersExceedingMaximum(isSelected = isSelected, params = params)
                 return
             }
             decreaseModifierQuantity(attributes)
@@ -530,6 +538,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
         attributes.isSelected = isSelected
         notifyItemChanged(selectedPosition)
         updateModifierGroup(selectedModifierGroupIndex, modifierGroup)
+
     }
 
     private fun increaseQuantity(attributes: ModifierItemAttributes) {
