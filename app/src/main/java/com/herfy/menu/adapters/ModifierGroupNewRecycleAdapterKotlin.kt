@@ -200,6 +200,14 @@ class ModifierGroupNewRecycleAdapterKotlin(
                     modifierItem.attributes.quantity = 1
                     notifyItemChanged(modifierPosition)
                 }
+                val maximumModifierGroup = modifierGroup.attributes.maximum
+                val selectedModifierItemByGroup = itemList.filterIsInstance<ModifierItemAdapterItem>()
+                    .filter { it.modifierGroup.id == modifierGroup.id }
+                    .groupBy { it.modifierGroup }
+                    .mapValues { (_, items) ->
+                        items.sumOf { if (it.modifierItem.attributes.isSelected) it.modifierItem.attributes.quantity else 0 }
+                    }
+               val selectedItemTotal =  selectedModifierItemByGroup.any<ModifierGroup, Int> { (_, sum) -> sum + 1 >= maximumModifierGroup }
                 val isExceedingLimit =
                     isUserExceedTheModifierGroupMax(modifierGroup = params.modifierGroup)
                 if (isSelected && isExceedingLimit) {
@@ -213,12 +221,31 @@ class ModifierGroupNewRecycleAdapterKotlin(
                             isSelected,
                             modifierGroupPosition
                         )
+//
+                        if (selectedItemTotal) {
+                            itemList.filterIsInstance<ModifierItemAdapterItem>()
+                                .filterIndexed { index, listItem ->
+                                    index != params.modifierPosition - 1 &&
+                                            !listItem.modifierItem.attributes.isSelected &&
+                                            listItem.modifierGroup.id == params.modifierGroup.id && listItem
+                                        .modifierItem.attributes.maximum > 1
+
+                                }
+                                .forEach { eachModifierIndex ->
+                                    eachModifierIndex.modifierItem.attributes.setModifierItemQuantityExceedsMaximum(
+                                        isSelected
+                                    )
+                                    notifyItemChanged(itemList.indexOf(eachModifierIndex))
+//                                }
+                                }
+                        }
                         updateVisibilityConfigBy(currentModifierGroup = params.modifierGroup)
                     }
                 }
             }
         }
     }
+
 
     private fun updateVisibilityConfigBy(currentModifierGroup: ModifierGroup) {
         var visibilityConfig: VisibilityConfig? = null
@@ -337,7 +364,8 @@ class ModifierGroupNewRecycleAdapterKotlin(
                         .filterIndexed { index, listItem ->
                             index != modifierItemClickParams.modifierPosition &&
                                     !listItem.modifierItem.attributes.isSelected &&
-                                    listItem.modifierGroup.id == modifierGroup.id
+                                    listItem.modifierGroup.id == modifierGroup.id &&
+                                    listItem.modifierItem.attributes.maximum > 1
                         }
                         .forEach { eachModifierIndex ->
                             eachModifierIndex.modifierItem.attributes.setModifierItemQuantityExceedsMaximum(
@@ -406,7 +434,8 @@ class ModifierGroupNewRecycleAdapterKotlin(
                 listItem.modifierItem.attributes.isSelected = false
                 notifyItemChanged(itemList.indexOf(listItem))
             }
-    }
+        }
+
 
     private fun showModifierMaxLimitMessage() {
         showModifierMaximumLimit(
@@ -425,7 +454,9 @@ class ModifierGroupNewRecycleAdapterKotlin(
             notifyItemChanged(selectedPosition)
             updateModifierGroup(selectedModifierGroupIndex, item.modifierGroup)
         }
+
     }
+
 
     private fun updateModifierItemQuantity(
         selectedPosition: Int,
