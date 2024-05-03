@@ -266,14 +266,9 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         clRewardTier.visible()
                     }
                 }
-                /*tiers.find { t -> t.name.equals(loyalty.attributes.loyaltyTier.name?:"")}?.let {
-                    it.collectRules?.let {collectRules ->
-                        layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
-                            .replace("(x)", collectRules.earnPoint.toString())
-                            .replace("(y)", collectRules.perSar.toString())
-                    }
-
-                }*/
+                layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
+                    .replace("(x)", "1")
+                    .replace("(y)", loyalty.attributes.pointConversion)
             }else {
                 fmRewardsTier.gone()
             }
