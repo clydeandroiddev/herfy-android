@@ -2,6 +2,7 @@ package com.herfy.popup
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -12,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
@@ -30,6 +32,7 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.model.Popup
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.utils.constants.Values
+import com.herfy.utils.helper.ViewUtil
 import com.kochava.tracker.events.EventType
 
 class PopupFragment : BaseDialogFragment() {
@@ -77,6 +80,10 @@ class PopupFragment : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val ratio = Values.POPUP_ASPECT_RATIO_WIDTH / Values.POPUP_ASPECT_RATIO_HEIGHT
+        val popupWidth = Resources.getSystem().displayMetrics.widthPixels * Values.POPUP_WIDTH_PERCENT
+        val popupHeight = popupWidth / ratio
+        val colorPrimary =  Color.parseColor(CacheUtil.getInstance().colorMain)
 
         popup.imageUri?.let {
             context?.let { ctx ->
@@ -111,19 +118,30 @@ class PopupFragment : BaseDialogFragment() {
             }
 
         }
-        binding.btnAction.setOnClickListener {
-            dismiss()
+
+        binding.card.layoutParams.apply {
+            width = popupWidth.toInt()
+            height = popupHeight.toInt()
         }
-        binding.image.setOnClickListener {
-            com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent(EventType.AD_VIEW)
-            dismiss()
-            setFragmentResult(
-                ARGS_KEY_FRAGMENT_RESULT,
-                bundleOf(
-                    ARGS_KEY_ACTION_TYPE to popup.actionType,
-                    ARGS_KEY_ACTION_VALUE to popup.actionValue
+
+        binding.btnAction.apply {
+            isVisible = !popup.buttonLabel.isNullOrBlank() && !popup.actionType.isNullOrBlank() && !popup.actionValue.isNullOrBlank()
+            text = popup.buttonLabel
+            backgroundTintList = ColorStateList.valueOf(colorPrimary)
+            setOnClickListener {
+                dismiss()
+                setFragmentResult(
+                    ARGS_KEY_FRAGMENT_RESULT,
+                    bundleOf(
+                        ARGS_KEY_ACTION_TYPE to popup.actionType,
+                        ARGS_KEY_ACTION_VALUE to popup.actionValue
+                    )
                 )
-            )
+            }
+        }
+
+        binding.ibClose.setOnClickListener {
+            dismiss()
         }
     }
 
