@@ -129,6 +129,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
             binding.modifierGroupLayout.headerVisibility(isVisibleByConfig)
             val minimum = modifierGroup.attributes.minimum
             val maximum = modifierGroup.attributes.maximum
+            println("Name ${modifierGroup.attributes.name} and max $maximum and $minimum")
             when {
                 minimum > 0 -> {
                     binding.select.text = when {
@@ -190,7 +191,16 @@ class ModifierGroupNewRecycleAdapterKotlin(
                 selectNewItem(modifierPosition, isSelected, modifierGroupPosition)
                 updateVisibilityConfigBy(currentModifierGroup = params.modifierGroup)
 
-            } else if (modifierGroupMaximum > 1) {
+            } else if (canUserSelectSingleModifier(
+                    groupMinimum = modifierGroupMinimum,
+                    groupMaximum = modifierGroupMinimum
+                )
+            ) {
+                deselectPreviouslySelectedItems(modifierPosition,params.modifierGroup)
+                selectNewItem(modifierPosition, isSelected, modifierGroupPosition)
+
+                updateVisibilityConfigBy(currentModifierGroup = params.modifierGroup)
+            } else if (isCanSelectMultipleModifierBy(maximum = modifierGroupMaximum)) {
                 val selectedModifierIndex =
                     modifierGroup.modifierItems.indexOfFirst { it.id == params.modifierItem.id }
                 val modifierItem = modifierGroup.modifierItems[selectedModifierIndex]
@@ -225,6 +235,14 @@ class ModifierGroupNewRecycleAdapterKotlin(
                 }
             }
         }
+    }
+
+    private fun isCanSelectMultipleModifierBy(maximum: Int): Boolean {
+        return maximum > 1
+    }
+
+    private fun canUserSelectSingleModifier(groupMinimum: Int, groupMaximum: Int): Boolean {
+        return groupMinimum == 1 && groupMaximum == 1
     }
 
 
@@ -460,7 +478,9 @@ class ModifierGroupNewRecycleAdapterKotlin(
                 index != selectedPosition &&
                         listItem.modifierItem.attributes.isSelected &&
                         listItem.modifierGroup.id == currentSelectedModifierGroup.id &&
-                        attributes.minimum != 1 || attributes.maximum != 1
+                        attributes.minimum != 1 || attributes.maximum != 1 ||
+                        attributes
+                            .maximum == 1 ||attributes.minimum == 1
             }
             .forEach { listItem ->
                 listItem.modifierItem.attributes.isSelected = false
@@ -488,7 +508,6 @@ class ModifierGroupNewRecycleAdapterKotlin(
         }
 
     }
-
 
     private fun updateModifierItemQuantity(
         selectedPosition: Int,

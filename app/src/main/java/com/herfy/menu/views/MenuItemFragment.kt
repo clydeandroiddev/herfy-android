@@ -164,6 +164,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         resetFrequentlyAddedFavoritesInCart()
         menuPresenter.start()
         binding.frequentlyBoughtShimmering.setVisible(true)
+        binding.modifierItemShimmerLayout.setVisible(true)
         initialModifierId = ""
         activity?.cast<BaseActivity> {
             if (BuildUtil.soloAppKey().equals("SpeWD37HZx9Uqora", ignoreCase = true)) {
@@ -685,8 +686,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 menuPresenter.getMenuItemTotalPrice(menuPresenter.menuItem,it.modifierGroupPosition)
                             }
                         )
+
+
                     menuPresenter.modifierGroupList.forEachIndexed { modifierGroupIndex, eachModifierGroup ->
-                        println("Modifier group ${menuPresenter.modifierGroupList}")
                         adapterItems.add(
                             ModifierGroupNewRecycleAdapterKotlin.ModifierGroupAdapterItem(
                                 modifierGroup = eachModifierGroup,
@@ -706,6 +708,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             )
                         }
                     }
+
+
+                    binding.modifierItemShimmerLayout.setVisible(adapterItems.isEmpty())
                     modifierGroupsAdapters?.submitList(adapterItems)
 
                     binding.modifierGroupsRecyclerView.visible()
