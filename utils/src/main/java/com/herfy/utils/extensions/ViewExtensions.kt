@@ -119,6 +119,8 @@ fun View.itemVisibility(isVisible: Boolean){
         val param = RecyclerView.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT )
         visible()
         param.bottomMargin = context.resources.getDimensionPixelSize(R.dimen.margin_large)
+        param.marginStart = context.resources.getDimensionPixelSize(R.dimen.margin_small)
+        param.marginEnd = context.resources.getDimensionPixelSize(R.dimen.margin_small)
         layoutParams = param
     } else {
         val param = RecyclerView.LayoutParams(0,0)
