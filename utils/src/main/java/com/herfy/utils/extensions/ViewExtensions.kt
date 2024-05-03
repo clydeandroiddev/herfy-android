@@ -11,6 +11,7 @@ import android.view.animation.Transformation
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.herfy.utils.R
 import com.herfy.utils.helper.throttleFirst
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -113,18 +114,37 @@ fun Window.setInteractionDisabled(disabled : Boolean) {
         clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 }
-fun View.visibility(isVisible: Boolean){
+fun View.itemVisibility(isVisible: Boolean){
     if (isVisible) {
         val param = RecyclerView.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT )
-        layoutParams = param
         visible()
+        param.bottomMargin = context.resources.getDimensionPixelSize(R.dimen.margin_large)
+        layoutParams = param
     } else {
-        gone()
-        visibility = View.GONE // Set visibility to View.GONE
         val param = RecyclerView.LayoutParams(0,0)
+        gone()
         param.bottomMargin = 0
         layoutParams = param
+    }
 
+}
+
+fun View.headerVisibility(isVisible: Boolean){
+
+    if (isVisible) {
+        val param = RecyclerView.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT )
+        visible()
+        param.topMargin = context.resources.getDimensionPixelSize(R.dimen.margin_xlarge)
+        param.bottomMargin = context.resources.getDimensionPixelSize(R.dimen.margin_large)
+        layoutParams = param
+    } else {
+        val param = RecyclerView.LayoutParams(0,0)
+        gone()
+        param.width = 0
+        param.height = 0
+        param.bottomMargin = 0
+        param.topMargin = 0
+        layoutParams = param
     }
 
 }
