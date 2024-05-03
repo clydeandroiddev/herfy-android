@@ -26,7 +26,6 @@ import com.herfy.utils.helper.ModifierProcessorCallback
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.StringUtil.localize
 import com.herfy.utils.menu.MenuUtil
-import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemAttributes
@@ -119,7 +118,6 @@ class ModifierGroupNewRecycleAdapterKotlin(
                     !imageUrl.lowercase().contains("default_category.png")
             val visibilityConfig = modifierGroup.attributes.visibilityConfig
 
-// Check if visibilityConfig is not null before accessing its properties
             var isVisibleByConfig = true
             if (visibilityConfig != null && visibilityConfig.initialValue != null && visibilityConfig.initialValue.equals(
                     "hidden",
@@ -200,14 +198,9 @@ class ModifierGroupNewRecycleAdapterKotlin(
                     modifierItem.attributes.quantity = 1
                     notifyItemChanged(modifierPosition)
                 }
-                val maximumModifierGroup = modifierGroup.attributes.maximum
-                val selectedModifierItemByGroup = itemList.filterIsInstance<ModifierItemAdapterItem>()
-                    .filter { it.modifierGroup.id == modifierGroup.id }
-                    .groupBy { it.modifierGroup }
-                    .mapValues { (_, items) ->
-                        items.sumOf { if (it.modifierItem.attributes.isSelected) it.modifierItem.attributes.quantity else 0 }
-                    }
-               val selectedItemTotal =  selectedModifierItemByGroup.any<ModifierGroup, Int> { (_, sum) -> sum + 1 >= maximumModifierGroup }
+
+                val selectedItemTotal = isCurrentSelectionEqualToMax(modifierGroup)
+                isUserExceedTheModifierGroupMax(modifierGroup = params.modifierGroup)
                 val isExceedingLimit =
                     isUserExceedTheModifierGroupMax(modifierGroup = params.modifierGroup)
                 if (isSelected && isExceedingLimit) {
@@ -221,23 +214,11 @@ class ModifierGroupNewRecycleAdapterKotlin(
                             isSelected,
                             modifierGroupPosition
                         )
-//
                         if (selectedItemTotal) {
-                            itemList.filterIsInstance<ModifierItemAdapterItem>()
-                                .filterIndexed { index, listItem ->
-                                    index != params.modifierPosition - 1 &&
-                                            !listItem.modifierItem.attributes.isSelected &&
-                                            listItem.modifierGroup.id == params.modifierGroup.id && listItem
-                                        .modifierItem.attributes.maximum > 1
-
-                                }
-                                .forEach { eachModifierIndex ->
-                                    eachModifierIndex.modifierItem.attributes.setModifierItemQuantityExceedsMaximum(
-                                        isSelected
-                                    )
-                                    notifyItemChanged(itemList.indexOf(eachModifierIndex))
-//                                }
-                                }
+                            updateNonSelectedModifiersExceedingMaximum(
+                                params = params,
+                                isSelected = isSelected
+                            )
                         }
                         updateVisibilityConfigBy(currentModifierGroup = params.modifierGroup)
                     }
@@ -294,7 +275,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
                                                             .visibilityConfig.initialValue =
                                                             "hidden"
                                                     }
-                                                    notifyItemChanged(0,eachModifierGroupIndex)
+                                                    notifyItemChanged(0, eachModifierGroupIndex)
                                                 }
                                             }
 
@@ -309,17 +290,27 @@ class ModifierGroupNewRecycleAdapterKotlin(
         itemList.filterIsInstance<ModifierItemAdapterItem>().forEach { eachModifierItem ->
 
             val attributes = eachModifierItem.modifierGroup.attributes
-           val modifierItemVisibilityConfig = attributes.visibilityConfig
+            val modifierItemVisibilityConfig = attributes.visibilityConfig
             if (modifierItemVisibilityConfig != null) {
-                val targetType = modifierItemVisibilityConfig?.rules?.firstOrNull { it.targetType.equals("modifier-group", ignoreCase = true) }
+                val targetType = modifierItemVisibilityConfig?.rules?.firstOrNull {
+                    it.targetType.equals(
+                        "modifier-group",
+                        ignoreCase = true
+                    )
+                }
                 if (targetType != null) {
                     eachModifierItem.listOfModifierGroups.forEachIndexed { eachModifierGroupIndex, modifierGroup ->
-                        if (eachModifierItem.modifierGroup.id != currentModifierGroup.id && targetType.targetId.equals(modifierGroup.id)) {
-                            val hasAnySelectedItems = modifierGroup.modifierItems.any { it.attributes.isSelected }
+                        if (eachModifierItem.modifierGroup.id != currentModifierGroup.id && targetType.targetId.equals(
+                                modifierGroup.id
+                            )
+                        ) {
+                            val hasAnySelectedItems =
+                                modifierGroup.modifierItems.any { it.attributes.isSelected }
                             val visibilityInitialValue = if (hasAnySelectedItems) "" else "hidden"
 
                             if (visibilityInitialValue.isEmpty() || visibilityInitialValue == "hidden") {
-                                eachModifierItem.modifierGroup.attributes.visibilityConfig.initialValue = visibilityInitialValue
+                                eachModifierItem.modifierGroup.attributes.visibilityConfig.initialValue =
+                                    visibilityInitialValue
                                 notifyItemRangeChanged(0, modifierGroup.modifierItems.size)
                                 return@forEach
                             }
@@ -358,22 +349,20 @@ class ModifierGroupNewRecycleAdapterKotlin(
             } else {
                 val isUserAlreadyExceed =
                     isUserExceedTheModifierGroupMax(modifierGroup = modifierItemClickParams.modifierGroup)
+                val selectedItemTotal = isCurrentSelectionEqualToMax(modifierGroup)
                 if (isUserAlreadyExceed) {
+                    updateNonSelectedModifiersExceedingMaximum(
+                        params = modifierItemClickParams,
+                        isSelected = isSelected
+                    )
                     showModifierMaxLimitMessage()
-                    itemList.filterIsInstance<ModifierItemAdapterItem>()
-                        .filterIndexed { index, listItem ->
-                            index != modifierItemClickParams.modifierPosition &&
-                                    !listItem.modifierItem.attributes.isSelected &&
-                                    listItem.modifierGroup.id == modifierGroup.id &&
-                                    listItem.modifierItem.attributes.maximum > 1
-                        }
-                        .forEach { eachModifierIndex ->
-                            eachModifierIndex.modifierItem.attributes.setModifierItemQuantityExceedsMaximum(
-                                true
-                            )
-                            notifyItemChanged(itemList.indexOf(eachModifierIndex))
-                        }
                     return
+                }
+                if (selectedItemTotal) {
+                    updateNonSelectedModifiersExceedingMaximum(
+                        params = modifierItemClickParams,
+                        isSelected = isSelected
+                    )
                 }
                 updateModifierItemQuantity(
                     selectedPosition = modifierPosition,
@@ -388,13 +377,50 @@ class ModifierGroupNewRecycleAdapterKotlin(
 
     private fun isUserExceedTheModifierGroupMax(modifierGroup: ModifierGroup): Boolean {
         val maximumModifierGroup = modifierGroup.attributes.maximum
-        val selectedModifierItemByGroup = itemList.filterIsInstance<ModifierItemAdapterItem>()
+        val selectedModifierItemByGroup = countModifierItemTotalBy(modifierGroup)
+        return selectedModifierItemByGroup.any<ModifierGroup, Int> { (_, sum) -> sum >= maximumModifierGroup }
+    }
+
+    private fun updateNonSelectedModifiersExceedingMaximum(
+        params: ModifierItemClickParams,
+        isSelected: Boolean
+    ) {
+        itemList.filterIsInstance<ModifierItemAdapterItem>()
+            .filter { isModifierItemExceedingMaximum(it, params) }
+            .forEach { updateModifierItem(it, isSelected) }
+    }
+
+    private fun isModifierItemExceedingMaximum(
+        listItem: ModifierItemAdapterItem,
+        params: ModifierItemClickParams
+    ): Boolean {
+        val isSameGroup = listItem.modifierGroup.id == params.modifierGroup.id
+        val isNotCurrentPosition = itemList.indexOf(listItem) != params.modifierPosition
+        val isNotSelected = !listItem.modifierItem.attributes.isSelected
+        val isMaximumGreaterThanOne = listItem.modifierItem.attributes.maximum > 1
+
+        return isSameGroup && isNotCurrentPosition && isNotSelected && isMaximumGreaterThanOne
+    }
+
+    private fun updateModifierItem(item: ModifierItemAdapterItem, isSelected: Boolean) {
+        item.modifierItem.attributes.setModifierItemQuantityExceedsMaximum(isSelected)
+        notifyItemChanged(itemList.indexOf(item))
+    }
+
+    private fun isCurrentSelectionEqualToMax(modifierGroup: ModifierGroup): Boolean {
+        val maximumAllowedSelection = modifierGroup.attributes.maximum
+        val selectedItemsByGroup = countModifierItemTotalBy(modifierGroup)
+        return selectedItemsByGroup.any { (_, sum) -> sum + 1 >= maximumAllowedSelection }
+    }
+
+    private fun countModifierItemTotalBy(modifierGroup: ModifierGroup): Map<ModifierGroup, Int> {
+        val totalQuantityByGroup = itemList.filterIsInstance<ModifierItemAdapterItem>()
             .filter { it.modifierGroup.id == modifierGroup.id }
             .groupBy { it.modifierGroup }
             .mapValues { (_, items) ->
                 items.sumOf { if (it.modifierItem.attributes.isSelected) it.modifierItem.attributes.quantity else 0 }
             }
-        return selectedModifierItemByGroup.any<ModifierGroup, Int> { (_, sum) -> sum >= maximumModifierGroup }
+        return totalQuantityByGroup
     }
 
     private fun updateModifierGroup(currentModifierGroupIndex: Int, modifierGroup: ModifierGroup) {
@@ -434,7 +460,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
                 listItem.modifierItem.attributes.isSelected = false
                 notifyItemChanged(itemList.indexOf(listItem))
             }
-        }
+    }
 
 
     private fun showModifierMaxLimitMessage() {
