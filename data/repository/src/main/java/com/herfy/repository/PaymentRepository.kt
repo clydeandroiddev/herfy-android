@@ -27,7 +27,12 @@ import javax.inject.Inject
 interface PaymentRepository {
     suspend fun sendOTP(number: String, result: (OTPResponse) -> Unit)
 
-    suspend fun verifyOTP(otp: String, amount: String, cartBody : JsonObject,result: (OTPResponse) -> Unit)
+    suspend fun verifyOTP(
+        otp: String,
+        amount: String,
+        cartBody: JsonObject,
+        result: (OTPResponse) -> Unit
+    )
 }
 
 class PaymentRepositoryImpl @Inject constructor(
@@ -40,7 +45,7 @@ class PaymentRepositoryImpl @Inject constructor(
             .authorizeProvider(body, Values.MUKAFAA_PROVIDER, object : ApiRequestListener {
                 override fun onSuccess(o: Any) {
                     if (o is JSONObject) {
-                        result(OTPResponse(true, null,null))
+                        result(OTPResponse(true, null, null))
                         //otpView.setCountdown((3 * 60 * 1000).toLong())
                     } else {
                         result(
@@ -146,7 +151,12 @@ class PaymentRepositoryImpl @Inject constructor(
             })
     }
 
-    override suspend fun verifyOTP(otp: String, amount: String, cartBody: JsonObject,result: (OTPResponse) -> Unit) {
+    override suspend fun verifyOTP(
+        otp: String,
+        amount: String,
+        cartBody: JsonObject,
+        result: (OTPResponse) -> Unit
+    ) {
         var valid = true
 
         if (otp.isEmpty()) {
@@ -177,7 +187,7 @@ class PaymentRepositoryImpl @Inject constructor(
                                     OTPResponse(
                                         true,
                                         OTPData(transactionId, amount),
-                                       null
+                                        null
                                     )
                                 )
                             } catch (e: JSONException) {
@@ -186,12 +196,12 @@ class PaymentRepositoryImpl @Inject constructor(
                         } else {
                             result(
                                 OTPResponse(
-                                    true,
+                                    false,
                                     null,
                                     ErrorMsgItem(
                                         true,
                                         "",
-                                        true
+                                        false
                                     )
                                 )
                             )
@@ -210,112 +220,116 @@ class PaymentRepositoryImpl @Inject constructor(
                                         Text.AN_ERROR_OCCURRED
                                     ), null
                                 )
-                                if (error is JSONObject) {
-                                    val errorCode = error.getString("code")
-                                    if (errorCode == "1062") {
-                                        result(
-                                            OTPResponse(
-                                                true,
-                                                null,
-                                                ErrorMsgItem(
-                                                    true,
-                                                    CacheUtil.getInstance().getTranslations(Text.INVALID_OTP),
-                                                    false
-                                                )
-                                            )
-                                        )
-                                    } else {
-                                        result(
-                                            OTPResponse(
-                                                true,
-                                                null,
-                                                ErrorMsgItem(
-                                                    true,
-                                                    detail,
-                                                    true
-                                                )
-                                            )
-                                        )
-                                    }
-                                } else if (error is JSONArray) {
-                                    val errorObject = error.getJSONObject(0)
-                                    val errorCode = errorObject.getString("code")
-                                    if (errorCode == "1062") {
-                                        result(
-                                            OTPResponse(
-                                                true,
-                                                null,
-                                                ErrorMsgItem(
-                                                    true,
-                                                    CacheUtil.getInstance().getTranslations(Text.INVALID_OTP),
-                                                    false
-                                                )
-                                            )
-                                        )
-                                    } else {
-                                        result(
-                                            OTPResponse(
-                                                true,
-                                                null,
-                                                ErrorMsgItem(
-                                                    true,
-                                                    detail,
-                                                    true
-                                                )
-                                            )
-                                        )
-                                    }
-                                } else if (messages is JSONObject) {
+
+                                if (messages is JSONObject) {
                                     val jsonMessages = messages
                                     val msg = jsonMessages.getString("message")
                                     val errorCode = jsonMessages.getString("errorCode")
                                     if (errorCode != "301") {
-                                        result(
-                                            OTPResponse(
+                                        result(OTPResponse(
+                                            false,
+                                            null,
+                                            ErrorMsgItem(
                                                 true,
-                                                null,
-                                                ErrorMsgItem(
-                                                    true,
-                                                    msg,
-                                                    true
+                                                msg,
+                                                true
+                                            )
+                                        ))
+                                    } else {
+                                        result(OTPResponse(
+                                            false,
+                                            null,
+                                            ErrorMsgItem(
+                                                true,
+                                                CacheUtil.getInstance()
+                                                    .getTranslations(Text.INVALID_OTP),
+                                                false
+                                            )
+                                        ))
+                                    }
+                                } else {
+                                    if (error is JSONObject) {
+                                        val errorCode = error.getString("code")
+                                        if (errorCode == "1062") {
+                                            result(
+                                                OTPResponse(
+                                                    false,
+                                                    null,
+                                                    ErrorMsgItem(
+                                                        true,
+                                                        CacheUtil.getInstance()
+                                                            .getTranslations(Text.INVALID_OTP),
+                                                        false
+                                                    )
                                                 )
                                             )
-                                        )
+                                        } else {
+                                            result(
+                                                OTPResponse(
+                                                    false,
+                                                    null,
+                                                    ErrorMsgItem(
+                                                        true,
+                                                        detail,
+                                                        true
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    } else if (error is JSONArray) {
+                                        val errorObject = error.getJSONObject(0)
+                                        val errorCode = errorObject.getString("code")
+                                        if (errorCode == "1062") {
+                                            result(
+                                                OTPResponse(
+                                                    false,
+                                                    null,
+                                                    ErrorMsgItem(
+                                                        true,
+                                                        CacheUtil.getInstance()
+                                                            .getTranslations(Text.INVALID_OTP),
+                                                        false
+                                                    )
+                                                )
+                                            )
+                                        } else {
+                                            result(
+                                                OTPResponse(
+                                                    false,
+                                                    null,
+                                                    ErrorMsgItem(
+                                                        true,
+                                                        detail,
+                                                        true
+                                                    )
+                                                )
+                                            )
+                                        }
                                     } else {
                                         result(
                                             OTPResponse(
-                                                true,
+                                                false,
                                                 null,
                                                 ErrorMsgItem(
                                                     true,
-                                                    CacheUtil.getInstance().getTranslations(Text.INVALID_OTP),
+                                                    CacheUtil.getInstance()
+                                                        .getTranslations(Text.INVALID_OTP),
                                                     false
                                                 )
                                             )
                                         )
                                     }
-                                } else {
-                                    result(
-                                        OTPResponse(
-                                            true,
-                                            null,
-                                            ErrorMsgItem(
-                                                true,
-                                                CacheUtil.getInstance().getTranslations(Text.INVALID_OTP),
-                                                false
-                                            )
-                                        )
-                                    )
                                 }
                             } catch (e: JSONException) {
                                 e.printStackTrace()
                                 result(
                                     OTPResponse(
-                                        true,
+                                        false,
                                         null,
                                         ErrorMsgItem(
                                             true,
-                                            CacheUtil.getInstance().getTranslations(Text.INVALID_OTP),
+                                            CacheUtil.getInstance()
+                                                .getTranslations(Text.INVALID_OTP),
                                             false
                                         )
                                     )
@@ -324,7 +338,7 @@ class PaymentRepositoryImpl @Inject constructor(
                         } else {
                             result(
                                 OTPResponse(
-                                    true,
+                                    false,
                                     null,
                                     ErrorMsgItem(
                                         true,

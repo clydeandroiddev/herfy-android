@@ -7,8 +7,11 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.Window
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.herfy.common.R
 import com.herfy.utils.helper.CacheUtil
@@ -134,9 +137,16 @@ open class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
         try {
             dismissLoadingDialog()
             context?.let {
+                val view = getLayoutInflater().inflate(R.layout.loading, null)
                 val builder = AlertDialog.Builder(it)
                 builder.setCancelable(false)
-                builder.setView(layoutInflater.inflate(R.layout.loading, null))
+                builder.setView(view)
+                val ivLoader = view.findViewById<ImageView>(R.id.ivLoader)
+                Glide.with(this)
+                    .asGif()
+                    .load(R.drawable.loader)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(ivLoader)
                 loadingDialog = builder.create()
                 loadingDialog?.apply {
                     requestWindowFeature(Window.FEATURE_NO_TITLE)

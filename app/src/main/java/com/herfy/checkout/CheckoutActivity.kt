@@ -56,8 +56,9 @@ import com.google.gson.JsonObject
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
-import com.herfy.analytics.firebase.*
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil.Companion.addPaymentInfoEvent
+import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.base.BaseActivity
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
@@ -1979,10 +1980,20 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun otpResult(transactionId: String, amount: String, invalidMukafaa: Boolean) {
         if (!invalidMukafaa && transactionId.isNotEmpty()) {
             paymentPresenter?.mukafaaTransactionId = transactionId
+            val validatedTotal = paymentPresenter?.validatedTotal?: 0.0
+            val orderPayment = CacheUtil.getInstance().orderPayment
+            val amountDbl = amount.toDouble()
+            if (orderPayment == PaymentType.NONE
+                && validatedTotal == amountDbl
+                && loyaltypointsInput <= 0
+                && CacheUtil.getInstance().getOrderType() != OrderType.DELIVERY
+            ) {
+                selectPaymentTypeCash()
+            }
             binding?.apply {
                 layoutAlrahji.switchAlrahji.isChecked = true
             }
-
+            bottomSheetAlrhaji?.dismissAllowingStateLoss()
         } else {
             CacheUtil.getInstance().orderPayment = PaymentType.NONE
             binding?.apply {

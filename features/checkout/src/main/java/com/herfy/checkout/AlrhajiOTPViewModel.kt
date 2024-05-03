@@ -28,9 +28,14 @@ class AlrhajiOTPViewModel @Inject constructor(
     private val _showVerified = MutableLiveData<Event<OTPData>>()
     val showVerified : LiveData<Event<OTPData>> = _showVerified
 
+    private val _isLoading = MutableLiveData<Event<Boolean>>()
+    val isLoading : LiveData<Event<Boolean>> = _isLoading
+
     fun sendOTP(number : String){
+        _isLoading.value = Event(true)
         invoke {
             paymentRepository.sendOTP(number){
+                _isLoading.value = Event(false)
                 if(it.isSuccess){
                     _showCountDown.value = (3*60*1000)
                 }else {
@@ -43,8 +48,10 @@ class AlrhajiOTPViewModel @Inject constructor(
     }
 
     fun verifyOTP(otp : String, amount : String, cartBody : JsonObject){
+        _isLoading.value = Event(true)
         invoke {
             paymentRepository.verifyOTP(otp,amount, cartBody){
+                _isLoading.value = Event(false)
                 if(it.isSuccess){
                     it.data?.let { data->
                         _showVerified.value = Event(data)
