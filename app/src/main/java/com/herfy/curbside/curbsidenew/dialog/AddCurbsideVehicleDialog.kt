@@ -133,6 +133,20 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
             }
 
         }
+
+        checkContinueButton()
+    }
+
+    private fun checkContinueButton() {
+        if ((carMaker != null && carColor != null && binding.plateNumberEdit.text.toString()
+                .isNotEmpty()) || carMaker != null && carColor != null && binding.plateNumberEdit.text.toString()
+                .isEmpty() || binding.plateNumberEdit.text.toString()
+                .isNotEmpty() && carMaker == null && carColor == null
+        ) {
+            binding.continueButton.alpha = 1f
+        } else {
+            binding.continueButton.alpha = 0.5f
+        }
     }
 
     override fun setPresenter(presenter: CurbsideContract.Presenter?) {
@@ -183,7 +197,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 }
 
                 override fun afterTextChanged(editable: Editable?) {
-
+                    checkContinueButton()
                 }
             })
 
@@ -195,10 +209,8 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
             }
 
             continueButton.setOnClickListener {
-                saveAndContinue()
+                if (continueButton.alpha == 1f) saveAndContinue()
             }
-
-            binding.continueButton.isVisible = true
         }
     }
 
@@ -373,6 +385,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                     }).into(binding.curbsideBrand)
             }
         }
+        checkContinueButton()
     }
 
     private fun setupColor() {
@@ -397,6 +410,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 )
             }
         }
+        checkContinueButton()
     }
 
     private fun showVehicleBrand() {
