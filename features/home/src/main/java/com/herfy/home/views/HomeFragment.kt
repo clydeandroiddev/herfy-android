@@ -51,6 +51,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     override val viewModel: HomeViewModel by viewModels()
     override val layout: Int = R.layout.fragment_home
+    private var orderType = ""
     private lateinit var sliderImageAdapter: SliderImageAdapter
     private lateinit var promotionsAdapter: PromotionsAdapter
     private lateinit var promotionCategoryAdapter: PromotionCategoryAdapter
@@ -114,12 +115,11 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     private fun showPopup() {
         CacheUtil.getInstance().popup?.let {
-            Glide.with(requireContext()).load(CacheUtil.getInstance().popup.imageUri)
-                .preload()
+            Glide.with(requireContext()).load(CacheUtil.getInstance().popup.imageUri).preload()
             setFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
                 clearFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT)
                 val actionValue = bundle.getString(Values.ARGS_KEY_ACTION_VALUE) ?: ""
-                if(actionValue.isNotEmpty()){
+                if (actionValue.isNotEmpty()) {
                     when (bundle.getString(Values.ARGS_KEY_ACTION_TYPE)) {
                         "url" -> {
                             try {
@@ -133,6 +133,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                 e.printStackTrace()
                             }
                         }
+
                         "category" -> {
                             MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
                             findNavController().navigateToDeepLink("nav_menu/$actionValue")
@@ -563,8 +564,15 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.showOrderTrackerNotif.observe(this) {
             it.getContentIfNotHandled()?.let { orderDetails ->
+                orderType = orderDetails.orderType
                 binding.layoutBanner.orderTracker.apply {
-                    if (orderDetails.orderType == OrderType.convertOrderTypeToString(OrderType.DELIVERY)) {
+                    if (orderDetails.orderType.equals(
+                            OrderType.convertOrderTypeToString(OrderType.DELIVERY),
+                            ignoreCase = true
+                        ) || orderDetails.orderType.equals(
+                            "deliver", ignoreCase = true
+                        )
+                    ) {
                         if (orderDetails.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
                             updateStatusGIF(R.drawable.make_order)
                         } else if (orderDetails.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && orderDetails.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
@@ -588,7 +596,18 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         Text.YOUR_ORDER_FROM, "Your (x) order from Herfy"
                     ).replace("(x)", orderDetails.orderType)
 
-                    val promisedTime = CacheUtil.getInstance().promisedTime
+                    val promisedTime: String = if (orderDetails.orderType.equals(
+                            OrderType.convertOrderTypeToString(OrderType.DELIVERY),
+                            ignoreCase = true
+                        ) || orderDetails.orderType.equals(
+                            "deliver", ignoreCase = true
+                        )
+                    ) {
+                        CacheUtil.getInstance().concept.promisedTimeDeltaDelivery.toString()
+                    } else {
+                        CacheUtil.getInstance().concept.promisedTimeDeltaPickup.toString()
+                    }
+
                     if (promisedTime == "0" || promisedTime == "") {
                         tvEstimateValue.gone()
                         tvEstimateLabel.gone()
@@ -597,7 +616,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         tvEstimateLabel.visible()
                         tvEstimateValue.text =
                             CacheUtil.getInstance().getTranslations(Text.MIN, "(x) mins")
-                                .replace("(x)", CacheUtil.getInstance().promisedTime)
+                                .replace("(x)", promisedTime)
                         tvEstimateLabel.text =
                             CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
                     }
@@ -612,11 +631,46 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.updateOrderTrackerNotif.observe(this) { orderData ->
             binding.apply {
-                if (orderData.orderStatus.sequence < 9) {
+                if (orderData.orderStatus.sequence < OrderStatusType.FINISHED.value) {
                     layoutBanner.orderTracker.tvStatusLabel.text = orderData.orderStatus.description
+                } else if (orderData.orderStatus.sequence == OrderStatusType.FINISHED.value) {
+                    binding.layoutBanner.orderTracker.tvEstimateValue.gone()
+                    binding.layoutBanner.orderTracker.tvEstimateLabel.gone()
+                    binding.layoutBanner.orderTracker.tvStatusLabel.text =
+                        CacheUtil.getInstance().getTranslations(
+                            Text.THANK_YOU_ORDERING,
+                            "Thank you for ordering at Herfy mobile app."
+                        )
+                    binding.layoutBanner.orderTracker.tvOrderTypeLabel.text =
+                        CacheUtil.getInstance()
+                            .getTranslations(Text.ORDER_COMPLETED, "Order completed!.")
                 } else {
-                    CacheUtil.getInstance().promisedTime = ""
+                    binding.layoutBanner.orderTracker.tvEstimateValue.gone()
+                    binding.layoutBanner.orderTracker.tvEstimateLabel.gone()
                     layoutBanner.orderTracker.clOrderNotif.visibility = View.GONE
+                }
+
+                if (orderType.equals(
+                        OrderType.convertOrderTypeToString(OrderType.DELIVERY), ignoreCase = true
+                    ) || orderType.equals(
+                        "deliver", ignoreCase = true
+                    )
+                ) {
+                    if (orderData.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
+                        updateStatusGIF(R.drawable.make_order)
+                    } else if (orderData.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && orderData.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                        updateStatusGIF(R.drawable.delivered_order)
+                    } else {
+                        updateStatusGIF(R.drawable.delivered_order)
+                    }
+                } else {
+                    if (orderData.orderStatus.sequence <= OrderStatusType.IN_KITCHEN.value) {
+                        updateStatusGIF(R.drawable.make_order)
+                    } else if (orderData.orderStatus.sequence >= OrderStatusType.READY.value && orderData.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                        updateStatusGIF(R.drawable.collected_order)
+                    } else {
+                        updateStatusGIF(R.drawable.collected_order)
+                    }
                 }
             }
         }

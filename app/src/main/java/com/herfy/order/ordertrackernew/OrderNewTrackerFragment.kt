@@ -384,8 +384,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             orderCurbsideDetails.serveOrder.text = CacheUtil.getInstance().getTranslations(
                 Text.ARRIVED_SERVE_ORDER, "Arrived - Serve my order"
             )
-            cancelledText.text =
-                CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
             orderHelpDetails.callHelpLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.CALL, "Call")
             orderHelpDetails.whatsAppHelpMessageLabel.text =
@@ -1133,12 +1131,22 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     }
 
                     if (order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value) {
+                        if (order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value && order.orderStatus.sequence <= OrderStatusType.CANCELLED_BY_EMPLOYEE.value) {
+                            binding.cancelledText.text =
+                                CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
+                            finishedLabel.text =
+                                CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
+                        } else {
+                            binding.cancelledText.text =
+                                CacheUtil.getInstance().getTranslations(Text.FAILED, "Failed")
+                            finishedLabel.text =
+                                CacheUtil.getInstance().getTranslations(Text.FAILED, "Failed")
+                        }
                         binding.cookingImage.setImageResource(R.drawable.ic_cancelled_order)
                         imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_cancelled_order)
                         binding.estimateLayout.isVisible = false
                         binding.cancelledText.isVisible = true
-                        finishedLabel.text =
-                            CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
+
                     } else {
                         binding.estimateLayout.isVisible = true
                         binding.cancelledText.isVisible = false
