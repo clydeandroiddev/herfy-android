@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.clearFragmentResultListener
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.herfy.common.getPromisedMinutes
 import com.herfy.home.R
 import com.herfy.home.adapter.PromotionCategoryAdapter
 import com.herfy.home.adapter.PromotionsAdapter
@@ -596,19 +598,9 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         Text.YOUR_ORDER_FROM, "Your (x) order from Herfy"
                     ).replace("(x)", orderDetails.orderType)
 
-                    val promisedTime: String = if (orderDetails.orderType.equals(
-                            OrderType.convertOrderTypeToString(OrderType.DELIVERY),
-                            ignoreCase = true
-                        ) || orderDetails.orderType.equals(
-                            "deliver", ignoreCase = true
-                        )
-                    ) {
-                        CacheUtil.getInstance().concept.promisedTimeDeltaDelivery.toString()
-                    } else {
-                        CacheUtil.getInstance().concept.promisedTimeDeltaPickup.toString()
-                    }
+                    val promisedTime = orderDetails.promisedTime.getPromisedMinutes()
 
-                    if (promisedTime == "0" || promisedTime == "") {
+                    if (promisedTime <= 0) {
                         tvEstimateValue.gone()
                         tvEstimateLabel.gone()
                     } else {
@@ -616,7 +608,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         tvEstimateLabel.visible()
                         tvEstimateValue.text =
                             CacheUtil.getInstance().getTranslations(Text.MIN, "(x) mins")
-                                .replace("(x)", promisedTime)
+                                .replace("(x)", promisedTime.toString())
                         tvEstimateLabel.text =
                             CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
                     }
@@ -638,8 +630,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     binding.layoutBanner.orderTracker.tvEstimateLabel.gone()
                     binding.layoutBanner.orderTracker.tvStatusLabel.text =
                         CacheUtil.getInstance().getTranslations(
-                            Text.THANK_YOU_ORDERING,
-                            "Thank you for ordering at Herfy mobile app."
+                            Text.THANK_YOU_ORDERING, "Thank you for ordering at Herfy mobile app."
                         )
                     binding.layoutBanner.orderTracker.tvOrderTypeLabel.text =
                         CacheUtil.getInstance()
