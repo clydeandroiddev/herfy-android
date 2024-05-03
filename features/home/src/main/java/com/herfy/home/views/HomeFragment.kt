@@ -115,8 +115,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     private fun showPopup() {
         CacheUtil.getInstance().popup?.let {
-            Glide.with(requireContext()).load(CacheUtil.getInstance().popup.imageUri)
-                .preload()
+            Glide.with(requireContext()).load(CacheUtil.getInstance().popup.imageUri).preload()
             setFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
                 clearFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT)
                 val actionValue = bundle.getString(Values.ARGS_KEY_ACTION_VALUE) ?: ""
@@ -570,6 +569,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     if (orderDetails.orderType.equals(
                             OrderType.convertOrderTypeToString(OrderType.DELIVERY),
                             ignoreCase = true
+                        ) || orderDetails.orderType.equals(
+                            "deliver", ignoreCase = true
                         )
                     ) {
                         if (orderDetails.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
@@ -595,7 +596,18 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         Text.YOUR_ORDER_FROM, "Your (x) order from Herfy"
                     ).replace("(x)", orderDetails.orderType)
 
-                    val promisedTime = CacheUtil.getInstance().promisedTime
+                    val promisedTime: String = if (orderDetails.orderType.equals(
+                            OrderType.convertOrderTypeToString(OrderType.DELIVERY),
+                            ignoreCase = true
+                        ) || orderDetails.orderType.equals(
+                            "deliver", ignoreCase = true
+                        )
+                    ) {
+                        CacheUtil.getInstance().concept.promisedTimeDeltaDelivery.toString()
+                    } else {
+                        CacheUtil.getInstance().concept.promisedTimeDeltaPickup.toString()
+                    }
+
                     if (promisedTime == "0" || promisedTime == "") {
                         tvEstimateValue.gone()
                         tvEstimateLabel.gone()
@@ -604,7 +616,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         tvEstimateLabel.visible()
                         tvEstimateValue.text =
                             CacheUtil.getInstance().getTranslations(Text.MIN, "(x) mins")
-                                .replace("(x)", CacheUtil.getInstance().promisedTime)
+                                .replace("(x)", promisedTime)
                         tvEstimateLabel.text =
                             CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
                     }
@@ -624,17 +636,24 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 } else if (orderData.orderStatus.sequence == OrderStatusType.FINISHED.value) {
                     binding.layoutBanner.orderTracker.tvEstimateValue.gone()
                     binding.layoutBanner.orderTracker.tvEstimateLabel.gone()
-                    CacheUtil.getInstance().promisedTime = ""
+                    binding.layoutBanner.orderTracker.tvStatusLabel.text =
+                        CacheUtil.getInstance().getTranslations(
+                            Text.THANK_YOU_ORDERING,
+                            "Thank you for ordering at Herfy mobile app."
+                        )
+                    binding.layoutBanner.orderTracker.tvOrderTypeLabel.text =
+                        CacheUtil.getInstance()
+                            .getTranslations(Text.ORDER_COMPLETED, "Order completed!.")
                 } else {
                     binding.layoutBanner.orderTracker.tvEstimateValue.gone()
                     binding.layoutBanner.orderTracker.tvEstimateLabel.gone()
-                    CacheUtil.getInstance().promisedTime = ""
                     layoutBanner.orderTracker.clOrderNotif.visibility = View.GONE
                 }
 
                 if (orderType.equals(
-                        OrderType.convertOrderTypeToString(OrderType.DELIVERY),
-                        ignoreCase = true
+                        OrderType.convertOrderTypeToString(OrderType.DELIVERY), ignoreCase = true
+                    ) || orderType.equals(
+                        "deliver", ignoreCase = true
                     )
                 ) {
                     if (orderData.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {

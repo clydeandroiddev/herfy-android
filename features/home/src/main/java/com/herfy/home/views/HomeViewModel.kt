@@ -38,6 +38,7 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.OrderData
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
+import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import com.skylinedynamics.solosdk.api.models.objects.Tier
@@ -54,8 +55,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository,
-    private val dispatchers: DispatcherProvider
+    private val homeRepository: HomeRepository, private val dispatchers: DispatcherProvider
 ) : BaseViewModel(), PromotionsAdapter.PromotionListener, SliderImageAdapter.SliderListener,
     PromotionCategoryAdapter.PromotionCategoryListener, PromotionDetailBottomSheet.onAction {
 
@@ -175,7 +175,7 @@ class HomeViewModel @Inject constructor(
                 homeRepository.getLastOrder(lastOrder) { homeResponse ->
                     if (homeResponse.success) {
                         homeResponse.data?.cast<OrderDetails> { orderDetails ->
-                            if (orderDetails.orderStatus.sequence < 9) {
+                            if (orderDetails.orderStatus.sequence < OrderStatusType.FINISHED.value) {
                                 val ablyUtil: AblyUtil = AblyUtil.Companion.instance
                                 ablyUtil.subscribeToOrderStatusUpdate(orderDetails.id) { message ->
                                     this@HomeViewModel.onOrderStatusUpdate(message)
@@ -196,7 +196,7 @@ class HomeViewModel @Inject constructor(
             val jsonObject = JSONObject(message.data.toString())
             val orderData = OrderData.parse(jsonObject.getJSONObject("order"))
             _updateOrderTrackerNotif.postValue(orderData)
-            if (orderData.orderStatus.sequence >= 9) {
+            if (orderData.orderStatus.sequence >= OrderStatusType.FINISHED.value) {
                 detachAbly()
             }
 
@@ -516,13 +516,10 @@ class HomeViewModel @Inject constructor(
                 promos.filter { promo ->
                     promo.promotion.attributes.rules.isNotEmpty() && promo.promotion.attributes.rules.find { rule ->
                         rule.ruleKey.equals(
-                            "order-type",
-                            true
-                        ) && rule.ruleValue?.replace("in:", "")?.split(",")
-                            ?.find { t ->
+                            "order-type", true
+                        ) && rule.ruleValue?.replace("in:", "")?.split(",")?.find { t ->
                                 if (category.equals(
-                                        "pickup",
-                                        ignoreCase = true
+                                        "pickup", ignoreCase = true
                                     )
                                 ) (t.trim() == "pickup" || t.trim() == "to-go" || t.trim() == "drive-thru") else t.trim()
                                     .equals(category, true)
@@ -639,9 +636,7 @@ class HomeViewModel @Inject constructor(
                                     MixpanelUtil.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
                                     if (menuItem.isMustBeCustomized || menuItem.isCombo) {
                                         val campaignToAdd = CampaignToAdd(
-                                            digitalCoupon,
-                                            digitalCoupon.promotion,
-                                            menuItem
+                                            digitalCoupon, digitalCoupon.promotion, menuItem
                                         )
                                         CacheUtil.getInstance().campaignToAdd = campaignToAdd
                                     } else {
@@ -665,9 +660,8 @@ class HomeViewModel @Inject constructor(
                             if (o is JSONObject) {
                                 try {
                                     val error = o["error"]
-                                    var detail =
-                                        CacheUtil.getInstance()
-                                            .getTranslations(Text.AN_ERROR_OCCURRED)
+                                    var detail = CacheUtil.getInstance()
+                                        .getTranslations(Text.AN_ERROR_OCCURRED)
                                     if (error is JSONObject) {
                                         detail = error.getString("detail")
                                     } else if (error is JSONArray) {
@@ -730,8 +724,7 @@ class HomeViewModel @Inject constructor(
                     orderBody.addProperty("source", "Android")
                     orderBody.addProperty("notes", CacheUtil.getInstance().cartNotes)
                     orderBody.addProperty(
-                        "subtotal",
-                        String.format(Locale.ENGLISH, "%.2f", subtotal).toDouble()
+                        "subtotal", String.format(Locale.ENGLISH, "%.2f", subtotal).toDouble()
                     )
 
                     var discount = 0.0
@@ -752,8 +745,7 @@ class HomeViewModel @Inject constructor(
                                     } else {
                                         deliveryCharge =
                                             deliveryCharge * (digitalCoupon.getPromotion()
-                                                .getAttributes()
-                                                .getDiscountValue() / 100)
+                                                .getAttributes().getDiscountValue() / 100)
                                     }
                                 } else {
                                     if (digitalCoupon.getPromotion().getAttributes()
@@ -763,8 +755,7 @@ class HomeViewModel @Inject constructor(
                                     } else {
                                         deliveryCharge =
                                             deliveryCharge - digitalCoupon.getPromotion()
-                                                .getAttributes()
-                                                .getDiscountValue()
+                                                .getAttributes().getDiscountValue()
                                     }
                                 }
                             }
@@ -779,8 +770,7 @@ class HomeViewModel @Inject constructor(
                         discount = subtotal
                     }
                     orderBody.addProperty(
-                        "discount",
-                        String.format(Locale.ENGLISH, "%.2f", discount).toDouble()
+                        "discount", String.format(Locale.ENGLISH, "%.2f", discount).toDouble()
                     )
                     val validDelivery = CacheUtil.getInstance()
                         .getOrderType() === OrderType.DELIVERY && (CacheUtil.getInstance()
@@ -794,9 +784,10 @@ class HomeViewModel @Inject constructor(
                     when (orderType) {
                         OrderType.PICKUP -> {
                             deliveryCharge = 0.0
-                            if (CacheUtil.getInstance().getApplication().attributes.getOrderTypes()
-                                    .size == 3 || CacheUtil.getInstance().getApplication()
-                                    .attributes.getOrderTypes().contains(OrderType.DINE_IN)
+                            if (CacheUtil.getInstance()
+                                    .getApplication().attributes.getOrderTypes().size == 3 || CacheUtil.getInstance()
+                                    .getApplication().attributes.getOrderTypes()
+                                    .contains(OrderType.DINE_IN)
                             ) {
                                 orderBody.addProperty("type", "to-go")
                             } else {
@@ -827,21 +818,20 @@ class HomeViewModel @Inject constructor(
                                 .getCurbsideCar() != null
                         ) {
                             orderBody.addProperty(
-                                "location",
-                                CacheUtil.getInstance().getOrderStore().id
+                                "location", CacheUtil.getInstance().getOrderStore().id
                             )
                             orderBody.addProperty(
-                                "car-id",
-                                CacheUtil.getInstance().getCurbsideCar().id
+                                "car-id", CacheUtil.getInstance().getCurbsideCar().id
                             )
                             orderBody.addProperty("type", "curbside")
                         }
 
                         OrderType.DRIVE_THRU -> {
                             deliveryCharge = 0.0
-                            if (CacheUtil.getInstance().getApplication().attributes.getOrderTypes()
-                                    .size == 3 || CacheUtil.getInstance().getApplication()
-                                    .attributes.getOrderTypes().contains(OrderType.DINE_IN)
+                            if (CacheUtil.getInstance()
+                                    .getApplication().attributes.getOrderTypes().size == 3 || CacheUtil.getInstance()
+                                    .getApplication().attributes.getOrderTypes()
+                                    .contains(OrderType.DINE_IN)
                             ) {
                                 orderBody.addProperty("type", "to-go")
                             } else {
@@ -860,9 +850,7 @@ class HomeViewModel @Inject constructor(
 //            orderBody.addProperty("vat-amount", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", vatAmount)));
 //        }
                     var total = String.format(
-                        Locale.ENGLISH,
-                        "%.2f",
-                        discountedSubtotal + deliveryCharge + vatAmount
+                        Locale.ENGLISH, "%.2f", discountedSubtotal + deliveryCharge + vatAmount
                     ).toDouble()
                     if (total < 0) {
                         total = 0.0
@@ -929,8 +917,7 @@ class HomeViewModel @Inject constructor(
                         for (modifierGroup in menuItem.getModifierGroups()) {
                             val visibilityConfig = modifierGroup.attributes.visibilityConfig
                             if (visibilityConfig == null || !visibilityConfig.initialValue.equals(
-                                    "hidden",
-                                    ignoreCase = true
+                                    "hidden", ignoreCase = true
                                 )
                             ) {
                                 for (modifierItem in modifierGroup.modifierItems) {
@@ -938,16 +925,14 @@ class HomeViewModel @Inject constructor(
                                         val modifier = JsonObject()
                                         modifier.addProperty("id", modifierItem.id)
                                         modifier.addProperty(
-                                            "price",
-                                            String.format(
+                                            "price", String.format(
                                                 Locale.ENGLISH,
                                                 "%.2f",
                                                 modifierItem.attributes.price
                                             ).toDouble()
                                         )
                                         modifier.addProperty(
-                                            "quantity",
-                                            modifierItem.attributes.quantity
+                                            "quantity", modifierItem.attributes.quantity
                                         )
                                         modifiers.add(modifier)
                                     }
@@ -970,17 +955,12 @@ class HomeViewModel @Inject constructor(
                                 val ingredientObject = JsonObject()
                                 ingredientObject.addProperty("id", ingredient.id)
                                 ingredientObject.addProperty(
-                                    "price",
-                                    String.format(
-                                        Locale.ENGLISH,
-                                        "%.2f",
-                                        ingredient.attributes.price
-                                    )
-                                        .toDouble()
+                                    "price", String.format(
+                                        Locale.ENGLISH, "%.2f", ingredient.attributes.price
+                                    ).toDouble()
                                 )
                                 ingredientObject.addProperty(
-                                    "quantity",
-                                    ingredient.attributes.quantity
+                                    "quantity", ingredient.attributes.quantity
                                 )
                                 ingredients.add(ingredientObject)
                             }
@@ -1025,14 +1005,11 @@ class HomeViewModel @Inject constructor(
                                 AppLogger.printRetrofitError(o)
                                 _showError.value = Event(
                                     ErrorMsgItem(
-                                        true,
-                                        ErrorHandler.getErrorMessage(
-                                            o,
-                                            CacheUtil.getInstance().getTranslations(
+                                        true, ErrorHandler.getErrorMessage(
+                                            o, CacheUtil.getInstance().getTranslations(
                                                 Text.YOU_ARE_NOT_ELIGIBLE_TO_CLAIM_THE_PROMOTION,
                                                 "You are not eligible to claim the promotion."
-                                            ),
-                                            null
+                                            ), null
                                         )
                                     )
                                 )
@@ -1044,8 +1021,7 @@ class HomeViewModel @Inject constructor(
         } else {
             _showError.value = Event(
                 ErrorMsgItem(
-                    true,
-                    CacheUtil.getInstance().getTranslations(
+                    true, CacheUtil.getInstance().getTranslations(
                         Text.PLEASE_ADD_ITEMS_TO_YOUR_CART,
                         "Please add items to your cart to avail this offer"
                     )
@@ -1103,8 +1079,7 @@ class HomeViewModel @Inject constructor(
         for (modifierGroup in menuItem.getModifierGroups()) {
             val visibilityConfig = modifierGroup.attributes.visibilityConfig
             if (visibilityConfig == null || !visibilityConfig.initialValue.equals(
-                    "hidden",
-                    ignoreCase = true
+                    "hidden", ignoreCase = true
                 )
             ) {
                 for (modifierItem in modifierGroup.modifierItems) {
@@ -1126,8 +1101,7 @@ class HomeViewModel @Inject constructor(
                                         Locale.getDefault()
                                     ).contains("sandwich")
                                 ) {
-                                    val getIndex: Int =
-                                        getYourWayModifier(item.modifierGroups)
+                                    val getIndex: Int = getYourWayModifier(item.modifierGroups)
                                     if (getIndex != -1) {
                                         for (i in item.modifierGroups[getIndex].modifierItems.indices) {
                                             if (item.modifierGroups[getIndex].modifierItems[i].attributes.isSelected) {
@@ -1137,14 +1111,11 @@ class HomeViewModel @Inject constructor(
                                     }
                                 } else if (!menuItem.isSandwichOnly && !components.name.english.lowercase(
                                         Locale.getDefault()
-                                    )
-                                        .contains("sandwich") && !components.name.french.lowercase(
+                                    ).contains("sandwich") && !components.name.french.lowercase(
                                         Locale.getDefault()
-                                    )
-                                        .contains("sandwich") || !components.name.english.lowercase(
+                                    ).contains("sandwich") || !components.name.english.lowercase(
                                         Locale.getDefault()
-                                    )
-                                        .contains("sandwich") && !components.name.french.lowercase(
+                                    ).contains("sandwich") && !components.name.french.lowercase(
                                         Locale.getDefault()
                                     )
                                         .contains("sandwich") && menuItem.customFieldObjectMap.isNotItemable
@@ -1171,8 +1142,7 @@ class HomeViewModel @Inject constructor(
     private fun getYourWayModifier(modifierGroups: java.util.ArrayList<ModifierGroup>): Int {
         for (i in modifierGroups.indices) {
             if (modifierGroups[i].attributes.customFieldObjectMap.label.equals(
-                    "yourway",
-                    ignoreCase = true
+                    "yourway", ignoreCase = true
                 )
             ) {
                 return i

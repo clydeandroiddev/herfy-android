@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.res.Resources
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
@@ -168,6 +169,25 @@ fun String.todayOrYesterday(): String {
         e.printStackTrace()
     }
     return ""
+}
+
+fun String.getPromisedMinutes(): String {
+    return try {
+        var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+        val timeValue = simpleDateFormat.parse(this)
+        simpleDateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        simpleDateFormat.timeZone = TimeZone.getDefault()
+        val actualDate = timeValue?.let { simpleDateFormat.format(it) }.orEmpty()
+        val c = Calendar.getInstance().time
+        val df = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        val formattedDate = df.format(c)
+        Log.e("ADAD", "ADADAD:" + actualDate + " - " + formattedDate)
+        ""
+    } catch (e: ParseException) {
+        e.printStackTrace()
+        return ""
+    }
 }
 
 fun String.formatOrderTime(forceIncludeYear: Boolean): String {
