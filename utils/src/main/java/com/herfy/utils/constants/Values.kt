@@ -108,7 +108,9 @@ object Values {
     const val SLIDER_MENU_ASPECT_RATIO_HEIGHT = 128.0
     const val NUTRITION_INFO_ASPECT_RATIO_WIDTH = 334.0
     const val NUTRITION_INFO_ASPECT_RATIO_HEIGHT = 387.0
-
+    const val POPUP_ASPECT_RATIO_WIDTH = 353.0
+    const val POPUP_ASPECT_RATIO_HEIGHT = 657.0
+    const val POPUP_WIDTH_PERCENT = 0.8
     const val LANGUAGE_BACKGROUND_VIDEO_URL = "https://customer-k8n892ut7y8lpez5.cloudflarestream.com/79e15cb36a7411cd45513b69abab8fed/manifest/video.mpd"
 
     const val ARGS_KEY_FRAGMENT_RESULT = "fragmentResult"
