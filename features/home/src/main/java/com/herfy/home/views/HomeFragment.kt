@@ -7,7 +7,6 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.clearFragmentResultListener
@@ -567,7 +566,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.showOrderTrackerNotif.observe(this) {
             it.getContentIfNotHandled()?.let { orderDetails ->
                 orderType = orderDetails.orderType
-                Log.e("ADADADADADOrderTracker", "ADADADADAD1:" + orderDetails.orderType)
                 binding.layoutBanner.orderTracker.apply {
                     if (orderDetails.orderType.equals(
                             OrderType.convertOrderTypeToString(OrderType.DELIVERY),
@@ -623,7 +621,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             binding.apply {
                 if (orderData.orderStatus.sequence < OrderStatusType.FINISHED.value) {
                     layoutBanner.orderTracker.tvStatusLabel.text = orderData.orderStatus.description
+                } else if (orderData.orderStatus.sequence == OrderStatusType.FINISHED.value) {
+                    binding.layoutBanner.orderTracker.tvEstimateValue.gone()
+                    binding.layoutBanner.orderTracker.tvEstimateLabel.gone()
+                    CacheUtil.getInstance().promisedTime = ""
                 } else {
+                    binding.layoutBanner.orderTracker.tvEstimateValue.gone()
+                    binding.layoutBanner.orderTracker.tvEstimateLabel.gone()
                     CacheUtil.getInstance().promisedTime = ""
                     layoutBanner.orderTracker.clOrderNotif.visibility = View.GONE
                 }
