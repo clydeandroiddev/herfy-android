@@ -138,11 +138,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
     }
 
     private fun checkContinueButton() {
-        if ((carMaker != null && carColor != null && binding.plateNumberEdit.text.toString()
-                .isNotEmpty()) || carMaker != null && carColor != null && binding.plateNumberEdit.text.toString()
-                .isEmpty() || binding.plateNumberEdit.text.toString()
-                .isNotEmpty() && carMaker == null && carColor == null
-        ) {
+        if (carMaker != null && carColor != null) {
             binding.continueButton.alpha = 1f
         } else {
             binding.continueButton.alpha = 0.5f
