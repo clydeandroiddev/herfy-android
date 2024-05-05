@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.herfy.R
+import com.herfy.common.VisibilityRulesType
 import com.herfy.menu.adapters.model.ModifierItemClickParams
 import com.herfy.productpagedetails.databinding.ItemModifierGroupHeaderBinding
 import com.herfy.productpagedetails.databinding.ItemModifierOptionTypeBinding
@@ -26,12 +27,9 @@ import com.herfy.utils.helper.ModifierProcessorCallback
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.StringUtil.localize
 import com.herfy.utils.menu.MenuUtil
-import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemAttributes
-import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig
-import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfigRule
 import com.herfy.productpagedetails.R as productPageR
 
 
@@ -42,6 +40,8 @@ class ModifierGroupNewRecycleAdapterKotlin(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var itemList: List<ModifierAdapterType> = mutableListOf()
+    private val modifierGroupVisibilityHash = HashMap<String, String>()
+    private val modifierGroupHasHiddenVisible = HashMap<String, Boolean>()
 
 
     companion object {
@@ -120,8 +120,15 @@ class ModifierGroupNewRecycleAdapterKotlin(
             val visibilityConfig = modifierGroup.attributes.visibilityConfig
 
             var isVisibleByConfig = true
+            val initialValue = if (item.modifierGroup.attributes.visibilityConfig != null) {
+                item.modifierGroup.attributes.visibilityConfig.initialValue
+            } else {
+                ""
+            }
+            val isVisible = initialValue == VisibilityRulesType.HIDDEN.value
+            modifierGroupHasHiddenVisible[item.modifierGroup.id] = isVisible
             if (visibilityConfig != null && visibilityConfig.initialValue != null && visibilityConfig.initialValue.equals(
-                    "hidden",
+                    VisibilityRulesType.HIDDEN.value,
                     ignoreCase = true
                 )
             ) {
@@ -130,7 +137,6 @@ class ModifierGroupNewRecycleAdapterKotlin(
             binding.modifierGroupLayout.headerVisibility(isVisibleByConfig)
             val minimum = modifierGroup.attributes.minimum
             val maximum = modifierGroup.attributes.maximum
-            println("Name ${modifierGroup.attributes.name} and max $maximum and $minimum")
             when {
                 minimum > 0 -> {
                     binding.select.text = when {
@@ -156,33 +162,20 @@ class ModifierGroupNewRecycleAdapterKotlin(
                 else -> binding.select.visibility = View.INVISIBLE
             }
             binding.modifierImage.setVisible(isImageUrl)
-            Glide.with(itemView.context)
-                .load(imageUrl)
-                .apply(RequestOptions.centerCropTransform())
-                .placeholder(R.drawable.imagepicker_image_placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(binding.modifierImage)
             binding.name.text = item.modifierGroup.attributes.name
             binding.btnMinimum.setVisible(isModifierGroupRequired)
             binding.minimum.text =
                 CacheUtil.getInstance().getTranslations(Text.REQUIRED, "Required")
+
             binding.checkBox.setVisible(modifierGroup.isHasSelectedModifierItems || item.hasSelectedItems && binding.btnMinimum.visibility == View.GONE)
         }
 
-        fun setVisibility(isVisible: Boolean) {
-            val param = binding.root.layoutParams as RecyclerView.LayoutParams
-            if (isVisible) {
-                param.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
-                binding.root.visibility = View.VISIBLE
-            } else {
-                binding.root.visibility = View.GONE
-                param.height = 0
-            }
-            binding.root.layoutParams = param
-        }
     }
 
-    fun updateModifierItem(params: ModifierItemClickParams) {
+    fun updateModifierItem(
+        params: ModifierItemClickParams,
+        modifierGroupList: List<ModifierGroup>
+    ) {
         with(params) {
             val modifierGroupAttributes = modifierGroup.attributes
             val modifierGroupMaximum = modifierGroupAttributes.maximum
@@ -190,7 +183,10 @@ class ModifierGroupNewRecycleAdapterKotlin(
             if (modifierGroupMinimum == 0 && modifierGroupMaximum == 1) {
                 deselectPreviouslySelectedItems(modifierPosition, params.modifierGroup)
                 selectNewItem(modifierPosition, isSelected, modifierGroupPosition)
-                updateVisibilityConfigBy(currentModifierGroup = params.modifierGroup)
+                updateModifierVisibilityBy(params.modifierGroup, modifierGroupList)
+                if (modifierGroupVisibilityHash.size > 0) {
+                    updateModifierVisibilityWith(modifierGroupVisibilityHash)
+                }
 
             } else if (canUserSelectSingleModifier(
                     groupMinimum = modifierGroupMinimum,
@@ -199,8 +195,10 @@ class ModifierGroupNewRecycleAdapterKotlin(
             ) {
                 deselectPreviouslySelectedItems(modifierPosition, params.modifierGroup)
                 selectNewItem(modifierPosition, isSelected, modifierGroupPosition)
-
-                updateVisibilityConfigBy(currentModifierGroup = params.modifierGroup)
+                updateModifierVisibilityBy(params.modifierGroup, modifierGroupList)
+                if (modifierGroupVisibilityHash.size > 0) {
+                    updateModifierVisibilityWith(modifierGroupVisibilityHash)
+                }
             } else if (isCanSelectMultipleModifierBy(maximum = modifierGroupMaximum)) {
                 val selectedModifierIndex =
                     modifierGroup.modifierItems.indexOfFirst { it.id == params.modifierItem.id }
@@ -231,7 +229,10 @@ class ModifierGroupNewRecycleAdapterKotlin(
                                 isSelected = isSelected
                             )
                         }
-                        updateVisibilityConfigBy(currentModifierGroup = params.modifierGroup)
+                        updateModifierVisibilityBy(params.modifierGroup, modifierGroupList)
+                        if (modifierGroupVisibilityHash.size > 0) {
+                            updateModifierVisibilityWith(modifierGroupVisibilityHash)
+                        }
                     }
                 }
             }
@@ -242,188 +243,139 @@ class ModifierGroupNewRecycleAdapterKotlin(
         return maximum > 1
     }
 
+
     private fun canUserSelectSingleModifier(groupMinimum: Int, groupMaximum: Int): Boolean {
         return groupMinimum == 1 && groupMaximum == 1
     }
 
+    private fun updateModifierVisibilityWith(modifierVisibilityHashMap: HashMap<String, String>) {
+        modifierVisibilityHashMap.forEach { (groupId, visiblityValue) ->
+            val firstIndex = itemList.indexOfFirst { modifierAdapterItem ->
+                modifierAdapterItem.viewType == VIEW_TYPE_MODIFIER_GROUP &&
+                        (modifierAdapterItem as ModifierGroupAdapterItem).modifierGroup.id == groupId
+            }
 
-    private fun updateVisibilityConfigBy(currentModifierGroup: ModifierGroup) {
+            var modifierGroup: ModifierGroup? = null
+            var hasChanges = false
+            itemList.filterIsInstance<ModifierGroupAdapterItem>().map { modifierGroupItem ->
+                val visibilityConfig = modifierGroupItem?.modifierGroup?.visibilityConfig
 
-        var visibilityConfig: VisibilityConfig? = null
-        itemList.filterIsInstance<ModifierGroupAdapterItem>()
-            .forEachIndexed { index, item ->
-                val attributes = item.modifierGroup.attributes
-                visibilityConfig = attributes.visibilityConfig
-                if (visibilityConfig != null) {
-                    val rules = visibilityConfig?.rules
-                    if (rules != null && rules.isNotEmpty()) {
-                        val rule: VisibilityConfigRule = rules[0]
-                        if (rule.targetType != null && rule.targetType.equals(
-                                "modifier-group",
+                if (modifierGroupItem?.modifierGroup?.id == groupId && visibilityConfig != null) {
+                    val currentVisibilityModifierValue = visibilityConfig.initialValue
+
+                    if (currentVisibilityModifierValue != visiblityValue || currentVisibilityModifierValue.isEmpty()) {
+                        modifierGroupItem.modifierGroup.attributes.visibilityConfig.initialValue =
+                            visiblityValue
+                        modifierGroup = modifierGroupItem.modifierGroup
+                        hasChanges = true
+                    }
+                }
+            }
+            if (hasChanges) {
+                itemList.filterIsInstance<ModifierItemAdapterItem>()
+                    .map { modifierItemAdapterItem ->
+                        if (modifierItemAdapterItem.modifierGroup.id == groupId) {
+                            modifierItemAdapterItem.modifierGroup.attributes.visibilityConfig.initialValue =
+                                visiblityValue
+                        }
+                    }
+            }
+
+            if (hasChanges && modifierGroupHasHiddenVisible[modifierGroup?.id] == true) {
+                val count = (modifierGroup?.modifierItems?.size ?: 0) + 1
+                notifyItemRangeChanged(firstIndex, count)
+            }
+        }
+        modifierVisibilityHashMap.entries.removeIf { e -> e.value == VisibilityRulesType.HIDDEN.value }
+    }
+
+
+    private fun updateModifierVisibilityBy(
+        modGroup: ModifierGroup,
+        modifierGroupList: List<ModifierGroup>
+    ) {
+
+        for (group in modifierGroupList) {
+            val visibilityConfig = group.attributes.visibilityConfig
+            if (visibilityConfig != null) {
+                val rules = visibilityConfig.rules
+                if (rules != null && rules.size > 0) {
+                    val rule = rules[0]
+                    if (rule.targetType != null) {
+                        if (rule.targetType.equals(
+                                VisibilityRulesType.MODIFIER_GROUP.value,
                                 ignoreCase = true
                             )
                         ) {
-
-                            val eachModifierGroupAttributes = item.modifierGroup.attributes
-                            visibilityConfig =
-                                eachModifierGroupAttributes.visibilityConfig
-                            if (visibilityConfig != null) {
-                                val eachModifierRules = visibilityConfig?.rules
-                                if (!eachModifierRules.isNullOrEmpty()) {
-                                    val eachModifierRule: VisibilityConfigRule = rules[0]
-                                    if (eachModifierRule.targetType != null && rule.targetType.equals(
-                                            "modifier-group",
-                                            ignoreCase = true
-                                        )
-                                    ) {
-
-                                        item.listOfModifierGroups
-                                            .forEachIndexed { eachModifierGroupIndex, modifierGroup ->
-                                                if (item.modifierGroup.id != currentModifierGroup.id && eachModifierRule.targetId.equals(
-                                                        modifierGroup.id
-                                                    )
-                                                ) {
-                                                    val hasAnySelectedItems =
-                                                        modifierGroup
-                                                            .modifierItems.any { it.attributes.isSelected }
-                                                    if (hasAnySelectedItems) {
-                                                        item.modifierGroup.attributes
-                                                            .visibilityConfig
-                                                            .initialValue = ""
-                                                    } else {
-                                                        item.modifierGroup.attributes
-                                                            .visibilityConfig.initialValue =
-                                                            "hidden"
-                                                    }
-                                                    notifyItemChanged(0, eachModifierGroupIndex)
-                                                    println("Modifier name group ${currentModifierGroup.attributes.name}")
-                                                    return@forEachIndexed
-                                                }
-                                            }
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        var visibilityUpdateNeeded = false
-        itemList.filterIsInstance<ModifierItemAdapterItem>().forEach { eachModifierItem ->
-            val attributes = eachModifierItem.modifierGroup.attributes
-            val modifierItemVisibilityConfig = attributes.visibilityConfig
-
-            if (modifierItemVisibilityConfig != null) {
-                val targetType = modifierItemVisibilityConfig.rules?.firstOrNull {
-                    it.targetType.equals("modifier-group", ignoreCase = true)
-                }
-
-                if (targetType != null) {
-                    eachModifierItem.listOfModifierGroups.forEach { modifierGroup ->
-                        if (eachModifierItem.modifierGroup.id != currentModifierGroup.id && targetType.targetId.equals(
-                                modifierGroup.id
-                            )
-                        ) {
-                            val hasAnySelectedItems =
-                                modifierGroup.modifierItems.any { it.attributes.isSelected }
-                            val visibilityInitialValue = if (hasAnySelectedItems) "" else "hidden"
-                            println("Modifier name by ${currentModifierGroup.attributes.name} and visibility $visibilityInitialValue and name " +
-                                    "${eachModifierItem.modifierGroup.attributes.name}" +
-                                    "${eachModifierItem.modifierGroup
-                                .visibilityConfig
-                                .initialValue}")
-                            if (visibilityInitialValue.isEmpty() && eachModifierItem.modifierGroup.visibilityConfig.initialValue.isNotEmpty()) {
-                                attributes.visibilityConfig.initialValue = visibilityInitialValue
-//                                visibilityUpdateNeeded = true
-                                // Notify only the modifier items within the modifier group
-                                val startIndex = itemList.indexOf(eachModifierItem) + 1
-                                val endIndex = startIndex + modifierGroup.modifierItems.size
-                                notifyItemRangeChanged(startIndex, endIndex)
-                            }
-                        }
-                    }
-                }
-            }
-//            if (visibilityUpdateNeeded && currentModifierGroup.id != eachModifierItem.modifierGroup.id) {
-//                notifyItemRangeChanged(0, eachModifierItem.modifierGroup.modifierItems.size)
-//            }
-//        }
-        }
-
-    }
-
-    fun updateModifierVisibilityBy(
-        modGroup: ModifierGroup, result: (HashMap<String, String>) -> Unit,
-        menu:MenuItem
-    ) {
-        menu?.let { componentModifierItem ->
-            for (group in componentModifierItem.modifierGroups) {
-                val visibilityConfig = group.attributes.visibilityConfig
-                if (visibilityConfig != null) {
-                    val rules = visibilityConfig.rules
-                    if (rules != null && rules.size > 0) {
-                        val rule = rules[0]
-                        if (rule.targetType != null) {
-                            if (rule.targetType.equals("modifier-group", ignoreCase = true)) {
-                                if (group.id != modGroup.id && rule.targetId == modGroup.id) {
-                                    if (rule.targetIs != null && rule.targetIs.equals(
-                                            "selected", ignoreCase = true
-                                        )
-                                    ) {
-                                        var selected = 0
-                                        for (modItem in modGroup.modifierItems) {
-                                            if (modItem.attributes.isSelected) {
-                                                selected += 1
-                                            }
-                                        }
-                                        if (selected > 0) {
-                                            group.attributes.visibilityConfig.initialValue = ""
-                                        } else {
-                                            group.attributes.visibilityConfig.initialValue =
-                                                "hidden"
-                                        }
-                                    }
-                                    if (group.attributes.visibilityConfig.initialValue != null) {
-                                        modifierGroupVisibilityHash[group.id] =
-                                            group.attributes.visibilityConfig.initialValue
-                                    }
-                                }
-                            } else if (rule.targetType.equals("modifier", ignoreCase = true)) {
-                                val selectedModifiers: MutableSet<String> = java.util.HashSet()
-                                if (group.id != modGroup.id) {
+                            if (group.id != modGroup.id && rule.targetId == modGroup.id) {
+                                if (rule.targetIs != null && rule.targetIs.equals(
+                                        VisibilityRulesType.MODIFIER_ITEM_SELECTED.value, ignoreCase = true
+                                    )
+                                ) {
+                                    var selected = 0
                                     for (modItem in modGroup.modifierItems) {
                                         if (modItem.attributes.isSelected) {
-                                            selectedModifiers.add(modItem.id)
+                                            selected += 1
                                         }
                                     }
-                                }
-                                if (rule.targetId != null && selectedModifiers.contains(rule.targetId)) {
-                                    if (rule.targetIs != null && rule.targetIs.equals(
-                                            "selected", ignoreCase = true
-                                        )
-                                    ) {
+
+                                    if (selected > 0) {
                                         group.attributes.visibilityConfig.initialValue = ""
                                     } else {
-                                        group.attributes.visibilityConfig.initialValue = "hidden"
+                                        group.attributes.visibilityConfig.initialValue =
+                                            VisibilityRulesType.HIDDEN.value
+                                        modifierGroupHasHiddenVisible[group.id] =
+                                            group.attributes.visibilityConfig.initialValue == VisibilityRulesType.HIDDEN.value
                                     }
-                                } else if (rule.targetId.isNotEmpty()) {
-                                    group.attributes.visibilityConfig.initialValue = "hidden"
                                 }
                                 if (group.attributes.visibilityConfig.initialValue != null) {
                                     modifierGroupVisibilityHash[group.id] =
                                         group.attributes.visibilityConfig.initialValue
                                 }
                             }
+                        } else if (rule.targetType.equals(VisibilityRulesType.MODIFIER.value, ignoreCase = true)) {
+                            val selectedModifiers: MutableSet<String> = java.util.HashSet()
+                            if (group.id != modGroup.id) {
+                                for (modItem in modGroup.modifierItems) {
+                                    if (modItem.attributes.isSelected) {
+                                        selectedModifiers.add(modItem.id)
+                                    }
+                                }
+                            }
+                            if (rule.targetId != null && selectedModifiers.contains(rule.targetId)) {
+                                if (rule.targetIs != null && rule.targetIs.equals(
+                                        VisibilityRulesType.SELECTED.value, ignoreCase = true
+                                    )
+                                ) {
+                                    group.attributes.visibilityConfig.initialValue = ""
+                                } else {
+                                    group.attributes.visibilityConfig.initialValue =
+                                        VisibilityRulesType.HIDDEN.value
+                                    modifierGroupHasHiddenVisible[group.id] =
+                                        group.attributes.visibilityConfig.initialValue == VisibilityRulesType.HIDDEN.value
+                                }
+                            } else if (rule.targetId.isNotEmpty()) {
+                                group.attributes.visibilityConfig.initialValue =
+                                    VisibilityRulesType.HIDDEN.value
+                                modifierGroupHasHiddenVisible[group.id] =
+                                    group.attributes.visibilityConfig.initialValue == VisibilityRulesType.HIDDEN.value
+                            }
+                            if (group.attributes.visibilityConfig.initialValue != null) {
+                                modifierGroupVisibilityHash[group.id] =
+                                    group.attributes.visibilityConfig.initialValue
+                            }
                         }
                     }
-
                 }
 
             }
-            result(modifierGroupVisibilityHash)
         }
     }
-    fun updateModifierItemQuantity(modifierItemClickParams: ModifierItemClickParams) {
+
+
+    fun updateModifierItemQuantity(
+    modifierItemClickParams: ModifierItemClickParams,
+    modifierGroupList: List<ModifierGroup>) {
 
         with(modifierItemClickParams) {
             val selectedItemTotal = isCurrentSelectionEqualToMax(modifierGroup)
@@ -439,6 +391,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
                         currentModifierQuantity = quantity,
                         params = modifierItemClickParams
                     )
+                    updateModifierVisibilityBy(modifierGroup, modifierGroupList)
                 } else {
                     updateModifierItemQuantity(
                         selectedPosition = modifierPosition,
@@ -475,6 +428,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
                     currentModifierQuantity = quantity,
                     params = modifierItemClickParams
                 )
+                updateModifierVisibilityBy(modifierGroup, modifierGroupList)
             }
         }
     }
@@ -508,7 +462,6 @@ class ModifierGroupNewRecycleAdapterKotlin(
 
     private fun updateModifierItem(item: ModifierItemAdapterItem, isSelected: Boolean) {
         item.modifierItem.attributes.setModifierItemQuantityExceedsMaximum(isSelected)
-        println("Not max out ${item.modifierItem.attributes.name}  and $isSelected")
         notifyItemChanged(itemList.indexOf(item))
     }
 
@@ -559,7 +512,6 @@ class ModifierGroupNewRecycleAdapterKotlin(
                         attributes.isSelected
             }
             .forEach { listItem ->
-                println("Modifier item name ${listItem.modifierItem.attributes.name}")
                 listItem.modifierItem.attributes.isSelected = false
                 notifyItemChanged(itemList.indexOf(listItem))
                 return@forEach
@@ -658,6 +610,13 @@ class ModifierGroupNewRecycleAdapterKotlin(
         }
 
         fun bind(item: ModifierItemAdapterItem) {
+            val initialValue = if (item.modifierGroup.attributes.visibilityConfig != null) {
+                item.modifierGroup.attributes.visibilityConfig.initialValue
+            } else {
+                ""
+            }
+            val isVisible = initialValue == VisibilityRulesType.HIDDEN.value
+            modifierGroupHasHiddenVisible[item.modifierGroup.id] = isVisible
             val modifierItem = item.modifierItem
             val modifierGroup = item.modifierGroup
             modifierProcesser?.processModifier(item.modifierItem)
@@ -692,13 +651,12 @@ class ModifierGroupNewRecycleAdapterKotlin(
 
             var isVisibleByConfig = true
             if (visibilityConfig != null && visibilityConfig.initialValue != null && visibilityConfig.initialValue.equals(
-                    "hidden",
+                    VisibilityRulesType.HIDDEN.value,
                     ignoreCase = true
                 )
             ) {
                 isVisibleByConfig = false
             }
-            println("Modifier item name ${modifierItem.attributes.name}  and config $isVisibleByConfig")
             itemView.itemVisibility(isVisibleByConfig)
             binding.quantityDownLayout.setVisible(isQuantityShouldShow)
             binding.quantity.text = localize("0" + modifierItem.attributes.quantity)
@@ -864,18 +822,6 @@ class ModifierGroupNewRecycleAdapterKotlin(
 
         override fun onModifierProcessed(name: String, formattedPrice: String) {
             setModifierNameAndPrice(name = name, formattedPrice = formattedPrice)
-        }
-
-        fun setVisibility(isVisible: Boolean) {
-            val param = binding.root.layoutParams as RecyclerView.LayoutParams
-            if (isVisible) {
-                param.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
-                binding.root.visibility = View.VISIBLE
-            } else {
-                binding.root.visibility = View.GONE
-                param.height = 0
-            }
-            binding.root.layoutParams = param
         }
     }
 

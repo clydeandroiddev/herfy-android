@@ -673,7 +673,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         ModifierGroupNewRecycleAdapterKotlin(
                             onUserClickModifierItem = { params ->
                                 modifierGroupsAdapters?.updateModifierItem(
-                                    params
+                                    params,
+                                    modifierGroupList = menuPresenter.modifierGroupList
                                 )
                                 menuPresenter.getMenuItemTotalPrice(menuPresenter.menuItem,params.modifierGroupPosition)
 
@@ -682,7 +683,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 requireContext().showToast(message)
                             },
                             onUserAddMoreModifierItemQuantity = {
-                                modifierGroupsAdapters?.updateModifierItemQuantity(it)
+                                modifierGroupsAdapters?.updateModifierItemQuantity(it, modifierGroupList = menuPresenter.modifierGroupList)
                                 menuPresenter.getMenuItemTotalPrice(menuPresenter.menuItem,it.modifierGroupPosition)
                             }
                         )
@@ -721,7 +722,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapters
 //
                 } else {
-                    println("Modifier gorup item count disabled")
                     binding.modifierGroupsRecyclerView.visibility = View.GONE
                     binding.modifierGroupsRecyclerView.visibility = View.GONE
                 }
