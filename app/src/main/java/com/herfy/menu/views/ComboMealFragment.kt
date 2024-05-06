@@ -312,9 +312,6 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                         }
                     }
                 }
-                add.setOnClickListener {
-                    collapseComboItemDetails()
-                }
             }
 
             mBottomSheetBehavior?.addBottomSheetCallback(object :
