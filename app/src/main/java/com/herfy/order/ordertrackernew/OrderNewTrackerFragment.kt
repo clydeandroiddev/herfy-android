@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -48,11 +47,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.common.cancelTime
+import com.herfy.common.drawArcPolyline
 import com.herfy.common.formatSecondsToMinutesAndSeconds
 import com.herfy.common.getCurrentTime
 import com.herfy.common.getDisplayId
@@ -482,27 +481,34 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     )
                     textView.text =
                         CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                            .replace("(x)", distanceValue).toLowerCase()
+                                                .replace("(x)", distanceValue)
+                            .lowercase(Locale.getDefault())
                     if (currentDistance != null) {
                         if (currentDistance <= 0.0) {
                             binding.orderAddressDetails.addressKm.text = ""
                             textView.isInvisible = true
                         } else {
                             textView.isVisible = true
-                            binding.orderAddressDetails.addressKm.text = distanceValue.toLowerCase()
+                            binding.orderAddressDetails.addressKm.text = distanceValue.lowercase(
+                                Locale.getDefault()
+                            )
                         }
                     }
 
                     if (userLatLng != null) {
-                        myPolyline = googleMap?.addPolyline(
-                            PolylineOptions().add(store.attributes?.lat?.let {
-                                store.attributes?.lng?.let { it1 ->
-                                    LatLng(
-                                        it, it1
-                                    )
-                                }
-                            }, userLatLng).width(8f).color(Color.parseColor("#0064AC"))
-                        )
+                        deletePolyline()
+                        val startPoint = store.attributes?.lat?.let {
+                            store.attributes?.lng?.let { it1 ->
+                                LatLng(
+                                    it, it1
+                                )
+                            }
+                        }
+                        myPolyline = startPoint?.let { it1 ->
+                            drawArcPolyline(
+                                googleMap, it1, userLatLng!!, 100
+                            )
+                        }
                     }
 
                 } catch (e: Exception) {
@@ -619,7 +625,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             }
 
             try {
-                val activity: Activity? = getActivity()
+                val activity: Activity? = activity
                 activity?.startActivity(
                     Intent(
                         Intent.ACTION_VIEW, directionsBuilder.build()
@@ -659,16 +665,16 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             if (!pickupHoursAvailable && !deliverHoursAvailable && hoursAvailable) {
                 val openingHours = StringUtil.getOpeningHours(store)
                 val openingFinal = if (!openingHours.isEmpty()) openingHours else "-"
-                binding.orderAddressDetails.addressTime.setText(openingFinal)
+                binding.orderAddressDetails.addressTime.text = openingFinal
             } else {
                 if (pickupHoursAvailable) {
                     val hoursText = StringUtil.formatOpenHours(
                         store.attributes.openingHoursPickup[day].open,
                         store.attributes.openingHoursPickup[day].closed
                     )
-                    binding.orderAddressDetails.addressTime.setText(hoursText)
+                    binding.orderAddressDetails.addressTime.text = hoursText
                 } else {
-                    binding.orderAddressDetails.addressTime.setVisibility(View.GONE)
+                    binding.orderAddressDetails.addressTime.visibility = View.GONE
                 }
             }
         }
@@ -1422,7 +1428,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
                     textView.text =
                         CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                            .replace("(x)", distanceValue).toLowerCase()
+                                                .replace("(x)", distanceValue)
+                            .lowercase(Locale.getDefault())
                     if (currentDistance != null) {
                         if (currentDistance <= 0.0) {
                             textView.isInvisible = true

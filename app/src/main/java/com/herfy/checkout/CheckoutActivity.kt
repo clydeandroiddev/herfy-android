@@ -62,6 +62,7 @@ import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.base.BaseActivity
 import com.herfy.checkout.databinding.ActivityCheckoutPageBinding
 import com.herfy.common.base.OrderSupportMapFragment
+import com.herfy.common.drawArcPolyline
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.OneDayDecorator
 import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
@@ -442,12 +443,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
                             try {
                                 deletePolyline()
-                                myPolyline = mMap?.addPolyline(
-                                    PolylineOptions().add(
-                                        LatLng(
-                                            storeLocation.latitude, storeLocation.longitude
-                                        ), currentLocation
-                                    ).width(8f).color(Color.parseColor("#0064AC"))
+                                val startPoint = LatLng(
+                                    storeLocation.latitude, storeLocation.longitude
+                                )
+                                myPolyline = drawArcPolyline(
+                                    mMap, startPoint, currentLocation, 100
                                 )
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -523,15 +523,13 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                     mMap?.animateCamera(zout)
                                 }
                             })
-
                             try {
                                 deletePolyline()
-                                myPolyline = mMap?.addPolyline(
-                                    PolylineOptions().add(
-                                        LatLng(
-                                            storeLocation.latitude, storeLocation.longitude
-                                        ), currentLocation
-                                    ).width(8f).color(Color.parseColor("#0064AC"))
+                                val startPoint = LatLng(
+                                    storeLocation.latitude, storeLocation.longitude
+                                )
+                                myPolyline = drawArcPolyline(
+                                    mMap, startPoint, currentLocation, 100
                                 )
                             } catch (e: Exception) {
                                 e.printStackTrace()

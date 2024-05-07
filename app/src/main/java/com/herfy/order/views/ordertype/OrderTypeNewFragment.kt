@@ -56,6 +56,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartDialogFragment
 import com.herfy.cart.views.CartFragment
+import com.herfy.common.drawArcPolyline
 import com.herfy.common.utils.areaJson
 import com.herfy.curbside.curbsidenew.CurbsideNewActivity
 import com.herfy.ext.cast
@@ -1123,15 +1124,18 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
                             if (userLatLng != null) {
                                 deletePolyline()
-                                myPolyline = googleMap?.addPolyline(
-                                    PolylineOptions().add(store?.attributes?.lat?.let {
-                                        store?.attributes?.lng?.let { it1 ->
-                                            LatLng(
-                                                it, it1
-                                            )
-                                        }
-                                    }, userLatLng).width(8f).color(Color.parseColor("#0064AC"))
-                                )
+                                val startPoint = store?.attributes?.lat?.let {
+                                    store?.attributes?.lng?.let { it1 ->
+                                        LatLng(
+                                            it, it1
+                                        )
+                                    }
+                                }
+                                myPolyline = startPoint?.let { it1 ->
+                                    drawArcPolyline(
+                                        googleMap, it1, userLatLng!!, 100
+                                    )
+                                }
                             }
 
                         }

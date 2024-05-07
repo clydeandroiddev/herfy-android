@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -34,8 +33,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
 import com.herfy.base.BaseFragment
+import com.herfy.common.drawArcPolyline
 import com.herfy.main.MainActivity
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.StoreLocatorBinding
@@ -387,15 +386,18 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
 
                             if (userLatLng != null) {
                                 deletePolyline()
-                                myPolyline = map?.addPolyline(
-                                    PolylineOptions().add(branch.attributes?.lat?.let {
-                                        branch.attributes?.lng?.let { it1 ->
-                                            LatLng(
-                                                it, it1
-                                            )
-                                        }
-                                    }, userLatLng).width(8f).color(Color.parseColor("#0064AC"))
-                                )
+                                val startPoint = branch.attributes?.lat?.let {
+                                    branch.attributes?.lng?.let { it1 ->
+                                        LatLng(
+                                            it, it1
+                                        )
+                                    }
+                                }
+                                myPolyline = startPoint?.let { it1 ->
+                                    drawArcPolyline(
+                                        map, it1, userLatLng!!, 100
+                                    )
+                                }
                             }
                         }
                     }
