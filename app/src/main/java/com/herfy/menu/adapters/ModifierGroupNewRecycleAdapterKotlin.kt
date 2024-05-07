@@ -1,5 +1,6 @@
 package com.herfy.menu.adapters
 
+import android.annotation.SuppressLint
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
@@ -248,6 +249,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
         return groupMinimum == 1 && groupMaximum == 1
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun updateModifierVisibilityWith(modifierVisibilityHashMap: HashMap<String, String>) {
         modifierVisibilityHashMap.forEach { (groupId, visiblityValue) ->
             val firstIndex = itemList.indexOfFirst { modifierAdapterItem ->
@@ -282,8 +284,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
             }
 
             if (hasChanges && modifierGroupHasHiddenVisible[modifierGroup?.id] == true) {
-                val count = (modifierGroup?.modifierItems?.size ?: 0) + 1
-                notifyItemRangeChanged(firstIndex, count)
+                notifyDataSetChanged()
             }
         }
         modifierVisibilityHashMap.entries.removeIf { e -> e.value == VisibilityRulesType.HIDDEN.value }
