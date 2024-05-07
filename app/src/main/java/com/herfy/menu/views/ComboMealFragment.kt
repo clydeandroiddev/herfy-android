@@ -23,7 +23,7 @@ import com.herfy.base.BaseActivity
 import com.herfy.model.ShowComboMealItemDetails
 import com.herfy.productpagedetails.R
 import com.herfy.productpagedetails.databinding.FragmentComboMealBinding
-import com.herfy.productpagedetails.ui.adapter.ComboItemDetailsModifierGroupAdapter
+import com.herfy.productpagedetails.ui.adapter.ComboItemDetailsModifierAdapter
 import com.herfy.productpagedetails.ui.adapter.ComboMealModifierGroupAdapter
 import com.herfy.productpagedetails.ui.adapter.FrequentlyBoughtItemAdapter
 import com.herfy.productpagedetails.ui.adapter.SizesItemAdapter
@@ -37,6 +37,7 @@ import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.invisible
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.observeNonNull
+import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.toTranslate
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
@@ -72,7 +73,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     private var sizesAdapter: SizesItemAdapter? = null
     private var frequentBoughItemsAdapter: FrequentlyBoughtItemAdapter? = null
     private var comboMealModifierGroupAdapter: ComboMealModifierGroupAdapter? = null
-    private var comboItemDetailsModifierGroupAdapter: ComboItemDetailsModifierGroupAdapter? = null
+    private var comboItemDetailsModifierAdapter: ComboItemDetailsModifierAdapter? = null
     private var _totalPrice = 0.0
 
     private val isPromo: Boolean by lazy {
@@ -100,6 +101,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
     override fun initViews() {
         super.initViews()
         binding.viewModel = this@ComboMealFragment.viewModel
@@ -237,6 +239,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
         }
 
     }
+
     override fun initTranslations() {
         super.initTranslations()
         binding.apply {
@@ -273,6 +276,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             sizesLabel.text = cacheUtilHelper.getTranslations(Text.COMBO_SIZES_LABEL, "Combo Sizes")
         }
     }
+
     private fun setupComboMealDetailsBottomSheet() {
         binding.apply {
             BottomSheetBehavior.from(layoutBottomSheetComboDetail.clBottomSheetDetailsMain)
@@ -285,13 +289,13 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 icClose.setOnClickListener {
                     collapseComboItemDetails()
                 }
-                comboItemDetailsModifierGroupAdapter = ComboItemDetailsModifierGroupAdapter()
-                comboItemDetailsModifierGroupAdapter?.setOnAction(this@ComboMealFragment.viewModel)
+                comboItemDetailsModifierAdapter = ComboItemDetailsModifierAdapter()
+                comboItemDetailsModifierAdapter?.setOnAction(this@ComboMealFragment.viewModel)
                 context?.let { ctx ->
                     val linearLayoutManager =
                         LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
                     rvModifiers.apply {
-                        adapter = comboItemDetailsModifierGroupAdapter
+                        adapter = comboItemDetailsModifierAdapter
                         layoutManager = linearLayoutManager
                         setHasFixedSize(true)
                         isNestedScrollingEnabled = false
@@ -308,11 +312,6 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                         }
                     }
                 }
-                add.setOnClickListener {
-                    collapseComboItemDetails()
-                }
-
-
             }
 
             mBottomSheetBehavior?.addBottomSheetCallback(object :
@@ -322,11 +321,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                         binding.viewBgTransparent.gone()
                         this@ComboMealFragment.viewModel.currentSelectedModifierItem = null
                         binding.layoutBottomSheetComboDetail.btnAddDetails.setOnClickListener(null)
-                        comboItemDetailsModifierGroupAdapter?.updateList(
-                            arrayListOf(),
-                            hashMapOf(),
-                            hashMapOf()
-                        )
+                        comboItemDetailsModifierAdapter?.addData(arrayListOf())
                     }
                 }
 
@@ -335,6 +330,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             })
         }
     }
+
     private fun setupComboMealItems() {
         binding.apply {
             context?.let { ctx ->
@@ -351,13 +347,15 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
         }
     }
+
     private fun setupSizeItems(sizes: List<ModifierItem>) {
         binding.apply {
             ivComboSizeIcon.setImageResource(R.drawable.ic_combo_size)
             activity?.let { act ->
-                val itemWidth = (ViewUtil.getScreenWidth(act) / sizes.size) - ViewUtil.dpToPx(act, 20)
+                val itemWidth =
+                    (ViewUtil.getScreenWidth(act) / sizes.size) - ViewUtil.dpToPx(act, 20)
                 val linearLayoutManager = GridLayoutManager(act, sizes.size)
-                sizesAdapter = SizesItemAdapter(items = sizes,itemWidth = itemWidth)
+                sizesAdapter = SizesItemAdapter(items = sizes, itemWidth = itemWidth)
                 sizesAdapter?.setOnAction(this@ComboMealFragment.viewModel)
                 sizesRecyclerView.apply {
                     adapter = sizesAdapter
@@ -369,9 +367,27 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
         }
     }
+
     override fun observe() {
         super.observe()
         viewModel.apply {
+            showError.observeNonNull(this@ComboMealFragment) {
+                it.getContentIfNotHandled()?.let {
+                    runOnMain {
+                        dismissLoading()
+                        showAlertDialog(
+                            title = "", message = it.message,
+                            neutral = CacheUtil.getInstance().getTranslations(Text.OK, "Ok")
+                        ) { dialog, _ ->
+                            if (it.closePage) {
+                                navigateUp()
+                            }
+                            dialog.dismiss()
+                        }
+                    }
+
+                }
+            }
             showMenuItemDetails.observeNonNull(this@ComboMealFragment) {
                 setupMenuItemDetails(it)
             }
@@ -389,7 +405,8 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     )
                 } else {
                     _totalPrice = totalPrice
-                    val formattedPrice = CurrencyUtils.updateCurrency(totalPrice,
+                    val formattedPrice = CurrencyUtils.updateCurrency(
+                        totalPrice,
                         withSpace = true,
                         ignoreDecimalPlaces = false
                     )
@@ -445,16 +462,36 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 sizesAdapter?.updateSelectedSize(it.second, it.first)
             }
             updateComboItemDetailModifier.observe(this@ComboMealFragment) {
-                comboItemDetailsModifierGroupAdapter?.apply {
-                    viewModel.getComponentModifierItemTotalPrice(this.getUpdateModifierGroupList())
-                    shouldShowCheckBox(it.first, it.second)
-                    //updateComboModifierItemsPerModifierGroup(it.second)
+                val modifierItemsQuantity =
+                    this@ComboMealFragment.viewModel.modifierItemQuantityCount(it.second.modifierItems)
+                val isAboveMax =
+                    this@ComboMealFragment.viewModel.isAboveMax(it.second, modifierItemsQuantity)
+                comboItemDetailsModifierAdapter?.apply {
+                    this@ComboMealFragment.viewModel.apply {
+                        getComponentModifierItemTotalPrice(
+                            getUpdatedModifierList()
+                        )
+                        updateModifierVisibilityBy(it.second){mapOfModifierVisibilityConfig ->
+                            updateSelectedModifierItem(
+                                hasModifierItemsSelected = it.first,
+                                modifierGroup = it.second,
+                                modifierItem = it.third,
+                                isAboveMax = isAboveMax,
+                                modifierVisibilityHashMap = mapOfModifierVisibilityConfig
+                            )
+                        }
+                    }
+
+
                 }
             }
             showComponentModifierItemTotal.observe(this@ComboMealFragment) {
-                binding.layoutBottomSheetComboDetail.tvTotalValue.text = CurrencyUtils.updateCurrency(it,
-                    withSpace = true,
-                    ignoreDecimalPlaces = false)
+                binding.layoutBottomSheetComboDetail.tvTotalValue.text =
+                    CurrencyUtils.updateCurrency(
+                        it,
+                        withSpace = true,
+                        ignoreDecimalPlaces = false
+                    )
             }
             showToastMessage.observe(this@ComboMealFragment) {
                 showToastMessage(it)
@@ -531,14 +568,14 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 dismissLoading()
                 setFavorite(it)
             }
-            showFrequentBoughtItems.observe(this@ComboMealFragment){
-                it.getContentIfNotHandled()?.let{ list->
+            showFrequentBoughtItems.observe(this@ComboMealFragment) {
+                it.getContentIfNotHandled()?.let { list ->
                     binding.apply {
-                        if(list.size > 0){
+                        if (list.size > 0) {
                             txtFrequntlyBought.visible()
                             frequentlyBoughRecycleview.visible()
                             frequentBoughItemsAdapter?.updateList(list)
-                        }else {
+                        } else {
                             txtFrequntlyBought.gone()
                             frequentlyBoughRecycleview.gone()
                         }
@@ -547,7 +584,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
 
             }
 
-            addFrequentlyBoughtItem.observe(this@ComboMealFragment){pair->
+            addFrequentlyBoughtItem.observe(this@ComboMealFragment) { pair ->
                 activity?.let {
                     it.runOnUiThread {
                         val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -569,42 +606,52 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     }
                 }
             }
-            navigateToMenuItemDetails.observe(this@ComboMealFragment){
-               it.getContentIfNotHandled()?.let { triple->
-                   val isCombo = triple.second.isCombo
-                   val navController = findNavController()
-                   if(isCombo){
-                       navController.navigate(ComboMealFragmentDirections.actionComboToCombo(
-                           triple.first.id,
-                           triple.second.id,
-                           isFrequentlyBoughtItem = true
-                       ))
-                   }else {
-                       navController.navigate(ComboMealFragmentDirections.actionComboToMenuItem(
-                           triple.second.id,triple.first.id,
-                           isFrequentlyBoughtItem = true
-                       ))
-                   }
-                   selectedFrequentBoughtItemPos = triple.third
-               }
+            navigateToMenuItemDetails.observe(this@ComboMealFragment) {
+                it.getContentIfNotHandled()?.let { triple ->
+                    val isCombo = triple.second.isCombo
+                    val navController = findNavController()
+                    if (isCombo) {
+                        navController.navigate(
+                            ComboMealFragmentDirections.actionComboToCombo(
+                                triple.first.id,
+                                triple.second.id,
+                                isFrequentlyBoughtItem = true
+                            )
+                        )
+                    } else {
+                        navController.navigate(
+                            ComboMealFragmentDirections.actionComboToMenuItem(
+                                triple.second.id, triple.first.id,
+                                isFrequentlyBoughtItem = true
+                            )
+                        )
+                    }
+                    selectedFrequentBoughtItemPos = triple.third
+                }
             }
-            updateFavoriteByPosition.observe(this@ComboMealFragment){ pair ->
+            updateFavoriteByPosition.observe(this@ComboMealFragment) { pair ->
                 frequentBoughItemsAdapter?.updateFavorite(pair.first, pair.second)
             }
-            showLoading.observe(this@ComboMealFragment){
-                if(it) showLoading() else dismissLoading()
+            showLoading.observe(this@ComboMealFragment) {
+                if (it) showLoading() else dismissLoading()
             }
-
+            modifierAdapterItems.observe(this@ComboMealFragment) {
+                it.getContentIfNotHandled()?.let { modifierAdapterItems ->
+                    comboItemDetailsModifierAdapter?.addData(modifierAdapterItems)
+                }
+            }
         }
     }
+
     private fun showToastMessage(message: String) {
         context?.let {
             Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun setupFrequentlyBoughtItems() {
-        if(!isPromo && menuItemId.isNotEmpty()){
-            if (viewModel.frequentBoughtItemList.isEmpty()){
+        if (!isPromo && menuItemId.isNotEmpty()) {
+            if (viewModel.frequentBoughtItemList.isEmpty()) {
                 viewModel.getFrequentBoughtItems(1, menuItemId)
             }
             context?.let { ctx ->
@@ -613,24 +660,29 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     frequentBoughItemsAdapter =
                         FrequentlyBoughtItemAdapter(listener = this@ComboMealFragment.viewModel)
                     frequentlyBoughRecycleview.apply {
-                        layoutManager = LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
+                        layoutManager =
+                            LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
                         adapter = frequentBoughItemsAdapter
                     }
                 }
             }
 
-            setFragmentResultListener(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER){ key, bundle ->
+            setFragmentResultListener(Values.FREQUENTLY_BOUGHT_ITEM_LISTENER) { key, bundle ->
                 val isAddedToFavorite = bundle.getBoolean(Values.KEY_IS_ADDED_TO_FAVORITES, false)
                 val isAddedToCart = bundle.getBoolean(Values.KEY_IS_ADDED_TO_CART, false)
 
-                if(selectedFrequentBoughtItemPos != -1 && (isAddedToCart || isAddedToFavorite)){
-                    viewModel.updateFrequentlyBoughtItems(selectedFrequentBoughtItemPos, isAddedToCart)
+                if (selectedFrequentBoughtItemPos != -1 && (isAddedToCart || isAddedToFavorite)) {
+                    viewModel.updateFrequentlyBoughtItems(
+                        selectedFrequentBoughtItemPos,
+                        isAddedToCart
+                    )
                     selectedFrequentBoughtItemPos = -1
                 }
             }
         }
 
     }
+
     private fun setupMenuItemDetails(data: MenuItem) {
         binding.apply {
             language = LocaleUtil.getInstance().language
@@ -638,6 +690,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             setFavorite(data)
         }
     }
+
     private fun setFavorite(menuItem: MenuItem) {
         binding.cbtComboMeal.apply {
             if (!isPromo && AuthUtil.getInstance().isSignedIn && CacheUtil.getInstance().favorites.contains(
@@ -651,12 +704,14 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
         }
 
     }
+
     private fun expandComboItemDetails() {
         binding.viewBgTransparent.visible()
         mBottomSheetBehavior?.let {
             it.state = BottomSheetBehavior.STATE_EXPANDED
         }
     }
+
     private fun collapseComboItemDetails() {
         mBottomSheetBehavior?.let {
             viewModel.currentSelectedModifierItem = null
@@ -667,21 +722,16 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
         }
     }
+
     private fun showComboComponentModifierItemDetails(data: ShowComboMealItemDetails) {
         binding.layoutBottomSheetComboDetail.apply {
             data.componentModifierItem.apply {
                 val modifierGroupsCopy = modifierGroups.deepCopy(ModifierGroup::class.java)
                 this@ComboMealFragment.viewModel.currentSelectedModifierItem = this
-                val showModifierItemPrice = viewModel.showModifierItemPricePer(this)
-                val showModifierCheckBox = viewModel.showModifierItemCheckBoxPer(this)
+                viewModel.getModifierAdapterItem(modifierGroupsCopy)
                 tvTitle.text = name.toTranslate()
                 this@ComboMealFragment.viewModel.getComponentModifierItemTotalPrice(
                     modifierGroupsCopy
-                )
-                comboItemDetailsModifierGroupAdapter?.updateList(
-                    modifierGroupsCopy,
-                    showModifierItemPrice,
-                    showModifierCheckBox
                 )
                 btnAddDetails.setOnClickListener {
                     if (data.previousComponentModifierIndex != data.componentModifierItemIndex) {
@@ -694,7 +744,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                         data.menuItemComponentIndex,
                         data.componentModifierItemIndex,
                         this,
-                        comboItemDetailsModifierGroupAdapter?.getUpdateModifierGroupList()
+                        comboItemDetailsModifierAdapter?.getUpdatedModifierList()
                     )
                     comboMealModifierGroupAdapter?.updateComboMealModifierItem(
                         data.menuItemComponentIndex,
@@ -706,17 +756,19 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             expandComboItemDetails()
         }
     }
+
     private fun showLoading() {
         binding.apply {
             inProgress = true
             isVisible = true
         }
     }
+
     private fun dismissLoading() {
-         binding.apply {
-             inProgress = false
-             isVisible = false
-         }
+        binding.apply {
+            inProgress = false
+            isVisible = false
+        }
     }
 
 }

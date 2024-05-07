@@ -74,7 +74,7 @@
                 android:id="@+id/btnPopular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center_vertical|end"
                 android:layout_marginStart="@dimen/margin_large"
                 android:background="@drawable/bg_rounded_background"
                 android:textAlignment="viewEnd"
@@ -107,6 +107,7 @@
                 android:id="@+id/check_layout"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:visibility="visible"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -140,6 +141,7 @@
                 android:layout_marginTop="@dimen/_6sdp"
                 android:layout_marginEnd="@dimen/_2sdp"
                 android:orientation="horizontal"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/check_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/check_layout">
@@ -154,7 +156,7 @@
                     android:layout_marginEnd="@dimen/margin_small"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/quantityDown"
