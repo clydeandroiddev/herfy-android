@@ -505,7 +505,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         }
                         myPolyline = startPoint?.let { it1 ->
                             drawArcPolyline(
-                                googleMap, it1, userLatLng!!, 100
+                                googleMap, it1, userLatLng!!, binding.mapFrame.context
                             )
                         }
                     }

@@ -2,6 +2,7 @@ package com.herfy.common
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
 import android.util.DisplayMetrics
@@ -10,6 +11,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.maps.android.SphericalUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -401,17 +403,37 @@ fun deviceHeight(context: Activity): Int {
     return displayMetrics.heightPixels - dpToPx(310f)
 }
 
-fun drawArcPolyline(googleMap: GoogleMap?, start: LatLng, end: LatLng, numPoints: Int): Polyline? {
-    val polylineOptions = PolylineOptions()
-    val fraction = 1.0 / numPoints
+fun drawArcPolyline(googleMap: GoogleMap?, currentLocation: LatLng, storeLocation: LatLng, context: Context): Polyline? {
+    val heading = SphericalUtil.computeHeading(currentLocation, storeLocation)
+    val distance = SphericalUtil.computeDistanceBetween(currentLocation, storeLocation)
+    val midpoint = SphericalUtil.computeOffset(currentLocation, distance * 0.5, heading)
 
-    for (i in 0..numPoints) {
-        val t = fraction * i
-        val lat = start.latitude * (1 - t) + end.latitude * t
-        val lng = start.longitude * (1 - t) + end.longitude * t
-        // Adding an elevation factor based on the sine function to create an arc effect
-        val altLat = lat + 3.5 * sin(Math.PI * t)  // Increase 0.1 to increase the height of the arc
-        polylineOptions.add(LatLng(altLat, lng))
+    // Increasing the 'height' of the arc
+    val height = distance * 0.3 // This adjusts the "steepness" of the arc
+
+    // Control point is above the midpoint, perpendicular to the line connecting start and end
+    val controlPoint = SphericalUtil.computeOffset(midpoint, height, heading + 90)
+
+    val numberOfPoints = 1000
+    val polylineOptions = PolylineOptions()
+
+    // Create points for the Bezier curve
+    for (i in 0..numberOfPoints) {
+        val t = i.toDouble() / numberOfPoints
+        val oneMinusT = 1 - t
+        val oneMinusT2 = oneMinusT * oneMinusT
+        val t2 = t * t
+
+        // Bezier quadratic formula
+        val lat = oneMinusT2 * currentLocation.latitude + 2 * oneMinusT * t * controlPoint.latitude + t2 * storeLocation.latitude
+        val lng = oneMinusT2 * currentLocation.longitude + 2 * oneMinusT * t * controlPoint.longitude + t2 * storeLocation.longitude
+        polylineOptions.add(LatLng(lat, lng))
     }
-    return googleMap?.addPolyline(polylineOptions.width(8f).color(Color.parseColor("#0064AC")))
+
+    // Styling the polyline
+    val lineColor = context.getColor(R.color.background_color_blue) ?: Color.BLUE
+    polylineOptions.color(lineColor).width(8f)
+
+    // Add polyline to the map
+    return googleMap?.addPolyline(polylineOptions)
 }
