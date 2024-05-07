@@ -1457,6 +1457,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     )
                     markerOptions.anchor(0.5f, 1f)
                     driverMarker = googleMap?.addMarker(markerOptions)
+                    deletePolyline()
                     googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
                 }
             } catch (e: Exception) {
