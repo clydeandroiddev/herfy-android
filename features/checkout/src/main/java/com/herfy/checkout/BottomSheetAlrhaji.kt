@@ -91,6 +91,52 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
             ibClose.setOnClickListener {
                 dismissAllowingStateLoss()
             }
+            val phoneTextWatcher = object : TextWatcher {
+                override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+                override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+                override fun afterTextChanged(editable: Editable) {
+                    etMobileNumber.removeTextChangedListener(this)
+                    try {
+                        if (etCicNumber.text.isNotEmpty() && etMobileNumber.text.isNotEmpty()) {
+                            etCicNumber.setText("")
+                        }
+                        etMobileNumber.setText(
+                            StringUtil.localize(
+                                etMobileNumber.getText().toString()
+                            )
+                        )
+                        val length = editable.length
+                        etMobileNumber.setSelection(length)
+                    } catch (e: Exception) {
+                    }
+                    etMobileNumber.addTextChangedListener(this)
+                }
+            }
+            etMobileNumber.addTextChangedListener(phoneTextWatcher)
+
+            val cicNumberTextWatcher = object : TextWatcher {
+                override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+                override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+                override fun afterTextChanged(editable: Editable) {
+                    try {
+                        if (etMobileNumber.text.isNotEmpty() && etCicNumber.text.isNotEmpty()) {
+                            etMobileNumber.setText("")
+                        }
+                        etCicNumber.removeTextChangedListener(this)
+                        etCicNumber.setText(
+                            StringUtil.localize(
+                                etCicNumber.getText().toString()
+                            )
+                        )
+                        val length = editable.length
+                        etCicNumber.setSelection(length)
+                    } catch (e: Exception) {
+                    }
+                    etCicNumber.addTextChangedListener(this)
+                }
+            }
+            etCicNumber.addTextChangedListener(cicNumberTextWatcher)
+
 
             amountTextWatcher = object : TextWatcher {
                 override fun beforeTextChanged(

@@ -190,6 +190,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginHorizontal="16dp"
                     tools:text="testing"
+                    android:maxLength="16"
                     android:inputType="number"/>
 
             </com.google.android.material.card.MaterialCardView>

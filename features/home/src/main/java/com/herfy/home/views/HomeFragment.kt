@@ -7,7 +7,6 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.clearFragmentResultListener
@@ -410,7 +409,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     rlLoyaltyContent.visible()
                     lnLoyaltyEmptyState.gone()
                     tvPoints.text =
-                        StringUtil.localize(loyalty.attributes.pointsAccumulated.toString())
+                        StringUtil.localize(loyalty.attributes.currentBalance.toString())
                     val currentBalanceValue =
                         String.format("%.2f", loyalty.attributes.currentBalanceAmount)
                     tvSarValue.text = StringUtil.localize(currentBalanceValue)
