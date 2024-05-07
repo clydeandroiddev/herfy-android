@@ -3,8 +3,13 @@ package com.herfy.common
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.res.Resources
+import android.graphics.Color
 import android.util.DisplayMetrics
 import android.util.TypedValue
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -17,6 +22,10 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.math.abs
+import kotlin.math.asin
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 @SuppressLint("SimpleDateFormat")
 fun String.formatDate(): String {
@@ -390,4 +399,19 @@ fun deviceHeight(context: Activity): Int {
     val displayMetrics = DisplayMetrics()
     context.windowManager.defaultDisplay.getMetrics(displayMetrics)
     return displayMetrics.heightPixels - dpToPx(310f)
+}
+
+fun drawArcPolyline(googleMap: GoogleMap?, start: LatLng, end: LatLng, numPoints: Int): Polyline? {
+    val polylineOptions = PolylineOptions()
+    val fraction = 1.0 / numPoints
+
+    for (i in 0..numPoints) {
+        val t = fraction * i
+        val lat = start.latitude * (1 - t) + end.latitude * t
+        val lng = start.longitude * (1 - t) + end.longitude * t
+        // Adding an elevation factor based on the sine function to create an arc effect
+        val altLat = lat + 3.5 * sin(Math.PI * t)  // Increase 0.1 to increase the height of the arc
+        polylineOptions.add(LatLng(altLat, lng))
+    }
+    return googleMap?.addPolyline(polylineOptions.width(8f).color(Color.parseColor("#0064AC")))
 }
