@@ -252,11 +252,6 @@ class ModifierGroupNewRecycleAdapterKotlin(
     @SuppressLint("NotifyDataSetChanged")
     private fun updateModifierVisibilityWith(modifierVisibilityHashMap: HashMap<String, String>) {
         modifierVisibilityHashMap.forEach { (groupId, visiblityValue) ->
-            val firstIndex = itemList.indexOfFirst { modifierAdapterItem ->
-                modifierAdapterItem.viewType == VIEW_TYPE_MODIFIER_GROUP &&
-                        (modifierAdapterItem as ModifierGroupAdapterItem).modifierGroup.id == groupId
-            }
-
             var modifierGroup: ModifierGroup? = null
             var hasChanges = false
             itemList.filterIsInstance<ModifierGroupAdapterItem>().map { modifierGroupItem ->
