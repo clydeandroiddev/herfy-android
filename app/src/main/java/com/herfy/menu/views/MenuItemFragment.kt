@@ -116,7 +116,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     private var menuCategorySelected: MenuCategory? = null
     private var sandwichId = ""
     private var sizesAdapter: SizesRecyclerViewAdapter? = null
-    private var modifierGroupsAdapter: ModifierGroupsNewRecyclerViewAdapter? = null
+
     private var modifierGroupsAdapters: ModifierGroupNewRecycleAdapterKotlin? = null
     private var frequentBoughItemsAdapter: FrequentBoughItemsAdapter? = null
     private var ingredientsAdapter: IngredientsRecyclerViewAdapter? = null
@@ -1402,8 +1402,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {
-        //menuPResenter.visibilityModifierGroup
-//        modifierGroupsAdapter!!.showModifierItemPrice(show, modifierGroupPosition)
+
     }
 
     override fun showModifierSelectionIndicator(
@@ -1418,13 +1417,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         grp.id.equals(modifierGroupIndexVisibility.entries.find { t -> t.value == modifierGroupPosition }?.key)
             } ?: -1
 
-//        modifierGroupsAdapter!!.shouldShowCheckBox(
-//            hasAtleastOneSelectedItem,
-//            modifierGroupPosition,
-//            modifierGroupIndexVisibility,
-//            indexOfRelatedModifierGroupPos,
-//            modifierItemPosition
-//        )
     }
 
     override fun showFavorites(fromAddRemove: Boolean, favorites: ArrayList<Favorite>) {}
