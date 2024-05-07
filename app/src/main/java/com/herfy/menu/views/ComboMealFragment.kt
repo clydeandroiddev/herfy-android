@@ -472,17 +472,16 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                             getUpdatedModifierList()
                         )
                         updateModifierVisibilityBy(it.second){mapOfModifierVisibilityConfig ->
-                            if(mapOfModifierVisibilityConfig.size > 0){
-                                updateModifierVisibilityWith(mapOfModifierVisibilityConfig)
-                            }
+                            updateSelectedModifierItem(
+                                hasModifierItemsSelected = it.first,
+                                modifierGroup = it.second,
+                                modifierItem = it.third,
+                                isAboveMax = isAboveMax,
+                                modifierVisibilityHashMap = mapOfModifierVisibilityConfig
+                            )
                         }
                     }
-                    updateSelectedModifierItem(
-                        hasModifierItemsSelected = it.first,
-                        modifierGroup = it.second,
-                        modifierItem = it.third,
-                        isAboveMax = isAboveMax
-                    )
+
 
                 }
             }

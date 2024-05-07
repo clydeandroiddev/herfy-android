@@ -88,22 +88,18 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                     it.bind(item)
                     it.binding.apply {
                         clickableLayout.setOnClickListener {
-                            if (item.modifierItem.attributes.minimum != 1) {
-                                onAction?.onCheckedChanged(
-                                    !item.modifierItem.attributes.isSelected,
-                                    modifierGroup = item.modifierGroup,
-                                    modifierItem = item.modifierItem
-                                )
-                            }
+                            onAction?.onCheckedChanged(
+                                !item.modifierItem.attributes.isSelected,
+                                modifierGroup = item.modifierGroup,
+                                modifierItem = item.modifierItem
+                            )
                         }
                         checkLayout.setOnClickListener {
-                            if (item.modifierItem.attributes.minimum != 1) {
-                                onAction?.onCheckedChanged(
-                                    !item.modifierItem.attributes.isSelected,
-                                    modifierGroup = item.modifierGroup,
-                                    modifierItem = item.modifierItem
-                                )
-                            }
+                            onAction?.onCheckedChanged(
+                                !item.modifierItem.attributes.isSelected,
+                                modifierGroup = item.modifierGroup,
+                                modifierItem = item.modifierItem
+                            )
                         }
                         quantityUp.setOnClickListener {
                             onAction?.onQuantityChanged(
@@ -398,13 +394,9 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
         hasModifierItemsSelected: Boolean,
         modifierGroup: ModifierGroup,
         modifierItem: ModifierItem,
-        isAboveMax: Boolean
+        isAboveMax: Boolean,
+        modifierVisibilityHashMap : HashMap<String, String>
     ) {
-        val firstIndex = itemList.indexOfFirst { modifierAdapterItem ->
-            modifierAdapterItem.viewType == ModifierAdapterItem.VIEW_TYPE_MODIFIER_GROUP &&
-                    (modifierAdapterItem as ModifierGroupAdapterItem).modifierGroup.id == modifierGroup.id
-        }
-
         itemList.filterIsInstance<ModifierGroupAdapterItem>().map { modifierAdapterItem ->
             if (modifierAdapterItem.modifierGroup.id == modifierGroup.id) {
                 modifierAdapterItem.modifierGroup = modifierGroup
@@ -420,22 +412,12 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 modifierAdapterItem.isAboveMax = isAboveMax
             }
         }
-        notifyItemRangeChanged(firstIndex, modifierGroup.modifierItems.size + 1)
-    }
-
-    fun updateModifierVisibilityWith(modifierVisibilityHashMap : HashMap<String, String>){
         modifierVisibilityHashMap.forEach { (groupId, visiblityValue) ->
-            val firstIndex = itemList.indexOfFirst { modifierAdapterItem ->
-                modifierAdapterItem.viewType == ModifierAdapterItem.VIEW_TYPE_MODIFIER_GROUP &&
-                        (modifierAdapterItem as ModifierGroupAdapterItem).modifierGroup.id == groupId }
-
-            var modifierGroup: ModifierGroup? = null
             var hasChanges = false
             itemList.filterIsInstance<ModifierGroupAdapterItem>().map { modifierGroupItem ->
                 val currentVisibilityModifierValue = modifierGroupItem.modifierGroup.attributes.visibilityConfig?.initialValue
                 if(modifierGroupItem.modifierGroup.id == groupId && currentVisibilityModifierValue != null && currentVisibilityModifierValue != visiblityValue) {
                     modifierGroupItem.modifierGroup.attributes.visibilityConfig.initialValue = visiblityValue
-                    modifierGroup = modifierGroupItem.modifierGroup
                     hasChanges = true
                 }
             }
@@ -447,14 +429,10 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 }
             }
 
-            if(hasChanges){
-                val count = (modifierGroup?.modifierItems?.size ?: 0) + 1
-                notifyItemRangeChanged(firstIndex, count)
-            }
         }
         modifierVisibilityHashMap.entries.removeIf{e -> e.value == "hidden" }
+        notifyDataSetChanged()
     }
-
     fun getUpdatedModifierList() : List<ModifierGroup>{
         return when(itemList.isNotEmpty()) {
             true -> {

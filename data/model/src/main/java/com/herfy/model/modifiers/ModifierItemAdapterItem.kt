@@ -7,6 +7,9 @@ data class ModifierItemAdapterItem(
     var modifierGroup : ModifierGroup,
     var modifierItem: ModifierItem,
     var isAboveMax : Boolean = false
-) : ModifierAdapterItem() {
+) : ModifierAdapterItem(), Cloneable {
+
+    public override fun clone(): ModifierItemAdapterItem = super.clone() as ModifierItemAdapterItem
+
     override val viewType: Int = VIEW_TYPE_MODIFIER_ITEM
 }

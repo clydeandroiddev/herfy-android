@@ -1,6 +1,6 @@
 package com.herfy.model.modifiers
 
-sealed class ModifierAdapterItem {
+sealed class ModifierAdapterItem{
     abstract val viewType: Int
 
     companion object {
