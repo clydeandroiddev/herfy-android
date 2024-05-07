@@ -53,6 +53,7 @@ import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
 import com.herfy.menu.MenuContract
 import com.herfy.menu.MenuPresenter
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.newmenu.NewMenuTabListener
 import com.herfy.newmenu.SliderContract
@@ -1255,7 +1256,8 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
         position: Int,
         modifierGroup: ModifierGroup?,
         showModifierItemPrice: Boolean,
-        showShowModifierCheckBox: Boolean
+        showShowModifierCheckBox: Boolean,
+        modifierItemsRecyclerViewAdapterNewHashMap: java.util.HashMap<Int, ModifierItemsNewRecyclerViewAdapter>
     ) {
 
     }
@@ -1414,9 +1416,11 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     ) {}
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
     override fun showModifierSelectionIndicator(
-        hasAtleastOneSelectedItem: Boolean, modifierGroupPosition: Int
+        hasAtleastOneSelectedItem: Boolean,
+        modifierGroupPosition: Int,
+        modifierGroupIndexVisibility: java.util.HashMap<String, Int>?,
+        modifierItemPosition: Int
     ) {
-        TODO("Not yet implemented")
     }
 
     override fun showFavorites(fromAddRemove: Boolean, favorites: ArrayList<Favorite>) {}

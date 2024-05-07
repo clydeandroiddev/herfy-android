@@ -4,6 +4,7 @@ import android.widget.ImageView;
 
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
 import com.herfy.productpagedetails.ui.viewholder.BaseModifierItemViewHolder;
 import com.herfy.menu.viewholders.FrequentBoughtViewHolder;
 import com.herfy.menu.viewholders.IngredientViewHolder;
@@ -81,7 +82,7 @@ public interface MenuContract {
 
         void setIngredient(Ingredient ingredient);
 
-        void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox);
+        void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, ModifierItemsNewRecyclerViewAdapter> modifierItemsRecyclerViewAdapterNewHashMap);
 
         void setMenuItemQuantity(int quantity);
 
@@ -104,7 +105,7 @@ public interface MenuContract {
         void showError(String error);
 
         void showHideModifierItemPrice(boolean show, int modifierGroupPosition);
-        void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition);
+        void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility, int modifierItemPosition);
 
         void showFavorites(boolean fromAddRemove, ArrayList<Favorite> favorites);
 
@@ -157,7 +158,7 @@ public interface MenuContract {
     }
 
     interface Presenter extends BasePresenter {
-        public void updateModifierGroupSelectionIndicator(Boolean hasSelectedModifierItem, int modifierGroupPosition);
+        public void updateModifierGroupSelectionIndicator(Boolean hasSelectedModifierItem, int modifierGroupPosition, int modifierItemPosition);
         MenuItem getMenuItemSingle(String id);
 
         void getFavorites(boolean fromAddRemove, int page);
@@ -307,7 +308,7 @@ public interface MenuContract {
 
         int getIngredientsCount();
 
-        void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity);
+        void onBindModifierGroupViewAtPosition(int position, ModifierNewGroupViewHolder modifierGroupViewHolder, boolean showModifierItemPrice, Boolean showShowModifierCheckBox, HashMap<Integer, Boolean> shouldShowQuantity, HashMap<Integer, ModifierItemsNewRecyclerViewAdapter> modifierItemsRecyclerViewAdapterNewHashMap);
 
         int getModifierGroupsCount();
 

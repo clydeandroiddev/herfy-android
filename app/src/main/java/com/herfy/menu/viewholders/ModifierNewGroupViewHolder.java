@@ -2,7 +2,6 @@ package com.herfy.menu.viewholders;
 
 import android.content.Context;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -206,7 +205,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, ModifierItemsNewRecyclerViewAdapter> modifierItemsRecyclerViewAdapterNewHashMap) {
         String imageUrl = modifierGroup.getAttributes().getImage();
         boolean visible = false;
         VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
@@ -261,11 +260,17 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
                 select.setVisibility(View.INVISIBLE);
             }
 
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setNestedScrollingEnabled(false);
-            ModifierItemsNewRecyclerViewAdapter modifierItemsNewRecyclerViewAdapter = new ModifierItemsNewRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice);
-            modifierItemsNewRecyclerViewAdapter.setOnAction(onAction);
-            recyclerView.setAdapter(modifierItemsNewRecyclerViewAdapter);
+
+            if(!modifierItemsRecyclerViewAdapterNewHashMap.containsKey(position)){
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                recyclerView.setNestedScrollingEnabled(false);
+                ModifierItemsNewRecyclerViewAdapter modifierItemsNewRecyclerViewAdapter = new ModifierItemsNewRecyclerViewAdapter(context, menuPresenter, position, modifierGroup, showModifierItemPrice);
+                modifierItemsNewRecyclerViewAdapter.setOnAction(onAction);
+                modifierItemsRecyclerViewAdapterNewHashMap.put(position,modifierItemsNewRecyclerViewAdapter);
+                recyclerView.setAdapter(modifierItemsNewRecyclerViewAdapter);
+            }else {
+                recyclerView.setAdapter(modifierItemsRecyclerViewAdapterNewHashMap.get(position));
+            }
         }
     }
 
@@ -326,7 +331,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     }
 
     @Override
-    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String,Integer> modifierGroupIndexVisibility, int modifierItemPosition) {
 
     }
 

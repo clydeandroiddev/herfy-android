@@ -26,9 +26,11 @@ import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil.Companion.addToCartEvent
 import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.auth.views.SignInActivity
+import com.herfy.common.view.SlantedTextView
 import com.herfy.databinding.ItemMenuItemNewBinding
 import com.herfy.main.MainActivity
 import com.herfy.menu.MenuContract
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter
 import com.herfy.util.StringUtil
 import com.herfy.util.scroll.ScrollableViewPagerContentTouchEventDelegator
 import com.herfy.utils.constants.Text
@@ -36,7 +38,6 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
-import com.herfy.common.view.SlantedTextView
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.Favorite
@@ -115,7 +116,8 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
         position: Int,
         modifierGroup: ModifierGroup,
         showModifierItemPrice: Boolean,
-        showShowModifierCheckBox: Boolean
+        showShowModifierCheckBox: Boolean,
+        modifierItemsRecyclerViewAdapterNewHashMap: java.util.HashMap<Int, ModifierItemsNewRecyclerViewAdapter>
     ) {}
     override fun setMenuItemQuantity(quantity: Int) {}
     override fun setMenuItemTotalPrice(totalPrice: Double, menuItemPrice: Double) {}
@@ -148,8 +150,11 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean,
-        modifierGroupPosition: Int
+        modifierGroupPosition: Int,
+        modifierGroupIndexVisibility: java.util.HashMap<String, Int>?,
+        modifierItemPosition: Int
     ) {
+        TODO("Not yet implemented")
     }
 
     override fun showFavorites(fromAddRemove: Boolean, favorites: ArrayList<Favorite>) {}

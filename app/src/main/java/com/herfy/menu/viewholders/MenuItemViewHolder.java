@@ -25,6 +25,7 @@ import com.herfy.R;
 import com.herfy.auth.views.AuthActivity;
 import com.herfy.components.Amount;
 import com.herfy.components.AmountTextView;
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
 import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.main.MainActivity;
@@ -198,7 +199,7 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
     }
 
     @Override
-    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox) {
+    public void setModifierGroup(int position, ModifierGroup modifierGroup, boolean showModifierItemPrice, boolean showShowModifierCheckBox, HashMap<Integer, ModifierItemsNewRecyclerViewAdapter> modifierItemsRecyclerViewAdapterNewHashMap) {
 
     }
 
@@ -260,7 +261,7 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
     }
 
     @Override
-    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition) {
+    public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility, int modifierItemPosition) {
 
     }
 

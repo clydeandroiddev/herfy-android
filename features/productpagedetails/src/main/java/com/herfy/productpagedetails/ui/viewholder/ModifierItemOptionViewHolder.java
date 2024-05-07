@@ -118,7 +118,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         boolean isModifierItemSelected = modifierItem.getAttributes().isSelected();
         radioButton.setVisibility(maximum == 1 && minimum == 1 ? View.VISIBLE : View.GONE);
         check.setVisibility(maximum > 1 || (minimum == 0 && maximum == 1) ? View.VISIBLE : View.GONE);
-
+        updateSelectedState(isModifierItemSelected);
         int selectedDefaultModifierItem = MenuUtil.modifierItemQuantityCount(modifierGroup);
         if (selectedDefaultModifierItem >= modifierGroup.getAttributes().getMaximum()) {
             if (!modifierItem.getAttributes().isSelected()) {
@@ -126,12 +126,14 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
                 modifierItem.getAttributes().setModifierItemQuantityExceedsMaximum(false);
             }
         }
-
+        System.out.println("Modifier item name " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
         if (isModifierItemSelected) {
+            System.out.println("Modifier item name selected " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state);
             radioButton.setImageResource(R.drawable.modifier_radio_item_selected);
             check.setImageResource(R.drawable.modifier_item_checked_selected);
         } else {
+            System.out.println("Modifier item name uselected " + modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
             modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_unselected_state);
             radioButton.setImageResource(R.drawable.modifier_item_radio_unselected);
             check.setImageResource(R.drawable.modifier_item_unselected);
@@ -177,8 +179,10 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
             public void onClick(View v) {
                 if (action != null && modifierItem.getAttributes().getMinimum() != 1) {
                     if (modifierItem.getAttributes().isSelected()) {
+                        updateSelectedState(false);
                         action.onCheckedChanged(false, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     } else {
+                        updateSelectedState(true);
                         action.onCheckedChanged(true, modifierGroupPosition, modifierGroup, modifierItemPosition, modifierItem);
                     }
                 }
@@ -281,6 +285,18 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         }
         if (!formattedPrice.isEmpty()) {
             txtModifierPrice.setText(formattedPrice);
+        }
+    }
+
+    private void updateSelectedState(boolean isModifierItemSelected) {
+        if (isModifierItemSelected) {
+            modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_selected_state);
+            radioButton.setImageResource(R.drawable.modifier_radio_item_selected);
+            check.setImageResource(R.drawable.modifier_item_checked_selected);
+        } else {
+            modifierItemCardView.setBackgroundResource(R.drawable.modifier_item_bg_unselected_state);
+            radioButton.setImageResource(R.drawable.modifier_item_radio_unselected);
+            check.setImageResource(R.drawable.modifier_item_unselected);
         }
     }
 }

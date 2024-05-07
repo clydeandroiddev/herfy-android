@@ -200,6 +200,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:textAlignment="viewEnd"
                     tools:src="@drawable/quantity_up_blue"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/quantityDownLayout"
