@@ -2,9 +2,11 @@ package com.herfy.history;
 
 import android.location.Geocoder;
 import android.location.Location;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.database.AppDatabase;
@@ -32,6 +34,7 @@ import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall;
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall;
+import com.skylinedynamics.solosdk.api.models.kotlin.LyveDriver;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Allergen;
 import com.skylinedynamics.solosdk.api.models.objects.AllergenCdn;
@@ -102,6 +105,8 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     public boolean hasLocation = false;
 
     private boolean fromAbly;
+
+    private boolean isLocationUpdateSubscribed = false;
     private Location location;
     private FusedLocationProvider fusedLocationProvider;
     private final OrdersContract.View ordersView;
@@ -115,7 +120,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     private Address address = null;
     private ArrayList<MenuItem> menuItems = new ArrayList<>();
     private int menuItemsCount = 0;
-    private Employee driver = null;
+    private LyveDriver driver = null;
     private List<ComboItemMain> comboItems = new ArrayList<>();
     private boolean isDone = false;
 
@@ -231,7 +236,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     }
 
     @Override
-    public Employee getDriverDetail() {
+    public LyveDriver getDriverDetail() {
         return driver;
     }
 
@@ -706,10 +711,24 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                         for (int i = 0; i < data.length(); i++) {
                             JSONObject dataObject = data.getJSONObject(i);
                             Employee employee = Employee.parse(dataObject);
-                            if (employee.getRoles().contains("driver")) {
-                                driver = employee;
-                                ordersView.showWhatsApp(driver.getMobile());
-                                getDriverBearing();
+                            JSONObject attributes = dataObject.optJSONObject("attributes");
+                            if (attributes != null) {
+                                JSONObject lyveDriverObject = attributes.getJSONObject("lyve-driver");
+                                try {
+                                    LyveDriver lyveDriver = new Gson().fromJson(lyveDriverObject.toString(), LyveDriver.class);
+                                    if (lyveDriver != null) {
+                                        driver = lyveDriver;
+                                        ordersView.showWhatsApp(driver.getEmployee().getMobile());
+                                        LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
+                                        LatLng driverLatLng = new LatLng(Double.parseDouble(lyveDriver.getLat()), Double.parseDouble(lyveDriver.getLng()));
+                                        ordersView.showDriver(customerLatLng, driverLatLng);
+                                        if (!isLocationUpdateSubscribed) {
+                                            subscribeToOrderDriverLocationUpdate(order.getId());
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
 
@@ -747,7 +766,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
 
     @Override
     public void getDriverBearing() {
-        OrdersApiCall.getInstance().getDriverBearing(driver.getId(), new ApiRequestListener() {
+        OrdersApiCall.getInstance().getDriverBearing(driver.getEmployee().getEmployeeId(), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
 
@@ -2162,6 +2181,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     }
 
     private void subscribeToOrderDriverLocationUpdate(String orderId) {
+        isLocationUpdateSubscribed = true;
         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
         ablyUtil.subscribeToOrderDriverLocationUpdate(orderId, OrdersPresenter.this::onOrderDriverLocationUpdate);
     }
@@ -2177,7 +2197,6 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         fromAbly = true;
         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
         ablyUtil.detachToOrderDriverAssign(order.getId());
-        subscribeToOrderDriverLocationUpdate(order.getId());
         getDriver();
         return Unit.INSTANCE;
     }
@@ -2188,7 +2207,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
             try {
                 JSONObject jsonObject = new JSONObject(message.data.toString());
                 DriverData driverData = DriverData.parse(jsonObject);
-                if (String.valueOf(driverData.getId()).equalsIgnoreCase(order.getDriverId())) {
+                if (String.valueOf(driver.getEmployee().getId()).equalsIgnoreCase(String.valueOf(driverData.getId()))) {
                     if (driverData.getLatitude() != 0 && driverData.getLongitude() != 0) {
                         ordersView.updateDriver(new LatLng(driverData.getLatitude(), driverData.getLongitude()), driverData.getMobile());
                     }

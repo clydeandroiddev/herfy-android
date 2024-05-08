@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polygon
 import com.google.android.gms.maps.model.Polyline
 import com.herfy.base.BaseFragment
 import com.herfy.common.drawArcPolyline
@@ -72,6 +73,7 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
 
     private var userLatLng: LatLng? = null
     private var myPolyline: Polyline? = null
+    private var mPolygon: Polygon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,6 +123,11 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
     private fun deletePolyline() {
         myPolyline?.remove()
         myPolyline = null  // Clear the reference
+    }
+
+    private fun deletePolygon() {
+        mPolygon?.remove()
+        mPolygon = null  // Clear the reference
     }
 
     override fun logEvent(
@@ -386,6 +393,7 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
 
                             if (userLatLng != null) {
                                 deletePolyline()
+                                deletePolygon()
                                 val startPoint = branch.attributes?.lat?.let {
                                     branch.attributes?.lng?.let { it1 ->
                                         LatLng(
@@ -393,9 +401,12 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                                         )
                                     }
                                 }
-                                myPolyline = startPoint?.let { it1 ->
-                                    drawArcPolyline(
-                                        map, it1, userLatLng!!, 100
+                                if (startPoint != null) {
+                                    myPolyline = drawArcPolyline(
+                                        map!!,
+                                        userLatLng!!,
+                                        startPoint,
+                                        binding.mapContainer.context
                                     )
                                 }
                             }
@@ -438,5 +449,7 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
     }
 
     override fun selectBranch(id: String) {}
+
+
 }
 

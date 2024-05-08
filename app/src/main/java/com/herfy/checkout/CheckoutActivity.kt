@@ -447,7 +447,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                     storeLocation.latitude, storeLocation.longitude
                                 )
                                 myPolyline = drawArcPolyline(
-                                    mMap, startPoint, currentLocation, 100
+                                    mMap, startPoint, currentLocation, view.context
                                 )
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -529,7 +529,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                     storeLocation.latitude, storeLocation.longitude
                                 )
                                 myPolyline = drawArcPolyline(
-                                    mMap, startPoint, currentLocation, 100
+                                    mMap, startPoint, currentLocation, view.context
                                 )
                             } catch (e: Exception) {
                                 e.printStackTrace()

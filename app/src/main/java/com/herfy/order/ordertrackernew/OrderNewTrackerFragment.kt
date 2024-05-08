@@ -481,8 +481,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     )
                     textView.text =
                         CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                                .replace("(x)", distanceValue)
-                            .lowercase(Locale.getDefault())
+                            .replace("(x)", distanceValue).lowercase(Locale.getDefault())
                     if (currentDistance != null) {
                         if (currentDistance <= 0.0) {
                             binding.orderAddressDetails.addressKm.text = ""
@@ -506,7 +505,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         }
                         myPolyline = startPoint?.let { it1 ->
                             drawArcPolyline(
-                                googleMap, it1, userLatLng!!, 100
+                                googleMap, it1, userLatLng!!, binding.mapFrame.context
                             )
                         }
                     }
@@ -903,19 +902,20 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 }
                 statusDriverDetails.withDriverLayout.isVisible = true
                 statusDriverDetails.noDriverLayout.isVisible = false
-                statusDriverDetails.riderName.text = "${driver.firstName} ${driver.lastName}"
+                statusDriverDetails.riderMotor.text = driver.plateNumber
+                statusDriverDetails.riderName.text =
+                    "${driver.employee.firstName} ${driver.employee.lastName}"
                 statusDriverDetails.driverInitial.text =
-                    "${driver.firstName.first()}${driver.lastName.first()}"
-
-                if (StringUtil.isValidPhoneNumber(driver.mobile)) {
+                    "${driver.employee.firstName.first()}${driver.employee.lastName.first()}"
+                if (!driver.employee.mobile.isNullOrBlank()) {
                     statusDriverDetails.callRider.isVisible = true
                     statusDriverDetails.messageRider.isVisible = true
                     statusDriverDetails.callRider.setOnClickListener {
-                        numberToCall = driver.mobile
+                        numberToCall = driver.employee.mobile
                         requestCallPermission(numberToCall)
                     }
                     statusDriverDetails.messageRider.setOnClickListener {
-                        callWhatsApp(driver.mobile)
+                        callWhatsApp(driver.employee.mobile)
                     }
                 } else {
                     statusDriverDetails.callRider.isVisible = false
@@ -1428,8 +1428,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
                     textView.text =
                         CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                                .replace("(x)", distanceValue)
-                            .lowercase(Locale.getDefault())
+                            .replace("(x)", distanceValue).lowercase(Locale.getDefault())
                     if (currentDistance != null) {
                         if (currentDistance <= 0.0) {
                             textView.isInvisible = true
@@ -1457,6 +1456,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     )
                     markerOptions.anchor(0.5f, 1f)
                     driverMarker = googleMap?.addMarker(markerOptions)
+                    deletePolyline()
                     googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
                 }
             } catch (e: Exception) {

@@ -15,7 +15,6 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.maps.model.LatLng
-import com.herfy.R
 import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
@@ -44,6 +43,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
+import io.shipbook.shipbooksdk.Log
 
 @AndroidEntryPoint
 class NewHistoryFragment : BaseFragment(), OrdersContract.View {
@@ -222,21 +222,26 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         }
         order?.let { history ->
             binding.apply {
-                if (order.orderType == OrderType.convertOrderTypeToString(OrderType.DELIVERY)) {
+                if (order.attrType.equals(
+                        OrderType.convertOrderTypeToString(OrderType.DELIVERY), ignoreCase = true
+                    ) || order.attrType.equals(
+                        "deliver", ignoreCase = true
+                    )
+                ) {
                     if (order.sequence <= OrderStatusType.DISPATCHED.value) {
-                        updateStatusGIF(R.drawable.make_order)
+                        updateStatusGIF(com.herfy.home.R.drawable.make_order)
                     } else if (order.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && order.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                        updateStatusGIF(R.drawable.delivered_order)
+                        updateStatusGIF(com.herfy.home.R.drawable.delivered_order)
                     } else {
-                        updateStatusGIF(R.drawable.delivered_order)
+                        updateStatusGIF(com.herfy.home.R.drawable.delivered_order)
                     }
                 } else {
                     if (order.sequence <= OrderStatusType.IN_KITCHEN.value) {
-                        updateStatusGIF(R.drawable.make_order)
+                        updateStatusGIF(com.herfy.home.R.drawable.make_order)
                     } else if (order.sequence >= OrderStatusType.READY.value && order.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                        updateStatusGIF(R.drawable.collected_order)
+                        updateStatusGIF(com.herfy.home.R.drawable.collected_order)
                     } else {
-                        updateStatusGIF(R.drawable.collected_order)
+                        updateStatusGIF(com.herfy.home.R.drawable.collected_order)
                     }
                 }
 

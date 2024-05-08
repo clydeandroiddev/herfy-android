@@ -1133,7 +1133,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                                 }
                                 myPolyline = startPoint?.let { it1 ->
                                     drawArcPolyline(
-                                        googleMap, it1, userLatLng!!, 100
+                                        googleMap, it1, userLatLng!!, binding.mapContainer.context
                                     )
                                 }
                             }
@@ -1623,8 +1623,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
-            currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN) {
