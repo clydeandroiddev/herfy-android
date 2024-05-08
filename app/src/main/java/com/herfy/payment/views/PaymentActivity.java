@@ -1434,10 +1434,15 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                 }
 
                 @Override
-                public void on3DSFailure(String error) {
-                    ShipBookLogger.logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter.getPaymentProvider() + " Card Payment Failed (Reason: on3DSFailure " + error + ")");
-                    ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, paymentPresenter.getPaymentProvider(), "Card Payment Failed (Reason: on3DSFailure " + error + ")");
+                public void on3DSFailure() {
+                    ShipBookLogger.logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter.getPaymentProvider() + " Card Payment Failed (Reason: on3DSFailure)");
+                    ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, paymentPresenter.getPaymentProvider(), "Card Payment Failed (Reason: on3DSFailure");
                     showCardFailed();
+                }
+
+                @Override
+                public void on3DSError(@Nullable String error) {
+
                 }
 
                 @Override
@@ -1505,7 +1510,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (dialogCheckout != null) {
-                        dialogCheckout.dismiss();
+                        dialogCheckout.dismissAllowingStateLoss();
                     }
                     selectPaymentTypeCash();
                 }

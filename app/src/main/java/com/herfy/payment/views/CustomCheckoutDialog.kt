@@ -175,9 +175,11 @@ class CustomCheckoutDialog(private val context: Context) : BaseDialogFragment() 
                 listener!!.on3DSSuccess()
             } else if (threeDSResult is ThreeDSResult.Error) {
                 val errorMessage: String = threeDSResult.error.message ?: ""
-                listener!!.on3DSFailure(errorMessage)
+                listener!!.on3DSError(errorMessage)
+            } else if (threeDSResult is ThreeDSResult.Failure) {
+                listener!!.on3DSFailure()
             } else {
-                listener!!.on3DSFailure("Authentication Failure")
+                listener!!.on3DSError("An unexpected error occurred")
             }
         }
 
@@ -209,7 +211,8 @@ class CustomCheckoutDialog(private val context: Context) : BaseDialogFragment() 
         fun onTokenGenerated(response: TokenDetails?)
         fun onError(fail: String?)
         fun on3DSSuccess()
-        fun on3DSFailure(error: String?)
+        fun on3DSError(error: String?)
+        fun on3DSFailure()
         fun onBackPressed()
     }
 

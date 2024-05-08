@@ -1140,11 +1140,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     dialogCheckout!!.dismissAllowingStateLoss()
                 }
 
-                override fun on3DSFailure(error: String?) {
-                    logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Failed (Reason: on3DSFailure " + error + ")")
+                override fun on3DSError(error: String?) {
+
+                }
+
+                override fun on3DSFailure() {
+                    logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Failed (Reason: on3DSFailure)")
                     sendOrderLog(
                         ApiLogLevel.ERROR, orderId, paymentPresenter!!.paymentProvider,
-                        "Card Payment Failed (Reason: on3DSFailure $error)"
+                        "Card Payment Failed (Reason: on3DSFailure)"
                     )
                     showCardFailed()
                 }
@@ -1191,7 +1195,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 CacheUtil.getInstance().getTranslations(Text.YES_CAPS),
                 { dialog, which ->
                     if (dialogCheckout != null) {
-                        dialogCheckout!!.dismiss()
+                        dialogCheckout!!.dismissAllowingStateLoss()
                     }
                     selectPaymentTypeCash()
                 },
