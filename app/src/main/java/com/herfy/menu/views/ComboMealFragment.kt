@@ -1,6 +1,7 @@
 package com.herfy.menu.views
 
 import android.content.Context
+import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -105,6 +106,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     override fun initViews() {
         super.initViews()
         binding.viewModel = this@ComboMealFragment.viewModel
+        setupImageHeight()
         setupFrequentlyBoughtItems()
         setupComboMealItems()
         setupComboMealDetailsBottomSheet()
@@ -238,6 +240,18 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
         }
 
+    }
+
+    private fun setupImageHeight() {
+        binding.image.apply {
+           /* val ratio = Values.MENU_ITEM_IMAGE_ASPECT_RATIO_WIDTH / Values.MENU_ITEM_IMAGE_ASPECT_RATIO_HEIGHT
+            val imageWidth = Resources.getSystem().displayMetrics.widthPixels * Values.POPUP_WIDTH_PERCENT
+            val imageHeight = imageWidth / ratio
+            layoutParams.height = imageHeight.toInt()*/
+            val toolbarHeight = (Resources.getSystem().displayMetrics.widthPixels / 1.1).toInt()
+            binding.mainToolbar.layoutParams.height = toolbarHeight
+            binding.image.layoutParams.height = toolbarHeight
+        }
     }
 
     override fun initTranslations() {

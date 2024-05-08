@@ -12,6 +12,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.herfy.utils.constants.Values
 import com.skylinedynamics.solosdk.util.AppLogger
@@ -89,6 +90,7 @@ fun loadImage(imageView: ImageView, imageSrc: String?){
     val imageURL : String =  if(imageSrc.isNullOrEmpty()) Values.DEFAULT_IMAGE_URL else imageSrc
     Glide.with(imageView.context).load(imageURL)
         .skipMemoryCache(false)
+        .apply(RequestOptions.centerInsideTransform())
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .listener(object : RequestListener<Drawable>{
             override fun onLoadFailed(
