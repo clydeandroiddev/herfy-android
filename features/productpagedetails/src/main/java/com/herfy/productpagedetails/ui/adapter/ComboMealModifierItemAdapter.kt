@@ -46,6 +46,12 @@ class ComboMealModifierItemAdapter(
     @SuppressLint("NotifyDataSetChanged")
     fun updateList(items: ArrayList<ComponentModifierItem>) {
         this.items = items
+        this.items.forEachIndexed { index, item ->
+            if(item.selected){
+                prevSelectedItemPos = index
+                return@forEachIndexed
+            }
+        }
         notifyDataSetChanged()
     }
 
