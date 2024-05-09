@@ -44,6 +44,7 @@ class ComboMealModifierGroupAdapter(
     @SuppressLint("NotifyDataSetChanged")
     fun updateList(items: List<MenuItemComponents>, checkBoxIndicatorMap : HashMap<Int, Boolean>){
         this.items = items
+        comboMealModifierItemAdapters = hashMapOf()
         showComboMealModifierGroupCheckIndicator = checkBoxIndicatorMap
         notifyDataSetChanged()
     }

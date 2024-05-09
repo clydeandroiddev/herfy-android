@@ -51,7 +51,6 @@ import com.herfy.menu.adapters.CombosListAdapter
 import com.herfy.menu.adapters.FrequentBoughItemsAdapter
 import com.herfy.menu.adapters.IngredientsRecyclerViewAdapter
 import com.herfy.menu.adapters.ModifierGroupNewRecycleAdapterKotlin
-import com.herfy.menu.adapters.ModifierGroupsNewRecyclerViewAdapter
 import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter
 import com.herfy.menu.adapters.SizesRecyclerViewAdapter
 import com.herfy.newmenu.NewMenuFragmentCommonListener
@@ -537,19 +536,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 ) {
                     imageUrl = Values.DEFAULT_IMAGE_URL
                 }
-                val requestOptions: RequestOptions
-                if (BuildUtil.soloAppKey().equals("kExl05bOT4ttFEO2", ignoreCase = true)) {
-                    requestOptions = RequestOptions.centerInsideTransform()
-                    binding.image.scaleType = ImageView.ScaleType.CENTER_INSIDE
-                } else {
-                    requestOptions = RequestOptions.centerCropTransform()
-                    binding.image.scaleType = ImageView.ScaleType.CENTER_CROP
-                }
+
                 Glide.with(it)
                     .load(imageUrl)
                     .skipMemoryCache(false)
+                    .centerInside()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .apply(requestOptions)
                     .listener(object : RequestListener<Drawable?> {
                         override fun onLoadFailed(
                             e: GlideException?,

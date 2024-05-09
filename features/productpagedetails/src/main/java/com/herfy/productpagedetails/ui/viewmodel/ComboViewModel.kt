@@ -23,6 +23,7 @@ import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.deepCopy
 import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.handler.ErrorHandler.getErrorMessage
 import com.herfy.utils.helper.AppLogger
@@ -103,7 +104,7 @@ class ComboViewModel @Inject constructor(
     private val menuCategories: List<MenuCategory> = arrayListOf()
     private var menuItemComponentList = HashMap<Int, MenuItemComponents>()
     private var menuItemComboList = HashMap<Int, HashMap<Int, MenuItemComponents>>()
-    private val selectedComponents = HashMap<String, Any>()
+    private var selectedComponents = HashMap<String, Any>()
     val frequentBoughtItemList = arrayListOf<MenuItem>()
     private val modifierGroupVisibilityHash = HashMap<String, String>()
 
@@ -427,7 +428,8 @@ class ComboViewModel @Inject constructor(
 
         try {
             if (item.isCombo) {
-                for (components in item.combo[comboIndex].components) {
+                val componentsList = menuItemComboList[comboIndex]?.values?.toList() ?: arrayListOf()
+                for (components in componentsList) {
                     for (componentModifierItem in components.items) {
                         if (componentModifierItem.selected) {
                             if (!item.isSandwichOnly) totalPrice += componentModifierItem.price
@@ -573,7 +575,8 @@ class ComboViewModel @Inject constructor(
     private fun getComboMenuItemComponents() {
         menuItem?.let {
             if (it.combo.size > 0) {
-                it.combo[comboIndex]?.components?.let {
+                val comboItems = it.combo[comboIndex]?.components?.deepCopy(MenuItemComponents::class.java)
+                comboItems?.let {
                     _showComboMenuItemComponents.value = it
                 }
                 if (isFromCartEdit) {
@@ -608,7 +611,8 @@ class ComboViewModel @Inject constructor(
                 showMenuItemComponent(it, showCheckBoxIndicator)
             }
         } else {
-            menuItem?.combo?.get(comboIndex)?.components?.get(menuItemComponentIndex)?.let {
+            val comboItems = menuItem?.combo?.get(comboIndex)?.components?.deepCopy(MenuItemComponents::class.java)
+            comboItems?.get(menuItemComponentIndex)?.let {
                 setupComponentPerPosition(menuItemComponentIndex, it, showMenuItemComponent)
             }
         }
@@ -919,7 +923,8 @@ class ComboViewModel @Inject constructor(
     /**Function for setting the value of selected to true of the first item of ComponentModifier per MenuItemComponent
      * **/
     private fun componentsSelectFirst(components: MenuItemComponents): ArrayList<ComponentModifierItem> {
-        if (!isFromCartEdit || checkIfNoItemSelected(components, components.items)) {
+        val noItemSelected = checkIfNoItemSelected(components, components.items)
+        if (!isFromCartEdit && noItemSelected) {
             components.items[0].selected = true
             selectedComponents[components.id] = 0
         }
@@ -960,6 +965,9 @@ class ComboViewModel @Inject constructor(
      * **/
     override fun onSelectSize(size: ModifierItem, pos: Int) {
         previousComboIndex = comboIndex
+        selectedComponents = hashMapOf()
+        menuItemComponentList = hashMapOf()
+        menuItemComboList = hashMapOf()
         comboIndex = pos
         _updateComboSizeList.value = Pair(pos, previousComboIndex)
         menuItem?.let {
@@ -967,8 +975,6 @@ class ComboViewModel @Inject constructor(
         }
         getComboMenuItemComponents()
 
-        //getComboMenuItemComponents()
-        //TODO : Unselect Or Set To Default OldComboIndex
     }
 
     /**Inheriting the function from ComboMealModifierItem.onClickListener
@@ -1400,6 +1406,14 @@ class ComboViewModel @Inject constructor(
                 invalid = checkComboModifiers(menuItem!!)
             }
             if (!invalid) {
+                menuItem?.let {item->
+                    if(item.isCombo){
+                        menuItemComboList[comboIndex]?.values?.let {  components ->
+                            menuItem!!.combo[comboIndex].components = ArrayList(components)
+                        }
+                    }
+                }
+
                 menuItem!!.attributes.notes = ""
                 if (!isPromo) {
                     cacheUtilHelper.updateCart(cartMenuItemPos, menuItem!!) {
@@ -1442,7 +1456,8 @@ class ComboViewModel @Inject constructor(
                 comboIndex++
             }
             if (menuItem!!.isCombo) {
-                for (components in menuItem!!.combo[trueIndex].components) {
+                val componentsList = menuItemComboList[trueIndex]?.values?.toList() ?: arrayListOf()
+                for (components in componentsList) {
                     if (invalid) {
                         break
                     }
@@ -1512,6 +1527,13 @@ class ComboViewModel @Inject constructor(
                 invalid = checkComboModifiers(menuItem!!)
             }
             if (!invalid) {
+                menuItem?.let {item->
+                    if(item.isCombo){
+                        menuItemComboList[comboIndex]?.values?.let {  components ->
+                            menuItem!!.combo[comboIndex].components = ArrayList(components)
+                        }
+                    }
+                }
                 menuItem!!.attributes.notes = notes.get()
                 addCartItem()
             }
