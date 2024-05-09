@@ -987,20 +987,24 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutLoyalty.tvLoyaltyPointsLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.LOYALTY_USE_POINTS_NOT_CAPS, "Use Loyalty Points")
         val orderType = CacheUtil.getInstance().orderType
-        if (orderType === OrderType.DELIVERY) {
-            binding!!.tvTimeLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.DELIVERY_TIME, "Delivery Time")
-            val mins =
-                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.delivery.toString()
-            binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)", mins)
-        } else {
-            binding!!.tvTimeLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.PICKUP_TIME, "Pickup Time")
-            val mins =
-                CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString()
-            binding!!.tvWithin.text = CacheUtil.getInstance()
-                .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)", mins)
+        try {
+            if (orderType === OrderType.DELIVERY) {
+                binding!!.tvTimeLabel.text = CacheUtil.getInstance()
+                    .getTranslations(Text.DELIVERY_TIME, "Delivery Time")
+                val mins =
+                    CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.delivery.toString()
+                binding!!.tvWithin.text = CacheUtil.getInstance()
+                    .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)", mins)
+            } else {
+                binding!!.tvTimeLabel.text = CacheUtil.getInstance()
+                    .getTranslations(Text.PICKUP_TIME, "Pickup Time")
+                val mins =
+                    CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString()
+                binding!!.tvWithin.text = CacheUtil.getInstance()
+                    .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)", mins)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         binding!!.placeOrder.text = CacheUtil.getInstance()
             .getTranslations(Text.PLACE_ORDER, "Place Order")
@@ -1981,7 +1985,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun otpResult(transactionId: String, amount: String, invalidMukafaa: Boolean) {
         if (!invalidMukafaa && transactionId.isNotEmpty()) {
             paymentPresenter?.mukafaaTransactionId = transactionId
-            val validatedTotal = paymentPresenter?.validatedTotal?: 0.0
+            val validatedTotal = paymentPresenter?.validatedTotal ?: 0.0
             val orderPayment = CacheUtil.getInstance().orderPayment
             val amountDbl = amount.toDouble()
             if (orderPayment == PaymentType.NONE

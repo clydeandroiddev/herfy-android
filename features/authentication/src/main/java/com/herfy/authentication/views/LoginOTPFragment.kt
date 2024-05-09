@@ -2,14 +2,9 @@ package com.herfy.authentication.views
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs

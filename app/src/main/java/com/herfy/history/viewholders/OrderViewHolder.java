@@ -22,6 +22,7 @@ import com.herfy.utils.constants.Text;
 import com.herfy.history.OrdersContract;
 import com.herfy.utils.extensions.DoubleExtKt;
 import com.herfy.utils.helper.CacheUtil;
+import com.skylinedynamics.solosdk.api.models.kotlin.AppDriver;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
@@ -291,7 +292,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements OrdersCo
     }
 
     @Override
-    public void updateDriver(LatLng latLng, String mobileNumber) {
+    public void updateDriver(AppDriver appDriver) {
 
     }
 
