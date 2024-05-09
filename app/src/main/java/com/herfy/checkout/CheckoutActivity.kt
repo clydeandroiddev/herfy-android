@@ -46,7 +46,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.model.mutation.Overlay
@@ -1194,22 +1193,22 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 ),
                 CacheUtil.getInstance().getTranslations(Text.YES_CAPS),
                 { dialog, which ->
-                    if (dialogCheckout != null) {
-                        dialogCheckout!!.dismissAllowingStateLoss()
-                    }
+                    dialogCheckout?.dismissAllowingStateLoss()
+                    dialog.dismiss()
                     selectPaymentTypeCash()
                 },
                 CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
-            ) { dialog, which -> dialog.dismiss() }
+            ) { dialog, which ->
+                dialogCheckout?.dismissAllowingStateLoss()
+                dialog.dismiss()
+            }
         } else {
             showAlertDialog(
                 "",
                 CacheUtil.getInstance().getTranslations(Text.CARD_FAILED),
                 CacheUtil.getInstance().getTranslations(Text.OK)
             ) { dialog, _ ->
-                if (dialogCheckout != null) {
-                    dialogCheckout!!.dismiss()
-                }
+                dialogCheckout?.dismissAllowingStateLoss()
                 dialog.dismiss()
             }
         }

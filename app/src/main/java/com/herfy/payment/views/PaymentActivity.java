@@ -1512,15 +1512,22 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                     if (dialogCheckout != null) {
                         dialogCheckout.dismissAllowingStateLoss();
                     }
+                    dialog.dismiss();
                     selectPaymentTypeCash();
                 }
             }, CacheUtil.getInstance().getTranslations(Text.NO_CAPS), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    if (dialogCheckout != null) {
+                        dialogCheckout.dismissAllowingStateLoss();
+                    }
                     dialog.dismiss();
                 }
             });
         } else {
+            if (dialogCheckout != null) {
+                dialogCheckout.dismissAllowingStateLoss();
+            }
             showError(CacheUtil.getInstance().getTranslations(Text.CARD_FAILED));
         }
     }
