@@ -33,6 +33,8 @@ import com.skylinedynamics.solosdk.api.calls.CouponsApiCall
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyAttributes
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTier
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
@@ -45,11 +47,13 @@ import com.skylinedynamics.solosdk.api.models.objects.Tier
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ably.lib.types.Message
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.Arrays
 import java.util.Locale
 import javax.inject.Inject
 
@@ -360,19 +364,64 @@ class HomeViewModel @Inject constructor(
     @SuppressLint("CheckResult")
     fun getLoyalty() {
         invoke {
-            homeRepository.getCustomerLoyalty(AuthUtil.getInstance().customer.id) { homeResponse ->
-                if (homeResponse.success) {
-                    homeResponse.data?.let { it ->
-                        it.cast<Loyalty> {
-                            _loyalty.value = it
-                            AuthUtil.getInstance().customerLoyalty = it
-                        }
-                    } ?: run {
-                        _loyalty.value = null
-                    }
-                } else {
-                    _loyalty.value = null
+            Single.zip<List<Tier>, Loyalty, android.util.Pair<Loyalty, List<Tier>>>(
+                getTiersObservable(), getLoyaltyObservable()
+            ) { tiers: List<Tier>, loyalty: Loyalty ->
+                android.util.Pair<Loyalty, List<Tier>>(loyalty, tiers)
+            }.subscribe({ pair: android.util.Pair<Loyalty, List<Tier>> ->
+                var tiers = pair.second
+                val loyalty = pair.first
+                this._tiers.value = tiers
+                val totalPointsAccumulated = loyalty.attributes.currentBalance
+                var eligibleTiers = Observable.fromIterable(tiers)
+                    .filter { tier: Tier -> totalPointsAccumulated <= tier.endPoint }.toList()
+                    .blockingGet()
+                var pointsToNextTier = 0
+                _loyalty.value = loyalty
+                var nextTier: Tier? = null
+                if (eligibleTiers.size <= 0 && tiers.size >= 1) {
+                    eligibleTiers = ArrayList()
+                    eligibleTiers.add(tiers[tiers.size - 1])
                 }
+                if (eligibleTiers.size >= 1) {
+                    nextTier = eligibleTiers[0]
+                }
+                if (eligibleTiers.size > 1) {
+                    nextTier = eligibleTiers[1]
+                    pointsToNextTier = nextTier.startPoint - loyalty.attributes.currentBalance
+                }
+                var startPoints = 0
+                if (nextTier != null) {
+                    startPoints = nextTier.startPoint
+                }
+
+                _tier.value = nextTier
+                _totalPointsAccumulated.value = totalPointsAccumulated
+                _pointsToNextTier.value = pointsToNextTier
+                _startPoints.value = startPoints
+
+            }) { error: Throwable? ->
+                val loyalty = Loyalty()
+                val loyaltyAttributes = LoyaltyAttributes()
+                val loyaltyTier = LoyaltyTier()
+                loyaltyTier.name = "Classic"
+                loyaltyAttributes.loyaltyTier = loyaltyTier
+                loyaltyAttributes.currentBalance = 0
+                val currentTier = Tier()
+                currentTier.name = "Classic"
+                currentTier.startPoint = 0
+                val nextTier = Tier()
+                nextTier.name = "Silver"
+                nextTier.startPoint = 100
+                loyaltyAttributes.loyaltyTier = loyaltyTier
+                loyaltyAttributes.currentBalance = 0
+                _tiers.value = ArrayList<Tier>(Arrays.asList<Tier>(currentTier))
+                loyalty.attributes = loyaltyAttributes
+                _tier.value = nextTier
+                _totalPointsAccumulated.value = 0
+                _pointsToNextTier.value = 100
+                _startPoints.value = 100
+
             }
         }
     }

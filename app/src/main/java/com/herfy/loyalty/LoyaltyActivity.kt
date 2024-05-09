@@ -2,6 +2,7 @@ package com.herfy.loyalty
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Build
@@ -15,8 +16,10 @@ import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.databinding.ActivityLoyaltyBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.OnLayoutLoadingCompleted
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
@@ -25,6 +28,7 @@ import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.TimeUtil
+import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
@@ -80,6 +84,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
         binding = ActivityLoyaltyBinding.inflate(layoutInflater)
         setContentView(binding.root)
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+        setupLoyaltyImageHeight()
         loyaltyPresenter.start()
 
         if (AuthUtil.getInstance().customerLoyalty != null) {
@@ -100,6 +105,16 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
         }
         getLoyalty()
 
+    }
+
+    private fun setupLoyaltyImageHeight() {
+        binding.layoutCard.ivLoyaltyCard.apply {
+            context?.let {
+                val imageHeight = (Resources.getSystem().displayMetrics.widthPixels / Values.LOYALTY_CARD_ASPECT_RATIO) + ViewUtil.dpToPx(it, 16)
+                layoutParams.height = imageHeight.toInt()
+            }
+
+        }
     }
 
     private fun getLoyalty() {
@@ -162,6 +177,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     override fun setupViews() {
         setupRewardTiers()
         binding.apply {
+            binding.layoutCard.ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
             toolbar.apply {
                 setNavButtonAction {
                     onBackPressedDispatcher.onBackPressed()
@@ -257,8 +273,8 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
 
     override fun showTiers(loyalty: Loyalty) {
         binding.apply {
-            val tiers = loyalty.attributes.tiers
-            if(tiers.size > 0){
+            val tiers = loyaltyPresenter.tiers //loyalty.attributes.tiers
+            if(tiers != null && tiers.size > 0){
                 rewardsTierAdapter.updateList(tiers)
                 layoutRewardsTier.apply {
                     rvRewardTier.OnLayoutLoadingCompleted {
@@ -266,9 +282,27 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         clRewardTier.visible()
                     }
                 }
-                layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
+                tiers.find { t -> t.name.equals(loyalty.attributes.loyaltyTier.name?:"")}?.let {
+                    it.collectRules?.let {collectRules ->
+                        layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
+                            .replace("(x)", collectRules.earnPoint.toString())
+                            .replace("(y)", collectRules.perSar.toString())
+                    }
+
+                }
+                val loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
+                if(loyaltyTier.isNotEmpty()){
+                    tiers.find { tier -> tier.name.equals(loyaltyTier, true) }?.let { tier ->
+                        tier.imageUrl.let { url ->
+                            if(!url.isNullOrEmpty()){
+                                binding.layoutCard.ivLoyaltyCard.loadImageFromUrl(imageUrl = url)
+                            }
+                        }
+                    }
+                }
+                /*layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
                     .replace("(x)", "1")
-                    .replace("(y)", loyalty.attributes.pointConversion)
+                    .replace("(y)", loyalty.attributes.pointConversion)*/
             }else {
                 fmRewardsTier.gone()
             }

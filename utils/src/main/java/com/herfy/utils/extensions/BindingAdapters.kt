@@ -181,6 +181,7 @@ fun ImageView.setIconWith(resource : Int){
 }
 @BindingAdapter("app:rewardDescription")
 fun TextView.setRewardTierDescription(percentVal : String?){
+    //text = CacheUtil.getInstance().getTranslations(Text.PERCENT_OF_YOUR_ORDER, "(x) of your order value converts to points.").replace("(x)", percentVal)
     text = percentVal?: ""
 }
 

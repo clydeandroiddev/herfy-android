@@ -21,6 +21,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -178,7 +179,7 @@ class LoyaltyPresenter @Inject constructor(
 
     override fun getLoyalty() {
         // Ensures that there will always be a tier when loyalty is shown
-        CustomersApiCall.getInstance().getCustomerLoyalty(
+      /*  CustomersApiCall.getInstance().getCustomerLoyalty(
             AuthUtil.getInstance().customer.id,
             object : ApiRequestListener {
                 override fun onSuccess(o: Any) {
@@ -231,8 +232,8 @@ class LoyaltyPresenter @Inject constructor(
                             .getTranslations(Text.AN_ERROR_OCCURRED))
                     }
                 }
-            })
-        /*Single.zip(
+            })*/
+        Single.zip(
             tiersObservable, loyaltyObservable
         ) { tiers: List<Tier>, loyalty: Loyalty -> Pair(loyalty, tiers) }
             .doOnSubscribe { disposable: Disposable? ->
@@ -290,7 +291,7 @@ class LoyaltyPresenter @Inject constructor(
                 )
                 loyaltyView.showTiers(loyalty)
                 loyaltyView.showNextTier(nextTier, 0, 100, 100)
-            }*/
+            }
     }
 
     override fun getCustomerLoyalty() {

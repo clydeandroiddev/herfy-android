@@ -30,6 +30,7 @@ import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.setInteractionDisabled
@@ -45,6 +46,7 @@ import com.herfy.utils.helper.ViewUtil
 import com.santalu.diagonalimageview.Direction
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
+import com.skylinedynamics.solosdk.api.models.objects.PaymentType
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -74,6 +76,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         binding.apply {
             showPopup()
             setupSlider()
+            setupCustomerLoyalty()
             setupPromoCategory()
             setupPromotions()
             setupOrderType()
@@ -154,18 +157,38 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     override fun onResume() {
         super.onResume()
         updateGreetings()
-        updateLoyalty()
+        updateCustomerLoyalty()
         setupOrdertracker()
     }
 
-    private fun updateLoyalty() {
-        if (AuthUtil.getInstance().isSignedIn) {
-            setupCustomerLoyalty()
-        } else {
-            binding.layoutLoyalty.apply {
-                rlLoyaltyContent.gone()
-                lnLoyaltyEmptyState.visible()
+    private fun updateCustomerLoyalty() {
+        val containsLoyalty =
+            CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes().contains(
+                PaymentType.LOYALTY
+            ) ||
+                    CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
+                        .contains(PaymentType.LOYALTY)
+        if(containsLoyalty){
+            val isSignedIn = AuthUtil.getInstance().isSignedIn
+            if(isSignedIn){
+
+                viewModel.getLoyalty()
+                binding.layoutLoyalty.apply{
+                    ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
+                    clCustomerLoyalty.visible()
+                    clLoyaltyDetailsContainer.gone()
+                    clLoyaltyEmptyState.gone()
+                    fmShimmerLoyalty.visible()
+                }
+            }else {
+                binding.layoutLoyalty.apply {
+                    clCustomerLoyalty.visible()
+                    fmShimmerLoyalty.gone()
+                    clLoyaltyEmptyState.visible()
+                }
             }
+        }else {
+            binding.layoutLoyalty.clCustomerLoyalty.gone()
         }
     }
 
@@ -404,12 +427,11 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.loyalty.observe(this) { loyalty ->
-
             binding.layoutLoyalty.apply {
+                fmShimmerLoyalty.gone()
                 loyalty?.let {
-                    clCustomerLoyalty.visibility = View.VISIBLE
-                    rlLoyaltyContent.visible()
-                    lnLoyaltyEmptyState.gone()
+                    clLoyaltyDetailsContainer.visible()
+                    clLoyaltyEmptyState.gone()
                     tvPoints.text =
                         StringUtil.localize(loyalty.attributes.currentBalance.toString())
                     val currentBalanceValue =
@@ -442,31 +464,28 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     }
 
                 } ?: run {
-                    rlLoyaltyContent.gone()
-                    lnLoyaltyEmptyState.visible()
+                    clLoyaltyDetailsContainer.gone()
+                    clLoyaltyEmptyState.visible()
                 }
             }
         }
 
-        /*viewModel.pointsToNextTier.observeNonNull(this) { pointsToNextTier ->
-            if (pointsToNextTier <= 0) {
-                viewModel.tier.observeNonNull(this) { tier ->
-                    if (tier == null) {
-                    } else {
+        viewModel.tiers.observe(this){tiers->
+            val loyalty = AuthUtil.getInstance().customerLoyalty
+            val loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
+            if(loyaltyTier.isNotEmpty()){
+                tiers.find { tier -> tier.name.equals(loyaltyTier, true) }?.let { tier ->
+                    tier.imageUrl.let { url ->
+                        if(!url.isNullOrEmpty()){
+                            binding.layoutLoyalty.ivLoyaltyCard.loadImageFromUrl(imageUrl = url)
+                        }else {
+                            binding.layoutLoyalty.ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
+                        }
+
                     }
-
                 }
-            } else {
-                viewModel.startPoints.observeNonNull(this) { startPoints ->
-                }
-
-
-
-                viewModel.tier.observeNonNull(this) { tier ->
-                }
-
             }
-        }*/
+        }
 
         viewModel.promotionCategoryList.observeNonNull(this) { promoCategories ->
             binding.layoutPromotions.apply {
@@ -842,8 +861,17 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     }
 
     private fun setupCustomerLoyalty() {
-        context?.let { ctx ->
-            viewModel.getLoyalty()
+        context?.let {
+            val imageHeight = (Resources.getSystem().displayMetrics.widthPixels / Values.LOYALTY_CARD_ASPECT_RATIO)
+            val imageEmptyLoyalty =  (Resources.getSystem().displayMetrics.widthPixels / Values.LOYALTY_EMPTY_CARD_ASPECT_RATION)
+            binding.layoutLoyalty.apply {
+                ivLoyaltyCard.apply {
+                    layoutParams.height = imageHeight.toInt()
+                }
+                clLoyaltyEmptyState.apply {
+                    layoutParams.height = imageEmptyLoyalty.toInt()
+                }
+            }
         }
     }
 
