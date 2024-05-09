@@ -896,41 +896,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         }
     }
 
-    private fun updateDriverFromOrder() {
-        binding.apply {
-            val driver = orderPresenter?.driverDetail
-            if (driver != null) {
-                if (!isOverHeadFrameShows && orderPresenter?.fromAbly == true) {
-                    showOverHeadFrame()
-                }
-                statusDriverDetails.withDriverLayout.isVisible = true
-                statusDriverDetails.noDriverLayout.isVisible = false
-                statusDriverDetails.riderMotor.text = driver.plateNumber
-                statusDriverDetails.riderName.text =
-                    "${driver.employee.firstName} ${driver.employee.lastName}"
-                statusDriverDetails.driverInitial.text =
-                    "${driver.employee.firstName.first()}${driver.employee.lastName.first()}"
-                if (!driver.employee.mobile.isNullOrBlank()) {
-                    statusDriverDetails.callRider.isVisible = true
-                    statusDriverDetails.messageRider.isVisible = true
-                    statusDriverDetails.callRider.setOnClickListener {
-                        numberToCall = driver.employee.mobile
-                        requestCallPermission(numberToCall)
-                    }
-                    statusDriverDetails.messageRider.setOnClickListener {
-                        callWhatsApp(driver.employee.mobile)
-                    }
-                } else {
-                    statusDriverDetails.callRider.isVisible = false
-                    statusDriverDetails.messageRider.isVisible = false
-                }
-            } else {
-                statusDriverDetails.noDriverLayout.isVisible = true
-                statusDriverDetails.withDriverLayout.isVisible = false
-            }
-        }
-    }
-
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
     private fun requestCallPermission(number: String) {
@@ -1411,6 +1376,28 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         updateDriverLocation(driverLatLng)
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun updateDriverFromOrder() {
+        binding.statusDriverDetails.apply {
+            val driver = orderPresenter?.driverDetail
+            if (driver != null) {
+                if (!isOverHeadFrameShows && orderPresenter?.fromAbly == true) {
+                    showOverHeadFrame()
+                }
+                withDriverLayout.isVisible = true
+                noDriverLayout.isVisible = false
+                riderMotor.text = driver.plateNumber
+                riderName.text = "${driver.employee.firstName} ${driver.employee.lastName}"
+                driverInitial.text =
+                    "${driver.employee.firstName.first()}${driver.employee.lastName.first()}"
+                checkDriverMobile(driver.employee.mobile)
+            } else {
+                noDriverLayout.isVisible = true
+                withDriverLayout.isVisible = false
+            }
+        }
+    }
+
     private fun updateDriverLocation(latLng: LatLng?) {
         activity?.runOnUiThread {
             latLng?.let {
@@ -1488,6 +1475,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             activity?.runOnUiThread {
                 activity?.cast<MainActivity> {
                     binding.statusDriverDetails.apply {
+                        withDriverLayout.isVisible = true
+                        noDriverLayout.isVisible = false
                         val driver = appDriver.driver
                         val driverOrder = orderPresenter?.driverDetail
                         riderMotor.text = driver.licensePlate.orEmpty()
@@ -1524,23 +1513,11 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                     return false
                                 }
                             }).into(driverImage)
-                        if (driver.mobile.orEmpty().isNotBlank()) {
-                            callRider.isVisible = true
-                            messageRider.isVisible = true
-                            callRider.setOnClickListener {
-                                numberToCall = driver.mobile.orEmpty()
-                                requestCallPermission(numberToCall)
-                            }
-                            messageRider.setOnClickListener {
-                                callWhatsApp(driver.mobile.orEmpty())
-                            }
-                        } else {
-                            callRider.isVisible = false
-                            messageRider.isVisible = false
-                        }
+                        checkDriverMobile(driver.mobile)
                         updateDriverLocation(
                             LatLng(
-                                (appDriver.bearing.lat ?:"0").toDouble(), (appDriver.bearing.lng ?: "0").toDouble()
+                                (appDriver.bearing.lat ?: "0").toDouble(),
+                                (appDriver.bearing.lng ?: "0").toDouble()
                             )
                         )
                     }
@@ -1548,6 +1525,29 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             }
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    private fun checkDriverMobile(mobile: String?) {
+        activity?.runOnUiThread {
+            activity?.cast<MainActivity> {
+                binding.statusDriverDetails.apply {
+                    if (mobile.orEmpty().isNotBlank()) {
+                        callRider.isVisible = true
+                        messageRider.isVisible = true
+                        callRider.setOnClickListener {
+                            numberToCall = mobile.orEmpty()
+                            requestCallPermission(numberToCall)
+                        }
+                        messageRider.setOnClickListener {
+                            callWhatsApp(mobile.orEmpty())
+                        }
+                    } else {
+                        callRider.isVisible = false
+                        messageRider.isVisible = false
+                    }
+                }
+            }
         }
     }
 
