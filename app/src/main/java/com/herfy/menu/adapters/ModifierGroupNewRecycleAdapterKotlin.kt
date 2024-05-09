@@ -168,6 +168,14 @@ class ModifierGroupNewRecycleAdapterKotlin(
             binding.minimum.text =
                 CacheUtil.getInstance().getTranslations(Text.REQUIRED, "Required")
 
+
+            Glide.with(itemView.context)
+                .load(imageUrl)
+                .apply(RequestOptions.centerCropTransform())
+                .placeholder(R.drawable.imagepicker_image_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(binding.modifierImage)
+
             binding.checkBox.setVisible(modifierGroup.isHasSelectedModifierItems || item.hasSelectedItems && binding.btnMinimum.visibility == View.GONE)
         }
 
@@ -305,7 +313,8 @@ class ModifierGroupNewRecycleAdapterKotlin(
                         ) {
                             if (group.id != modGroup.id && rule.targetId == modGroup.id) {
                                 if (rule.targetIs != null && rule.targetIs.equals(
-                                        VisibilityRulesType.MODIFIER_ITEM_SELECTED.value, ignoreCase = true
+                                        VisibilityRulesType.MODIFIER_ITEM_SELECTED.value,
+                                        ignoreCase = true
                                     )
                                 ) {
                                     var selected = 0
@@ -329,7 +338,11 @@ class ModifierGroupNewRecycleAdapterKotlin(
                                         group.attributes.visibilityConfig.initialValue
                                 }
                             }
-                        } else if (rule.targetType.equals(VisibilityRulesType.MODIFIER.value, ignoreCase = true)) {
+                        } else if (rule.targetType.equals(
+                                VisibilityRulesType.MODIFIER.value,
+                                ignoreCase = true
+                            )
+                        ) {
                             val selectedModifiers: MutableSet<String> = java.util.HashSet()
                             if (group.id != modGroup.id) {
                                 for (modItem in modGroup.modifierItems) {
@@ -370,8 +383,9 @@ class ModifierGroupNewRecycleAdapterKotlin(
 
 
     fun updateModifierItemQuantity(
-    modifierItemClickParams: ModifierItemClickParams,
-    modifierGroupList: List<ModifierGroup>) {
+        modifierItemClickParams: ModifierItemClickParams,
+        modifierGroupList: List<ModifierGroup>
+    ) {
 
         with(modifierItemClickParams) {
             val selectedItemTotal = isCurrentSelectionEqualToMax(modifierGroup)
@@ -812,7 +826,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
             if (formattedPrice.isNotEmpty()) {
                 binding.txtmodifierPrice.text = formattedPrice
             } else {
-                binding.txtmodifierPrice.text = ""
+                binding.txtmodifierPrice.text = CacheUtil.getInstance().getTranslations(Text.FREE, "Free")
             }
         }
 
