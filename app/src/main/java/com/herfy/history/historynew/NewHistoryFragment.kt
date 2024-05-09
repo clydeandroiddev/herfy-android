@@ -33,6 +33,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -43,7 +44,6 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
-import io.shipbook.shipbooksdk.Log
 
 @AndroidEntryPoint
 class NewHistoryFragment : BaseFragment(), OrdersContract.View {
@@ -348,7 +348,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
 
     }
 
-    override fun updateDriver(latLng: LatLng?, mobileNumber: String?) {
+    override fun updateDriver(appDriver: DeliveryDriver) {
 
     }
 

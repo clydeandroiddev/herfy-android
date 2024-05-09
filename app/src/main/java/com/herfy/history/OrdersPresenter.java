@@ -2,7 +2,6 @@ package com.herfy.history;
 
 import android.location.Geocoder;
 import android.location.Location;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
@@ -34,6 +33,7 @@ import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall;
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall;
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver;
 import com.skylinedynamics.solosdk.api.models.kotlin.LyveDriver;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Allergen;
@@ -41,7 +41,6 @@ import com.skylinedynamics.solosdk.api.models.objects.AllergenCdn;
 import com.skylinedynamics.solosdk.api.models.objects.Application;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.Customer;
-import com.skylinedynamics.solosdk.api.models.objects.DriverData;
 import com.skylinedynamics.solosdk.api.models.objects.Employee;
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
 import com.skylinedynamics.solosdk.api.models.objects.IngredientCdn;
@@ -2206,12 +2205,8 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         if (driver != null && orderStatus != null && orderStatus.getSequence() >= OrderStatusType.DELIVERY_IN_PROGRESS.getValue() && orderStatus.getSequence() <= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue()) {
             try {
                 JSONObject jsonObject = new JSONObject(message.data.toString());
-                DriverData driverData = DriverData.parse(jsonObject);
-                if (String.valueOf(driver.getEmployee().getId()).equalsIgnoreCase(String.valueOf(driverData.getId()))) {
-                    if (driverData.getLatitude() != 0 && driverData.getLongitude() != 0) {
-                        ordersView.updateDriver(new LatLng(driverData.getLatitude(), driverData.getLongitude()), driverData.getMobile());
-                    }
-                }
+                DeliveryDriver appDriver = new Gson().fromJson(jsonObject.toString(), DeliveryDriver.class);
+                ordersView.updateDriver(appDriver);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

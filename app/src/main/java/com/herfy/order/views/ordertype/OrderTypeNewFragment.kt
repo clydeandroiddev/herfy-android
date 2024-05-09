@@ -1072,12 +1072,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                             val view = inflater.inflate(R.layout.marker_store_new, null)
                             val textView =
                                 view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
-                            val distanceValue = StringUtil.getDistance(
-                                store!!.attributes.distance
-                            )
                             textView.text =
-                                CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                    .replace("(x)", distanceValue).toLowerCase()
+                                CacheUtil.getInstance().getTranslations(Text.SEE_DIRECTIONS, "See Directions")
                             view.setOnClickListener {
                                 val directionsBuilder =
                                     Uri.Builder().scheme("https").authority("www.google.com")

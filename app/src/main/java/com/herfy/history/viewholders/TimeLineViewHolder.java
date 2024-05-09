@@ -15,6 +15,7 @@ import com.herfy.R;
 import com.herfy.font.FontHandler;
 import com.herfy.history.OrdersContract;
 import com.herfy.utils.helper.CacheUtil;
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
@@ -208,7 +209,7 @@ public class TimeLineViewHolder extends RecyclerView.ViewHolder implements Order
     }
 
     @Override
-    public void updateDriver(LatLng latLng, String mobileNumber) {
+    public void updateDriver(DeliveryDriver appDriver) {
 
     }
 

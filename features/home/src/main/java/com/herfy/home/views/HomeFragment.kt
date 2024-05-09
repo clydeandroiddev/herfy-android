@@ -5,8 +5,10 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.clearFragmentResultListener
@@ -60,6 +62,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private lateinit var bottomSliderImageAdapter: SliderImageAdapter
     private var bottomSliderhandler: Handler? = null
     private var promotionDetailBottomSheet: PromotionDetailBottomSheet? = null
+    private var countDownTimer: CountDownTimer? = null
     private val cacheUtilHelper by lazy {
         context?.let {
             CacheUtilHelper(it)
@@ -610,6 +613,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                 .replace("(x)", promisedTime.toString())
                         tvEstimateLabel.text =
                             CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
+                        initTimer(orderDetails.promisedTime)
                     }
 
                     otherDetails.setOnClickListener {
@@ -650,6 +654,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         updateStatusGIF(R.drawable.make_order)
                     } else if (orderData.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && orderData.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
                         updateStatusGIF(R.drawable.delivered_order)
+                    } else if (orderData.orderStatus.sequence == OrderStatusType.FINISHED.value) {
+                        binding.layoutBanner.orderTracker.ivOrderNotif.setImageResource(R.drawable.ic_full_order_done)
                     } else {
                         updateStatusGIF(R.drawable.delivered_order)
                     }
@@ -658,11 +664,47 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         updateStatusGIF(R.drawable.make_order)
                     } else if (orderData.orderStatus.sequence >= OrderStatusType.READY.value && orderData.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
                         updateStatusGIF(R.drawable.collected_order)
+                    } else if (orderData.orderStatus.sequence == OrderStatusType.FINISHED.value) {
+                        binding.layoutBanner.orderTracker.ivOrderNotif.setImageResource(R.drawable.ic_full_order_done)
                     } else {
                         updateStatusGIF(R.drawable.collected_order)
                     }
                 }
             }
+        }
+    }
+
+    private fun checkEstimatedTime(promisedTime: String) {
+        val minutes = promisedTime.getPromisedMinutes()
+        binding.layoutBanner.orderTracker.apply {
+            if (minutes <= 0) {
+                tvEstimateValue.gone()
+                tvEstimateLabel.gone()
+            } else {
+                tvEstimateValue.visible()
+                tvEstimateLabel.visible()
+                tvEstimateValue.text = CacheUtil.getInstance().getTranslations(Text.MIN, "(x) mins")
+                    .replace("(x)", minutes.toString())
+                tvEstimateLabel.text =
+                    CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
+            }
+        }
+    }
+
+    private fun initTimer(promisedTime: String) {
+        if (countDownTimer != null) {
+            countDownTimer!!.cancel()
+        }
+        val minutes = promisedTime.getPromisedMinutes()
+        val countDownTime = minutes * 1000
+        if (minutes > 0) {
+            countDownTimer = object : CountDownTimer(countDownTime, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    checkEstimatedTime(promisedTime)
+                }
+                override fun onFinish() {}
+            }
+            countDownTimer?.start()
         }
     }
 

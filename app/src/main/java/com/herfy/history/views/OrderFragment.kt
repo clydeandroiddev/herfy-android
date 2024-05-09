@@ -12,8 +12,6 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Interpolator
-import android.view.animation.LinearInterpolator
 import android.widget.Chronometer
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -49,7 +47,6 @@ import com.herfy.history.views.CancelOrderDialog.Companion.newInstance
 import com.herfy.loyalty.LoyaltyActivity
 import com.herfy.main.MainActivity
 import com.herfy.util.*
-import com.herfy.util.LatLngInterpolator.Spherical
 import com.herfy.util.extensions.dialPhoneNumber
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
@@ -62,6 +59,7 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver
 import com.skylinedynamics.solosdk.api.models.objects.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -925,63 +923,63 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
         }
     }
 
-    override fun updateDriver(latLng: LatLng, mobileNumber: String) {
-        activity?.cast<MainActivity> {
-            it.runOnUiThread {
-                if (driverMarker != null) {
-                    val latLngInterpolator: LatLngInterpolator = Spherical()
-                    //MarkerAnimation.animateMarker(driverMarker, latLng, interpolator);
-                    val startPosition = driverMarker!!.position
-                    val handler = Handler()
-                    val start = SystemClock.uptimeMillis()
-                    val interpolator: Interpolator = LinearInterpolator()
-                    val durationInMs = 3000f
-                    handler.post(object : Runnable {
-                        var elapsed: Long = 0
-                        var t = 0f
-                        var v = 0f
-                        override fun run() {
-                            // Calculate progress using interpolator
-                            elapsed = SystemClock.uptimeMillis() - start
-                            t = elapsed / durationInMs
-                            v = interpolator.getInterpolation(t)
-                            driverMarker!!.position =
-                                latLngInterpolator.interpolate(v, startPosition, latLng)
-                            /*if(firstDriverUpdate) {
-                                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngInterpolator.interpolate(v, startPosition, latLng), 16));
-                                        firstDriverUpdate = false;
-                                    } else {*/
-                            //map.animateCamera(CameraUpdateFactory.newLatLng(latLngInterpolator.interpolate(v, startPosition, latLng)));
-                            //}
-                            // Repeat till progress is complete.
-                            if (t < 1) {
-                                // Post again 16ms later.
-                                handler.postDelayed(this, 16)
-                            }
-                        }
-                    })
-                } else {
-                    val markerOptions = MarkerOptions()
-                    markerOptions.position(latLng)
-                    markerOptions.anchor(0.5f, 0.5f)
-                    markerOptions.icon(
-                        ViewUtil.vectorDrawableToBitmapDescriptor(
-                            it,
-                            R.drawable.ic_marker_driver
-                        )
-                    )
-                    driverMarker = googleMap!!.addMarker(markerOptions)
-                }
-                //CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(16).build();
-                //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                /*if(firstDriverUpdate) {
-                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
-                            firstDriverUpdate = false;
-                        } else {*/
-                //map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                //}
-            }
-        }
+    override fun updateDriver(appDriver: DeliveryDriver) {
+//        activity?.cast<MainActivity> {
+//            it.runOnUiThread {
+//                if (driverMarker != null) {
+//                    val latLngInterpolator: LatLngInterpolator = Spherical()
+//                    //MarkerAnimation.animateMarker(driverMarker, latLng, interpolator);
+//                    val startPosition = driverMarker!!.position
+//                    val handler = Handler()
+//                    val start = SystemClock.uptimeMillis()
+//                    val interpolator: Interpolator = LinearInterpolator()
+//                    val durationInMs = 3000f
+//                    handler.post(object : Runnable {
+//                        var elapsed: Long = 0
+//                        var t = 0f
+//                        var v = 0f
+//                        override fun run() {
+//                            // Calculate progress using interpolator
+//                            elapsed = SystemClock.uptimeMillis() - start
+//                            t = elapsed / durationInMs
+//                            v = interpolator.getInterpolation(t)
+//                            driverMarker!!.position =
+//                                latLngInterpolator.interpolate(v, startPosition, latLng)
+//                            /*if(firstDriverUpdate) {
+//                                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngInterpolator.interpolate(v, startPosition, latLng), 16));
+//                                        firstDriverUpdate = false;
+//                                    } else {*/
+//                            //map.animateCamera(CameraUpdateFactory.newLatLng(latLngInterpolator.interpolate(v, startPosition, latLng)));
+//                            //}
+//                            // Repeat till progress is complete.
+//                            if (t < 1) {
+//                                // Post again 16ms later.
+//                                handler.postDelayed(this, 16)
+//                            }
+//                        }
+//                    })
+//                } else {
+//                    val markerOptions = MarkerOptions()
+//                    markerOptions.position(latLng)
+//                    markerOptions.anchor(0.5f, 0.5f)
+//                    markerOptions.icon(
+//                        ViewUtil.vectorDrawableToBitmapDescriptor(
+//                            it,
+//                            R.drawable.ic_marker_driver
+//                        )
+//                    )
+//                    driverMarker = googleMap!!.addMarker(markerOptions)
+//                }
+//                //CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(16).build();
+//                //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//                /*if(firstDriverUpdate) {
+//                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
+//                            firstDriverUpdate = false;
+//                        } else {*/
+//                //map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+//                //}
+//            }
+//        }
     }
 
     override fun cancel() {

@@ -1196,4 +1196,6 @@ public class Text {
     public static final String THANK_YOU_ORDERING = "thank_you_ordering";
 
     public static final String ORDER_COMPLETED = "order_completed";
+
+    public static final String SEE_DIRECTIONS = "see_directions";
 }

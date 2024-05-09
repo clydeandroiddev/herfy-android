@@ -47,6 +47,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
+import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
@@ -77,6 +78,7 @@ import com.herfy.utils.helper.DistanceCalculator
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.ViewUtil
 import com.location.FusedLocationProvider
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -87,6 +89,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
+import io.shipbook.shipbooksdk.Log
 import java.util.Calendar
 import java.util.Locale
 
@@ -886,44 +889,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             CacheUtil.getInstance().getTranslations(
                                 Text.MESSAGE, "Message"
                             )
-                        updateDriver()
+                        updateDriverFromOrder()
                     }
                 }
-            }
-        }
-    }
-
-    private fun updateDriver() {
-        binding.apply {
-            val driver = orderPresenter?.driverDetail
-            if (driver != null) {
-                if (!isOverHeadFrameShows && orderPresenter?.fromAbly == true) {
-                    showOverHeadFrame()
-                }
-                statusDriverDetails.withDriverLayout.isVisible = true
-                statusDriverDetails.noDriverLayout.isVisible = false
-                statusDriverDetails.riderMotor.text = driver.plateNumber
-                statusDriverDetails.riderName.text =
-                    "${driver.employee.firstName} ${driver.employee.lastName}"
-                statusDriverDetails.driverInitial.text =
-                    "${driver.employee.firstName.first()}${driver.employee.lastName.first()}"
-                if (!driver.employee.mobile.isNullOrBlank()) {
-                    statusDriverDetails.callRider.isVisible = true
-                    statusDriverDetails.messageRider.isVisible = true
-                    statusDriverDetails.callRider.setOnClickListener {
-                        numberToCall = driver.employee.mobile
-                        requestCallPermission(numberToCall)
-                    }
-                    statusDriverDetails.messageRider.setOnClickListener {
-                        callWhatsApp(driver.employee.mobile)
-                    }
-                } else {
-                    statusDriverDetails.callRider.isVisible = false
-                    statusDriverDetails.messageRider.isVisible = false
-                }
-            } else {
-                statusDriverDetails.noDriverLayout.isVisible = true
-                statusDriverDetails.withDriverLayout.isVisible = false
             }
         }
     }
@@ -1027,7 +995,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
                         } else if (status.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && status.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-
                             updateStatusGIF(R.drawable.delivered_order)
 
                             frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
@@ -1049,7 +1016,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
                         } else {
-                            updateStatusGIF(R.drawable.delivered_order)
+                            binding.cookingImage.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_done)
+
                             frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
                             preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
@@ -1114,7 +1082,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
 
                         } else {
-                            updateStatusGIF(R.drawable.collected_order)
+                            binding.cookingImage.setImageResource(R.drawable.ic_order_done)
                             frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
                             imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
                             preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
@@ -1153,6 +1121,16 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         binding.estimateLayout.isVisible = false
                         binding.cancelledText.isVisible = true
 
+                    } else if (order.orderStatus.sequence == OrderStatusType.FINISHED.value) {
+                        if (ot == OrderType.DELIVERY) {
+                            binding.cancelledText.text =
+                                CacheUtil.getInstance().getTranslations(Text.DELIVERED, "Delivered")
+                        } else {
+                            binding.cancelledText.text =
+                                CacheUtil.getInstance().getTranslations(Text.PICKED, "Picked")
+                        }
+                        binding.estimateLayout.isVisible = false
+                        binding.cancelledText.isVisible = true
                     } else {
                         binding.estimateLayout.isVisible = true
                         binding.cancelledText.isVisible = false
@@ -1394,73 +1372,181 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?) {
-        updateDriver()
-        updateDriver(driverLatLng, "")
+        updateDriverFromOrder()
+        updateDriverLocation(driverLatLng)
     }
 
-    override fun updateDriver(latLng: LatLng?, mobileNumber: String?) {
-        latLng?.let {
-            try {
-                val activity: Activity? = activity
-                val inflater =
-                    activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val view =
-                    inflater.inflate(com.herfy.ordertracker.R.layout.order_driver_marker, null)
-                val textView = view.findViewById<TextView>(com.herfy.ordertracker.R.id.kmDriverAway)
-                var distanceValue = ""
+    @SuppressLint("SetTextI18n")
+    private fun updateDriverFromOrder() {
+        binding.statusDriverDetails.apply {
+            val driver = orderPresenter?.driverDetail
+            if (driver != null) {
+                if (!isOverHeadFrameShows && orderPresenter?.fromAbly == true) {
+                    showOverHeadFrame()
+                }
+                withDriverLayout.isVisible = true
+                noDriverLayout.isVisible = false
+                riderMotor.text = driver.plateNumber
+                riderName.text = "${driver.employee.firstName} ${driver.employee.lastName}"
+                driverInitial.text =
+                    "${driver.employee.firstName.first()}${driver.employee.lastName.first()}"
+                checkDriverMobile(driver.employee.mobile)
+            } else {
+                noDriverLayout.isVisible = true
+                withDriverLayout.isVisible = false
+            }
+        }
+    }
+
+    private fun updateDriverLocation(latLng: LatLng?) {
+        activity?.runOnUiThread {
+            latLng?.let {
                 try {
-                    val currentLocation = userLatLng
-                    val currentDistance = currentLocation?.latitude?.let {
-                        currentLocation.longitude.let { it1 ->
-                            latLng.latitude.let { it2 ->
-                                latLng.longitude.let { it3 ->
-                                    DistanceCalculator.calculateDistance(
-                                        it, it1, it2, it3
-                                    )
+                    val activity: Activity? = activity
+                    val inflater =
+                        activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                    val view =
+                        inflater.inflate(com.herfy.ordertracker.R.layout.order_driver_marker, null)
+                    val textView =
+                        view.findViewById<TextView>(com.herfy.ordertracker.R.id.kmDriverAway)
+                    var distanceValue = ""
+                    try {
+                        val currentLocation = userLatLng
+                        val currentDistance = currentLocation?.latitude?.let {
+                            currentLocation.longitude.let { it1 ->
+                                latLng.latitude.let { it2 ->
+                                    latLng.longitude.let { it3 ->
+                                        DistanceCalculator.calculateDistance(
+                                            it, it1, it2, it3
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    distanceValue = StringUtil.getDistance(
-                        currentDistance ?: 0.0
-                    )
+                        distanceValue = StringUtil.getDistance(
+                            currentDistance ?: 0.0
+                        )
 
-                    textView.text =
-                        CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                            .replace("(x)", distanceValue).lowercase(Locale.getDefault())
-                    if (currentDistance != null) {
-                        if (currentDistance <= 0.0) {
-                            textView.isInvisible = true
-                        } else {
-                            textView.isVisible = true
+                        textView.text =
+                            CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                                .replace("(x)", distanceValue).lowercase(Locale.getDefault())
+                        if (currentDistance != null) {
+                            if (currentDistance <= 0.0) {
+                                textView.isInvisible = true
+                            } else {
+                                textView.isVisible = true
+                            }
                         }
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
 
+                    Handler(Looper.getMainLooper()).post {
+                        if (driverMarker != null) {
+                            driverMarker?.remove()
+                        }
+                        val markerOptions = MarkerOptions()
+                        markerOptions.position(latLng)
+                        markerOptions.icon(
+                            BitmapDescriptorFactory.fromBitmap(
+                                ViewUtil.createDrawableFromView(
+                                    activity, view
+                                )
+                            )
+                        )
+                        markerOptions.anchor(0.5f, 1f)
+                        driverMarker = googleMap?.addMarker(markerOptions)
+                        deletePolyline()
+                        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+            }
+        }
+    }
 
-                Handler(Looper.getMainLooper()).post {
-                    if (driverMarker != null) {
-                        driverMarker?.remove()
-                    }
-                    val markerOptions = MarkerOptions()
-                    markerOptions.position(latLng)
-                    markerOptions.icon(
-                        BitmapDescriptorFactory.fromBitmap(
-                            ViewUtil.createDrawableFromView(
-                                activity, view
+    @SuppressLint("SetTextI18n")
+    override fun updateDriver(appDriver: DeliveryDriver) {
+        Log.e("ADADADADADADAD", "ADADADADAD:" + Gson().toJson(appDriver))
+        try {
+            activity?.runOnUiThread {
+                activity?.cast<MainActivity> {
+                    binding.statusDriverDetails.apply {
+                        withDriverLayout.isVisible = true
+                        noDriverLayout.isVisible = false
+                        val driver = appDriver.driver
+                        val driverOrder = orderPresenter?.driverDetail
+                        riderMotor.text = driver.licensePlate.orEmpty()
+                        riderName.text = driver.name.orEmpty()
+                        if (driverOrder != null) {
+                            driverInitial.isVisible = true
+                            driverInitial.text =
+                                "${driverOrder.employee.firstName.first()}${driverOrder.employee.lastName.first()}"
+                        } else {
+                            driverInitial.isVisible = false
+                        }
+                        Glide.with(it).load(driver.photoURL.orEmpty())
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .apply(RequestOptions.centerInsideTransform())
+                            .listener(object : RequestListener<Drawable?> {
+                                override fun onLoadFailed(
+                                    e: GlideException?,
+                                    model: Any,
+                                    target: Target<Drawable?>,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    driverImage.visibility = View.GONE
+                                    return false
+                                }
+
+                                override fun onResourceReady(
+                                    resource: Drawable?,
+                                    model: Any,
+                                    target: Target<Drawable?>,
+                                    dataSource: DataSource,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    driverImage.visibility = View.VISIBLE
+                                    return false
+                                }
+                            }).into(driverImage)
+                        checkDriverMobile(driver.mobile)
+                        updateDriverLocation(
+                            LatLng(
+                                (appDriver.bearing.lat ?: "0").toDouble(),
+                                (appDriver.bearing.lng ?: "0").toDouble()
                             )
                         )
-                    )
-                    markerOptions.anchor(0.5f, 1f)
-                    driverMarker = googleMap?.addMarker(markerOptions)
-                    deletePolyline()
-                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
+                    }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun checkDriverMobile(mobile: String?) {
+        activity?.runOnUiThread {
+            activity?.cast<MainActivity> {
+                binding.statusDriverDetails.apply {
+                    if (mobile.orEmpty().isNotBlank()) {
+                        callRider.isVisible = true
+                        messageRider.isVisible = true
+                        callRider.setOnClickListener {
+                            numberToCall = mobile.orEmpty()
+                            requestCallPermission(numberToCall)
+                        }
+                        messageRider.setOnClickListener {
+                            callWhatsApp(mobile.orEmpty())
+                        }
+                    } else {
+                        callRider.isVisible = false
+                        messageRider.isVisible = false
+                    }
+                }
             }
         }
     }

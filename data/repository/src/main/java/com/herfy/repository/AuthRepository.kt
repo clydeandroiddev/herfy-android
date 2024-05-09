@@ -86,19 +86,7 @@ class AuthRepositoryImpl @Inject constructor(
                             val customer = Gson().fromJson(
                                 data.toString(), Customer::class.java
                             )
-                            if (status == Values.STATUS_VERIFIED) {
-                                result(LoginResponse(true, true, customer, ""))
-                            } else {
-                                if (customer.attributes.mobile != null && StringUtil.isValidPhoneNumber(
-                                        customer.attributes.mobile
-                                    )
-                                ) {
-                                    verificationSend(
-                                        customer.id, phoneNumberTrue
-                                    )
-                                }
-                                result(LoginResponse(true, true, customer, ""))
-                            }
+                            result(LoginResponse(true, true, customer, ""))
                         } else {
                             result(
                                 LoginResponse(
