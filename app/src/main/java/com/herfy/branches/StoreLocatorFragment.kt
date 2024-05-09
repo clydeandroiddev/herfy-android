@@ -50,7 +50,6 @@ import com.herfy.views.RecyclerViewUtil.smoothSnapToPosition
 import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -336,12 +335,8 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                                 it.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                             val view = inflater.inflate(com.herfy.R.layout.marker_store_new, null)
                             val textView = view.findViewById<TextView>(R.id.kmAway)
-                            val distanceValue = StringUtil.getDistance(
-                                branch.attributes.distance
-                            )
-                            textView.text =
-                                CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                    .replace("(x)", distanceValue).lowercase(Locale.getDefault())
+                            textView.text = CacheUtil.getInstance()
+                                .getTranslations(Text.SEE_DIRECTIONS, "See Directions")
                             view.setOnClickListener {
                                 val directionsBuilder =
                                     Uri.Builder().scheme("https").authority("www.google.com")
@@ -404,8 +399,8 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                                 if (startPoint != null) {
                                     myPolyline = drawArcPolyline(
                                         map!!,
-                                        userLatLng!!,
                                         startPoint,
+                                        userLatLng!!,
                                         binding.mapContainer.context
                                     )
                                 }

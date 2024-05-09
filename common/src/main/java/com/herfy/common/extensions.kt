@@ -403,7 +403,7 @@ fun deviceHeight(context: Activity): Int {
     return displayMetrics.heightPixels - dpToPx(310f)
 }
 
-fun drawArcPolyline(googleMap: GoogleMap?, currentLocation: LatLng, storeLocation: LatLng, context: Context): Polyline? {
+fun drawArcPolyline(googleMap: GoogleMap?, storeLocation: LatLng, currentLocation: LatLng, context: Context): Polyline? {
     val heading = SphericalUtil.computeHeading(currentLocation, storeLocation)
     val distance = SphericalUtil.computeDistanceBetween(currentLocation, storeLocation)
     val midpoint = SphericalUtil.computeOffset(currentLocation, distance * 0.5, heading)
