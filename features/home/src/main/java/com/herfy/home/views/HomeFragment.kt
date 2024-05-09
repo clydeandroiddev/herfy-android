@@ -610,6 +610,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                 .replace("(x)", promisedTime.toString())
                         tvEstimateLabel.text =
                             CacheUtil.getInstance().getTranslations(Text.ESTIMATED, "(Estimated)")
+
                     }
 
                     otherDetails.setOnClickListener {
@@ -650,6 +651,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         updateStatusGIF(R.drawable.make_order)
                     } else if (orderData.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && orderData.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
                         updateStatusGIF(R.drawable.delivered_order)
+                    } else if (orderData.orderStatus.sequence == OrderStatusType.FINISHED.value) {
+                        binding.layoutBanner.orderTracker.ivOrderNotif.setImageResource(R.drawable.ic_full_order_done)
                     } else {
                         updateStatusGIF(R.drawable.delivered_order)
                     }
@@ -658,6 +661,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         updateStatusGIF(R.drawable.make_order)
                     } else if (orderData.orderStatus.sequence >= OrderStatusType.READY.value && orderData.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
                         updateStatusGIF(R.drawable.collected_order)
+                    } else if (orderData.orderStatus.sequence == OrderStatusType.FINISHED.value) {
+                        binding.layoutBanner.orderTracker.ivOrderNotif.setImageResource(R.drawable.ic_full_order_done)
                     } else {
                         updateStatusGIF(R.drawable.collected_order)
                     }
