@@ -12,8 +12,6 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Interpolator
-import android.view.animation.LinearInterpolator
 import android.widget.Chronometer
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -49,7 +47,6 @@ import com.herfy.history.views.CancelOrderDialog.Companion.newInstance
 import com.herfy.loyalty.LoyaltyActivity
 import com.herfy.main.MainActivity
 import com.herfy.util.*
-import com.herfy.util.LatLngInterpolator.Spherical
 import com.herfy.util.extensions.dialPhoneNumber
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
@@ -62,7 +59,7 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
-import com.skylinedynamics.solosdk.api.models.kotlin.AppDriver
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver
 import com.skylinedynamics.solosdk.api.models.objects.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -926,7 +923,7 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
         }
     }
 
-    override fun updateDriver(appDriver: AppDriver) {
+    override fun updateDriver(appDriver: DeliveryDriver) {
 //        activity?.cast<MainActivity> {
 //            it.runOnUiThread {
 //                if (driverMarker != null) {

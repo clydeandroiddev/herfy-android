@@ -78,7 +78,7 @@ import com.herfy.utils.helper.DistanceCalculator
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.ViewUtil
 import com.location.FusedLocationProvider
-import com.skylinedynamics.solosdk.api.models.kotlin.AppDriver
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -1469,7 +1469,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     @SuppressLint("SetTextI18n")
-    override fun updateDriver(appDriver: AppDriver) {
+    override fun updateDriver(appDriver: DeliveryDriver) {
         Log.e("ADADADADADADAD", "ADADADADAD:" + Gson().toJson(appDriver))
         try {
             activity?.runOnUiThread {

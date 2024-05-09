@@ -33,7 +33,7 @@ import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall;
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall;
-import com.skylinedynamics.solosdk.api.models.kotlin.AppDriver;
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver;
 import com.skylinedynamics.solosdk.api.models.kotlin.LyveDriver;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Allergen;
@@ -2205,7 +2205,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         if (driver != null && orderStatus != null && orderStatus.getSequence() >= OrderStatusType.DELIVERY_IN_PROGRESS.getValue() && orderStatus.getSequence() <= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue()) {
             try {
                 JSONObject jsonObject = new JSONObject(message.data.toString());
-                AppDriver appDriver = new Gson().fromJson(jsonObject.toString(), AppDriver.class);
+                DeliveryDriver appDriver = new Gson().fromJson(jsonObject.toString(), DeliveryDriver.class);
                 ordersView.updateDriver(appDriver);
             } catch (JSONException e) {
                 e.printStackTrace();

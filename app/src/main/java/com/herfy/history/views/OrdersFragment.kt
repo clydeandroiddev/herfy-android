@@ -27,7 +27,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.NavigationUtils
-import com.skylinedynamics.solosdk.api.models.kotlin.AppDriver
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -226,7 +226,7 @@ class OrdersFragment : BaseFragment(), OrdersContract.View {
 
     override fun updateStatus(orderDetails: OrderDetails, orderStatus: OrderStatus) {}
     override fun showDriver(customerLatLng: LatLng, driverLatLng: LatLng) {}
-    override fun updateDriver(appDriver: AppDriver) {}
+    override fun updateDriver(appDriver: DeliveryDriver) {}
     override fun cancel() {}
     override fun showRatings(orderStatus: OrderStatus, ratings: List<Rating>) {}
     override fun showMessage(message: String) {}

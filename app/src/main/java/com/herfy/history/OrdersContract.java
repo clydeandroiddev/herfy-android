@@ -11,11 +11,9 @@ import com.herfy.history.viewholders.OrderMenuItemViewHolder;
 import com.herfy.history.viewholders.OrderViewHolder;
 import com.herfy.history.viewholders.TimeLineViewHolder;
 import com.location.FusedLocationProvider;
-import com.skylinedynamics.solosdk.api.models.kotlin.AppDriver;
-import com.skylinedynamics.solosdk.api.models.kotlin.DriverEmployee;
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver;
 import com.skylinedynamics.solosdk.api.models.kotlin.LyveDriver;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
-import com.skylinedynamics.solosdk.api.models.objects.Employee;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsTransaction;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails;
@@ -59,7 +57,7 @@ public interface OrdersContract {
 
         void showDriver(LatLng customerLatLng, LatLng driverLatLng);
 
-        void updateDriver(AppDriver appDriver);
+        void updateDriver(DeliveryDriver appDriver);
 
         void cancel();
 

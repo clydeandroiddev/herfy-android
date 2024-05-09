@@ -18,7 +18,7 @@ import com.herfy.util.AppLogger;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.CacheUtil;
-import com.skylinedynamics.solosdk.api.models.kotlin.AppDriver;
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes;
@@ -293,7 +293,7 @@ public class OrderMenuItemViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void updateDriver(AppDriver appDriver) {
+    public void updateDriver(DeliveryDriver appDriver) {
 
     }
 

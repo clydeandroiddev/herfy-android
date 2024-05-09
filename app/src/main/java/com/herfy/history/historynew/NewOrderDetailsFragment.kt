@@ -37,7 +37,7 @@ import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
-import com.skylinedynamics.solosdk.api.models.kotlin.AppDriver
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -381,7 +381,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
 
     }
 
-    override fun updateDriver(appDriver: AppDriver) {
+    override fun updateDriver(appDriver: DeliveryDriver) {
 
     }
 
