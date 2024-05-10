@@ -1072,8 +1072,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                             val view = inflater.inflate(R.layout.marker_store_new, null)
                             val textView =
                                 view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
-                            textView.text =
-                                CacheUtil.getInstance().getTranslations(Text.SEE_DIRECTIONS, "See Directions")
+                            textView.text = CacheUtil.getInstance()
+                                .getTranslations(Text.SEE_DIRECTIONS, "See Directions")
                             view.setOnClickListener {
                                 val directionsBuilder =
                                     Uri.Builder().scheme("https").authority("www.google.com")
@@ -1118,22 +1118,24 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                                 )
                             )
 
-                            if (userLatLng != null) {
+                            userLatLng?.let { userLatLng ->
                                 deletePolyline()
-                                val startPoint = store?.attributes?.lat?.let {
+                                val storeLocation = store?.attributes?.lat?.let {
                                     store?.attributes?.lng?.let { it1 ->
                                         LatLng(
                                             it, it1
                                         )
                                     }
                                 }
-                                myPolyline = startPoint?.let { it1 ->
+                                myPolyline = storeLocation?.let { sLocation ->
                                     drawArcPolyline(
-                                        googleMap, it1, userLatLng!!, binding.mapContainer.context
+                                        googleMap,
+                                        sLocation,
+                                        userLatLng,
+                                        binding.mapContainer.context
                                     )
                                 }
                             }
-
                         }
                     } catch (e: NumberFormatException) {
                         e.printStackTrace()
@@ -1194,6 +1196,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         binding.deliveryFrame.visible()
         binding.pickupFrame.gone()
         binding.confirmContainer.visibility = View.VISIBLE
+        binding.continueButton.isFocusable = true
+        binding.continueButton.isClickable = true
         binding.continueButton.text =
             CacheUtil.getInstance().getTranslations(Text.ADD_NEW_ADDRESS, "Add new address")
         binding.slidingPanel.post {
@@ -1619,7 +1623,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
+            currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN) {
