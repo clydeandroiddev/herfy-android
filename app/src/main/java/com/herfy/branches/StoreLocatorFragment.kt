@@ -389,17 +389,17 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                             if (userLatLng != null) {
                                 deletePolyline()
                                 deletePolygon()
-                                val startPoint = branch.attributes?.lat?.let {
+                                val storeLocation = branch.attributes?.lat?.let {
                                     branch.attributes?.lng?.let { it1 ->
                                         LatLng(
                                             it, it1
                                         )
                                     }
                                 }
-                                if (startPoint != null) {
+                                if (storeLocation != null) {
                                     myPolyline = drawArcPolyline(
                                         map!!,
-                                        startPoint,
+                                        storeLocation,
                                         userLatLng!!,
                                         binding.mapContainer.context
                                     )

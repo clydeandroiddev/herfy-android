@@ -171,6 +171,13 @@ class AddAddressDialog : DialogFragment() {
                 featureName.text = it.featureName
             }
 
+            if (isEdit) {
+                editButton.gone()
+            } else {
+                labelHome.performClick()
+                editButton.visible()
+            }
+
             addressMain?.let {
                 Glide.with(requireActivity()).load(
                     LatLng(
@@ -204,12 +211,6 @@ class AddAddressDialog : DialogFragment() {
                 } else {
                     labelOther.performClick()
                 }
-            }
-
-            if (isEdit) {
-                editButton.gone()
-            } else {
-                editButton.visible()
             }
 
             editButton.setOnClickListener {

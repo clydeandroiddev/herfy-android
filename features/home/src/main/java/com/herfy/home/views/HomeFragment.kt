@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.clearFragmentResultListener
@@ -655,6 +654,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     } else if (orderData.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && orderData.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
                         updateStatusGIF(R.drawable.delivered_order)
                     } else if (orderData.orderStatus.sequence == OrderStatusType.FINISHED.value) {
+                        removeTimer()
+                        binding.layoutBanner.orderTracker.tvEstimateValue.isVisible = false
                         binding.layoutBanner.orderTracker.ivOrderNotif.setImageResource(R.drawable.ic_full_order_done)
                     } else {
                         updateStatusGIF(R.drawable.delivered_order)
@@ -674,6 +675,12 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
+    private fun removeTimer() {
+        if (countDownTimer != null) {
+            countDownTimer!!.cancel()
+        }
+    }
+
     private fun checkEstimatedTime(promisedTime: String) {
         val minutes = promisedTime.getPromisedMinutes()
         binding.layoutBanner.orderTracker.apply {
@@ -681,8 +688,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 tvEstimateValue.gone()
                 tvEstimateLabel.gone()
             } else {
-                tvEstimateValue.visible()
-                tvEstimateLabel.visible()
                 tvEstimateValue.text = CacheUtil.getInstance().getTranslations(Text.MIN, "(x) mins")
                     .replace("(x)", minutes.toString())
                 tvEstimateLabel.text =
@@ -692,9 +697,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     }
 
     private fun initTimer(promisedTime: String) {
-        if (countDownTimer != null) {
-            countDownTimer!!.cancel()
-        }
+        removeTimer()
         val minutes = promisedTime.getPromisedMinutes()
         val countDownTime = minutes * 1000
         if (minutes > 0) {
@@ -702,6 +705,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 override fun onTick(millisUntilFinished: Long) {
                     checkEstimatedTime(promisedTime)
                 }
+
                 override fun onFinish() {}
             }
             countDownTimer?.start()

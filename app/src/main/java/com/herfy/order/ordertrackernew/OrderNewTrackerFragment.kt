@@ -497,22 +497,21 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         }
                     }
 
-                    if (userLatLng != null) {
+                    userLatLng?.let { userLatLng ->
                         deletePolyline()
-                        val startPoint = store.attributes?.lat?.let {
+                        val storeLocation = store.attributes?.lat?.let {
                             store.attributes?.lng?.let { it1 ->
                                 LatLng(
                                     it, it1
                                 )
                             }
                         }
-                        myPolyline = startPoint?.let { it1 ->
+                        myPolyline = storeLocation?.let { sLocation ->
                             drawArcPolyline(
-                                googleMap, it1, userLatLng!!, binding.mapFrame.context
+                                googleMap, sLocation, userLatLng, binding.mapFrame.context
                             )
                         }
                     }
-
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -1105,6 +1104,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     }
 
                     if (order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value) {
+                        binding.cancelledText.setTextColor(resources.getColor(R.color.red_cancelled))
                         if (order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value && order.orderStatus.sequence <= OrderStatusType.CANCELLED_BY_EMPLOYEE.value) {
                             binding.cancelledText.text =
                                 CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
@@ -1120,8 +1120,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_cancelled_order)
                         binding.estimateLayout.isVisible = false
                         binding.cancelledText.isVisible = true
-
                     } else if (order.orderStatus.sequence == OrderStatusType.FINISHED.value) {
+                        binding.cancelledText.setTextColor(resources.getColor(R.color.black_delivered))
                         if (ot == OrderType.DELIVERY) {
                             binding.cancelledText.text =
                                 CacheUtil.getInstance().getTranslations(Text.DELIVERED, "Delivered")
