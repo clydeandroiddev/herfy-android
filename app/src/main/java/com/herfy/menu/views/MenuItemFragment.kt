@@ -74,7 +74,6 @@ import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheHelper
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
-import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
 import com.herfy.utils.menu.MenuUtil
