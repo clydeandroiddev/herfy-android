@@ -76,7 +76,7 @@ class CurrencyUtils {
             withSpace: Boolean = false,
             ignoreDecimalPlaces: Boolean = false,
             isDiscount: Boolean = false,
-            ignoreScale: Boolean = false,
+            ignoreScale: Boolean = true,
         ): SpannedString {
 
             val concept = CacheUtil.getInstance().concept
