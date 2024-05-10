@@ -668,15 +668,24 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                     params,
                                     modifierGroupList = menuPresenter.modifierGroupList
                                 )
-                                menuPresenter.getMenuItemTotalPrice(menuPresenter.menuItem,params.modifierGroupPosition)
+                                menuPresenter.getMenuItemTotalPrice(
+                                    menuPresenter.menuItem,
+                                    params.modifierGroupPosition
+                                )
 
                             },
                             showModifierMaximumLimit = { message ->
                                 requireContext().showToast(message)
                             },
                             onUserAddMoreModifierItemQuantity = {
-                                modifierGroupsAdapters?.updateModifierItemQuantity(it, modifierGroupList = menuPresenter.modifierGroupList)
-                                menuPresenter.getMenuItemTotalPrice(menuPresenter.menuItem,it.modifierGroupPosition)
+                                modifierGroupsAdapters?.updateModifierItemQuantity(
+                                    it,
+                                    modifierGroupList = menuPresenter.modifierGroupList
+                                )
+                                menuPresenter.getMenuItemTotalPrice(
+                                    menuPresenter.menuItem,
+                                    it.modifierGroupPosition
+                                )
                             }
                         )
 
@@ -820,6 +829,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             }
         }
     }
+
     private fun hasSelectedModifierItemsBy(modifierGroup: ModifierGroup): Boolean =
         modifierGroup.modifierItems.any { it.attributes.isSelected }
 
@@ -1268,7 +1278,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 Text.FREE
             )
         } else {
-             binding.total.text = StringUtil.getFormattedPrice(menuItemPrice)
+            binding.total.text = StringUtil.getFormattedPrice(menuItemPrice)
             binding.add.text =
                 CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
                     .replace("(x)", "${StringUtil.getFormattedPrice(totalPrice)}")
