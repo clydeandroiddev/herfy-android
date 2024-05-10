@@ -935,7 +935,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     CurrencyUtils.updateCurrency(subTotal, true, true)
             } else {
                 binding.paymentSummaryContainer.subtotal.text =
-                    CurrencyUtils.updateCurrency(subTotal, true, true)
+                    CurrencyUtils.updateCurrency(0.0, true, true)
             }
             if (discountAmount > 0.0) {
                 binding.paymentSummaryContainer.discountLayout.visibility = View.VISIBLE
