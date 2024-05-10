@@ -932,10 +932,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             validatedTotalPrice = _totalPrice
             if (subTotal > 0.0) {
                 binding.paymentSummaryContainer.subtotal.text =
-                    CurrencyUtils.updateCurrency(subTotal, true, true)
+                    CurrencyUtils.updateCurrency(subTotal, true,  ignoreDecimalPlaces = true)
             } else {
                 binding.paymentSummaryContainer.subtotal.text =
-                    CurrencyUtils.updateCurrency(0.0, true, true)
+                    CurrencyUtils.updateCurrency(0.0, true, ignoreDecimalPlaces = true)
             }
             if (discountAmount > 0.0) {
                 binding.paymentSummaryContainer.discountLayout.visibility = View.VISIBLE

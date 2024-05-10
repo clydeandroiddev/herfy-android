@@ -8,6 +8,8 @@ import com.skylinedynamics.solosdk.api.models.objects.CurrencyFormat
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
+internal const val ONE_RATIO_PROPOTION = 1F
+internal const val SCALE_VALUE = 0.58f
 // For kotlin classes
 fun String.updateCurrency(currency: String, withSpace: Boolean): SpannedString {
     val space = if (withSpace) " " else ""
@@ -73,7 +75,8 @@ class CurrencyUtils {
             amount: Double,
             withSpace: Boolean = false,
             ignoreDecimalPlaces: Boolean = false,
-            isDiscount: Boolean = false
+            isDiscount: Boolean = false,
+            ignoreScale: Boolean = false,
         ): SpannedString {
 
             val concept = CacheUtil.getInstance().concept
@@ -91,22 +94,24 @@ class CurrencyUtils {
 
             val decimalFormat = DecimalFormat(pattern, symbols)
             val formattedDecimal: String = decimalFormat.format(amount)
-
+            val scaleRatio = getScaleRatio(ignoreScale)
             val discount = if (isDiscount) "-" else ""
             val space = if (withSpace) " " else ""
             return when (concept.currencyFormat) {
                 CurrencyFormat.currencySymbolAmount -> buildSpannedString {
                     append(discount)
-                    scale(0.58f) {
+                    append(space)
+                    scale(scaleRatio) {
                         append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
                     }
-                    append(space)
                     append(StringUtil.localize(formattedDecimal))
                 }
                 CurrencyFormat.currencyCodeAmount -> buildSpannedString {
                     append(discount)
-                    scale(0.58f) {
+                    append(space)
+                    scale(scaleRatio) {
                         append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
+
                     }
                     append(space)
                     append(StringUtil.localize(formattedDecimal))
@@ -115,7 +120,7 @@ class CurrencyUtils {
                     append(discount)
                     append(StringUtil.localize(formattedDecimal))
                     append(space)
-                    scale(0.58f) {
+                    scale(scaleRatio) {
                         append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
                     }
                 }
@@ -123,13 +128,15 @@ class CurrencyUtils {
                     append(discount)
                     append(StringUtil.localize(formattedDecimal))
                     append(space)
-                    scale(0.58f) {
+                    scale(scaleRatio) {
                         append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
                     }
                 }
             }
         }
-
+        private fun getScaleRatio(ignoreScale: Boolean): Float {
+            return if (ignoreScale) ONE_RATIO_PROPOTION else SCALE_VALUE
+        }
         @JvmOverloads
         fun updateCurrencyWithText(
             amount: Double,
@@ -208,4 +215,5 @@ class CurrencyUtils {
         }
 
     }
+
 }

@@ -74,6 +74,7 @@ import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheHelper
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.viewLifecycleScope
 import com.herfy.utils.menu.MenuUtil
@@ -1268,7 +1269,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 Text.FREE
             )
         } else {
-            binding.total.text = StringUtil.getFormattedPrice(menuItemPrice)
+             binding.total.text = CurrencyUtils.updateCurrency(menuItemPrice, true, ignoreScale = true, ignoreDecimalPlaces = true)
             binding.add.text =
                 CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
                     .replace("(x)", "${StringUtil.getFormattedPrice(totalPrice)}")
