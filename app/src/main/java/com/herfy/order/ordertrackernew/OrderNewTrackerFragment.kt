@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -39,15 +40,16 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsStatusCodes
+import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
-import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
@@ -91,9 +93,11 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
-import io.shipbook.shipbooksdk.Log
 import java.util.Calendar
 import java.util.Locale
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 @AndroidEntryPoint
@@ -110,7 +114,13 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     private var driverMarker: Marker? = null
 
+    private var driverCameraUpdate: CameraUpdate? = null
+
+    private var storeCameraUpdate: CameraUpdate? = null
+
     private var storeMarker: Marker? = null
+
+    private var zoomLevel = 0F
 
     private val args: OrderNewTrackerFragmentArgs by navArgs()
 
@@ -466,7 +476,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 val view = inflater.inflate(R.layout.order_store_marker, null)
                 val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
-                var distanceValue = ""
+                val distanceValue: String
                 try {
                     val currentLocation = userLatLng
                     val currentDistance = currentLocation?.latitude?.let {
@@ -501,17 +511,19 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
                     userLatLng?.let { userLatLng ->
                         deletePolyline()
-                        val storeLocation = store.attributes?.lat?.let {
-                            store.attributes?.lng?.let { it1 ->
-                                LatLng(
-                                    it, it1
+                        if (driverMarker == null) {
+                            val storeLocation = store.attributes?.lat?.let {
+                                store.attributes?.lng?.let { it1 ->
+                                    LatLng(
+                                        it, it1
+                                    )
+                                }
+                            }
+                            myPolyline = storeLocation?.let { sLocation ->
+                                drawArcPolyline(
+                                    googleMap, sLocation, userLatLng, binding.mapFrame.context
                                 )
                             }
-                        }
-                        myPolyline = storeLocation?.let { sLocation ->
-                            drawArcPolyline(
-                                googleMap, sLocation, userLatLng, binding.mapFrame.context
-                            )
                         }
                     }
                 } catch (e: Exception) {
@@ -552,8 +564,28 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         }
                     }
                     if (isMoveCamera) {
-                        latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
-                            ?.let { googleMap?.animateCamera(it) }
+                        if (storeCameraUpdate == null && userLatLng != null) {
+                            userLatLng?.latitude?.let { it1 ->
+                                userLatLng?.longitude?.let { it2 ->
+                                    LatLng(
+                                        it1, it2
+                                    )
+                                }
+                            }?.let { it2 ->
+                                if (latLng != null) {
+                                    calculateZoomLevel(
+                                        latLng, it2, false
+                                    )
+                                }
+                            }!!
+                        } else {
+                            if (storeCameraUpdate != null) {
+                                googleMap?.animateCamera(storeCameraUpdate!!)
+                            } else {
+                                latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
+                                    ?.let { googleMap?.animateCamera(it) }
+                            }
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -1427,7 +1459,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         inflater.inflate(com.herfy.ordertracker.R.layout.order_driver_marker, null)
                     val textView =
                         view.findViewById<TextView>(com.herfy.ordertracker.R.id.kmDriverAway)
-                    var distanceValue = ""
+                    val distanceValue: String
                     try {
                         val currentLocation = userLatLng
                         val currentDistance = currentLocation?.latitude?.let {
@@ -1477,8 +1509,31 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         markerOptions.anchor(0.5f, 1f)
                         driverMarker = googleMap?.addMarker(markerOptions)
                         deletePolyline()
-                        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
+                        if (driverCameraUpdate == null && userLatLng != null) {
+                            userLatLng?.latitude?.let { it1 ->
+                                userLatLng?.longitude?.let { it2 ->
+                                    LatLng(
+                                        it1, it2
+                                    )
+                                }
+                            }?.let { it2 ->
+                                calculateZoomLevel(
+                                    latLng, it2, true
+                                )
+                            }!!
+                        } else {
+                            if (driverCameraUpdate != null) {
+                                googleMap?.animateCamera(driverCameraUpdate!!)
+                            } else {
+                                googleMap?.animateCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        latLng, 11F
+                                    )
+                                )
+                            }
+                        }
                     }
+
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -1486,13 +1541,52 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         }
     }
 
+    private fun calculateBearing(
+        startLat: Double, startLng: Double, endLat: Double, endLng: Double
+    ): Float {
+        val dLng = endLng - startLng
+        val y = sin(dLng) * cos(endLat)
+        val x = cos(startLat) * sin(endLat) - sin(startLat) * cos(endLat) * cos(dLng)
+        var bearing = atan2(y, x).toFloat()
+        bearing = Math.toDegrees(bearing.toDouble()).toFloat()
+        return (bearing + 360) % 360
+    }
+
+    private fun calculateZoomLevel(start: LatLng, end: LatLng, isDriver: Boolean) {
+        val builder = LatLngBounds.Builder()
+        builder.include(start)
+        builder.include(end)
+        val bounds = builder.build()
+
+        val width = Resources.getSystem().displayMetrics.widthPixels
+        val height = Resources.getSystem().displayMetrics.heightPixels
+        val padding = (width * 0.16).toInt()
+
+        if (isDriver) {
+            driverCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
+            driverCameraUpdate?.let {
+                googleMap?.animateCamera(it)
+            }
+        } else {
+            storeCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
+            storeCameraUpdate?.let {
+                googleMap?.animateCamera(it)
+            }
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun updateDriver(appDriver: DeliveryDriver) {
-        Log.e("ADADADADADADAD", "ADADADADAD:" + Gson().toJson(appDriver))
         try {
             activity?.runOnUiThread {
                 activity?.cast<MainActivity> {
                     binding.statusDriverDetails.apply {
+                        updateDriverLocation(
+                            LatLng(
+                                (appDriver.bearing.lat ?: "0").toDouble(),
+                                (appDriver.bearing.lng ?: "0").toDouble()
+                            )
+                        )
                         withDriverLayout.isVisible = true
                         noDriverLayout.isVisible = false
                         val driver = appDriver.driver
@@ -1532,12 +1626,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 }
                             }).into(driverImage)
                         checkDriverMobile(driver.mobile)
-                        updateDriverLocation(
-                            LatLng(
-                                (appDriver.bearing.lat ?: "0").toDouble(),
-                                (appDriver.bearing.lng ?: "0").toDouble()
-                            )
-                        )
                     }
                 }
             }

@@ -2,6 +2,7 @@ package com.herfy.utils.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.Pair;
 
 import com.google.gson.Gson;
@@ -1225,6 +1226,7 @@ public class CacheUtil {
 
     public void setOrderStore(Store store) {
         if (getCampaign() != null && store != null) {
+            Log.e("ADADADADADADAD","ADADADADAD:" + store.getAttributes().getName());
             JsonObject campaignBody = new JsonParser().parse(new Gson().toJson(getCampaign())).getAsJsonObject();
             campaignBody.addProperty("location", store.getId());
             //setCampaign(campaignBody.toString());
