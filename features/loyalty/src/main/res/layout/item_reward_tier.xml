@@ -62,7 +62,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/ln_reward_tier"
             app:layout_constraintEnd_toEndOf="parent"
-            app:rewardDescription="@{tier.text}"
+            app:rewardDescription="@{tier}"
             style="@style/Styles.Text.Caption.Regular"
             tools:text="3% of your order value converts to points."/>
 

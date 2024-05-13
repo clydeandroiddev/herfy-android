@@ -177,7 +177,11 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     override fun setupViews() {
         setupRewardTiers()
         binding.apply {
-            binding.layoutCard.ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
+            binding.layoutCard.apply {
+                ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
+                progress.isEnabled = false
+            }
+
             toolbar.apply {
                 setNavButtonAction {
                     onBackPressedDispatcher.onBackPressed()
@@ -231,7 +235,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     }
 
     override fun showNextTier(
-        tier: Tier,
+        tier: Tier?,
         totalAccumulatedPoints: Int,
         pointsUntilNextTier: Int,
         startingPointsOfNextTier: Int
@@ -242,6 +246,31 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 CacheUtil.getInstance().totalAccumulatedPoints = totalAccumulatedPoints
                 CacheUtil.getInstance().pointsUntilNextTier = pointsUntilNextTier
                 CacheUtil.getInstance().startingPointsOfNextTier = startingPointsOfNextTier
+                if (pointsUntilNextTier <= 0) {
+                    if (tier == null) {
+                        progress.max = 100
+                        progress.progress = 0
+                        tvTierProgressDesc.text = "You are now a Tier member"
+                        progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                    } else {
+                        progress.max = 100
+                        progress.progress = 100
+                        tvTierProgressDesc.text = CacheUtil.getInstance().getTranslations(
+                            Text.TOTAL_POINTS_MAX_OUT,
+                            "You have maxed out on our tier levels"
+                        )
+                        progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                    }
+                } else {
+                    var loyaltyTier = tier?.name
+                    if(!loyaltyTier.isNullOrEmpty() && LocaleUtil.getInstance().isEnglish) {
+                        loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
+                    }
+                    progress.max = startingPointsOfNextTier
+                    progress.progress = totalAccumulatedPoints
+                    tvTierProgressDesc.text = cacheUtilHelper.getTranslations(Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)").replace("(x)", pointsUntilNextTier.toString()).replace("(y)", loyaltyTier?:"")
+                    progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                }
 
             }
         }
@@ -282,14 +311,6 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         clRewardTier.visible()
                     }
                 }
-                tiers.find { t -> t.name.equals(loyalty.attributes.loyaltyTier.name?:"")}?.let {
-                    it.collectRules?.let {collectRules ->
-                        layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
-                            .replace("(x)", collectRules.earnPoint.toString())
-                            .replace("(y)", collectRules.perSar.toString())
-                    }
-
-                }
                 val loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
                 if(loyaltyTier.isNotEmpty()){
                     tiers.find { tier -> tier.name.equals(loyaltyTier, true) }?.let { tier ->
@@ -300,9 +321,6 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         }
                     }
                 }
-                /*layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
-                    .replace("(x)", "1")
-                    .replace("(y)", loyalty.attributes.pointConversion)*/
             }else {
                 fmRewardsTier.gone()
             }
@@ -355,6 +373,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         StringUtil.localize(currentBalanceValue)
                     tvTotalPoints.text =
                         StringUtil.localize(loyalty.attributes.currentBalance.toLong().toString())
+                    tvProgressTier.text = loyaltyTier
                 }
 
             }

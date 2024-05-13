@@ -14,6 +14,7 @@ import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.model.CampaignToAdd
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.PromotionCategory
+import com.herfy.model.TierProgress
 import com.herfy.repository.HomeRepository
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
@@ -53,7 +54,6 @@ import io.reactivex.SingleEmitter
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.Arrays
 import java.util.Locale
 import javax.inject.Inject
 
@@ -132,6 +132,9 @@ class HomeViewModel @Inject constructor(
 
     private val _updateOrderTrackerNotif = MutableLiveData<OrderData>()
     val updateOrderTrackerNotif: LiveData<OrderData> = _updateOrderTrackerNotif
+
+    private val _tierProgress = MutableLiveData<TierProgress>()
+    val tierProgress : LiveData<TierProgress> = _tierProgress
 
     fun getSliders() {
         invoke {
@@ -394,11 +397,13 @@ class HomeViewModel @Inject constructor(
                 if (nextTier != null) {
                     startPoints = nextTier.startPoint
                 }
+                _tierProgress.value = TierProgress(
+                    nextTier,
+                    totalPointsAccumulated,
+                    pointsToNextTier,
+                    startPoints
+                )
 
-                _tier.value = nextTier
-                _totalPointsAccumulated.value = totalPointsAccumulated
-                _pointsToNextTier.value = pointsToNextTier
-                _startPoints.value = startPoints
 
             }) { error: Throwable? ->
                 val loyalty = Loyalty()
@@ -415,13 +420,14 @@ class HomeViewModel @Inject constructor(
                 nextTier.startPoint = 100
                 loyaltyAttributes.loyaltyTier = loyaltyTier
                 loyaltyAttributes.currentBalance = 0
-                _tiers.value = ArrayList<Tier>(Arrays.asList<Tier>(currentTier))
+                _tiers.value = ArrayList<Tier>(listOf(currentTier))
                 loyalty.attributes = loyaltyAttributes
-                _tier.value = nextTier
-                _totalPointsAccumulated.value = 0
-                _pointsToNextTier.value = 100
-                _startPoints.value = 100
-
+                _tierProgress.value = TierProgress(
+                    nextTier,
+                    0,
+                    100,
+                    100
+                )
             }
         }
     }

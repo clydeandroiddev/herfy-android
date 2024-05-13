@@ -1198,4 +1198,6 @@ public class Text {
     public static final String ORDER_COMPLETED = "order_completed";
 
     public static final String SEE_DIRECTIONS = "see_directions";
+
+    public static final String SAR_ORDER_VALUE_TO_POINTS="sar_order_value_converts_to_points";
 }
