@@ -31,8 +31,7 @@
             android:scaleType="fitXY"
             android:src="@drawable/product_page_details_border"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Corner8dp"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:visibility="visible"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"

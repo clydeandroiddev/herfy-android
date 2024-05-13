@@ -32,7 +32,7 @@ class ComboMealModifierGroupViewholder(
         ) {
         binding.apply {
             val context = itemView.context
-
+            modifierImage.gone()
             name.text = data.name.getValue(LocaleUtil.getInstance().language)
             minimum.gone()
             minimum.text = CacheUtil.getInstance().getTranslations(Text.REQUIRED, "Required")

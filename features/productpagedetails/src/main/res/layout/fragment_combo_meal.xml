@@ -163,7 +163,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="-5dp"
                             android:includeFontPadding="false"
-                            android:textColor="@color/shade_blue"
+                            android:textColor="@color/text_color_blue"
                             app:layout_constraintBottom_toBottomOf="@+id/name"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/name"
@@ -296,6 +296,7 @@
 
 
                             <LinearLayout
+                                android:visibility="gone"
                                 android:id="@+id/imageCardView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
