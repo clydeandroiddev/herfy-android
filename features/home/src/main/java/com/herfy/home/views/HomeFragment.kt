@@ -491,7 +491,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.tierProgress.observeNonNull(this) { tierProgress ->
             binding.layoutLoyalty.apply {
                 if (tierProgress.pointsToNextTier <= 0) {
-                    if (tierProgress.nextTier == null) {
+                    if (tierProgress.nextTier == null && !tierProgress.isMaxTier) {
                         progress.max = 100
                         progress.progress = 0
                         tvTierProgressDesc.text = "You are now a Tier member"

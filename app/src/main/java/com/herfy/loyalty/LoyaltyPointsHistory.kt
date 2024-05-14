@@ -63,7 +63,7 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyHistoryContract.View {
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,AnimUtil.outF(), AnimUtil.outS(), R.color.white)
+                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,AnimUtil.outF(), AnimUtil.outS(), getColor(R.color.white))
             } else {
                 overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
             }

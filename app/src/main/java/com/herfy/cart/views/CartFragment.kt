@@ -1018,10 +1018,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         placeOrder.apply {
                             if (subTotal >= minimumCart) {
                                 lnMinimumCartAmount.gone()
+                                ivFooter.visible()
                                 alpha = 1.0f
                                 isEnabled = true
                             } else {
                                 lnMinimumCartAmount.visible()
+                                ivFooter.gone()
                                 alpha = 0.5f
                                 isEnabled = false
                             }
@@ -2044,7 +2046,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         runOnMain {
             binding.paymentSummaryContainer.subtotal.text = StringUtil.getFormattedPrice(subtotal)
             binding.dashed.visibility = View.GONE
-            binding.originalPrice.visibility = View.GONE
+            binding.originalPrice.gone()
             binding.footerTotalPrice.invisible()
         }
     }

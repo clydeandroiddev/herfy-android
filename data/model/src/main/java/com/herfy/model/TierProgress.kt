@@ -6,5 +6,6 @@ data class TierProgress(
     val nextTier: Tier?,
     val totalPointsAccumulated : Int,
     val pointsToNextTier : Int,
-    val startPoints : Int
+    val startPoints : Int,
+    val isMaxTier : Boolean
 )

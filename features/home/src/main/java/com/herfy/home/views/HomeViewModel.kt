@@ -382,7 +382,7 @@ class HomeViewModel @Inject constructor(
                 var pointsToNextTier = 0
                 _loyalty.value = loyalty
                 var nextTier: Tier? = null
-                if (eligibleTiers.size <= 0 && tiers.size >= 1) {
+                if (eligibleTiers.size <= 0 && tiers.isNotEmpty()) {
                     eligibleTiers = ArrayList()
                     eligibleTiers.add(tiers[tiers.size - 1])
                 }
@@ -393,15 +393,21 @@ class HomeViewModel @Inject constructor(
                     nextTier = eligibleTiers[1]
                     pointsToNextTier = nextTier.startPoint - loyalty.attributes.currentBalance
                 }
+                var isMaxTier = false
                 var startPoints = 0
                 if (nextTier != null) {
                     startPoints = nextTier.startPoint
+                    isMaxTier = nextTier.name == loyalty.attributes.loyaltyTier.name
+                    if(isMaxTier){
+                        pointsToNextTier = 0
+                    }
                 }
                 _tierProgress.value = TierProgress(
                     nextTier,
                     totalPointsAccumulated,
                     pointsToNextTier,
-                    startPoints
+                    startPoints,
+                    isMaxTier
                 )
 
 
@@ -426,7 +432,8 @@ class HomeViewModel @Inject constructor(
                     nextTier,
                     0,
                     100,
-                    100
+                    100,
+                    false
                 )
             }
         }

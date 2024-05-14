@@ -256,6 +256,7 @@ class LoyaltyPresenter @Inject constructor(
                     )
                     loyaltyView.showTiers(loyalty)
                     var nextTier: Tier? = null
+                    var isMaxTier = false
                     if (eligibleTiers.size <= 0 && tiers.size >= 1) {
                         eligibleTiers = ArrayList()
                         eligibleTiers.add(tiers[tiers.size - 1])
@@ -270,12 +271,17 @@ class LoyaltyPresenter @Inject constructor(
                     var startPoints = 0
                     if (nextTier != null) {
                         startPoints = nextTier.startPoint
+                        isMaxTier = nextTier.name == loyalty.attributes.loyaltyTier.name
+                        if(isMaxTier){
+                            pointsToNextTier = 0
+                        }
                     }
                     loyaltyView.showNextTier(
                         nextTier,
                         totalPointsAccumulated,
                         pointsToNextTier,
-                        startPoints
+                        startPoints,
+                        isMaxTier
                     )
                 })
             { error: Throwable? ->
@@ -290,7 +296,7 @@ class LoyaltyPresenter @Inject constructor(
                     AuthUtil.getInstance().customer.attributes.firstName + " " + AuthUtil.getInstance().customer.attributes.lastName
                 )
                 loyaltyView.showTiers(loyalty)
-                loyaltyView.showNextTier(nextTier, 0, 100, 100)
+                loyaltyView.showNextTier(nextTier, 0, 100, 100, false)
             }
     }
 
@@ -345,7 +351,8 @@ class LoyaltyPresenter @Inject constructor(
                         nextTier,
                         totalPointsAccumulated,
                         pointsToNextTier,
-                        startPoints
+                        startPoints,
+                        false
                     )
                 } catch (ex: JSONException) {
                     ex.printStackTrace()
@@ -367,7 +374,7 @@ class LoyaltyPresenter @Inject constructor(
                 loyaltyAttributes.loyaltyTier = loyaltyTier
                 loyaltyAttributes.currentBalance = 0
                 tiers = ArrayList(Arrays.asList(currentTier))
-                loyaltyView.showNextTier(nextTier, 0, 100, 100)
+                loyaltyView.showNextTier(nextTier, 0, 100, 100, false)
             }
         })
     }

@@ -34,7 +34,6 @@ import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
 import com.skylinedynamics.solosdk.api.models.objects.Tier
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.DecimalFormat
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -100,7 +99,8 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 tier,
                 CacheUtil.getInstance().totalAccumulatedPoints,
                 CacheUtil.getInstance().pointsUntilNextTier,
-                CacheUtil.getInstance().startingPointsOfNextTier
+                CacheUtil.getInstance().startingPointsOfNextTier,
+                false
             )
         }
         getLoyalty()
@@ -131,7 +131,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,AnimUtil.outF(), AnimUtil.outS(), R.color.white)
+                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,AnimUtil.outF(), AnimUtil.outS(),getColor(R.color.white))
             } else {
                 overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
             }
@@ -238,7 +238,8 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
         tier: Tier?,
         totalAccumulatedPoints: Int,
         pointsUntilNextTier: Int,
-        startingPointsOfNextTier: Int
+        startingPointsOfNextTier: Int,
+        isMaxTier: Boolean
     ) {
         binding.apply {
             layoutCard.apply {

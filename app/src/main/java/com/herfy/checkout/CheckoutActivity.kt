@@ -310,7 +310,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             false,
             CacheUtil.getInstance().orderStore,
             null,
-            0,
+            loyaltypointsInput,
             isShowCardFailed
         )
         paymentPresenter!!.fetchCustomerCards()

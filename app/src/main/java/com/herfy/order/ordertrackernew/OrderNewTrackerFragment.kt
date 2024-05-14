@@ -72,7 +72,9 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.showToast
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.DistanceCalculator
 import com.herfy.utils.helper.LocaleUtil
@@ -1242,6 +1244,22 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 } else {
                     orderPaymentDetails.discountContainer.isVisible = false
                 }
+
+                if(item.loyaltyPointsRedeemed > 0){
+                    orderPaymentDetails.apply {
+                        loyaltyContainer.visible()
+                        tvRedeemPointsLabel.text = CacheUtil.getInstance()
+                            .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
+                            .replace("x", item.loyaltyActualPointsRedeemed.toString())
+                        tvRedeemPointsEquiv.text =
+                            CurrencyUtils.updateCurrency(
+                                item.loyaltyPointsRedeemed.toDouble(), true, false, true
+                            )
+                    }
+                }else {
+                    orderPaymentDetails.loyaltyContainer.gone()
+                }
+
 
                 orderPaymentDetails.totalPrice.text = StringUtil.getNewFormattedPrice(
                     item.total, true
