@@ -893,6 +893,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private fun setupOrderType() {
         context?.let {
             viewModel.getOrderTypes()
+
+            val itemHeight = (Resources.getSystem().displayMetrics.widthPixels  / 3) - ViewUtil.dpToPx(it, 40)
+            binding.layoutOrderTypeMain.apply {
+                deliveryType.layoutParams.height = itemHeight
+                pickupType.layoutParams.height = itemHeight
+                dineType.layoutParams.height = itemHeight
+            }
         }
     }
 
