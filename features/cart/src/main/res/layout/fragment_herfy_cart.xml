@@ -203,7 +203,7 @@
                 android:textAllCaps="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/center"
-                app:layout_constraintTop_toTopOf="@id/total_price"
+                app:layout_constraintTop_toTopOf="@id/footer_total_price"
                 tools:enabled="true"
                 tools:text="Checkout" />
 

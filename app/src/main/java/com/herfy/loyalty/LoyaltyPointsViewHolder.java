@@ -118,7 +118,7 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void showNextTier(Tier tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier) {
+    public void showNextTier(Tier tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier, boolean isMaxTier) {
 
     }
 

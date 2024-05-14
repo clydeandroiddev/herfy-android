@@ -2,6 +2,7 @@ package com.herfy.loyalty
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Build
@@ -15,8 +16,10 @@ import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.databinding.ActivityLoyaltyBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.OnLayoutLoadingCompleted
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
@@ -25,12 +28,12 @@ import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.TimeUtil
+import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
 import com.skylinedynamics.solosdk.api.models.objects.Tier
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.DecimalFormat
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -80,6 +83,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
         binding = ActivityLoyaltyBinding.inflate(layoutInflater)
         setContentView(binding.root)
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+        setupLoyaltyImageHeight()
         loyaltyPresenter.start()
 
         if (AuthUtil.getInstance().customerLoyalty != null) {
@@ -95,11 +99,22 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 tier,
                 CacheUtil.getInstance().totalAccumulatedPoints,
                 CacheUtil.getInstance().pointsUntilNextTier,
-                CacheUtil.getInstance().startingPointsOfNextTier
+                CacheUtil.getInstance().startingPointsOfNextTier,
+                false
             )
         }
         getLoyalty()
 
+    }
+
+    private fun setupLoyaltyImageHeight() {
+        binding.layoutCard.ivLoyaltyCard.apply {
+            context?.let {
+                val imageHeight = (Resources.getSystem().displayMetrics.widthPixels / Values.LOYALTY_CARD_ASPECT_RATIO) + ViewUtil.dpToPx(it, 16)
+                layoutParams.height = imageHeight.toInt()
+            }
+
+        }
     }
 
     private fun getLoyalty() {
@@ -116,7 +131,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,AnimUtil.outF(), AnimUtil.outS(), R.color.white)
+                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,AnimUtil.outF(), AnimUtil.outS(),getColor(R.color.white))
             } else {
                 overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
             }
@@ -162,6 +177,11 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     override fun setupViews() {
         setupRewardTiers()
         binding.apply {
+            binding.layoutCard.apply {
+                ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
+                progress.isEnabled = false
+            }
+
             toolbar.apply {
                 setNavButtonAction {
                     onBackPressedDispatcher.onBackPressed()
@@ -215,10 +235,11 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     }
 
     override fun showNextTier(
-        tier: Tier,
+        tier: Tier?,
         totalAccumulatedPoints: Int,
         pointsUntilNextTier: Int,
-        startingPointsOfNextTier: Int
+        startingPointsOfNextTier: Int,
+        isMaxTier: Boolean
     ) {
         binding.apply {
             layoutCard.apply {
@@ -226,6 +247,31 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 CacheUtil.getInstance().totalAccumulatedPoints = totalAccumulatedPoints
                 CacheUtil.getInstance().pointsUntilNextTier = pointsUntilNextTier
                 CacheUtil.getInstance().startingPointsOfNextTier = startingPointsOfNextTier
+                if (pointsUntilNextTier <= 0) {
+                    if (tier == null) {
+                        progress.max = 100
+                        progress.progress = 0
+                        tvTierProgressDesc.text = "You are now a Tier member"
+                        progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                    } else {
+                        progress.max = 100
+                        progress.progress = 100
+                        tvTierProgressDesc.text = CacheUtil.getInstance().getTranslations(
+                            Text.TOTAL_POINTS_MAX_OUT,
+                            "You have maxed out on our tier levels"
+                        )
+                        progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                    }
+                } else {
+                    var loyaltyTier = tier?.name
+                    if(!loyaltyTier.isNullOrEmpty() && LocaleUtil.getInstance().isEnglish) {
+                        loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
+                    }
+                    progress.max = startingPointsOfNextTier
+                    progress.progress = totalAccumulatedPoints
+                    tvTierProgressDesc.text = cacheUtilHelper.getTranslations(Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)").replace("(x)", pointsUntilNextTier.toString()).replace("(y)", loyaltyTier?:"")
+                    progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                }
 
             }
         }
@@ -257,8 +303,8 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
 
     override fun showTiers(loyalty: Loyalty) {
         binding.apply {
-            val tiers = loyalty.attributes.tiers
-            if(tiers.size > 0){
+            val tiers = loyaltyPresenter.tiers //loyalty.attributes.tiers
+            if(tiers != null && tiers.size > 0){
                 rewardsTierAdapter.updateList(tiers)
                 layoutRewardsTier.apply {
                     rvRewardTier.OnLayoutLoadingCompleted {
@@ -266,9 +312,16 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         clRewardTier.visible()
                     }
                 }
-                layoutRewardsTier.tvRewardConversion.text = cacheUtilHelper.getTranslations(Text.POINTS_EQUAL_SAR, "(x) points = (y) SAR")
-                    .replace("(x)", "1")
-                    .replace("(y)", loyalty.attributes.pointConversion)
+                val loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
+                if(loyaltyTier.isNotEmpty()){
+                    tiers.find { tier -> tier.name.equals(loyaltyTier, true) }?.let { tier ->
+                        tier.imageUrl.let { url ->
+                            if(!url.isNullOrEmpty()){
+                                binding.layoutCard.ivLoyaltyCard.loadImageFromUrl(imageUrl = url)
+                            }
+                        }
+                    }
+                }
             }else {
                 fmRewardsTier.gone()
             }
@@ -321,6 +374,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         StringUtil.localize(currentBalanceValue)
                     tvTotalPoints.text =
                         StringUtil.localize(loyalty.attributes.currentBalance.toLong().toString())
+                    tvProgressTier.text = loyaltyTier
                 }
 
             }

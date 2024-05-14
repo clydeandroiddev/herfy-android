@@ -99,6 +99,7 @@ import com.skylinedynamics.solosdk.api.SoloAuth
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.PaymentType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.cms.CmsPage
 import com.skylinedynamics.solosdk.util.GsonHelper
@@ -583,6 +584,17 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             binding.sidebar.customerName.text =
                 CacheUtil.getInstance().getTranslations(Text.HI_LOGGED_OUT, "Hi!")
             binding.sidebar.clNotification.gone()
+            binding.sidebar.fmLoyalty.gone()
+        }
+        val containsLoyalty =
+            CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes().contains(
+                PaymentType.LOYALTY
+            ) ||
+                    CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
+                        .contains(PaymentType.LOYALTY)
+        if(containsLoyalty && isSignedIn){
+            binding.sidebar.fmLoyalty.visible()
+        }else {
             binding.sidebar.fmLoyalty.gone()
         }
         binding.sidebar.fmAccount.visibility = if (isSignedIn) View.VISIBLE else View.GONE
