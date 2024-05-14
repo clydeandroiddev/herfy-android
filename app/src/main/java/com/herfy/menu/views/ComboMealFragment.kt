@@ -442,6 +442,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     if (it.size > 1) {
                         sizesLayoutTextContainer.visible()
                         sizesRecyclerView.visible()
+                        viewSizesSeparator.visible()
                         val hasSelectedSize = it.any { it.attributes.isSelected }
                         if (hasSelectedSize) {
                             checkBox.visible()
@@ -452,6 +453,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     } else {
                         sizesLayoutTextContainer.gone()
                         sizesRecyclerView.gone()
+                        viewSizesSeparator.gone()
                     }
                 }
 
