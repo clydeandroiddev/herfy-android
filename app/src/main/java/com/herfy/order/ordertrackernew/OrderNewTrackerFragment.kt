@@ -132,6 +132,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     private var userLatLng: LatLng? = null
 
+    private var driverLastLocation: LatLng? = null
+
     private var countDownTimer: CountDownTimer? = null
 
     private var countDownTime: Long = 60000
@@ -429,8 +431,12 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             locationMarker = googleMap?.addMarker(markerOptions)
             googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
             userLatLng = latLng
-            orderStore?.let {
-                showStoreMarker(false)
+            if (driverMarker != null && driverLastLocation != null) {
+                updateDriverLocation(driverLastLocation)
+            } else {
+                orderStore?.let {
+                    showStoreMarker(true)
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -1533,7 +1539,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             }
                         }
                     }
-
+                    driverLastLocation = latLng
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

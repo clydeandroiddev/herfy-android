@@ -257,7 +257,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
 
                 dateToday.text = history.createdAt.formatOrderTime()
                 orderNumber.text = CacheUtil.getInstance()
-                    .getTranslations(Text.ORDER_NUM, "Order #") + " " + history.id
+                    .getTranslations(Text.ORDER_NUM, "Order #") + " " + getDisplayId(order)
                 status.text = history.description
                 trackButton.setOnClickListener {
                     findNavController().navigate(
@@ -269,6 +269,24 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         }
         return null
     }
+
+    private fun getDisplayId(order: OrderHistory): String {
+        var displayId = order.displayId
+        if (displayId == null || displayId.isEmpty() || displayId.equals(
+                "null", ignoreCase = true
+            )
+        ) {
+            displayId = order.code
+        }
+        if (displayId == null || displayId.isEmpty() || displayId.equals(
+                "null", ignoreCase = true
+            )
+        ) {
+            displayId = order.id
+        }
+        return displayId
+    }
+
 
     override fun setOrder(order: OrderHistory?) {
 
