@@ -42,7 +42,7 @@
                     style="@style/Styles.Text.Caption.Regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginHorizontal="24dp"
                     android:gravity="center_vertical"
                     android:textColor="@color/primaryTextColor"
                     android:textSize="18sp"

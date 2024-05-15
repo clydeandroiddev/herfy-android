@@ -17,6 +17,7 @@
             android:textColor="#191919"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:layout_marginStart="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="How will you order today?" />
@@ -25,7 +26,7 @@
             android:id="@+id/layout_type_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:paddingBottom="4dp"
             android:visibility="gone"
             android:weightSum="3"
@@ -34,7 +35,6 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
-                android:layout_marginEnd="12dp"
                 android:visibility="gone"
                 tools:visibility="visible"
                 android:id="@+id/delivery_container"
@@ -48,7 +48,9 @@
                     android:background="@drawable/background_order_type_stroke"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                  >
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -66,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="15.6dp"
                     android:textColor="#191919"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -83,7 +85,7 @@
                 android:visibility="gone"
                 tools:visibility="visible"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
+
                 android:layout_weight="1">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -93,7 +95,8 @@
                     android:background="@drawable/background_order_type_stroke"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintDimensionRatio="1:1">
 
 
                     <ImageView
@@ -112,7 +115,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="15.6dp"
                     android:textColor="#191919"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -138,7 +141,8 @@
                     android:background="@drawable/background_order_type_stroke"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintDimensionRatio="1:1">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -156,7 +160,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="15.6dp"
                     android:textColor="#191919"
                     android:textSize="18sp"
                     android:textStyle="bold"
