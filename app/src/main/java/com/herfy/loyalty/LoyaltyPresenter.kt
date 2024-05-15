@@ -55,13 +55,11 @@ class LoyaltyPresenter @Inject constructor(
                         val `object` = JSONObject(o.toString())
                         val tiersArray = `object`.getJSONArray("data")
                         val type = object : TypeToken<List<Tier?>?>() {}.type
-                        val tiers =
-                            GsonHelper.gsonFinal().fromJson<List<Tier>>(tiersArray.toString(), type)
-                        // TODO: Should set Tier as Comparable in SDK
+                        val tiers = GsonHelper.gsonFinal().fromJson<List<Tier>?>(tiersArray.toString(), type)
                         Collections.sort(
                             tiers,
                             Comparator { o1: Tier, o2: Tier -> o1.startPoint - o2.startPoint } as Comparator<Tier>)
-                        source.onSuccess(tiers)
+                        source.onSuccess(tiers?: arrayListOf())
                     } catch (ex: JSONException) {
                         ex.printStackTrace()
                     }
@@ -234,8 +232,8 @@ class LoyaltyPresenter @Inject constructor(
                 }
             })*/
         Single.zip(
-            tiersObservable, loyaltyObservable
-        ) { tiers: List<Tier>, loyalty: Loyalty -> Pair(loyalty, tiers) }
+            loyaltyObservable,tiersObservable
+        ) { loyalty: Loyalty,tiers: List<Tier>  -> Pair(loyalty, tiers) }
             .doOnSubscribe { disposable: Disposable? ->
                 disposables.add(
                     disposable!!

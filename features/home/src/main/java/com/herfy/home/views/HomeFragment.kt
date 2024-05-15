@@ -168,26 +168,26 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             ) ||
                     CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
                         .contains(PaymentType.LOYALTY)
-        if(containsLoyalty){
+        if (containsLoyalty) {
             val isSignedIn = AuthUtil.getInstance().isSignedIn
-            if(isSignedIn){
+            if (isSignedIn) {
 
                 viewModel.getLoyalty()
-                binding.layoutLoyalty.apply{
+                binding.layoutLoyalty.apply {
                     ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
                     clCustomerLoyalty.visible()
                     clLoyaltyDetailsContainer.gone()
                     clLoyaltyEmptyState.gone()
                     fmShimmerLoyalty.visible()
                 }
-            }else {
+            } else {
                 binding.layoutLoyalty.apply {
                     clCustomerLoyalty.visible()
                     fmShimmerLoyalty.gone()
                     clLoyaltyEmptyState.visible()
                 }
             }
-        }else {
+        } else {
             binding.layoutLoyalty.clCustomerLoyalty.gone()
         }
     }
@@ -238,7 +238,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         cacheHelper.getTranslations(Text.ASHAB_HERFY, "Ashab Herfy")
                     tvTotalPointsLabel.text =
                         cacheHelper.getTranslations(Text.TOTAL_POINTS, "Total Points")
-                    tvSarValueLabel.text = cacheHelper.getTranslations(Text.SAR_VALUE_LABEL, "SR VALUE")
+                    tvSarValueLabel.text =
+                        cacheHelper.getTranslations(Text.SAR_VALUE_LABEL, "SR VALUE")
                     tvSeeRewards.text =
                         cacheHelper.getTranslations(Text.SEE_MY_REWARDS, "See my rewards")
                     tvTitleEmptyState.text = cacheHelper.getTranslations(
@@ -426,97 +427,103 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.loyalty.observe(this) { loyalty ->
-            binding.layoutLoyalty.apply {
-                fmShimmerLoyalty.gone()
-                loyalty?.let {
-                    clLoyaltyDetailsContainer.visible()
-                    clLoyaltyEmptyState.gone()
-                    tvTotalPoints.text =
-                        StringUtil.localize(loyalty.attributes.currentBalance.toString())
-                    val currentBalanceValue =
-                        String.format("%.2f", loyalty.attributes.currentBalanceAmount)
-                    tvSarValue.text = StringUtil.localize(currentBalanceValue)
-                    var loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
-                    if (LocaleUtil.getInstance().isEnglish) {
-                        loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
-                    }
-                    if (loyaltyTier.isNotEmpty()) {
-                        var tierBackground = R.drawable.background_bronze_tier
-                        if (loyaltyTier.equals(
-                                "Silver", ignoreCase = true
-                            ) || loyaltyTier == "فضي"
-                        ) {
-                            tierBackground = R.drawable.background_silver_tier
-                        } else if (loyaltyTier.equals(
-                                "Gold", ignoreCase = true
-                            ) || loyaltyTier == "ذهبي"
-                        ) {
-                            tierBackground = R.drawable.background_gold_tier
-                        } else if (loyaltyTier.equals(
-                                "Diamond", true
-                            ) || loyaltyTier == "البلاتين"
-                        ) {
-                            tierBackground = R.drawable.background_diamond_tier
+        viewModel.loyalty.observe(this) {
+            it.getContentIfNotHandled()?.let { loyalty ->
+                binding.layoutLoyalty.apply {
+                    fmShimmerLoyalty.gone()
+                    loyalty?.let {
+                        clLoyaltyDetailsContainer.visible()
+                        clLoyaltyEmptyState.gone()
+                        tvTotalPoints.text =
+                            StringUtil.localize(loyalty.attributes.currentBalance.toString())
+                        val currentBalanceValue =
+                            String.format("%.2f", loyalty.attributes.currentBalanceAmount)
+                        tvSarValue.text = StringUtil.localize(currentBalanceValue)
+                        var loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
+                        if (LocaleUtil.getInstance().isEnglish) {
+                            loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
                         }
-                        tvTier.text = loyaltyTier
-                        tvTier.setBackgroundResource(tierBackground)
-                        tvProgressTier.text = loyaltyTier
-                    }
-
-                } ?: run {
-                    clLoyaltyDetailsContainer.gone()
-                    clLoyaltyEmptyState.visible()
-                }
-            }
-        }
-
-        viewModel.tiers.observe(this){tiers->
-            val loyalty = AuthUtil.getInstance().customerLoyalty
-            val loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
-            if(loyaltyTier.isNotEmpty()){
-                tiers.find { tier -> tier.name.equals(loyaltyTier, true) }?.let { tier ->
-                    tier.imageUrl.let { url ->
-                        if(!url.isNullOrEmpty()){
-                            binding.layoutLoyalty.ivLoyaltyCard.loadImageFromUrl(imageUrl = url)
-                        }else {
-                            binding.layoutLoyalty.ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
+                        if (loyaltyTier.isNotEmpty()) {
+                            var tierBackground = R.drawable.background_bronze_tier
+                            if (loyaltyTier.equals(
+                                    "Silver", ignoreCase = true
+                                ) || loyaltyTier == "فضي"
+                            ) {
+                                tierBackground = R.drawable.background_silver_tier
+                            } else if (loyaltyTier.equals(
+                                    "Gold", ignoreCase = true
+                                ) || loyaltyTier == "ذهبي"
+                            ) {
+                                tierBackground = R.drawable.background_gold_tier
+                            } else if (loyaltyTier.equals(
+                                    "Diamond", true
+                                ) || loyaltyTier == "البلاتين"
+                            ) {
+                                tierBackground = R.drawable.background_diamond_tier
+                            }
+                            tvTier.text = loyaltyTier
+                            tvTier.setBackgroundResource(tierBackground)
+                            tvProgressTier.text = loyaltyTier
                         }
 
+                    } ?: run {
+                        clLoyaltyDetailsContainer.gone()
+                        clLoyaltyEmptyState.visible()
                     }
                 }
             }
         }
 
-        viewModel.tierProgress.observeNonNull(this) { tierProgress ->
-            binding.layoutLoyalty.apply {
-                if (tierProgress.pointsToNextTier <= 0) {
-                    if (tierProgress.nextTier == null && !tierProgress.isMaxTier) {
-                        progress.max = 100
-                        progress.progress = 0
-                        tvTierProgressDesc.text = "You are now a Tier member"
-                        progressTextIndicator.text = "${progress.progress}/${progress.max}"
+        viewModel.tiers.observe(this) {
+            it.getContentIfNotHandled()?.let { tiers ->
+                val loyalty = AuthUtil.getInstance().customerLoyalty
+                val loyaltyTier = loyalty.attributes?.loyaltyTier?.name ?: ""
+                if (loyaltyTier.isNotEmpty()) {
+                    tiers.find { tier -> tier.name.equals(loyaltyTier, true) }?.let { tier ->
+                        tier.imageUrl.let { url ->
+                            if (!url.isNullOrEmpty()) {
+                                binding.layoutLoyalty.ivLoyaltyCard.loadImageFromUrl(imageUrl = url)
+                            } else {
+                                binding.layoutLoyalty.ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
+        viewModel.tierProgress.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let {tierProgress ->
+                binding.layoutLoyalty.apply {
+                    if (tierProgress.pointsToNextTier <= 0) {
+                        if (tierProgress.nextTier == null && !tierProgress.isMaxTier) {
+                            progress.max = 100
+                            progress.progress = 0
+                            tvTierProgressDesc.text = "You are now a Tier member"
+                            progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                        } else {
+                            progress.max = 100
+                            progress.progress = 100
+                            tvTierProgressDesc.text = CacheUtil.getInstance().getTranslations(
+                                Text.TOTAL_POINTS_MAX_OUT,
+                                "You have maxed out on our tier levels"
+                            )
+                            progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                        }
                     } else {
-                        progress.max = 100
-                        progress.progress = 100
-                        tvTierProgressDesc.text = CacheUtil.getInstance().getTranslations(
-                            Text.TOTAL_POINTS_MAX_OUT,
-                            "You have maxed out on our tier levels"
-                        )
+                        var loyaltyTier = tierProgress.nextTier?.name?:""
+                        if(!loyaltyTier.isNullOrEmpty() && LocaleUtil.getInstance().isEnglish) {
+                            loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
+                        }
+                        progress.max = tierProgress.startPoints
+                        progress.progress = tierProgress.totalPointsAccumulated
+                        cacheUtilHelper?.let {
+                            tvTierProgressDesc.text = it.getTranslations(Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)").replace("(x)", tierProgress.pointsToNextTier.toString()).replace("(y)", loyaltyTier)
+                        }
+
                         progressTextIndicator.text = "${progress.progress}/${progress.max}"
                     }
-                } else {
-                    var loyaltyTier = tierProgress.nextTier?.name?:""
-                    if(!loyaltyTier.isNullOrEmpty() && LocaleUtil.getInstance().isEnglish) {
-                        loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
-                    }
-                    progress.max = tierProgress.startPoints
-                    progress.progress = tierProgress.totalPointsAccumulated
-                    cacheUtilHelper?.let {
-                        tvTierProgressDesc.text = it.getTranslations(Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)").replace("(x)", tierProgress.pointsToNextTier.toString()).replace("(y)", loyaltyTier)
-                    }
-
-                    progressTextIndicator.text = "${progress.progress}/${progress.max}"
                 }
             }
         }
@@ -894,7 +901,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         context?.let {
             viewModel.getOrderTypes()
 
-            val itemHeight = (Resources.getSystem().displayMetrics.widthPixels  / 3) - ViewUtil.dpToPx(it, 40)
+            val itemHeight =
+                (Resources.getSystem().displayMetrics.widthPixels / 3) - ViewUtil.dpToPx(it, 40)
             binding.layoutOrderTypeMain.apply {
                 deliveryType.layoutParams.height = itemHeight
                 pickupType.layoutParams.height = itemHeight
@@ -905,8 +913,10 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     private fun setupCustomerLoyalty() {
         context?.let {
-            val imageHeight = (Resources.getSystem().displayMetrics.widthPixels / Values.LOYALTY_CARD_ASPECT_RATIO)
-            val imageEmptyLoyalty =  (Resources.getSystem().displayMetrics.widthPixels / Values.LOYALTY_EMPTY_CARD_ASPECT_RATION)
+            val imageHeight =
+                (Resources.getSystem().displayMetrics.widthPixels / Values.LOYALTY_CARD_ASPECT_RATIO)
+            val imageEmptyLoyalty =
+                (Resources.getSystem().displayMetrics.widthPixels / Values.LOYALTY_EMPTY_CARD_ASPECT_RATION)
             binding.layoutLoyalty.apply {
                 progress.isEnabled = false
                 ivLoyaltyCard.apply {
