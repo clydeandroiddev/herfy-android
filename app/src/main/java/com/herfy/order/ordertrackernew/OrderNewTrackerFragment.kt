@@ -1580,18 +1580,16 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         builder.include(start)
         builder.include(end)
         val bounds = builder.build()
-
         val width = Resources.getSystem().displayMetrics.widthPixels
-        val height = Resources.getSystem().displayMetrics.heightPixels
         val padding = (width * 0.16).toInt()
 
         if (isDriver) {
-            driverCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
+            driverCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
             driverCameraUpdate?.let {
                 googleMap?.animateCamera(it)
             }
         } else {
-            storeCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
+            storeCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
             storeCameraUpdate?.let {
                 googleMap?.animateCamera(it)
             }
