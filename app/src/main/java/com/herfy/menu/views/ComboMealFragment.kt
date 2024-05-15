@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -22,6 +23,8 @@ import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.base.BaseActivity
 import com.herfy.model.ShowComboMealItemDetails
+import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet
+import com.herfy.nutritiondetails.NutritionInfoParams
 import com.herfy.productpagedetails.R
 import com.herfy.productpagedetails.databinding.FragmentComboMealBinding
 import com.herfy.productpagedetails.ui.adapter.ComboItemDetailsModifierAdapter
@@ -37,6 +40,7 @@ import com.herfy.utils.extensions.deepCopy
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.invisible
 import com.herfy.utils.extensions.navigateUp
+import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.toTranslate
@@ -48,6 +52,7 @@ import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.ViewUtil
+import com.herfy.utils.helper.viewLifecycleScope
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
@@ -259,6 +264,8 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
         binding.apply {
             tvSoldOut.text =
                 CacheUtil.getInstance().getTranslations(Text.SOLD_OUT_CAPS, "SOLD OUT")
+            txtMoreInfo.text = CacheUtil.getInstance()
+                .getTranslations(Text.MORE_INFO, "More Info")
             notesLabel.text =
                 cacheUtilHelper.getTranslations(Text.SPECIAL_INSTRUCTION, "Special Instruction")
             notesDescription.text = cacheUtilHelper.getTranslations(
@@ -435,6 +442,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     if (it.size > 1) {
                         sizesLayoutTextContainer.visible()
                         sizesRecyclerView.visible()
+                        viewSizesSeparator.visible()
                         val hasSelectedSize = it.any { it.attributes.isSelected }
                         if (hasSelectedSize) {
                             checkBox.visible()
@@ -445,6 +453,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     } else {
                         sizesLayoutTextContainer.gone()
                         sizesRecyclerView.gone()
+                        viewSizesSeparator.gone()
                     }
                 }
 
@@ -495,14 +504,13 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                             )
                         }
                     }
-
-
                 }
             }
             showComponentModifierItemTotal.observe(this@ComboMealFragment) {
+                val currentTotal = it + _totalPrice
                 binding.layoutBottomSheetComboDetail.tvTotalValue.text =
                     CurrencyUtils.updateCurrency(
-                        it,
+                        currentTotal    ,
                         withSpace = true,
                         ignoreDecimalPlaces = false
                     )
@@ -702,6 +710,20 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             language = LocaleUtil.getInstance().language
             menuItem = data
             setFavorite(data)
+            txtMoreInfo.isVisible =
+                !data.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
+            txtMoreInfo.ninjaTap(viewLifecycleScope) {
+                val bundle = Bundle()
+                bundle.putParcelable(
+                    NutritionInfoFragmentBottomSheet.NAV_ARGS_INFO_KEY, NutritionInfoParams(
+                        nutritionImageUrl = data.customFieldObjectMap.nutritionInfoImageUrl.orEmpty(),
+                        nutritionStory = data.customFieldObjectMap.nutritionInfoStory.orEmpty(),
+                        menuName = data.getName(LocaleUtil.getInstance().language)
+                    )
+                )
+                NutritionInfoFragmentBottomSheet.newInstance(bundle)
+                    .show(childFragmentManager, NutritionInfoFragmentBottomSheet.TAG)
+            }
         }
     }
 

@@ -180,12 +180,13 @@
                         style="@style/Styles.Text.Headline1"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
-                        android:layout_marginEnd="@dimen/margin_large"
+                        android:layout_marginEnd="20dp"
 
-                        android:textColor="#2266A7"
+                        android:textColor="@color/text_color_blue"
                         app:layout_constraintBottom_toBottomOf="@+id/name"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/name"
+                        app:layout_constraintVertical_bias="0.0"
                         tools:text="SAR 44" />
 
                     <TextView
@@ -196,7 +197,7 @@
                         android:gravity="start"
                         android:textAlignment="viewStart"
                         android:layout_marginTop="8dp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/secondaryTextColor"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="@+id/total"
                         app:layout_constraintHorizontal_bias="1.0"
@@ -213,9 +214,10 @@
                         android:layout_marginTop="@dimen/margin_large"
                         android:layout_marginEnd="@dimen/margin_large"
                         android:drawableEnd="@drawable/ic_question_mark"
+                        android:drawableTint="@color/text_color_blue"
                         android:drawablePadding="@dimen/margin_micro"
                         android:textAlignment="viewStart"
-                        android:textColor="@color/shade_blue"
+                        android:textColor="@color/text_color_blue"
                         android:visibility="gone"
                         app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
                         app:layout_constraintEnd_toEndOf="parent"
