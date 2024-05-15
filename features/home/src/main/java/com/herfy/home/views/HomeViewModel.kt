@@ -91,8 +91,8 @@ class HomeViewModel @Inject constructor(
     var excludedMenu: ArrayList<MenuCategory> = ArrayList()
     private val excludedCategories = HashMap<String, HashSet<MenuCategory>>()
 
-    private val _loyalty = MutableLiveData<Loyalty?>()
-    val loyalty: LiveData<Loyalty?> = _loyalty
+    private val _loyalty = MutableLiveData<Event<Loyalty?>>()
+    val loyalty: LiveData<Event<Loyalty?>> = _loyalty
 
     private val _updatePromoCategoryList = MutableLiveData<Event<PromotionCategory>>()
     val updatePromoCategoryList: LiveData<Event<PromotionCategory>> = _updatePromoCategoryList
@@ -101,8 +101,8 @@ class HomeViewModel @Inject constructor(
     val orderTypes: LiveData<Set<OrderType>> = _orderTypes
 
 
-    private val _tiers = MutableLiveData<List<Tier>>()
-    val tiers: MutableLiveData<List<Tier>> = _tiers
+    private val _tiers = MutableLiveData<Event<List<Tier>>>()
+    val tiers: MutableLiveData<Event<List<Tier>>> = _tiers
 
 
     private val _tier = MutableLiveData<Tier?>()
@@ -133,8 +133,8 @@ class HomeViewModel @Inject constructor(
     private val _updateOrderTrackerNotif = MutableLiveData<OrderData>()
     val updateOrderTrackerNotif: LiveData<OrderData> = _updateOrderTrackerNotif
 
-    private val _tierProgress = MutableLiveData<TierProgress>()
-    val tierProgress : LiveData<TierProgress> = _tierProgress
+    private val _tierProgress = MutableLiveData<Event<TierProgress>>()
+    val tierProgress : LiveData<Event<TierProgress>> = _tierProgress
 
     fun getSliders() {
         invoke {
@@ -367,20 +367,19 @@ class HomeViewModel @Inject constructor(
     @SuppressLint("CheckResult")
     fun getLoyalty() {
         invoke {
-            Single.zip<List<Tier>, Loyalty, android.util.Pair<Loyalty, List<Tier>>>(
-                getTiersObservable(), getLoyaltyObservable()
-            ) { tiers: List<Tier>, loyalty: Loyalty ->
-                android.util.Pair<Loyalty, List<Tier>>(loyalty, tiers)
-            }.subscribe({ pair: android.util.Pair<Loyalty, List<Tier>> ->
+            Single.zip<Loyalty,List<Tier>, Pair<Loyalty, List<Tier>>>(
+                getLoyaltyObservable(),getTiersObservable()
+            ) {  loyalty: Loyalty, tiers: List<Tier>->
+                Pair(loyalty, tiers)
+            }.subscribe({ pair: Pair<Loyalty, List<Tier>> ->
                 var tiers = pair.second
                 val loyalty = pair.first
-                this._tiers.value = tiers
                 val totalPointsAccumulated = loyalty.attributes.currentBalance
                 var eligibleTiers = Observable.fromIterable(tiers)
                     .filter { tier: Tier -> totalPointsAccumulated <= tier.endPoint }.toList()
                     .blockingGet()
                 var pointsToNextTier = 0
-                _loyalty.value = loyalty
+                _loyalty.value = Event(loyalty)
                 var nextTier: Tier? = null
                 if (eligibleTiers.size <= 0 && tiers.isNotEmpty()) {
                     eligibleTiers = ArrayList()
@@ -402,13 +401,13 @@ class HomeViewModel @Inject constructor(
                         pointsToNextTier = 0
                     }
                 }
-                _tierProgress.value = TierProgress(
+                _tierProgress.value = Event(TierProgress(
                     nextTier,
                     totalPointsAccumulated,
                     pointsToNextTier,
                     startPoints,
                     isMaxTier
-                )
+                ))
 
 
             }) { error: Throwable? ->
@@ -426,15 +425,15 @@ class HomeViewModel @Inject constructor(
                 nextTier.startPoint = 100
                 loyaltyAttributes.loyaltyTier = loyaltyTier
                 loyaltyAttributes.currentBalance = 0
-                _tiers.value = ArrayList<Tier>(listOf(currentTier))
+                _tiers.value = Event(ArrayList<Tier>(listOf(currentTier)))
                 loyalty.attributes = loyaltyAttributes
-                _tierProgress.value = TierProgress(
+                _tierProgress.value = Event(TierProgress(
                     nextTier,
                     0,
                     100,
                     100,
                     false
-                )
+                ))
             }
         }
     }
@@ -510,7 +509,7 @@ class HomeViewModel @Inject constructor(
                     if (homeResponse.success) {
                         homeResponse.data?.let { it ->
                             it.cast<ArrayList<Tier>> {
-                                _tiers.value = it
+                                _tiers.value = Event(it)
                                 source.onSuccess(it)
                             }
                         }
@@ -529,15 +528,15 @@ class HomeViewModel @Inject constructor(
                     if (homeResponse.success) {
                         homeResponse.data?.let { it ->
                             it.cast<Loyalty> {
-                                _loyalty.value = it
+                                _loyalty.value = Event(it)
                                 AuthUtil.getInstance().customerLoyalty = it
                                 source.onSuccess(it)
                             }
                         } ?: run {
-                            _loyalty.value = null
+                            _loyalty.value = Event(null)
                         }
                     } else {
-                        _loyalty.value = null
+                        _loyalty.value = Event(null)
                         //_showError.value = Event(ErrorMsgItem(true, homeResponse.message))
                     }
                 }
