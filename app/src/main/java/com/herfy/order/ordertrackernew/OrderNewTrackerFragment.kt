@@ -1581,7 +1581,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         builder.include(end)
         val bounds = builder.build()
         val width = Resources.getSystem().displayMetrics.widthPixels
-        val padding = (width * 0.16).toInt()
+        val padding = (width * 0.21).toInt()
 
         if (isDriver) {
             driverCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
