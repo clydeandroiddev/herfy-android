@@ -711,7 +711,6 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         }
                     }
 
-
                     binding.modifierItemShimmerLayout.setVisible(adapterItems.isEmpty())
                     modifierGroupsAdapters?.submitList(adapterItems)
 
@@ -723,6 +722,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     binding.modifierGroupsRecyclerView.adapter = modifierGroupsAdapters
 //
                 } else {
+                    binding.modifierItemShimmerLayout.gone()
                     binding.modifierGroupsRecyclerView.visibility = View.GONE
                     binding.modifierGroupsRecyclerView.visibility = View.GONE
                 }
