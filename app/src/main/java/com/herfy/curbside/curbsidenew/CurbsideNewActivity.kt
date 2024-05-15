@@ -1,6 +1,7 @@
 package com.herfy.curbside.curbsidenew
 
 import android.os.Bundle
+import androidx.core.view.isVisible
 import com.herfy.base.BaseActivity
 import com.herfy.curbside.CurbsideContract
 import com.herfy.curbside.CurbsidePresenter
@@ -108,6 +109,9 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
                     Text.CHOOSE_YOUR_CURBSIDE_VEHICLE, "Choose your curbside vehicle"
                 )
             }
+            emptyState.text =
+                CacheUtil.getInstance()
+                    .getTranslations(Text.NO_CURBSIDE_VEHICLES, "No curbside vehicles found.")
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.ADD_NEW_VEHICLE, "Add New Vehicle")
             continueButton.setOnClickListener {
@@ -132,14 +136,18 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
     override fun showCustomerCars(cars: MutableList<CustomerCar>) {
         dismissDialogs()
         if (cars.isEmpty()) {
+            binding.emptyStateLayout.isVisible = true
             showAddDialog(true)
         } else {
+            binding.emptyStateLayout.isVisible = false
             curbsideVehicleAdapter.updateList(ArrayList(cars))
         }
     }
 
     private fun showAddDialog(isEmpty: Boolean) {
-        showAddDialog(isEmpty, null)
+        if (!intent.getBooleanExtra("fromProfile", false)) {
+            showAddDialog(isEmpty, null)
+        }
     }
 
     private fun showAddDialog(isEmpty: Boolean, customerCar: CustomerCar?) {
@@ -188,6 +196,7 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
         val car = curbsideVehicleAdapter.getCar(position)
         curbsideVehicleAdapter.removeItem(position)
         if (curbsideVehicleAdapter.listCount() == 0) {
+            binding.emptyStateLayout.isVisible = true
             showAddDialog(true)
         }
         val car1 = CacheUtil.getInstance().curbsideCar
