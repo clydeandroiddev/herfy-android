@@ -24,10 +24,6 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.math.abs
-import kotlin.math.asin
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
 
 @SuppressLint("SimpleDateFormat")
 fun String.formatDate(): String {
@@ -403,10 +399,24 @@ fun deviceHeight(context: Activity): Int {
     return displayMetrics.heightPixels - dpToPx(310f)
 }
 
-fun drawArcPolyline(googleMap: GoogleMap?, storeLocation: LatLng, currentLocation: LatLng, context: Context): Polyline? {
-    val heading = SphericalUtil.computeHeading(currentLocation, storeLocation)
-    val distance = SphericalUtil.computeDistanceBetween(currentLocation, storeLocation)
-    val midpoint = SphericalUtil.computeOffset(currentLocation, distance * 0.5, heading)
+// Note:
+// always pass user location as sLocation
+// and store location as eLocation
+fun drawArcPolyline(
+    googleMap: GoogleMap?, sLocation: LatLng, eLocation: LatLng, context: Context
+): Polyline? {
+
+    var startLocation = sLocation
+    var endLocation = eLocation
+    val isAboveAndLeft = isAboveAndLeft(sLocation, eLocation)
+    if (isAboveAndLeft) {
+        startLocation = eLocation
+        endLocation = sLocation
+    }
+
+    val heading = SphericalUtil.computeHeading(startLocation, endLocation)
+    val distance = SphericalUtil.computeDistanceBetween(startLocation, endLocation)
+    val midpoint = SphericalUtil.computeOffset(startLocation, distance * 0.5, heading)
 
     // Increasing the 'height' of the arc
     val height = distance * 0.3 // This adjusts the "steepness" of the arc
@@ -425,8 +435,10 @@ fun drawArcPolyline(googleMap: GoogleMap?, storeLocation: LatLng, currentLocatio
         val t2 = t * t
 
         // Bezier quadratic formula
-        val lat = oneMinusT2 * currentLocation.latitude + 2 * oneMinusT * t * controlPoint.latitude + t2 * storeLocation.latitude
-        val lng = oneMinusT2 * currentLocation.longitude + 2 * oneMinusT * t * controlPoint.longitude + t2 * storeLocation.longitude
+        val lat =
+            oneMinusT2 * startLocation.latitude + 2 * oneMinusT * t * controlPoint.latitude + t2 * endLocation.latitude
+        val lng =
+            oneMinusT2 * startLocation.longitude + 2 * oneMinusT * t * controlPoint.longitude + t2 * endLocation.longitude
         polylineOptions.add(LatLng(lat, lng))
     }
 
@@ -436,4 +448,9 @@ fun drawArcPolyline(googleMap: GoogleMap?, storeLocation: LatLng, currentLocatio
 
     // Add polyline to the map
     return googleMap?.addPolyline(polylineOptions)
+}
+
+// If true make user location as endlocation in polyline
+private fun isAboveAndLeft(userLocation: LatLng, storeLocation: LatLng): Boolean {
+    return userLocation.latitude > storeLocation.latitude && userLocation.longitude < storeLocation.longitude
 }

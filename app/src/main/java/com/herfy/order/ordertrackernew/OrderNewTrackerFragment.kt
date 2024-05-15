@@ -525,9 +525,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                     )
                                 }
                             }
-                            myPolyline = storeLocation?.let { sLocation ->
+                            myPolyline = storeLocation?.let { storeLoc ->
                                 drawArcPolyline(
-                                    googleMap, sLocation, userLatLng, binding.mapFrame.context
+                                    googleMap, userLatLng, storeLoc, binding.mapFrame.context
                                 )
                             }
                         }
@@ -1283,7 +1283,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     orderPaymentDetails.discountContainer.isVisible = false
                 }
 
-                if(item.loyaltyPointsRedeemed > 0){
+                if (item.loyaltyPointsRedeemed > 0) {
                     orderPaymentDetails.apply {
                         loyaltyContainer.visible()
                         tvRedeemPointsLabel.text = CacheUtil.getInstance()
@@ -1294,7 +1294,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 item.loyaltyPointsRedeemed.toDouble(), true, false, true
                             )
                     }
-                }else {
+                } else {
                     orderPaymentDetails.loyaltyContainer.gone()
                 }
 
