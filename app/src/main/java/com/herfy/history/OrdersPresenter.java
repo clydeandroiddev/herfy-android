@@ -1009,7 +1009,11 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
             feedbackNew = "Order Feedback";
         }
         Customer customer = AuthUtil.getInstance().getCustomer();
-        OrderFeedbackBody orderFeedbackBody = new OrderFeedbackBody(customer.getAttributes().getFirstName() + " " + customer.getAttributes().getLastName(), customer.getAttributes().getEmail(), customer.getAttributes().getMobile(), "Order Feedback", feedbackNew, this.ratings);
+        String email = customer.getAttributes().getEmail();
+        if (email.isEmpty()) {
+            email = null;
+        }
+        OrderFeedbackBody orderFeedbackBody = new OrderFeedbackBody(customer.getAttributes().getFirstName() + " " + customer.getAttributes().getLastName(), email, customer.getAttributes().getMobile(), "Order Feedback", feedbackNew, this.ratings);
         OrdersApiCall.getInstance().sendOrderFeedback(orderId, orderFeedbackBody, null, new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {

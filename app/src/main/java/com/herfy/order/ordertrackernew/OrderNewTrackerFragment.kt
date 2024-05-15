@@ -587,7 +587,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             }?.let { it2 ->
                                 if (latLng != null) {
                                     calculateZoomLevel(
-                                        latLng, it2, false
+                                        latLng, it2, null, false
                                     )
                                 }
                             }!!
@@ -1540,9 +1540,18 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                     )
                                 }
                             }?.let { it2 ->
-                                calculateZoomLevel(
-                                    latLng, it2, true
-                                )
+                                val storeLatLng = orderStore?.attributes?.lat?.let { it1 ->
+                                    orderStore?.attributes?.lng?.let { it3 ->
+                                        LatLng(
+                                            it1, it3
+                                        )
+                                    }
+                                }
+                                if (storeLatLng != null) {
+                                    calculateZoomLevel(
+                                        storeLatLng, it2, latLng, true
+                                    )
+                                }
                             }!!
                         } else {
                             if (driverCameraUpdate != null) {
@@ -1575,10 +1584,15 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         return (bearing + 360) % 360
     }
 
-    private fun calculateZoomLevel(start: LatLng, end: LatLng, isDriver: Boolean) {
+    private fun calculateZoomLevel(
+        start: LatLng, end: LatLng, driverLatLng: LatLng?, isDriver: Boolean
+    ) {
         val builder = LatLngBounds.Builder()
         builder.include(start)
         builder.include(end)
+        if (isDriver && driverLatLng != null) {
+            builder.include(driverLatLng)
+        }
         val bounds = builder.build()
         val width = Resources.getSystem().displayMetrics.widthPixels
         val padding = (width * 0.21).toInt()
