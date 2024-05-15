@@ -12,12 +12,13 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.herfy.productpagedetails.R
 import com.herfy.productpagedetails.databinding.ItemComboComponentItemBinding
 import com.herfy.productpagedetails.ui.adapter.SelectedModifiersPerItemAdapter
+import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
-import com.herfy.utils.extensions.invisible
 import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.extensions.toTranslate
 import com.herfy.utils.extensions.visible
+import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.StringUtil
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
@@ -30,7 +31,8 @@ class ComboMealModifierItemViewHolder(val binding: ItemComboComponentItemBinding
         binding.apply {
             val context = itemView.context
             var imageUrl: String? = componentModifierItem.image
-            var hasModifiers = componentModifierItem.modifierGroups.size >= 1
+            val hasModifiers = componentModifierItem.modifierGroups.size >= 1
+            var hasSelectedModifiers = false
             if (imageUrl == null || imageUrl.equals(
                     "null",
                     ignoreCase = true
@@ -50,7 +52,8 @@ class ComboMealModifierItemViewHolder(val binding: ItemComboComponentItemBinding
 
             if(hasModifiers){
                 val selectedLists = fetchSelectedModifierItemsPerItem(componentModifierItem.modifierGroups)
-                if(selectedLists.isNotEmpty()){
+                hasSelectedModifiers = selectedLists.isNotEmpty()
+                if(hasSelectedModifiers){
                     val selectedModifiersPerItemAdapter = SelectedModifiersPerItemAdapter(selectedLists)
                     val flexLayoutManager = FlexboxLayoutManager(context)
                     flexLayoutManager.flexWrap = FlexWrap.WRAP
@@ -84,7 +87,7 @@ class ComboMealModifierItemViewHolder(val binding: ItemComboComponentItemBinding
                 optionCardView.strokeColor = context.getColor(R.color.background_color_blue)
                 optionCardView.backgroundTintList =
                     ColorStateList.valueOf(context.getColor(R.color.card_selected_bg))
-                if (hasModifiers) {
+                if (hasModifiers && hasSelectedModifiers) {
                     ivRightIcon.setImageResource(R.drawable.ic_edit_blue)
                 } else {
                     radioButton.isChecked = true
@@ -100,18 +103,14 @@ class ComboMealModifierItemViewHolder(val binding: ItemComboComponentItemBinding
                 }
             }
             txtModifierItemName.text = componentModifierItem.name.toTranslate()
-
+            txtmodifierPrice.visible()
             val componentModifierItemPrice =
                 if (componentModifierItem.price != 0.0) componentModifierItem.price else componentModifierItem.attributes.price
             if (componentModifierItemPrice > 0) {
-                txtmodifierPrice.visible()
                 txtmodifierPrice.text = StringUtil.getFormattedPrice(componentModifierItemPrice)
             } else {
-                txtmodifierPrice.invisible()
+                txtmodifierPrice.text = CacheUtil.getInstance().getTranslations(Text.FREE, "Free");
             }
-
-
-
         }
     }
 
