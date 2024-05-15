@@ -54,15 +54,18 @@ import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.common.cancelTime
+import com.herfy.common.deviceHeight
 import com.herfy.common.drawArcPolyline
 import com.herfy.common.formatSecondsToMinutesAndSeconds
 import com.herfy.common.getCurrentTime
 import com.herfy.common.getDisplayId
+import com.herfy.common.orderTypeString
 import com.herfy.common.showTime
 import com.herfy.common.statusTime
 import com.herfy.ext.cast
 import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
+import com.herfy.history.historynew.RatingBarDialog
 import com.herfy.history.historynew.adapter.OrderMenuItemsAdapter
 import com.herfy.main.MainActivity
 import com.herfy.ordertracker.databinding.FragmentOrderNewTrackerBinding
@@ -103,7 +106,7 @@ import kotlin.math.sin
 @AndroidEntryPoint
 class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     CancelOrderDialogFragment.OnAction {
-
+    private var fromDelivered = false
     private var orderPresenter: OrdersContract.Presenter? = null
 
     private lateinit var binding: FragmentOrderNewTrackerBinding
@@ -149,6 +152,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     private var isOverHeadFrameShows = false
 
     private var myPolyline: Polyline? = null
+
+    private var fromRate = false
+
+    private lateinit var ratingBarDialog: RatingBarDialog
 
     private val gpsLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
@@ -1171,6 +1178,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         }
                         binding.estimateLayout.isVisible = false
                         binding.cancelledText.isVisible = true
+                        fromDelivered = true
+                        processRating()
                     } else {
                         binding.estimateLayout.isVisible = true
                         binding.cancelledText.isVisible = false
@@ -1179,6 +1188,15 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             }
         }
 
+    }
+
+    private fun processRating() {
+        val orderId = CacheUtil.getInstance().currentOrderID
+        if (orderId != null) {
+            activity?.let {
+                orderPresenter?.getOrderFeedbackTopics(orderId)
+            }
+        }
     }
 
     private fun initTimer() {
@@ -1668,10 +1686,71 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     override fun showRatings(orderStatus: OrderStatus?, ratings: MutableList<Rating>?) {
+        dismissDialogs()
+        if (fromDelivered) {
+            fromDelivered = false
+            ratings?.let {
+                showRatingDialog(it)
+            }
+        }
+    }
 
+    private fun dismissRatingBarDialog() {
+        try {
+            ratingBarDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun checkRatings(ratings: List<Rating>): Boolean {
+        return ratings.any { it.attributes.rating != 0 }
+    }
+
+    private fun showRatingDialog(ratings: MutableList<Rating>?) {
+        dismissRatingBarDialog()
+        activity?.let {
+            orderDetails?.let { order ->
+                val orderId = CacheUtil.getInstance().currentOrderID
+                CacheUtil.getInstance().setCurrentOrderId(null)
+                ratingBarDialog = RatingBarDialog.newInstance(order.createdAt,
+                    OrderType.convertOrderTypeToString(OrderType.fromString(order.orderType))
+                        .orderTypeString(),
+                    order.locationName,
+                    deviceHeight(it),
+                    ratings!!.toList(),
+                    object : RatingBarDialog.OnRatingListener {
+                        override fun orderRatings(ratings: List<Rating>, feedbackOther: String) {
+                            if (checkRatings(ratings)) {
+                                fromRate = true
+                                activity?.cast<BaseActivity> {
+                                    it.showLoadingDialog()
+                                }
+                                orderPresenter?.sendOrderFeedback(
+                                    ratings,
+                                    orderId,
+                                    feedbackOther
+                                )
+                            }
+                        }
+
+                        override fun exit() {
+                            dismissRatingBarDialog()
+                        }
+
+                    })
+                ratingBarDialog.show(
+                    it.supportFragmentManager, RatingBarDialog::class.java.simpleName
+                )
+            }
+        }
     }
 
     override fun showMessage(message: String?) {
+        if (fromRate) {
+            fromRate = false
+            dismissRatingBarDialog()
+        }
         activity?.cast<BaseActivity> {
             it.showToast(message.orEmpty())
         }

@@ -142,6 +142,8 @@ public class CacheUtil {
     private static final String POINTS_UNTIL_NEXT_TIER = "pointsUntilNextTier";
     private static final String STARTING_POINTS_OF_NEXT_TIER = "startingPointsOfNextTier";
 
+    private static final String CURRENT_ORDER_ID = "CurrentOrderID";
+
     private static final String CART_QUANTITY = "CartQuantity";
     private String COUNTRY = "Country";
     private String SUPPORT_CARD_TYPES = "SupportCardTypes";
@@ -386,6 +388,16 @@ public class CacheUtil {
         return new ArrayList<>();
     }
 
+    public void setCurrentOrderId(String currentOrderId) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(CURRENT_ORDER_ID, currentOrderId);
+        editor.apply();
+    }
+
+    public String getCurrentOrderID() {
+        return cacheSharedPreferences.getString(CURRENT_ORDER_ID, null);
+    }
+
     public void setCities(String cities) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(CITIES, cities);
@@ -410,14 +422,16 @@ public class CacheUtil {
     public void setFrequentlyQuantityShouldShow(boolean isQuantityShouldShow, String menuId) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putBoolean(IS_FREQUENTLY_QUANTITY_SHOW, isQuantityShouldShow);
-        editor.putString(FREQUENTLY_QUANTITY_ID,menuId);
+        editor.putString(FREQUENTLY_QUANTITY_ID, menuId);
         editor.apply();
     }
+
     public Pair<Boolean, String> getFrequentlyQuantityShouldShow() {
         boolean isQuantityShouldShow = cacheSharedPreferences.getBoolean(IS_FREQUENTLY_QUANTITY_SHOW, false);
         String menuId = cacheSharedPreferences.getString(FREQUENTLY_QUANTITY_ID, "");
         return new Pair<>(isQuantityShouldShow, menuId);
     }
+
     public List<CustomerCard> getCustomerCards() {
         String cards = cacheSharedPreferences.getString(CUSTOMER_CARDS, null);
         if (cards != null) {
@@ -1226,7 +1240,7 @@ public class CacheUtil {
 
     public void setOrderStore(Store store) {
         if (getCampaign() != null && store != null) {
-            Log.e("ADADADADADADAD","ADADADADAD:" + store.getAttributes().getName());
+            Log.e("ADADADADADADAD", "ADADADADAD:" + store.getAttributes().getName());
             JsonObject campaignBody = new JsonParser().parse(new Gson().toJson(getCampaign())).getAsJsonObject();
             campaignBody.addProperty("location", store.getId());
             //setCampaign(campaignBody.toString());

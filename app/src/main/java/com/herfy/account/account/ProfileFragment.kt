@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -20,12 +19,10 @@ import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
 import com.herfy.commonstyles.R
 import com.herfy.curbside.curbsidenew.CurbsideNewActivity
-import com.herfy.main.MainActivity
 import com.herfy.profile.databinding.FragmentUserProfileBinding
 import com.herfy.utils.analytics.MixpanelUtil.Companion.logout
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
-import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
@@ -271,6 +268,7 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
         CacheUtil.getInstance().clearOrder()
         SoloAuth.getInstance().logout()
         logout()
+        CacheUtil.getInstance().setCurrentOrderId(null)
         AuthUtil.getInstance().customer = null
         navigateUp()
     }
@@ -308,6 +306,7 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
         accountPresenter!!.removeMukafaaRedemption()
         CacheUtil.getInstance().clearOrder()
         SoloAuth.getInstance().logout()
+        CacheUtil.getInstance().setCurrentOrderId(null)
         logout()
         AuthUtil.getInstance().customer = null
         navigateUp()

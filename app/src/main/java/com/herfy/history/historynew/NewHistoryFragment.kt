@@ -188,17 +188,31 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         checkEmptyState()
         orders?.let {
             if (orders.isNotEmpty()) {
+                var noCurrentOrder = false
                 val orderProgressId = processInProgress(orders)
                 var pastOrders = ArrayList<OrderHistory>()
                 if (orderProgressId != null) {
+                    CacheUtil.getInstance().setCurrentOrderId(orderProgressId)
                     pastOrders.addAll(orders.filter { it.id != orderProgressId })
                 } else {
                     binding.inProgressLayout.isVisible = false
+                    noCurrentOrder = true
                     pastOrders = orders
                 }
                 binding.pastOrdersLabel.isVisible = pastOrders.isNotEmpty()
                 historyList = pastOrders
                 historyListAdapter.updateList(pastOrders)
+                if (noCurrentOrder) {
+                    val currentOrderId = CacheUtil.getInstance().currentOrderID
+                    if (currentOrderId != null) {
+                        orderHistoryRate = pastOrders.find { pOrder -> pOrder.id == currentOrderId }
+                        ratePosition =
+                            historyList.indexOfFirst { pOrder -> pOrder.id == currentOrderId }
+                        activity?.let {
+                            ordersPresenter?.getOrderFeedbackTopics(currentOrderId)
+                        }
+                    }
+                }
             }
         }
     }
@@ -379,7 +393,6 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         ratings?.let {
             showRatingDialog(it)
         }
-
     }
 
     private fun checkRatings(ratings: List<Rating>): Boolean {
@@ -388,6 +401,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
 
     private fun showRatingDialog(ratings: MutableList<Rating>?) {
         dismissRatingBarDialog()
+        CacheUtil.getInstance().setCurrentOrderId(null)
         activity?.let {
             orderHistoryRate?.let { order ->
                 ratingBarDialog = RatingBarDialog.newInstance(order.createdAt,

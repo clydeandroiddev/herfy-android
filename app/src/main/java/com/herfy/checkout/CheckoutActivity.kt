@@ -1231,6 +1231,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun showCompleted(orderId: String, orderType: OrderType) {
         dismissDialogs()
         this.orderId = orderId
+        CacheUtil.getInstance().setCurrentOrderId(orderId)
         continueOrder()
     }
 
