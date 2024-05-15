@@ -1307,10 +1307,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         tvRedeemPointsLabel.text = CacheUtil.getInstance()
                             .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
                             .replace("x", item.loyaltyActualPointsRedeemed.toString())
-                        tvRedeemPointsEquiv.text =
-                            CurrencyUtils.updateCurrency(
-                                item.loyaltyPointsRedeemed.toDouble(), true, false, true
-                            )
+                        tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
+                            item.loyaltyPointsRedeemed.toDouble(), true, false, true
+                        )
                     }
                 } else {
                     orderPaymentDetails.loyaltyContainer.gone()
@@ -1727,9 +1726,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                     it.showLoadingDialog()
                                 }
                                 orderPresenter?.sendOrderFeedback(
-                                    ratings,
-                                    orderId,
-                                    feedbackOther
+                                    ratings, orderId, feedbackOther
                                 )
                             }
                         }
@@ -1747,12 +1744,13 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     override fun showMessage(message: String?) {
+        activity?.cast<BaseActivity> {
+            it.dismissDialogs()
+            it.showToast(message.orEmpty())
+        }
         if (fromRate) {
             fromRate = false
             dismissRatingBarDialog()
-        }
-        activity?.cast<BaseActivity> {
-            it.showToast(message.orEmpty())
         }
     }
 
