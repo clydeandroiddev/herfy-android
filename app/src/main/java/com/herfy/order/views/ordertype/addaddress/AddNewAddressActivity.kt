@@ -478,14 +478,18 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun updateAddress(address: String?) {
-        dismissDialogs()
-        dismissAddressDialog()
-        val eventAttributes = java.util.HashMap<String, String>()
-        eventAttributes["Delivery"] = address!!
-        logEvent("OrderTypeSelection", eventAttributes, null, 0.0)
-        overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
-        setResult(RESULT_OK)
-        finish()
+        if (CacheUtil.getInstance().orderStore == null) {
+            orderPresenter.getStore(orderPresenter.selectedAddress)
+        } else {
+            dismissDialogs()
+            dismissAddressDialog()
+            val eventAttributes = java.util.HashMap<String, String>()
+            eventAttributes["Delivery"] = address!!
+            logEvent("OrderTypeSelection", eventAttributes, null, 0.0)
+            overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
+            setResult(RESULT_OK)
+            finish()
+        }
     }
 
     override fun logFirebaseEvent(event: String?) {

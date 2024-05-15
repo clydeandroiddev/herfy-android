@@ -1200,4 +1200,8 @@ public class Text {
     public static final String SEE_DIRECTIONS = "see_directions";
 
     public static final String SAR_ORDER_VALUE_TO_POINTS="sar_order_value_converts_to_points";
+
+    public static final String DINE_IN_LABEL = "dine_in_label";
+
+    public static final String NO_CURBSIDE_VEHICLES = "no_curbside_vehicles";
 }

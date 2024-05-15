@@ -259,6 +259,8 @@ public interface OrderContract {
 
         void setSelectedAddress(@NotNull Address address);
 
+        Address getSelectedAddress();
+
         void goToDirection(Store store);
     }
 

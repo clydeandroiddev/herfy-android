@@ -188,17 +188,31 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         checkEmptyState()
         orders?.let {
             if (orders.isNotEmpty()) {
+                var noCurrentOrder = false
                 val orderProgressId = processInProgress(orders)
                 var pastOrders = ArrayList<OrderHistory>()
                 if (orderProgressId != null) {
+                    CacheUtil.getInstance().setCurrentOrderId(orderProgressId)
                     pastOrders.addAll(orders.filter { it.id != orderProgressId })
                 } else {
                     binding.inProgressLayout.isVisible = false
+                    noCurrentOrder = true
                     pastOrders = orders
                 }
                 binding.pastOrdersLabel.isVisible = pastOrders.isNotEmpty()
                 historyList = pastOrders
                 historyListAdapter.updateList(pastOrders)
+                if (noCurrentOrder) {
+                    val currentOrderId = CacheUtil.getInstance().currentOrderID
+                    if (currentOrderId != null) {
+                        orderHistoryRate = pastOrders.find { pOrder -> pOrder.id == currentOrderId }
+                        ratePosition =
+                            historyList.indexOfFirst { pOrder -> pOrder.id == currentOrderId }
+                        activity?.let {
+                            ordersPresenter?.getOrderFeedbackTopics(currentOrderId)
+                        }
+                    }
+                }
             }
         }
     }
@@ -257,7 +271,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
 
                 dateToday.text = history.createdAt.formatOrderTime()
                 orderNumber.text = CacheUtil.getInstance()
-                    .getTranslations(Text.ORDER_NUM, "Order #") + " " + history.id
+                    .getTranslations(Text.ORDER_NUM, "Order #") + " " + getDisplayId(order)
                 status.text = history.description
                 trackButton.setOnClickListener {
                     findNavController().navigate(
@@ -269,6 +283,24 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         }
         return null
     }
+
+    private fun getDisplayId(order: OrderHistory): String {
+        var displayId = order.displayId
+        if (displayId == null || displayId.isEmpty() || displayId.equals(
+                "null", ignoreCase = true
+            )
+        ) {
+            displayId = order.code
+        }
+        if (displayId == null || displayId.isEmpty() || displayId.equals(
+                "null", ignoreCase = true
+            )
+        ) {
+            displayId = order.id
+        }
+        return displayId
+    }
+
 
     override fun setOrder(order: OrderHistory?) {
 
@@ -361,7 +393,6 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         ratings?.let {
             showRatingDialog(it)
         }
-
     }
 
     private fun checkRatings(ratings: List<Rating>): Boolean {
@@ -370,6 +401,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
 
     private fun showRatingDialog(ratings: MutableList<Rating>?) {
         dismissRatingBarDialog()
+        CacheUtil.getInstance().setCurrentOrderId(null)
         activity?.let {
             orderHistoryRate?.let { order ->
                 ratingBarDialog = RatingBarDialog.newInstance(order.createdAt,

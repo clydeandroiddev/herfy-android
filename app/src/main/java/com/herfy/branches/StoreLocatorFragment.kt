@@ -239,8 +239,9 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
             if (locationMarker != null) {
                 locationMarker?.remove()
             }
+            userLatLng = latLng
             val markerOptions = MarkerOptions()
-            markerOptions.position(latLng)
+            markerOptions.position(userLatLng!!)
             try {
                 val activity: Activity? = activity
                 if (activity != null) {
@@ -252,10 +253,9 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            userLatLng = latLng
             markerOptions.anchor(0.5f, 0.5f)
             locationMarker = map?.addMarker(markerOptions)
-            map?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
+            map?.animateCamera(CameraUpdateFactory.newLatLngZoom(userLatLng!!, 11f))
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -399,8 +399,8 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                                 if (storeLocation != null) {
                                     myPolyline = drawArcPolyline(
                                         map!!,
-                                        storeLocation,
                                         userLatLng!!,
+                                        storeLocation,
                                         binding.mapContainer.context
                                     )
                                 }

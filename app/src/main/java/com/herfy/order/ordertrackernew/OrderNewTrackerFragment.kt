@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -39,28 +40,32 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsStatusCodes
+import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
-import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.common.cancelTime
+import com.herfy.common.deviceHeight
 import com.herfy.common.drawArcPolyline
 import com.herfy.common.formatSecondsToMinutesAndSeconds
 import com.herfy.common.getCurrentTime
 import com.herfy.common.getDisplayId
+import com.herfy.common.orderTypeString
 import com.herfy.common.showTime
 import com.herfy.common.statusTime
 import com.herfy.ext.cast
 import com.herfy.history.OrdersContract
 import com.herfy.history.OrdersPresenter
+import com.herfy.history.historynew.RatingBarDialog
 import com.herfy.history.historynew.adapter.OrderMenuItemsAdapter
 import com.herfy.main.MainActivity
 import com.herfy.ordertracker.databinding.FragmentOrderNewTrackerBinding
@@ -91,15 +96,17 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
-import io.shipbook.shipbooksdk.Log
 import java.util.Calendar
 import java.util.Locale
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 @AndroidEntryPoint
 class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     CancelOrderDialogFragment.OnAction {
-
+    private var fromDelivered = false
     private var orderPresenter: OrdersContract.Presenter? = null
 
     private lateinit var binding: FragmentOrderNewTrackerBinding
@@ -110,7 +117,13 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     private var driverMarker: Marker? = null
 
+    private var driverCameraUpdate: CameraUpdate? = null
+
+    private var storeCameraUpdate: CameraUpdate? = null
+
     private var storeMarker: Marker? = null
+
+    private var zoomLevel = 0F
 
     private val args: OrderNewTrackerFragmentArgs by navArgs()
 
@@ -121,6 +134,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     private var orderAddress: Address? = null
 
     private var userLatLng: LatLng? = null
+
+    private var driverLastLocation: LatLng? = null
 
     private var countDownTimer: CountDownTimer? = null
 
@@ -137,6 +152,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     private var isOverHeadFrameShows = false
 
     private var myPolyline: Polyline? = null
+
+    private var fromRate = false
+
+    private lateinit var ratingBarDialog: RatingBarDialog
 
     private val gpsLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
@@ -419,8 +438,12 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             locationMarker = googleMap?.addMarker(markerOptions)
             googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
             userLatLng = latLng
-            orderStore?.let {
-                showStoreMarker(false)
+            if (driverMarker != null && driverLastLocation != null) {
+                updateDriverLocation(driverLastLocation)
+            } else {
+                orderStore?.let {
+                    showStoreMarker(true)
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -466,7 +489,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 val view = inflater.inflate(R.layout.order_store_marker, null)
                 val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
-                var distanceValue = ""
+                val distanceValue: String
                 try {
                     val currentLocation = userLatLng
                     val currentDistance = currentLocation?.latitude?.let {
@@ -501,17 +524,19 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
                     userLatLng?.let { userLatLng ->
                         deletePolyline()
-                        val storeLocation = store.attributes?.lat?.let {
-                            store.attributes?.lng?.let { it1 ->
-                                LatLng(
-                                    it, it1
+                        if (driverMarker == null) {
+                            val storeLocation = store.attributes?.lat?.let {
+                                store.attributes?.lng?.let { it1 ->
+                                    LatLng(
+                                        it, it1
+                                    )
+                                }
+                            }
+                            myPolyline = storeLocation?.let { storeLoc ->
+                                drawArcPolyline(
+                                    googleMap, userLatLng, storeLoc, binding.mapFrame.context
                                 )
                             }
-                        }
-                        myPolyline = storeLocation?.let { sLocation ->
-                            drawArcPolyline(
-                                googleMap, sLocation, userLatLng, binding.mapFrame.context
-                            )
                         }
                     }
                 } catch (e: Exception) {
@@ -552,8 +577,28 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         }
                     }
                     if (isMoveCamera) {
-                        latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
-                            ?.let { googleMap?.animateCamera(it) }
+                        if (storeCameraUpdate == null && userLatLng != null) {
+                            userLatLng?.latitude?.let { it1 ->
+                                userLatLng?.longitude?.let { it2 ->
+                                    LatLng(
+                                        it1, it2
+                                    )
+                                }
+                            }?.let { it2 ->
+                                if (latLng != null) {
+                                    calculateZoomLevel(
+                                        latLng, it2, false
+                                    )
+                                }
+                            }!!
+                        } else {
+                            if (storeCameraUpdate != null) {
+                                googleMap?.animateCamera(storeCameraUpdate!!)
+                            } else {
+                                latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
+                                    ?.let { googleMap?.animateCamera(it) }
+                            }
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -1133,6 +1178,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         }
                         binding.estimateLayout.isVisible = false
                         binding.cancelledText.isVisible = true
+                        fromDelivered = true
+                        processRating()
                     } else {
                         binding.estimateLayout.isVisible = true
                         binding.cancelledText.isVisible = false
@@ -1141,6 +1188,15 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             }
         }
 
+    }
+
+    private fun processRating() {
+        val orderId = CacheUtil.getInstance().currentOrderID
+        if (orderId != null) {
+            activity?.let {
+                orderPresenter?.getOrderFeedbackTopics(orderId)
+            }
+        }
     }
 
     private fun initTimer() {
@@ -1245,7 +1301,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     orderPaymentDetails.discountContainer.isVisible = false
                 }
 
-                if(item.loyaltyPointsRedeemed > 0){
+                if (item.loyaltyPointsRedeemed > 0) {
                     orderPaymentDetails.apply {
                         loyaltyContainer.visible()
                         tvRedeemPointsLabel.text = CacheUtil.getInstance()
@@ -1256,7 +1312,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 item.loyaltyPointsRedeemed.toDouble(), true, false, true
                             )
                     }
-                }else {
+                } else {
                     orderPaymentDetails.loyaltyContainer.gone()
                 }
 
@@ -1427,7 +1483,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         inflater.inflate(com.herfy.ordertracker.R.layout.order_driver_marker, null)
                     val textView =
                         view.findViewById<TextView>(com.herfy.ordertracker.R.id.kmDriverAway)
-                    var distanceValue = ""
+                    val distanceValue: String
                     try {
                         val currentLocation = userLatLng
                         val currentDistance = currentLocation?.latitude?.let {
@@ -1477,8 +1533,31 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         markerOptions.anchor(0.5f, 1f)
                         driverMarker = googleMap?.addMarker(markerOptions)
                         deletePolyline()
-                        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
+                        if (driverCameraUpdate == null && userLatLng != null) {
+                            userLatLng?.latitude?.let { it1 ->
+                                userLatLng?.longitude?.let { it2 ->
+                                    LatLng(
+                                        it1, it2
+                                    )
+                                }
+                            }?.let { it2 ->
+                                calculateZoomLevel(
+                                    latLng, it2, true
+                                )
+                            }!!
+                        } else {
+                            if (driverCameraUpdate != null) {
+                                googleMap?.animateCamera(driverCameraUpdate!!)
+                            } else {
+                                googleMap?.animateCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        latLng, 11F
+                                    )
+                                )
+                            }
+                        }
                     }
+                    driverLastLocation = latLng
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -1486,13 +1565,52 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         }
     }
 
+    private fun calculateBearing(
+        startLat: Double, startLng: Double, endLat: Double, endLng: Double
+    ): Float {
+        val dLng = endLng - startLng
+        val y = sin(dLng) * cos(endLat)
+        val x = cos(startLat) * sin(endLat) - sin(startLat) * cos(endLat) * cos(dLng)
+        var bearing = atan2(y, x).toFloat()
+        bearing = Math.toDegrees(bearing.toDouble()).toFloat()
+        return (bearing + 360) % 360
+    }
+
+    private fun calculateZoomLevel(start: LatLng, end: LatLng, isDriver: Boolean) {
+        val builder = LatLngBounds.Builder()
+        builder.include(start)
+        builder.include(end)
+        val bounds = builder.build()
+
+        val width = Resources.getSystem().displayMetrics.widthPixels
+        val height = Resources.getSystem().displayMetrics.heightPixels
+        val padding = (width * 0.16).toInt()
+
+        if (isDriver) {
+            driverCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
+            driverCameraUpdate?.let {
+                googleMap?.animateCamera(it)
+            }
+        } else {
+            storeCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
+            storeCameraUpdate?.let {
+                googleMap?.animateCamera(it)
+            }
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun updateDriver(appDriver: DeliveryDriver) {
-        Log.e("ADADADADADADAD", "ADADADADAD:" + Gson().toJson(appDriver))
         try {
             activity?.runOnUiThread {
                 activity?.cast<MainActivity> {
                     binding.statusDriverDetails.apply {
+                        updateDriverLocation(
+                            LatLng(
+                                (appDriver.bearing.lat ?: "0").toDouble(),
+                                (appDriver.bearing.lng ?: "0").toDouble()
+                            )
+                        )
                         withDriverLayout.isVisible = true
                         noDriverLayout.isVisible = false
                         val driver = appDriver.driver
@@ -1532,12 +1650,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 }
                             }).into(driverImage)
                         checkDriverMobile(driver.mobile)
-                        updateDriverLocation(
-                            LatLng(
-                                (appDriver.bearing.lat ?: "0").toDouble(),
-                                (appDriver.bearing.lng ?: "0").toDouble()
-                            )
-                        )
                     }
                 }
             }
@@ -1574,10 +1686,71 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     override fun showRatings(orderStatus: OrderStatus?, ratings: MutableList<Rating>?) {
+        dismissDialogs()
+        if (fromDelivered) {
+            fromDelivered = false
+            ratings?.let {
+                showRatingDialog(it)
+            }
+        }
+    }
 
+    private fun dismissRatingBarDialog() {
+        try {
+            ratingBarDialog.dismiss()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun checkRatings(ratings: List<Rating>): Boolean {
+        return ratings.any { it.attributes.rating != 0 }
+    }
+
+    private fun showRatingDialog(ratings: MutableList<Rating>?) {
+        dismissRatingBarDialog()
+        activity?.let {
+            orderDetails?.let { order ->
+                val orderId = CacheUtil.getInstance().currentOrderID
+                CacheUtil.getInstance().setCurrentOrderId(null)
+                ratingBarDialog = RatingBarDialog.newInstance(order.createdAt,
+                    OrderType.convertOrderTypeToString(OrderType.fromString(order.orderType))
+                        .orderTypeString(),
+                    order.locationName,
+                    deviceHeight(it),
+                    ratings!!.toList(),
+                    object : RatingBarDialog.OnRatingListener {
+                        override fun orderRatings(ratings: List<Rating>, feedbackOther: String) {
+                            if (checkRatings(ratings)) {
+                                fromRate = true
+                                activity?.cast<BaseActivity> {
+                                    it.showLoadingDialog()
+                                }
+                                orderPresenter?.sendOrderFeedback(
+                                    ratings,
+                                    orderId,
+                                    feedbackOther
+                                )
+                            }
+                        }
+
+                        override fun exit() {
+                            dismissRatingBarDialog()
+                        }
+
+                    })
+                ratingBarDialog.show(
+                    it.supportFragmentManager, RatingBarDialog::class.java.simpleName
+                )
+            }
+        }
     }
 
     override fun showMessage(message: String?) {
+        if (fromRate) {
+            fromRate = false
+            dismissRatingBarDialog()
+        }
         activity?.cast<BaseActivity> {
             it.showToast(message.orEmpty())
         }

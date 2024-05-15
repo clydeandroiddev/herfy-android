@@ -542,7 +542,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         binding.deliveryButton.text =
             CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
         binding.pickupButton.text = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
-        binding.dineInButton.text = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
+        binding.dineInButton.text =
+            CacheUtil.getInstance().getTranslations(Text.DINE_IN_LABEL, "Dine-in")
         binding.deliveryLayout.useCurrentLocationLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.USE_CURRENT_LOCATION, "Use current location")
         binding.deliveryLayout.savedAddressesLabel.text =
@@ -1127,11 +1128,11 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                                         )
                                     }
                                 }
-                                myPolyline = storeLocation?.let { sLocation ->
+                                myPolyline = storeLocation?.let { storeLoc ->
                                     drawArcPolyline(
                                         googleMap,
-                                        sLocation,
                                         userLatLng,
+                                        storeLoc,
                                         binding.mapContainer.context
                                     )
                                 }
