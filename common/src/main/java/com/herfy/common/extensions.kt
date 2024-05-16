@@ -408,7 +408,11 @@ fun drawArcPolyline(
 
     var startLocation = sLocation
     var endLocation = eLocation
-    val isAboveAndLeft = isAboveAndLeft(sLocation, eLocation)
+    val isAboveAndLeft = isAboveOrBelowAndLeft(sLocation, eLocation, true) || isAboveOrBelowAndLeft(
+        sLocation,
+        eLocation,
+        false
+    )
     if (isAboveAndLeft) {
         startLocation = eLocation
         endLocation = sLocation
@@ -451,6 +455,14 @@ fun drawArcPolyline(
 }
 
 // If true make user location as endlocation in polyline
-private fun isAboveAndLeft(userLocation: LatLng, storeLocation: LatLng): Boolean {
-    return userLocation.latitude > storeLocation.latitude && userLocation.longitude < storeLocation.longitude
+private fun isAboveOrBelowAndLeft(
+    userLocation: LatLng,
+    storeLocation: LatLng,
+    checkAbove: Boolean
+): Boolean {
+    return if (checkAbove) {
+        userLocation.latitude > storeLocation.latitude && userLocation.longitude < storeLocation.longitude
+    } else {
+        userLocation.latitude < storeLocation.latitude && userLocation.longitude < storeLocation.longitude
+    }
 }
