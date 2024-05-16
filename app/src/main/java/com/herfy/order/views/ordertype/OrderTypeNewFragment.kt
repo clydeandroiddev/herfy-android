@@ -933,7 +933,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     }
                     markerOptions.anchor(0.5f, 1f)
                     val marker = googleMap?.addMarker(markerOptions)
-                    marker?.isVisible = CacheUtil.getInstance().orderType !== OrderType.DELIVERY
                     marker?.title = i.toString()
                     storeMarkers.add(marker)
                 }
