@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -428,9 +429,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             builder.include(addressLocation)
                             builder.include(storeLocation)
                             val bounds = builder.build()
+                            val width = Resources.getSystem().displayMetrics.widthPixels
+                            val padding = (width * 0.21).toInt()
                             val cu = CameraUpdateFactory.newLatLngBounds(
                                 bounds,
-                                50
+                                padding
                             )
                             mMap?.animateCamera(cu, object : CancelableCallback {
                                 override fun onCancel() {}
@@ -511,9 +514,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             builder.include(currentLocation)
                             builder.include(storeLocation)
                             val bounds = builder.build()
+                            val width = Resources.getSystem().displayMetrics.widthPixels
+                            val padding = (width * 0.21).toInt()
                             val cu = CameraUpdateFactory.newLatLngBounds(
                                 bounds,
-                                50
+                                padding
                             )
                             mMap?.animateCamera(cu, object : CancelableCallback {
                                 override fun onCancel() {}

@@ -8,6 +8,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.location.Geocoder
@@ -445,12 +446,12 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     CameraUpdateFactory.newLatLngZoom(
                         LatLng(
                             Values.DEFAULT_LATITUDE, Values.DEFAULT_LONGITUDE
-                        ), 15f
+                        ), 11f
                     )
                 )
                 initializeLocation()
                 activity?.cast<BaseActivity> {
-                    googleMap?.setPadding(0, 0, 0, ViewUtil.dpToPx(it, 255))
+                    googleMap?.setPadding(0, 0, 0, ViewUtil.dpToPx(it, 340))
                 }
             }
             googleMap?.setOnMarkerClickListener { marker ->
@@ -932,7 +933,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                     }
                     markerOptions.anchor(0.5f, 1f)
                     val marker = googleMap?.addMarker(markerOptions)
-                    marker?.isVisible = CacheUtil.getInstance().orderType !== OrderType.DELIVERY
                     marker?.title = i.toString()
                     storeMarkers.add(marker)
                 }
@@ -1113,11 +1113,27 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                             )
                             storeMarker.setAnchor(0.5f, 1f)
                             storeMarker.title = i.toString()
-                            googleMap?.animateCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    storeMarker.position, 11f
+
+                            if (userLatLng != null) {
+                                val builder = LatLngBounds.Builder()
+                                builder.include(userLatLng!!)
+                                builder.include(storeMarker.position)
+                                val bounds = builder.build()
+                                val width = Resources.getSystem().displayMetrics.widthPixels
+                                val padding = (width * 0.22).toInt()
+                                val cu = CameraUpdateFactory.newLatLngBounds(
+                                    bounds, padding
                                 )
-                            )
+                                googleMap!!.animateCamera(
+                                    cu
+                                )
+                            } else {
+                                googleMap!!.animateCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        storeMarker.position, 11f
+                                    )
+                                )
+                            }
 
                             userLatLng?.let { userLatLng ->
                                 deletePolyline()
@@ -1624,8 +1640,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
-            currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN) {

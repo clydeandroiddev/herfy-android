@@ -10,6 +10,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Rating
 
 class RatingBarAdapter(
     val items: List<Rating> = arrayListOf(),
+    val listener: RatingListener
 ) : RecyclerView.Adapter<RatingBarAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: ItemRatingStarOrderBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -35,12 +36,18 @@ class RatingBarAdapter(
         holder.binding.apply {
             executePendingBindings()
             ratingName.text = item.attributes.name
+            ratingStar.rating = item.attributes.rating.toFloat()
             separator.isVisible = (position < (items.size - 1))
             ratingStar.setOnRatingChangeListener { _, rating, _ ->
                 run {
                     items[position].attributes.rating = rating.toInt()
+                    listener.onFirstRate()
                 }
             }
         }
+    }
+
+    interface RatingListener {
+        fun onFirstRate()
     }
 }

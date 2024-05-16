@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -23,7 +24,7 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 
-class RatingBarDialog : BottomSheetDialogFragment() {
+class RatingBarDialog : BottomSheetDialogFragment(), RatingBarAdapter.RatingListener {
 
     private var onSubmit: OnRatingListener? = null
 
@@ -34,6 +35,8 @@ class RatingBarDialog : BottomSheetDialogFragment() {
     private var time: String = ""
 
     private var orderType: String = ""
+
+    private var alreadyShownAll = false
 
     private var ratings: List<Rating> = listOf()
 
@@ -93,11 +96,24 @@ class RatingBarDialog : BottomSheetDialogFragment() {
         }
     }
 
+    private fun hideOrShowTheRest(isShow: Boolean) {
+        binding.apply {
+            ratingName.isVisible = isShow
+            otherFeedbackEdit.isVisible = isShow
+            viewSeparator.isVisible = isShow
+            submitLayout.isVisible = isShow
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     private fun setupViews() {
         binding.apply {
-            ratingBarAdapter = RatingBarAdapter(ratings)
-            ratingsList.adapter = ratingBarAdapter
+            if (ratings.isNotEmpty()) {
+                val list = ratings.subList(0, 1)
+                ratingBarAdapter = RatingBarAdapter(list, this@RatingBarDialog)
+                ratingsList.adapter = ratingBarAdapter
+                hideOrShowTheRest(false)
+            }
             otherFeedbackEdit.hint = CacheUtil.getInstance().getTranslations(
                 Text.OTHER_FEEDBACK_PLACEHOLDER, "e.g: Loved the food and service!"
             )
@@ -143,6 +159,21 @@ class RatingBarDialog : BottomSheetDialogFragment() {
             ratingBarDialogDialogFragment.orderType = orderType
             ratingBarDialogDialogFragment.locationName = locationName
             return ratingBarDialogDialogFragment
+        }
+    }
+
+    override fun onFirstRate() {
+        if (!alreadyShownAll) {
+            alreadyShownAll = true
+            hideOrShowTheRest(true)
+            val ratingsTrue = mutableListOf<Rating>()
+            ratingsTrue.addAll(ratingBarAdapter.getRatings())
+            if (ratings.size > 1) {
+                val ratingsToAdd = ratings.subList(1, ratings.size)
+                ratingsTrue.addAll(ratingsToAdd)
+            }
+            ratingBarAdapter = RatingBarAdapter(ratingsTrue, this@RatingBarDialog)
+            binding.ratingsList.adapter = ratingBarAdapter
         }
     }
 }

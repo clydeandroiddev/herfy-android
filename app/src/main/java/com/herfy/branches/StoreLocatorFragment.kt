@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -30,6 +31,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polygon
@@ -156,7 +158,7 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                 map!!.uiSettings.isCompassEnabled = false
                 map!!.uiSettings.isZoomControlsEnabled = false
                 map!!.uiSettings.isMapToolbarEnabled = false
-                map!!.setPadding(0, 0, 0, com.herfy.util.ViewUtil.dpToPx(requireContext(), 255))
+                map!!.setPadding(0, 0, 0, com.herfy.util.ViewUtil.dpToPx(requireContext(), 340))
                 map!!.setOnMarkerClickListener { marker ->
                     selectBranch(true, marker.title!!.toInt())
                     true
@@ -378,11 +380,26 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                             branchMarker.setAnchor(0.5f, 1f)
                             branchMarker.title = i.toString()
                             if (!dontAnimate) {
-                                map!!.animateCamera(
-                                    CameraUpdateFactory.newLatLngZoom(
-                                        branchMarker.position, 11f
+                                if (userLatLng != null) {
+                                    val builder = LatLngBounds.Builder()
+                                    builder.include(userLatLng!!)
+                                    builder.include(branchMarker.position)
+                                    val bounds = builder.build()
+                                    val width = Resources.getSystem().displayMetrics.widthPixels
+                                    val padding = (width * 0.22).toInt()
+                                    val cu = CameraUpdateFactory.newLatLngBounds(
+                                        bounds, padding
                                     )
-                                )
+                                    map!!.animateCamera(
+                                        cu
+                                    )
+                                } else {
+                                    map!!.animateCamera(
+                                        CameraUpdateFactory.newLatLngZoom(
+                                            branchMarker.position, 11f
+                                        )
+                                    )
+                                }
                             }
                             dontAnimate = false
 

@@ -206,10 +206,16 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                     val currentOrderId = CacheUtil.getInstance().currentOrderID
                     if (currentOrderId != null) {
                         orderHistoryRate = pastOrders.find { pOrder -> pOrder.id == currentOrderId }
-                        ratePosition =
-                            historyList.indexOfFirst { pOrder -> pOrder.id == currentOrderId }
-                        activity?.let {
-                            ordersPresenter?.getOrderFeedbackTopics(currentOrderId)
+                        orderHistoryRate?.let {
+                            if (it.sequence == OrderStatusType.FINISHED.value) {
+                                ratePosition =
+                                    historyList.indexOfFirst { pOrder -> pOrder.id == currentOrderId }
+                                activity?.let {
+                                    ordersPresenter?.getOrderFeedbackTopics(currentOrderId)
+                                }
+                            } else {
+                                CacheUtil.getInstance().setCurrentOrderId(null)
+                            }
                         }
                     }
                 }
