@@ -63,7 +63,7 @@ class ComboViewModel @Inject constructor(
 
 
     init {
-        getCartMenuItemsTotalPrice()
+        //getCartMenuItemsTotalPrice()
     }
 
 
@@ -227,7 +227,16 @@ class ComboViewModel @Inject constructor(
                     menuItem = it
                     _showMenuItemDetails.value = it
                     isFromCartEdit = true
-                    setMenuCategory(it)
+                    val applicationId = cacheUtilHelper.getApplication()?.id ?: ""
+                    if (menuCategory == null) {
+                        invokeAtBackground {
+                            menuRepository.getMenuCategoryIdFromMenuItemEntityBy(it.id, applicationId) {
+                                val menuCategory = MenuCategory()
+                                menuCategory.id = it
+                                this.menuCategory = menuCategory
+                            }
+                        }
+                    }
                     if (it.sizes.modifierItems.size > 0) {
                         var counter = 0
                         for (size in it.sizes.modifierItems) {
@@ -238,6 +247,8 @@ class ComboViewModel @Inject constructor(
                             counter++
                         }
                     }
+
+
                     previousComboIndex = comboIndex
                     _showMenuItemDetails.value = it
                     _showMenuItemQuantity.value = it.attributes.quantity
@@ -575,10 +586,6 @@ class ComboViewModel @Inject constructor(
     private fun getComboMenuItemComponents() {
         menuItem?.let {
             if (it.combo.size > 0) {
-                val comboItems = it.combo[comboIndex]?.components?.deepCopy(MenuItemComponents::class.java)
-                comboItems?.let {
-                    _showComboMenuItemComponents.value = it
-                }
                 if (isFromCartEdit) {
                     it.combo.forEachIndexed { comboIndex, menuItemCombo ->
                         val menuItemComponentList = hashMapOf<Int, MenuItemComponents>()
@@ -588,6 +595,11 @@ class ComboViewModel @Inject constructor(
                         menuItemComboList[comboIndex] = menuItemComponentList
                     }
                 }
+                val comboItems = it.combo[comboIndex]?.components?.deepCopy(MenuItemComponents::class.java)
+                comboItems?.let {
+                    _showComboMenuItemComponents.value = it
+                }
+
             } else {
                 _showComboMenuItemComponents.value = ArrayList()
             }

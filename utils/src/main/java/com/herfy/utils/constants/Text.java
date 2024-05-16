@@ -949,7 +949,7 @@ public class Text {
     public static final String COUPON_DISCOUNT_LABEL = "coupon_discount_label";
     public static final String CHECKOUT_LABEL = "checkout_label";
 
-    public static final String ADD_MORE_ITEM = "add_more_item";
+    public static final String ADD_MORE_ITEM = "add_more_items";
     public static final String YOUR_CART_IS_EMPTY_LABEL = "your_cart_is_empty";
 
     public static final String CHOOSE_YOUR_LANG = "choose_your_lang";

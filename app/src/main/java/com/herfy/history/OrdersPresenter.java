@@ -1119,14 +1119,13 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     @Override
     public void reorder() {
 
-        CacheUtil.getInstance().setOrderStore(store);
+        //CacheUtil.getInstance().setOrderStore(store);
         if (order.getDeliveryOption().equalsIgnoreCase("to-go") || order.getDeliveryOption().equalsIgnoreCase("pickup") || order.getDeliveryOption().equalsIgnoreCase("امسك")) {
             CacheUtil.getInstance().setOrderType(OrderType.PICKUP);
         } else if (order.getDeliveryOption().equalsIgnoreCase("dine-in") || order.getDeliveryOption().equalsIgnoreCase("eat-in") || order.getDeliveryOption().equalsIgnoreCase("أكلت داخل")) {
             CacheUtil.getInstance().setOrderType(OrderType.DINE_IN);
         } else if (order.getDeliveryOption().equalsIgnoreCase("deliver") || order.getDeliveryOption().equalsIgnoreCase("ايصال")) {
             CacheUtil.getInstance().setOrderType(OrderType.DELIVERY);
-            CacheUtil.getInstance().setOrderAddress(address);
         } else if (order.getDeliveryOption().equalsIgnoreCase("drive-thru")) {
             CacheUtil.getInstance().setOrderType(OrderType.DRIVE_THRU);
         }
