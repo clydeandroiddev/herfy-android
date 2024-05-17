@@ -206,7 +206,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         });
 
         delete.setOnClickListener(view -> {
-            cartPresenter.deleteCartItem(true, getAdapterPosition());
+            cartPresenter.deleteCartItem(false, getAdapterPosition());
         });
 
         minus.setOnClickListener(new View.OnClickListener() {

@@ -200,20 +200,21 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         headerText = CacheUtil.getInstance()
                             .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
                         binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_drivethru)
+                    } else {
+                        headerText = CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE)
+
+                        binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_pickup_home)
                     }
                     binding.orderTypeContainer.orderTypeText.text = headerText
                     if (CacheUtil.getInstance().orderStore != null) {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().orderStore.attributes.name
-                    } else {
-                        binding.orderTypeContainer.orderTypeText.text =
-                            CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE)
+                    }else {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().getTranslations(
                                 Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
                                 "Please tap here to pick an order type"
                             )
-                        binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_walkin)
                     }
                 }
 
@@ -225,8 +226,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().orderStore.attributes.name
                     } else {
-                        binding.orderTypeContainer.orderTypeText.text =
-                            CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE)
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().getTranslations(
                                 Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
@@ -248,15 +247,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().orderDeliveryAddress
                     } else {
-                        binding.orderTypeContainer.orderTypeText.text =
-                            CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE)
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().getTranslations(
                                 Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
                                 "Please tap here to pick an order type"
                             )
                     }
-                    binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_delivery)
+                    binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_delivery_v2)
                 }
 
                 OrderType.CURBSIDE -> {
@@ -270,8 +267,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             CacheUtil.getInstance().orderStore.attributes.name
                         setupCurbside()
                     } else {
-                        binding.orderTypeContainer.orderTypeText.text =
-                            CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE)
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().getTranslations(
                                 Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
@@ -730,7 +725,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         binding.paymentSummaryContainer.viewCoupon.text =
             CacheUtil.getInstance().getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
         binding.orderDetailsContainer.addMore.text =
-            CacheUtil.getInstance().getTranslations(Text.ADD_MORE_ITEM, "Add more item")
+            CacheUtil.getInstance().getTranslations(Text.ADD_MORE_ITEM, "Add more items")
         binding.orderDetailsContainer.emptyCart.setTitle(
             CacheUtil.getInstance()
                 .getTranslations(Text.YOUR_CART_IS_EMPTY_LABEL, "Your cart is empty")
@@ -826,6 +821,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         dontShowDigitalCoupons = false
         cartPresenter!!.getTotalPrice(false, false)
         binding.placeOrder.isEnabled = menuItems.size > 0
+
         setCartQuantity(menuItems)
 
 
@@ -871,6 +867,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         .replace("(x)", itemCount.toString())
                 emptyCart.gone()
                 rvCartItems.visible()
+                binding.paymentSummaryContainer.viewCoupon.isEnabled = true
                 rvCartItems.OnLayoutLoadingCompleted {
                     Handler(Looper.getMainLooper()).postDelayed({
                         clOrderDetails.visibility = View.VISIBLE
@@ -883,6 +880,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         .replace("(x)", "0")
                 emptyCart.visible()
                 rvCartItems.gone()
+                binding.paymentSummaryContainer.viewCoupon.isEnabled = false
                 layoutItemCoupons.contentMain.gone()
                 placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
             }
@@ -949,8 +947,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             } else {
                 binding.paymentSummaryContainer.discountLayout.visibility = View.GONE
             }
-
-            if (isDelivery) {
+            val orderAddress = CacheUtil.getInstance().orderAddress
+            if (isDelivery && orderAddress != null) {
                 if (deliveryChargeValue != 0.0) {
                     binding.paymentSummaryContainer.deliveryCharge.setText(
                         StringUtil.getFormattedPrice(
@@ -1047,7 +1045,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                 "Add (x) to reach minimum order value of (y)."
                             ).replace("(x)", toMeetMinimumStr).replace("(y)", minimumCartStr)
                         }
-                    }else{
+                    } else {
                         lnMinimumCartAmount.gone()
                         ivFooter.visible()
                     }
@@ -1108,7 +1106,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             if (menuItem.isCombo) {
                 val bundle = Bundle()
                 bundle.putBoolean(Values.KEY_IS_PROMO, false)
-                bundle.putString(Values.KEY_MENU_ITEM_ID, menuItem.id)
+                bundle.putString(Values.KEY_MENU_ITEM_ID, "")
                 bundle.putBoolean(Values.KEY_IS_UPSELL, menuItem.attributes.isUpsell)
                 bundle.putBoolean(Values.KEY_IS_EDIT, true)
                 bundle.putInt(Values.KEY_CART_MENU_ITEM_POSITION, position)
