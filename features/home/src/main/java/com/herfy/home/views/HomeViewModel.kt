@@ -396,7 +396,9 @@ class HomeViewModel @Inject constructor(
                 var startPoints = 0
                 if (nextTier != null) {
                     startPoints = nextTier.startPoint
-                    isMaxTier = nextTier.name == loyalty.attributes.loyaltyTier.name
+                    if(loyalty.attributes.loyaltyTier != null){
+                        isMaxTier = nextTier.name == loyalty.attributes.loyaltyTier.name
+                    }
                     if(isMaxTier){
                         pointsToNextTier = 0
                     }
