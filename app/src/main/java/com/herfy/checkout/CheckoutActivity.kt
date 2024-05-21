@@ -190,6 +190,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private val projection: Projection? = null
 
     private var bottomSheetAlrhaji: BottomSheetAlrhaji? = null
+    private var finalTotal = 0.0
+    private var finalDiscount = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -737,36 +739,45 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
 
         val loyalty = AuthUtil.getInstance().customerLoyalty
+
         lifecycleScope.launchWithTimber {
             binding!!.layoutLoyalty
                 .etPoints.debounceAfterTextChanges()
                 .map { it.toString() }
                 .collectLatest { pointsText ->
-                    if (pointsText.length > 0) {
-                        val userSetPoints = StringUtil.toEnglish(pointsText).toDouble()
-                        val currentBalance =
-                            AuthUtil.getInstance().customerLoyalty.attributes.currentBalanceAmount
+                    if (pointsText.isNotEmpty()) {
+                        var userSetPoints = StringUtil.toEnglish(pointsText).toDouble()
+                        val currentPoints = AuthUtil.getInstance().customerLoyalty.attributes.currentBalance
                         val pointConversion =
                             AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble()
+                        if (userSetPoints >= currentPoints) {
+                            if(loyaltypointsInput == userSetPoints.toInt()){
+                                return@collectLatest
+                            }
+                            userSetPoints =
+                                if (loyalty!!.attributes.currentBalanceAmount > paymentPresenter!!.menuItemsTotalPrice) paymentPresenter!!.menuItemsTotalPrice * AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble() else loyalty!!.attributes.currentBalance
+                                    .toDouble()
+                            binding?.layoutLoyalty?.etPoints?.setText(
+                                StringUtil.localize(
+                                    userSetPoints.toInt().toString()
+                                )
+                            )
+                        } else {
+                            binding!!.layoutLoyalty.etPoints.setText(StringUtil.localize(binding!!.layoutLoyalty.etPoints.text.toString()))
+
+                        }
                         val sarAmount = Math.min(
                             userSetPoints / pointConversion, paymentPresenter!!.menuItemsTotalPrice
                         )
                         val formattedSarAmount = String.format("%.2f", sarAmount)
-                        val points =
-                            if (loyalty.attributes.currentBalanceAmount > paymentPresenter!!.menuItemsTotalPrice) paymentPresenter!!.menuItemsTotalPrice * pointConversion else loyalty.attributes.currentBalance
-                                .toDouble()
-
                         if (sarAmount > 0) {
-                            binding?.layoutLoyalty?.etSarAmount?.setText(formattedSarAmount)
-                        }
-                        if (userSetPoints >= currentBalance) {
-                        } else {
-                            binding!!.layoutLoyalty.etPoints.setText(StringUtil.localize(binding!!.layoutLoyalty.etPoints.text.toString()))
+                            binding?.layoutLoyalty?.etSarAmount?.text = formattedSarAmount
                         }
 
                         binding!!.layoutLoyalty.etPoints.setSelection(binding!!.layoutLoyalty.etPoints.text.toString().length)
                         loyaltypointsInput =
                             binding!!.layoutLoyalty.etPoints.text.toString().toInt()
+
                         paymentPresenter!!.validateOrder(
                             false,
                             CacheUtil.getInstance().orderStore,
@@ -774,6 +785,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             loyaltypointsInput,
                             false
                         )
+
                     } else {
                         binding!!.layoutLoyalty.etSarAmount.setText("")
                         binding!!.layoutLoyalty.etPoints.setSelection(0)
@@ -1363,10 +1375,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 //        }
 
 
-        /*   double mukafaaAmount = paymentPresenter.getMukafaaTransactionAmount();
-        discount = discount - mukafaaAmount;*/
+        val mukafaaAmount = paymentPresenter!!.getMukafaaTransactionAmount();
+        val _discount = discount - mukafaaAmount;
         binding!!.layoutPaymentSummary.tvDiscount.text =
-            updateCurrency(discount, true, hasPromotion, discount > 0)
+            updateCurrency(discount, true, hasPromotion, _discount > 0)
         binding!!.layoutPaymentSummary.grpDiscount.visibility =
             if (discount != 0.0) View.VISIBLE else View.GONE
 
@@ -1421,6 +1433,13 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             true,
             false
         )
+        finalDiscount = discount
+
+        if (mukafaaAmount > 0) {
+            finalTotal = subtotalPrice - mukafaaAmount
+        } else {
+            finalTotal = subtotalPrice
+        }
         binding!!.tvDiscountedPrice.text = formattedDiscountedPrice
         binding!!.layoutPaymentSummary.tvTotal.text = formattedTotal
         totalValue = totalPrice
@@ -1707,6 +1726,13 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         .getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_cod)
             }
+        }
+    }
+
+    override fun insufficientLoyaltyPoints() {
+        binding?.layoutPaymentSummary?.apply {
+            loyaltypointsInput = 0
+            grpRedeemedPoints.gone()
         }
     }
 

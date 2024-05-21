@@ -651,7 +651,7 @@ public class Text {
     public static final String TOTAL_POINTS_MAX_OUT = "total_points_max_out";
     public static final String EARNABLE_POINTS = "earn_points_for_complete_order";
     public static final String CURRENCY_EQUIVALENCE = "points_equivalence";
-    public static final String POINTS = "loyalty_points";
+    public static final String POINTS = "points";
     public static final String REDEEMED = "redeemed";
     public static final String OPEN = "open";
     public static final String LOYALTY_USE_POINTS_INPUT = "loyalty_use_points_input_hint";

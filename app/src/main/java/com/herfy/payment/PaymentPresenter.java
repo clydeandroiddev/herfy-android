@@ -76,10 +76,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -1230,16 +1233,17 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         pointsSarValue = loyaltyPoints / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
                     }
                     double discountValue = orderData.getDiscountDisplay() > 0.0?  orderData.getDiscountDisplay() : orderData.getDiscount();
-                    paymentView.setPriceDetails(getValidatedSubtotal(),
-                            discountValue,
-                            getValidatedTotal(),
-                            validatedDeliveryCharge,
-                            pointsSarValue, pointsEarnable, loyaltyPointsUsed, orderData.getCharges());
 
                     boolean hasPromoItem = CacheUtil.getInstance().getCouponMenuItem() != null ||
                             CacheUtil.getInstance().getCampaignPromotionMenuItem() != null;
 
                     if (jsonObject.has("error") && !jsonObject.isNull("error")) {
+                        ErrorHandler.getErrorCode(jsonObject, s -> {
+                            if(s.equals("1213")){
+                                loyaltyPointsUsed = 0;
+                            }
+                            return null;
+                        });
                         paymentView.showError(jsonObject.getString("error"));
                     } else if (checkout) {
                         if (!hasPromoItem) {
@@ -1255,6 +1259,12 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         }
 
                     }
+                    paymentView.setPriceDetails(getValidatedSubtotal(),
+                            discountValue,
+                            getValidatedTotal(),
+                            validatedDeliveryCharge,
+                            pointsSarValue, pointsEarnable, loyaltyPointsUsed, orderData.getCharges());
+
                     if (!hasPromoItem) {
                         validatedBody = (JsonObject) new JsonParser().parse(o.toString());
                     }
@@ -1271,6 +1281,19 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                     try {
                         JSONObject object = (JSONObject) o;
                         if (object.has("error") && !object.isNull("error")) {
+                            ErrorHandler.getErrorCode(object, s -> {
+                                if(s.equals("1213")){
+                                    loyaltyPointsUsed = 0;
+                                    paymentView.insufficientLoyaltyPoints();
+                                    double currentValidatedTotal = getValidatedSubtotal() - validatedDiscount;
+                                    paymentView.setPriceDetails(getValidatedSubtotal(),
+                                            validatedDiscount,
+                                            currentValidatedTotal,
+                                            validatedDeliveryCharge,
+                                            0, 0, loyaltyPointsUsed, new ArrayList<>());
+                                }
+                                return null;
+                            });
                             paymentView.showError(ErrorHandler.getErrorMessage(object, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
                         } else if (object.has("messages") && !object.isNull("messages")) {
                             Object messages = object.get("messages");

@@ -619,6 +619,11 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
     }
 
     @Override
+    public void insufficientLoyaltyPoints() {
+
+    }
+
+    @Override
     public void setPresenter(PaymentContract.Presenter presenter) {
         paymentPresenter = presenter;
     }
