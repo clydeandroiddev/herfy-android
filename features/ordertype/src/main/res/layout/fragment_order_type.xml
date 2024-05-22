@@ -25,7 +25,7 @@
                     android:layout_height="56dp"
                     android:background="@color/order_type_bg_color"
                     android:paddingStart="12dp"
-                    android:paddingEnd="20dp"
+                    android:paddingEnd="12dp"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.appcompat.widget.AppCompatImageButton
@@ -57,78 +57,87 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="Select Pickup" />
 
-                    <RadioGroup
-                        android:id="@+id/typeGroup"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:background="@drawable/background_bg_order_types"
-                        android:orientation="horizontal"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="34dp"
+                        android:layout_marginEnd="24dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:checkedButton="@id/deliveryButton">
+                        app:layout_constraintTop_toTopOf="parent">
 
-                        <androidx.appcompat.widget.AppCompatRadioButton
-                            android:id="@+id/deliveryButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_types"
-                            android:button="@null"
-                            android:drawableStart="@drawable/ic_delivery_small"
-                            android:drawablePadding="6dp"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            android:maxLines="1"
-                            android:paddingHorizontal="@dimen/order_type_padding"
-                            android:textColor="@drawable/bg_types_text"
-                            android:textSize="12sp"
-                            android:visibility="gone"
-                            tools:text="Delivery"
-                            tools:visibility="visible" />
+                        <RadioGroup
+                            android:id="@+id/typeGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="@drawable/background_bg_order_types"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:checkedButton="@id/deliveryButton">
 
-                        <androidx.appcompat.widget.AppCompatRadioButton
-                            android:id="@+id/pickupButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_types"
-                            android:button="@null"
-                            android:drawableStart="@drawable/ic_pickup_small"
-                            android:drawablePadding="6dp"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            android:maxLines="1"
-                            android:paddingHorizontal="@dimen/order_type_padding"
-                            android:textColor="@drawable/bg_types_text"
-                            android:textSize="12sp"
-                            android:visibility="gone"
-                            tools:text="Pickup"
-                            tools:visibility="visible" />
+                            <com.ordertype.ImageRadioButton
+                                android:id="@+id/deliveryButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_types"
+                                android:button="@null"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:paddingHorizontal="4dp"
+                                android:textAlignment="center"
+                                android:textColor="@drawable/bg_types_text"
+                                android:textSize="12sp"
+                                android:visibility="gone"
+                                app:radioTextImage="@drawable/ic_delivery_small"
+                                tools:text="Delivery"
+                                tools:visibility="visible" />
 
-                        <androidx.appcompat.widget.AppCompatRadioButton
-                            android:id="@+id/dineInButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_types"
-                            android:button="@null"
-                            android:drawableStart="@drawable/ic_dine_in_small"
-                            android:drawablePadding="6dp"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            android:maxLines="1"
-                            android:paddingHorizontal="@dimen/order_type_padding"
-                            android:textAlignment="center"
-                            android:textColor="@drawable/bg_types_text"
-                            android:textSize="12sp"
-                            android:visibility="gone"
-                            tools:text="Dine-in"
-                            tools:visibility="gone" />
+                            <com.ordertype.ImageRadioButton
+                                android:id="@+id/pickupButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_types"
+                                android:button="@null"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:paddingHorizontal="4dp"
+                                android:textColor="@drawable/bg_types_text"
+                                android:textSize="12sp"
+                                android:visibility="gone"
+                                app:radioTextImage="@drawable/ic_pickup_small"
+                                tools:text="Pickup"
+                                tools:visibility="visible" />
 
+                            <com.ordertype.ImageRadioButton
+                                android:id="@+id/dineInButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_types"
+                                android:button="@null"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:paddingHorizontal="4dp"
+                                android:textColor="@drawable/bg_types_text"
+                                android:textSize="12sp"
+                                android:visibility="gone"
+                                app:radioTextImage="@drawable/ic_dine_in_small_new"
+                                tools:text="Dine-in"
+                                tools:visibility="visible" />
 
-                    </RadioGroup>
+                        </RadioGroup>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
