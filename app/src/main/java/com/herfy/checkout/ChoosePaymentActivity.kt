@@ -249,6 +249,10 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
     override fun showSelectedPayment() {
     }
 
+    override fun insufficientLoyaltyPoints() {
+        TODO("Not yet implemented")
+    }
+
     override fun setStartName(startName: String?) {
 
     }

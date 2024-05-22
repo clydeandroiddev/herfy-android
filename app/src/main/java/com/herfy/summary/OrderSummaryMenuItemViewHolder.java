@@ -433,6 +433,11 @@ public class OrderSummaryMenuItemViewHolder extends RecyclerView.ViewHolder impl
 
     }
 
+    @Override
+    public void insufficientLoyaltyPoints() {
+
+    }
+
     public String translated(String language, Translated name) {
         if (language.equalsIgnoreCase("en-us")) {
             return name.getEnglish();

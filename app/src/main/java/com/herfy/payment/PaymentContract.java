@@ -102,6 +102,8 @@ public interface PaymentContract {
         void showOrderType(Boolean checkout);
 
         void showSelectedPayment();
+
+        void insufficientLoyaltyPoints();
     }
 
     interface Presenter extends BasePresenter {

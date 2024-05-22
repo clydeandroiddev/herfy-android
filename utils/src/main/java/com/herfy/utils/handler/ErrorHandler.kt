@@ -48,4 +48,35 @@ object ErrorHandler {
         return errorMsg
     }
 
+    @JvmStatic
+    fun getErrorCode(o: Any, code : (String) -> Unit){
+        var codeValue = ""
+        try {
+            if(o !is JSONObject){
+                return code(codeValue)
+            }
+
+            val error = o["error"]
+            if (error is JSONObject) {
+                val key = if(error.has("code")) error.getString("code") else ""
+
+                if(key.isNotEmpty()){
+                    codeValue = CacheUtil.getInstance().getTranslations(key)
+                }
+
+            } else if (error is JSONArray) {
+                val errorObject = error.getJSONObject(0)
+                val key = if(errorObject.has("code")) errorObject.getString("code") else ""
+                if(key.isNotEmpty()){
+                    codeValue = CacheUtil.getInstance().getTranslations(key)
+                }
+
+            }
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+
+        code(codeValue)
+    }
+
 }
