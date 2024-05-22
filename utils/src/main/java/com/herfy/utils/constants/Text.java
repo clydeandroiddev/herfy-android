@@ -1204,4 +1204,5 @@ public class Text {
     public static final String DINE_IN_LABEL = "dine_in_label";
 
     public static final String NO_CURBSIDE_VEHICLES = "no_curbside_vehicles";
+    public static final String ALL_OFFERS = "all_offers";
 }

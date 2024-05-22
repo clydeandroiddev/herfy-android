@@ -502,7 +502,7 @@ class PromotionsPresenter @Inject constructor(
                     promocateglist.add(
                         PromotionCategory(
                             cacheUtil.getTranslations(
-                                Text.ALL_LABEL, "All"
+                                Text.ALL_OFFERS, "All Offers"
                             ), true, OrderType.NONE
                         )
                     )

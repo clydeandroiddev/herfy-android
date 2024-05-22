@@ -33,6 +33,8 @@
 -keep class com.herfy.popup.** { *; }
 -keep class com.herfy.menu.adapter.MenuCategoryAdapter.** { *; }
 -keep class com.herfy.utils.event.** { *; }
+-keep class com.herfy.model.** { *; }
+-keep class com.herfy.enum.** { *; }
 
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
