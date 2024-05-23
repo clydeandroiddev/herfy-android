@@ -92,4 +92,6 @@
 
     <dimen name="spinner_padding_start">30dp</dimen>
     <dimen name="spinner_padding_end">20dp</dimen>
+
+    <dimen name="order_type_padding">32dp</dimen>
 </resources>

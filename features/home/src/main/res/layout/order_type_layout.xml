@@ -13,44 +13,44 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="0dp"
             android:textColor="#191919"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginStart="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="How will you order today?" />
 
         <LinearLayout
             android:id="@+id/layout_type_list"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
             android:layout_marginTop="24dp"
             android:paddingBottom="4dp"
             android:visibility="gone"
-            android:weightSum="3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_how_will_you_label"
             tools:visibility="visible">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:id="@+id/delivery_container"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/delivery_type"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="104dp"
                     android:background="@drawable/background_order_type_stroke"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                  >
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -68,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:layout_marginTop="15.6dp"
+                    android:layout_marginTop="15dp"
                     android:textColor="#191919"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -80,23 +80,22 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
                 android:id="@+id/pickup_container"
-                android:visibility="gone"
-                tools:visibility="visible"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-
-                android:layout_weight="1">
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/pickup_type"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="104dp"
                     android:background="@drawable/background_order_type_stroke"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintDimensionRatio="1:1">
+                    app:layout_constraintTop_toTopOf="parent">
 
 
                     <ImageView
@@ -115,7 +114,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:layout_marginTop="15.6dp"
+                    android:layout_marginTop="15dp"
                     android:textColor="#191919"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -127,22 +126,22 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
                 android:id="@+id/dinein_container"
-                android:visibility="gone"
-                tools:visibility="visible"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:visibility="gone"
+                tools:visibility="gone">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/dine_type"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="104dp"
                     android:background="@drawable/background_order_type_stroke"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintDimensionRatio="1:1">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -160,7 +159,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:layout_marginTop="15.6dp"
+                    android:layout_marginTop="15dp"
                     android:textColor="#191919"
                     android:textSize="18sp"
                     android:textStyle="bold"

@@ -134,7 +134,7 @@ class HomeViewModel @Inject constructor(
     val updateOrderTrackerNotif: LiveData<OrderData> = _updateOrderTrackerNotif
 
     private val _tierProgress = MutableLiveData<Event<TierProgress>>()
-    val tierProgress : LiveData<Event<TierProgress>> = _tierProgress
+    val tierProgress: LiveData<Event<TierProgress>> = _tierProgress
 
     fun getSliders() {
         invoke {
@@ -237,15 +237,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getOrderTypes() {
+    fun getOrderTypes(): Int {
         invoke {
             homeRepository.getOrderTypes { res ->
                 res.data?.cast<Set<OrderType>> { orderTypes ->
                     _orderTypes.value = orderTypes
                 }
-
             }
         }
+        return _orderTypes.value?.size ?: 0
     }
 
     fun getPromotions() {
@@ -367,9 +367,9 @@ class HomeViewModel @Inject constructor(
     @SuppressLint("CheckResult")
     fun getLoyalty() {
         invoke {
-            Single.zip<Loyalty,List<Tier>, Pair<Loyalty, List<Tier>>>(
-                getLoyaltyObservable(),getTiersObservable()
-            ) {  loyalty: Loyalty, tiers: List<Tier>->
+            Single.zip<Loyalty, List<Tier>, Pair<Loyalty, List<Tier>>>(
+                getLoyaltyObservable(), getTiersObservable()
+            ) { loyalty: Loyalty, tiers: List<Tier> ->
                 Pair(loyalty, tiers)
             }.subscribe({ pair: Pair<Loyalty, List<Tier>> ->
                 var tiers = pair.second
@@ -396,20 +396,22 @@ class HomeViewModel @Inject constructor(
                 var startPoints = 0
                 if (nextTier != null) {
                     startPoints = nextTier.startPoint
-                    if(loyalty.attributes.loyaltyTier != null){
+                    if (loyalty.attributes.loyaltyTier != null) {
                         isMaxTier = nextTier.name == loyalty.attributes.loyaltyTier.name
                     }
-                    if(isMaxTier){
+                    if (isMaxTier) {
                         pointsToNextTier = 0
                     }
                 }
-                _tierProgress.value = Event(TierProgress(
-                    nextTier,
-                    totalPointsAccumulated,
-                    pointsToNextTier,
-                    startPoints,
-                    isMaxTier
-                ))
+                _tierProgress.value = Event(
+                    TierProgress(
+                        nextTier,
+                        totalPointsAccumulated,
+                        pointsToNextTier,
+                        startPoints,
+                        isMaxTier
+                    )
+                )
 
 
             }) { error: Throwable? ->
@@ -429,13 +431,15 @@ class HomeViewModel @Inject constructor(
                 loyaltyAttributes.currentBalance = 0
                 _tiers.value = Event(ArrayList<Tier>(listOf(currentTier)))
                 loyalty.attributes = loyaltyAttributes
-                _tierProgress.value = Event(TierProgress(
-                    nextTier,
-                    0,
-                    100,
-                    100,
-                    false
-                ))
+                _tierProgress.value = Event(
+                    TierProgress(
+                        nextTier,
+                        0,
+                        100,
+                        100,
+                        false
+                    )
+                )
             }
         }
     }
@@ -581,12 +585,12 @@ class HomeViewModel @Inject constructor(
                         rule.ruleKey.equals(
                             "order-type", true
                         ) && rule.ruleValue?.replace("in:", "")?.split(",")?.find { t ->
-                                if (category.equals(
-                                        "pickup", ignoreCase = true
-                                    )
-                                ) (t.trim() == "pickup" || t.trim() == "to-go" || t.trim() == "drive-thru") else t.trim()
-                                    .equals(category, true)
-                            } != null
+                            if (category.equals(
+                                    "pickup", ignoreCase = true
+                                )
+                            ) (t.trim() == "pickup" || t.trim() == "to-go" || t.trim() == "drive-thru") else t.trim()
+                                .equals(category, true)
+                        } != null
                     } != null
                 }.let { promosWithRules ->
                     filteredList.addAll(promosWithRules)

@@ -165,9 +165,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         val containsLoyalty =
             CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes().contains(
                 PaymentType.LOYALTY
-            ) ||
-                    CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
-                        .contains(PaymentType.LOYALTY)
+            ) || CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
+                .contains(PaymentType.LOYALTY)
         if (containsLoyalty) {
             val isSignedIn = AuthUtil.getInstance().isSignedIn
             if (isSignedIn) {
@@ -234,8 +233,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 layoutBottomBanner.tvBannerBottom.text = CacheUtil.getInstance()
                     .getTranslations(Text.HERFY_SUPPORT, "Herfy supports the cause")
                 layoutLoyalty.apply {
-                    tvAshabHerfy.text =
-                        cacheHelper.getTranslations(Text.ASHAB_HERFY, "Ashab Herfy")
+                    tvAshabHerfy.text = cacheHelper.getTranslations(Text.ASHAB_HERFY, "Ashab Herfy")
                     tvTotalPointsLabel.text =
                         cacheHelper.getTranslations(Text.TOTAL_POINTS, "Total Points")
                     tvSarValueLabel.text =
@@ -494,7 +492,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.tierProgress.observeNonNull(this) {
-            it.getContentIfNotHandled()?.let {tierProgress ->
+            it.getContentIfNotHandled()?.let { tierProgress ->
                 binding.layoutLoyalty.apply {
                     if (tierProgress.pointsToNextTier <= 0) {
                         if (tierProgress.nextTier == null && !tierProgress.isMaxTier) {
@@ -506,20 +504,22 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             progress.max = 100
                             progress.progress = 100
                             tvTierProgressDesc.text = CacheUtil.getInstance().getTranslations(
-                                Text.TOTAL_POINTS_MAX_OUT,
-                                "You have maxed out on our tier levels"
+                                Text.TOTAL_POINTS_MAX_OUT, "You have maxed out on our tier levels"
                             )
                             progressTextIndicator.text = "${progress.progress}/${progress.max}"
                         }
                     } else {
-                        var loyaltyTier = tierProgress.nextTier?.name?:""
-                        if(!loyaltyTier.isNullOrEmpty() && LocaleUtil.getInstance().isEnglish) {
+                        var loyaltyTier = tierProgress.nextTier?.name ?: ""
+                        if (!loyaltyTier.isNullOrEmpty() && LocaleUtil.getInstance().isEnglish) {
                             loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
                         }
                         progress.max = tierProgress.startPoints
                         progress.progress = tierProgress.totalPointsAccumulated
                         cacheUtilHelper?.let {
-                            tvTierProgressDesc.text = it.getTranslations(Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)").replace("(x)", tierProgress.pointsToNextTier.toString()).replace("(y)", loyaltyTier)
+                            tvTierProgressDesc.text = it.getTranslations(
+                                Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)"
+                            ).replace("(x)", tierProgress.pointsToNextTier.toString())
+                                .replace("(y)", loyaltyTier)
                         }
 
                         progressTextIndicator.text = "${progress.progress}/${progress.max}"
@@ -899,14 +899,24 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     private fun setupOrderType() {
         context?.let {
-            viewModel.getOrderTypes()
-
-            val itemHeight =
-                (Resources.getSystem().displayMetrics.widthPixels / 3) - ViewUtil.dpToPx(it, 40)
-            binding.layoutOrderTypeMain.apply {
-                deliveryType.layoutParams.height = itemHeight
-                pickupType.layoutParams.height = itemHeight
-                dineType.layoutParams.height = itemHeight
+            val denominator = viewModel.getOrderTypes()
+            if (denominator > 0) {
+                val itemHeight: Int = if (denominator >= Values.MAX_ORDERTYPE_COUNT) {
+                    (Resources.getSystem().displayMetrics.widthPixels / 3) - ViewUtil.dpToPx(
+                        it, Values.TOTAL_ORDERTYPE_SPACING
+                    )
+                } else {
+                    val numerator =
+                        ((Resources.getSystem().displayMetrics.widthPixels) - ViewUtil.dpToPx(
+                            it, Values.TOTAL_ORDERTYPE_SPACING
+                        ))
+                    numerator / (Values.TWO_ORDERTYPE_ASPECT_RATIO * denominator)
+                }
+                binding.layoutOrderTypeMain.apply {
+                    deliveryType.layoutParams.height = itemHeight
+                    pickupType.layoutParams.height = itemHeight
+                    dineType.layoutParams.height = itemHeight
+                }
             }
         }
     }

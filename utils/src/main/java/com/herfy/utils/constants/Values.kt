@@ -17,8 +17,10 @@ object Values {
     const val MENU_IMAGE_SIZE = 450
     const val SLIDER_IMAGE_WIDTH = 1000
     const val SLIDER_IMAGE_HEIGHT = 500
+
     @JvmField
     var fromAddAddressBool = false
+
     @JvmField
     var fromUpsell = false
     const val DIRECTIONS_URL = "https://maps.googleapis.com/maps/api/directions/"
@@ -67,12 +69,16 @@ object Values {
     const val VALIDATE_QUANTITY = false
     const val DEFAULT_LATITUDE = 24.7193534
     const val DEFAULT_LONGITUDE = 46.4861749
+
     @JvmField
     var sDeepLink = ""
+
     @JvmField
     var sDeepLinkId = ""
+
     @JvmField
     var sDeepLinkUtm: Bundle? = null
+
     @JvmField
     var IMAGE_TEXT = "image_text"
     const val MUKAFA_ENABLED = true
@@ -91,10 +97,10 @@ object Values {
 
     const val KEY_MENU_ITEM_ID = "menu_item_id"
     const val KEY_IS_PROMO = "is_promo"
-    const val KEY_IS_EDIT ="is_edit"
+    const val KEY_IS_EDIT = "is_edit"
     const val KEY_CART_MENU_ITEM_POSITION = "cart_menu_item_position"
-    const val KEY_MENU_CATEGORY_ID ="menu_category_id"
-    const val KEY_IS_UPSELL ="is_upsell"
+    const val KEY_MENU_CATEGORY_ID = "menu_category_id"
+    const val KEY_IS_UPSELL = "is_upsell"
     const val FREQUENTLY_BOUGHT_ITEM_LISTENER = "frequently_bought_item_listener"
     const val KEY_IS_ADDED_TO_FAVORITES = "is_added_to_favorites"
     const val KEY_IS_ADDED_TO_CART = "is_added_to_cart"
@@ -111,9 +117,14 @@ object Values {
     const val POPUP_ASPECT_RATIO_WIDTH = 353.0
     const val POPUP_ASPECT_RATIO_HEIGHT = 657.0
     const val POPUP_WIDTH_PERCENT = 0.8
-    const val LANGUAGE_BACKGROUND_VIDEO_URL = "https://customer-k8n892ut7y8lpez5.cloudflarestream.com/79e15cb36a7411cd45513b69abab8fed/manifest/video.mpd"
+    const val LANGUAGE_BACKGROUND_VIDEO_URL =
+        "https://customer-k8n892ut7y8lpez5.cloudflarestream.com/79e15cb36a7411cd45513b69abab8fed/manifest/video.mpd"
     const val LOYALTY_CARD_ASPECT_RATIO = 2.3
     const val LOYALTY_EMPTY_CARD_ASPECT_RATION = 1.8
+    const val TWO_ORDERTYPE_ASPECT_RATIO = 164 / 104
+    const val THREE_ORDERTYPE_ASPECT_RATIO = 104 / 104
+    const val MAX_ORDERTYPE_COUNT = 3
+    const val TOTAL_ORDERTYPE_SPACING = 40
 
     const val ARGS_KEY_FRAGMENT_RESULT = "fragmentResult"
     const val ARGS_KEY_ACTION_TYPE = "action_type"
