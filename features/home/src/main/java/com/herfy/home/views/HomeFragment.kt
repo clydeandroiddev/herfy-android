@@ -901,15 +901,17 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         context?.let {
             val denominator = viewModel.getOrderTypes()
             if (denominator > 0) {
-                val numerator =
-                    ((Resources.getSystem().displayMetrics.widthPixels) - ViewUtil.dpToPx(
+                val itemHeight: Int = if (denominator >= Values.MAX_ORDERTYPE_COUNT) {
+                    (Resources.getSystem().displayMetrics.widthPixels / 3) - ViewUtil.dpToPx(
                         it, Values.TOTAL_ORDERTYPE_SPACING
-                    ))
-                var aspectRatio = Values.TWO_ORDERTYPE_ASPECT_RATIO
-                if (denominator == Values.MAX_ORDERTYPE_COUNT) {
-                    aspectRatio = Values.THREE_ORDERTYPE_ASPECT_RATIO
+                    )
+                } else {
+                    val numerator =
+                        ((Resources.getSystem().displayMetrics.widthPixels) - ViewUtil.dpToPx(
+                            it, Values.TOTAL_ORDERTYPE_SPACING
+                        ))
+                    numerator / (Values.TWO_ORDERTYPE_ASPECT_RATIO * denominator)
                 }
-                val itemHeight = numerator / (aspectRatio * denominator)
                 binding.layoutOrderTypeMain.apply {
                     deliveryType.layoutParams.height = itemHeight
                     pickupType.layoutParams.height = itemHeight

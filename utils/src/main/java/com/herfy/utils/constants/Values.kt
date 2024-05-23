@@ -117,13 +117,14 @@ object Values {
     const val POPUP_ASPECT_RATIO_WIDTH = 353.0
     const val POPUP_ASPECT_RATIO_HEIGHT = 657.0
     const val POPUP_WIDTH_PERCENT = 0.8
-    const val LANGUAGE_BACKGROUND_VIDEO_URL = "https://customer-k8n892ut7y8lpez5.cloudflarestream.com/79e15cb36a7411cd45513b69abab8fed/manifest/video.mpd"
+    const val LANGUAGE_BACKGROUND_VIDEO_URL =
+        "https://customer-k8n892ut7y8lpez5.cloudflarestream.com/79e15cb36a7411cd45513b69abab8fed/manifest/video.mpd"
     const val LOYALTY_CARD_ASPECT_RATIO = 2.3
     const val LOYALTY_EMPTY_CARD_ASPECT_RATION = 1.8
     const val TWO_ORDERTYPE_ASPECT_RATIO = 164 / 104
     const val THREE_ORDERTYPE_ASPECT_RATIO = 104 / 104
     const val MAX_ORDERTYPE_COUNT = 3
-    const val TOTAL_ORDERTYPE_SPACING = 56
+    const val TOTAL_ORDERTYPE_SPACING = 40
 
     const val ARGS_KEY_FRAGMENT_RESULT = "fragmentResult"
     const val ARGS_KEY_ACTION_TYPE = "action_type"
