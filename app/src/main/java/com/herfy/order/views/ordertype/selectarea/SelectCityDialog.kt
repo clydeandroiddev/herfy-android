@@ -3,14 +3,15 @@ package com.herfy.order.views.ordertype.selectarea
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
-import com.google.gson.Gson
 import com.herfy.order.views.ordertype.selectarea.adapter.SelectCityAdapter
 import com.herfy.ordertype.R
 import com.herfy.ordertype.databinding.SelectCityDialogBinding
@@ -26,6 +27,7 @@ class SelectCityDialog : DialogFragment() {
     private lateinit var adapter: SelectCityAdapter
     private lateinit var selectAreaDialog: SelectAreaDialog
     private var selectedCity: City? = null
+    private var originalList: List<City> = listOf()
 
     interface OnSubmit {
         fun onSuccess(
@@ -68,9 +70,45 @@ class SelectCityDialog : DialogFragment() {
         setupList()
     }
 
+    private fun filter(text: String) {
+        binding.clearSearch.isVisible = text.isNotEmpty()
+        val filteredList = originalList.filter { it.name.contains(text, ignoreCase = true) }
+        binding.cityList.isVisible = filteredList.isNotEmpty()
+        binding.emptyStateLayout.isVisible = filteredList.isEmpty()
+        if (filteredList.isEmpty()) {
+            binding.emptyState.text = CacheUtil.getInstance()
+                .getTranslations(Text.SEARCH_EMPTY_RESULT, "No result found for \"(x)\"")
+                .replace("(x)", text)
+        } else {
+            adapter.updateList(ArrayList(filteredList))
+        }
+    }
+
     private fun setupList() {
-        val list = CacheUtil.getInstance().cities
-        adapter.updateList(ArrayList(list))
+        originalList = CacheUtil.getInstance().cities
+        adapter.updateList(ArrayList(originalList))
+        binding.apply {
+            searchEdit.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    filter(searchEdit.text.toString())
+                }
+            })
+
+            clearSearch.setOnClickListener {
+                emptyStateLayout.isVisible = false
+                searchEdit.setText("")
+                binding.cityList.isVisible = true
+                binding.clearSearch.isVisible = false
+                adapter.updateList(ArrayList(originalList))
+            }
+        }
     }
 
     private fun checkButton() {
@@ -89,10 +127,15 @@ class SelectCityDialog : DialogFragment() {
             back.setOnClickListener {
                 dismiss()
             }
+
+            searchEdit.hint =
+                CacheUtil.getInstance().getTranslations(Text.SEARCH_CITY, "Search city")
+
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue")
             appTitle.text = CacheUtil.getInstance().getTranslations(Text.SELECT_CITY, "Select City")
             checkButton()
+
             adapter = SelectCityAdapter(
                 ArrayList(), object : SelectCityAdapter.SelectCityListener {
                     override fun onSelectedCity(city: City, position: Int) {
@@ -102,6 +145,7 @@ class SelectCityDialog : DialogFragment() {
                     }
                 }, ""
             )
+
             binding.cityList.adapter = adapter
         }
     }

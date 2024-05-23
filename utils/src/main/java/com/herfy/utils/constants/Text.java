@@ -1,7 +1,5 @@
 package com.herfy.utils.constants;
 
-import org.jetbrains.annotations.Nullable;
-
 public class Text {
 
     public static final String CART = "cart";
@@ -1015,11 +1013,11 @@ public class Text {
     public static final String COMPLETE_PROFILE = "complete_profile";
     public static final String COMPLETE_YOUR_PROFILE = "complete_your_profile";
 
-    public static final String ALRHAJI_LABEL="alrhaji_label";
-    public static final String ALRHAJI_DESCRIPTION="alrhaji_description";
-    public static final String CIC_NUMBER_LABEL="cic_number_label";
-    public static final String ENTER_OTP_LABEL="enter_otp_label";
-    public static final String ALRHAJI_AMOUNT_ERROR= "alrhaji_amount_error";
+    public static final String ALRHAJI_LABEL = "alrhaji_label";
+    public static final String ALRHAJI_DESCRIPTION = "alrhaji_description";
+    public static final String CIC_NUMBER_LABEL = "cic_number_label";
+    public static final String ENTER_OTP_LABEL = "enter_otp_label";
+    public static final String ALRHAJI_AMOUNT_ERROR = "alrhaji_amount_error";
     public static final String POINTS_EQUAL_SAR = "points_equal_sar";
 
     public static final String NAME = "name_label";
@@ -1174,22 +1172,22 @@ public class Text {
 
     public static final String BRANCH_IS_CLOSED_ERROR = "branch_is_closed_error";
 
-    public static final String SPECIAL_INSTRUCTION_DESCRIPTION="special_instruction_description";
-    public static final String FREQUENTLY_BOUGHT_TOGETHER_LABEL="frequently_bought_togehter_label";
-    public static final String COMBO_SIZES_LABEL="combo_sizes_label";
+    public static final String SPECIAL_INSTRUCTION_DESCRIPTION = "special_instruction_description";
+    public static final String FREQUENTLY_BOUGHT_TOGETHER_LABEL = "frequently_bought_togehter_label";
+    public static final String COMBO_SIZES_LABEL = "combo_sizes_label";
 
     public static final String YOUR_ORDER_X = "your_order_template";
     public static final String DO_HAVE_OTHER_FEEDBACK = "do_have_other_feedback";
     public static final String OTHER_FEEDBACK_PLACEHOLDER = "other_feedback_placeholder";
     public static final String CONFIRM = "confirm";
     public static final String SORRY_YOU_ARE_NOT_YET_ELIGIBLE = "sorry_you_are_not_yet_eligible";
-    public static final String VALID_TIME_LABEL="valid_time_value";
-    public static final String LOGIN_REGISTER_LABEL ="login_register";
-    public static final String REPEATING_OFFER_LABEL="repeating_offer_label";
+    public static final String VALID_TIME_LABEL = "valid_time_value";
+    public static final String LOGIN_REGISTER_LABEL = "login_register";
+    public static final String REPEATING_OFFER_LABEL = "repeating_offer_label";
     public static final String CANCELLED = "cancelled";
 
     public static final String FAILED = "failed";
-    public static final String MINIMUM_CART_LABEL="minimum_cart_label";
+    public static final String MINIMUM_CART_LABEL = "minimum_cart_label";
 
     public static final String PICKED_UP = "picked_up";
 
@@ -1199,10 +1197,14 @@ public class Text {
 
     public static final String SEE_DIRECTIONS = "see_directions";
 
-    public static final String SAR_ORDER_VALUE_TO_POINTS="sar_order_value_converts_to_points";
+    public static final String SAR_ORDER_VALUE_TO_POINTS = "sar_order_value_converts_to_points";
 
     public static final String DINE_IN_LABEL = "dine_in_label";
 
     public static final String NO_CURBSIDE_VEHICLES = "no_curbside_vehicles";
     public static final String ALL_OFFERS = "all_offers";
+
+    public static final String SEARCH_CITY = "search_city";
+    public static final String SEARCH_AREA = "search_area";
+    public static final String SEARCH_EMPTY_RESULT = "search_empty_result";
 }
