@@ -5,6 +5,7 @@ import android.app.Activity
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -37,7 +38,9 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
     @SuppressLint("SetTextI18n")
     override fun initViews() {
         super.initViews()
+        adjustWindow()
         binding.apply {
+            
             continueButton.setOnClickListener {
                 verify(binding.otpView.otp.orEmpty())
             }
@@ -67,6 +70,10 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
                 initArgs()
             }, 500)
         }
+    }
+
+    private fun adjustWindow() {
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
     private fun verify(otp: String) {
