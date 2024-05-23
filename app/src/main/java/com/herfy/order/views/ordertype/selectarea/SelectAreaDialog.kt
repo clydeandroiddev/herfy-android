@@ -3,11 +3,14 @@ package com.herfy.order.views.ordertype.selectarea
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.herfy.order.views.ordertype.selectarea.adapter.SelectAreaAdapter
 import com.herfy.ordertype.R
@@ -65,8 +68,44 @@ class SelectAreaDialog : DialogFragment() {
         setupList()
     }
 
+    private fun filter(text: String) {
+        binding.clearSearch.isVisible = text.isNotEmpty()
+        val filteredList = areas.filter { it.name.contains(text, ignoreCase = true) }
+        binding.cityList.isVisible = filteredList.isNotEmpty()
+        binding.emptyStateLayout.isVisible = filteredList.isEmpty()
+        if (filteredList.isEmpty()) {
+            binding.emptyState.text = CacheUtil.getInstance()
+                .getTranslations(Text.SEARCH_EMPTY_RESULT, "No result found for \"(x)\"")
+                .replace("(x)", text)
+        } else {
+            adapter.updateList(ArrayList(filteredList))
+        }
+    }
+
     private fun setupList() {
         adapter.updateList(areas)
+        binding.apply {
+            searchEdit.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    filter(searchEdit.text.toString())
+                }
+            })
+
+            clearSearch.setOnClickListener {
+                emptyStateLayout.isVisible = false
+                searchEdit.setText("")
+                binding.cityList.isVisible = true
+                binding.clearSearch.isVisible = false
+                adapter.updateList(ArrayList(areas))
+            }
+        }
     }
 
     private fun checkButton() {
@@ -85,6 +124,9 @@ class SelectAreaDialog : DialogFragment() {
             back.setOnClickListener {
                 dismiss()
             }
+            searchEdit.hint =
+                CacheUtil.getInstance().getTranslations(Text.SEARCH_AREA, "Search area")
+
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue")
             appTitle.text = CacheUtil.getInstance().getTranslations(Text.SELECT_AREA, "Select Area")
