@@ -78,6 +78,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
@@ -1160,170 +1163,171 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
     @Override
     public void validateOrder(boolean checkout, Store store, String scheduledTime, int loyaltyPoints, boolean isShowCardFailed) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            setLoyaltyPointsUsed(loyaltyPoints);
 
-        setLoyaltyPointsUsed(loyaltyPoints);
-
-        CouponsApiCall.getInstance().validatePromotion(getOrderBody(true, store, scheduledTime, false, loyaltyPoints, null).first, new ApiRequestListener() {
-            @Override
-            public void onSuccess(Object o) {
+            CouponsApiCall.getInstance().validatePromotion(getOrderBody(true, store, scheduledTime, false, loyaltyPoints, null).first, new ApiRequestListener() {
+                @Override
+                public void onSuccess(Object o) {
 //                double vatAmount = 0;
-                try {
-                    JSONObject jsonObject = (JSONObject) o;
-
-                    JSONArray itemsArray = jsonObject.getJSONArray("items");
-                    boolean hasChanged = false;
-                    for (int i = 0; i < itemsArray.length(); i++) {
-                        JSONObject itemObject = itemsArray.getJSONObject(i);
-                        MenuItem item = GsonHelper.gsonFinal().fromJson(itemObject.toString(), MenuItem.class);
-                        validatedPromoItemPrice = 0.0;
-                        validatedPromoItemQuantity = 0;
-                        for (MenuItem menuItem : menuItems) {
-                            if (item.getIsPromotion()) {
-                                validatedPromoItemPrice = item.getPrice();
-                                validatedPromoItemQuantity = item.getQuantity();
-                            }
-                            if (!item.getIsPromotion() && menuItem.getId().equals(item.getId())) {
-                                if (BuildUtil.isEkfc() && (item.getTotal() != item.getPrice() || getMenuItemTotalPrice(false, menuItems.get(menuItems.indexOf(menuItem)), -1) != item.getTotal())) {
-                                    menuItems.get(menuItems.indexOf(menuItem)).setTotal(item.getTotal());
-                                } else {
-                                    menuItems.get(menuItems.indexOf(menuItem)).setTotal(0);
-                                    menuItems.get(menuItems.indexOf(menuItem)).setPrice(item.getPrice(null));
-                                    menuItems.get(menuItems.indexOf(menuItem)).setPrice(item.getPrice(null));
-                                }
-                                hasChanged = true;
-                            }
-                        }
-                    }
-
-                    if (hasChanged) {
-                        ArrayList<MenuItem> items = new ArrayList<>();
-                        for (MenuItem item : menuItems) {
-                            if (!item.isPromo()) {
-                                items.add(item);
-                            }
-                        }
-                        CacheUtil.getInstance().setCart(items);
-                        paymentView.updateMenuItems();
-                    }
-
-                    OrderData orderData = OrderData.parse(jsonObject);
-
-                    if (jsonObject.has("loyalty-points-earnable")) {
-                        pointsEarnable = jsonObject.getInt("loyalty-points-earnable");
-                    }
-
-                    validatedSubtotal = orderData.getSubtotal();
-                    validatedDiscount = orderData.getDiscount();
-                    validatedRound = orderData.getRound();
-                    validatedDeliveryCharge = orderData.getDeliverCharge();
-                    validatedCharges = orderData.getCharges();
-                    vatAmountFromResponse = orderData.getVatAmount();
-                    validatedTotal = orderData.getTotal();
-
-                    if (jsonObject.has("loyalty")) {
-                        JSONObject loyalty = jsonObject.getJSONObject("loyalty");
-                        if (loyalty.has("amount")) {
-                            setMukafaaTransactionAmount(loyalty.getDouble("amount"));
-                        }
-                    }
-
-                    double pointsSarValue = 0.0;
-
-                    if (loyaltyPoints > 0) {
-                        pointsSarValue = loyaltyPoints / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
-                    }
-                    double discountValue = orderData.getDiscountDisplay() > 0.0?  orderData.getDiscountDisplay() : orderData.getDiscount();
-
-                    boolean hasPromoItem = CacheUtil.getInstance().getCouponMenuItem() != null ||
-                            CacheUtil.getInstance().getCampaignPromotionMenuItem() != null;
-
-                    if (jsonObject.has("error") && !jsonObject.isNull("error")) {
-                        ErrorHandler.getErrorCode(jsonObject, s -> {
-                            if(s.equals("1213")){
-                                loyaltyPointsUsed = 0;
-                            }
-                            return null;
-                        });
-                        paymentView.showError(jsonObject.getString("error"));
-                    } else if (checkout) {
-                        if (!hasPromoItem) {
-                            sendOrder(store, scheduledTime, o.toString(), loyaltyPoints);
-                        } else {
-                            validatedBody = getOrderBody(false, store, scheduledTime, false, loyaltyPoints, JsonParser.parseString(jsonObject.toString()).getAsJsonObject()).first;
-                            sendOrder(store, scheduledTime, validatedBody.toString(), loyaltyPoints);
-                        }
-                    } else {
-                        paymentView.dismissDialogs();
-                        if (isShowCardFailed) {
-                            paymentView.showCardFailed();
-                        }
-
-                    }
-                    paymentView.setPriceDetails(getValidatedSubtotal(),
-                            discountValue,
-                            getValidatedTotal(),
-                            validatedDeliveryCharge,
-                            pointsSarValue, pointsEarnable, loyaltyPointsUsed, orderData.getCharges());
-
-                    if (!hasPromoItem) {
-                        validatedBody = (JsonObject) new JsonParser().parse(o.toString());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void onError(Object o) {
-                AppLogger.printRetrofitError(o);
-                if (o instanceof JSONObject) {
                     try {
-                        JSONObject object = (JSONObject) o;
-                        if (object.has("error") && !object.isNull("error")) {
-                            ErrorHandler.getErrorCode(object, s -> {
+                        JSONObject jsonObject = (JSONObject) o;
+
+                        JSONArray itemsArray = jsonObject.getJSONArray("items");
+                        boolean hasChanged = false;
+                        for (int i = 0; i < itemsArray.length(); i++) {
+                            JSONObject itemObject = itemsArray.getJSONObject(i);
+                            MenuItem item = GsonHelper.gsonFinal().fromJson(itemObject.toString(), MenuItem.class);
+                            validatedPromoItemPrice = 0.0;
+                            validatedPromoItemQuantity = 0;
+                            for (MenuItem menuItem : menuItems) {
+                                if (item.getIsPromotion()) {
+                                    validatedPromoItemPrice = item.getPrice();
+                                    validatedPromoItemQuantity = item.getQuantity();
+                                }
+                                if (!item.getIsPromotion() && menuItem.getId().equals(item.getId())) {
+                                    if (BuildUtil.isEkfc() && (item.getTotal() != item.getPrice() || getMenuItemTotalPrice(false, menuItems.get(menuItems.indexOf(menuItem)), -1) != item.getTotal())) {
+                                        menuItems.get(menuItems.indexOf(menuItem)).setTotal(item.getTotal());
+                                    } else {
+                                        menuItems.get(menuItems.indexOf(menuItem)).setTotal(0);
+                                        menuItems.get(menuItems.indexOf(menuItem)).setPrice(item.getPrice(null));
+                                        menuItems.get(menuItems.indexOf(menuItem)).setPrice(item.getPrice(null));
+                                    }
+                                    hasChanged = true;
+                                }
+                            }
+                        }
+
+                        if (hasChanged) {
+                            ArrayList<MenuItem> items = new ArrayList<>();
+                            for (MenuItem item : menuItems) {
+                                if (!item.isPromo()) {
+                                    items.add(item);
+                                }
+                            }
+                            CacheUtil.getInstance().setCart(items);
+                            paymentView.updateMenuItems();
+                        }
+
+                        OrderData orderData = OrderData.parse(jsonObject);
+
+                        if (jsonObject.has("loyalty-points-earnable")) {
+                            pointsEarnable = jsonObject.getInt("loyalty-points-earnable");
+                        }
+
+                        validatedSubtotal = orderData.getSubtotal();
+                        validatedDiscount = orderData.getDiscount();
+                        validatedRound = orderData.getRound();
+                        validatedDeliveryCharge = orderData.getDeliverCharge();
+                        validatedCharges = orderData.getCharges();
+                        vatAmountFromResponse = orderData.getVatAmount();
+                        validatedTotal = orderData.getTotal();
+
+                        if (jsonObject.has("loyalty")) {
+                            JSONObject loyalty = jsonObject.getJSONObject("loyalty");
+                            if (loyalty.has("amount")) {
+                                setMukafaaTransactionAmount(loyalty.getDouble("amount"));
+                            }
+                        }
+
+                        double pointsSarValue = 0.0;
+
+                        if (loyaltyPoints > 0) {
+                            pointsSarValue = loyaltyPoints / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
+                        }
+                        double discountValue = orderData.getDiscountDisplay() > 0.0?  orderData.getDiscountDisplay() : orderData.getDiscount();
+
+                        boolean hasPromoItem = CacheUtil.getInstance().getCouponMenuItem() != null ||
+                                CacheUtil.getInstance().getCampaignPromotionMenuItem() != null;
+
+                        if (jsonObject.has("error") && !jsonObject.isNull("error")) {
+                            ErrorHandler.getErrorCode(jsonObject, s -> {
                                 if(s.equals("1213")){
                                     loyaltyPointsUsed = 0;
-                                    paymentView.insufficientLoyaltyPoints();
-                                    double currentValidatedTotal = getValidatedSubtotal() - validatedDiscount;
-                                    paymentView.setPriceDetails(getValidatedSubtotal(),
-                                            validatedDiscount,
-                                            currentValidatedTotal,
-                                            validatedDeliveryCharge,
-                                            0, 0, loyaltyPointsUsed, new ArrayList<>());
                                 }
                                 return null;
                             });
-                            paymentView.showError(ErrorHandler.getErrorMessage(object, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
-                        } else if (object.has("messages") && !object.isNull("messages")) {
-                            Object messages = object.get("messages");
-                            if (messages instanceof JSONObject) {
-                                JSONObject message = (JSONObject) messages;
-                                List<String> errorList = new ArrayList<>();
-                                Iterator<String> keys = message.keys();
-                                while (keys.hasNext()) {
-                                    String key = keys.next();
-                                    if (message.get(key) instanceof JSONArray) {
-                                        JSONArray array = (JSONArray) message.get(key);
-                                        Type type = new TypeToken<List<String>>() {
-                                        }.getType();
-                                        List<String> error = GsonHelper.gsonFinal().fromJson(array.toString(), type);
-                                        errorList.addAll(error);
-                                    }
-                                }
-                                paymentView.showValidateOrderError(errorList);
+                            paymentView.showError(jsonObject.getString("error"));
+                        } else if (checkout) {
+                            if (!hasPromoItem) {
+                                sendOrder(store, scheduledTime, o.toString(), loyaltyPoints);
+                            } else {
+                                validatedBody = getOrderBody(false, store, scheduledTime, false, loyaltyPoints, JsonParser.parseString(jsonObject.toString()).getAsJsonObject()).first;
+                                sendOrder(store, scheduledTime, validatedBody.toString(), loyaltyPoints);
                             }
                         } else {
+                            paymentView.dismissDialogs();
+                            if (isShowCardFailed) {
+                                paymentView.showCardFailed();
+                            }
+
+                        }
+                        paymentView.setPriceDetails(getValidatedSubtotal(),
+                                discountValue,
+                                getValidatedTotal(),
+                                validatedDeliveryCharge,
+                                pointsSarValue, pointsEarnable, loyaltyPoints, orderData.getCharges());
+
+                        if (!hasPromoItem) {
+                            validatedBody = (JsonObject) new JsonParser().parse(o.toString());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onError(Object o) {
+                    AppLogger.printRetrofitError(o);
+                    if (o instanceof JSONObject) {
+                        try {
+                            JSONObject object = (JSONObject) o;
+                            if (object.has("error") && !object.isNull("error")) {
+                                ErrorHandler.getErrorCode(object, s -> {
+                                    if(s.equals("1213")){
+                                        loyaltyPointsUsed = 0;
+                                        double currentValidatedTotal = getValidatedSubtotal() - validatedDiscount;
+                                        paymentView.setPriceDetails(getValidatedSubtotal(),
+                                                validatedDiscount,
+                                                currentValidatedTotal,
+                                                validatedDeliveryCharge,
+                                                0, 0, loyaltyPointsUsed, new ArrayList<>());
+                                    }
+                                    return null;
+                                });
+                                paymentView.showError(ErrorHandler.getErrorMessage(object, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                            } else if (object.has("messages") && !object.isNull("messages")) {
+                                Object messages = object.get("messages");
+                                if (messages instanceof JSONObject) {
+                                    JSONObject message = (JSONObject) messages;
+                                    List<String> errorList = new ArrayList<>();
+                                    Iterator<String> keys = message.keys();
+                                    while (keys.hasNext()) {
+                                        String key = keys.next();
+                                        if (message.get(key) instanceof JSONArray) {
+                                            JSONArray array = (JSONArray) message.get(key);
+                                            Type type = new TypeToken<List<String>>() {
+                                            }.getType();
+                                            List<String> error = GsonHelper.gsonFinal().fromJson(array.toString(), type);
+                                            errorList.addAll(error);
+                                        }
+                                    }
+                                    paymentView.showValidateOrderError(errorList);
+                                }
+                            } else {
+                                paymentView.showError(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                             paymentView.showError(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    } else {
                         paymentView.showError(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
                     }
-                } else {
-                    paymentView.showError(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
                 }
-            }
+            });
         });
     }
 

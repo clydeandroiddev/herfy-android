@@ -88,6 +88,7 @@ import com.herfy.util.ViewUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.debounceAfterTextChanges
+import com.herfy.utils.extensions.debounceTextChanged
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.showToast
@@ -136,6 +137,9 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 
 @AndroidEntryPoint
@@ -739,10 +743,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
 
         val loyalty = AuthUtil.getInstance().customerLoyalty
-
+        val debounceDuration = 400L
         lifecycleScope.launchWithTimber {
             binding!!.layoutLoyalty
-                .etPoints.debounceAfterTextChanges()
+                .etPoints.debounceTextChanged(debounceDuration.toDuration(DurationUnit.MILLISECONDS))
                 .map { it.toString() }
                 .collectLatest { pointsText ->
                     if (pointsText.isNotEmpty()) {
@@ -750,13 +754,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         val currentPoints = AuthUtil.getInstance().customerLoyalty.attributes.currentBalance
                         val pointConversion =
                             AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble()
-                        if (userSetPoints >= currentPoints) {
-                            if(loyaltypointsInput == userSetPoints.toInt()){
-                                return@collectLatest
-                            }
-                            userSetPoints =
-                                if (loyalty!!.attributes.currentBalanceAmount > paymentPresenter!!.menuItemsTotalPrice) paymentPresenter!!.menuItemsTotalPrice * AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble() else loyalty!!.attributes.currentBalance
-                                    .toDouble()
+                        val orderTotalPoints = if (loyalty!!.attributes.currentBalanceAmount > paymentPresenter!!.menuItemsTotalPrice) paymentPresenter!!.menuItemsTotalPrice * AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble() else loyalty!!.attributes.currentBalance
+                                .toDouble()
+                        if (userSetPoints >= currentPoints || userSetPoints >= orderTotalPoints) {
+
+                            userSetPoints = orderTotalPoints
                             binding?.layoutLoyalty?.etPoints?.setText(
                                 StringUtil.localize(
                                     userSetPoints.toInt().toString()
@@ -775,8 +777,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         }
 
                         binding!!.layoutLoyalty.etPoints.setSelection(binding!!.layoutLoyalty.etPoints.text.toString().length)
-                        loyaltypointsInput =
-                            binding!!.layoutLoyalty.etPoints.text.toString().toInt()
+                        loyaltypointsInput = userSetPoints.toInt()
 
                         paymentPresenter!!.validateOrder(
                             false,
@@ -1397,7 +1398,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             selectMukafaa(false, false);
         }*/
         if (pointsUsed > 0) {
-            binding!!.layoutPaymentSummary.grpRedeemedPoints.visibility = View.VISIBLE
+            binding!!.layoutPaymentSummary.grpRedeemedPoints.visible()
             binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
                 .replace("x", pointsUsed.toString())
@@ -1409,7 +1410,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     ), true, hasPromotion, true
                 )
         } else {
-            binding!!.layoutPaymentSummary.grpRedeemedPoints.visibility = View.GONE
+            binding!!.layoutPaymentSummary.grpRedeemedPoints.gone()
         }
         if (totalPrice == 0.0 && pointsUsed > 0) {
             if (deliveryCharge <= 0) {
@@ -1732,6 +1733,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun insufficientLoyaltyPoints() {
         binding?.layoutPaymentSummary?.apply {
             loyaltypointsInput = 0
+
             grpRedeemedPoints.gone()
         }
     }
