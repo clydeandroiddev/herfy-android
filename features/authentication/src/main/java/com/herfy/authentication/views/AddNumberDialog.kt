@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -12,6 +13,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -26,6 +28,8 @@ import com.herfy.utils.helper.LocaleUtil
 class AddNumberDialog : BottomSheetDialogFragment() {
 
     private var onSubmit: OnSubmit? = null
+
+    private lateinit var globalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener
 
     private var isMaxTen = false
 
@@ -60,6 +64,26 @@ class AddNumberDialog : BottomSheetDialogFragment() {
         bottomSheet.backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
         bottomSheet.setBackgroundColor(Color.TRANSPARENT)
         bottomSheet.elevation = 0f
+        setupKeyboardListener(bottomSheet)
+    }
+
+    private fun setupKeyboardListener(bottomSheet: View) {
+        globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+            val rect = Rect()
+            bottomSheet.getWindowVisibleDisplayFrame(rect)
+            val screenHeight = bottomSheet.rootView.height
+            val keypadHeight = screenHeight - rect.bottom
+            val isKeyboardShown = keypadHeight > screenHeight * 0.15
+
+            val layoutParams = bottomSheet.layoutParams
+            if (isKeyboardShown) {
+                layoutParams.height = screenHeight - keypadHeight
+            } else {
+                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            }
+            bottomSheet.layoutParams = layoutParams
+        }
+        bottomSheet.viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -74,8 +98,21 @@ class AddNumberDialog : BottomSheetDialogFragment() {
         setupViews()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        try {
+            if (this::globalLayoutListener.isInitialized) {
+                val bottomSheet = (requireView().parent as View)
+                bottomSheet.viewTreeObserver.removeOnGlobalLayoutListener(globalLayoutListener)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     private fun setupViews() {
         binding.apply {
+
             mobileNumberDialCode.text = "+966"
 
             sendCodeButton.setOnClickListener {

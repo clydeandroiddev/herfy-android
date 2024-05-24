@@ -1,6 +1,7 @@
 package com.herfy.authentication.views
 
 import android.app.Activity
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -25,6 +26,7 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
 
     override fun initViews() {
         super.initViews()
+        adjustWindow()
         binding.apply {
             backButton.setOnClickListener {
                 skipButton.performClick()
@@ -49,6 +51,10 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
                 } else false
             }
         }
+    }
+
+    private fun adjustWindow() {
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
     override fun initTranslations() {
