@@ -132,7 +132,7 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
             )
             showError(error)
             return
-        } else if (fullName.isNotEmpty()) {
+        } else if (fullName.isEmpty()) {
             val error = CacheUtil.getInstance()
                 .getTranslations(Text.FIRST_NAME_EMPTY, "First name cannot be empty")
             showError(error)
@@ -205,7 +205,10 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
 
             if (!firstName.isNullOrEmpty()) {
                 fullName = "$firstName $lastName"
-                binding.nameEdit.setText("$firstName $lastName")
+                if (lastName.isNullOrEmpty()) {
+                    fullName = "$firstName"
+                }
+                binding.nameEdit.setText(fullName)
                 binding.nameEdit.setBackgroundResource(R.drawable.background_common_selection)
                 checkNameState()
             }

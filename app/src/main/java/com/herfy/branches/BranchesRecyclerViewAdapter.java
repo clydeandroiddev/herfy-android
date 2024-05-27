@@ -31,10 +31,7 @@ public class BranchesRecyclerViewAdapter extends RecyclerView.Adapter<BranchView
 
     @Override
     public int getItemCount() {
-        if(branchesPresenter.getBranchesCount() > 0) {
-            return branchesPresenter.getBranchesCount() + 3;
-        }
-        return 0;
+        return branchesPresenter.getBranchesCount();
     }
 
     public int getSelected() {

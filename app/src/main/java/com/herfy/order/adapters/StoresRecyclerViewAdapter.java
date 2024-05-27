@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.herfy.R;
 import com.herfy.order.OrderContract;
 import com.herfy.order.viewholders.StoreViewHolder;
 
@@ -35,10 +34,7 @@ public class StoresRecyclerViewAdapter extends RecyclerView.Adapter<StoreViewHol
 
     @Override
     public int getItemCount() {
-        if (orderPresenter.getStoresCount(isDineIn) > 0) {
-            return orderPresenter.getStoresCount(isDineIn) + 3;
-        }
-        return 0;
+        return orderPresenter.getStoresCount(isDineIn);
     }
 
     public int getSelected() {

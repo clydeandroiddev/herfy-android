@@ -267,13 +267,13 @@ public class AccountPresenter implements AccountContract.Presenter {
             }
         }
 
-        if (phoneNumber.isEmpty()) {
-            valid = false;
-            accountView.showErrorPhoneNumber(CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_REQUIRED));
-        } else if (!StringUtil.isValidPhoneNumber(phoneNumber)) {
-            valid = false;
-            accountView.showErrorPhoneNumber(CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_INVALID));
-        }
+//        if (phoneNumber.isEmpty()) {
+//            valid = false;
+//            accountView.showErrorPhoneNumber(CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_REQUIRED));
+//        } else if (!StringUtil.isValidPhoneNumber(phoneNumber)) {
+//            valid = false;
+//            accountView.showErrorPhoneNumber(CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_INVALID));
+//        }
 
 
         if (valid) {
