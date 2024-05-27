@@ -1240,7 +1240,6 @@ public class CacheUtil {
 
     public void setOrderStore(Store store) {
         if (getCampaign() != null && store != null) {
-            Log.e("ADADADADADADAD", "ADADADADAD:" + store.getAttributes().getName());
             JsonObject campaignBody = new JsonParser().parse(new Gson().toJson(getCampaign())).getAsJsonObject();
             campaignBody.addProperty("location", store.getId());
             //setCampaign(campaignBody.toString());

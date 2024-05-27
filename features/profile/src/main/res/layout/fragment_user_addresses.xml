@@ -65,6 +65,14 @@
                     android:layout_height="1dp"
                     android:background="#E6E8EB" />
 
+                <com.herfy.common.component.EmptyStateView
+                    android:id="@+id/emptyState"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_xxxlarge"
+                    android:visibility="gone"
+                    app:emptyStateDrawable="@drawable/ic_empty_address" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/addresses"
                     android:layout_width="match_parent"

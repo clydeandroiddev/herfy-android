@@ -19,6 +19,7 @@ import com.herfy.order.views.ordertype.addaddress.AddNewAddressActivity
 import com.herfy.profile.databinding.FragmentUserAddressesBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
+import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
@@ -87,6 +88,7 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
 
     private fun goToAddAddress() {
         val intent = Intent(activity, AddNewAddressActivity::class.java)
+        intent.putExtra("fromProfile", true)
         addressLauncher.launch(intent)
     }
 
@@ -162,6 +164,10 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
             CacheUtil.getInstance().getTranslations(Text.ADDRESSES_LABEL, "Addresses")
         binding.continueButton.text =
             CacheUtil.getInstance().getTranslations(Text.ADD_NEW_ADDRESS_LABEL, "Add New Address")
+        binding.emptyState.setTitle(
+            CacheUtil.getInstance()
+                .getTranslations(Text.NO_SAVED_ADDRESSES_FOUND, "No saved addresses found.")
+        )
     }
 
 
@@ -176,6 +182,7 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
     override fun successDelete(position: Int) {
         dismissDialogs()
         adapter.removeItem(position)
+        binding.emptyState.setVisible(adapter.itemCount == 0)
     }
 
     override fun successEdit() {
@@ -204,6 +211,7 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
         otherAddresses: ArrayList<Address>
     ) {
         dismissDialogs()
+        binding.emptyState.setVisible(homeAddresses.isEmpty())
         adapter.updateList(ArrayList(homeAddresses))
     }
 

@@ -15,7 +15,6 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Geocoder
-import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -47,7 +46,6 @@ import com.herfy.util.AppLogger
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AnimUtil
-import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.location.FusedLocationProvider
@@ -270,7 +268,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun getLocation() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ActivityCompat.checkSelfPermission(
+        if (ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
@@ -320,7 +318,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     private fun dismissAddressDialog() {
         try {
-            addAddressDialog.dismiss()
+            if (addAddressDialog.isAdded) addAddressDialog.dismiss()
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
@@ -418,11 +416,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun updateAddAddress(updateAddress: Address?, saveAddress: android.location.Address?) {
-        if (AuthUtil.getInstance().isSignedIn) {
-            orderPresenter.addAddress(phoneNumber, addressLabel, driverNote, addressLabel2)
-        } else {
-            dismissDialogs()
-        }
+        finalizeDismiss(updateAddress?.attributes?.line1.orEmpty())
     }
 
     override fun showStores(pickupStores: ArrayList<Store>?, curbsideStores: ArrayList<Store>?) {
@@ -478,17 +472,13 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun updateAddress(address: String?) {
-        if (CacheUtil.getInstance().orderStore == null) {
+        if (!intent.getBooleanExtra(
+                "fromProfile", false
+            )
+        ) {
             orderPresenter.getStore(orderPresenter.selectedAddress)
         } else {
-            dismissDialogs()
-            dismissAddressDialog()
-            val eventAttributes = java.util.HashMap<String, String>()
-            eventAttributes["Delivery"] = address!!
-            logEvent("OrderTypeSelection", eventAttributes, null, 0.0)
-            overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
-            setResult(RESULT_OK)
-            finish()
+            finalizeDismiss(address.orEmpty())
         }
     }
 
@@ -590,6 +580,17 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     override fun setCloseTime(time: String?) {
 
+    }
+
+    private fun finalizeDismiss(address: String) {
+        dismissDialogs()
+        dismissAddressDialog()
+        val eventAttributes = java.util.HashMap<String, String>()
+        eventAttributes["Delivery"] = address
+        logEvent("OrderTypeSelection", eventAttributes, null, 0.0)
+        overridePendingTransition(AnimUtil.outF(), AnimUtil.outS())
+        setResult(RESULT_OK)
+        finish()
     }
 
 }
