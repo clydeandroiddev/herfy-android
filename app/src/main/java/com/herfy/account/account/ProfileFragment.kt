@@ -151,13 +151,17 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
         email: String?,
         provider: String?
     ) {
-        binding.profileName.text = "$firstName $lastName"
+        var name = "$firstName $lastName"
+        if (lastName.isNullOrEmpty()) {
+            name = "$firstName"
+        }
+        binding.profileName.text = name
         if (phoneNumber.isNullOrEmpty()) {
             binding.profileNumber.text = email.orEmpty()
         } else {
             binding.profileNumber.text = "+" + phoneNumber.replace("+", "")
         }
-        if (firstName.isNullOrEmpty() || lastName.isNullOrEmpty() || gender.isNullOrEmpty() || AuthUtil.getInstance().customer.attributes.birthDate.isNullOrEmpty()) {
+        if (firstName.isNullOrEmpty() || gender.isNullOrEmpty() || AuthUtil.getInstance().customer.attributes.birthDate.isNullOrEmpty()) {
             binding.profileCard.setCardBackgroundColor(requireActivity().resources.getColor(R.color.card_selected_bg))
             binding.editLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.COMPLETE_PROFILE, "Complete Profile")
