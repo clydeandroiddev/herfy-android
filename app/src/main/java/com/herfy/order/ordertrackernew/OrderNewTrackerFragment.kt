@@ -1245,7 +1245,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     private fun showOrderHelpDetails() {
         binding.apply {
             val mobile = CacheUtil.getInstance().concept.whatsappNumber
-            if (StringUtil.isValidPhoneNumber(mobile)) {
+            if (mobile.isNotEmpty()) {
                 binding.orderHelpDetailsFrame.isVisible = true
                 orderHelpDetails.callHelpLayout.setOnClickListener {
                     numberToCall = mobile
