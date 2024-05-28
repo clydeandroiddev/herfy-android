@@ -85,7 +85,6 @@
                     app:flow_horizontalBias="0"
                     app:flow_maxElementsWrap="1"
                     app:flow_verticalBias="0"
-                    app:flow_verticalGap="24dp"
                     app:flow_verticalStyle="packed"
                     app:flow_wrapMode="aligned"
                     app:layout_constraintTop_toBottomOf="@id/layout_order_type" />

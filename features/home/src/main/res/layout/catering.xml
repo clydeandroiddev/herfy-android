@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
+        android:layout_marginTop="24dp"
         android:id="@+id/tv_cater_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,7 +14,6 @@
         style="@style/TextAppearance.Title1"
         android:textColor="@color/black"
         tools:text="Cater with Herfy"
-        android:layout_marginTop="24dp"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

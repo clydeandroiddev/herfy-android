@@ -413,6 +413,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 CacheUtil.getInstance().getTranslations(Text.WHATSAPP_MESSAGE, "Whatsapp Message")
             orderCancelDetails.cancelOrderLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.CANCEL_ORDER_NEW, "Cancel Order")
+            orderPaymentDetails.mukafaaLabel.text =  CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
         }
     }
 
@@ -1291,8 +1292,23 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 } else {
                     orderPaymentDetails.deliverContainer.isVisible = false
                 }
-
-                if (item.discount > 0) {
+                var mukafaaAmount = 0.0
+                orderPaymentDetails.apply {
+                    orderPresenter?.let {
+                        val mukafaaTransaction = it.mukafaaTransaction
+                        if(mukafaaTransaction != null && it.isMukafaaEnabled){
+                            mukafaaContainer.visible()
+                            mukafaaAmount = mukafaaTransaction.attributes.amount
+                            var dc = "-" + StringUtil.getFormattedPrice(mukafaaAmount)
+                            dc = dc.replace("--", "-")
+                            mukafaaTotal.text = dc
+                        }else {
+                            mukafaaContainer.gone()
+                        }
+                    }
+                }
+                val discountAmount = (if(order.discountDisplay != 0.0) order.discountDisplay else order.discount) - mukafaaAmount
+                if (discountAmount > 0.0) {
                     orderPaymentDetails.discountContainer.isVisible = true
                     orderPaymentDetails.discountTotal.text = StringUtil.getNewFormattedPrice(
                         item.discount, true
@@ -1322,6 +1338,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 totalPrice.text = StringUtil.getNewFormattedPrice(
                     item.total, true
                 )
+
+
             }
         }
     }

@@ -778,15 +778,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
                         binding!!.layoutLoyalty.etPoints.setSelection(binding!!.layoutLoyalty.etPoints.text.toString().length)
                         loyaltypointsInput = userSetPoints.toInt()
-
-                        paymentPresenter!!.validateOrder(
-                            false,
-                            CacheUtil.getInstance().orderStore,
-                            null,
-                            loyaltypointsInput,
-                            false
-                        )
-
+                        if(sarAmount >= 1){
+                            paymentPresenter!!.validateOrder(
+                                false,
+                                CacheUtil.getInstance().orderStore,
+                                null,
+                                loyaltypointsInput,
+                                false
+                            )
+                        }
                     } else {
                         binding!!.layoutLoyalty.etSarAmount.setText("")
                         binding!!.layoutLoyalty.etPoints.setSelection(0)
@@ -1056,6 +1056,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             .getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
         binding!!.totalVatDescription.text = CacheUtil.getInstance()
             .getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
+        binding!!.layoutPaymentSummary.tvMukafaaLabel.text = CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
     }
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}
@@ -1382,21 +1383,22 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             updateCurrency(discount, true, hasPromotion, _discount > 0)
         binding!!.layoutPaymentSummary.grpDiscount.visibility =
             if (discount != 0.0) View.VISIBLE else View.GONE
-
-        /*if (mukafaaAmount > 0) {
-            if (paymentPresenter.hasMukafaaTransactionId() && paymentPresenter.isMukafaaEnabled()) {
-                String amnt = String.valueOf(StringUtil.getFormattedPrice(mukafaaAmount));
-                if (!"0".equals(amnt) && !amnt.contains("-")) amnt = "-" + amnt;
-                tvMukafaaSar.setText(amnt);
-
-                grpMukafaa.setVisibility(View.VISIBLE);
+        binding?.layoutPaymentSummary?.apply {
+            if (mukafaaAmount > 0) {
+                if (paymentPresenter!!.hasMukafaaTransactionId() && paymentPresenter!!.isMukafaaEnabled()) {
+                    var amnt = StringUtil.getFormattedPrice(mukafaaAmount).toString()
+                    if (!"0".equals(amnt) && !amnt.contains("-")) amnt = "-" + amnt;
+                    tvMukafaaSar.text = amnt
+                    grpMukafaa.visibility = View.VISIBLE;
+                } else {
+                    grpMukafaa.visibility = View.GONE;
+                }
             } else {
                 grpMukafaa.setVisibility(View.GONE);
             }
-        } else {
-            grpMukafaa.setVisibility(View.GONE);
-            selectMukafaa(false, false);
-        }*/
+        }
+
+
         if (pointsUsed > 0) {
             binding!!.layoutPaymentSummary.grpRedeemedPoints.visible()
             binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text = CacheUtil.getInstance()

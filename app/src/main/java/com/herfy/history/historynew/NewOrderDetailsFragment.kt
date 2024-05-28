@@ -35,7 +35,9 @@ import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
+import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.DialogUtils
 import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver
 import com.skylinedynamics.solosdk.api.models.objects.Address
@@ -183,6 +185,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
             discountLabel.text = CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
             totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL, "Total")
+            mukafaaLabel.text = CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
         }
     }
 
@@ -261,13 +264,40 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                     deliverContainer.isVisible = false
                 }
 
-                if (item.discount > 0) {
+                var mukafaaAmount = 0.0
+                orderPresenter?.let {
+                    val mukafaaTransaction = it.mukafaaTransaction
+                    if(mukafaaTransaction != null && it.isMukafaaEnabled){
+                        mukafaaContainer.visible()
+                        mukafaaAmount = mukafaaTransaction.attributes.amount
+                        var dc = "-" + StringUtil.getFormattedPrice(mukafaaAmount)
+                        dc = dc.replace("--", "-")
+                        mukafaaTotal.text = dc
+                    }else {
+                        mukafaaContainer.gone()
+                    }
+                }
+
+                val discountAmount = (if(order.discountDisplay != 0.0) order.discountDisplay else order.discount) - mukafaaAmount
+                if (discountAmount > 0.0) {
                     discountContainer.isVisible = true
                     discountTotal.text = StringUtil.getNewFormattedPrice(
                         item.discount, true
                     )
                 } else {
                     discountContainer.isVisible = false
+                }
+
+                if (item.loyaltyPointsRedeemed > 0) {
+                    loyaltyContainer.visible()
+                    tvRedeemPointsLabel.text = CacheUtil.getInstance()
+                        .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
+                        .replace("x", item.loyaltyActualPointsRedeemed.toString())
+                    tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
+                        item.loyaltyPointsRedeemed.toDouble(), true, false, true
+                    )
+                } else {
+                    loyaltyContainer.gone()
                 }
 
                 totalPrice.text = StringUtil.getNewFormattedPrice(

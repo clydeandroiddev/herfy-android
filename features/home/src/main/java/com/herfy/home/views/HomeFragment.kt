@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.view.ViewOutlineProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResultListener
@@ -17,7 +19,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.herfy.common.getPromisedMinutes
 import com.herfy.home.R
 import com.herfy.home.adapter.PromotionCategoryAdapter
@@ -30,7 +35,6 @@ import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
-import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.setInteractionDisabled
@@ -170,19 +174,18 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         if (containsLoyalty) {
             val isSignedIn = AuthUtil.getInstance().isSignedIn
             if (isSignedIn) {
-
                 viewModel.getLoyalty()
                 binding.layoutLoyalty.apply {
-                    ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
                     clCustomerLoyalty.visible()
-                    clLoyaltyDetailsContainer.gone()
+                    cvLoyaltyDetails.gone()
                     clLoyaltyEmptyState.gone()
-                    fmShimmerLoyalty.visible()
+                    cvShimmerLoyalty.visible()
                 }
             } else {
                 binding.layoutLoyalty.apply {
                     clCustomerLoyalty.visible()
-                    fmShimmerLoyalty.gone()
+                    cvShimmerLoyalty.gone()
+                    cvLoyaltyDetails.gone()
                     clLoyaltyEmptyState.visible()
                 }
             }
@@ -428,10 +431,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.loyalty.observe(this) {
             it.getContentIfNotHandled()?.let { loyalty ->
                 binding.layoutLoyalty.apply {
-                    fmShimmerLoyalty.gone()
-                    loyalty?.let {
-                        clLoyaltyDetailsContainer.visible()
-                        clLoyaltyEmptyState.gone()
+                    loyalty.let {
                         tvTotalPoints.text =
                             StringUtil.localize(loyalty.attributes.currentBalance.toString())
                         val currentBalanceValue =
@@ -459,14 +459,10 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             ) {
                                 tierBackground = R.drawable.background_diamond_tier
                             }
-                            tvTier.text = loyaltyTier
                             tvTier.setBackgroundResource(tierBackground)
+                            tvTier.text = loyaltyTier
                             tvProgressTier.text = loyaltyTier
                         }
-
-                    } ?: run {
-                        clLoyaltyDetailsContainer.gone()
-                        clLoyaltyEmptyState.visible()
                     }
                 }
             }
@@ -475,13 +471,41 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.tiers.observe(this) {
             it.getContentIfNotHandled()?.let { tiers ->
                 val loyalty = AuthUtil.getInstance().customerLoyalty
-                val loyaltyTier = loyalty.attributes?.loyaltyTier?.name ?: ""
+                val loyaltyTier = loyalty?.attributes?.loyaltyTier?.name ?: ""
                 if (loyaltyTier.isNotEmpty()) {
                     tiers.find { tier -> tier.name.equals(loyaltyTier, true) }?.let { tier ->
                         tier.imageUrl.let { url ->
                             if (!url.isNullOrEmpty()) {
-                                binding.layoutLoyalty.ivLoyaltyCard.loadImageFromUrl(imageUrl = url)
+                                binding.layoutLoyalty.ivLoyaltyCard.apply {
+                                    this@HomeFragment.context?.let {
+                                        Glide.with(it)
+                                            .load(url)
+                                            .skipMemoryCache(false)
+                                            .apply(RequestOptions.noTransformation())
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .into(object : DrawableImageViewTarget(this) {
+                                                override fun setResource(resource: Drawable?) {
+                                                    super.setResource(resource)
+                                                    binding.layoutLoyalty.apply {
+                                                        if (resource == null) {
+                                                            ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
+                                                        }
+                                                        cvLoyaltyDetails.visible()
+                                                        clLoyaltyEmptyState.gone()
+                                                        cvShimmerLoyalty.gone()
+
+                                                    }
+
+                                                }
+                                            })
+                                    }
+                                }
                             } else {
+                                binding.layoutLoyalty.apply {
+                                    clLoyaltyEmptyState.gone()
+                                    cvShimmerLoyalty.gone()
+                                    cvLoyaltyDetails.visible()
+                                }
                                 binding.layoutLoyalty.ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
                             }
 
@@ -934,6 +958,12 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 }
                 clLoyaltyEmptyState.apply {
                     layoutParams.height = imageEmptyLoyalty.toInt()
+                }
+                clDetailsLoyaltyContainer.clipToOutline = true
+                clDetailsLoyaltyContainer.outlineProvider = ViewOutlineProvider.BACKGROUND
+                ivLoyaltyCard.apply {
+                    clipToOutline = true
+                    outlineProvider = ViewOutlineProvider.BACKGROUND
                 }
             }
         }
