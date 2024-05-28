@@ -1469,26 +1469,20 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         if (CacheUtil.getInstance().getOrderType() != OrderType.DINE_IN || store.getAttributes().hasPromptForTableNumber == 0) {
             CacheUtil.getInstance().setDineInTableNumber("");
         }
-
         if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
-
             if (selectedAddress != null) {
                 CacheUtil.getInstance().setOrderAddress(selectedAddress);
                 CacheUtil.getInstance().setOrderDeliveryAddress(null);
                 orderView.saveAddress(selectedAddress.getAttributes().getLine1());
             } else {
-
                 com.skylinedynamics.solosdk.api.models.objects.Address updateAddress = null;
-
                 if (AuthUtil.getInstance().isSignedIn()) {
-
                     for (com.skylinedynamics.solosdk.api.models.objects.Address homeAddress : bookmarkedAddresses) {
                         if (homeAddress.getAttributes().getLat().equals(String.valueOf(address.getLatitude())) && homeAddress.getAttributes().getLongt().equals(String.valueOf(address.getLongitude()))) {
                             updateAddress = homeAddress;
                             break;
                         }
                     }
-
                     if (updateAddress == null) {
                         for (com.skylinedynamics.solosdk.api.models.objects.Address otherAddress : otherAddresses) {
                             if (address != null && otherAddress.getAttributes().getLat().equals(String.valueOf(address.getLatitude())) && otherAddress.getAttributes().getLongt().equals(String.valueOf(address.getLongitude()))) {
@@ -1497,18 +1491,14 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                             }
                         }
                     }
-
                 }
-
                 if (updateAddress != null) {
                     orderView.updateAddAddress(updateAddress, null);
                 } else {
                     orderView.updateAddAddress(null, address);
                 }
             }
-
         } else {
-
             orderView.showStore(true, store, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
         }
     }
