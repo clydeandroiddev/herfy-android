@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -21,6 +22,8 @@ import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.CompoundButton
+import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -68,6 +71,7 @@ import com.herfy.decorator.OneDayDecorator
 import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
 import com.herfy.main.MainActivity
 import com.herfy.main.MainActivity.Companion.currentMainActivity
+import com.herfy.menu.viewholders.IngredientViewHolder.OnCheckedChanged
 import com.herfy.order.views.OrderTypeActivity
 import com.herfy.payment.PaymentContract
 import com.herfy.payment.PaymentPresenter
@@ -114,6 +118,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard
+import com.skylinedynamics.solosdk.api.models.objects.Ingredient
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType
@@ -196,6 +201,30 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private var bottomSheetAlrhaji: BottomSheetAlrhaji? = null
     private var finalTotal = 0.0
     private var finalDiscount = 0.0
+
+    var alrahjiCheckChangeListener = OnCheckedChangeListener { p0, p1 ->
+        if (!p1) {
+            paymentPresenter?.let {
+                if(it.hasMukafaaTransactionId()) {
+                    it.removeMukafaa()
+                }
+            }
+        }else {
+            paymentPresenter?.let {
+                bottomSheetAlrhaji = BottomSheetAlrhaji.newInstance(
+                    it.validatedTotal,
+                    it.validatedBody,
+                    it.validatedDeliveryCharge
+                )
+                bottomSheetAlrhaji?.isCancelable = false
+                bottomSheetAlrhaji?.show(
+                    supportFragmentManager,
+                    BottomSheetAlrhaji::class.java.simpleName
+                )
+
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -754,7 +783,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         val currentPoints = AuthUtil.getInstance().customerLoyalty.attributes.currentBalance
                         val pointConversion =
                             AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble()
-                        val orderTotalPoints = if (loyalty!!.attributes.currentBalanceAmount > paymentPresenter!!.menuItemsTotalPrice) paymentPresenter!!.menuItemsTotalPrice * AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble() else loyalty!!.attributes.currentBalance
+                        val orderTotalPoints = if (loyalty.attributes.currentBalanceAmount > (finalTotal - finalDiscount)) (finalTotal - finalDiscount) * AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble() else loyalty!!.attributes.currentBalance
                                 .toDouble()
                         if (userSetPoints >= currentPoints || userSetPoints >= orderTotalPoints) {
 
@@ -778,15 +807,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
                         binding!!.layoutLoyalty.etPoints.setSelection(binding!!.layoutLoyalty.etPoints.text.toString().length)
                         loyaltypointsInput = userSetPoints.toInt()
-
-                        paymentPresenter!!.validateOrder(
-                            false,
-                            CacheUtil.getInstance().orderStore,
-                            null,
-                            loyaltypointsInput,
-                            false
-                        )
-
+                        if(sarAmount >= 1){
+                            paymentPresenter!!.validateOrder(
+                                false,
+                                CacheUtil.getInstance().orderStore,
+                                null,
+                                loyaltypointsInput,
+                                false
+                            )
+                        }
                     } else {
                         binding!!.layoutLoyalty.etSarAmount.setText("")
                         binding!!.layoutLoyalty.etPoints.setSelection(0)
@@ -880,14 +909,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 else -> View.GONE
             }
 
-            switchAlrahji.setOnCheckedChangeListener { compoundButton, b ->
-                if (!b) {
-                    paymentPresenter?.removeMukafaa()
-                    switchAlrahji.isEnabled = false
-                } else {
-                    switchAlrahji.isEnabled = true
-                }
-            }
+            switchAlrahji.setOnCheckedChangeListener(alrahjiCheckChangeListener)
         }
         //total.setText(StringUtil.getFormattedPrice(paymentPresenter.getTotalPrice()));
 
@@ -963,23 +985,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 placeOrder.setVisibility(View.VISIBLE);
             }
         }*/
-
-        binding!!.layoutAlrahji.apply {
-            cvAlrhaji.setOnClickListener {
-                paymentPresenter?.let {
-                    bottomSheetAlrhaji = BottomSheetAlrhaji.newInstance(
-                        it.validatedTotal,
-                        it.validatedBody,
-                        it.validatedDeliveryCharge
-                    )
-                    bottomSheetAlrhaji?.show(
-                        supportFragmentManager,
-                        BottomSheetAlrhaji::class.java.simpleName
-                    )
-                }
-
-            }
-        }
     }
 
     override fun setupFonts() {}
@@ -1056,6 +1061,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             .getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
         binding!!.totalVatDescription.text = CacheUtil.getInstance()
             .getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
+        binding!!.layoutPaymentSummary.tvMukafaaLabel.text = CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
     }
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}
@@ -1381,33 +1387,35 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPaymentSummary.tvDiscount.text =
             updateCurrency(discount, true, hasPromotion, _discount > 0)
         binding!!.layoutPaymentSummary.grpDiscount.visibility =
-            if (discount != 0.0) View.VISIBLE else View.GONE
-
-        /*if (mukafaaAmount > 0) {
-            if (paymentPresenter.hasMukafaaTransactionId() && paymentPresenter.isMukafaaEnabled()) {
-                String amnt = String.valueOf(StringUtil.getFormattedPrice(mukafaaAmount));
-                if (!"0".equals(amnt) && !amnt.contains("-")) amnt = "-" + amnt;
-                tvMukafaaSar.setText(amnt);
-
-                grpMukafaa.setVisibility(View.VISIBLE);
+            if (_discount != 0.0) View.VISIBLE else View.GONE
+        binding?.layoutPaymentSummary?.apply {
+            if (mukafaaAmount > 0) {
+                if (paymentPresenter!!.hasMukafaaTransactionId() && paymentPresenter!!.isMukafaaEnabled()) {
+                    var amnt = StringUtil.getFormattedPrice(mukafaaAmount).toString()
+                    if (!"0".equals(amnt) && !amnt.contains("-")) amnt = "-" + amnt;
+                    tvMukafaaSar.text = amnt
+                    grpMukafaa.visibility = View.VISIBLE;
+                } else {
+                    grpMukafaa.visibility = View.GONE;
+                }
             } else {
                 grpMukafaa.setVisibility(View.GONE);
             }
-        } else {
-            grpMukafaa.setVisibility(View.GONE);
-            selectMukafaa(false, false);
-        }*/
+        }
+
+
         if (pointsUsed > 0) {
             binding!!.layoutPaymentSummary.grpRedeemedPoints.visible()
             binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text = CacheUtil.getInstance()
                 .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
                 .replace("x", pointsUsed.toString())
+            val sarAmount = Math.min(
+                pointsSarValue,
+                paymentPresenter!!.menuItemsTotalPrice
+            )
             binding!!.layoutPaymentSummary.tvRedeemPointsEquiv.text =
                 updateCurrency(
-                    Math.min(
-                        pointsSarValue,
-                        paymentPresenter!!.menuItemsTotalPrice
-                    ), true, hasPromotion, true
+                    sarAmount, true, hasPromotion, true
                 )
         } else {
             binding!!.layoutPaymentSummary.grpRedeemedPoints.gone()
@@ -1434,7 +1442,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             true,
             false
         )
-        finalDiscount = discount
+        finalDiscount = _discount
 
         if (mukafaaAmount > 0) {
             finalTotal = subtotalPrice - mukafaaAmount
@@ -2030,13 +2038,21 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 selectPaymentTypeCash()
             }
             binding?.apply {
-                layoutAlrahji.switchAlrahji.isChecked = true
+                layoutAlrahji.switchAlrahji.apply {
+                    setOnCheckedChangeListener(null)
+                    isChecked = true
+                    setOnCheckedChangeListener(alrahjiCheckChangeListener)
+                }
             }
             bottomSheetAlrhaji?.dismissAllowingStateLoss()
         } else {
             CacheUtil.getInstance().orderPayment = PaymentType.NONE
             binding?.apply {
-                layoutAlrahji.switchAlrahji.isChecked = false
+                layoutAlrahji.switchAlrahji.apply {
+                    setOnCheckedChangeListener(null)
+                    isChecked = false
+                    setOnCheckedChangeListener(alrahjiCheckChangeListener)
+                }
             }
         }
 
@@ -2048,4 +2064,23 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             false
         )
     }
+
+    override fun onClose() {
+        paymentPresenter?.let {
+            if(!it.hasMukafaaTransactionId()){
+                binding?.apply {
+                    layoutAlrahji.switchAlrahji.apply {
+                        setOnCheckedChangeListener(null)
+                        isChecked = false
+                        setOnCheckedChangeListener(alrahjiCheckChangeListener)
+                    }
+                }
+                bottomSheetAlrhaji?.dismissAllowingStateLoss()
+                bottomSheetAlrhaji = null
+            }
+        }
+    }
+
+
+
 }

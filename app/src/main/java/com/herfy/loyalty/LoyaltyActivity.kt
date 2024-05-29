@@ -5,12 +5,17 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.base.BaseActivity
@@ -107,12 +112,15 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     }
 
     private fun setupLoyaltyImageHeight() {
-        binding.layoutCard.ivLoyaltyCard.apply {
-            context?.let {
+        binding.layoutCard.apply{
+            fmShimmerLoyalty.apply {
                 val imageHeight = (Resources.getSystem().displayMetrics.widthPixels / Values.LOYALTY_CARD_ASPECT_RATIO)
                 layoutParams.height = imageHeight.toInt()
             }
-
+            clCardMain.apply {
+                val imageHeight = (Resources.getSystem().displayMetrics.widthPixels / Values.LOYALTY_CARD_ASPECT_RATIO)
+                layoutParams.height = imageHeight.toInt()
+            }
         }
     }
 
@@ -177,7 +185,6 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
         setupRewardTiers()
         binding.apply {
             binding.layoutCard.apply {
-                ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
                 progress.isEnabled = false
             }
 
@@ -316,6 +323,25 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                     tiers.find { tier -> tier.name.equals(loyaltyTier, true) }?.let { tier ->
                         tier.imageUrl.let { url ->
                             if(!url.isNullOrEmpty()){
+                                Glide.with(this@LoyaltyActivity)
+                                    .load(url)
+                                    .skipMemoryCache(false)
+                                    .apply(RequestOptions.noTransformation())
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .into(object : DrawableImageViewTarget(binding.layoutCard.ivLoyaltyCard) {
+                                        override fun setResource(resource: Drawable?) {
+                                            super.setResource(resource)
+                                            binding.layoutCard.apply {
+                                                if (resource == null) {
+                                                    ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
+                                                }
+                                                clCardMain.visible()
+                                                fmShimmerLoyalty.gone()
+
+                                            }
+
+                                        }
+                                    })
                                 binding.layoutCard.ivLoyaltyCard.loadImageFromUrl(imageUrl = url)
                             }
                         }

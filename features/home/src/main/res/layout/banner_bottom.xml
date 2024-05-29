@@ -2,8 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+
     android:paddingHorizontal="16dp"
-    android:paddingTop="18dp"
     android:id="@+id/cl_bottom_banner"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -16,6 +16,7 @@
         app:constraint_referenced_ids="tv_banner_bottom, cv_banner_bottom, sdi_banner_bottom"/>
 
     <TextView
+        android:layout_marginTop="16dp"
         android:id="@+id/tv_banner_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

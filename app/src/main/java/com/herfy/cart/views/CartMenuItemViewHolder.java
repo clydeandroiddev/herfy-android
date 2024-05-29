@@ -220,7 +220,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         if (imageUrl == null || imageUrl.equalsIgnoreCase("null") || imageUrl.isEmpty() || imageUrl.toLowerCase().contains("default-image.png")) {
             imageUrl = Values.DEFAULT_IMAGE_URL;
         }
-        ImageViewExtKt.loadImageFromUrl(image, imageUrl, false, DiskCacheStrategy.ALL, RequestOptions.centerCropTransform(), R.drawable.imagepicker_image_placeholder);
+        ImageViewExtKt.loadImageFromUrl(image, imageUrl, false, DiskCacheStrategy.ALL, RequestOptions.centerCropTransform(), R.drawable.imagepicker_image_placeholder, null);
         quantity.setText(StringUtil.localize(String.valueOf(menuItem.getAttributes().getQuantity())));
         totalPrice.setVisibility(View.VISIBLE);
         if (!menuItem.isPromo()) {

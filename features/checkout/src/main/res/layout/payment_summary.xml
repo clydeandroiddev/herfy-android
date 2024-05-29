@@ -72,13 +72,14 @@
         android:lineHeight="14dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_payment_label" />
+
     <androidx.constraintlayout.widget.Group
         android:id="@+id/grp_mukafaa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        tools:visibility="gone"
-        app:constraint_referenced_ids="tv_mukafaa_label,tv_mukafaa_remove,tv_mukafaa_sar, view_mukafaa"/>
+        tools:visibility="visible"
+        app:constraint_referenced_ids="tv_mukafaa_label,tv_mukafaa_sar, view_mukafaa"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_mukafaa_label"
@@ -86,13 +87,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         tools:text="Al Rajhi Mokafa'a"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        android:fontFamily="@font/inter_semi_bold"
+        android:textColor="#55667B"
+        android:textSize="14sp"
+        android:fontFamily="@font/inter_regular"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view0" />
+        app:layout_constraintTop_toBottomOf="@+id/viewDeliverySeparator" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+   <!-- <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_mukafaa_remove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -103,7 +104,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/tv_mukafaa_sar"
         app:layout_constraintEnd_toStartOf="@+id/tv_mukafaa_sar"
         app:layout_constraintTop_toTopOf="@+id/tv_mukafaa_sar"
-        tools:text="Remove" />
+        tools:text="Remove"
+        android:visibility="gone"/>-->
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_mukafaa_sar"
@@ -115,12 +117,12 @@
         android:textSize="12sp"
         android:fontFamily="@font/inter_semi_bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view0" />
+        app:layout_constraintTop_toBottomOf="@+id/viewDeliverySeparator" />
 
     <View
         android:id="@+id/view_mukafaa"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="16dp"
         android:background="@color/colorSeparator"
@@ -177,6 +179,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvDeliveryChargeValue" />
 
+
+
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_discount_label"
         android:layout_width="wrap_content"
@@ -188,7 +193,7 @@
         android:textFontWeight="500"
         android:fontFamily="@font/inter_regular"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewDeliverySeparator" />
+        app:layout_constraintTop_toBottomOf="@+id/view_mukafaa" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_discount"
@@ -201,7 +206,7 @@
         android:lineHeight="14dp"
         android:fontFamily="@font/inter_bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewDeliverySeparator"
+        app:layout_constraintTop_toBottomOf="@+id/view_mukafaa"
         tools:text="-5 SR" />
 
     <View

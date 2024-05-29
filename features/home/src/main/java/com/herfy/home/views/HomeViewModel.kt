@@ -380,6 +380,7 @@ class HomeViewModel @Inject constructor(
                     .blockingGet()
                 var pointsToNextTier = 0
                 _loyalty.value = Event(loyalty)
+                _tiers.value = Event(tiers)
                 var nextTier: Tier? = null
                 if (eligibleTiers.size <= 0 && tiers.isNotEmpty()) {
                     eligibleTiers = ArrayList()
@@ -515,7 +516,6 @@ class HomeViewModel @Inject constructor(
                     if (homeResponse.success) {
                         homeResponse.data?.let { it ->
                             it.cast<ArrayList<Tier>> {
-                                _tiers.value = Event(it)
                                 source.onSuccess(it)
                             }
                         }
@@ -534,7 +534,6 @@ class HomeViewModel @Inject constructor(
                     if (homeResponse.success) {
                         homeResponse.data?.let { it ->
                             it.cast<Loyalty> {
-                                _loyalty.value = Event(it)
                                 AuthUtil.getInstance().customerLoyalty = it
                                 source.onSuccess(it)
                             }

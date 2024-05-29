@@ -372,6 +372,51 @@
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/mukafaaContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="46dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/mukafaaLabel"
+                                style="@style/Styles.Text.Caption.Regular"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:textColor="#55667B"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Al rhaji Mokafa'a" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/mukafaaTotal"
+                                style="@style/Styles.Text.Footnote_Bold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:textColor="#0C0C0C"
+                                android:textSize="12sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="SAR 24" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#E6E8EB"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/discountContainer"
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
@@ -407,6 +452,52 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="SAR 24" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#E6E8EB"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/loyaltyContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="46dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:visibility="gone">
+
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tv_redeem_points_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#55667B"
+                                android:textSize="14sp"
+                                android:fontFamily="@font/inter_regular"
+                                android:textAllCaps="false"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Loyalty Points (500)"/>
+
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tv_redeem_points_equiv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:textColor="#16A34A"
+                                style="@style/TextAppearance.Footnote"
+                                android:textFontWeight="700"
+                                android:lineHeight="14dp"
+                                android:fontFamily="@font/inter_bold"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="-5 SR" />
 
                             <View
                                 android:layout_width="match_parent"
