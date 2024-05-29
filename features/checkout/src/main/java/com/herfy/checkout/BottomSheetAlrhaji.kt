@@ -89,7 +89,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
     fun setupViews(binding: BottomSheetAlrhajiBinding) {
         binding.apply {
             ibClose.setOnClickListener {
-                dismissAllowingStateLoss()
+                mBottomSheetListener?.onClose()
             }
             val phoneTextWatcher = object : TextWatcher {
                 override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
@@ -242,7 +242,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                     tvAmountError.visible()
                 } else {
                     viewModel.verifyOTP(
-                        o, a, GsonHelper.gsonFinal().fromJson<JsonObject>(
+                        o, a, GsonHelper.gsonFinal().fromJson(
                             cartBody,
                             JsonObject::class.java
                         )
@@ -453,6 +453,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
     }
 
     interface OTPAlrahjiListener {
+        fun onClose()
         fun otpResult(transactionId: String, amount: String, invalidMukafaa: Boolean)
 
     }

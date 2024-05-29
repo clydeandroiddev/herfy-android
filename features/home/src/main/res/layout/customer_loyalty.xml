@@ -285,86 +285,106 @@
 
 
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_loyalty_empty_state"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_empty_state"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:elevation="12dp"
-        android:visibility="gone"
+        android:layout_marginBottom="24dp"
+        app:cardElevation="12dp"
+        app:cardCornerRadius="20dp"
+        app:cardUseCompatPadding="false"
+        app:cardPreventCornerOverlap="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/iv_loyalty_empty_card"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_loyalty_empty_state"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/background_loyalty_card"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:elevation="12dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/ln_loyalty_empty_state"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:gravity="center_horizontal"
-            android:layout_gravity="center_horizontal"
-            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
+            <ImageView
+                android:id="@+id/iv_loyalty_empty_card"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/background_loyalty_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_title_empty_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                style="@style/Styles.Text.Title1"
-                tools:text="Become an Ashab Herfy"/>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_description_empty_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:layout_marginHorizontal="32dp"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/ln_loyalty_empty_state"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:gravity="center_horizontal"
                 android:layout_gravity="center_horizontal"
-                style="@style/Styles.Text.Caption.Regular"
-                tools:text="By creating an account or signing in to your existing one you get point on every order"/>
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
 
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_continue"
-                android:layout_marginTop="36dp"
-                android:layout_width="172dp"
-                android:layout_height="40dp"
-                android:insetBottom="0dp"
-                android:insetTop="0dp"
-                app:cornerRadius="20dp"
-                android:textAllCaps="false"
-                android:textColor="@color/text_color_red"
-                android:textSize="14sp"
-                app:backgroundTint="@color/white"
-                android:textAppearance="@style/Styles.Text.Footnote.Semi.Bold"
-                android:layout_marginBottom="32dp"
-                tools:text="Continue"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_title_empty_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    style="@style/Styles.Text.Title1"
+                    tools:text="Become an Ashab Herfy"/>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_description_empty_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:layout_marginHorizontal="32dp"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal"
+                    style="@style/Styles.Text.Caption.Regular"
+                    tools:text="By creating an account or signing in to your existing one you get point on every order"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_continue"
+                    android:layout_marginTop="36dp"
+                    android:layout_width="172dp"
+                    android:layout_height="40dp"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    app:cornerRadius="20dp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_color_red"
+                    android:textSize="14sp"
+                    app:backgroundTint="@color/white"
+                    android:textAppearance="@style/Styles.Text.Footnote.Semi.Bold"
+                    android:layout_marginBottom="32dp"
+                    tools:text="Continue"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_shimmer_loyalty"
@@ -374,8 +394,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        app:cardElevation="12dp"
         android:backgroundTint="@color/white"
+        android:layout_marginBottom="24dp"
+        app:cardElevation="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

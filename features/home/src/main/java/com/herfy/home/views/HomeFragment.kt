@@ -178,7 +178,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 binding.layoutLoyalty.apply {
                     clCustomerLoyalty.visible()
                     cvLoyaltyDetails.gone()
-                    clLoyaltyEmptyState.gone()
+                    cvEmptyState.gone()
                     cvShimmerLoyalty.visible()
                 }
             } else {
@@ -186,7 +186,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     clCustomerLoyalty.visible()
                     cvShimmerLoyalty.gone()
                     cvLoyaltyDetails.gone()
-                    clLoyaltyEmptyState.visible()
+                    cvEmptyState.visible()
                 }
             }
         } else {
@@ -490,10 +490,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                                         if (resource == null) {
                                                             ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
                                                         }
-                                                        cvLoyaltyDetails.visible()
-                                                        clLoyaltyEmptyState.gone()
-                                                        cvShimmerLoyalty.gone()
-
+                                                        Handler(Looper.getMainLooper()).postDelayed(
+                                                            {
+                                                                cvEmptyState.gone()
+                                                                cvShimmerLoyalty.gone()
+                                                                cvLoyaltyDetails.visible()
+                                                            },
+                                                            500
+                                                        )
                                                     }
 
                                                 }
@@ -502,7 +506,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                 }
                             } else {
                                 binding.layoutLoyalty.apply {
-                                    clLoyaltyEmptyState.gone()
+                                    cvEmptyState.gone()
                                     cvShimmerLoyalty.gone()
                                     cvLoyaltyDetails.visible()
                                 }
@@ -723,6 +727,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     binding.layoutBanner.orderTracker.tvOrderTypeLabel.text =
                         CacheUtil.getInstance()
                             .getTranslations(Text.ORDER_COMPLETED, "Order completed!.")
+                    updateCustomerLoyalty()
                 } else {
                     binding.layoutBanner.orderTracker.tvEstimateValue.gone()
                     binding.layoutBanner.orderTracker.tvEstimateLabel.gone()
