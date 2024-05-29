@@ -24,7 +24,6 @@
             android:id="@+id/iv_loyalty_card"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/background_loyalty_card"
             android:scaleType="fitXY"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
