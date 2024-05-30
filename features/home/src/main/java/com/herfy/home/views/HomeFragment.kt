@@ -76,14 +76,16 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     override fun initViews() {
         super.initViews()
-        viewModel.getMenuCategory()
+        viewModel.apply {
+            getMenuCategory()
+            getOrderTypes()
+        }
         binding.apply {
             showPopup()
             setupSlider()
             setupCustomerLoyalty()
             setupPromoCategory()
             setupPromotions()
-            setupOrderType()
             setupCaterWithHerfy()
             setupBottomSlider()
             layoutLoyalty.apply {
@@ -394,6 +396,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 if (it.isNotEmpty()) {
                     cacheUtilHelper?.let { cacheHelper ->
                         binding.layoutOrderTypeMain.apply {
+                            var hasPickup = false
                             deliveryContainer.isVisible = false
                             pickupContainer.isVisible = false
                             dineinContainer.isVisible = false
@@ -406,7 +409,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                     deliveryContainer.setOnClickListener {
                                         orderTypeClick(OrderType.DELIVERY)
                                     }
-                                } else if (orderType === OrderType.PICKUP) {
+                                } else if (!hasPickup && (orderType === OrderType.PICKUP || orderType === OrderType.CURBSIDE)) {
+                                    hasPickup = true
                                     pickupLabel.text =
                                         cacheHelper.getTranslations(Text.PICKUP, "Pickup")
                                     pickupContainer.isVisible = true
@@ -425,6 +429,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         }
                     }
                 }
+                setupOrderType()
             }
         }
 
@@ -928,23 +933,21 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     private fun setupOrderType() {
         context?.let {
-            val denominator = viewModel.getOrderTypes()
+            val denominator = viewModel.orderTypes.value?.size ?: 0
             if (denominator > 0) {
-                val itemHeight: Int = if (denominator >= Values.MAX_ORDERTYPE_COUNT) {
+                val itemHeight = if (denominator >= Values.MAX_ORDERTYPE_COUNT) {
                     (Resources.getSystem().displayMetrics.widthPixels / 3) - ViewUtil.dpToPx(
                         it, Values.TOTAL_ORDERTYPE_SPACING
-                    )
+                    ) * (Values.THREE_ORDERTYPE_ASPECT_RATIO_HEIGHT / Values.THREE_ORDERTYPE_ASPECT_RATIO_WIDTH)
                 } else {
-                    val numerator =
-                        ((Resources.getSystem().displayMetrics.widthPixels) - ViewUtil.dpToPx(
-                            it, Values.TOTAL_ORDERTYPE_SPACING
-                        ))
-                    numerator / (Values.TWO_ORDERTYPE_ASPECT_RATIO * denominator)
+                    ((Resources.getSystem().displayMetrics.widthPixels / 2) - ViewUtil.dpToPx(
+                        it, Values.TOTAL_ORDERTYPE_SPACING
+                    )) * (Values.TWO_ORDERTYPE_ASPECT_RATIO_HEIGHT / Values.TWO_ORDERTYPE_ASPECT_RATIO_WIDTH)
                 }
                 binding.layoutOrderTypeMain.apply {
-                    deliveryType.layoutParams.height = itemHeight
-                    pickupType.layoutParams.height = itemHeight
-                    dineType.layoutParams.height = itemHeight
+                    deliveryType.layoutParams.height = itemHeight.toInt()
+                    pickupType.layoutParams.height = itemHeight.toInt()
+                    dineType.layoutParams.height = itemHeight.toInt()
                 }
             }
         }

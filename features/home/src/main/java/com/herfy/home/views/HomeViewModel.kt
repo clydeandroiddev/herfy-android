@@ -2,6 +2,7 @@ package com.herfy.home.views
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonArray
@@ -237,15 +238,19 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getOrderTypes(): Int {
+    fun getOrderTypes() {
         invoke {
             homeRepository.getOrderTypes { res ->
                 res.data?.cast<Set<OrderType>> { orderTypes ->
-                    _orderTypes.value = orderTypes
+                    val types = hashSetOf<OrderType>()
+                    types.addAll(orderTypes)
+                    if(types.contains(OrderType.PICKUP) && types.contains(OrderType.CURBSIDE)) {
+                        types.remove(OrderType.CURBSIDE)
+                    }
+                    _orderTypes.postValue(types)
                 }
             }
         }
-        return _orderTypes.value?.size ?: 0
     }
 
     fun getPromotions() {
