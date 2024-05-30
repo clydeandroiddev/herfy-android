@@ -472,48 +472,52 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             it.getContentIfNotHandled()?.let { tiers ->
                 val loyalty = AuthUtil.getInstance().customerLoyalty
                 val loyaltyTier = loyalty?.attributes?.loyaltyTier?.name ?: ""
+                var tierImageUrl = ""
                 if (loyaltyTier.isNotEmpty()) {
                     tiers.find { tier -> tier.name.equals(loyaltyTier, true) }?.let { tier ->
-                        tier.imageUrl.let { url ->
-                            if (!url.isNullOrEmpty()) {
-                                binding.layoutLoyalty.ivLoyaltyCard.apply {
-                                    this@HomeFragment.context?.let {
-                                        Glide.with(it)
-                                            .load(url)
-                                            .skipMemoryCache(false)
-                                            .apply(RequestOptions.noTransformation())
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                            .into(object : DrawableImageViewTarget(this) {
-                                                override fun setResource(resource: Drawable?) {
-                                                    super.setResource(resource)
-                                                    binding.layoutLoyalty.apply {
-                                                        if (resource == null) {
-                                                            ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
-                                                        }
-                                                        Handler(Looper.getMainLooper()).postDelayed(
-                                                            {
-                                                                cvEmptyState.gone()
-                                                                cvShimmerLoyalty.gone()
-                                                                cvLoyaltyDetails.visible()
-                                                            },
-                                                            500
-                                                        )
-                                                    }
+                       tierImageUrl = tier.imageUrl
+                    }
+                }else {
+                    tiers[0].imageUrl?.let{ url->
+                        tierImageUrl = url
+                    }
+                }
 
-                                                }
-                                            })
+                if (tierImageUrl.isNotEmpty()) {
+                    binding.layoutLoyalty.ivLoyaltyCard.apply {
+                        this@HomeFragment.context?.let {
+                            Glide.with(it)
+                                .load(tierImageUrl)
+                                .skipMemoryCache(false)
+                                .apply(RequestOptions.noTransformation())
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(object : DrawableImageViewTarget(this) {
+                                    override fun setResource(resource: Drawable?) {
+                                        super.setResource(resource)
+                                        binding.layoutLoyalty.apply {
+                                            if (resource == null) {
+                                                ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
+                                            }
+                                            Handler(Looper.getMainLooper()).postDelayed(
+                                                {
+                                                    cvEmptyState.gone()
+                                                    cvShimmerLoyalty.gone()
+                                                    cvLoyaltyDetails.visible()
+                                                },
+                                                500
+                                            )
+                                        }
+
                                     }
-                                }
-                            } else {
-                                binding.layoutLoyalty.apply {
-                                    cvEmptyState.gone()
-                                    cvShimmerLoyalty.gone()
-                                    cvLoyaltyDetails.visible()
-                                }
-                                binding.layoutLoyalty.ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
-                            }
-
+                                })
                         }
+                    }
+                } else {
+                    binding.layoutLoyalty.apply {
+                        ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
+                        cvEmptyState.gone()
+                        cvShimmerLoyalty.gone()
+                        cvLoyaltyDetails.visible()
                     }
                 }
             }
@@ -523,18 +527,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             it.getContentIfNotHandled()?.let { tierProgress ->
                 binding.layoutLoyalty.apply {
                     if (tierProgress.pointsToNextTier <= 0) {
-                        if (tierProgress.nextTier == null && !tierProgress.isMaxTier) {
-                            progress.max = 100
-                            progress.progress = 0
-                            tvTierProgressDesc.text = "You are now a Tier member"
-                            progressTextIndicator.text = "${progress.progress}/${progress.max}"
-                        } else {
+                        val tierName = tierProgress.loyalty?.attributes?.loyaltyTier?.name?: ""
+                        if (tierProgress.isMaxTier) {
                             progress.max = 100
                             progress.progress = 100
                             tvTierProgressDesc.text = CacheUtil.getInstance().getTranslations(
-                                Text.TOTAL_POINTS_MAX_OUT, "You have maxed out on our tier levels"
-                            )
-                            progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                                Text.CONGRATS_YOUVE_REACHED_X, "Congrats! You’ve reached (x)"
+                            ).replace("(x)",tierName)
                         }
                     } else {
                         var loyaltyTier = tierProgress.nextTier?.name ?: ""

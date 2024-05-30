@@ -22,7 +22,7 @@ public interface LoyaltyContract {
 
         void setLoyaltyHistory(LoyaltyTransaction loyaltyTransaction);
 
-        void showNextTier(Tier tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier, boolean isMaxTier);
+        void showNextTier(Tier tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier, boolean isMaxTier, Loyalty loyalty);
 
         void showQRPage(LoyaltyPointsPosRedemption loyalty);
 

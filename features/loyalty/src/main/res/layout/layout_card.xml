@@ -17,7 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_card_main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:visibility="gone">
 
         <ImageView
@@ -25,6 +25,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="fitXY"
+            tools:src="@drawable/background_loyalty_card"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -88,59 +89,62 @@
                 android:includeFontPadding="false"
                 app:drawableStartCompat="@drawable/ic_loyalty_database"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_tier"/>
+                app:layout_constraintBottom_toTopOf="@id/constraintLayout"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_sar_value"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_tier_progress_desc"
-                app:layout_constraintWidth_percent=".6">
+                app:layout_constraintTop_toTopOf="@id/tv_sar_value"
+                app:layout_constraintVertical_bias=".7"
+                app:layout_constraintWidth_percent=".55">
 
 
                 <SeekBar
                     android:id="@+id/progress"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:max="100"
-                    android:progress="0"
                     android:layout_marginTop="3dp"
-                    android:paddingEnd="0dp"
+                    android:max="100"
                     android:paddingStart="0dp"
-                    android:thumbOffset="0dp"
+                    android:paddingEnd="0dp"
+                    android:progress="0"
                     android:progressDrawable="@drawable/background_loyalty_progress"
+                    android:splitTrack="false"
                     android:thumb="@drawable/ic_rewards_thumb"
+                    android:thumbOffset="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:splitTrack="false"
-                    />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_progress_tier"
+                    style="@style/Styles.Text.Footnote.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
+                    android:includeFontPadding="false"
                     android:textColor="@color/white"
                     android:textSize="11sp"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/progress"
-                    style="@style/Styles.Text.Footnote.Medium"
-                    android:includeFontPadding="false"
                     tools:text="Silver" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/progress_text_indicator"
+                    style="@style/Styles.Text.Footnote.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
                     android:textColor="@color/white"
                     android:textSize="11sp"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tv_progress_tier"
-                    style="@style/Styles.Text.Footnote.Medium"
-                    android:includeFontPadding="false"
                     tools:text="400/600" />
 
 
@@ -207,13 +211,13 @@
                 style="@style/Styles.Text.LargeTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:gravity="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
                 android:textAlignment="viewEnd"
                 android:textColor="@color/white"
                 android:textSize="25sp"
-                android:layout_marginStart="16dp"
-                android:maxLines="1"
-                android:includeFontPadding="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/constraintLayout"
@@ -237,7 +241,7 @@
         android:id="@+id/fm_shimmer_loyalty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

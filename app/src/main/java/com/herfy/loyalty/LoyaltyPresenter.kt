@@ -248,6 +248,14 @@ class LoyaltyPresenter @Inject constructor(
                         .filter { tier: Tier -> totalPointsAccumulated <= tier.endPoint }
                         .toList().blockingGet()
                     var pointsToNextTier = 0
+                    if (loyalty.attributes.loyaltyTier == null){
+                        val tier = tiers[0]
+                        val loyaltyTier = LoyaltyTier()
+                        loyaltyTier.name = tier.name
+                        loyaltyTier.id = tier.id
+                        loyaltyTier.imageUrl = tier.imageUrl
+                        loyalty.attributes.loyaltyTier = loyaltyTier
+                    }
                     loyaltyView.showLoyalty(
                         loyalty,
                         AuthUtil.getInstance().customer.attributes.firstName + " " + AuthUtil.getInstance().customer.attributes.lastName
@@ -281,7 +289,8 @@ class LoyaltyPresenter @Inject constructor(
                         totalPointsAccumulated,
                         pointsToNextTier,
                         startPoints,
-                        isMaxTier
+                        isMaxTier,
+                        loyalty
                     )
                 })
             { error: Throwable? ->
@@ -296,7 +305,7 @@ class LoyaltyPresenter @Inject constructor(
                     AuthUtil.getInstance().customer.attributes.firstName + " " + AuthUtil.getInstance().customer.attributes.lastName
                 )
                 loyaltyView.showTiers(loyalty)
-                loyaltyView.showNextTier(nextTier, 0, 100, 100, false)
+                loyaltyView.showNextTier(nextTier, 0, 100, 100, false, loyalty)
             }
     }
 
@@ -352,7 +361,8 @@ class LoyaltyPresenter @Inject constructor(
                         totalPointsAccumulated,
                         pointsToNextTier,
                         startPoints,
-                        false
+                        false,
+                        loyalty
                     )
                 } catch (ex: JSONException) {
                     ex.printStackTrace()
@@ -374,7 +384,7 @@ class LoyaltyPresenter @Inject constructor(
                 loyaltyAttributes.loyaltyTier = loyaltyTier
                 loyaltyAttributes.currentBalance = 0
                 tiers = ArrayList(Arrays.asList(currentTier))
-                loyaltyView.showNextTier(nextTier, 0, 100, 100, false)
+                //loyaltyView.showNextTier(nextTier, 0, 100, 100, false, loyalty)
             }
         })
     }

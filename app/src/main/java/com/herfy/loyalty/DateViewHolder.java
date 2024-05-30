@@ -91,7 +91,7 @@ public class DateViewHolder extends RecyclerView.ViewHolder implements LoyaltyCo
     }
 
     @Override
-    public void showNextTier(Tier tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier, boolean isMaxTier) {
+    public void showNextTier(Tier tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier, boolean isMaxTier, Loyalty loyalty) {
 
     }
 

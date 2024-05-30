@@ -1,5 +1,6 @@
 package com.herfy.model
 
+import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.Tier
 
 data class TierProgress(
@@ -7,5 +8,6 @@ data class TierProgress(
     val totalPointsAccumulated : Int,
     val pointsToNextTier : Int,
     val startPoints : Int,
-    val isMaxTier : Boolean
+    val isMaxTier : Boolean,
+    val loyalty : Loyalty?
 )

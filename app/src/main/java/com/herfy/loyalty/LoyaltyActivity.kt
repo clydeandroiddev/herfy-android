@@ -24,7 +24,6 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.OnLayoutLoadingCompleted
 import com.herfy.utils.extensions.gone
-import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.AuthUtil
@@ -104,7 +103,8 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 CacheUtil.getInstance().totalAccumulatedPoints,
                 CacheUtil.getInstance().pointsUntilNextTier,
                 CacheUtil.getInstance().startingPointsOfNextTier,
-                false
+                false,
+                AuthUtil.getInstance().customerLoyalty
             )
         }
         getLoyalty()
@@ -130,6 +130,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 if (AuthUtil.getInstance().customerLoyalty == null) {
                     checkLoading()
                 }
+                binding.layoutCard.fmShimmerLoyalty.visible()
                 loyaltyPresenter.getLoyalty()
             }
         }, 350)
@@ -245,7 +246,8 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
         totalAccumulatedPoints: Int,
         pointsUntilNextTier: Int,
         startingPointsOfNextTier: Int,
-        isMaxTier: Boolean
+        isMaxTier: Boolean,
+        loyalty: Loyalty?
     ) {
         binding.apply {
             layoutCard.apply {
@@ -254,19 +256,13 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 CacheUtil.getInstance().pointsUntilNextTier = pointsUntilNextTier
                 CacheUtil.getInstance().startingPointsOfNextTier = startingPointsOfNextTier
                 if (pointsUntilNextTier <= 0) {
-                    if (tier == null) {
-                        progress.max = 100
-                        progress.progress = 0
-                        tvTierProgressDesc.text = "You are now a Tier member"
-                        progressTextIndicator.text = "${progress.progress}/${progress.max}"
-                    } else {
+                    val tierName = loyalty?.attributes?.loyaltyTier?.name?: ""
+                    if (isMaxTier) {
                         progress.max = 100
                         progress.progress = 100
                         tvTierProgressDesc.text = CacheUtil.getInstance().getTranslations(
-                            Text.TOTAL_POINTS_MAX_OUT,
-                            "You have maxed out on our tier levels"
-                        )
-                        progressTextIndicator.text = "${progress.progress}/${progress.max}"
+                            Text.CONGRATS_YOUVE_REACHED_X, "Congrats! You’ve reached (x)"
+                        ).replace("(x)",tierName)
                     }
                 } else {
                     var loyaltyTier = tier?.name
@@ -276,7 +272,6 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                     progress.max = startingPointsOfNextTier
                     progress.progress = totalAccumulatedPoints
                     tvTierProgressDesc.text = cacheUtilHelper.getTranslations(Text.POINTS_UNTIL_NEXT_TIER, "(x) points until (y)").replace("(x)", pointsUntilNextTier.toString()).replace("(y)", loyaltyTier?:"")
-                    progressTextIndicator.text = "${progress.progress}/${progress.max}"
                 }
 
             }
@@ -319,32 +314,40 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                     }
                 }
                 val loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
+                var tierImageUrl = ""
                 if(loyaltyTier.isNotEmpty()){
                     tiers.find { tier -> tier.name.equals(loyaltyTier, true) }?.let { tier ->
-                        tier.imageUrl.let { url ->
-                            if(!url.isNullOrEmpty()){
-                                Glide.with(this@LoyaltyActivity)
-                                    .load(url)
-                                    .skipMemoryCache(false)
-                                    .apply(RequestOptions.noTransformation())
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                    .into(object : DrawableImageViewTarget(binding.layoutCard.ivLoyaltyCard) {
-                                        override fun setResource(resource: Drawable?) {
-                                            super.setResource(resource)
-                                            binding.layoutCard.apply {
-                                                if (resource == null) {
-                                                    ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
-                                                }
-                                                clCardMain.visible()
-                                                fmShimmerLoyalty.gone()
+                       tierImageUrl = tier.imageUrl
+                    }
+                }else {
+                    tierImageUrl = tiers[0].imageUrl
+                }
+                if(tierImageUrl.isNotEmpty()){
+                    Glide.with(this@LoyaltyActivity)
+                        .load(tierImageUrl)
+                        .skipMemoryCache(false)
+                        .apply(RequestOptions.noTransformation())
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(object : DrawableImageViewTarget(binding.layoutCard.ivLoyaltyCard) {
+                            override fun setResource(resource: Drawable?) {
+                                super.setResource(resource)
+                                binding.layoutCard.apply {
+                                    if (resource == null) {
+                                        ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
+                                    }
+                                    clCardMain.visible()
+                                    fmShimmerLoyalty.gone()
 
-                                            }
+                                }
 
-                                        }
-                                    })
-                                binding.layoutCard.ivLoyaltyCard.loadImageFromUrl(imageUrl = url)
                             }
-                        }
+                        })
+                }else {
+                    binding.layoutCard.apply {
+                        ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
+                        clCardMain.visible()
+                        fmShimmerLoyalty.gone()
+
                     }
                 }
             }else {
