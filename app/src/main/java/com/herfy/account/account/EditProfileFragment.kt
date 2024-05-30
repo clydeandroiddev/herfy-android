@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -107,6 +109,13 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
                 if (it.alpha == 1F) {
                     saveUser()
                 }
+            }
+            binding.numberLayout.setOnClickListener {
+                canNotBeEdited.visible()
+                closeKeyboard(binding.nameEdit)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    canNotBeEdited.gone()
+                }, 1200)
             }
             nameEdit.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
@@ -223,14 +232,11 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
     private fun finalState() {
         if (fullName.isNotEmpty() && genderSelected.isNotEmpty() && birthdaySelected.isNotEmpty()) {
             if (!isSaveGender && !isSaveBirthdate && !isSaveName) {
-                binding.canNotBeEdited.visible()
                 binding.continueButton.alpha = 0.5f
             } else {
-                binding.canNotBeEdited.gone()
                 binding.continueButton.alpha = 1f
             }
         } else {
-            binding.canNotBeEdited.visible()
             binding.continueButton.alpha = 0.5f
         }
     }
