@@ -1207,4 +1207,5 @@ public class Text {
     public static final String SEARCH_CITY = "search_city";
     public static final String SEARCH_AREA = "search_area";
     public static final String SEARCH_EMPTY_RESULT = "search_empty_result";
+    public static final String CONGRATS_YOUVE_REACHED_X = "congrats_youve_reached_x";
 }

@@ -384,8 +384,19 @@ class HomeViewModel @Inject constructor(
                     .filter { tier: Tier -> totalPointsAccumulated <= tier.endPoint }.toList()
                     .blockingGet()
                 var pointsToNextTier = 0
+                if (loyalty.attributes.loyaltyTier == null){
+                    val tier = tiers[0]
+                    val loyaltyTier = LoyaltyTier()
+                    loyaltyTier.name = tier.name
+                    loyaltyTier.id = tier.id
+                    loyaltyTier.imageUrl = tier.imageUrl
+                    loyalty.attributes.loyaltyTier = loyaltyTier
+                }
+
                 _loyalty.value = Event(loyalty)
                 _tiers.value = Event(tiers)
+
+
                 var nextTier: Tier? = null
                 if (eligibleTiers.size <= 0 && tiers.isNotEmpty()) {
                     eligibleTiers = ArrayList()
@@ -415,7 +426,8 @@ class HomeViewModel @Inject constructor(
                         totalPointsAccumulated,
                         pointsToNextTier,
                         startPoints,
-                        isMaxTier
+                        isMaxTier,
+                        loyalty
                     )
                 )
 
@@ -443,7 +455,8 @@ class HomeViewModel @Inject constructor(
                         0,
                         100,
                         100,
-                        false
+                        false,
+                        loyalty
                     )
                 )
             }

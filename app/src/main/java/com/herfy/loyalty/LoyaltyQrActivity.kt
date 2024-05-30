@@ -135,7 +135,8 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
         totalAccumulatedPoints: Int,
         pointsUntilNextTier: Int,
         startingPointsOfNextTier: Int,
-        isMaxTier: Boolean
+        isMaxTier: Boolean,
+        loyalty: Loyalty
     ) {
     }
 
