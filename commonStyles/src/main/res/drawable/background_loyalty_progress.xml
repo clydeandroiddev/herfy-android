@@ -4,7 +4,7 @@
         android:gravity="center_vertical|fill_horizontal">
         <shape android:shape="rectangle">
             <corners android:radius="12dp"/>
-            <size android:height="6dp" />
+            <size android:height="7dp" />
             <solid android:color="#4D000000" />
             <stroke android:width="1dp"
                 android:color="#80FFFFFF"/>
@@ -17,8 +17,9 @@
         <scale android:scaleWidth="100%">
             <shape android:shape="rectangle">
                 <corners android:radius="12dp"/>
-                <size android:height="6dp" />
+                <size android:height="7dp" />
                 <solid android:color="#EFB042" />
+
                 <padding android:left="0dp"
                     android:right="0dp"/>
             </shape>
@@ -29,8 +30,10 @@
         <scale android:scaleWidth="100%">
             <shape android:shape="rectangle">
                 <corners android:radius="12dp"/>
-                <size android:height="6dp" />
+                <size android:height="7dp" />
                 <solid android:color="#EFB042" />
+                <stroke android:width="1dp"
+                    android:color="#80FFFFFF"/>
                 <padding android:left="0dp"
                     android:right="0dp"/>
             </shape>
