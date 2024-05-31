@@ -32,15 +32,11 @@ public interface LoyaltyContract {
     }
 
     interface Presenter extends BasePresenter {
-
         void getLoyalty();
-
         void getCustomerLoyalty();
-
         List<Tier> getTiers();
-
-
         void redeemPoints(int points);
+        void setTiers(List<Tier> tiers);
 
 
     }

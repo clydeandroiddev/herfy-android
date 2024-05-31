@@ -311,6 +311,8 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
         CacheUtil.getInstance().clearOrder()
         SoloAuth.getInstance().logout()
         CacheUtil.getInstance().setCurrentOrderId(null)
+        AuthUtil.getInstance().customerLoyalty = null
+        AuthUtil.getInstance().customerLoyaltyTier = null
         logout()
         AuthUtil.getInstance().customer = null
         navigateUp()

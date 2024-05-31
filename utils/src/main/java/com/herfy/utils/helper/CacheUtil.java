@@ -34,6 +34,7 @@ import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
 import com.skylinedynamics.solosdk.api.models.objects.Promotion;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
+import com.skylinedynamics.solosdk.api.models.objects.Tier;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
 import com.skylinedynamics.solosdk.api.models.objects.area.City;
 import com.skylinedynamics.solosdk.api.models.objects.area.CityList;
@@ -157,6 +158,8 @@ public class CacheUtil {
 
     private static final String FAVOURITE = "FAVOURITE";
     private static final String PROMISED_TIME = "promised_time";
+
+    private static final String LOYALTY_TIERS = "loyalty_tiers";
 
     private CacheUtil(Context context) {
 
@@ -2014,5 +2017,20 @@ public class CacheUtil {
 
     public String getPromisedTime() {
         return cacheSharedPreferences.getString(PROMISED_TIME, "");
+    }
+
+    public void setLoyaltyTiers(ArrayList<Tier> tiers) {
+        String tierJson = GsonHelper.gsonFinal().toJson(tiers);
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(LOYALTY_TIERS, tierJson);
+        editor.apply();
+    }
+    public List<Tier> getLoyaltyTiers(){
+        List<Tier> tiers = new ArrayList<>();
+        String tierJson = cacheSharedPreferences.getString(LOYALTY_TIERS, "");
+        if(!tierJson.isEmpty()){
+            tiers = GsonHelper.gsonFinal().fromJson(tierJson, new TypeToken<List<Tier>>(){});
+        }
+        return tiers;
     }
 }
