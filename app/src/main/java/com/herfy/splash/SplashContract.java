@@ -79,5 +79,6 @@ public interface SplashContract {
 
         void removeMukafaaRedemption();
 
+        void getLoyaltyTiers();
     }
 }

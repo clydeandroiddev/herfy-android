@@ -2,7 +2,6 @@ package com.herfy.splash;
 
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -59,15 +58,11 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Slider;
+import com.skylinedynamics.solosdk.api.models.objects.Tier;
 import com.skylinedynamics.solosdk.api.models.objects.area.Area;
 import com.skylinedynamics.solosdk.api.models.objects.area.City;
 import com.skylinedynamics.solosdk.util.GsonHelper;
-import com.herfy.util.AppLogger;
 import com.herfy.utils.helper.DeviceUtil;
-import com.herfy.utils.handler.ErrorHandler;
-import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.utils.analytics.MixpanelUtil;
-import com.herfy.util.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -445,6 +440,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                     if (AuthUtil.getInstance().isSignedIn()) {
                         getLoyalty();
                     }
+                    getLoyaltyTiers();
 
                     CacheUtil.getInstance().setColorMain(application.getAttributes().getTheme().getPrimaryColor());
                     CacheUtil.getInstance().setSliderId(String.valueOf(application.getAttributes().getSliderId()));
@@ -1122,6 +1118,35 @@ public class SplashPresenter implements SplashContract.Presenter {
                 }
             });
         }
+    }
+
+    @Override
+    public void getLoyaltyTiers(){
+        CustomersApiCall.getInstance().getLoyaltyTiers(new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                try {
+                    JSONObject object = new JSONObject(o.toString());
+                    JSONArray tiersArray = object.getJSONArray("data");
+                    Type type = new TypeToken<List<Tier>>() {
+                    }.getType();
+                    List<Tier> tiers = GsonHelper.gsonFinal().fromJson(tiersArray.toString(), type);
+                    if(tiers != null && !tiers.isEmpty()){
+                        CacheUtil.getInstance().setLoyaltyTiers(new ArrayList<>(tiers));
+                        for(Tier tier : tiers){
+                            splashView.preloadImage(tier.getImageUrl(), RequestOptions.noTransformation());
+                        }
+                    }
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Object o) {
+            }
+        });
+
     }
 
 }

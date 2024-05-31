@@ -36,6 +36,8 @@ class LoyaltyPresenter @Inject constructor(
     private var tiers: List<Tier> = ArrayList()
     private val disposables = CompositeDisposable()
 
+
+
     init {
         loyaltyView.setPresenter(this)
     }
@@ -389,7 +391,9 @@ class LoyaltyPresenter @Inject constructor(
         })
     }
 
-
+    override fun setTiers(tiers : List<Tier>){
+        this.tiers = tiers
+    }
     override fun getTiers(): List<Tier> {
         return tiers
     }

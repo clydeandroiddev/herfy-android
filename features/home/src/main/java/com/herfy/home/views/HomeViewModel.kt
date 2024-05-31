@@ -57,6 +57,7 @@ import org.json.JSONObject
 import java.util.Locale
 import javax.inject.Inject
 
+
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository, private val dispatchers: DispatcherProvider
@@ -367,6 +368,22 @@ class HomeViewModel @Inject constructor(
     @SuppressLint("CheckResult")
     fun getLoyalty() {
         invoke {
+            AuthUtil.getInstance().customerLoyalty?.let { loyalty ->
+                AuthUtil.getInstance().customerLoyaltyTier?.let {
+                    _tierProgress.value = Event(
+                        TierProgress(
+                            it,
+                            CacheUtil.getInstance().totalAccumulatedPoints,
+                            CacheUtil.getInstance().pointsUntilNextTier,
+                            CacheUtil.getInstance().startingPointsOfNextTier,
+                            CacheUtil.getInstance().pointsUntilNextTier == 0,
+                            loyalty
+                        )
+                    )
+                }
+                _loyalty.value = Event(loyalty)
+            }
+
             Single.zip<Loyalty, List<Tier>, Pair<Loyalty, List<Tier>>>(
                 getLoyaltyObservable(), getTiersObservable()
             ) { loyalty: Loyalty, tiers: List<Tier> ->
@@ -390,7 +407,7 @@ class HomeViewModel @Inject constructor(
 
                 _loyalty.value = Event(loyalty)
                 _tiers.value = Event(tiers)
-
+                AuthUtil.getInstance().customerLoyalty = loyalty
 
                 var nextTier: Tier? = null
                 if (eligibleTiers.size <= 0 && tiers.isNotEmpty()) {
@@ -529,8 +546,10 @@ class HomeViewModel @Inject constructor(
                     if (homeResponse.success) {
                         homeResponse.data?.let { it ->
                             it.cast<ArrayList<Tier>> {
+                                CacheUtil.getInstance().setLoyaltyTiers(it)
                                 source.onSuccess(it)
                             }
+
                         }
                     } else {
                         //_showError.value = Event(ErrorMsgItem(true, homeResponse.message))
