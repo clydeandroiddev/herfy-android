@@ -258,6 +258,7 @@ class LoyaltyPresenter @Inject constructor(
                         loyaltyTier.imageUrl = tier.imageUrl
                         loyalty.attributes.loyaltyTier = loyaltyTier
                     }
+                    AuthUtil.getInstance().customerLoyalty = loyalty
                     loyaltyView.showLoyalty(
                         loyalty,
                         AuthUtil.getInstance().customer.attributes.firstName + " " + AuthUtil.getInstance().customer.attributes.lastName

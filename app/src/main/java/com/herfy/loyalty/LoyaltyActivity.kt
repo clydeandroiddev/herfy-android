@@ -371,7 +371,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         StringUtil.localize(loyalty.attributes.currentBalance.toLong().toString())
                     tvProgressTier.text = loyaltyTier
 
-                    val tierImageUrl = loyalty.attributes.loyaltyTier.imageUrl ?: ""
+                    val tierImageUrl = loyalty.attributes?.loyaltyTier?.imageUrl ?: ""
                     if(tierImageUrl.isNotEmpty()){
                         if(!isFinishing && !isDestroyed){
                             Glide.with(this@LoyaltyActivity)
