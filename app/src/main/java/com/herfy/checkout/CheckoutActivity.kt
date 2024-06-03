@@ -142,6 +142,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.math.floor
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -783,8 +784,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         val currentPoints = AuthUtil.getInstance().customerLoyalty.attributes.currentBalance
                         val pointConversion =
                             AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble()
-                        val orderTotalPoints = if (loyalty.attributes.currentBalanceAmount > (finalTotal - finalDiscount)) (finalTotal - finalDiscount) * AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble() else loyalty!!.attributes.currentBalance
+                        val roundedTotal = floor((finalTotal - finalDiscount))
+                        val orderTotalPoints = if (loyalty.attributes.currentBalanceAmount > roundedTotal) roundedTotal * AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble() else loyalty!!.attributes.currentBalance
                                 .toDouble()
+
                         if (userSetPoints >= currentPoints || userSetPoints >= orderTotalPoints) {
 
                             userSetPoints = orderTotalPoints
@@ -794,14 +797,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                 )
                             )
                         } else {
-                            binding!!.layoutLoyalty.etPoints.setText(StringUtil.localize(binding!!.layoutLoyalty.etPoints.text.toString()))
-
+                            binding!!.layoutLoyalty.etPoints.setText(StringUtil.localize(userSetPoints.toInt().toString()))
                         }
+
                         val sarAmount = Math.min(
                             userSetPoints / pointConversion, paymentPresenter!!.menuItemsTotalPrice
                         )
+
                         val formattedSarAmount = String.format("%.2f", sarAmount)
-                        if (sarAmount > 0) {
+                        if (sarAmount >= 1) {
                             binding?.layoutLoyalty?.etSarAmount?.text = formattedSarAmount
                         }
 
