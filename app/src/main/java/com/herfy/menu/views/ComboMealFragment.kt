@@ -674,7 +674,8 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     private fun setupFrequentlyBoughtItems() {
         if (!isPromo && menuItemId.isNotEmpty()) {
             if (viewModel.frequentBoughtItemList.isEmpty()) {
-                viewModel.getFrequentBoughtItems(1, menuItemId)
+                // TODO: Remove this comment when client requests to re-enable frequently bought items feature.
+//                viewModel.getFrequentBoughtItems(1, menuItemId)
             }
             context?.let { ctx ->
                 binding.apply {
