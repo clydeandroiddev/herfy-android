@@ -12,12 +12,16 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -93,6 +97,8 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CurrencyUtils.Companion.updateCurrency
 import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.DistanceCalculator
+import com.herfy.utils.helper.KeyboardUtils
+import com.herfy.utils.helper.KeyboardUtils.SoftKeyboardToggleListener
 import com.herfy.utils.helper.launchWithTimber
 import com.herfy.utils.permission.PermissionManager
 import com.herfy.utils.permission.PermissionResult
@@ -213,6 +219,17 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCheckoutPageBinding.inflate(layoutInflater)
+
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                binding?.layoutLoyalty?.etPoints?.apply {
+                    if(this.hasFocus()){
+                        this.clearFocus()
+                    }
+                }
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
         setContentView(binding!!.root)
         popupUpsellBackStack()
         passedTotalFromCart = intent.getDoubleExtra("totalPrice", 0.0)
@@ -264,6 +281,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
         }
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
     }
 
     private fun deletePolyline() {
@@ -299,7 +317,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 PermissionResult.Granted -> {
                     showMap()
                     mMap?.apply {
-                        isMyLocationEnabled = true
+                         isMyLocationEnabled = true
                         uiSettings.isMyLocationButtonEnabled = true
                     }
                 }
@@ -611,6 +629,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 false, CacheUtil.getInstance().orderStore, null, 0, false
             )
         }
+        KeyboardUtils.addKeyboardToggleListener(this, object : SoftKeyboardToggleListener {
+            override fun onToggleSoftKeyboard(isVisible: Boolean) {
+                binding?.layoutLoyalty?.apply {
+                    if(!isVisible && etPoints.hasFocus()){
+                        etPoints.clearFocus()
+                    }
+                }
+            }
+        })
         if (orderType === OrderType.DELIVERY) {
             binding!!.groupDeliveryInstruction.visible()/*showLoadingDialog();
             Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
@@ -857,6 +884,18 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
 
             switchAlrahji.setOnCheckedChangeListener(alrahjiCheckChangeListener)
+        }
+        binding?.layoutLoyalty?.etPoints?.apply {
+            setOnEditorActionListener(object : OnEditorActionListener {
+                override fun onEditorAction(p0: TextView?, p1: Int, p2: KeyEvent?): Boolean {
+                    if (p1 == EditorInfo.IME_ACTION_DONE || (p2 != null && p2.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        this@apply.clearFocus()
+                        hideKeyboardFrom(context,this@apply)
+                        return true
+                    }
+                    return false
+                }
+            })
         }
         //total.setText(StringUtil.getFormattedPrice(paymentPresenter.getTotalPrice()));
 
@@ -1340,6 +1379,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
 
         if (pointsUsed > 0) {
+            binding!!.layoutLoyalty.etPoints.clearFocus()
             binding!!.layoutPaymentSummary.grpRedeemedPoints.visible()
             binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
