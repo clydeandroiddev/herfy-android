@@ -455,7 +455,7 @@ fun drawArcPolyline(
 }
 
 // If true make user location as endlocation in polyline
-private fun isAboveOrBelowAndLeft(
+fun isAboveOrBelowAndLeft(
     userLocation: LatLng,
     storeLocation: LatLng,
     checkAbove: Boolean
