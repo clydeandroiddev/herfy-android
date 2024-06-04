@@ -162,7 +162,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         }
         resetFrequentlyAddedFavoritesInCart()
         menuPresenter.start()
-        binding.frequentlyBoughtShimmering.setVisible(true)
+
+        // TODO: Remove this comment when client requests to re-enable frequently bought items feature.
+//        binding.frequentlyBoughtShimmering.setVisible(true)
         binding.modifierItemShimmerLayout.setVisible(true)
         initialModifierId = ""
         activity?.cast<BaseActivity> {
@@ -186,7 +188,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             menuPresenter.menuItem = menuItem
                             setMenuItemDetails(menuPresenter.menuItem)
                             setMenuItem(menuPresenter.menuCategory, menuPresenter.menuItem)
-                            menuPresenter.getFrequentBoughtItemsByMenuId(1, args.menuItemId)
+                            // TODO: Remove this comment when client requests to re-enable frequently bought items feature.
+//                            menuPresenter.getFrequentBoughtItemsByMenuId(1, args.menuItemId)
                             menuPresenter.showHideModifierItemPrice()
                             return
                         }
@@ -198,7 +201,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 } else {
                     menuPresenter.getMenuItem(false, args.menuItemId)
                 }
-                menuPresenter.getFrequentBoughtItemsByMenuId(1, args.menuItemId)
+                // TODO: Remove this comment when client requests to re-enable frequently bought items feature.
+                // menuPresenter.getFrequentBoughtItemsByMenuId(1, args.menuItemId)
             }
         } else {
             val menuItem: MenuItem? = if (!args.isEdit) {

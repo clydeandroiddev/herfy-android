@@ -501,6 +501,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:visibility="gone"
                         android:orientation="vertical">
                         <include layout="@layout/item_frequently_bought_placeholder" />
                         <include layout="@layout/item_frequently_bought_placeholder" />
@@ -514,6 +515,7 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/frequently_bough_recycleview"
                         android:layout_width="match_parent"
+                        android:visibility="gone"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/margin_small"
                         android:clipToPadding="false"
