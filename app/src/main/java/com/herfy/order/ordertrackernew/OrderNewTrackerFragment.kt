@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -59,6 +60,7 @@ import com.herfy.common.drawArcPolyline
 import com.herfy.common.formatSecondsToMinutesAndSeconds
 import com.herfy.common.getCurrentTime
 import com.herfy.common.getDisplayId
+import com.herfy.common.isAboveOrBelowAndLeft
 import com.herfy.common.orderTypeString
 import com.herfy.common.showTime
 import com.herfy.common.statusTime
@@ -134,6 +136,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     private var orderAddress: Address? = null
 
     private var userLatLng: LatLng? = null
+
+    private var currentLocationToUse: LatLng? = null
 
     private var driverLastLocation: LatLng? = null
 
@@ -413,7 +417,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 CacheUtil.getInstance().getTranslations(Text.WHATSAPP_MESSAGE, "Whatsapp Message")
             orderCancelDetails.cancelOrderLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.CANCEL_ORDER_NEW, "Cancel Order")
-            orderPaymentDetails.mukafaaLabel.text =  CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
+            orderPaymentDetails.mukafaaLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
         }
     }
 
@@ -483,127 +488,170 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     private fun showStoreMarker(isMoveCamera: Boolean) {
-        orderStore?.let { store ->
-            try {
-                val activity: Activity? = activity
-                val inflater =
-                    activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val view = inflater.inflate(R.layout.order_store_marker, null)
-                val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
-                val distanceValue: String
+        orderDetails?.let { od ->
+            orderStore?.let { store ->
                 try {
-                    val currentLocation = userLatLng
-                    val currentDistance = currentLocation?.latitude?.let {
-                        currentLocation.longitude.let { it1 ->
-                            store.attributes?.lat?.let { it2 ->
-                                store.attributes?.lng?.let { it3 ->
-                                    DistanceCalculator.calculateDistance(
-                                        it, it1, it2, it3
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    val activity: Activity? = activity
+                    val inflater =
+                        activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                    val view = inflater.inflate(R.layout.order_store_marker, null)
+                    val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
+                    val distanceValue: String
+                    try {
+                        currentLocationToUse = userLatLng
+                        val orderType = OrderType.fromString(od.orderType)
+                        if (orderType == OrderType.DELIVERY) {
+                            if (orderAddress != null) {
+                                currentLocationToUse =
+                                    orderAddress?.attributes?.lat?.toDouble()?.let {
+                                        orderAddress?.attributes?.longt?.toDouble()?.let { it1 ->
+                                            LatLng(
+                                                it, it1
+                                            )
+                                        }
+                                    }
 
-                    distanceValue = StringUtil.getDistance(
-                        currentDistance ?: 0.0
-                    )
-                    textView.text =
-                        CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                            .replace("(x)", distanceValue).lowercase(Locale.getDefault())
-                    if (currentDistance != null) {
-                        if (currentDistance <= 0.0) {
-                            binding.orderAddressDetails.addressKm.text = ""
-                            textView.isInvisible = true
-                        } else {
-                            textView.isVisible = true
-                            binding.orderAddressDetails.addressKm.text = distanceValue.lowercase(
-                                Locale.getDefault()
-                            )
-                        }
-                    }
-
-                    userLatLng?.let { userLatLng ->
-                        deletePolyline()
-                        if (driverMarker == null) {
-                            val storeLocation = store.attributes?.lat?.let {
-                                store.attributes?.lng?.let { it1 ->
-                                    LatLng(
-                                        it, it1
-                                    )
-                                }
-                            }
-                            myPolyline = storeLocation?.let { storeLoc ->
-                                drawArcPolyline(
-                                    googleMap, userLatLng, storeLoc, binding.mapFrame.context
+                                var currentMarkerIcon = ViewUtil.vectorDrawableToBitmapDescriptor(
+                                    binding.mapFrame.context, R.drawable.ic_address_user_home
                                 )
+                                if (orderAddress!!.attributes.label.equals(
+                                        "work", ignoreCase = true
+                                    )
+                                ) {
+                                    currentMarkerIcon = ViewUtil.vectorDrawableToBitmapDescriptor(
+                                        binding.mapFrame.context, R.drawable.ic_address_user_work
+                                    )
+                                }
+
+                                val currentLocationMarker = MarkerOptions()
+                                currentLocationMarker.icon(currentMarkerIcon)
+                                currentLocationMarker.position(currentLocationToUse!!)
+                                currentLocationMarker.anchor(0.5f, 1f)
+                                googleMap?.addMarker(currentLocationMarker)
+                            }
+                        }
+
+                        val currentDistance = currentLocationToUse?.latitude?.let {
+                            currentLocationToUse?.longitude.let { it1 ->
+                                store.attributes?.lat?.let { it2 ->
+                                    store.attributes?.lng?.let { it3 ->
+                                        if (it1 != null) {
+                                            DistanceCalculator.calculateDistance(
+                                                it, it1, it2, it3
+                                            )
+                                        } else {
+                                            0.0
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        distanceValue = StringUtil.getDistance(
+                            currentDistance ?: 0.0
+                        )
+
+                        textView.text =
+                            CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                                .replace("(x)", distanceValue).lowercase(Locale.getDefault())
+                        if (currentDistance != null) {
+                            if (currentDistance <= 0.0) {
+                                binding.orderAddressDetails.addressKm.text = ""
+                                textView.isInvisible = true
+                            } else {
+                                textView.isVisible = true
+                                binding.orderAddressDetails.addressKm.text =
+                                    distanceValue.lowercase(
+                                        Locale.getDefault()
+                                    )
+                            }
+                        }
+
+                        currentLocationToUse?.let { currentLocationToUse ->
+                            deletePolyline()
+                            if (driverMarker == null) {
+                                val storeLocation = store.attributes?.lat?.let {
+                                    store.attributes?.lng?.let { it1 ->
+                                        LatLng(
+                                            it, it1
+                                        )
+                                    }
+                                }
+                                myPolyline = storeLocation?.let { storeLoc ->
+                                    drawArcPolyline(
+                                        googleMap,
+                                        currentLocationToUse,
+                                        storeLoc,
+                                        binding.mapFrame.context
+                                    )
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                    Handler(Looper.getMainLooper()).post {
+                        if (storeMarker != null) {
+                            storeMarker?.remove()
+                        }
+                        val markerOptions = MarkerOptions()
+                        val latLng = store.attributes?.lat?.let {
+                            store.attributes?.lng?.let { it1 ->
+                                LatLng(
+                                    it, it1
+                                )
+                            }
+                        }
+                        if (latLng != null) {
+                            markerOptions.position(latLng)
+                        }
+                        markerOptions.icon(
+                            BitmapDescriptorFactory.fromBitmap(
+                                ViewUtil.createDrawableFromView(
+                                    activity, view
+                                )
+                            )
+                        )
+                        markerOptions.anchor(0.5f, 1f)
+                        storeMarker = googleMap?.addMarker(markerOptions)
+                        storeMarker?.tag = "storeTag"
+                        googleMap?.setOnMarkerClickListener { marker ->
+                            if (marker.tag == "storeTag") {
+                                goToStoreInMap(store)
+                                true // Consume the click event
+                            } else {
+                                false // Default behavior (showing the InfoWindow)
+                            }
+                        }
+                        if (isMoveCamera) {
+                            if (storeCameraUpdate == null && currentLocationToUse != null) {
+                                currentLocationToUse?.latitude?.let { it1 ->
+                                    currentLocationToUse?.longitude?.let { it2 ->
+                                        LatLng(
+                                            it1, it2
+                                        )
+                                    }
+                                }?.let { it2 ->
+                                    if (latLng != null) {
+                                        calculateZoomLevel(
+                                            latLng, it2, null, false
+                                        )
+                                    }
+                                }!!
+                            } else {
+                                if (storeCameraUpdate != null) {
+                                    googleMap?.animateCamera(storeCameraUpdate!!)
+                                } else {
+                                    latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
+                                        ?.let { googleMap?.animateCamera(it) }
+                                }
                             }
                         }
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-
-                Handler(Looper.getMainLooper()).post {
-                    if (storeMarker != null) {
-                        storeMarker?.remove()
-                    }
-                    val markerOptions = MarkerOptions()
-                    val latLng = store.attributes?.lat?.let {
-                        store.attributes?.lng?.let { it1 ->
-                            LatLng(
-                                it, it1
-                            )
-                        }
-                    }
-                    if (latLng != null) {
-                        markerOptions.position(latLng)
-                    }
-                    markerOptions.icon(
-                        BitmapDescriptorFactory.fromBitmap(
-                            ViewUtil.createDrawableFromView(
-                                activity, view
-                            )
-                        )
-                    )
-                    markerOptions.anchor(0.5f, 1f)
-                    storeMarker = googleMap?.addMarker(markerOptions)
-                    storeMarker?.tag = "storeTag"
-                    googleMap?.setOnMarkerClickListener { marker ->
-                        if (marker.tag == "storeTag") {
-                            goToStoreInMap(store)
-                            true // Consume the click event
-                        } else {
-                            false // Default behavior (showing the InfoWindow)
-                        }
-                    }
-                    if (isMoveCamera) {
-                        if (storeCameraUpdate == null && userLatLng != null) {
-                            userLatLng?.latitude?.let { it1 ->
-                                userLatLng?.longitude?.let { it2 ->
-                                    LatLng(
-                                        it1, it2
-                                    )
-                                }
-                            }?.let { it2 ->
-                                if (latLng != null) {
-                                    calculateZoomLevel(
-                                        latLng, it2, null, false
-                                    )
-                                }
-                            }!!
-                        } else {
-                            if (storeCameraUpdate != null) {
-                                googleMap?.animateCamera(storeCameraUpdate!!)
-                            } else {
-                                latLng?.let { CameraUpdateFactory.newLatLngZoom(it, 11f) }
-                                    ?.let { googleMap?.animateCamera(it) }
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         }
     }
@@ -1261,6 +1309,23 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         }
     }
 
+    private fun setCurrentStore() {
+        orderDetails?.let {
+            val orderType = OrderType.fromString(it.orderType)
+            if (orderType == OrderType.DELIVERY) {
+                if (orderAddress != null) {
+                    currentLocationToUse = orderAddress?.attributes?.lat?.toDouble()?.let {
+                        orderAddress?.attributes?.longt?.toDouble()?.let { it1 ->
+                            LatLng(
+                                it, it1
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {
         dismissDialogs()
         order?.let { item ->
@@ -1269,6 +1334,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             orderAddress = address
             binding.apply {
                 blocker.gone()
+                setCurrentStore()
                 showStoreMarker()
                 showStoreDeliveryTime()
                 showDeliveryDetails()
@@ -1296,18 +1362,19 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 orderPaymentDetails.apply {
                     orderPresenter?.let {
                         val mukafaaTransaction = it.mukafaaTransaction
-                        if(mukafaaTransaction != null && it.isMukafaaEnabled){
+                        if (mukafaaTransaction != null && it.isMukafaaEnabled) {
                             mukafaaContainer.visible()
                             mukafaaAmount = mukafaaTransaction.attributes.amount
                             var dc = "-" + StringUtil.getFormattedPrice(mukafaaAmount)
                             dc = dc.replace("--", "-")
                             mukafaaTotal.text = dc
-                        }else {
+                        } else {
                             mukafaaContainer.gone()
                         }
                     }
                 }
-                val discountAmount = (if(order.discountDisplay != 0.0) order.discountDisplay else order.discount) - mukafaaAmount
+                val discountAmount =
+                    (if (order.discountDisplay != 0.0) order.discountDisplay else order.discount) - mukafaaAmount
                 if (discountAmount > 0.0) {
                     orderPaymentDetails.discountContainer.isVisible = true
                     orderPaymentDetails.discountTotal.text = StringUtil.getNewFormattedPrice(
@@ -1500,36 +1567,57 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         inflater.inflate(com.herfy.ordertracker.R.layout.order_driver_marker, null)
                     val textView =
                         view.findViewById<TextView>(com.herfy.ordertracker.R.id.kmDriverAway)
+                    val driverIcon =
+                        view.findViewById<ImageView>(com.herfy.ordertracker.R.id.driverIcon)
+
                     val distanceValue: String
                     try {
-                        val currentLocation = userLatLng
-                        val currentDistance = currentLocation?.latitude?.let {
-                            currentLocation.longitude.let { it1 ->
-                                latLng.latitude.let { it2 ->
-                                    latLng.longitude.let { it3 ->
-                                        DistanceCalculator.calculateDistance(
-                                            it, it1, it2, it3
-                                        )
+                        if (orderAddress != null) {
+                            currentLocationToUse = orderAddress?.attributes?.lat?.toDouble()?.let {
+                                orderAddress?.attributes?.longt?.toDouble()?.let { it1 ->
+                                    LatLng(
+                                        it, it1
+                                    )
+                                }
+                            }
+
+                            val isLocationLeft = isAboveOrBelowAndLeft(
+                                latLng, currentLocationToUse!!, true
+                            ) || isAboveOrBelowAndLeft(
+                                latLng, currentLocationToUse!!, false
+                            )
+
+                            if (isLocationLeft) {
+                                driverIcon.setImageResource(R.drawable.ic_delivery_right)
+                            }
+
+                            val currentDistance = currentLocationToUse?.latitude?.let {
+                                currentLocationToUse!!.longitude.let { it1 ->
+                                    latLng.latitude.let { it2 ->
+                                        latLng.longitude.let { it3 ->
+                                            DistanceCalculator.calculateDistance(
+                                                it, it1, it2, it3
+                                            )
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        distanceValue = StringUtil.getDistance(
-                            currentDistance ?: 0.0
-                        )
+                            distanceValue = StringUtil.getDistance(
+                                currentDistance ?: 0.0
+                            )
 
-                        textView.text =
-                            CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                .replace("(x)", distanceValue).lowercase(Locale.getDefault())
-                        if (currentDistance != null) {
-                            if (currentDistance <= 0.0) {
-                                textView.isInvisible = true
-                            } else {
-                                textView.isVisible = true
+                            textView.text =
+                                CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                                    .replace("(x)", distanceValue).lowercase(Locale.getDefault())
+                            if (currentDistance != null) {
+                                if (currentDistance <= 0.0) {
+                                    textView.isInvisible = true
+                                } else {
+                                    textView.isVisible = true
+                                }
                             }
                         }
-
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -1550,9 +1638,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         markerOptions.anchor(0.5f, 1f)
                         driverMarker = googleMap?.addMarker(markerOptions)
                         deletePolyline()
-                        if (driverCameraUpdate == null && userLatLng != null) {
-                            userLatLng?.latitude?.let { it1 ->
-                                userLatLng?.longitude?.let { it2 ->
+                        if (driverCameraUpdate == null && currentLocationToUse != null) {
+                            currentLocationToUse?.latitude?.let { it1 ->
+                                currentLocationToUse?.longitude?.let { it2 ->
                                     LatLng(
                                         it1, it2
                                     )

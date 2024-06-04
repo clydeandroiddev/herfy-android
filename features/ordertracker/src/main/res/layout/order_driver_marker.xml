@@ -32,6 +32,6 @@
         app:layout_constraintEnd_toEndOf="@id/kmDriverAway"
         app:layout_constraintStart_toStartOf="@id/kmDriverAway"
         app:layout_constraintTop_toBottomOf="@id/kmDriverAway"
-        app:srcCompat="@drawable/ic_rider_new" />
+        app:srcCompat="@drawable/ic_delivery_left" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

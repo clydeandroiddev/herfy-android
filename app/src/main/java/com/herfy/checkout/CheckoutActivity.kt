@@ -4,17 +4,9 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -22,7 +14,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.ImageView
 import android.widget.TextView
@@ -33,7 +24,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -71,7 +61,6 @@ import com.herfy.decorator.OneDayDecorator
 import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
 import com.herfy.main.MainActivity
 import com.herfy.main.MainActivity.Companion.currentMainActivity
-import com.herfy.menu.viewholders.IngredientViewHolder.OnCheckedChanged
 import com.herfy.order.views.OrderTypeActivity
 import com.herfy.payment.PaymentContract
 import com.herfy.payment.PaymentPresenter
@@ -91,7 +80,6 @@ import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
-import com.herfy.utils.extensions.debounceAfterTextChanges
 import com.herfy.utils.extensions.debounceTextChanged
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.setVisible
@@ -118,7 +106,6 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard
-import com.skylinedynamics.solosdk.api.models.objects.Ingredient
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType
@@ -143,7 +130,6 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.math.floor
-import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -206,21 +192,18 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     var alrahjiCheckChangeListener = OnCheckedChangeListener { p0, p1 ->
         if (!p1) {
             paymentPresenter?.let {
-                if(it.hasMukafaaTransactionId()) {
+                if (it.hasMukafaaTransactionId()) {
                     it.removeMukafaa()
                 }
             }
-        }else {
+        } else {
             paymentPresenter?.let {
                 bottomSheetAlrhaji = BottomSheetAlrhaji.newInstance(
-                    it.validatedTotal,
-                    it.validatedBody,
-                    it.validatedDeliveryCharge
+                    it.validatedTotal, it.validatedBody, it.validatedDeliveryCharge
                 )
                 bottomSheetAlrhaji?.isCancelable = false
                 bottomSheetAlrhaji?.show(
-                    supportFragmentManager,
-                    BottomSheetAlrhaji::class.java.simpleName
+                    supportFragmentManager, BottomSheetAlrhaji::class.java.simpleName
                 )
 
             }
@@ -238,53 +221,48 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         paymentPresenter?.getLoyalty()
         paymentPresenter?.start()
         paymentPresenter?.getPaymentTypes()
-        moyasarActivityResultLauncher =
-            registerForActivityResult<Intent, ActivityResult>(
-                ActivityResultContracts.StartActivityForResult()
-            ) { result ->
-                if (result != null) {
-                    if (result.resultCode == RESULT_OK) {
-                        val intent = result.data
-                        if (intent != null) {
-                            if (intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID) && intent.hasExtra(
-                                    MoyasarActivity.EXTRA_MOYASAR_STATUS
-                                )
+        moyasarActivityResultLauncher = registerForActivityResult<Intent, ActivityResult>(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result != null) {
+                if (result.resultCode == RESULT_OK) {
+                    val intent = result.data
+                    if (intent != null) {
+                        if (intent.hasExtra(MoyasarActivity.EXTRA_MOYASAR_ID) && intent.hasExtra(
+                                MoyasarActivity.EXTRA_MOYASAR_STATUS
+                            )
+                        ) {
+                            if (!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID).equals(
+                                    MoyasarActivity.STATUS_FAILED, ignoreCase = true
+                                ) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
+                                    .equals(
+                                        MoyasarActivity.STATUS_CANCELLED, ignoreCase = true
+                                    ) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
+                                    .equals(MoyasarActivity.STATUS_FAILED, ignoreCase = true)
                             ) {
-                                if (!intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
-                                        .equals(
-                                            MoyasarActivity.STATUS_FAILED,
-                                            ignoreCase = true
-                                        ) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_ID)
-                                        .equals(
-                                            MoyasarActivity.STATUS_CANCELLED,
-                                            ignoreCase = true
-                                        ) && !intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
-                                        .equals(MoyasarActivity.STATUS_FAILED, ignoreCase = true)
-                                ) {
-                                    paymentPresenter!!.sendUpsells()
-                                } else {
-                                    val errorMessage =
-                                        intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
-                                    val orderId =
-                                        intent.getStringExtra(MoyasarActivity.EXTRA_ORDER_ID)
-                                    if (orderId != null && errorMessage != null && errorMessage != MoyasarActivity.STATUS_CANCELLED) {
+                                paymentPresenter!!.sendUpsells()
+                            } else {
+                                val errorMessage =
+                                    intent.getStringExtra(MoyasarActivity.EXTRA_MOYASAR_STATUS)
+                                val orderId = intent.getStringExtra(MoyasarActivity.EXTRA_ORDER_ID)
+                                if (orderId != null && errorMessage != null && errorMessage != MoyasarActivity.STATUS_CANCELLED) {
 //                                        logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter?.paymentProvider + " Card Payment Failed (Reason: Moyasar " + errorMessage + ")")
-                                        sendOrderLog(
-                                            ApiLogLevel.ERROR,
-                                            orderId,
-                                            paymentPresenter?.paymentProvider.orEmpty(),
-                                            "Card Payment Failed (Reason: Moyasar $errorMessage)"
-                                        )
-                                    }
-                                    isShowCardFailed = true
+                                    sendOrderLog(
+                                        ApiLogLevel.ERROR,
+                                        orderId,
+                                        paymentPresenter?.paymentProvider.orEmpty(),
+                                        "Card Payment Failed (Reason: Moyasar $errorMessage)"
+                                    )
                                 }
+                                isShowCardFailed = true
                             }
                         }
-                    } else {
-                        isShowCardFailed = true
                     }
+                } else {
+                    isShowCardFailed = true
                 }
             }
+        }
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
     }
 
@@ -298,8 +276,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             try {
                 if (currentMainActivity != null) {
                     Handler(Looper.getMainLooper()).postDelayed(
-                        { currentMainActivity!!.popUpsell() },
-                        300
+                        { currentMainActivity!!.popUpsell() }, 300
                     )
                 }
             } catch (e: Exception) {
@@ -309,15 +286,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     private fun requestPermissionLocation() {
-        permissionManager.requestPermissions(
-            permissions = arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            showRationale = { rationaleCallback ->
-                rationaleCallback.showRationale()
-            }
-        ) { result ->
+        permissionManager.requestPermissions(permissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+        ), showRationale = { rationaleCallback ->
+            rationaleCallback.showRationale()
+        }) { result ->
             when (result) {
                 is PermissionResult.Denied -> {
                     showToast(result.deniedPermissions.joinToString(", "))
@@ -344,11 +317,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             return
         }
         paymentPresenter!!.validateOrder(
-            false,
-            CacheUtil.getInstance().orderStore,
-            null,
-            loyaltypointsInput,
-            isShowCardFailed
+            false, CacheUtil.getInstance().orderStore, null, loyaltypointsInput, isShowCardFailed
         )
         paymentPresenter!!.fetchCustomerCards()
         showSelectedPayment()
@@ -379,7 +348,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     private fun showMap() {
         markerOptionsList.clear()
-        val currentMarkerIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_address_location)
+        var currentMarkerIcon = com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
+            this, R.drawable.user_current_location
+        )
         val storeLat = CacheUtil.getInstance().orderStore.attributes.lat
         val storeLon = CacheUtil.getInstance().orderStore.attributes.lng
         val storeLocation = LatLng(storeLat, storeLon)
@@ -399,108 +370,96 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             mMap?.uiSettings?.isMapToolbarEnabled = false
 
             if (orderType == OrderType.DELIVERY) {
+                currentMarkerIcon =
+                    com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
+                        this, R.drawable.ic_address_user_home
+                    )
+                if (CacheUtil.getInstance().orderAddress.attributes.label.equals(
+                        "work",
+                        ignoreCase = true
+                    )
+                ) {
+                    currentMarkerIcon =
+                        com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
+                            this, R.drawable.ic_address_user_work
+                        )
+                }
                 val lat = CacheUtil.getInstance().orderAddress.attributes.lat.toDouble()
                 val lon = CacheUtil.getInstance().orderAddress.attributes.longt.toDouble()
                 val addressLocation = LatLng(lat, lon)
-                val bitmapDrawable = ContextCompat.getDrawable(
-                    this, R.drawable.ic_address_location
-                ) as BitmapDrawable?
-
-                if (bitmapDrawable != null) {
-                    val bitmap = Bitmap.createScaledBitmap(bitmapDrawable.bitmap, 110, 110, true)
-                    val canvas = Canvas(bitmap)
-                    val view = inflater.inflate(R.layout.marker_store_new, null)
-                    val textView =
-                        view.findViewById<TextView>(R.id.kmAway)
-                    val image = view.findViewById<ImageView>(R.id.icon)
-                    image.setImageResource(R.drawable.delivery_marker_selected)
-                    val paint = Paint()
-                    val filter: ColorFilter = PorterDuffColorFilter(
-                        Color.parseColor(CacheUtil.getInstance().colorMain),
-                        PorterDuff.Mode.SRC_IN
+                val view = inflater.inflate(R.layout.marker_store_new, null)
+                val textView = view.findViewById<TextView>(R.id.kmAway)
+                val image = view.findViewById<ImageView>(R.id.icon)
+                image.setImageResource(R.drawable.delivery_marker_selected)
+                val currentLocation =
+                    LatLng(addressLocation.latitude, addressLocation.longitude)
+                val currentDistance = DistanceCalculator.calculateDistance(
+                    currentLocation.latitude,
+                    currentLocation.longitude,
+                    storeLocation.latitude,
+                    storeLocation.longitude
+                )
+                val distanceValue = StringUtil.getDistance(currentDistance)
+                textView.text =
+                    CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                        .replace("(x)", distanceValue).toLowerCase()
+                val icon = BitmapDescriptorFactory.fromBitmap(
+                    ViewUtil.createDrawableFromView(
+                        this@CheckoutActivity, view
                     )
-                    val task = fusedLocationProviderClient!!.lastLocation
-                    task.addOnSuccessListener { location ->
-                        location?.let {
-                            val currentLocation = LatLng(it.latitude, it.longitude)
-                            val currentDistance = DistanceCalculator.calculateDistance(
-                                currentLocation.latitude, currentLocation.longitude,
-                                storeLocation.latitude, storeLocation.longitude
-                            )
-
-                            val distanceValue = StringUtil.getDistance(currentDistance)
-
-                            textView.text =
-                                CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                    .replace("(x)", distanceValue).toLowerCase()
-                            val icon = BitmapDescriptorFactory.fromBitmap(
-                                ViewUtil.createDrawableFromView(
-                                    this@CheckoutActivity, view
-                                )
-                            )
-                            val currentLocationMarker = MarkerOptions()
-                            currentLocationMarker.icon(currentMarkerIcon)
-                            currentLocationMarker.position(addressLocation)
-                            currentLocationMarker.anchor(0.5f, 0.5f)
-                            markerOptionsList.add(currentLocationMarker)
-                            mMap?.addMarker(currentLocationMarker)
-
-                            val storeLocationMarker = MarkerOptions()
-                            storeLocationMarker.icon(icon)
-                            storeLocationMarker.position(storeLocation)
-                            storeLocationMarker.anchor(0.5f, 1f)
-                            markerOptionsList.add(storeLocationMarker)
-                            val markerStore = mMap?.addMarker(storeLocationMarker)
-                            markerStore?.tag = "storeMarker"
-                            mMap?.setOnMarkerClickListener { marker ->
-                                if (marker.tag == "storeMarker") {
-                                    goToStoreInMap(storeLocation)
-                                    true // Consume the click event
-                                } else {
-                                    false // Default behavior (showing the InfoWindow)
-                                }
-                            }
-
-                            val builder = LatLngBounds.Builder()
-                            builder.include(addressLocation)
-                            builder.include(storeLocation)
-                            val bounds = builder.build()
-                            val width = Resources.getSystem().displayMetrics.widthPixels
-                            val padding = (width * 0.21).toInt()
-                            val cu = CameraUpdateFactory.newLatLngBounds(
-                                bounds,
-                                padding
-                            )
-                            mMap?.animateCamera(cu, object : CancelableCallback {
-                                override fun onCancel() {}
-                                override fun onFinish() {
-                                    val zout = CameraUpdateFactory.zoomBy(-1.0f)
-                                    mMap?.animateCamera(zout)
-                                }
-                            })
-
-                            try {
-                                deletePolyline()
-                                val storeLoc = LatLng(
-                                    storeLocation.latitude, storeLocation.longitude
-                                )
-                                myPolyline = drawArcPolyline(
-                                    mMap, currentLocation, storeLoc, view.context
-                                )
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }.addOnFailureListener {
-                        it.printStackTrace()
-                        AppLogger.printRetrofitError(it)
+                )
+                val currentLocationMarker = MarkerOptions()
+                currentLocationMarker.icon(currentMarkerIcon)
+                currentLocationMarker.position(addressLocation)
+                currentLocationMarker.anchor(0.5f, 1f)
+                markerOptionsList.add(currentLocationMarker)
+                mMap?.addMarker(currentLocationMarker)
+                val storeLocationMarker = MarkerOptions()
+                storeLocationMarker.icon(icon)
+                storeLocationMarker.position(storeLocation)
+                storeLocationMarker.anchor(0.5f, 1f)
+                markerOptionsList.add(storeLocationMarker)
+                val markerStore = mMap?.addMarker(storeLocationMarker)
+                markerStore?.tag = "storeMarker"
+                mMap?.setOnMarkerClickListener { marker ->
+                    if (marker.tag == "storeMarker") {
+                        goToStoreInMap(storeLocation)
+                        true // Consume the click event
+                    } else {
+                        false // Default behavior (showing the InfoWindow)
                     }
+                }
+                val builder = LatLngBounds.Builder()
+                builder.include(addressLocation)
+                builder.include(storeLocation)
+                val bounds = builder.build()
+                val width = Resources.getSystem().displayMetrics.widthPixels
+                val padding = (width * 0.21).toInt()
+                val cu = CameraUpdateFactory.newLatLngBounds(
+                    bounds, padding
+                )
+                mMap?.animateCamera(cu, object : CancelableCallback {
+                    override fun onCancel() {}
+                    override fun onFinish() {
+                        val zout = CameraUpdateFactory.zoomBy(-1.0f)
+                        mMap?.animateCamera(zout)
+                    }
+                })
+                try {
+                    deletePolyline()
+                    val storeLoc = LatLng(
+                        storeLocation.latitude, storeLocation.longitude
+                    )
+                    myPolyline = drawArcPolyline(
+                        mMap, currentLocation, storeLoc, view.context
+                    )
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             } else {
                 markerOptions.position(storeLocation)
                 val view = inflater.inflate(R.layout.marker_store_new, null)
-                val textView =
-                    view.findViewById<TextView>(R.id.kmAway)
+                val textView = view.findViewById<TextView>(R.id.kmAway)
                 val imageView = view.findViewById<AppCompatImageView>(R.id.icon)
                 imageView.setImageResource(R.drawable.ic_marker_red)
                 lifecycleScope.launchWithTimber {
@@ -509,8 +468,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         location?.let {
                             val currentLocation = LatLng(it.latitude, it.longitude)
                             val currentDistance = DistanceCalculator.calculateDistance(
-                                currentLocation.latitude, currentLocation.longitude,
-                                storeLocation.latitude, storeLocation.longitude
+                                currentLocation.latitude,
+                                currentLocation.longitude,
+                                storeLocation.latitude,
+                                storeLocation.longitude
                             )
 
                             val distanceValue = StringUtil.getDistance(currentDistance)
@@ -553,8 +514,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             val width = Resources.getSystem().displayMetrics.widthPixels
                             val padding = (width * 0.21).toInt()
                             val cu = CameraUpdateFactory.newLatLngBounds(
-                                bounds,
-                                padding
+                                bounds, padding
                             )
                             mMap?.animateCamera(cu, object : CancelableCallback {
                                 override fun onCancel() {}
@@ -595,8 +555,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 Uri.Builder().scheme("https").authority("www.google.com").appendPath("maps")
                     .appendPath("dir").appendPath("").appendQueryParameter("api", "1")
                     .appendQueryParameter("travelmode", "driving").appendQueryParameter(
-                        "destination",
-                        it.latitude.toString() + "," + it.longitude.toString()
+                        "destination", it.latitude.toString() + "," + it.longitude.toString()
                     )
 
             if (StringUtil.hasOrderLatLong()) {
@@ -631,8 +590,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             if (branchImage != null) {
                 isBranchImageAvailable = branchImage.isNotEmpty()
             }
-        }
-        /*if (isScheduled) {
+        }/*if (isScheduled) {
             schedLayout.setVisibility(View.VISIBLE);
             scheduleText.setText(TimeUtil.properSchedDate(goodDaySelected + " " + goodSelectedDateString));
         } else {
@@ -650,16 +608,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.toolbarLayout.btnBack.setOnClickListener { onBackPressed() }
         if (CacheUtil.getInstance().orderStore != null) {
             paymentPresenter!!.validateOrder(
-                false,
-                CacheUtil.getInstance().orderStore,
-                null,
-                0,
-                false
+                false, CacheUtil.getInstance().orderStore, null, 0, false
             )
         }
         if (orderType === OrderType.DELIVERY) {
-            binding!!.groupDeliveryInstruction.visible()
-            /*showLoadingDialog();
+            binding!!.groupDeliveryInstruction.visible()/*showLoadingDialog();
             Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
             paymentPresenter.getStore(geocoder);*/
             if (CacheUtil.getInstance().orderAddress != null) {
@@ -669,8 +622,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.tvDeliveryInstruction.text = instruction
             binding!!.tvDeliveryInstruction.setVisible(instruction.isNotEmpty())
         } else {
-            binding!!.groupDeliveryInstruction.gone()
-            /*Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
+            binding!!.groupDeliveryInstruction.gone()/*Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
             paymentPresenter.getAddresses(geocoder);*/
             if (CacheUtil.getInstance().orderStore != null) {
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name
@@ -745,12 +697,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 firebaseAddPaymentInfoEvent()
             } else {
                 Toast.makeText(
-                    this@CheckoutActivity,
-                    CacheUtil.getInstance().getTranslations(
-                        Text.PLEASE_SELECT_PAYMENT_TYPE,
-                        "Please select payment type"
-                    ),
-                    Toast.LENGTH_SHORT
+                    this@CheckoutActivity, CacheUtil.getInstance().getTranslations(
+                        Text.PLEASE_SELECT_PAYMENT_TYPE, "Please select payment type"
+                    ), Toast.LENGTH_SHORT
                 ).show()
             }
         }
@@ -763,11 +712,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 binding!!.layoutLoyalty.etPoints.setText("")
                 loyaltypointsInput = 0
                 paymentPresenter!!.validateOrder(
-                    false,
-                    CacheUtil.getInstance().orderStore,
-                    null,
-                    0,
-                    false
+                    false, CacheUtil.getInstance().orderStore, null, 0, false
                 )
             }
         }
@@ -775,57 +720,63 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         val loyalty = AuthUtil.getInstance().customerLoyalty
         val debounceDuration = 400L
         lifecycleScope.launchWithTimber {
-            binding!!.layoutLoyalty
-                .etPoints.debounceTextChanged(debounceDuration.toDuration(DurationUnit.MILLISECONDS))
-                .map { it.toString() }
-                .collectLatest { pointsText ->
-                    if (pointsText.isNotEmpty()) {
-                        var userSetPoints = StringUtil.toEnglish(pointsText).toDouble()
-                        val currentPoints = AuthUtil.getInstance().customerLoyalty.attributes.currentBalance
-                        val pointConversion =
-                            AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble()
-                        val roundedTotal = floor((finalTotal - finalDiscount))
-                        val orderTotalPoints = if (loyalty.attributes.currentBalanceAmount > roundedTotal) roundedTotal * AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble() else loyalty!!.attributes.currentBalance
-                                .toDouble()
+            binding!!.layoutLoyalty.etPoints.debounceTextChanged(
+                debounceDuration.toDuration(
+                    DurationUnit.MILLISECONDS
+                )
+            ).map { it.toString() }.collectLatest { pointsText ->
+                if (pointsText.isNotEmpty()) {
+                    var userSetPoints = StringUtil.toEnglish(pointsText).toDouble()
+                    val currentPoints =
+                        AuthUtil.getInstance().customerLoyalty.attributes.currentBalance
+                    val pointConversion =
+                        AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble()
+                    val roundedTotal = floor((finalTotal - finalDiscount))
+                    val orderTotalPoints =
+                        if (loyalty.attributes.currentBalanceAmount > roundedTotal) roundedTotal * AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble() else loyalty!!.attributes.currentBalance.toDouble()
 
-                        if (userSetPoints >= currentPoints || userSetPoints >= orderTotalPoints) {
+                    if (userSetPoints >= currentPoints || userSetPoints >= orderTotalPoints) {
 
-                            userSetPoints = orderTotalPoints
-                            binding?.layoutLoyalty?.etPoints?.setText(
-                                StringUtil.localize(
-                                    userSetPoints.toInt().toString()
-                                )
+                        userSetPoints = orderTotalPoints
+                        binding?.layoutLoyalty?.etPoints?.setText(
+                            StringUtil.localize(
+                                userSetPoints.toInt().toString()
                             )
-                        } else {
-                            binding!!.layoutLoyalty.etPoints.setText(StringUtil.localize(userSetPoints.toInt().toString()))
-                        }
-
-                        val sarAmount = Math.min(
-                            userSetPoints / pointConversion, paymentPresenter!!.menuItemsTotalPrice
                         )
-
-                        val formattedSarAmount = String.format("%.2f", sarAmount)
-                        if (sarAmount >= 1) {
-                            binding?.layoutLoyalty?.etSarAmount?.text = formattedSarAmount
-                        }
-
-                        binding!!.layoutLoyalty.etPoints.setSelection(binding!!.layoutLoyalty.etPoints.text.toString().length)
-                        loyaltypointsInput = userSetPoints.toInt()
-                        if(sarAmount >= 1){
-                            paymentPresenter!!.validateOrder(
-                                false,
-                                CacheUtil.getInstance().orderStore,
-                                null,
-                                loyaltypointsInput,
-                                false
-                            )
-                        }
                     } else {
-                        binding!!.layoutLoyalty.etSarAmount.setText("")
-                        binding!!.layoutLoyalty.etPoints.setSelection(0)
-                        paymentPresenter!!.setLoyaltyPointsUsed(0)
+                        binding!!.layoutLoyalty.etPoints.setText(
+                            StringUtil.localize(
+                                userSetPoints.toInt().toString()
+                            )
+                        )
                     }
+
+                    val sarAmount = Math.min(
+                        userSetPoints / pointConversion, paymentPresenter!!.menuItemsTotalPrice
+                    )
+
+                    val formattedSarAmount = String.format("%.2f", sarAmount)
+                    if (sarAmount >= 1) {
+                        binding?.layoutLoyalty?.etSarAmount?.text = formattedSarAmount
+                    }
+
+                    binding!!.layoutLoyalty.etPoints.setSelection(binding!!.layoutLoyalty.etPoints.text.toString().length)
+                    loyaltypointsInput = userSetPoints.toInt()
+                    if (sarAmount >= 1) {
+                        paymentPresenter!!.validateOrder(
+                            false,
+                            CacheUtil.getInstance().orderStore,
+                            null,
+                            loyaltypointsInput,
+                            false
+                        )
+                    }
+                } else {
+                    binding!!.layoutLoyalty.etSarAmount.setText("")
+                    binding!!.layoutLoyalty.etPoints.setSelection(0)
+                    paymentPresenter!!.setLoyaltyPointsUsed(0)
                 }
+            }
         }
 
         if (loyalty != null && loyalty.attributes != null) {
@@ -856,16 +807,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
             val loyaltyBalanceLabelText = CacheUtil.getInstance().getTranslations(
                 Text.LOYALTY_POINTS_PAYMENT_LABEL, "(x) Points ((y))"
-            ).replace(
-                "(x)",
-                if (currentBalanceAmount.toInt().toDouble() == currentBalanceAmount) {
-                    AuthUtil.getInstance().customerLoyalty.attributes.currentBalance.toString()
-                } else {
-                    formattedLoyaltyPoints.takeIf { it.isNotEmpty() } ?: "0"
-                }
-            ).replace(
-                "(y)",
-                updateCurrency(currentBalanceAmount, true).toString()
+            ).replace("(x)", if (currentBalanceAmount.toInt().toDouble() == currentBalanceAmount) {
+                AuthUtil.getInstance().customerLoyalty.attributes.currentBalance.toString()
+            } else {
+                formattedLoyaltyPoints.takeIf { it.isNotEmpty() } ?: "0"
+            }).replace(
+                "(y)", updateCurrency(currentBalanceAmount, true).toString()
             )
             binding!!.layoutLoyalty.tvLoyaltyPoints.text = loyaltyBalanceLabelText
             //loyaltyLabel.setText(StringUtil.getFormattedAmount(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getCurrentBalance())+" Points ("+StringUtil.getFormattedAmount(loyalty.getAttributes().getCurrentBalanceAmount()) +")");
@@ -880,16 +827,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         try {
             var paymentTypes: Set<PaymentType?> =
                 CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes()
-            if (CacheUtil
-                    .getInstance()
-                    .orderType != OrderType.DELIVERY
-            ) {
+            if (CacheUtil.getInstance().orderType != OrderType.DELIVERY) {
                 paymentTypes =
                     CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name;
             } else {
-                binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress
-                    .attributes.line1
+                binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress.attributes.line1
 //                tvBranchAddress.setText(CacheUtil.getInstance().getOrderAddress().getAttributes().getLine1());
             }
             val isEligibleForLoyaltyDiscount =
@@ -998,16 +941,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPayment.tvEditPaymentMethod.text =
             CacheUtil.getInstance().getTranslations(Text.EDIT, "Edit")
         binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance().getTranslations(
-            Text.DELIVERY_INSTRUCTION,
-            "Delivery Instruction"
+            Text.DELIVERY_INSTRUCTION, "Delivery Instruction"
         )
-        binding!!.layoutPayment.tvPaymentMethod.text = CacheUtil.getInstance()
-            .getTranslations(Text.PAYMENT_METHOD_NOT_CAPS, "Payment Method")
+        binding!!.layoutPayment.tvPaymentMethod.text =
+            CacheUtil.getInstance().getTranslations(Text.PAYMENT_METHOD_NOT_CAPS, "Payment Method")
         //        tvChangeOrderType.setText(CacheUtil.getInstance().getTranslations(Text.CHANGE, "Change").toUpperCase());
         binding!!.layoutLoyalty.tvPointsLabel.text =
             CacheUtil.getInstance().getTranslations(Text.POINTS, "Points")
-        binding!!.layoutLoyalty.tvSarAmountLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.SAR_AMOUNT, "SAR Amount")
+        binding!!.layoutLoyalty.tvSarAmountLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.SAR_AMOUNT, "SAR Amount")
 
         binding!!.layoutPaymentSummary.tvDiscountLabel.text =
             CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
@@ -1016,32 +958,33 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         val orderType = CacheUtil.getInstance().orderType
         try {
             if (orderType === OrderType.DELIVERY) {
-                binding!!.tvTimeLabel.text = CacheUtil.getInstance()
-                    .getTranslations(Text.DELIVERY_TIME, "Delivery Time")
+                binding!!.tvTimeLabel.text =
+                    CacheUtil.getInstance().getTranslations(Text.DELIVERY_TIME, "Delivery Time")
                 val mins =
                     CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.delivery.toString()
-                binding!!.tvWithin.text = CacheUtil.getInstance()
-                    .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)", mins)
+                binding!!.tvWithin.text =
+                    CacheUtil.getInstance().getTranslations(Text.WITHIN, "Within (x) mins")
+                        .replace("(x)", mins)
             } else {
-                binding!!.tvTimeLabel.text = CacheUtil.getInstance()
-                    .getTranslations(Text.PICKUP_TIME, "Pickup Time")
+                binding!!.tvTimeLabel.text =
+                    CacheUtil.getInstance().getTranslations(Text.PICKUP_TIME, "Pickup Time")
                 val mins =
                     CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup.toString()
-                binding!!.tvWithin.text = CacheUtil.getInstance()
-                    .getTranslations(Text.WITHIN, "Within (x) mins").replace("(x)", mins)
+                binding!!.tvWithin.text =
+                    CacheUtil.getInstance().getTranslations(Text.WITHIN, "Within (x) mins")
+                        .replace("(x)", mins)
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        binding!!.placeOrder.text = CacheUtil.getInstance()
-            .getTranslations(Text.PLACE_ORDER, "Place Order")
+        binding!!.placeOrder.text =
+            CacheUtil.getInstance().getTranslations(Text.PLACE_ORDER, "Place Order")
         binding!!.layoutPaymentSummary.tvSubtotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL)
         binding!!.layoutPaymentSummary.tvDiscount.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
         binding!!.layoutPaymentSummary.tvTotalLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total")
-                .replace(":", "")
+            CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total").replace(":", "")
         binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.DELIVERY_INSTRUCTION, "Delivery Instruction")
         binding!!.layoutPaymentSummary.tvSubtotalLabel.text =
@@ -1059,13 +1002,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 "The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful."
             )
         }
-        binding!!
-            .layoutPaymentSummary.tvDeliveryChargeLabel.text = CacheUtil
-            .getInstance()
-            .getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
+        binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
         binding!!.totalVatDescription.text = CacheUtil.getInstance()
             .getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
-        binding!!.layoutPaymentSummary.tvMukafaaLabel.text = CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
+        binding!!.layoutPaymentSummary.tvMukafaaLabel.text =
+            CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
     }
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}
@@ -1077,10 +1019,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun setEndName(endName: String) {}
     override fun setEndAddress(endAddress: String) {}
     override fun updateMap(
-        orderType: OrderType,
-        startLocation: LatLng,
-        endLocation: LatLng,
-        bounds: LatLngBounds
+        orderType: OrderType, startLocation: LatLng, endLocation: LatLng, bounds: LatLngBounds
     ) {
     }
 
@@ -1100,16 +1039,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
         val validatedTotal = paymentPresenter?.validatedTotal?.toInt()
         if (CacheUtil.getInstance().orderType === OrderType.DELIVERY && validatedTotal != null && validatedTotal != 0) {
-            val paymentDialogFragment: PaymentDialogFragment =
-                PaymentDialogFragment.newInstance(
-                    paymentPresenter
-                ) { dialog, cashPresented ->
-                    dialog.dismiss()
-                    paymentPresenter!!.cashPresented = cashPresented
-                }
+            val paymentDialogFragment: PaymentDialogFragment = PaymentDialogFragment.newInstance(
+                paymentPresenter
+            ) { dialog, cashPresented ->
+                dialog.dismiss()
+                paymentPresenter!!.cashPresented = cashPresented
+            }
             paymentDialogFragment.show(
-                supportFragmentManager,
-                PaymentDialogFragment::class.java.simpleName
+                supportFragmentManager, PaymentDialogFragment::class.java.simpleName
             )
         }
     }
@@ -1133,10 +1070,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             override fun onClose() {
                                 saveDialogAlert!!.dismissAllowingStateLoss()
                                 checkTokenGenerated(
-                                    response!!.token,
-                                    null,
-                                    false,
-                                    orderId.orEmpty()
+                                    response!!.token, null, false, orderId.orEmpty()
                                 )
                             }
 
@@ -1147,8 +1081,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         })
                     saveDialogAlert?.setCancelable(false)
                     saveDialogAlert?.show(
-                        supportFragmentManager,
-                        SaveDialogAlert::class.java.toString()
+                        supportFragmentManager, SaveDialogAlert::class.java.toString()
                     )
                 }
 
@@ -1159,7 +1092,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     }
                     logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Failed (Reason: " + reason + ")")
                     sendOrderLog(
-                        ApiLogLevel.ERROR, orderId, paymentPresenter!!.paymentProvider,
+                        ApiLogLevel.ERROR,
+                        orderId,
+                        paymentPresenter!!.paymentProvider,
                         "Card Payment Failed (Reason: $reason)"
                     )
                     dismissDialogs()
@@ -1178,7 +1113,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 override fun on3DSFailure() {
                     logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Failed (Reason: on3DSFailure)")
                     sendOrderLog(
-                        ApiLogLevel.ERROR, orderId, paymentPresenter!!.paymentProvider,
+                        ApiLogLevel.ERROR,
+                        orderId,
+                        paymentPresenter!!.paymentProvider,
                         "Card Payment Failed (Reason: on3DSFailure)"
                     )
                     showCardFailed()
@@ -1204,8 +1141,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
             dismissDialogs()
             dialogCheckout!!.show(
-                supportFragmentManager,
-                CustomCheckoutDialog::class.java.simpleName
+                supportFragmentManager, CustomCheckoutDialog::class.java.simpleName
             )
         }
     }
@@ -1218,18 +1154,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun showCardFailed() {
         if (CacheUtil.getInstance().orderPayment == PaymentType.CASH) {
             showAlertDialog(
-                "",
-                CacheUtil.getInstance().getTranslations(
+                "", CacheUtil.getInstance().getTranslations(
                     Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH,
                     "Card payment failed. Do you want to Pay with Cash instead?"
-                ),
-                CacheUtil.getInstance().getTranslations(Text.YES_CAPS),
-                { dialog, which ->
+                ), CacheUtil.getInstance().getTranslations(Text.YES_CAPS), { dialog, which ->
                     dialogCheckout?.dismissAllowingStateLoss()
                     dialog.dismiss()
                     selectPaymentTypeCash()
-                },
-                CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
+                }, CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
             ) { dialog, which ->
                 dialogCheckout?.dismissAllowingStateLoss()
                 dialog.dismiss()
@@ -1316,8 +1248,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         val hasPromotion = CacheUtil.getInstance().hasPromotion()
         val total = updateCurrency(subtotalPrice, true, hasPromotion).toString()
         val deliveryChargeTotal = updateCurrency(deliveryCharge, withSpace = true).toString()
-        binding!!.layoutPaymentSummary.tvSubtotal.text =
-            total
+        binding!!.layoutPaymentSummary.tvSubtotal.text = total
         val isDeliverCharge = deliveryCharge >= 1 && isDelivery
         binding!!.layoutPaymentSummary.viewDeliverySeparator.setVisible(isDeliverCharge)
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.setVisible(isDeliverCharge)
@@ -1410,17 +1341,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
         if (pointsUsed > 0) {
             binding!!.layoutPaymentSummary.grpRedeemedPoints.visible()
-            binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
-                .replace("x", pointsUsed.toString())
+            binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
+                    .replace("x", pointsUsed.toString())
             val sarAmount = Math.min(
-                pointsSarValue,
-                paymentPresenter!!.menuItemsTotalPrice
+                pointsSarValue, paymentPresenter!!.menuItemsTotalPrice
             )
-            binding!!.layoutPaymentSummary.tvRedeemPointsEquiv.text =
-                updateCurrency(
-                    sarAmount, true, hasPromotion, true
-                )
+            binding!!.layoutPaymentSummary.tvRedeemPointsEquiv.text = updateCurrency(
+                sarAmount, true, hasPromotion, true
+            )
         } else {
             binding!!.layoutPaymentSummary.grpRedeemedPoints.gone()
         }
@@ -1437,14 +1366,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
 
         val formattedTotal = updateCurrency(
-            totalPrice,
-            true,
-            true
+            totalPrice, true, true
         )
         val formattedDiscountedPrice = updateCurrency(
-            totalPrice,
-            true,
-            false
+            totalPrice, true, false
         )
         finalDiscount = _discount
 
@@ -1458,8 +1383,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         totalValue = totalPrice
 
         val currSubTotal = if (isDelivery) subtotalPrice + deliveryCharge else subtotalPrice
-        val formattedCurrentSubtotal =
-            updateCurrency(currSubTotal, true, false)
+        val formattedCurrentSubtotal = updateCurrency(currSubTotal, true, false)
         if (totalPrice != currSubTotal) {
             binding?.tvOriginalPrice?.visible()
             binding?.tvOriginalPrice?.text = formattedCurrentSubtotal
@@ -1546,16 +1470,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     override fun showErrorPrayerTime() {}
     val activityResultLauncher: ActivityResultLauncher<Pair<String, ResultType>> =
-        registerForActivityResult(
-            PaymentResultContract() as ActivityResultContract<Pair<String, ResultType>, Any>,
+        registerForActivityResult(PaymentResultContract() as ActivityResultContract<Pair<String, ResultType>, Any>,
             ActivityResultCallback<Any> { result ->
                 if (result == null) return@ActivityResultCallback
                 when (result) {
                     is PaymentStatus.Success -> paymentPresenter?.sendUpsells()
                     is PaymentStatus.Redirect -> {
                         if (result.result.component2()?.status.equals(
-                                "SUCCESSFUL",
-                                ignoreCase = true
+                                "SUCCESSFUL", ignoreCase = true
                             )
                         ) {
                             paymentPresenter?.sendUpsells()
@@ -1566,8 +1488,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
                     else -> showCardFailed()
                 }
-            }
-        )
+            })
 
     override fun moneyHashContract(): ActivityResultLauncher<Pair<String, ResultType>> {
         return activityResultLauncher
@@ -1576,8 +1497,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun setOrderId(orderId: String) {}
     override fun showCardDialogList(orderId: String) {
         if (isCanProceedFragmentTransaction(supportFragmentManager)) {
-            savedCardsDialog = SavedCardsDialog.newInstance(
-                CacheUtil.getInstance().customerCards,
+            savedCardsDialog = SavedCardsDialog.newInstance(CacheUtil.getInstance().customerCards,
                 object : SavedCardsDialog.OnSavedAction {
                     override fun onClose() {
                         dismissDialogs()
@@ -1605,8 +1525,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             // Check if the fragment is still added to the activity
             if (!savedCardsDialog?.isAdded()!!) {
                 savedCardsDialog?.show(
-                    supportFragmentManager,
-                    SavedCardsDialog::class.java.toString()
+                    supportFragmentManager, SavedCardsDialog::class.java.toString()
                 )
             }
         }
@@ -1625,8 +1544,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         try {
             if (this != null) {
                 addPaymentInfoEvent(this, paymentPresenter!!.menuItemsList, totalValue)
-                val orderPayment = CacheUtil
-                    .getInstance().orderPayment
+                val orderPayment = CacheUtil.getInstance().orderPayment
                 if (orderPayment != null) {
                     addPaymentInfoEvent(this, paymentPresenter!!.menuItemsList, totalValue)
                 }
@@ -1637,15 +1555,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun firebaseApplyPromotionEvent(
-        promotionId: String,
-        promotionName: String,
-        orderedItems: List<MenuItem>
+        promotionId: String, promotionName: String, orderedItems: List<MenuItem>
     ) {
         FirebaseECommerceEventUtil.applyPromotionEvent(
-            this,
-            promotionId,
-            promotionName,
-            paymentPresenter!!.menuItemsList
+            this, promotionId, promotionName, paymentPresenter!!.menuItemsList
         )
     }
 
@@ -1654,10 +1567,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun showMoyasarSheet(
-        orderId: String,
-        validatedTotal: Double,
-        menuItems: String,
-        apiKey: String
+        orderId: String, validatedTotal: Double, menuItems: String, apiKey: String
     ) {
         Handler().post {
             val intent = Intent(this@CheckoutActivity, MoyasarActivity::class.java)
@@ -1698,13 +1608,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 cardPair.second + selectedCard.attributes.last4Digits
         } else {
             val isUserNotSelectedAnyPaymentMethod =
-                selectedPayment == PaymentType.NONE  // && CacheUtil.getInstance().customCard == null
-            /*binding!!.layoutPayment.emptyState.setVisible(isUserNotSelectedAnyPaymentMethod)
-            binding!!.layoutPayment.emptyState.setTitle(
-                CacheUtil.getInstance()
-                    .getTranslations(Text.NO_PAYMENT_METHOD_SELECTED, "No payment method found.")
+                selectedPayment == PaymentType.NONE
 
-            )*/
             if (isUserNotSelectedAnyPaymentMethod) {
                 binding!!.layoutPayment.tvSelectedPayment.visibility = View.VISIBLE
                 binding!!.layoutPayment.ivSelectedPayment.visibility = View.VISIBLE
@@ -1788,9 +1693,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun onDateSelected(
-        materialCalendarView: MaterialCalendarView,
-        calendarDay: CalendarDay,
-        b: Boolean
+        materialCalendarView: MaterialCalendarView, calendarDay: CalendarDay, b: Boolean
     ) {
 //        oneDayDecorator.setDate(calendarDay.getDate());
 //        daySelected = calendarDay.getDate().toString();
@@ -1928,10 +1831,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun userEnabledSaveCardOption(saveCardEnabled: Boolean) {}
     override fun cardTokenizedSuccessfully(token: Token, saveCardEnabled: Boolean) {}
     private fun checkTokenGenerated(
-        token: String,
-        cvv: String?,
-        isSave: Boolean,
-        orderIds: String
+        token: String, cvv: String?, isSave: Boolean, orderIds: String
     ) {
         val body = JsonObject()
         body.addProperty("order", orderIds)
@@ -1988,8 +1888,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         })
     }
 
-    private fun checkoutForce(data: JSONObject) {
-        /*Intent intent = new Intent(PaymentActivity.this, CustomCheckoutActivity.class);
+    private fun checkoutForce(data: JSONObject) {/*Intent intent = new Intent(PaymentActivity.this, CustomCheckoutActivity.class);
         intent.putExtra(CustomCheckoutActivity.EXTRA_ORDER_ID , orderId);
         intent.putExtra(CustomCheckoutActivity.EXTRA_PAYMENT_PROVIDER, paymentPresenter.getPaymentProvider());
         intent.putExtra(CustomCheckoutActivity.EXTRA_3DS_DATA, data.toString());
@@ -2034,10 +1933,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             val validatedTotal = paymentPresenter?.validatedTotal ?: 0.0
             val orderPayment = CacheUtil.getInstance().orderPayment
             val amountDbl = amount.toDouble()
-            if (orderPayment == PaymentType.NONE
-                && validatedTotal == amountDbl
-                && loyaltypointsInput <= 0
-                && CacheUtil.getInstance().getOrderType() != OrderType.DELIVERY
+            if (orderPayment == PaymentType.NONE && validatedTotal == amountDbl && loyaltypointsInput <= 0 && CacheUtil.getInstance()
+                    .getOrderType() != OrderType.DELIVERY
             ) {
                 selectPaymentTypeCash()
             }
@@ -2061,17 +1958,13 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
 
         paymentPresenter?.validateOrder(
-            false,
-            CacheUtil.getInstance().orderStore,
-            null,
-            0,
-            false
+            false, CacheUtil.getInstance().orderStore, null, 0, false
         )
     }
 
     override fun onClose() {
         paymentPresenter?.let {
-            if(!it.hasMukafaaTransactionId()){
+            if (!it.hasMukafaaTransactionId()) {
                 binding?.apply {
                     layoutAlrahji.switchAlrahji.apply {
                         setOnCheckedChangeListener(null)
@@ -2084,7 +1977,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
         }
     }
-
 
 
 }
