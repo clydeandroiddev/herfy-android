@@ -612,7 +612,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             val intent = Intent(this, FeedbackActivity::class.java)
             startActivity(intent)
         }
-        binding.sidebar.fmRefer.isVisible = isSignedIn
         binding.sidebar.fmStoreLocator.isVisible = isSignedIn
     }
 
@@ -977,12 +976,15 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     override fun setFaqs(content: String) {
-        binding.sidebar.fmFaqs.setOnClickListener {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            navCmsPage(
-                title = CacheUtil.getInstance().getTranslations(Text.FAQS_LABEL, "FAQs"),
-                content = content
-            )
+        binding.sidebar.fmFaqs.apply {
+            setOnClickListener {
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+                navCmsPage(
+                    title = CacheUtil.getInstance().getTranslations(Text.FAQS_LABEL, "FAQs"),
+                    content = content
+                )
+            }
+            visible()
         }
     }
 
