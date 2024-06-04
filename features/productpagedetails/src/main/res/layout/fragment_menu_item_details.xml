@@ -470,10 +470,11 @@
                         android:background="#E6E8EB" />
                 </LinearLayout>
 
-
+                <!-- TODO  Revert the parent to visible state when client requests to re-enable frequently bought items feature  -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <com.google.android.material.textview.MaterialTextView
@@ -491,8 +492,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"
-                        android:layout_marginTop="@dimen/margin_large"
                         android:visibility="gone"
+                        android:layout_marginTop="@dimen/margin_large"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/orderTypeContainer"
                         app:shimmer_duration="1000"
@@ -501,7 +502,6 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:visibility="gone"
                         android:orientation="vertical">
                         <include layout="@layout/item_frequently_bought_placeholder" />
                         <include layout="@layout/item_frequently_bought_placeholder" />
@@ -515,7 +515,6 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/frequently_bough_recycleview"
                         android:layout_width="match_parent"
-                        android:visibility="gone"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/margin_small"
                         android:clipToPadding="false"

@@ -415,9 +415,12 @@
                             android:background="#E6E8EB" />
                     </LinearLayout>
 
+                    <!-- TODO  Revert the parent to visible state when client requests to re-enable frequently bought items feature  -->
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:orientation="vertical">
 
                         <com.google.android.material.textview.MaterialTextView
@@ -438,7 +441,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/margin_large"
                             android:clipToPadding="false"
-                            android:visibility="gone"
                             android:descendantFocusability="blocksDescendants"
                             android:focusableInTouchMode="false"
                             android:layout_marginTop="@dimen/margin_xlarge"
