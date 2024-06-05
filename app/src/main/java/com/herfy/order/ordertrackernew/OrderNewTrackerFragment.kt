@@ -1219,8 +1219,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     } else if (order.orderStatus.sequence == OrderStatusType.FINISHED.value) {
                         binding.cancelledText.setTextColor(resources.getColor(R.color.black_delivered))
                         if (ot == OrderType.DELIVERY) {
+                            removeDriverMarker()
                             binding.cancelledText.text =
                                 CacheUtil.getInstance().getTranslations(Text.DELIVERED, "Delivered")
+
                         } else {
                             binding.cancelledText.text =
                                 CacheUtil.getInstance().getTranslations(Text.PICKED, "Picked")
@@ -1237,6 +1239,12 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             }
         }
 
+    }
+
+    private fun removeDriverMarker() {
+        if (driverMarker != null) {
+            driverMarker?.remove()
+        }
     }
 
     private fun processRating() {
@@ -1623,9 +1631,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     }
 
                     Handler(Looper.getMainLooper()).post {
-                        if (driverMarker != null) {
-                            driverMarker?.remove()
-                        }
+                        removeDriverMarker()
                         val markerOptions = MarkerOptions()
                         markerOptions.position(latLng)
                         markerOptions.icon(

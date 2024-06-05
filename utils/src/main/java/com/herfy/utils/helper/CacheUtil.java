@@ -248,6 +248,29 @@ public class CacheUtil {
 
     }
 
+    public String getEnglishTranslations(String key, String defaultValue) {
+
+        String translations = cacheSharedPreferences.getString(TRANSLATIONS, null);
+
+        if (translations != null) {
+            try {
+                JSONObject translationsObject = new JSONObject(translations);
+                if (translationsObject.has(key)) {
+                    JSONObject text = translationsObject.getJSONObject(key);
+                    if (text != null) {
+                        return text.getString("en_US");
+                    }
+                } else {
+                    return defaultValue;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return defaultValue;
+
+    }
     public String getArabicTranslations(String key, String defaultValue) {
 
         String translations = cacheSharedPreferences.getString(TRANSLATIONS, null);
