@@ -44,8 +44,9 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/chooseYourEnglishLabel"
                 style="@style/TextAppearance.Headline5"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="left"
                 android:textColor="@color/black"
                 tools:text="Choose your language to continue" />
 
@@ -54,7 +55,7 @@
                 style="@style/TextAppearance.Headline1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAlignment="viewEnd"
+                android:gravity="right"
                 android:textColor="@color/black"
                 tools:text="اختر لغتك للمتابعة" />
 

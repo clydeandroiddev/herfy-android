@@ -1,14 +1,8 @@
 package com.herfy.language
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.WindowManager
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
@@ -86,9 +80,12 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
             }
 
             chooseYourEnglishLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.CHOOSE_LANGUAGE_ENGLISH, "Choose your language to continue")
+                .getEnglishTranslations(
+                    Text.CHOOSE_LANGUAGE_ENGLISH,
+                    "Choose your language to continue"
+                )
             chooseYourArabicLabel.text = CacheUtil.getInstance()
-                .getTranslations(Text.CHOOSE_LANGUAGE_ARABIC, "اختر لغتك للمتابعة")
+                .getArabicTranslations(Text.CHOOSE_LANGUAGE_ENGLISH, "اختر لغتك للمتابعة")
 
             chooseArabic.setOnClickListener {
                 selectArabic()
@@ -137,9 +134,7 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
 
     }
 
-    override fun setupTranslations() {
-
-    }
+    override fun setupTranslations() {}
 
     private fun updateLanguageSelection(
         isArabic: Boolean,
@@ -173,7 +168,7 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
 
     override fun selectEnglish() {
         binding.continueButton.text =
-            CacheUtil.getInstance().getTranslations(Text.CONTINUE_LABEL, "Continue")
+            CacheUtil.getInstance().getEnglishTranslations(Text.CONTINUE_LABEL, "Continue")
         updateLanguageSelection(
             false,
             R.drawable.bg_language_unselected,
@@ -216,7 +211,7 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
     public override fun onStart() {
         super.onStart()
         initializePlayer()
-     }
+    }
 
     public override fun onResume() {
         super.onResume()
