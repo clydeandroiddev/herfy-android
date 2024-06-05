@@ -801,8 +801,6 @@ public class SplashPresenter implements SplashContract.Presenter {
                         appDatabase.menuCategoryEntityDao().insertAll(menuCategoryEntities.toArray(new MenuCategoryEntity[menuCategoryEntities.size()]));
                     }
 
-                    proceedNext();
-
                     JSONObject included = data.getJSONObject("included");
 
                     JSONArray allergensArray = new JSONArray();
@@ -984,6 +982,9 @@ public class SplashPresenter implements SplashContract.Presenter {
         CacheUtil.getInstance().setLastOrderId(null);
 
         getMenuCdn();
+
+        proceedNext();
+
     }
 
     public void getLoyalty() {
