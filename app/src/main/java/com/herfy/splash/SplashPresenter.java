@@ -64,6 +64,7 @@ import com.skylinedynamics.solosdk.api.models.objects.area.City;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.utils.helper.DeviceUtil;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -709,42 +710,31 @@ public class SplashPresenter implements SplashContract.Presenter {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                if (!appDatabase.menuCategoryEntityDao().hasByApplication(applicationId)) {
-                    String url = MenuUtil.getMenuCdnUrl();
-                    UtilitiesApiCall.getInstance().getMenuCategoriesWithHeaders(url, new ApiRequestWithHeadersListener() {
-                        @Override
-                        public void onSuccess(Headers headers, Object o) {
-                            try {
-                                if (headers.names().contains("last-modified")) {
-                                    CacheUtil.getInstance().setMenuCdnLastModified(headers.get("last-modified"));
-                                }
-                                String objectString = o.toString();
-                                JSONObject object = new JSONObject(objectString);
-                                cachedCountryMenu(objectString);
-                                parseMenu(object);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                this.onError("");
+                appDatabase.menuCategoryDao().deleteByApplication(applicationId);
+                String url = MenuUtil.getMenuCdnUrl();
+                UtilitiesApiCall.getInstance().getMenuCategoriesWithHeaders(url, new ApiRequestWithHeadersListener() {
+                    @Override
+                    public void onSuccess(Headers headers, Object o) {
+                        try {
+                            if (headers.names().contains("last-modified")) {
+                                CacheUtil.getInstance().setMenuCdnLastModified(headers.get("last-modified"));
                             }
+                            String objectString = o.toString();
+                            JSONObject object = new JSONObject(objectString);
+                            cachedCountryMenu(objectString);
+                            parseMenu(object);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            this.onError("");
                         }
+                    }
 
-                        @Override
-                        public void onError(Object o) {
-                            AppLogger.printRetrofitError(o.toString());
-                            splashView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
-                        }
-                    });
-                } else {
-                    appDatabase.menuCategoryDao().deleteByApplication(applicationId);
-                    appDatabase.menuItemDao().deleteByApplication(applicationId);
-                    appDatabase.modifierGroupDao().deleteByApplication(applicationId);
-                    appDatabase.modifierItemDao().deleteByApplication(applicationId);
-                    appDatabase.ingredientDao().deleteByApplication(applicationId);
-                    appDatabase.allergenDao().deleteByApplication(applicationId);
-                    appDatabase.menuCategoryEntityDao().deleteByApplication(applicationId);
-                    appDatabase.menuItemEntityDao().deleteByApplication(applicationId);
-                    getMenuCdn();
-                }
+                    @Override
+                    public void onError(Object o) {
+                        AppLogger.printRetrofitError(o.toString());
+                        splashView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                    }
+                });
             }
         });
 
@@ -764,8 +754,54 @@ public class SplashPresenter implements SplashContract.Presenter {
                     String applicationId = CacheUtil.getInstance().getApplication().getId();
 
                     JSONArray dataArray = data.getJSONArray("data");
+
                     List<MenuCategoryItemResponse> menuCategoryItemsResponse = GsonHelper.gsonFinal().fromJson(dataArray.toString(), new TypeToken<ArrayList<MenuCategoryItemResponse>>() {
                     }.getType());
+
+                    List<MenuCategoryEntity> menuCategoryEntities = new ArrayList<>();
+                    List<MenuItemEntity> menuItemEntities = new ArrayList<>();
+                    for (MenuCategoryItemResponse menuCategoryItem : menuCategoryItemsResponse) {
+                        MenuCategoryEntity menuCategoryEntity = menuCategoryItem.getAttributes().getMenuCategory();
+                        menuCategoryEntity.setApplicationId(applicationId);
+                        if (!MenuUtil.isExcluded(menuCategoryEntity.getExcludedApps())) {
+                            menuCategoryEntities.add(menuCategoryEntity);
+                            String categoryImageUrl = menuCategoryItem.getAttributes().getMenuCategory().getImage();
+                            if (categoryImageUrl == null || categoryImageUrl.equalsIgnoreCase("null") || categoryImageUrl.isEmpty() || categoryImageUrl.toLowerCase().contains("default-image.png")) {
+                                categoryImageUrl = Values.DEFAULT_IMAGE_URL;
+                            } else {
+                                categoryImageUrl = StringUtil.getCloudflareUrl(Values.MENU_IMAGE_SIZE, Values.MENU_IMAGE_SIZE, categoryImageUrl);
+                            }
+                            splashView.preloadImage(categoryImageUrl, RequestOptions.centerInsideTransform());
+
+                            for (MenuItemEntity menuItem : menuCategoryItem.getAttributes().getMenuItems()) {
+                                menuItem.setApplicationId(applicationId);
+                                menuItem.setMenuCategoryId(menuCategoryItem.getAttributes().getMenuCategory().getId());
+                                if (!MenuUtil.isExcluded(menuItem.getExcludedApps())) {
+                                    menuItemEntities.add(menuItem);
+                                    String itemImageUrl = menuItem.getImage();
+                                    if (itemImageUrl == null || itemImageUrl.equalsIgnoreCase("null") || itemImageUrl.isEmpty() || itemImageUrl.toLowerCase().contains("default-image.png")) {
+                                        itemImageUrl = Values.DEFAULT_IMAGE_URL;
+                                    } else {
+                                        itemImageUrl = StringUtil.getCloudflareUrl(Values.MENU_IMAGE_SIZE, Values.MENU_IMAGE_SIZE, itemImageUrl);
+                                    }
+                                    splashView.preloadImage(itemImageUrl, RequestOptions.centerCropTransform());
+                                }
+                            }
+                        }
+
+                    }
+
+                    if(!menuItemEntities.isEmpty()) {
+                        appDatabase.menuItemEntityDao().deleteByApplication(applicationId);
+                        appDatabase.menuItemEntityDao().insertAll(menuItemEntities.toArray(new MenuItemEntity[menuCategoryEntities.size()]));
+                    }
+
+                    if(!menuCategoryEntities.isEmpty()) {
+                        appDatabase.menuCategoryEntityDao().deleteByApplication(applicationId);
+                        appDatabase.menuCategoryEntityDao().insertAll(menuCategoryEntities.toArray(new MenuCategoryEntity[menuCategoryEntities.size()]));
+                    }
+
+                    proceedNext();
 
                     JSONObject included = data.getJSONObject("included");
 
@@ -773,6 +809,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                     if (included.has("allergens") && !included.isNull("allergens")) {
                         allergensArray = included.getJSONArray("allergens");
                     }
+                    appDatabase.allergenDao().deleteByApplication(applicationId);
                     for (int index = 0; index < allergensArray.length(); index++) {
                         JSONObject allergenObject = allergensArray.getJSONObject(index);
                         String allergenId = String.valueOf(allergenObject.getLong("id"));
@@ -788,6 +825,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                     if (included.has("ingredients") && !included.isNull("ingredients")) {
                         ingredientsArray = included.getJSONArray("ingredients");
                     }
+                    appDatabase.ingredientDao().deleteByApplication(applicationId);
                     for (int index = 0; index < ingredientsArray.length(); index++) {
                         JSONObject ingredientObject = ingredientsArray.getJSONObject(index);
                         String ingredientId = String.valueOf(ingredientObject.getLong("id"));
@@ -803,6 +841,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                     if (included.has("modifierGroups") && !included.isNull("modifierGroups")) {
                         modifierGroupsArray = included.getJSONArray("modifierGroups");
                     }
+                    appDatabase.modifierGroupDao().deleteByApplication(applicationId);
                     for (int index = 0; index < modifierGroupsArray.length(); index++) {
                         JSONObject modifierGroupObject = modifierGroupsArray.getJSONObject(index);
                         JSONObject modifierGroupAttributesObject = modifierGroupObject.getJSONObject("attributes");
@@ -838,6 +877,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                     if (included.has("modifiers") && !included.isNull("modifiers")) {
                         modifiersArray = included.getJSONArray("modifiers");
                     }
+                    appDatabase.modifierItemDao().deleteByApplication(applicationId);
                     for (int index = 0; index < modifiersArray.length(); index++) {
                         JSONObject modifierItemObject = modifiersArray.getJSONObject(index);
                         String modifierItemId = String.valueOf(modifierItemObject.getLong("id"));
@@ -878,39 +918,9 @@ public class SplashPresenter implements SplashContract.Presenter {
                     }
 
                     try {
+                        appDatabase.menuItemDao().deleteByApplication(applicationId);
                         appDatabase.menuItemDao().insertAll(menuItemDbs.toArray(new MenuItemDb[menuItemDbs.size()]));
                     } catch (ArrayIndexOutOfBoundsException e) {
-                    }
-
-                    for (MenuCategoryItemResponse menuCategoryItem : menuCategoryItemsResponse) {
-                        MenuCategoryEntity menuCategoryEntity = menuCategoryItem.getAttributes().getMenuCategory();
-                        menuCategoryEntity.setApplicationId(applicationId);
-                        if (!MenuUtil.isExcluded(menuCategoryEntity.getExcludedApps())) {
-                            appDatabase.menuCategoryEntityDao().insertAll(menuCategoryEntity);
-                            String categoryImageUrl = menuCategoryItem.getAttributes().getMenuCategory().getImage();
-                            if (categoryImageUrl == null || categoryImageUrl.equalsIgnoreCase("null") || categoryImageUrl.isEmpty() || categoryImageUrl.toLowerCase().contains("default-image.png")) {
-                                categoryImageUrl = Values.DEFAULT_IMAGE_URL;
-                            } else {
-                                categoryImageUrl = StringUtil.getCloudflareUrl(Values.MENU_IMAGE_SIZE, Values.MENU_IMAGE_SIZE, categoryImageUrl);
-                            }
-                            splashView.preloadImage(categoryImageUrl, RequestOptions.centerInsideTransform());
-
-                            for (MenuItemEntity menuItem : menuCategoryItem.getAttributes().getMenuItems()) {
-                                menuItem.setApplicationId(applicationId);
-                                menuItem.setMenuCategoryId(menuCategoryItem.getAttributes().getMenuCategory().getId());
-                                if (!MenuUtil.isExcluded(menuItem.getExcludedApps())) {
-                                    appDatabase.menuItemEntityDao().insertAll(menuItem);
-                                    String itemImageUrl = menuItem.getImage();
-                                    if (itemImageUrl == null || itemImageUrl.equalsIgnoreCase("null") || itemImageUrl.isEmpty() || itemImageUrl.toLowerCase().contains("default-image.png")) {
-                                        itemImageUrl = Values.DEFAULT_IMAGE_URL;
-                                    } else {
-                                        itemImageUrl = StringUtil.getCloudflareUrl(Values.MENU_IMAGE_SIZE, Values.MENU_IMAGE_SIZE, itemImageUrl);
-                                    }
-                                    splashView.preloadImage(itemImageUrl, RequestOptions.centerCropTransform());
-                                }
-                            }
-                        }
-
                     }
 
                     CacheUtil.getInstance().setMenuCached(new Date().getTime());
@@ -974,33 +984,6 @@ public class SplashPresenter implements SplashContract.Presenter {
         CacheUtil.getInstance().setLastOrderId(null);
 
         getMenuCdn();
-
-        boolean forceLocation = false;
-        if (CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0) {
-            forceLocation = true;
-        }
-
-        if (CacheUtil.getInstance().isSeparatedMenus() && CacheUtil.getInstance().getCartQuantity() == 0) {
-            forceLocation = false;
-        }
-
-        String primaryLanguage = CacheUtil.getInstance().getConcept().getPrimaryLanguage();
-        String secondaryLanguage = CacheUtil.getInstance().getConcept().getSecondaryLanguage();
-
-        if (secondaryLanguage == null || secondaryLanguage.isEmpty()) {
-            boolean language = CacheUtil.getInstance().getLanguage();
-            LocaleUtil.getInstance().setLanguage(primaryLanguage.split("-")[0]);
-            SoloAuth.getInstance().setLanguage(primaryLanguage);
-            CacheUtil.getInstance().setLanguage(true);
-            if (!language) {
-                changeLanguage();
-            } else {
-                splashView.proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), forceLocation);
-            }
-        } else {
-            splashView.proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), forceLocation);
-        }
-
     }
 
     public void getLoyalty() {
@@ -1147,6 +1130,34 @@ public class SplashPresenter implements SplashContract.Presenter {
             }
         });
 
+    }
+
+    public void proceedNext() {
+        boolean forceLocation = false;
+        if (CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0) {
+            forceLocation = true;
+        }
+
+        if (CacheUtil.getInstance().isSeparatedMenus() && CacheUtil.getInstance().getCartQuantity() == 0) {
+            forceLocation = false;
+        }
+
+        String primaryLanguage = CacheUtil.getInstance().getConcept().getPrimaryLanguage();
+        String secondaryLanguage = CacheUtil.getInstance().getConcept().getSecondaryLanguage();
+
+        if (secondaryLanguage == null || secondaryLanguage.isEmpty()) {
+            boolean language = CacheUtil.getInstance().getLanguage();
+            LocaleUtil.getInstance().setLanguage(primaryLanguage.split("-")[0]);
+            SoloAuth.getInstance().setLanguage(primaryLanguage);
+            CacheUtil.getInstance().setLanguage(true);
+            if (!language) {
+                changeLanguage();
+            } else {
+                splashView.proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), forceLocation);
+            }
+        } else {
+            splashView.proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), forceLocation);
+        }
     }
 
 }

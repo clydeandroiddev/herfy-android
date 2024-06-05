@@ -153,9 +153,9 @@ class MenuViewModel @Inject constructor(
                     }
                     count++
                 }
+                _showMenuCategories.postValue(Event(menuCategories))
+                _menuAdapterItems.postValue(Event(adapterItems))
             }
-            _showMenuCategories.postValue(Event(menuCategories))
-            _menuAdapterItems.postValue(Event(adapterItems))
         }
     }
 

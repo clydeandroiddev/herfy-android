@@ -306,39 +306,40 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
 
     @Override
     public void proceed(boolean language, boolean onboarding, boolean forceLocation) {
-
-        if (!router) {
-            Values.sDeepLinkUtm = null;
-        }
-
-        if (!BuildConfig.SUBSCRIPTION_ENABLED) {
-            CacheUtil.getInstance().setUpMode(1);
-        }
-
-        Intent intent = new Intent(this, MainActivity.class);
-        proceedMain = true;
-        if (!language) {
-            proceedMain = false;
-            intent = new Intent(this, LanguageNewActivity.class);
-        } else {
-            intent.putExtra("home", true);
-        }
-
-        intent.putExtra("forceLocation", forceLocation);
-
-        final Intent finalIntent = intent;
-
-        if (CacheUtil.getInstance().getConceptKey().equalsIgnoreCase("CGqbTzpyKa9")) {
-            Bundle bundle = ActivityOptionsCompat.makeCustomAnimation(SplashActivity.this, android.R.anim.fade_in, android.R.anim.fade_out).toBundle();
-            startActivity(intent, bundle);
-            finish();
-        } else {
-            if (BuildConfig.DISABLE_SPLASH_ANIMATION || (BuildUtil.splashBackgroundApp() || BuildUtil.splashGIFApp()) || videoCompleted) {
-                proceedNext(false, finalIntent);
-            } else {
-                animateLogo(false, finalIntent);
+        new Handler(getMainLooper()).post(() -> {
+            if (!router) {
+                Values.sDeepLinkUtm = null;
             }
-        }
+
+            if (!BuildConfig.SUBSCRIPTION_ENABLED) {
+                CacheUtil.getInstance().setUpMode(1);
+            }
+
+            Intent intent = new Intent(this, MainActivity.class);
+            proceedMain = true;
+            if (!language) {
+                proceedMain = false;
+                intent = new Intent(this, LanguageNewActivity.class);
+            } else {
+                intent.putExtra("home", true);
+            }
+
+            intent.putExtra("forceLocation", forceLocation);
+
+            final Intent finalIntent = intent;
+
+            if (CacheUtil.getInstance().getConceptKey().equalsIgnoreCase("CGqbTzpyKa9")) {
+                Bundle bundle = ActivityOptionsCompat.makeCustomAnimation(SplashActivity.this, android.R.anim.fade_in, android.R.anim.fade_out).toBundle();
+                startActivity(intent, bundle);
+                finish();
+            } else {
+                if (BuildConfig.DISABLE_SPLASH_ANIMATION || (BuildUtil.splashBackgroundApp() || BuildUtil.splashGIFApp()) || videoCompleted) {
+                    proceedNext(false, finalIntent);
+                } else {
+                    animateLogo(false, finalIntent);
+                }
+            }
+        });
     }
 
     @Override
