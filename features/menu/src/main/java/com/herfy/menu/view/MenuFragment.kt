@@ -566,21 +566,21 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     }
 
     private fun selectMenuCategory(position: Int, menuCategoryId: String) {
-        menuCategoryAdapter.select(position)
-        binding.rvMenuCategories.smoothScrollToPosition(position)
-        viewModel.menuCategoryPositions[menuCategoryId]?.let {
-            binding.rvMenuCategoriesItems.apply {
-                layoutManager?.cast<LinearLayoutManager> { linearLayoutManager ->
-                    linearLayoutManager.scrollToPositionWithOffset(it, layoutParams.height)
-                }
-                removeOnScrollListener(menuOnScrollListener)
-                clearOnScrollListeners()
-                activity?.apply {
-                    runOnUiThread {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            addOnScrollListener(menuOnScrollListener)
-                        }, 250)
+        activity?.runOnUiThread {
+            menuCategoryAdapter.select(position)
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.rvMenuCategories.smoothScrollToPosition(position)
+            }, 100)
+            viewModel.menuCategoryPositions[menuCategoryId]?.let {
+                binding.rvMenuCategoriesItems.apply {
+                    layoutManager?.cast<LinearLayoutManager> { linearLayoutManager ->
+                        linearLayoutManager.scrollToPositionWithOffset(it, layoutParams.height)
                     }
+                    removeOnScrollListener(menuOnScrollListener)
+                    clearOnScrollListeners()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        addOnScrollListener(menuOnScrollListener)
+                    }, 250)
                 }
             }
         }
