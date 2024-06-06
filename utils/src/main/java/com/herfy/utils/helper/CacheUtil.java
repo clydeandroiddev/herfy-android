@@ -702,6 +702,7 @@ public class CacheUtil {
     }
 
     public void clearOrder() {
+        setCartExpired(false);
         setCart(new ArrayList<>());
         setCartNotes("");
         setUpsell(true);
