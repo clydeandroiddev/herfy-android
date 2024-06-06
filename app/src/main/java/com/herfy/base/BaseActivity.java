@@ -635,7 +635,7 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
     }
 
     public void clearCart() {
-        if (currentActivity != null) {
+        if (currentActivity != null && CacheUtil.getInstance().getCartQuantity() != 0) {
             if (currentActivity instanceof UpsellActivity || currentActivity instanceof CheckoutActivity || currentActivity instanceof ChoosePaymentActivity || currentActivity instanceof PaymentActivity || currentActivity instanceof OrderSummaryActivity || currentActivity instanceof MukafaaOTPActivity || currentActivity instanceof MoyasarActivity) {
                 CacheUtil.getInstance().setCartExpired(true);
             } else {
