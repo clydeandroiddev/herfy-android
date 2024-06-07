@@ -114,6 +114,7 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
                     .getTranslations(Text.NO_CURBSIDE_VEHICLES, "No curbside vehicles found.")
             continueButton.text =
                 CacheUtil.getInstance().getTranslations(Text.ADD_NEW_VEHICLE, "Add New Vehicle")
+
             continueButton.setOnClickListener {
                 showAddDialog(false)
             }
@@ -137,7 +138,9 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
         dismissDialogs()
         if (cars.isEmpty()) {
             binding.emptyStateLayout.isVisible = true
-            showAddDialog(true)
+            if (!intent.getBooleanExtra("fromProfile", false)) {
+                showAddDialog(true)
+            }
         } else {
             binding.emptyStateLayout.isVisible = false
             curbsideVehicleAdapter.updateList(ArrayList(cars))
@@ -145,9 +148,7 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
     }
 
     private fun showAddDialog(isEmpty: Boolean) {
-        if (!intent.getBooleanExtra("fromProfile", false)) {
-            showAddDialog(isEmpty, null)
-        }
+        showAddDialog(isEmpty, null)
     }
 
     private fun showAddDialog(isEmpty: Boolean, customerCar: CustomerCar?) {
@@ -197,7 +198,9 @@ class CurbsideNewActivity : BaseActivity(), CurbsideContract.View {
         curbsideVehicleAdapter.removeItem(position)
         if (curbsideVehicleAdapter.listCount() == 0) {
             binding.emptyStateLayout.isVisible = true
-            showAddDialog(true)
+            if (!intent.getBooleanExtra("fromProfile", false)) {
+                showAddDialog(true)
+            }
         }
         val car1 = CacheUtil.getInstance().curbsideCar
         if (car1 != null) {
