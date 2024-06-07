@@ -19,6 +19,15 @@
     <string name="arabic" translatable="false">عربي</string>
     <string name="eng" translatable="false">ENG</string>
 
+    <string name="enable_cart_notifications_title_en" translatable="false">Enable Cart Notifications</string>
+    <string name="enable_cart_notifications_title_ar" translatable="false">تفعيل إشعارات العربة</string>
+    <string name="enable_cart_notifications_message_en" translatable="false">Please enable alarms and reminders for the app to receive cart notifications</string>
+    <string name="enable_cart_notifications_message_ar" translatable="false">يرجى تمكين التنبيهات والتذكيرات للتطبيق للحصول على إشعارات العربة</string>
+    <string name="okay_en" translatable="false">Okay</string>
+    <string name="okay_ar" translatable="false">تم</string>
+    <string name="cancel_en" translatable="false">Cancel</string>
+    <string name="cancel_ar" translatable="false">إلغاء</string>
+
     <string-array name="custom_weekdays_common">
         <item>M</item>
         <item>T</item>
