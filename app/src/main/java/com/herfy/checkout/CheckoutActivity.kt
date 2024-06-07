@@ -216,20 +216,28 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
     }
 
+    fun handleBack() {
+        binding?.layoutLoyalty?.etPoints?.apply {
+            if (this.hasFocus()) {
+                this.clearFocus()
+            } else {
+                finish()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCheckoutPageBinding.inflate(layoutInflater)
 
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                binding?.layoutLoyalty?.etPoints?.apply {
-                    if(this.hasFocus()){
-                        this.clearFocus()
-                    }
-                }
+                handleBack()
             }
         }
+
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
         setContentView(binding!!.root)
         popupUpsellBackStack()
         passedTotalFromCart = intent.getDoubleExtra("totalPrice", 0.0)
@@ -317,7 +325,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 PermissionResult.Granted -> {
                     showMap()
                     mMap?.apply {
-                         isMyLocationEnabled = true
+                        isMyLocationEnabled = true
                         uiSettings.isMyLocationButtonEnabled = true
                     }
                 }
@@ -623,7 +631,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
 //        slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         binding!!.tvMobileNumber.text = "+${AuthUtil.getInstance().customer.attributes.mobile}"
-        binding!!.toolbarLayout.btnBack.setOnClickListener { onBackPressed() }
+
+        binding!!.toolbarLayout.btnBack.setOnClickListener {
+            handleBack()
+        }
+
         if (CacheUtil.getInstance().orderStore != null) {
             paymentPresenter!!.validateOrder(
                 false, CacheUtil.getInstance().orderStore, null, 0, false
@@ -632,7 +644,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         KeyboardUtils.addKeyboardToggleListener(this, object : SoftKeyboardToggleListener {
             override fun onToggleSoftKeyboard(isVisible: Boolean) {
                 binding?.layoutLoyalty?.apply {
-                    if(!isVisible && etPoints.hasFocus()){
+                    if (!isVisible && etPoints.hasFocus()) {
                         etPoints.clearFocus()
                     }
                 }
@@ -890,7 +902,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 override fun onEditorAction(p0: TextView?, p1: Int, p2: KeyEvent?): Boolean {
                     if (p1 == EditorInfo.IME_ACTION_DONE || (p2 != null && p2.keyCode == KeyEvent.KEYCODE_ENTER)) {
                         this@apply.clearFocus()
-                        hideKeyboardFrom(context,this@apply)
+                        hideKeyboardFrom(context, this@apply)
                         return true
                     }
                     return false
