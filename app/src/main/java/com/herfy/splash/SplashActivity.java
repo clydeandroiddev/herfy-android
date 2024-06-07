@@ -602,19 +602,35 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             if (!alarmManager.canScheduleExactAlarms()) {
+                boolean isArabic = LocaleUtil.getInstance().isArabic();
+                String title;
+                String message;
+                String okay;
+                String cancel;
+                if(isArabic) {
+                    title = getResources().getString(R.string.enable_cart_notifications_title_ar);
+                    message = getResources().getString(R.string.enable_cart_notifications_message_ar);
+                    okay = getResources().getString(R.string.okay_ar);
+                    cancel = getResources().getString(R.string.cancel_ar);
+                } else {
+                    title = getResources().getString(R.string.enable_cart_notifications_title_en);
+                    message = getResources().getString(R.string.enable_cart_notifications_message_en);
+                    okay = getResources().getString(R.string.okay_en);
+                    cancel = getResources().getString(R.string.cancel_en);
+                }
                 showAlertDialog(
-                        CacheUtil.getInstance().getTranslations(Text.ENABLE_CART_NOTIFICATIONS_TITLE, "Enable Cart Notifications"),
-                        CacheUtil.getInstance().getTranslations(Text.ENABLE_CART_NOTIFICATIONS_MESSAGE, "Please enable alarms and reminders for the app to receive cart notifications"),
-                        CacheUtil.getInstance().getTranslations(Text.OK),
-                        (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-                            intent.setData(Uri.parse("package:" + getPackageName()));
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        },
-                        CacheUtil.getInstance().getTranslations(Text.CANCEL),
-                        (dialogInterface, i) -> dialogInterface.dismiss()
+                    title,
+                    message,
+                    okay,
+                    (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    },
+                    cancel,
+                    (dialogInterface, i) -> dialogInterface.dismiss()
                 );
 
             }
