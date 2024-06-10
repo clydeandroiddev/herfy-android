@@ -16,6 +16,7 @@ import com.herfy.model.CampaignToAdd
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.PromotionCategory
 import com.herfy.model.TierProgress
+import com.herfy.repository.CmsRepository
 import com.herfy.repository.HomeRepository
 import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
@@ -61,7 +62,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository, private val dispatchers: DispatcherProvider
+    private val homeRepository: HomeRepository,
+    private val cmsRepository: CmsRepository,
+    private val dispatchers: DispatcherProvider
 ) : BaseViewModel(), PromotionsAdapter.PromotionListener, SliderImageAdapter.SliderListener,
     PromotionCategoryAdapter.PromotionCategoryListener, PromotionDetailBottomSheet.onAction {
 
@@ -137,6 +140,9 @@ class HomeViewModel @Inject constructor(
 
     private val _tierProgress = MutableLiveData<Event<TierProgress>>()
     val tierProgress: LiveData<Event<TierProgress>> = _tierProgress
+
+    private val _catering = MutableLiveData<Event<String?>>()
+    val catering: LiveData<Event<String?>> = _catering
 
     fun getSliders() {
         invoke {
@@ -1252,6 +1258,14 @@ class HomeViewModel @Inject constructor(
             }
         }
         return -1
+    }
+
+    fun getCatering() {
+        invoke {
+            cmsRepository.getCatering {
+                _catering.value = Event(it)
+            }
+        }
     }
 
 }
