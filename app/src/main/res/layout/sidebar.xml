@@ -1001,12 +1001,12 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cv_ig"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         app:cardCornerRadius="12dp"
                         app:strokeColor="@color/border_color_light"
                         app:strokeWidth="1dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginEnd="8dp"
                         android:visibility="visible"
                         tools:visibility="visible">
 
@@ -1022,12 +1022,12 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cv_facebook"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         app:cardCornerRadius="12dp"
                         app:strokeColor="@color/border_color_light"
                         app:strokeWidth="1dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginEnd="8dp"
                         android:visibility="visible"
                         tools:visibility="visible">
 
@@ -1044,12 +1044,12 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cv_tiktok"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         app:cardCornerRadius="12dp"
                         app:strokeColor="@color/border_color_light"
                         app:strokeWidth="1dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginEnd="8dp"
                         android:visibility="visible"
                         tools:visibility="visible">
 
@@ -1066,12 +1066,12 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cv_youtube"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         app:cardCornerRadius="12dp"
                         app:strokeColor="@color/border_color_light"
                         app:strokeWidth="1dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginEnd="8dp"
                         android:visibility="gone"
                         tools:visibility="visible">
 
@@ -1089,12 +1089,12 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cv_web"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         app:cardCornerRadius="12dp"
                         app:strokeColor="@color/border_color_light"
                         app:strokeWidth="1dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginEnd="8dp"
                         android:visibility="gone"
                         tools:visibility="visible">
 
@@ -1112,11 +1112,10 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cv_twitter"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:visibility="visible"
-                        app:cardCornerRadius="12dp"
+                        app:cardCornerRadius="8dp"
                         app:strokeColor="@color/border_color_light"
                         app:strokeWidth="1dp"
                         tools:visibility="visible">
@@ -1131,15 +1130,14 @@
 
                     </com.google.android.material.card.MaterialCardView>
 
-
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cv_share"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         app:cardCornerRadius="12dp"
                         app:strokeColor="@color/border_color_light"
                         app:strokeWidth="1dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginEnd="8dp"
                         android:visibility="gone">
 
                         <ImageView
@@ -1152,9 +1150,6 @@
 
 
                     </com.google.android.material.card.MaterialCardView>
-
-
-
 
                 </LinearLayout>
 
