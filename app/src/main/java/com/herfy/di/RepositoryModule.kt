@@ -1,9 +1,10 @@
 package com.herfy.di
 
-import android.content.Context
 import com.herfy.database.AppDatabase
 import com.herfy.repository.AuthRepository
 import com.herfy.repository.AuthRepositoryImpl
+import com.herfy.repository.CmsRepository
+import com.herfy.repository.CmsRepositoryImpl
 import com.herfy.repository.FavoriteRepository
 import com.herfy.repository.FavoriteRepositoryImpl
 import com.herfy.repository.HomeRepository
@@ -18,7 +19,6 @@ import com.herfy.utils.helper.CacheUtilHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -75,5 +75,8 @@ object RepositoryModule {
         cacheUtilHelper: CacheUtilHelper
     ) : PaymentRepository = PaymentRepositoryImpl(appDatabase, cacheUtilHelper)
 
+    @Provides
+    @Singleton
+    fun provideCmsRepository(): CmsRepository = CmsRepositoryImpl()
 
 }

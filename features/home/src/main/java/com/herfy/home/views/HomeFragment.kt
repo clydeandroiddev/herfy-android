@@ -77,6 +77,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     override fun initViews() {
         super.initViews()
         viewModel.apply {
+            getCatering()
             getMenuCategory()
             getOrderTypes()
         }
@@ -107,18 +108,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         val intent = Intent()
                         intent.setClassName(it, Navigation.LOYALTY_ACTIVITY)
                         startActivity(intent)
-                    }
-                }
-            }
-            layoutCatering.btnCatering.setOnClickListener {
-                activity?.apply {
-                    try {
-                        val intent = Intent(
-                            Intent.ACTION_VIEW, Uri.parse(Values.CATER_WITH_HERFY_URL)
-                        )
-                        startActivity(intent)
-                    } catch (e: ActivityNotFoundException) {
-                        e.printStackTrace()
                     }
                 }
             }
@@ -759,6 +748,25 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         binding.layoutBanner.orderTracker.ivOrderNotif.setImageResource(R.drawable.ic_full_order_done)
                     } else {
                         updateStatusGIF(R.drawable.collected_order)
+                    }
+                }
+            }
+        }
+
+        viewModel.catering.observe(this) {
+            it.getContentIfNotHandled()?.let { catering ->
+                if(catering.isNotEmpty()) {
+                    binding.layoutCatering.btnCatering.setOnClickListener {
+                        activity?.apply {
+                            try {
+                                val intent = Intent(
+                                    Intent.ACTION_VIEW, Uri.parse(catering)
+                                )
+                                startActivity(intent)
+                            } catch (e: ActivityNotFoundException) {
+                                e.printStackTrace()
+                            }
+                        }
                     }
                 }
             }
