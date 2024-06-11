@@ -9,6 +9,7 @@ import com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent
 import com.herfy.database.entities.MenuItemDb
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.EventAttributesMetric
+import com.herfy.model.MenuItemComponentItem
 import com.herfy.model.ShowComboMealItemDetails
 import com.herfy.model.modifiers.ModifierAdapterItem
 import com.herfy.model.modifiers.ModifierGroupAdapterItem
@@ -124,8 +125,8 @@ class ComboViewModel @Inject constructor(
     val showMenuItemTotal: LiveData<Double> = _showMenuItemTotal
     private val _showMenuItemQuantity = MutableLiveData<Int>()
     val showMenuItemQuantity: LiveData<Int> = _showMenuItemQuantity
-    private val _showComboMenuItemComponents = MutableLiveData<List<MenuItemComponents>>()
-    val showMenuItemComponent: LiveData<List<MenuItemComponents>> = _showComboMenuItemComponents
+    private val _showComboMenuItemComponents = MutableLiveData<List<MenuItemComponentItem>>()
+    val showMenuItemComponent: LiveData<List<MenuItemComponentItem>> = _showComboMenuItemComponents
     private val _showComboSizes = MutableLiveData<List<ModifierItem>>()
     val showComboSizes: LiveData<List<ModifierItem>> = _showComboSizes
     private val _updateComponentModifierList = MutableLiveData<Pair<Int, Int>>()
@@ -597,7 +598,13 @@ class ComboViewModel @Inject constructor(
                 }
                 val comboItems = it.combo[comboIndex]?.components?.deepCopy(MenuItemComponents::class.java)
                 comboItems?.let {
-                    _showComboMenuItemComponents.value = it
+                    val menuItemComponentItems = arrayListOf<MenuItemComponentItem>()
+                    it.forEachIndexed { index, menuItemComponents ->
+                        if(menuItemComponents.items.isNotEmpty()){
+                            menuItemComponentItems.add(MenuItemComponentItem(index, menuItemComponents))
+                        }
+                    }
+                    _showComboMenuItemComponents.value = menuItemComponentItems
                 }
 
             } else {
@@ -1300,13 +1307,21 @@ class ComboViewModel @Inject constructor(
         return shouldShowModifierCheckbox
     }
 
-    fun showComboModifierGroupCheckBox(menuItemComponentList: List<MenuItemComponents>): HashMap<Int, Boolean> {
+    fun showComboModifierGroupCheckBox(menuItemComponentList: List<MenuItemComponentItem>): HashMap<Int, Boolean> {
+        val map = hashMapOf<Int, Boolean>()
+        menuItemComponentList.forEachIndexed { index, data ->
+            map[index] = data.menuItemComponents.items.any { it.selected }
+        }
+        return map
+    }
+
+   /* fun showComboModifierGroupCheckBox(menuItemComponentList: List<MenuItemComponents>): HashMap<Int, Boolean> {
         val map = hashMapOf<Int, Boolean>()
         menuItemComponentList.forEachIndexed { index, menuItemComponents ->
             map[index] = menuItemComponents.items.any { it.selected }
         }
         return map
-    }
+    }*/
 
     fun showComboModifierGroupCheckBoxPerComponent(
         index: Int, menuItemComponent: MenuItemComponents
@@ -1343,7 +1358,7 @@ class ComboViewModel @Inject constructor(
             } else {
                 selectedComboComponentItem.selected = false
             }
-            it.items[menuItemComponentIndex] = selectedComboComponentItem
+            it.items[previousComponentModifierIndex] = selectedComboComponentItem
         }
 
     }
