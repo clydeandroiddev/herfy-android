@@ -4,13 +4,13 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.herfy.model.MenuItemComponentItem
 import com.herfy.productpagedetails.databinding.ItemModifierGroupNewBinding
 import com.herfy.productpagedetails.ui.viewholder.ComboMealModifierGroupViewholder
 import com.herfy.productpagedetails.ui.viewmodel.ComboViewModel
-import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents
 
 class ComboMealModifierGroupAdapter(
-    private var items: List<MenuItemComponents> = arrayListOf(),
+    private var items: List<MenuItemComponentItem> = arrayListOf(),
     private val comboViewModel: ComboViewModel,
     private var showComboMealModifierGroupCheckIndicator : HashMap<Int, Boolean> = hashMapOf()
 ) : RecyclerView.Adapter<ComboMealModifierGroupViewholder>() {
@@ -35,14 +35,14 @@ class ComboMealModifierGroupAdapter(
     override fun onBindViewHolder(holder: ComboMealModifierGroupViewholder, position: Int) {
         holder.apply {
             val data = items[position]
-            setComboModifierGroup(data, position,comboMealModifierItemAdapters,showComboMealModifierGroupCheckIndicator)
+            setComboModifierGroup(data.menuItemComponents, data.menuItemComponentPos, comboMealModifierItemAdapters,showComboMealModifierGroupCheckIndicator)
         }
     }
 
 
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(items: List<MenuItemComponents>, checkBoxIndicatorMap : HashMap<Int, Boolean>){
+    fun updateList(items: List<MenuItemComponentItem>, checkBoxIndicatorMap : HashMap<Int, Boolean>){
         this.items = items
         comboMealModifierItemAdapters = hashMapOf()
         showComboMealModifierGroupCheckIndicator = checkBoxIndicatorMap
