@@ -465,6 +465,7 @@
                             android:id="@+id/loyaltyContainer"
                             android:layout_width="match_parent"
                             android:layout_height="46dp"
+                            tools:visibility="visible"
                             android:layout_marginStart="16dp"
                             android:layout_marginEnd="16dp"
                             android:visibility="gone">

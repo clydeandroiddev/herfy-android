@@ -294,7 +294,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                         .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
                         .replace("x", item.loyaltyActualPointsRedeemed.toString())
                     tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
-                        item.loyaltyPointsRedeemed.toDouble(), true, false, true
+                        item.loyaltyPointsRedeemed, true, false, true
                     )
                 } else {
                     loyaltyContainer.gone()

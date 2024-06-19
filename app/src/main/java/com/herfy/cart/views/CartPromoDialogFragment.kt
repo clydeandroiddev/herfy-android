@@ -96,14 +96,18 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
             rvDigitalCoupons.apply {
                 adapter = cartPromoAdapter
             }
+
             placeholderCoupons.shimmerCouponItems.visibility = View.GONE
+
             if (campaigns.isNotEmpty()) {
+                tvApplyCoupons.visibility = View.VISIBLE
                 rvDigitalCoupons.visibility = View.VISIBLE
+                emptyStateView.visibility = View.GONE
                 cartPromoAdapter?.notifyDataSetChanged()
             } else {
-                empStayeView.visibility = View.VISIBLE
+                tvApplyCoupons.visibility = View.GONE
+                emptyStateView.visibility = View.VISIBLE
                 rvDigitalCoupons.visibility = View.GONE
-
             }
 
             btnApply.setOnClickListener {
@@ -174,6 +178,7 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
             tvApplyCoupons.text = CacheUtil.getInstance()
                 .getTranslations(Text.APPLY_DIGITAL_COUPONS, "Apply Digital Coupons")
             btnApply.text = CacheUtil.getInstance().getTranslations(Text.APPLY, "Apply")
+            txtEmptyTitle.text = CacheUtil.getInstance().getTranslations(Text.NO_COUPONS_FOUND, "No coupons found.")
         }
     }
 

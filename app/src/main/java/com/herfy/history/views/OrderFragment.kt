@@ -648,7 +648,7 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
                             .contains(PaymentType.LOYALTY)
             val isFullSignedIn =
                 isSignedIn && !customer.attributes.accountType.equals("guest", ignoreCase = true)
-            if (!isFullSignedIn || !containsLoyalty || orderDetails.total <= 0 || orderDetails.loyaltyPointsRedeemed != 0 && orderDetails.total == orderDetails.deliveryCharge) {
+            if (!isFullSignedIn || !containsLoyalty || orderDetails.total <= 0 || orderDetails.loyaltyPointsRedeemed != 0.0 && orderDetails.total == orderDetails.deliveryCharge) {
                 binding.vEarnPointsCard.visibility = View.GONE
             } else {
                 binding.vEarnPointsCard.visibility = View.VISIBLE
