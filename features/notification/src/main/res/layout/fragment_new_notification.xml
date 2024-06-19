@@ -46,6 +46,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="@dimen/margin_large"
         android:layout_height="wrap_content"/>
+
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/notificationShimmer"
         android:layout_width="match_parent"

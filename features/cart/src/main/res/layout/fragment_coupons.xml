@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="#F7F7F7"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-
+    android:background="#F7F7F7">
 
 
     <com.herfy.common.toolbar.TitleToolbar
@@ -14,58 +12,56 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="#F7F7F7"
-        app:rightButtonColor="#0064AC"
+        android:elevation="8dp"
         android:paddingHorizontal="16dp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:elevation="8dp"/>
-
-
+        app:rightButtonColor="#0064AC" />
 
     <LinearLayout
         android:id="@+id/ln_coupons_content"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_title"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:orientation="vertical"
         android:layout_marginHorizontal="16dp"
+        android:orientation="vertical"
         android:paddingTop="24dp"
-        android:paddingBottom="24dp">
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_title">
 
         <TextView
             android:id="@+id/tv_enter_coupon"
+            style="@style/Styles.Text.Caption.Regular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Styles.Text.Caption.Regular"
             android:textColor="@color/primaryTextColor"
             android:textSize="14sp"
-            tools:text="Enter coupon code?"/>
+            tools:text="Enter coupon code?" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/til_coupon"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
-            app:cardCornerRadius="8dp"
             app:cardBackgroundColor="@color/white"
-            app:strokeWidth=".5dp"
-            app:strokeColor="@color/input_border_color">
+            app:cardCornerRadius="8dp"
+            app:strokeColor="@color/input_border_color"
+            app:strokeWidth=".5dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tie_coupon"
+                style="@style/Styles.Text.Caption.Regular"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="e.g. 100Sale12"
-                android:textSize="12sp"
-                style="@style/Styles.Text.Caption.Regular"
                 android:background="?selectableItemBackground"
-                android:textColor="@color/secondaryTextColor"
+                android:hint="e.g. 100Sale12"
+                android:paddingHorizontal="16dp"
                 android:paddingVertical="13dp"
-                android:paddingHorizontal="16dp"/>
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="12sp" />
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -73,61 +69,60 @@
             android:id="@+id/btn_apply"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:insetRight="0dp"
-            android:insetLeft="0dp"
-            android:insetBottom="0dp"
-            android:insetTop="0dp"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:textAppearance="@style/TextAppearance.Caption"
             android:layout_marginTop="16dp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.Caption"
+            android:textColor="@color/white"
+            android:textSize="16sp"
             app:backgroundTint="@color/background_color_blue"
-            app:cornerRadius="24dp"
-           />
+            app:cornerRadius="24dp" />
 
 
         <LinearLayout
             android:id="@+id/ln_or_sep"
-            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <View
-                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:background="@color/colorSeparator"/>
+                android:layout_weight="1"
+                android:background="@color/colorSeparator" />
 
             <TextView
                 android:id="@+id/tv_or"
+                style="@style/Styles.Text.Caption.Regular"
                 android:layout_width="25dp"
                 android:layout_height="wrap_content"
-                tools:text="Or"
-                android:textColor="@color/secondaryTextColor"
-                style="@style/Styles.Text.Caption.Regular"
                 android:layout_gravity="center"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:textColor="@color/secondaryTextColor"
+                tools:text="Or" />
 
             <View
-                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:background="@color/colorSeparator"/>
+                android:layout_weight="1"
+                android:background="@color/colorSeparator" />
 
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_apply_coupons"
+            style="@style/Styles.Text.SmallTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:textSize="@dimen/_14ssp"
-            style="@style/Styles.Text.SmallTitle"
             android:textColor="@color/primaryTextColor"
-            tools:text="Apply Digital Coupons"/>
+            android:textSize="@dimen/_14ssp"
+            tools:text="Apply Digital Coupons" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -135,24 +130,58 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="16dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="vertical"
             android:nestedScrollingEnabled="false"
-            tools:listitem="@layout/item_coupons"
-            android:visibility="gone"/>
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_coupons" />
 
         <include
             android:id="@+id/placeholder_coupons"
-            layout="@layout/placeholder_coupons" />
+            layout="@layout/placeholder_coupons"
+            tools:visibility="gone" />
 
-
-
-        <com.herfy.common.component.EmptyStateView
-            android:id="@+id/empStayeView"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/emptyStateView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:visibility="gone"
+            tools:visibility="visible">
 
+            <ImageView
+                android:id="@+id/imageEmpty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_empty_bg"
+                app:layout_constraintBottom_toTopOf="@+id/txtEmptyTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_empty_coupon"
+                app:layout_constraintBottom_toBottomOf="@id/imageEmpty"
+                app:layout_constraintEnd_toEndOf="@id/imageEmpty"
+                app:layout_constraintStart_toStartOf="@id/imageEmpty"
+                app:layout_constraintTop_toTopOf="@id/imageEmpty"
+                app:tint="#55667B" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtEmptyTitle"
+                style="@style/Styles.Text.Footnote.Medium_Regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_large"
+                android:fontFamily="@font/inter_regular"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageEmpty"
+                tools:text="No favourites found" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
@@ -161,26 +190,21 @@
         android:id="@+id/progressContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/background_loading_transparent"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@color/background_loading_transparent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
