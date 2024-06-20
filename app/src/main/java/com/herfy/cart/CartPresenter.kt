@@ -2338,113 +2338,214 @@ class CartPresenter @Inject constructor(
                     orderStoreId = CacheUtil.getInstance().orderStore.id
                 }
                 for (menuItem in menuItems) {
-                    val item = JsonObject()
-                    val modifiers = JsonArray()
-                    val ingredients = JsonArray()
-                    item.addProperty("id", menuItem.id)
-                    item.addProperty(
-                        "price",
-                        String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId))
-                            .toDouble()
-                    )
-                    item.addProperty("quantity", menuItem.attributes.quantity)
-                    item.addProperty("is-reorder", menuItem.attributes.isReorder)
-                    item.addProperty("is-promotion", menuItem.isPromo)
-                    item.addProperty("notes", menuItem.attributes.notes)
-                    for (size in menuItem.sizes.modifierItems) {
-                        if (size.attributes.isSelected) {
-                            val modifier = JsonObject()
-                            modifier.addProperty("id", size.id)
-                            modifier.addProperty(
-                                "price",
-                                String.format(Locale.ENGLISH, "%.2f", size.attributes.price)
-                                    .toDouble()
-                            )
-                            modifier.addProperty("quantity", size.attributes.quantity)
-                            modifiers.add(modifier)
+                    if (!menuItem.isPromo) {
+                        val item = JsonObject()
+                        val modifiers = JsonArray()
+                        val ingredients = JsonArray()
+                        item.addProperty("id", menuItem.id)
+                        item.addProperty(
+                            "price",
+                            String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId))
+                                .toDouble()
+                        )
+                        item.addProperty("quantity", menuItem.attributes.quantity)
+                        item.addProperty("is-reorder", menuItem.attributes.isReorder)
+                        item.addProperty("is-promotion", menuItem.isPromo)
+                        item.addProperty("notes", menuItem.attributes.notes)
+                        var comboIndex = 0
+                        var trueIndex = 0
+                        for (size in menuItem.sizes.modifierItems) {
+                            if (size.attributes.isSelected) {
+                                val modifier = JsonObject()
+                                modifier.addProperty("id", size.id)
+                                modifier.addProperty(
+                                    "price",
+                                    String.format(Locale.ENGLISH, "%.2f", size.attributes.price)
+                                        .toDouble()
+                                )
+                                modifier.addProperty("quantity", size.attributes.quantity)
+                                modifiers.add(modifier)
+                                trueIndex = comboIndex
+                            }
+                            comboIndex++
                         }
-                    }
-                    for (drink in menuItem.drinks.modifierItems) {
-                        if (drink.attributes.isSelected) {
-                            val modifier = JsonObject()
-                            modifier.addProperty("id", drink.id)
-                            modifier.addProperty(
-                                "price",
-                                String.format(Locale.ENGLISH, "%.2f", drink.attributes.price)
-                                    .toDouble()
-                            )
-                            modifier.addProperty("quantity", drink.attributes.quantity)
-                            modifiers.add(modifier)
+                        for (drink in menuItem.drinks.modifierItems) {
+                            if (drink.attributes.isSelected) {
+                                val modifier = JsonObject()
+                                modifier.addProperty("id", drink.id)
+                                modifier.addProperty(
+                                    "price",
+                                    String.format(Locale.ENGLISH, "%.2f", drink.attributes.price)
+                                        .toDouble()
+                                )
+                                modifier.addProperty("quantity", drink.attributes.quantity)
+                                modifiers.add(modifier)
+                            }
                         }
-                    }
-                    for (fries in menuItem.fries.modifierItems) {
-                        if (fries.attributes.isSelected) {
-                            val modifier = JsonObject()
-                            modifier.addProperty("id", fries.id)
-                            modifier.addProperty(
-                                "price",
-                                String.format(Locale.ENGLISH, "%.2f", fries.attributes.price)
-                                    .toDouble()
-                            )
-                            modifier.addProperty("quantity", fries.attributes.quantity)
-                            modifiers.add(modifier)
+                        for (fries in menuItem.fries.modifierItems) {
+                            if (fries.attributes.isSelected) {
+                                val modifier = JsonObject()
+                                modifier.addProperty("id", fries.id)
+                                modifier.addProperty(
+                                    "price",
+                                    String.format(Locale.ENGLISH, "%.2f", fries.attributes.price)
+                                        .toDouble()
+                                )
+                                modifier.addProperty("quantity", fries.attributes.quantity)
+                                modifiers.add(modifier)
+                            }
                         }
-                    }
-                    for (modifierGroup in menuItem.modifierGroups) {
-                        val visibilityConfig = modifierGroup.attributes.visibilityConfig
-                        if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                                "hidden", ignoreCase = true
-                            )
-                        ) {
-                            for (modifierItem in modifierGroup.modifierItems) {
-                                if (modifierItem.attributes.isSelected) {
-                                    val modifier = JsonObject()
-                                    modifier.addProperty("id", modifierItem.id)
-                                    modifier.addProperty(
-                                        "price",
-                                        String.format(
-                                            Locale.ENGLISH,
-                                            "%.2f",
-                                            modifierItem.attributes.price
-                                        )
-                                            .toDouble()
-                                    )
-                                    modifier.addProperty(
-                                        "quantity",
-                                        modifierItem.attributes.quantity
-                                    )
-                                    modifiers.add(modifier)
+                        for (modifierGroup in menuItem.modifierGroups) {
+                            val visibilityConfig = modifierGroup.attributes.visibilityConfig
+                            if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
+                                    "hidden", ignoreCase = true
+                                )
+                            ) {
+                                var selectedFreeModifier = 0
+                                for (modifierItem in modifierGroup.modifierItems) {
+                                    if (modifierItem.attributes.isSelected) {
+                                        var freeModifier: JsonObject? = null
+                                        var modifier: JsonObject? = null
+                                        if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                            val totalSelectedFreeModifier =
+                                                selectedFreeModifier + modifierItem.attributes.quantity
+                                            if (totalSelectedFreeModifier <= modifierGroup.attributes.freeModifiersCount) {
+                                                selectedFreeModifier += modifierItem.attributes.quantity
+                                                freeModifier = JsonObject()
+                                                freeModifier.addProperty("id", modifierItem.id)
+                                                freeModifier.addProperty("price", 0)
+                                                freeModifier.addProperty(
+                                                    "quantity", modifierItem.attributes.quantity
+                                                )
+                                            } else {
+                                                selectedFreeModifier =
+                                                    modifierGroup.attributes.freeModifiersCount
+                                                freeModifier = JsonObject()
+                                                freeModifier.addProperty("id", modifierItem.id)
+                                                freeModifier.addProperty("price", 0)
+                                                freeModifier.addProperty(
+                                                    "quantity",
+                                                    modifierItem.attributes.quantity - (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
+                                                )
+                                                modifier = JsonObject()
+                                                modifier.addProperty("id", modifierItem.id)
+                                                modifier.addProperty(
+                                                    "price", String.format(
+                                                        Locale.ENGLISH,
+                                                        "%.2f",
+                                                        modifierItem.attributes.price
+                                                    ).toDouble()
+                                                )
+                                                modifier.addProperty(
+                                                    "quantity",
+                                                    totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount
+                                                )
+                                            }
+                                        } else {
+                                            modifier = JsonObject()
+                                            modifier.addProperty("id", modifierItem.id)
+                                            modifier.addProperty(
+                                                "price", String.format(
+                                                    Locale.ENGLISH,
+                                                    "%.2f",
+                                                    modifierItem.attributes.price
+                                                ).toDouble()
+                                            )
+                                            modifier.addProperty(
+                                                "quantity", modifierItem.attributes.quantity
+                                            )
+                                        }
+                                        if (freeModifier != null) {
+                                            modifiers.add(freeModifier)
+                                        }
+                                        if (modifier != null) {
+                                            modifiers.add(modifier)
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                    for (modifierItem in menuItem.modifierItems) {
-                        val modifier = JsonObject()
-                        modifier.addProperty("id", modifierItem.id)
-                        modifier.addProperty(
-                            "price",
-                            String.format(Locale.ENGLISH, "%.2f", modifierItem.attributes.price)
-                                .toDouble()
-                        )
-                        modifier.addProperty("quantity", modifierItem.attributes.quantity)
-                        modifiers.add(modifier)
-                    }
-                    for (ingredient in menuItem.ingredients) {
-                        if (!ingredient.attributes.isSelected) {
-                            val ingredientObject = JsonObject()
-                            ingredientObject.addProperty("id", ingredient.id)
-                            ingredientObject.addProperty(
+                        for (modifierItem in menuItem.modifierItems) {
+                            val modifier = JsonObject()
+                            modifier.addProperty("id", modifierItem.id)
+                            modifier.addProperty(
                                 "price",
-                                String.format(Locale.ENGLISH, "%.2f", ingredient.attributes.price)
+                                String.format(Locale.ENGLISH, "%.2f", modifierItem.attributes.price)
                                     .toDouble()
                             )
-                            ingredientObject.addProperty("quantity", ingredient.attributes.quantity)
-                            ingredients.add(ingredientObject)
+                            modifier.addProperty("quantity", modifierItem.attributes.quantity)
+                            modifiers.add(modifier)
                         }
+                        for (ingredient in menuItem.ingredients) {
+                            if (!ingredient.attributes.isSelected) {
+                                val ingredientObject = JsonObject()
+                                ingredientObject.addProperty("id", ingredient.id)
+                                ingredientObject.addProperty(
+                                    "price", String.format(
+                                        Locale.ENGLISH, "%.2f", ingredient.attributes.price
+                                    ).toDouble()
+                                )
+                                ingredientObject.addProperty(
+                                    "quantity", ingredient.attributes.quantity
+                                )
+                                ingredients.add(ingredientObject)
+                            }
+                        }
+                        try {
+                            if (menuItem.isCombo) {
+                                val comboItems = JsonArray()
+                                for (components in menuItem.combo[trueIndex].components) {
+                                    for (compoItem in components.items) {
+                                        if (compoItem.selected) {
+                                            val comboItemObject = JsonObject()
+                                            comboItemObject.addProperty("id", compoItem.id)
+                                            comboItemObject.addProperty(
+                                                "price", String.format(
+                                                    Locale.ENGLISH, "%.2f", compoItem.price
+                                                ).toDouble()
+                                            )
+                                            comboItemObject.addProperty("quantity", 1)
+                                            comboItemObject.add("ingredients", JsonArray())
+                                            val modifierCombos = JsonArray()
+                                            if (!compoItem.modifierGroups.isEmpty()) {
+                                                for (modifierGroup in compoItem.modifierGroups) {
+                                                    for (i in modifierGroup.modifierItems.indices) {
+                                                        if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                                            val comoModItemObject = JsonObject()
+                                                            comoModItemObject.addProperty(
+                                                                "id",
+                                                                modifierGroup.modifierItems[i].id
+                                                            )
+                                                            comoModItemObject.addProperty(
+                                                                "price", String.format(
+                                                                    Locale.ENGLISH,
+                                                                    "%.2f",
+                                                                    modifierGroup.modifierItems[i].attributes.price
+                                                                ).toDouble()
+                                                            )
+                                                            comoModItemObject.addProperty(
+                                                                "quantity",
+                                                                modifierGroup.modifierItems[i].attributes.quantity
+                                                            )
+                                                            modifierCombos.add(comoModItemObject)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            comboItemObject.add("modifiers", modifierCombos)
+                                            comboItems.add(comboItemObject)
+                                        }
+                                    }
+                                }
+                                item.add("combo-items", comboItems)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                        item.add("ingredients", ingredients)
+                        item.add("modifiers", modifiers)
+                        items.add(item)
                     }
-                    item.add("ingredients", ingredients)
-                    item.add("modifiers", modifiers)
-                    items.add(item)
                 }
                 orderBody.add("items", items)
 
