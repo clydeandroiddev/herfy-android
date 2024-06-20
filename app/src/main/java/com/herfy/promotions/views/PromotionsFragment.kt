@@ -149,8 +149,8 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
                 CacheUtil.getInstance().getTranslations(Text.PROMOTIONS, "Promotions")
             tvEmptyStateTitle.text = CacheUtil.getInstance()
                     .getTranslations(Text.STAY_TUNED_PROMO, "Stay Tuned for Culinary Delights!")
-            tvEmptyStateContext.text = CacheUtil.getInstance().getTranslations(Text.PROMOTION_EMPTY_CONTENT, "Our promotions are on a brief pause, but get ready for a mouthwatering comeback in just a few days.")
-            btnGoToMenu.text = CacheUtil.getInstance().getTranslations(Text.GO_TO_MENU, "Go To Menu")
+            tvEmptyStateContext.text = CacheUtil.getInstance().getTranslations(Text.PROMOTION_EMPTY_CONTENT, "Our promotions are on a brief pause, but get ready\nfor a mouthwatering comeback in just a few days.")
+            btnGoToMenu.text = CacheUtil.getInstance().getTranslations(Text.GO_TO_MENU, "Go to Menu")
         }
     }
 

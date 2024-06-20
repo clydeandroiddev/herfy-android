@@ -97,17 +97,16 @@
             
             <LinearLayout
                 android:id="@+id/ln_empty_state"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:paddingHorizontal="60dp"
-                >
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/tv_empty_state_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:textSize="14sp"
                     tools:text="Stay Tuned for Culinary Delights!"
                     android:textColor="@color/primaryTextColor"
@@ -117,15 +116,14 @@
                     android:id="@+id/tv_empty_state_context"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:textAlignment="center"
                     android:gravity="center"
                     android:layout_marginTop="4dp"
                     android:textSize="11sp"
                     style="@style/Styles.Text.Caption.Regular"
                     android:textColor="@color/secondaryTextColor"
-                    tools:text="Our promotions are on a brief pause, but get ready for a mouthwatering comeback in just a few days."/>
-
-
+                    tools:text="Our promotions are on a brief pause, but get ready\nfor a mouthwatering comeback in just a few days."/>
 
             </LinearLayout>
             
