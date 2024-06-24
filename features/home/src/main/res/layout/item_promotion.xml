@@ -131,10 +131,10 @@
                         android:id="@+id/delivery_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginEnd="3dp"
                         android:layout_weight="1"
                         android:background="@drawable/background_blue_gradient"
-                        android:paddingHorizontal="8dp"
+                        android:paddingHorizontal="6dp"
                         android:paddingVertical="4dp"
                         android:visibility="gone"
                         app:cardBackgroundColor="@color/colorPromoCategoryBlue"
@@ -157,7 +157,7 @@
                             <ImageView
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
-                                android:layout_marginEnd="5dp"
+                                android:layout_marginEnd="3dp"
                                 android:src="@drawable/ic_delivery_promo" />
 
                             <TextView
@@ -181,7 +181,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@drawable/background_blue_gradient"
-                        android:paddingHorizontal="8dp"
+                        android:paddingHorizontal="6dp"
                         android:paddingVertical="4dp"
                         android:visibility="gone"
                         app:cardBackgroundColor="@color/colorPromoCategoryBlue"
@@ -205,7 +205,7 @@
                                 android:id="@+id/iv_promo_category"
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
-                                android:layout_marginEnd="5dp"
+                                android:layout_marginEnd="3dp"
                                 android:src="@drawable/ic_pickup_promo" />
 
                             <TextView
