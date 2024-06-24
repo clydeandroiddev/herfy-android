@@ -626,6 +626,7 @@ class ComboViewModel @Inject constructor(
             menuItemComboList[comboIndex]?.containsKey(menuItemComponentIndex) ?: false
         if (isContainMenuItemComponentKey) {
             menuItemComboList[comboIndex]?.get(menuItemComponentIndex)?.let {
+                it.items = componentsSelectFirstFromEditCart(it)
                 val showCheckBoxIndicator = it.items.any { it.selected }
                 showMenuItemComponent(it, showCheckBoxIndicator)
             }
@@ -944,6 +945,15 @@ class ComboViewModel @Inject constructor(
     private fun componentsSelectFirst(components: MenuItemComponents): ArrayList<ComponentModifierItem> {
         val noItemSelected = checkIfNoItemSelected(components, components.items)
         if (!isFromCartEdit && noItemSelected) {
+            components.items[0].selected = true
+            selectedComponents[components.id] = 0
+        }
+        return components.items
+    }
+
+    private fun componentsSelectFirstFromEditCart(components: MenuItemComponents): ArrayList<ComponentModifierItem> {
+        val noItemSelected = checkIfNoItemSelected(components, components.items)
+        if (noItemSelected) {
             components.items[0].selected = true
             selectedComponents[components.id] = 0
         }
