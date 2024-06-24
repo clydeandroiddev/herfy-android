@@ -1282,7 +1282,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 Text.FREE
             )
         } else {
-            binding.total.text = StringUtil.getFormattedPrice(menuItemPrice)
+            binding.total.text = StringUtil.getFormattedPrice(totalPrice)
             binding.add.text =
                 CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
                     .replace("(x)", "${StringUtil.getFormattedPrice(totalPrice)}")
