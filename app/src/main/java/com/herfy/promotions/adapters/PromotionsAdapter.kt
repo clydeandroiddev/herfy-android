@@ -52,12 +52,12 @@ class PromotionsAdapter(
                     promoRules.find { rule -> rule.ruleKey.equals("order-type", true) }?.let {
                         val orderTypes = it.text.split(Pattern.compile(","))
                         for (orderType in orderTypes) {
-                            when (orderType) {
+                            when (orderType.trim()) {
                                 "pickup", "curbside", "drive-thru" -> {
                                     pickupLabel.visible()
                                 }
 
-                                "delivery" -> {
+                                "delivery", "deliver" -> {
                                     deliveryLabel.visible()
                                 }
                             }
