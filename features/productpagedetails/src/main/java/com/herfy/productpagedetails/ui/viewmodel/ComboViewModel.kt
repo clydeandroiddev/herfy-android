@@ -587,19 +587,20 @@ class ComboViewModel @Inject constructor(
     private fun getComboMenuItemComponents() {
         menuItem?.let {
             if (it.combo.size > 0) {
-                if (isFromCartEdit) {
-                    it.combo.forEachIndexed { comboIndex, menuItemCombo ->
-                        val menuItemComponentList = hashMapOf<Int, MenuItemComponents>()
-                        menuItemCombo.components?.forEachIndexed { menuItemComponentIndex, menuItemComponents ->
-                            menuItemComponentList[menuItemComponentIndex] = menuItemComponents
+                it.combo.forEachIndexed { comboIndex, menuItemCombo ->
+                    val menuItemComponentList = hashMapOf<Int, MenuItemComponents>()
+                    menuItemCombo.components?.forEachIndexed { menuItemComponentIndex, menuItemComponents ->
+                        if(!isFromCartEdit) {
+                            menuItemComponents.items = componentsSelectFirst(menuItemComponents)
                         }
-                        menuItemComboList[comboIndex] = menuItemComponentList
+                        menuItemComponentList[menuItemComponentIndex] = menuItemComponents
                     }
+                    menuItemComboList[comboIndex] = menuItemComponentList
                 }
                 val comboItems = it.combo[comboIndex]?.components?.deepCopy(MenuItemComponents::class.java)
-                comboItems?.let {
+                comboItems?.let { combos ->
                     val menuItemComponentItems = arrayListOf<MenuItemComponentItem>()
-                    it.forEachIndexed { index, menuItemComponents ->
+                    combos.forEachIndexed { index, menuItemComponents ->
                         if(menuItemComponents.items.isNotEmpty()){
                             menuItemComponentItems.add(MenuItemComponentItem(index, menuItemComponents))
                         }
@@ -626,7 +627,7 @@ class ComboViewModel @Inject constructor(
             menuItemComboList[comboIndex]?.containsKey(menuItemComponentIndex) ?: false
         if (isContainMenuItemComponentKey) {
             menuItemComboList[comboIndex]?.get(menuItemComponentIndex)?.let {
-                it.items = componentsSelectFirstFromEditCart(it)
+                it.items = componentsSelectFirst(it)
                 val showCheckBoxIndicator = it.items.any { it.selected }
                 showMenuItemComponent(it, showCheckBoxIndicator)
             }
@@ -943,15 +944,6 @@ class ComboViewModel @Inject constructor(
     /**Function for setting the value of selected to true of the first item of ComponentModifier per MenuItemComponent
      * **/
     private fun componentsSelectFirst(components: MenuItemComponents): ArrayList<ComponentModifierItem> {
-        val noItemSelected = checkIfNoItemSelected(components, components.items)
-        if (!isFromCartEdit && noItemSelected) {
-            components.items[0].selected = true
-            selectedComponents[components.id] = 0
-        }
-        return components.items
-    }
-
-    private fun componentsSelectFirstFromEditCart(components: MenuItemComponents): ArrayList<ComponentModifierItem> {
         val noItemSelected = checkIfNoItemSelected(components, components.items)
         if (noItemSelected) {
             components.items[0].selected = true
