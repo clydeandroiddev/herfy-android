@@ -134,18 +134,9 @@
                         android:layout_marginEnd="3dp"
                         android:layout_weight="1"
                         android:background="@drawable/background_blue_gradient"
-                        android:paddingHorizontal="6dp"
+                        android:paddingHorizontal="5dp"
                         android:paddingVertical="4dp"
                         android:visibility="gone"
-                        app:cardBackgroundColor="@color/colorPromoCategoryBlue"
-                        app:cardCornerRadius="4dp"
-                        app:cardElevation="0dp"
-                        app:cardPreventCornerOverlap="false"
-                        app:cardUseCompatPadding="false"
-                        app:contentPaddingBottom="4dp"
-                        app:contentPaddingLeft="8dp"
-                        app:contentPaddingRight="8dp"
-                        app:contentPaddingTop="4dp"
                         tools:visibility="visible">
 
                         <androidx.appcompat.widget.LinearLayoutCompat
@@ -169,6 +160,7 @@
                                 android:maxLines="1"
                                 android:singleLine="true"
                                 android:textColor="@color/white"
+                                android:textSize="10sp"
                                 tools:text="Delivery" />
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -181,18 +173,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@drawable/background_blue_gradient"
-                        android:paddingHorizontal="6dp"
+                        android:paddingHorizontal="5dp"
                         android:paddingVertical="4dp"
                         android:visibility="gone"
-                        app:cardBackgroundColor="@color/colorPromoCategoryBlue"
-                        app:cardCornerRadius="4dp"
-                        app:cardElevation="0dp"
-                        app:cardPreventCornerOverlap="false"
-                        app:cardUseCompatPadding="false"
-                        app:contentPaddingBottom="4dp"
-                        app:contentPaddingLeft="8dp"
-                        app:contentPaddingRight="8dp"
-                        app:contentPaddingTop="4dp"
                         tools:visibility="visible">
 
                         <androidx.appcompat.widget.LinearLayoutCompat
@@ -214,6 +197,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/white"
+                                android:textSize="10sp"
                                 tools:text="Pickup" />
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
