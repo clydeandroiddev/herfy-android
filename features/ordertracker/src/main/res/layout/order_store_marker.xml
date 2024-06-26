@@ -29,8 +29,8 @@
         android:layout_marginTop="6dp"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/kmAway"
-        app:layout_constraintStart_toStartOf="@id/kmAway"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/kmAway"
         app:srcCompat="@drawable/order_tracker_store" />
 
