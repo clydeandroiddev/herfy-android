@@ -151,8 +151,12 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
                 promoData.promotion?.attributes?.rules?.let {
                     it.find { r -> r.ruleKey.equals("total.gte", ignoreCase = true) }?.let { gte ->
-                        fmPromoCategory.visible()
-                        totalGte = gte.text
+                        if(gte.ruleValue != "gte:0") {
+                            tvPromoCategory.text = gte.text
+                            fmPromoCategory.visible()
+                        } else {
+                            fmPromoCategory.gone()
+                        }
                     }
                     setRedeemButton(it)
                 }
@@ -162,6 +166,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                     val requirementList = arrayListOf<PromotionRequirement>()
                     requirementList.add(
                         PromotionRequirement(
+                            R.drawable.ic_promotion_rule_login_register,
                             cacheUtilHelper?.getTranslations(
                                 Text.LOGIN_REGISTER_LABEL,
                                 "Login/Register"
@@ -171,6 +176,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                     )
                     requirementList.add(
                         PromotionRequirement(
+                            R.drawable.ic_promotion_rule_repeating_offer,
                             cacheUtilHelper?.getTranslations(
                                 Text.REPEATING_OFFER_LABEL,
                                 "Repeating Offer"

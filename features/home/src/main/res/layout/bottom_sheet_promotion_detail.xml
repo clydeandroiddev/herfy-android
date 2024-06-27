@@ -8,9 +8,6 @@
         <variable
             name="promo"
             type="com.skylinedynamics.solosdk.api.models.objects.Campaign" />
-        <variable
-            name="totalGte"
-            type="String"/>
 
     </data>
 
@@ -90,9 +87,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
                         style="@style/Styles.Text.Body.Medium"
-                        android:textColor="@color/secondaryTextColor"
-                        tools:text="Pick up"
-                        android:text="@{totalGte}"/>
+                        android:textColor="@color/secondaryTextColor" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
