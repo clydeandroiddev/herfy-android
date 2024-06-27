@@ -112,18 +112,16 @@
 
             <TextView
                 android:id="@+id/tv_promo_description"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@{promo.attributes.description}"
                 android:textSize="16sp"
                 android:textColor="@color/secondaryTextColor"
+                android:visibility="gone"
                 style="@style/Styles.Text.Body.Medium"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_promo_name"
                 tools:text="Description of the promotion, which can be multiple lines."
-                android:layout_marginHorizontal="16dp"/>
+                android:layout_marginHorizontal="16dp" />
 
             <View
                 android:id="@+id/line_sep_description"
@@ -154,7 +152,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_constrainedHeight="true"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="24dp"
                 android:layout_marginHorizontal="16dp"
                 app:layout_constraintEnd_toEndOf="parent"

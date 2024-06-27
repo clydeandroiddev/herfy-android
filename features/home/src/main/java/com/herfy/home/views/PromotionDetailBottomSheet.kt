@@ -149,6 +149,16 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                     dismissAllowingStateLoss()
                 }
 
+                tvPromoDescription.apply {
+                    val description = promoData.attributes?.description
+                    if(!description.isNullOrEmpty()) {
+                        text = description
+                        visible()
+                    } else {
+                        gone()
+                    }
+                }
+
                 promoData.promotion?.attributes?.rules?.let {
                     it.find { r -> r.ruleKey.equals("total.gte", ignoreCase = true) }?.let { gte ->
                         if(gte.ruleValue != "gte:0") {
