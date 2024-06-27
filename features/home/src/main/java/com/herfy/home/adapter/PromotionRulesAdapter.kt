@@ -28,7 +28,9 @@ class PromotionRulesAdapter(val requirements: List<PromotionRequirement>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.apply {
-            requirement = requirements[position]
+            val rule = requirements[position]
+            requirement = rule
+            holder.binding.ivRule.setImageResource(rule.icon)
         }
     }
 
