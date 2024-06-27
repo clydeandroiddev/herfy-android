@@ -26,6 +26,9 @@ class AuthActivity : BaseActivity() {
         val graph = inflater.inflate(R.navigation.auth_nav)
 
         val bundle = Bundle()
+        if (intent.getBooleanExtra("checkout", false)) {
+            bundle.putBoolean("fromCheckout", true)
+        }
         graph.setStartDestination(R.id.nav_login_fragment)
         navController.setGraph(graph, bundle)
 

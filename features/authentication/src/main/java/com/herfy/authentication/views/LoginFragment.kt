@@ -9,11 +9,11 @@ import android.os.Looper
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -172,6 +172,12 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     }
                 }
             })
+
+            arguments?.let {
+                if (it.getBoolean("fromCheckout", false)) {
+                    loginGuest.isVisible = false
+                }
+            }
         }
     }
 

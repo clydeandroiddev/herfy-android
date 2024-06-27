@@ -344,6 +344,12 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     activity?.cast<BaseActivity> {
                         googleMap?.setPadding(0, 0, 0, 0)
                     }
+
+                    googleMap?.setOnMapClickListener {
+                        orderStore?.let { store ->
+                            goToStoreInMap(store)
+                        }
+                    }
                 }
             }
 
@@ -424,9 +430,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     override fun showLocation(isPlace: Boolean, latLng: LatLng, address: String) {
         try {
-            if (locationMarker != null) {
-                locationMarker?.remove()
-            }
             val markerOptions = MarkerOptions()
             markerOptions.position(latLng)
             try {
@@ -441,11 +444,17 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 e.printStackTrace()
             }
             markerOptions.anchor(0.5f, 0.5f)
-            locationMarker = googleMap?.addMarker(markerOptions)
-            googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11f))
-            userLatLng = latLng
+            if (locationMarker == null) {
+                locationMarker = googleMap?.addMarker(markerOptions)
+                userLatLng = latLng
+            }
+            userLatLng?.let {
+                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(it, 11f))
+            }
             if (driverMarker != null && driverLastLocation != null) {
-                updateDriverLocation(driverLastLocation)
+                if (driverMarker!!.position != driverLastLocation) updateDriverLocation(
+                    driverLastLocation
+                )
             } else {
                 orderStore?.let {
                     showStoreMarker(true)
@@ -485,6 +494,53 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     private fun showStoreMarker() {
         showStoreMarker(true)
+    }
+
+    private fun recreateStore(store: Store?) {
+        store?.let {
+            val activity: Activity? = activity
+            val inflater =
+                activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = inflater.inflate(R.layout.order_store_marker, null)
+            val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
+            textView.isInvisible = true
+            addStoreMarker(store, view)
+        }
+    }
+
+    private fun addStoreMarker(store: Store, view: View) {
+        if (storeMarker != null) {
+            storeMarker?.remove()
+        }
+        val markerOptions = MarkerOptions()
+        val latLng = store.attributes?.lat?.let {
+            store.attributes?.lng?.let { it1 ->
+                LatLng(
+                    it, it1
+                )
+            }
+        }
+        if (latLng != null) {
+            markerOptions.position(latLng)
+        }
+        markerOptions.icon(
+            BitmapDescriptorFactory.fromBitmap(
+                ViewUtil.createDrawableFromView(
+                    activity, view
+                )
+            )
+        )
+        markerOptions.anchor(0.5f, 1f)
+        storeMarker = googleMap?.addMarker(markerOptions)
+        storeMarker?.tag = "storeTag"
+//        googleMap?.setOnMarkerClickListener { marker ->
+//            if (marker.tag == "storeTag") {
+//                goToStoreInMap(store)
+//                true // Consume the click event
+//            } else {
+//                false // Default behavior (showing the InfoWindow)
+//            }
+//        }
     }
 
     private fun showStoreMarker(isMoveCamera: Boolean) {
@@ -555,7 +611,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
                                 .replace("(x)", distanceValue).lowercase(Locale.getDefault())
                         if (currentDistance != null) {
-                            if (currentDistance <= 0.0) {
+                            if (currentDistance <= 0.0 || driverMarker != null) {
                                 binding.orderAddressDetails.addressKm.text = ""
                                 textView.isInvisible = true
                             } else {
@@ -592,10 +648,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     }
 
                     Handler(Looper.getMainLooper()).post {
-                        if (storeMarker != null) {
-                            storeMarker?.remove()
-                        }
-                        val markerOptions = MarkerOptions()
                         val latLng = store.attributes?.lat?.let {
                             store.attributes?.lng?.let { it1 ->
                                 LatLng(
@@ -603,27 +655,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 )
                             }
                         }
-                        if (latLng != null) {
-                            markerOptions.position(latLng)
-                        }
-                        markerOptions.icon(
-                            BitmapDescriptorFactory.fromBitmap(
-                                ViewUtil.createDrawableFromView(
-                                    activity, view
-                                )
-                            )
-                        )
-                        markerOptions.anchor(0.5f, 1f)
-                        storeMarker = googleMap?.addMarker(markerOptions)
-                        storeMarker?.tag = "storeTag"
-                        googleMap?.setOnMarkerClickListener { marker ->
-                            if (marker.tag == "storeTag") {
-                                goToStoreInMap(store)
-                                true // Consume the click event
-                            } else {
-                                false // Default behavior (showing the InfoWindow)
-                            }
-                        }
+                        addStoreMarker(store, view)
                         if (isMoveCamera) {
                             if (storeCameraUpdate == null && currentLocationToUse != null) {
                                 currentLocationToUse?.latitude?.let { it1 ->
@@ -1005,17 +1037,28 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     private fun callWhatsApp(number: String) {
-        activity?.cast<MainActivity> { mainActivity ->
-            val whatsAppPackageName = "com.whatsapp"
-            try {
-                val packageManager = mainActivity.packageManager
-                val intent = Intent(Intent.ACTION_VIEW)
-                val url = "https://api.whatsapp.com/send?phone=" + number.trim { it <= ' ' }
-                intent.setPackage(whatsAppPackageName)
-                intent.data = Uri.parse(url)
-                if (intent.resolveActivity(packageManager) != null) {
-                    startActivity(intent)
-                } else {
+        try {
+            activity?.cast<MainActivity> { mainActivity ->
+                val whatsAppPackageName = "com.whatsapp"
+                try {
+                    val packageManager = mainActivity.packageManager
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    val url = "https://api.whatsapp.com/send?phone=" + number.trim { it <= ' ' }
+                    intent.setPackage(whatsAppPackageName)
+                    intent.data = Uri.parse(url)
+                    if (intent.resolveActivity(packageManager) != null) {
+                        startActivity(intent)
+                    } else {
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW, Uri.parse(
+                                    "market://details?id=$whatsAppPackageName"
+                                )
+                            )
+                        )
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                     startActivity(
                         Intent(
                             Intent.ACTION_VIEW, Uri.parse(
@@ -1024,16 +1067,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         )
                     )
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW, Uri.parse(
-                            "market://details?id=$whatsAppPackageName"
-                        )
-                    )
-                )
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -1631,6 +1667,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     }
 
                     Handler(Looper.getMainLooper()).post {
+                        if (driverMarker == null) {
+                            recreateStore(orderStore)
+                        }
                         removeDriverMarker()
                         val markerOptions = MarkerOptions()
                         markerOptions.position(latLng)
