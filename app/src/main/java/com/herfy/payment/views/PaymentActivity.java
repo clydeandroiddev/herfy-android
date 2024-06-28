@@ -1042,7 +1042,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         priceLabel.setText(CacheUtil.getInstance().getTranslations(Text.PRICE_CAPS, "PRICE"));
         subtotalLabel.setText(CacheUtil.getInstance().getTranslations(Text.SUBTOTAL));
         discountLabel.setText(CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT));
-        mukafaaLabel.setText(CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a"));
+        mukafaaLabel.setText(CacheUtil.getInstance().getTranslations(Text.MOKAFAA_POINTS, "Mokafa’a Points"));
         mukafaaRemove.setText(CacheUtil.getInstance().getTranslations(Text.REMOVE_CAPS, "Remove"));
         deliveryLabel.setText(CacheUtil.getInstance().getTranslations(Text.DELIVERY));
 //        taxLabel.setText(CacheUtil.getInstance().getTranslations(Text.TAX_RATE, "(x)% VAT").replace("(x)", StringUtil.localize(String.valueOf(CacheUtil.getInstance().getConcept().getVatRate()))));

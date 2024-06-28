@@ -185,7 +185,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
             discountLabel.text = CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
             totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL, "Total")
-            mukafaaLabel.text = CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
+            mukafaaLabel.text = CacheUtil.getInstance().getTranslations(Text.MOKAFAA_POINTS, "Mokafa’a Points")
         }
     }
 
