@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7F7F7"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:background="#F7F7F7">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/dialogAlrajiCardView"
@@ -18,15 +18,18 @@
         app:strokeColor="#D9E8F3"
         app:strokeWidth="1dp"
         tools:visibility="visible">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guidelineLeft"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.05" />
+
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guidelineRight"
                 android:layout_width="wrap_content"
@@ -37,38 +40,41 @@
             <ImageView
                 android:id="@+id/icClose"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/ic_close_without_bg"
-                app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
                 app:layout_constraintBottom_toBottomOf="@+id/viewSeparator"
-                android:layout_height="wrap_content"/>
+                app:layout_constraintStart_toStartOf="@+id/guidelineLeft" />
+
             <ImageView
                 android:layout_width="131dp"
+                android:layout_height="64dp"
                 android:src="@drawable/alraji_icon_with_title"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/viewSeparator"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_height="64dp"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <View
                 android:id="@+id/viewSeparator"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/margin_large"
-                android:background="#E6E8EB"
-                app:layout_constraintStart_toStartOf="@+id/icClose"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginEnd="16dp"
+                android:background="#E6E8EB"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/icClose"
                 app:layout_constraintTop_toBottomOf="@+id/icClose" />
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txtTitle"
-                android:layout_width="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
-                app:layout_constraintStart_toStartOf="parent"
                 style="@style/Styles.Text.Footnote.Semi.Bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_xlarge"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:text = "Al Rhaji Bank (Mokafa's Rewards)"
-                android:layout_height="wrap_content"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewSeparator"
+                tools:text="Al Rhaji Bank (Mokafa's Rewards)" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/enterForDigitLabel"
@@ -148,18 +154,19 @@
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/sendAgainLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:padding="12dp"
                 android:layout_marginEnd="2dp"
+                android:padding="12dp"
                 app:cardCornerRadius="20dp"
-                app:contentPaddingRight="8dp"
-                app:contentPaddingLeft="8dp"
-                app:contentPaddingTop="12dp"
                 app:contentPaddingBottom="12dp"
+                app:contentPaddingLeft="8dp"
+                app:contentPaddingRight="8dp"
+                app:contentPaddingTop="12dp"
                 app:layout_constraintEnd_toEndOf="@id/guidelineRight"
                 app:layout_constraintTop_toBottomOf="@id/otpCodeLayout"
                 app:strokeColor="#0064AC"
@@ -202,92 +209,115 @@
                 app:layout_constraintTop_toTopOf="@id/sendAgainLayout"
                 tools:text="Did not get the code?" />
 
-<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                android:id="@+id/footer"-->
-<!--                android:padding="16dp"-->
-<!--                android:backgroundTint="#E6F0F7"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintEnd_toEndOf="p"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content">-->
-<!--                <androidx.appcompat.widget.AppCompatButton-->
-<!--                    android:id="@+id/place_order"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:background="@drawable/bg_place_order_button"-->
-<!--                    android:fontFamily="@font/inter_medium"-->
-<!--                    android:textSize="15sp"-->
-<!--                    android:gravity="center"-->
-<!--                    android:padding="12dp"-->
-<!--                    android:textAllCaps="false"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    app:cornerRadius="@dimen/_24sdp"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    tools:text="Place Order" />-->
+            <!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+            <!--                android:id="@+id/footer"-->
+            <!--                android:padding="16dp"-->
+            <!--                android:backgroundTint="#E6F0F7"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="p"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content">-->
+            <!--                <androidx.appcompat.widget.AppCompatButton-->
+            <!--                    android:id="@+id/place_order"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:background="@drawable/bg_place_order_button"-->
+            <!--                    android:fontFamily="@font/inter_medium"-->
+            <!--                    android:textSize="15sp"-->
+            <!--                    android:gravity="center"-->
+            <!--                    android:padding="12dp"-->
+            <!--                    android:textAllCaps="false"-->
+            <!--                    android:textColor="@color/white"-->
+            <!--                    app:cornerRadius="@dimen/_24sdp"-->
+            <!--                    app:layout_constraintStart_toStartOf="parent"-->
+            <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                    app:layout_constraintTop_toTopOf="parent"-->
+            <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                    tools:text="Place Order" />-->
 
-<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/txtAmount"
-            android:layout_width="wrap_content"
-            style="@style/Styles.Text.Footnote.Semi.Bold"
-            app:layout_constraintTop_toBottomOf="@+id/sendAgainLayout"
-            app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-            tools:text = "Amount"
-            android:layout_height="wrap_content"/>
+            <!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtAmount"
+                style="@style/Styles.Text.Footnote.Semi.Bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+                app:layout_constraintTop_toBottomOf="@+id/sendAgainLayout"
+                tools:text="Amount" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/amountEditText"
                 style="@style/TextAppearance.Body"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/margin_small"
                 android:background="@drawable/common_background_edit_field"
                 android:digits="0123456789"
                 android:gravity="center_vertical"
-                android:layout_marginTop="@dimen/margin_small"
                 android:imeOptions="actionDone"
                 android:inputType="number"
-                android:padding="15dp"
                 android:layoutDirection="ltr"
                 android:maxLength="9"
+                android:padding="15dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="#1C1C1E"
                 android:textDirection="ltr"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="@+id/guidelineRight"
-                app:layout_constraintTop_toBottomOf="@+id/txtAmount"
-                app:layout_constraintStart_toStartOf="@id/guidelineLeft">
+                app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+                app:layout_constraintTop_toBottomOf="@+id/txtAmount">
 
             </androidx.appcompat.widget.AppCompatEditText>
+
+            <ImageView
+                android:id="@+id/icTotalCartValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_icon_cart_value"
+                app:layout_constraintBottom_toBottomOf="@+id/txtTotalCartLabel"
+                app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+                app:layout_constraintTop_toTopOf="@+id/txtTotalCartLabel"
+                tools:visibility="visible" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtTotalCartLabel"
+                style="@style/Styles.Text.Footnote.Semi.Bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_small"
+                android:textColor="#0C0C0C"
+                app:layout_constraintStart_toEndOf="@+id/icAlert"
+                app:layout_constraintTop_toBottomOf="@+id/amountEditText"
+                tools:text="Total Cart Value: SAR 150" />
 
             <ImageView
                 android:id="@+id/icAlert"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                tools:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/txtErrorMessage"
                 android:src="@drawable/ic_alert"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/txtErrorMessage"
+                app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
                 app:layout_constraintTop_toTopOf="@+id/txtErrorMessage"
-                app:layout_constraintStart_toStartOf="@+id/guidelineLeft" />
+                tools:visibility="visible" />
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txtErrorMessage"
-                android:layout_width="wrap_content"
                 style="@style/Styles.Text.Footnote.Semi.Bold"
-                app:layout_constraintTop_toBottomOf="@+id/amountEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_small"
-                app:layout_constraintStart_toEndOf="@+id/icAlert"
                 android:layout_marginTop="@dimen/margin_small"
                 android:textColor="#D12928"
-                tools:text = "Amount cannot exceed the total amount"
-                android:layout_height="wrap_content"/>
+                app:layout_constraintStart_toEndOf="@+id/icAlert"
+                app:layout_constraintTop_toBottomOf="@+id/icTotalCartValue"
+                tools:text="Amount cannot exceed the total amount" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
 
     </com.google.android.material.card.MaterialCardView>
 

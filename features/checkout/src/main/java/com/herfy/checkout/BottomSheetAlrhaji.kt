@@ -92,7 +92,14 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                 mBottomSheetListener?.onClose()
             }
             val phoneTextWatcher = object : TextWatcher {
-                override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+                override fun beforeTextChanged(
+                    charSequence: CharSequence,
+                    i: Int,
+                    i1: Int,
+                    i2: Int
+                ) {
+                }
+
                 override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
                 override fun afterTextChanged(editable: Editable) {
                     etMobileNumber.removeTextChangedListener(this)
@@ -115,7 +122,14 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
             etMobileNumber.addTextChangedListener(phoneTextWatcher)
 
             val cicNumberTextWatcher = object : TextWatcher {
-                override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+                override fun beforeTextChanged(
+                    charSequence: CharSequence,
+                    i: Int,
+                    i1: Int,
+                    i2: Int
+                ) {
+                }
+
                 override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
                 override fun afterTextChanged(editable: Editable) {
                     try {
@@ -256,6 +270,12 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                 setLayoutInputOTP(false)
                 setLayoutInputNumber(true)
             }
+
+            val formattedPrice: String = StringUtil.getFormattedPrice(total).toString()
+            txtTotalCartLabel.text = cacheUtilHelper.getTranslations(
+                Text.TOTAL_CART_VALUE,
+                "Total Cart Value:"
+            ) + " " + formattedPrice
         }
     }
 
@@ -280,7 +300,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
             tvEditMobileNumber.text = cacheUtilHelper.getTranslations(Text.EDIT, "Edit")
             tvResendCode.text =
                 cacheUtilHelper.getTranslations(Text.DID_NOT_GE_CODE, "Did not get the code?")
-            tvAmountLabel.text = cacheUtilHelper.getTranslations(Text.AMOUNT, "Amount")
+            tvAmountLabel.text = cacheUtilHelper.getTranslations(Text.AMOUNT_SAR, "Amount (SAR)")
             btnSubmit.text = cacheUtilHelper.getTranslations(Text.SUBMIT_OTP, "Submit OTP")
             tvAmountError.text = cacheUtilHelper.getTranslations(
                 Text.ALRHAJI_AMOUNT_ERROR,
@@ -292,7 +312,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
 
     private fun observe() {
         viewModel.isLoading.observe(this) {
-            it.getContentIfNotHandled()?.let { loading->
+            it.getContentIfNotHandled()?.let { loading ->
                 if (loading) {
                     showLoadingDialog()
                 } else {
@@ -327,21 +347,21 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
 
     private fun setLayoutInputOTP(show: Boolean) {
         binding.apply {
-            if(show){
+            if (show) {
                 lnInputOtp.visible()
                 tvMobileNumberValue.text = number
-            }else {
+            } else {
                 lnInputOtp.gone()
             }
         }
     }
 
-    private fun setLayoutInputNumber(show : Boolean){
+    private fun setLayoutInputNumber(show: Boolean) {
         binding.apply {
-            if(show){
+            if (show) {
                 lnInputNumber.visible()
                 tvAlrhajiDescription.visible()
-            }else {
+            } else {
                 lnInputNumber.gone()
                 tvAlrhajiDescription.invisible()
             }

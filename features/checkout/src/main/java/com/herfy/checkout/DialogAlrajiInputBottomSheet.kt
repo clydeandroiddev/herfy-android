@@ -121,7 +121,7 @@ class DialogAlrajiInputBottomSheet: BottomSheetDialogFragment() {
         binding.txtTitle.text = cacheUtilHelper.getTranslations(Text.AlRAJI_BANK_TITLE,"Al Rhaji Bank (Mokafa's Rewards)")
         binding.submitOtp.text = cacheUtilHelper
             .getTranslations(Text.SUBMIT_OTP,"Submit OTP")
-        binding.txtAmount.text = cacheUtilHelper.getTranslations(Text.AMOUNT,"Amount")
+        binding.txtAmount.text = cacheUtilHelper.getTranslations(Text.AMOUNT_SAR,"Amount (SAR)")
         binding.notReceiveLabel.text =cacheUtilHelper
             .getTranslations(Text.DID_NOT_GE_CODE, "Did not get the code?")
     }
