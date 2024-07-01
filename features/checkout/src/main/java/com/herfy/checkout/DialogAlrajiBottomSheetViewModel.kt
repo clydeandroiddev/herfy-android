@@ -10,43 +10,48 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class DialogAlrajiBottomSheetViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider,
-): ViewModel() {
+) : ViewModel() {
     private val _state = MutableSharedFlow<DialogAlrajiState>()
 
-     val state  = _state
+    val state = _state
     private var timerJob: Job? = null
 
     companion object {
         const val COUNTDOWN_MAX_TIMER = 30
     }
+
     init {
         startTimer()
     }
-    fun verifyCode(code:String,userInputAmount:String) {
+
+    fun verifyCode(code: String, userInputAmount: String) {
 
         viewModelScope.launchWithTimber(dispatchers.io) {
-            val areAllFieldsValid = validateFields(userInputAmount = userInputAmount, code = code) { errorState->
-                _state.emit(errorState)
-            }
+            val areAllFieldsValid =
+                validateFields(userInputAmount = userInputAmount, code = code) { errorState ->
+                    _state.emit(errorState)
+                }
             if (areAllFieldsValid.not()) {
                 return@launchWithTimber
             }
             _state.emit(DialogAlrajiState.IsLoading(true))
-             // todo ask maam rio what endpoint should be use here
+            // todo ask maam rio what endpoint should be use here
         }
     }
+
     private inline fun validateFields(
-        code:String,
-        userInputAmount:String,
-        onError:(DialogAlrajiState) -> Unit):Boolean {
+        code: String,
+        userInputAmount: String,
+        onError: (DialogAlrajiState) -> Unit
+    ): Boolean {
         val customerId = CacheUtil.getInstance()
         var otpLength = CacheUtil.getInstance().concept.otpLength
         val totalAmount = 20 // mocking for now
@@ -58,7 +63,10 @@ class DialogAlrajiBottomSheetViewModel @Inject constructor(
             )
             onError(
                 DialogAlrajiState.InvalidAmountError(
-                    CacheUtil.getInstance().getTranslations(Text.ALRAJI_ENTER_AMOUNT_ERROR, "Amount cannot exceed the total amount")
+                    CacheUtil.getInstance().getTranslations(
+                        Text.ALRAJI_ENTER_AMOUNT_ERROR,
+                        "Amount cannot exceed the total amount"
+                    )
                 )
             )
             return false
@@ -74,7 +82,10 @@ class DialogAlrajiBottomSheetViewModel @Inject constructor(
         if (userInputAmount.isEmpty()) {
             onError(
                 DialogAlrajiState.InvalidAmountError(
-                    CacheUtil.getInstance().getTranslations(Text.ALRAJI_ENTER_AMOUNT_ERROR, "Amount cannot exceed the total amount")
+                    CacheUtil.getInstance().getTranslations(
+                        Text.ALRAJI_ENTER_AMOUNT_ERROR,
+                        "Amount cannot exceed the total amount"
+                    )
                 )
             )
             return false
@@ -82,7 +93,10 @@ class DialogAlrajiBottomSheetViewModel @Inject constructor(
         if (userInputAmount.isNotEmpty() && userInputAmount.toInt() > totalAmount) {
             onError(
                 DialogAlrajiState.InvalidAmountError(
-                    CacheUtil.getInstance().getTranslations(Text.ALRAJI_ENTER_AMOUNT_ERROR, "Amount cannot exceed the total amount")
+                    CacheUtil.getInstance().getTranslations(
+                        Text.ALRAJI_ENTER_AMOUNT_ERROR,
+                        "Amount cannot exceed the total amount"
+                    )
                 )
             )
             return false
@@ -98,12 +112,11 @@ class DialogAlrajiBottomSheetViewModel @Inject constructor(
                 // todo call the endpoint
             } catch (e: Exception) {
                 _state.emit(DialogAlrajiState.Error(e.localizedMessage.orEmpty()))
-            }finally {
-             _state.emit(DialogAlrajiState.IsLoading(false))
+            } finally {
+                _state.emit(DialogAlrajiState.IsLoading(false))
             }
         }
     }
-
 
 
     private fun startTimer() {
@@ -114,7 +127,7 @@ class DialogAlrajiBottomSheetViewModel @Inject constructor(
             flow {
                 for (eachTime in COUNTDOWN_MAX_TIMER downTo 1) {
                     emit(eachTime)
-                   delay(1000L)
+                    delay(1000L)
                 }
             }.onCompletion {
                 _state.emit(DialogAlrajiState.ResendTimeCompleted)

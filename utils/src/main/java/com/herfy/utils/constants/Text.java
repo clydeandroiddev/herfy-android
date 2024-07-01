@@ -1211,4 +1211,6 @@ public class Text {
 
     public static final String NO_COUPONS_FOUND = "no_coupons_found";
     public static final String MOKAFAA_POINTS = "mokafaa_points";
+    public static final String AMOUNT_SAR = "amount_sar";
+    public static final String TOTAL_CART_VALUE = "total_cart_value";
 }
