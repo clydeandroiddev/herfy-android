@@ -1058,7 +1058,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.totalVatDescription.text = CacheUtil.getInstance()
             .getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
         binding!!.layoutPaymentSummary.tvMukafaaLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
+            CacheUtil.getInstance().getTranslations(Text.MOKAFAA_POINTS, "Mokafa’a Points")
     }
 
     override fun showPaymentTypes(paymentTypes: Set<PaymentType>) {}

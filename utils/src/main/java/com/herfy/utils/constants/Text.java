@@ -1210,4 +1210,5 @@ public class Text {
     public static final String CONGRATS_YOUVE_REACHED_X = "congrats_youve_reached_x";
 
     public static final String NO_COUPONS_FOUND = "no_coupons_found";
+    public static final String MOKAFAA_POINTS = "mokafaa_points";
 }

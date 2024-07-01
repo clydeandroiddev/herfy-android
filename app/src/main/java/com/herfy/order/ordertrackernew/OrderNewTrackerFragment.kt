@@ -424,7 +424,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             orderCancelDetails.cancelOrderLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.CANCEL_ORDER_NEW, "Cancel Order")
             orderPaymentDetails.mukafaaLabel.text =
-                CacheUtil.getInstance().getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
+                CacheUtil.getInstance().getTranslations(Text.MOKAFAA_POINTS, "Mokafa’a Points")
         }
     }
 

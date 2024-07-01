@@ -272,7 +272,7 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
         binding.tableNumberLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.TABLE_NUMBER_CAPS, "TABLE NUMBER")
         binding.mukafaaLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.AL_RAJHI_MOKAFAA, "Al Rajhi Mokafa'a")
+            .getTranslations(Text.MOKAFAA_POINTS, "Mokafa’a Points")
     }
 
     override fun showLocation(isPlace: Boolean, latLng: LatLng?, address: String?) {
