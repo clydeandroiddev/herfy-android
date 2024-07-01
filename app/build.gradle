@@ -45,11 +45,15 @@ android {
     signingConfigs project.signingConfigs
 
     buildTypes {
+        // Update these when creating new builds
+        def dateToday = "MMddyyyy" // Today's Date with Format: MMddyyyy
+        def apkCountForToday = "1" // Increment for every new build for today
         debug {
             signingConfig null
             debuggable true
             minifyEnabled false
             shrinkResources false
+            versionNameSuffix "-develop-$dateToday.$apkCountForToday"
             buildConfigField "String", "BASE_URL", "\"https://dev-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
@@ -62,6 +66,7 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            versionNameSuffix "-staging-$dateToday.$apkCountForToday"
             buildConfigField "String", "BASE_URL", "\"https://staging-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
@@ -76,6 +81,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            versionNameSuffix "-staging-$dateToday.$apkCountForToday"
             buildConfigField "String", "BASE_URL", "\"https://staging-api.getsolo.io/\""
             //buildConfigField "String", "BASE_URL", "\"https://staging2.api.solo.skylinedynamics.com/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
@@ -89,6 +95,7 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            versionNameSuffix "-production-$dateToday.$apkCountForToday"
             buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "float", "FEATURE_PHASE", '1.3'
@@ -100,6 +107,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            versionNameSuffix "-productionlog-$dateToday.$apkCountForToday"
             buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "float", "FEATURE_PHASE", '1.3'
@@ -111,6 +119,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            versionNameSuffix "-production-$dateToday.$apkCountForToday"
             buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "float", "FEATURE_PHASE", '1.3'
@@ -122,6 +131,7 @@ android {
             debuggable true
             minifyEnabled false
             shrinkResources false
+            versionNameSuffix "-consumer-$dateToday.$apkCountForToday"
             buildConfigField "String", "BASE_URL", "\"https://test-consumer-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
@@ -134,6 +144,7 @@ android {
             debuggable true
             minifyEnabled false
             shrinkResources false
+            versionNameSuffix "-kiosk-$dateToday.$apkCountForToday"
             buildConfigField "String", "BASE_URL", "\"https://test-kiosk-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
@@ -146,6 +157,7 @@ android {
             debuggable true
             minifyEnabled false
             shrinkResources false
+            versionNameSuffix "-marketing-$dateToday.$apkCountForToday"
             buildConfigField "String", "BASE_URL", "\"https://test-marketing-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
@@ -158,6 +170,7 @@ android {
             debuggable true
             minifyEnabled false
             shrinkResources false
+            versionNameSuffix "-merchant-$dateToday.$apkCountForToday"
             buildConfigField "String", "BASE_URL", "\"https://test-merchant-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
@@ -221,6 +234,15 @@ android {
             def buildType = variant.buildType.name
             def versionName = variant.versionName
             def flavor = variant.flavorName
+            if(buildType == "kiosk") {
+                output.setVersionCodeOverride(1)
+            } else if(buildType == "staging") {
+                output.setVersionCodeOverride(2)
+            } else if(buildType == "release") {
+                output.setVersionCodeOverride(3)
+            } else if(buildType == "releaselog") {
+                output.setVersionCodeOverride(4)
+            }
             outputFileName = "${flavor}-${buildType}-v${versionName}(${versionCode})-${new Date().format('yyyy.MM.dd.hh.mm.aa')}.apk"
         }
     }
