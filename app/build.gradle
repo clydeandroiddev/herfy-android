@@ -46,7 +46,7 @@ android {
 
     buildTypes {
         // Update these when creating new builds
-        def dateToday = "20240701" // Today's Date with Format: yyyyMMdd
+        def dateToday = "yyyyMMdd" // Today's Date with Format: yyyyMMdd
         def apkCountForToday = "1" // Increment for every new build for today
         debug {
             signingConfig null
