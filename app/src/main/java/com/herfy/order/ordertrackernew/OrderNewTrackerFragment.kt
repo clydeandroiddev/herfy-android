@@ -1653,18 +1653,16 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 //                                currentDistance ?: 0.0
 //                            )
 
-                            if (eta > 1) {
-                                textView.text =
-                                    CacheUtil.getInstance().getTranslations(
-                                        Text.DRIVER_MINUTES_AWAY,
-                                        "(x) driver mins away"
-                                    ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
+                            textView.text = if (eta > 1) {
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.DRIVER_MINUTES_AWAY,
+                                    "(x) mins away"
+                                ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
                             } else {
-                                textView.text =
-                                    CacheUtil.getInstance().getTranslations(
-                                        Text.DRIVER_MINUTE_AWAY,
-                                        "(x) driver min away"
-                                    ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.DRIVER_MINUTE_AWAY,
+                                    "(x) min away"
+                                ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
                             }
 
                             if (eta == 0) {
