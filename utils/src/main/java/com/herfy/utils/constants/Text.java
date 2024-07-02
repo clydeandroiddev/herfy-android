@@ -1213,4 +1213,8 @@ public class Text {
     public static final String MOKAFAA_POINTS = "mokafaa_points";
     public static final String AMOUNT_SAR = "amount_sar";
     public static final String TOTAL_CART_VALUE = "total_cart_value";
+
+    public static final String DRIVER_MINUTE_AWAY = "driver_minute_away";
+
+    public static final String DRIVER_MINUTES_AWAY = "driver_minutes_away";
 }

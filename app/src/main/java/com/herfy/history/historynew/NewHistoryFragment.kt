@@ -382,7 +382,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         showOrders(true, ordersPresenter?.orderHistories)
     }
 
-    override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?) {
+    override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?, eta: Int) {
 
     }
 

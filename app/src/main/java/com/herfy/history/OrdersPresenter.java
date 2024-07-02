@@ -720,7 +720,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                                         ordersView.showWhatsApp(driver.getEmployee().getMobile());
                                         LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
                                         LatLng driverLatLng = new LatLng(Double.parseDouble(lyveDriver.getLat()), Double.parseDouble(lyveDriver.getLng()));
-                                        ordersView.showDriver(customerLatLng, driverLatLng);
+                                        ordersView.showDriver(customerLatLng, driverLatLng, lyveDriver.getEta());
                                         if (!isLocationUpdateSubscribed) {
                                             subscribeToOrderDriverLocationUpdate(order.getId());
                                         }
@@ -776,7 +776,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
 
                     LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
                     LatLng driverLatLng = new LatLng(attributesObject.getDouble("lat"), attributesObject.getDouble("long"));
-                    ordersView.showDriver(customerLatLng, driverLatLng);
+                    ordersView.showDriver(customerLatLng, driverLatLng, attributesObject.getInt("eta"));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

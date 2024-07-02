@@ -141,6 +141,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     private var driverLastLocation: LatLng? = null
 
+    private var driverLastLastEta: Int? = null
+
     private var countDownTimer: CountDownTimer? = null
 
     private var countDownTime: Long = 60000
@@ -453,7 +455,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             }
             if (driverMarker != null && driverLastLocation != null) {
                 if (driverMarker!!.position != driverLastLocation) updateDriverLocation(
-                    driverLastLocation
+                    driverLastLocation,
+                    driverLastLastEta ?: 0
                 )
             } else {
                 orderStore?.let {
@@ -1573,9 +1576,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         orderPresenter?.getOrderStatuses()
     }
 
-    override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?) {
+    override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?, eta: Int) {
         updateDriverFromOrder()
-        updateDriverLocation(driverLatLng)
+        updateDriverLocation(driverLatLng, eta)
     }
 
     @SuppressLint("SetTextI18n")
@@ -1600,7 +1603,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         }
     }
 
-    private fun updateDriverLocation(latLng: LatLng?) {
+    private fun updateDriverLocation(latLng: LatLng?, eta: Int) {
         activity?.runOnUiThread {
             latLng?.let {
                 try {
@@ -1614,7 +1617,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     val driverIcon =
                         view.findViewById<ImageView>(com.herfy.ordertracker.R.id.driverIcon)
 
-                    val distanceValue: String
                     try {
                         if (orderAddress != null) {
                             currentLocationToUse = orderAddress?.attributes?.lat?.toDouble()?.let {
@@ -1635,31 +1637,38 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 driverIcon.setImageResource(R.drawable.ic_delivery_right)
                             }
 
-                            val currentDistance = currentLocationToUse?.latitude?.let {
-                                currentLocationToUse!!.longitude.let { it1 ->
-                                    latLng.latitude.let { it2 ->
-                                        latLng.longitude.let { it3 ->
-                                            DistanceCalculator.calculateDistance(
-                                                it, it1, it2, it3
-                                            )
-                                        }
-                                    }
-                                }
+//                            val currentDistance = currentLocationToUse?.latitude?.let {
+//                                currentLocationToUse!!.longitude.let { it1 ->
+//                                    latLng.latitude.let { it2 ->
+//                                        latLng.longitude.let { it3 ->
+//                                            DistanceCalculator.calculateDistance(
+//                                                it, it1, it2, it3
+//                                            )
+//                                        }
+//                                    }
+//                                }
+//                            }
+//
+//                            distanceValue = StringUtil.getDistance(
+//                                currentDistance ?: 0.0
+//                            )
+
+                            textView.text = if (eta > 1) {
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.DRIVER_MINUTES_AWAY,
+                                    "(x) mins away"
+                                ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
+                            } else {
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.DRIVER_MINUTE_AWAY,
+                                    "(x) min away"
+                                ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
                             }
 
-                            distanceValue = StringUtil.getDistance(
-                                currentDistance ?: 0.0
-                            )
-
-                            textView.text =
-                                CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                    .replace("(x)", distanceValue).lowercase(Locale.getDefault())
-                            if (currentDistance != null) {
-                                if (currentDistance <= 0.0) {
-                                    textView.isInvisible = true
-                                } else {
-                                    textView.isVisible = true
-                                }
+                            if (eta == 0) {
+                                textView.isInvisible = true
+                            } else {
+                                textView.isVisible = true
                             }
                         }
                     } catch (e: Exception) {
@@ -1716,6 +1725,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             }
                         }
                     }
+                    driverLastLastEta = eta
                     driverLastLocation = latLng
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -1771,7 +1781,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             LatLng(
                                 (appDriver.bearing.lat ?: "0").toDouble(),
                                 (appDriver.bearing.lng ?: "0").toDouble()
-                            )
+                            ),
+                            appDriver.bearing.eta ?: "0".toInt()
                         )
                         withDriverLayout.isVisible = true
                         noDriverLayout.isVisible = false
