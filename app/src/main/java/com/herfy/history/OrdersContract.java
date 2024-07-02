@@ -55,7 +55,7 @@ public interface OrdersContract {
 
         void updateStatus(OrderDetails orderDetails, OrderStatus orderStatus);
 
-        void showDriver(LatLng customerLatLng, LatLng driverLatLng);
+        void showDriver(LatLng customerLatLng, LatLng driverLatLng, int eta);
 
         void updateDriver(DeliveryDriver appDriver);
 

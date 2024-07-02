@@ -884,7 +884,7 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
         }
     }
 
-    override fun showDriver(customerLatLng: LatLng, driverLatLng: LatLng) {
+    override fun showDriver(customerLatLng: LatLng, driverLatLng: LatLng, eta: Int) {
         activity?.cast<BaseActivity> {
             it.runOnUiThread {
                 if (customerMarker != null) {
