@@ -35,6 +35,7 @@ import com.herfy.productpagedetails.ui.viewmodel.ComboViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.OnLayoutLoadingCompleted
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.deepCopy
 import com.herfy.utils.extensions.gone
@@ -365,6 +366,13 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     setHasFixedSize(true)
                     isNestedScrollingEnabled = false
                 }
+                rvModifierGroup.OnLayoutLoadingCompleted {
+                    this@ComboMealFragment.viewModel.apply {
+                        menuItem?.let {
+                            getMenuItemTotalPrice(it, -1)
+                        }
+                    }
+                }
             }
         }
     }
@@ -482,6 +490,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 }
             }
             updateComboSizeList.observe(this@ComboMealFragment) {
+                comboMealModifierGroupAdapter?.updateList(arrayListOf(), hashMapOf())
                 sizesAdapter?.updateSelectedSize(it.second, it.first)
             }
             updateComboItemDetailModifier.observe(this@ComboMealFragment) {

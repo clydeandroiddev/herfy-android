@@ -587,15 +587,14 @@ class ComboViewModel @Inject constructor(
     private fun getComboMenuItemComponents() {
         menuItem?.let {
             if (it.combo.size > 0) {
-                it.combo.forEachIndexed { comboIndex, menuItemCombo ->
-                    val menuItemComponentList = hashMapOf<Int, MenuItemComponents>()
-                    menuItemCombo.components?.forEachIndexed { menuItemComponentIndex, menuItemComponents ->
-                        if(!isFromCartEdit) {
-                            menuItemComponents.items = componentsSelectFirst(menuItemComponents)
+                if (isFromCartEdit) {
+                    it.combo.forEachIndexed { comboIndex, menuItemCombo ->
+                        val menuItemComponentList = hashMapOf<Int, MenuItemComponents>()
+                        menuItemCombo.components?.forEachIndexed { menuItemComponentIndex, menuItemComponents ->
+                            menuItemComponentList[menuItemComponentIndex] = menuItemComponents
                         }
-                        menuItemComponentList[menuItemComponentIndex] = menuItemComponents
+                        menuItemComboList[comboIndex] = menuItemComponentList
                     }
-                    menuItemComboList[comboIndex] = menuItemComponentList
                 }
                 val comboItems = it.combo[comboIndex]?.components?.deepCopy(MenuItemComponents::class.java)
                 comboItems?.let { combos ->
@@ -965,7 +964,6 @@ class ComboViewModel @Inject constructor(
         return true
     }
 
-
     /**Function for changing the quantity of the current menu item,
      *after updating the quantity getMenuItemTotalPrice is always called
      * **/
@@ -991,11 +989,10 @@ class ComboViewModel @Inject constructor(
         menuItemComboList = hashMapOf()
         comboIndex = pos
         _updateComboSizeList.value = Pair(pos, previousComboIndex)
+        getComboMenuItemComponents()
         menuItem?.let {
             getMenuItemTotalPrice(it, -1)
         }
-        getComboMenuItemComponents()
-
     }
 
     /**Inheriting the function from ComboMealModifierItem.onClickListener
