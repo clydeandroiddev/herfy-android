@@ -500,14 +500,63 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     private fun recreateStore(store: Store?) {
-        store?.let {
-            val activity: Activity? = activity
-            val inflater =
-                activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val view = inflater.inflate(R.layout.order_store_marker, null)
-            val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
-            textView.isInvisible = true
-            addStoreMarker(store, view)
+        try {
+            activity?.cast<BaseActivity> { act ->
+                store?.let {
+                    val inflater =
+                        act.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                    val view = inflater.inflate(R.layout.order_store_marker, null)
+                    val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
+                    textView.isInvisible = true
+                    addStoreMarker(store, view)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun addStoreKMAway(store: Store?) {
+        try {
+            activity?.cast<BaseActivity> { act ->
+                currentLocationToUse?.let { clt ->
+                    store?.let {
+                        val inflater =
+                            act.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                        val view = inflater.inflate(R.layout.order_store_marker, null)
+                        val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
+                        textView.isInvisible = true
+
+                        val currentDistance = clt.latitude.let {
+                            clt.longitude.let { it1 ->
+                                store.attributes?.lat?.let { it2 ->
+                                    store.attributes?.lng?.let { it3 ->
+                                        DistanceCalculator.calculateDistance(
+                                            it, it1, it2, it3
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        val distanceValue: String = StringUtil.getDistance(
+                            currentDistance ?: 0.0
+                        )
+                        textView.text =
+                            CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                                .replace("(x)", distanceValue).lowercase(Locale.getDefault())
+                        if (currentDistance != null) {
+                            if (currentDistance <= 0.0) {
+                                textView.isInvisible = true
+                            } else {
+                                textView.isVisible = true
+                            }
+                        }
+                        addStoreMarker(store, view)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -536,14 +585,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         markerOptions.anchor(0.5f, 1f)
         storeMarker = googleMap?.addMarker(markerOptions)
         storeMarker?.tag = "storeTag"
-//        googleMap?.setOnMarkerClickListener { marker ->
-//            if (marker.tag == "storeTag") {
-//                goToStoreInMap(store)
-//                true // Consume the click event
-//            } else {
-//                false // Default behavior (showing the InfoWindow)
-//            }
-//        }
     }
 
     private fun showStoreMarker(isMoveCamera: Boolean) {
@@ -1261,7 +1302,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             removeDriverMarker()
                             binding.cancelledText.text =
                                 CacheUtil.getInstance().getTranslations(Text.DELIVERED, "Delivered")
-
+                            addStoreKMAway(orderStore)
                         } else {
                             binding.cancelledText.text =
                                 CacheUtil.getInstance().getTranslations(Text.PICKED, "Picked")

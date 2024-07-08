@@ -1052,6 +1052,8 @@ public class Text {
 
     public static final String NOTE_TO_RIDER_LABEL = "note_to_rider_label";
     public static final String YOUR_ORDER_FROM = "your_order_from";
+    public static final String YOUR_ORDER = "your_order";
+    public static final String YOUR_DELIVERY_ORDER = "your_delivery_order";
     public static final String ESTIMATED = "estimated";
     public static final String MIN = "min";
 

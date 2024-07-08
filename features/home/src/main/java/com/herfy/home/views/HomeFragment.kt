@@ -505,18 +505,19 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.tierProgress.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { tierProgress ->
                 AuthUtil.getInstance().setCustomerLoyaltyTier(tierProgress.nextTier)
-                CacheUtil.getInstance().setTotalAccumulatedPoints(tierProgress.totalPointsAccumulated)
+                CacheUtil.getInstance()
+                    .setTotalAccumulatedPoints(tierProgress.totalPointsAccumulated)
                 CacheUtil.getInstance().setPointsUntilNextTier(tierProgress.pointsToNextTier)
                 CacheUtil.getInstance().setStartingPointsOfNextTier(tierProgress.startPoints)
                 binding.layoutLoyalty.apply {
                     if (tierProgress.pointsToNextTier <= 0) {
-                        val tierName = tierProgress.loyalty?.attributes?.loyaltyTier?.name?: ""
+                        val tierName = tierProgress.loyalty?.attributes?.loyaltyTier?.name ?: ""
                         if (tierProgress.isMaxTier) {
                             progress.max = 100
                             progress.progress = 100
                             tvTierProgressDesc.text = CacheUtil.getInstance().getTranslations(
                                 Text.CONGRATS_YOUVE_REACHED_X, "Congrats! You’ve reached (x)"
-                            ).replace("(x)",tierName)
+                            ).replace("(x)", tierName)
                         }
                     } else {
                         var loyaltyTier = tierProgress.nextTier?.name ?: ""
@@ -538,8 +539,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.tiers.observeNonNull(this){
-            it.getContentIfNotHandled().let { tiers->
+        viewModel.tiers.observeNonNull(this) {
+            it.getContentIfNotHandled().let { tiers ->
                 tiers?.forEach { tier ->
                     Glide.with(this@HomeFragment).load(tier.imageUrl).preload()
                 }
@@ -654,6 +655,9 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             "deliver", ignoreCase = true
                         )
                     ) {
+                        tvOrderTypeLabel.text = CacheUtil.getInstance().getTranslations(
+                            Text.YOUR_DELIVERY_ORDER, "Your delivery order from Herfy"
+                        )
                         if (orderDetails.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
                             updateStatusGIF(R.drawable.make_order)
                         } else if (orderDetails.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && orderDetails.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
@@ -662,6 +666,9 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             updateStatusGIF(R.drawable.delivered_order)
                         }
                     } else {
+                        tvOrderTypeLabel.text = CacheUtil.getInstance().getTranslations(
+                            Text.YOUR_ORDER, "Your order from Herfy"
+                        )
                         if (orderDetails.orderStatus.sequence <= OrderStatusType.IN_KITCHEN.value) {
                             updateStatusGIF(R.drawable.make_order)
                         } else if (orderDetails.orderStatus.sequence >= OrderStatusType.READY.value && orderDetails.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
@@ -673,9 +680,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
                     clOrderNotif.visibility = View.VISIBLE
                     tvStatusLabel.text = orderDetails.orderStatus.description
-                    tvOrderTypeLabel.text = CacheUtil.getInstance().getTranslations(
-                        Text.YOUR_ORDER_FROM, "Your (x) order from Herfy"
-                    ).replace("(x)", orderDetails.orderType)
 
                     val promisedTime = orderDetails.promisedTime.getPromisedMinutes()
 
@@ -755,7 +759,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.catering.observe(this) {
             it.getContentIfNotHandled()?.let { catering ->
-                if(catering.isNotEmpty()) {
+                if (catering.isNotEmpty()) {
                     binding.layoutCatering.btnCatering.setOnClickListener {
                         activity?.apply {
                             try {
