@@ -1,10 +1,11 @@
 package com.herfy.model
 
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
+import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents
 
 data class ShowComboMealItemDetails(
+    val menuItemComponent: MenuItemComponents,
     val componentModifierItem: ComponentModifierItem,
-    val componentModifierItemIndex: Int,
-    val previousComponentModifierIndex : Int,
-    val menuItemComponentIndex : Int
+    val menuItemComponentIndex : Int,
+    val isSelected : Boolean
 )

@@ -510,4 +510,18 @@ public class MenuUtil {
     public static boolean areModifiersSame(ModifierItem currentModifier, ModifierItem selectedModifier) {
         return Objects.equals(currentModifier.getId(), selectedModifier.getId());
     }
+
+    public static boolean isAboveMaxComponent(MenuItemComponents menuItemComponents, int selectedItems){
+        return selectedItems >= menuItemComponents.maximum;
+    }
+
+    public static boolean shouldShowComboItemQuantity(MenuItemComponents menuItemComponents, ComponentModifierItem componentModifierItem){
+        return menuItemComponents.maximum > 1 && componentModifierItem.maximum > 1;
+    }
+
+    public static boolean areComponentModifierSame(ComponentModifierItem currentCompoenent, ComponentModifierItem selectedComponent){
+        return Objects.equals(currentCompoenent, selectedComponent);
+    }
+
+
 }
