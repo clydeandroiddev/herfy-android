@@ -35,6 +35,7 @@ import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.loadSliderImage
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.setInteractionDisabled
@@ -305,6 +306,16 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         sliderViewPager.visibility = View.VISIBLE
                         dotsIndicator.visibility = View.GONE
                         properSliderHeights()
+                    }
+                }
+            }
+        }
+
+        viewModel.caterList.observeNonNull(this) { slides ->
+            binding.apply {
+                layoutBanner.apply {
+                    if (slides.size > 0) {
+                        loadSliderImage(binding.layoutCatering.ivCater, slides[0].imageUri)
                     }
                 }
             }
@@ -984,6 +995,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     }
 
     private fun setupCaterWithHerfy() {
+        viewModel.getCaterSlider()
         activity?.let {
             binding.apply {
                 val sliderHeight =

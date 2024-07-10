@@ -369,6 +369,15 @@ public class CacheUtil {
         return null;
     }
 
+    public void setCaterHerfyBannerId(String key, String id) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(key, id);
+        editor.apply();
+    }
+
+    public String getCaterHerfyBannerId(String key) {
+        return cacheSharedPreferences.getString(key, "");
+    }
     public void setSliderId(String key, String id) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(key, id);

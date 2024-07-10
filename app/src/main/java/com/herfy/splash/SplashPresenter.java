@@ -35,6 +35,7 @@ import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.DeviceUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
@@ -62,9 +63,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Tier;
 import com.skylinedynamics.solosdk.api.models.objects.area.Area;
 import com.skylinedynamics.solosdk.api.models.objects.area.City;
 import com.skylinedynamics.solosdk.util.GsonHelper;
-import com.herfy.utils.helper.DeviceUtil;
 
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -599,6 +598,9 @@ public class SplashPresenter implements SplashContract.Presenter {
                                 } else if (label.equalsIgnoreCase(Values.CATEGORY_PAGE_TOP_BANNER_LABEL)) {
                                     key = Values.CATEGORY_PAGE_TOP_BANNER_LABEL;
                                 }
+                                if (label.equalsIgnoreCase(Values.CATER_HERFY_BANNER)) {
+                                    CacheUtil.getInstance().setSliderId(Values.CATER_HERFY_BANNER, slider.getId());
+                                }
                                 if (!key.isEmpty()) {
                                     CacheUtil.getInstance().setSliderId(key, slider.getId());
                                 }
@@ -607,6 +609,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    CacheUtil.getInstance().setSliderId(Values.CATER_HERFY_BANNER, "");
                     CacheUtil.getInstance().setSliderId(Values.HOME_PAGE_TOP_BANNER_LABEL, "");
                     CacheUtil.getInstance().setSliderId(Values.HOME_PAGE_BOTTOM_BANNER_LABEL, "");
                     CacheUtil.getInstance().setSliderId(Values.CATEGORY_PAGE_TOP_BANNER_LABEL, "");
@@ -793,12 +796,12 @@ public class SplashPresenter implements SplashContract.Presenter {
 
                     }
 
-                    if(!menuItemEntities.isEmpty()) {
+                    if (!menuItemEntities.isEmpty()) {
                         appDatabase.menuItemEntityDao().deleteByApplication(applicationId);
                         appDatabase.menuItemEntityDao().insertAll(menuItemEntities.toArray(new MenuItemEntity[menuCategoryEntities.size()]));
                     }
 
-                    if(!menuCategoryEntities.isEmpty()) {
+                    if (!menuCategoryEntities.isEmpty()) {
                         appDatabase.menuCategoryEntityDao().deleteByApplication(applicationId);
                         appDatabase.menuCategoryEntityDao().insertAll(menuCategoryEntities.toArray(new MenuCategoryEntity[menuCategoryEntities.size()]));
                     }
@@ -1107,7 +1110,7 @@ public class SplashPresenter implements SplashContract.Presenter {
     }
 
     @Override
-    public void getLoyaltyTiers(){
+    public void getLoyaltyTiers() {
         CustomersApiCall.getInstance().getLoyaltyTiers(new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
@@ -1117,9 +1120,9 @@ public class SplashPresenter implements SplashContract.Presenter {
                     Type type = new TypeToken<List<Tier>>() {
                     }.getType();
                     List<Tier> tiers = GsonHelper.gsonFinal().fromJson(tiersArray.toString(), type);
-                    if(tiers != null && !tiers.isEmpty()){
+                    if (tiers != null && !tiers.isEmpty()) {
                         CacheUtil.getInstance().setLoyaltyTiers(new ArrayList<>(tiers));
-                        for(Tier tier : tiers){
+                        for (Tier tier : tiers) {
                             splashView.preloadImage(tier.getImageUrl(), RequestOptions.noTransformation());
                         }
                     }
