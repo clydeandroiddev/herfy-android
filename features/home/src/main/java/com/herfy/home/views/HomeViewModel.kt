@@ -74,6 +74,9 @@ class HomeViewModel @Inject constructor(
     private val _slideList = MutableLiveData<ArrayList<Slide>>()
     val slideList: LiveData<ArrayList<Slide>> = _slideList
 
+    private val _caterList = MutableLiveData<ArrayList<Slide>>()
+    val caterList: LiveData<ArrayList<Slide>> = _caterList
+
     private val _promotionsList = MutableLiveData<List<Campaign>>()
     val promotionsList: LiveData<List<Campaign>> = _promotionsList
 
@@ -163,6 +166,29 @@ class HomeViewModel @Inject constructor(
                 }
             } else {
                 _slideList.value = arrayListOf()
+            }
+        }
+    }
+
+    fun getCaterSlider() {
+        invoke {
+            val sliderId = CacheUtil.getInstance().getCaterHerfyBannerId(Values.CATER_HERFY_BANNER)
+            if (!sliderId.isNullOrEmpty()) {
+                homeRepository.getSliders(sliderId) { homeResponse ->
+                    if (homeResponse.success) {
+                        homeResponse.data?.let {
+                            it.cast<ArrayList<Slide>> {
+                                _caterList.value = it
+                            }
+                        } ?: run {
+                            _caterList.value = arrayListOf()
+                        }
+                    } else {
+                        _caterList.value = arrayListOf()
+                    }
+                }
+            } else {
+                _caterList.value = arrayListOf()
             }
         }
     }

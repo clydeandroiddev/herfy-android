@@ -88,6 +88,7 @@ object Values {
     const val HOME_PAGE_TOP_BANNER_LABEL = "Home Page Top Banner"
     const val HOME_PAGE_BOTTOM_BANNER_LABEL = "Home Page Bottom Banner"
     const val CATEGORY_PAGE_TOP_BANNER_LABEL = "Category Page Top Banner"
+    const val CATER_HERFY_BANNER = "Cater Herfy Banner"
     const val SLIDER_INTERVAL = 8_000L
     const val NAV_DEEP_LINK_BASE_URL = "android-app://com.herfy/"
     const val INSTAGRAM_LINK = "https://www.instagram.com/herfyfsc/"
