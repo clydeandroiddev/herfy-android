@@ -37,8 +37,8 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import java.util.Locale
 
-class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapterItem> = mutableListOf()) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
-
+class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapterItem> = mutableListOf()) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     private var onAction: ComboComponentListener? = null
@@ -47,13 +47,13 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
     }
 
     //Event
-    interface ComboComponentListener{
+    interface ComboComponentListener {
         fun onComponentCheckedChanged(
             isSelected: Boolean,
             menuItemComponent: MenuItemComponents,
             componentModifierItem: ComponentModifierItem,
-            menuItemComponentPos : Int,
-            componentModifierItemPos : Int
+            menuItemComponentPos: Int,
+            componentModifierItemPos: Int
         )
 
         fun onComponentQuantityChanged(
@@ -61,13 +61,13 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
             menuItemComponent: MenuItemComponents,
             componentModifierItem: ComponentModifierItem,
             isQuantityVisible: Boolean,
-            menuItemComponentPos : Int,
-            componentModifierItemPos : Int
+            menuItemComponentPos: Int,
+            componentModifierItemPos: Int
         )
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType){
+        return when (viewType) {
             ComboComponentAdapterItem.VIEW_TYPE_MENU_ITEM_COMPONENT -> {
                 val binding = ItemModifierGroupHeaderBinding.inflate(
                     LayoutInflater.from(parent.context),
@@ -95,11 +95,12 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
     override fun getItemCount(): Int = itemList.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(holder.itemViewType){
+        when (holder.itemViewType) {
             ComboComponentAdapterItem.VIEW_TYPE_MENU_ITEM_COMPONENT -> {
                 val item = itemList[position] as ComponentAdapterItem
-                holder.cast<ComponentViewHolder>{ it.bind(item) }
+                holder.cast<ComponentViewHolder> { it.bind(item) }
             }
+
             ComboComponentAdapterItem.VIEW_TYPE_COMPONENT_MODIFIER_ITEM -> {
                 val item = itemList[position] as ComponentModifierAdapterItem
                 holder.cast<ComponentModifierItemViewHolder> {
@@ -196,12 +197,12 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
     }
 
     class ComponentViewHolder(
-        private val binding : ItemModifierGroupHeaderBinding
+        private val binding: ItemModifierGroupHeaderBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private val cacheUtil = CacheUtil.getInstance()
 
-        fun bind(item : ComponentAdapterItem){
+        fun bind(item: ComponentAdapterItem) {
             binding.apply {
 
                 val data = item.menuItemComponents
@@ -210,12 +211,21 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
 
                 select.apply {
                     visible()
-                    text = when (data.maximum > 1) {
-                        true -> cacheUtil.getTranslations(Text.SELECT_UP_TO_X, "Select up to (x)")
-                            .replace("(x)", localize(data.maximum.toString()))
+                    text = when {
+                        data.minimum > 0 && data.maximum > data.minimum -> cacheUtil.getTranslations(
+                            Text.SELECT_AT_LEAST_X_OPTIONS,
+                            "(Select at least (x) options)"
+                        ).replace("(x)", localize(data.minimum.toString()))
 
-                        false -> cacheUtil.getTranslations(Text.SELECT_X, "Select (x)")
-                            .replace("(x)", localize(data.maximum.toString()))
+                        data.minimum > 0 && data.minimum == data.maximum -> cacheUtil.getTranslations(
+                            Text.SELECT_X_OPTIONS,
+                            "(Select (x) options)"
+                        ).replace("(x)", localize(data.maximum.toString()))
+
+                        else -> cacheUtil.getTranslations(
+                            Text.SELECT_UP_TO_X_OPTIONS,
+                            "(Select up to (x) options)"
+                        ).replace("(x)", localize(data.maximum.toString()))
                     }
                 }
                 minimum.text = cacheUtil.getTranslations(Text.REQUIRED, "Required")
@@ -226,7 +236,7 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
                     checkBox.gone()
                     if (data.minimum >= 1) {
                         btnMinimum.visible()
-                    }else {
+                    } else {
                         btnMinimum.gone()
                     }
                 }
@@ -236,9 +246,9 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
     }
 
     class ComponentModifierItemViewHolder(
-        val binding : ItemComboComponentItemBinding
+        val binding: ItemComboComponentItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item : ComponentModifierAdapterItem){
+        fun bind(item: ComponentModifierAdapterItem) {
             binding.apply {
                 val menuItemComponent = item.menuItemComponents
                 val componentModifierItem = item.componentModifierItem
@@ -266,11 +276,13 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
                     isSkipMemoryCache = false
                 )
 
-                if(hasModifiers){
-                    val selectedLists = fetchSelectedModifierItemsPerItem(componentModifierItem.modifierGroups)
+                if (hasModifiers) {
+                    val selectedLists =
+                        fetchSelectedModifierItemsPerItem(componentModifierItem.modifierGroups)
                     hasSelectedModifiers = selectedLists.isNotEmpty()
-                    if(hasSelectedModifiers){
-                        val selectedModifiersPerItemAdapter = SelectedModifiersPerItemAdapter(selectedLists)
+                    if (hasSelectedModifiers) {
+                        val selectedModifiersPerItemAdapter =
+                            SelectedModifiersPerItemAdapter(selectedLists)
                         val flexLayoutManager = FlexboxLayoutManager(context)
                         flexLayoutManager.flexWrap = FlexWrap.WRAP
                         flexLayoutManager.flexDirection = FlexDirection.ROW
@@ -282,10 +294,10 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
                             setHasFixedSize(true)
                             isNestedScrollingEnabled = false
                         }
-                    }else{
+                    } else {
                         rvSelectedModifiers.gone()
                     }
-                }else {
+                } else {
                     rvSelectedModifiers.gone()
                 }
 
@@ -296,9 +308,14 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
                 if (componentModifierItemPrice > 0) {
                     txtmodifierPrice.text = StringUtil.getFormattedPrice(componentModifierItemPrice)
                 } else {
-                    txtmodifierPrice.text = CacheUtil.getInstance().getTranslations(Text.FREE, "Free");
+                    txtmodifierPrice.text =
+                        CacheUtil.getInstance().getTranslations(Text.FREE, "Free");
                 }
-                quantity.text = localize(("0" + componentModifierItem.quantity))
+
+                quantity.text = when (componentModifierItem.quantity > 9) {
+                    true -> localize(componentModifierItem.quantity.toString())
+                    else -> localize(("0" + componentModifierItem.quantity))
+                }
 
                 updateSideButtons(
                     componentModifierItem,
@@ -313,49 +330,52 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
         private fun updateSideButtons(
             componentModifierItem: ComponentModifierItem,
             menuItemComponent: MenuItemComponents,
-            isAboveMax : Boolean,
-            hasSelectedModifiers : Boolean
+            isAboveMax: Boolean,
+            hasSelectedModifiers: Boolean
         ) {
             val hasModifiers = componentModifierItem.modifierGroups.size >= 1
             val maximum = menuItemComponent.maximum
             val minimum = menuItemComponent.minimum
             val isComponentSelected = componentModifierItem.selected
-            val shouldShowQuantity = MenuUtil.shouldShowComboItemQuantity(menuItemComponent, componentModifierItem)
-            val isCheckBoxVisible = !hasModifiers && !shouldShowQuantity && (maximum > 1 || minimum == 0)
-            val isRadioButtonVisible = !hasModifiers && !shouldShowQuantity && (maximum == 1 && minimum == 1)
-            val isQuantityDownLayout =  (menuItemComponent.maximum > 1 &&
+            val shouldShowQuantity =
+                MenuUtil.shouldShowComboItemQuantity(menuItemComponent, componentModifierItem)
+            val isCheckBoxVisible =
+                !hasModifiers && !shouldShowQuantity && (maximum > 1 || minimum == 0)
+            val isRadioButtonVisible =
+                !hasModifiers && !shouldShowQuantity && (maximum == 1 && minimum == 1)
+            val isQuantityDownLayout = (menuItemComponent.maximum > 1 &&
                     componentModifierItem.selected && componentModifierItem.maximum > 1)
             binding.apply {
                 val context = itemView.context
 
-                if(hasModifiers || isRadioButtonVisible || isCheckBoxVisible){
+                if (hasModifiers || isRadioButtonVisible || isCheckBoxVisible) {
                     checkLayout.visible()
                     if (hasModifiers) {
                         ivRightIcon.visible()
                         ivRightIcon.setImageResource(R.drawable.ic_arrow_right_tail_blue)
                         radioButton.gone()
                         checkBox.gone()
-                    } else if(isRadioButtonVisible){
+                    } else if (isRadioButtonVisible) {
                         radioButton.visible()
                         checkBox.gone()
                         ivRightIcon.gone()
-                    }else if(isCheckBoxVisible){
+                    } else if (isCheckBoxVisible) {
                         checkBox.visible()
                         radioButton.gone()
                         ivRightIcon.gone()
                     }
-                }else {
+                } else {
                     checkLayout.gone()
                 }
 
-                if(shouldShowQuantity){
+                if (shouldShowQuantity) {
                     quantityContainer.visible()
                     quantityDownLayout.gone()
                     quantityUp.visible()
                     quantityDownLayout.apply {
-                        if(isQuantityDownLayout) visible() else gone()
+                        if (isQuantityDownLayout) visible() else gone()
                     }
-                }else {
+                } else {
                     quantityContainer.gone()
                     quantityUp.gone()
                     quantityDownLayout.gone()
@@ -368,9 +388,9 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
                         ColorStateList.valueOf(context.getColor(R.color.card_selected_bg))
                     if (hasModifiers && hasSelectedModifiers) {
                         ivRightIcon.setImageResource(R.drawable.ic_edit_blue)
-                    } else if(radioButton.isVisible()) {
+                    } else if (radioButton.isVisible()) {
                         radioButton.isChecked = true
-                    } else if(checkBox.isVisible()){
+                    } else if (checkBox.isVisible()) {
                         checkBox.setImageResource(R.drawable.modifier_item_checked_selected)
                     }
                 } else {
@@ -379,9 +399,9 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
                         ColorStateList.valueOf(context.getColor(R.color.white))
                     if (hasModifiers) {
                         ivRightIcon.setImageResource(R.drawable.ic_arrow_right_tail_blue)
-                    } else if(radioButton.isVisible()) {
+                    } else if (radioButton.isVisible()) {
                         radioButton.isChecked = false
-                    } else if(checkBox.isVisible()){
+                    } else if (checkBox.isVisible()) {
                         checkBox.setImageResource(R.drawable.modifier_item_unselected)
                     }
                 }
@@ -414,7 +434,7 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
         }
 
 
-        private fun fetchSelectedModifierItemsPerItem(modifierGroups : List<ModifierGroup>) : List<String>{
+        private fun fetchSelectedModifierItemsPerItem(modifierGroups: List<ModifierGroup>): List<String> {
             val list = arrayListOf<String>()
             for (modifierGroup in modifierGroups) {
                 val visibilityConfig = modifierGroup.attributes.visibilityConfig
@@ -443,23 +463,24 @@ class ComboMealComponentAdapter(private var itemList : List<ComboComponentAdapte
         menuItemComponent: MenuItemComponents,
         componentModifierItem: ComponentModifierItem,
         isAboveMax: Boolean
-    ){
+    ) {
         itemList.filterIsInstance<ComponentAdapterItem>().map { componentAdapterItem ->
-            if(componentAdapterItem.menuItemComponents.id == menuItemComponent.id){
+            if (componentAdapterItem.menuItemComponents.id == menuItemComponent.id) {
                 componentAdapterItem.menuItemComponents = menuItemComponent
                 componentAdapterItem.hasSelectedModifierItems = hasSelectedModifiers
             }
         }
 
-        itemList.filterIsInstance<ComponentModifierAdapterItem>().map { componentModifierAdapterItem ->
-            if(componentModifierAdapterItem.menuItemComponents.id == menuItemComponent.id) {
-                componentModifierAdapterItem.menuItemComponents = menuItemComponent
-                if(componentModifierAdapterItem.componentModifierItem.id == componentModifierItem.id){
-                    componentModifierAdapterItem.componentModifierItem = componentModifierItem
+        itemList.filterIsInstance<ComponentModifierAdapterItem>()
+            .map { componentModifierAdapterItem ->
+                if (componentModifierAdapterItem.menuItemComponents.id == menuItemComponent.id) {
+                    componentModifierAdapterItem.menuItemComponents = menuItemComponent
+                    if (componentModifierAdapterItem.componentModifierItem.id == componentModifierItem.id) {
+                        componentModifierAdapterItem.componentModifierItem = componentModifierItem
+                    }
+                    componentModifierAdapterItem.isAboveMax = isAboveMax
                 }
-                componentModifierAdapterItem.isAboveMax = isAboveMax
             }
-        }
 
         notifyDataSetChanged()
     }

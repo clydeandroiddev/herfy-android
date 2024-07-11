@@ -210,14 +210,25 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 val cacheUtil = CacheUtil.getInstance()
                 select.apply {
                     visible()
-                    text = when (data.attributes.maximum > 1) {
-                        true -> cacheUtil.getTranslations(Text.SELECT_UP_TO_X, "Select up to (x)")
-                            .replace("(x)", localize(data.attributes.maximum.toString()))
 
-                        false -> cacheUtil.getTranslations(Text.SELECT_X, "Select (x)")
-                            .replace("(x)", localize(data.attributes.maximum.toString()))
+                    text = when {
+                        data.attributes.minimum > 0 && data.attributes.maximum > data.attributes.minimum -> cacheUtil.getTranslations(
+                            Text.SELECT_AT_LEAST_X_OPTIONS,
+                            "(Select at least (x) options)"
+                        ).replace("(x)", localize(data.attributes.minimum.toString()))
+
+                        data.attributes.minimum > 0 && data.attributes.minimum == data.attributes.maximum -> cacheUtil.getTranslations(
+                            Text.SELECT_X_OPTIONS,
+                            "(Select (x) options)"
+                        ).replace("(x)", localize(data.attributes.maximum.toString()))
+
+                        else -> cacheUtil.getTranslations(
+                            Text.SELECT_UP_TO_X_OPTIONS,
+                            "(Select up to (x) options)"
+                        ).replace("(x)", localize(data.attributes.maximum.toString()))
                     }
                 }
+
                 minimum.text = cacheUtil.getTranslations(Text.REQUIRED, "Required")
                 if (item.hasSelectedModifierItems) {
                     checkBox.visible()
@@ -264,8 +275,10 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                         modifierItem.attributes.isSelected && modifierItem.attributes.maximum > 1)
                 updateSideButtons(isCheckBoxVisible, isRadioButtonVisible, isQuantityLayoutVisible,isQuantityDownLayout,isModifierItemSelected, modifierGroup,modifierItem, item.isAboveMax)
 
-
-                quantity.text = localize(("0" + modifierItem.attributes.quantity))
+                quantity.text = when (modifierItem.attributes.quantity > 9) {
+                    true -> localize(modifierItem.attributes.quantity.toString())
+                    else -> localize(("0" + modifierItem.attributes.quantity))
+                }
                 val imageUrl = modifierItem.attributes.image
                 if (imageUrl != null && !imageUrl.equals(
                         "null",

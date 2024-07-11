@@ -1,5 +1,7 @@
 package com.herfy.utils.constants;
 
+import org.jetbrains.annotations.Nullable;
+
 public class Text {
 
     public static final String CART = "cart";
@@ -1219,4 +1221,8 @@ public class Text {
     public static final String DRIVER_MINUTE_AWAY = "driver_minute_away";
 
     public static final String DRIVER_MINUTES_AWAY = "driver_minutes_away";
+
+    public static final String SELECT_AT_LEAST_X_OPTIONS = "select_at_least_x_options";
+    public static final String SELECT_X_OPTIONS = "select_x_options";
+    public static final String SELECT_UP_TO_X_OPTIONS = "select_up_to_x_options";
 }
