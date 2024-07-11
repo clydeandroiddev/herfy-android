@@ -142,21 +142,30 @@ class ModifierGroupNewRecycleAdapterKotlin(
                 minimum > 0 -> {
                     binding.select.text = when {
                         maximum > minimum -> CacheUtil.getInstance()
-                            .getTranslations(Text.SELECT_ATLEAST, "(Select at least (x))")
+                            .getTranslations(
+                                Text.SELECT_AT_LEAST_X_OPTIONS,
+                                "(Select at least (x) options)"
+                            )
 
                         maximum == minimum -> CacheUtil.getInstance()
-                            .getTranslations(Text.SELECT_X, "(Select (x))")
+                            .getTranslations(
+                                Text.SELECT_X_OPTIONS,
+                                "(Select (x) options)"
+                            )
 
                         else -> ""
-                    }.replace("(x)", StringUtil.localize(minimum.toString()))
+                    }.replace("(x)", localize(minimum.toString()))
                     binding.select.visibility =
                         if (binding.select.text.isNotBlank()) View.VISIBLE else View.INVISIBLE
                 }
 
                 minimum == 0 && maximum > 0 -> {
                     binding.select.text = CacheUtil.getInstance()
-                        .getTranslations(Text.SELECT_UP_TO_X, "(Select up to (x))")
-                        .replace("(x)", StringUtil.localize(maximum.toString()))
+                        .getTranslations(
+                            Text.SELECT_UP_TO_X_OPTIONS,
+                            "(Select up to (x) options)"
+                        )
+                        .replace("(x)", localize(maximum.toString()))
                     binding.select.visibility = View.VISIBLE
                 }
 
@@ -669,7 +678,10 @@ class ModifierGroupNewRecycleAdapterKotlin(
             }
             itemView.itemVisibility(isVisibleByConfig)
             binding.quantityDownLayout.setVisible(isQuantityShouldShow)
-            binding.quantity.text = localize("0" + modifierItem.attributes.quantity)
+            binding.quantity.text = when {
+                modifierItem.attributes.quantity > 9 -> localize(modifierItem.attributes.quantity.toString())
+                else -> localize("0" + modifierItem.attributes.quantity)
+            }
             binding.radioButton.setVisible(modifierGroupMaximum == 1 && modifierGroupMinimum == 1)
             binding.checkBox.setVisible(modifierGroupMaximum > 1 && modifierMaximum == 1 || modifierGroupMinimum == 0)
             binding.image.setVisible(isImageUrl)
@@ -826,7 +838,8 @@ class ModifierGroupNewRecycleAdapterKotlin(
             if (formattedPrice.isNotEmpty()) {
                 binding.txtmodifierPrice.text = formattedPrice
             } else {
-                binding.txtmodifierPrice.text = CacheUtil.getInstance().getTranslations(Text.FREE, "Free")
+                binding.txtmodifierPrice.text =
+                    CacheUtil.getInstance().getTranslations(Text.FREE, "Free")
             }
         }
 
