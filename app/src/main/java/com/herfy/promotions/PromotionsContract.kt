@@ -15,6 +15,7 @@ interface PromotionsContract {
         fun showPromotionsCategory(promocateglist: MutableList<PromotionCategory>)
         fun updatePromoCategoryList(category: PromotionCategory)
         fun showCart(isAvail : Boolean)
+        fun showMenu()
     }
 
     interface Presenter : BasePresenter, PromotionCategoryAdapter.PromotionCategoryListener{

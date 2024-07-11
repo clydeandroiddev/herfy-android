@@ -328,6 +328,15 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
         )
     }
 
+    override fun showMenu(){
+        promotionDetailBottomSheet?.dismissAllowingStateLoss()
+        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
+        NavigationUtils.navigateSafe(
+            findNavController(),
+            PromotionsFragmentDirections.actionPromotionsToMenu()
+        )
+    }
+
 
     override fun onSelectedPromo(promo: Campaign) {
         promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(
@@ -340,6 +349,10 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
 
                 override fun onRemovePromo() {
                     showCart(false)
+                }
+
+                override fun onShowMenu() {
+                    showMenu()
                 }
 
             }

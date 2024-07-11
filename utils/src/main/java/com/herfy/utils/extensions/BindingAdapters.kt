@@ -62,6 +62,7 @@ fun loadPromoImage(imageView: ImageView, sliderImageUri: String?){
         Glide.with(imageView.context).load(sliderImageUri)
             .skipMemoryCache(false)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .centerInside()
             .listener(object : RequestListener<Drawable>{
                 override fun onLoadFailed(
                     e: GlideException?,

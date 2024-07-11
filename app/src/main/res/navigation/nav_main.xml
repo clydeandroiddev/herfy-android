@@ -685,7 +685,7 @@
         <action
             android:id="@+id/action_promotions_to_menu"
             app:destination="@id/nav_menu"
-            app:popUpTo="@+id/nav_herfy_home" />
+            app:popUpTo="@+id/nav_promotions" />
 
     </fragment>
 

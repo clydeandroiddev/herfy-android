@@ -380,6 +380,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 findNavController().navigateToDeepLink("nav_menu/$menuCategoryId")
             }
         }
+        viewModel.showMenu.observeNonNull(this){
+            it.getContentIfNotHandled()?.let {
+                promotionDetailBottomSheet?.dismissAllowingStateLoss()
+                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
+                findNavController().navigateToDeepLink("nav_menu")
+            }
+        }
 
         viewModel.showPromo.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { promo ->

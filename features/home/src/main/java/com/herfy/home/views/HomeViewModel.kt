@@ -147,6 +147,9 @@ class HomeViewModel @Inject constructor(
     private val _catering = MutableLiveData<Event<String?>>()
     val catering: LiveData<Event<String?>> = _catering
 
+    private val _showMenu = MutableLiveData<Event<Boolean>>()
+    val showMenu : LiveData<Event<Boolean>> = _showMenu
+
     fun getSliders() {
         invoke {
             val sliderId = CacheUtil.getInstance().getSliderId(Values.HOME_PAGE_TOP_BANNER_LABEL)
@@ -742,6 +745,10 @@ class HomeViewModel @Inject constructor(
         _showCart.value = Event(false)
     }
 
+    override fun onShowMenu() {
+        _showMenu.value = Event(true)
+    }
+
     private fun getCampaignPromotionItem(digitalCoupon: Campaign?) {
         invoke {
             digitalCoupon?.promotion?.let { promotion ->
@@ -1154,14 +1161,7 @@ class HomeViewModel @Inject constructor(
             }
 
         } else {
-            _showError.value = Event(
-                ErrorMsgItem(
-                    true, CacheUtil.getInstance().getTranslations(
-                        Text.PLEASE_ADD_ITEMS_TO_YOUR_CART,
-                        "Please add items to your cart to avail this offer"
-                    )
-                )
-            )
+          _showMenu.value = Event(true)
         }
     }
 
