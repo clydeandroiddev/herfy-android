@@ -209,7 +209,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     if (CacheUtil.getInstance().orderStore != null) {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().orderStore.attributes.name
-                    }else {
+                    } else {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().getTranslations(
                                 Text.PLEASE_TAP_HERE_TO_PICK_AN_ORDER_TYPE,
@@ -1870,11 +1870,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     }
                     //quantityLayout.visibility = if (menuItem.isPromo || menuItemTotalPrice == 0.0) View.INVISIBLE else View.VISIBLE
 
-                    if (menuItem.isPromo) {
-                        delete.invisible()
-                        minus.gone()
-                        plus.invisible()
-                    }
 
                     quantity.text = StringUtil.localize(menuItem.attributes.quantity.toString())
 
@@ -1898,6 +1893,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     } else {
                         edit.gone()
                     }
+
                     delete.setOnClickListener(View.OnClickListener {
                         activity?.cast<BaseActivity> {
                             it.showDeleteAlertDialog("",
@@ -1920,6 +1916,18 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                 { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() })
                         }
                     })
+
+                    delete.alpha = 1f
+                    plus.alpha = 1f
+
+                    if (menuItem.isPromo) {
+                        delete.visible()
+                        minus.gone()
+                        plus.visible()
+                        delete.alpha = 0.5f
+                        plus.alpha = 0.5f
+                        delete.setOnClickListener(null)
+                    }
                 }
             }
         }
