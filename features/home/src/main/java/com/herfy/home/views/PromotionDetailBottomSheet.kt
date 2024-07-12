@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.DialogInterface.OnShowListener
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +31,7 @@ import com.herfy.home.databinding.BottomSheetPromotionDetailBinding
 import com.herfy.model.PromotionOrderType
 import com.herfy.model.PromotionRequirement
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.isMet
 import com.herfy.utils.extensions.observeNonNull
@@ -133,8 +135,10 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun initViews() {
         super.initViews()
+        val imageHeight = (Resources.getSystem().displayMetrics.widthPixels / Values.PROMO_IMAGE_ASPECT_RATIO).toInt()
         promo?.let { promoData ->
             binding.apply {
+                ivPromo.layoutParams.height = imageHeight
                 activity?.let {
                     Glide.with(it)
                         .asGif()
@@ -246,9 +250,11 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
         }
         val cartQuantity = cacheUtilHelper?.getCartQuantity() ?: 0
         if(rules.isMet()){
+
             activity?.let {
                 binding.btnClaim.backgroundTintList = ContextCompat.getColorStateList(it, R.color.background_color_blue)
             }
+            binding.btnClaim.isEnabled = true
             binding.btnClaim.setOnClickListener {
                 if (!toRemove) {
                     if(cartQuantity > 0){
@@ -303,10 +309,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                             }
                         }
                     } else {
-                        showError(CacheUtil.getInstance().getTranslations(
-                            Text.PLEASE_ADD_ITEMS_TO_YOUR_CART,
-                            "Please add items to your cart to avail this offer"
-                        ))
+                        action?.onShowMenu()
                     }
                 } else {
                     CacheUtil.getInstance().couponCode = null
@@ -323,7 +326,10 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
             }
         } else {
             activity?.let {
-                binding.btnClaim.backgroundTintList = ContextCompat.getColorStateList(it, R.color.disabled)
+                binding.btnClaim.apply {
+                    isEnabled = false
+                    backgroundTintList = ContextCompat.getColorStateList(it, R.color.disabled)
+                }
             }
         }
     }
@@ -418,8 +424,8 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
     interface onAction {
         fun onClickClaimPromo(promo: Campaign)
-
         fun onRemovePromo()
+        fun onShowMenu()
     }
 
 

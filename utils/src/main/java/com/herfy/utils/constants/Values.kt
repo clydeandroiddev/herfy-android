@@ -132,4 +132,6 @@ object Values {
     const val ARGS_KEY_FRAGMENT_RESULT = "fragmentResult"
     const val ARGS_KEY_ACTION_TYPE = "action_type"
     const val ARGS_KEY_ACTION_VALUE = "action_value"
+
+    const val PROMO_IMAGE_ASPECT_RATIO = 1.54
 }

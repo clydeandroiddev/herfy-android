@@ -870,12 +870,7 @@ class PromotionsPresenter @Inject constructor(
             }
 
         } else {
-            view.showError(
-                CacheUtil.getInstance().getTranslations(
-                    Text.PLEASE_ADD_ITEMS_TO_YOUR_CART,
-                    "Please add items to your cart to avail this offer"
-                ), false
-            )
+            view.showMenu()
         }
     }
 
