@@ -484,5 +484,10 @@ public class ModifierGroupViewHolder extends RecyclerView.ViewHolder implements 
 
     }
 
+    @Override
+    public void isFavorite(boolean isFavorite) {
+
+    }
+
 }
 

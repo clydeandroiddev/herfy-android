@@ -196,6 +196,9 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
         isDiffMenuEnabled = CacheUtil.getInstance().isSeparatedMenus
     }
 
+    override fun isFavorite(isFavorite: Boolean) {
+
+    }
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt("lastCategoryPosition", lastCategoryPosition)
         outState.putInt("tabLastPosition", tabLastPosition)

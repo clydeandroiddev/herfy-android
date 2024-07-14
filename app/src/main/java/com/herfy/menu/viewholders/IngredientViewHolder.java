@@ -455,4 +455,9 @@ public class IngredientViewHolder extends RecyclerView.ViewHolder implements Men
 
     }
 
+    @Override
+    public void isFavorite(boolean isFavorite) {
+
+    }
+
 }

@@ -429,4 +429,9 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
 
     }
 
+    @Override
+    public void isFavorite(boolean isFavorite) {
+
+    }
+
 }

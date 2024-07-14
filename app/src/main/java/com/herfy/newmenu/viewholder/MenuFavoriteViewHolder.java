@@ -569,4 +569,9 @@ public class MenuFavoriteViewHolder extends RecyclerView.ViewHolder implements M
 
     }
 
+    @Override
+    public void isFavorite(boolean isFavorite) {
+
+    }
+
 }

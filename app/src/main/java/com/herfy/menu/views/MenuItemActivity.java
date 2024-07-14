@@ -671,4 +671,9 @@ public class MenuItemActivity extends BaseActivity implements MenuContract.View 
 
     }
 
+    @Override
+    public void isFavorite(boolean isFavorite) {
+        
+    }
+
 }

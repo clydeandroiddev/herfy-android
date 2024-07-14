@@ -557,4 +557,9 @@ public class MenuRecentViewHolder extends RecyclerView.ViewHolder implements Men
 
     }
 
+    @Override
+    public void isFavorite(boolean isFavorite) {
+
+    }
+
 }

@@ -513,4 +513,9 @@ if (CacheUtil.getInstance().getOrderStore() != null) {
 
     }
 
+    @Override
+    public void isFavorite(boolean isFavorite) {
+
+    }
+
 }

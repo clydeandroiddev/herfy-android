@@ -377,4 +377,9 @@ public class MenuCouponViewHolder extends RecyclerView.ViewHolder implements Men
 
     }
 
+    @Override
+    public void isFavorite(boolean isFavorite) {
+
+    }
+
 }

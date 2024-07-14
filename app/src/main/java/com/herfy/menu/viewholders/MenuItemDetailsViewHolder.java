@@ -662,6 +662,12 @@ public class MenuItemDetailsViewHolder extends RecyclerListAdapter.ViewHolder<Me
     public void updateFloatingTotalPrice() {
 
     }
+
+    @Override
+    public void isFavorite(boolean isFavorite) {
+
+    }
+
     public HashMap<Integer, Boolean> calculateShouldShowModifierCheckbox(List<ModifierGroup> modifierGroups) {
         HashMap<Integer, Boolean> shouldShowModifierCheckbox = new HashMap<>();
 
