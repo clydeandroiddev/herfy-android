@@ -105,6 +105,9 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
         }
     }
 
+    override fun isFavorite(isFavorite: Boolean) {
+
+    }
     override fun setMenuCategory(menuCategory: MenuCategory, selected: Boolean) {}
     override fun setMenuItemDetails(menuItem: MenuItem) {}
     override fun setMenuItem(menuCategory: MenuCategory, menuItem: MenuItem) {}

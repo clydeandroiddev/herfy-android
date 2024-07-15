@@ -383,4 +383,9 @@ public class MenuItemImageViewHolder extends RecyclerListAdapter.ViewHolder<Obje
 
     }
 
+    @Override
+    public void isFavorite(boolean isFavorite) {
+
+    }
+
 }

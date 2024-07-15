@@ -155,6 +155,8 @@ public interface MenuContract {
 
         void updateFloatingTotalPrice();
 
+        void isFavorite(boolean isFavorite);
+
     }
 
     interface Presenter extends BasePresenter {

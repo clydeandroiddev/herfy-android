@@ -92,6 +92,10 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
 
     }
 
+    override fun isFavorite(isFavorite: Boolean) {
+
+    }
+
     override fun showStoreOpen(open: Boolean, message: String) {}
     override fun showFrequentBoughtItems(frequentBoughtItems: MutableList<MenuItem>?) {
         TODO("Not yet implemented")

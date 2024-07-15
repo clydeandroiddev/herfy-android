@@ -454,6 +454,12 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
     public void updateFloatingTotalPrice() {
 
     }
+
+    @Override
+    public void isFavorite(boolean isFavorite) {
+
+    }
+
     public void setVisibility(boolean isVisible){
         RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)itemView.getLayoutParams();
         if (isVisible){

@@ -517,4 +517,9 @@ public class ModifierItemViewHolderNew extends RecyclerView.ViewHolder implement
 
     }
 
+    @Override
+    public void isFavorite(boolean isFavorite) {
+
+    }
+
 }

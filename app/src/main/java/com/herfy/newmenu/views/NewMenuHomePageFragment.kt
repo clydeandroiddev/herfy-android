@@ -269,6 +269,9 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         }
     }
 
+    override fun isFavorite(isFavorite: Boolean) {
+
+    }
     override fun onResume() {
         super.onResume()
         checkDiffMenu()

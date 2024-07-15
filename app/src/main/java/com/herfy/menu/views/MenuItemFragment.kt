@@ -1556,6 +1556,10 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     }
 
+    override fun isFavorite(isFavorite: Boolean) {
+
+    }
+
     private fun navMenuItem(
         menuCategoryId: String,
         menuItemId: String,
