@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,6 +76,7 @@ import com.herfy.utils.helper.CacheHelper
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.SnackBarUtils.showCustomSnackBar
 import com.herfy.utils.helper.viewLifecycleScope
 import com.herfy.utils.menu.MenuUtil
 import com.kochava.tracker.events.EventType
@@ -1557,7 +1559,21 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
     }
 
     override fun isFavorite(isFavorite: Boolean) {
+        var text = CacheUtil.getInstance().getTranslations(Text.ADDED_TO_FAVORITES)
+        if (!isFavorite) {
+            text = CacheUtil.getInstance().getTranslations(Text.REMOVED_FROM_FAVORITES)
+        }
+        var background: Int = R.drawable.background_favorites
+        if (!isFavorite) {
+            background = R.drawable.background_unfavorite
+        }
 
+        var color: Int = binding.mainToolbar.context.resources.getColor(R.color.fav_color)
+        if (!isFavorite) {
+            color = binding.mainToolbar.context.resources.getColor(R.color.unfav_color)
+        }
+
+        showCustomSnackBar(binding.mainToolbar, text!!, isFavorite, background, color)
     }
 
     private fun navMenuItem(

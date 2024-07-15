@@ -48,6 +48,8 @@
     <color name="dodger_blue">#1A68FF</color>
     <color name="red_cancelled">#DB2627</color>
     <color name="black_delivered">#191919</color>
+    <color name="fav_color">#248A3D</color>
+    <color name="unfav_color">#D70015</color>
 </resources>
 
 

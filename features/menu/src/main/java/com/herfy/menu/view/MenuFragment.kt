@@ -44,6 +44,7 @@ import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.SnackBarUtils
 import com.herfy.utils.helper.ViewUtil
 import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
@@ -92,7 +93,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     private val menuOnScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             super.onScrollStateChanged(recyclerView, newState)
-            menuIsScrolled = when(newState) {
+            menuIsScrolled = when (newState) {
                 RecyclerView.SCROLL_STATE_IDLE -> false
                 RecyclerView.SCROLL_STATE_DRAGGING -> true
                 else -> true
@@ -101,7 +102,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-            if(menuIsScrolled && binding.rvMenuCategories.isVisible()) {
+            if (menuIsScrolled && binding.rvMenuCategories.isVisible()) {
                 val firstVisibleItem =
                     (binding.rvMenuCategoriesItems.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
                 val lastVisibleItem =
@@ -110,10 +111,11 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     viewModel.getMenuCategoryId(firstVisibleItem)?.let { menuCategoryId ->
                         scrollToMenuCategory(menuCategoryId)
                     }
-                } else if(menuCategoryItemAdapter.getMenuItemCategory(lastVisibleItem) != null) {
-                    menuCategoryItemAdapter.getMenuItemCategory(lastVisibleItem)?.let { menuCategory ->
-                        scrollToMenuCategory(menuCategory.id)
-                    }
+                } else if (menuCategoryItemAdapter.getMenuItemCategory(lastVisibleItem) != null) {
+                    menuCategoryItemAdapter.getMenuItemCategory(lastVisibleItem)
+                        ?.let { menuCategory ->
+                            scrollToMenuCategory(menuCategory.id)
+                        }
                 }
             }
         }
@@ -144,7 +146,8 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
                 sliderImageAdapter = SliderImageAdapter(sliderListener = viewModel)
                 val margin = ViewUtil.dpToPx(it, 16)
-                val sliderHeight = (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_MENU_ASPECT_RATIO_WIDTH / Values.SLIDER_MENU_ASPECT_RATIO_HEIGHT)).toInt() + margin
+                val sliderHeight =
+                    (Resources.getSystem().displayMetrics.widthPixels / (Values.SLIDER_MENU_ASPECT_RATIO_WIDTH / Values.SLIDER_MENU_ASPECT_RATIO_HEIGHT)).toInt() + margin
                 containerSlider.layoutParams.height = sliderHeight
                 shimmerSlider.root.layoutParams.height = sliderHeight
                 sliderViewPager.adapter = sliderImageAdapter
@@ -152,7 +155,12 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 etSearch.apply {
                     hint = CacheUtil.getInstance().getTranslations(Text.SEARCH_MENU, "Search menu")
                     addTextChangedListener(object : TextWatcher {
-                        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        override fun beforeTextChanged(
+                            p0: CharSequence?,
+                            p1: Int,
+                            p2: Int,
+                            p3: Int
+                        ) {
 
                         }
 
@@ -176,17 +184,19 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                                     viewSearch.gone()
                                     toolbar.layoutParams.height =
                                         resources.getDimensionPixelSize(R.dimen.toolbar_height_menu)
-                                    viewModel.menuAdapterItems.value?.peekContent()?.let { menuAdapterItems ->
-                                        menuCategoryItemAdapter.addData(menuAdapterItems)
-                                    }
+                                    viewModel.menuAdapterItems.value?.peekContent()
+                                        ?.let { menuAdapterItems ->
+                                            menuCategoryItemAdapter.addData(menuAdapterItems)
+                                        }
                                     activity?.apply {
                                         runOnUiThread {
                                             binding.apply {
                                                 appBarLayout.setExpanded(true, false)
-                                                rvMenuCategoriesItems.isNestedScrollingEnabled = true
+                                                rvMenuCategoriesItems.isNestedScrollingEnabled =
+                                                    true
                                                 layoutSearchEmptyStateView.gone()
                                                 layoutFooter.apply {
-                                                    if(isCartEmpty) {
+                                                    if (isCartEmpty) {
                                                         layoutFooter.gone()
                                                     } else {
                                                         layoutFooter.visible()
@@ -220,11 +230,15 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     addOnScrollListener(menuOnScrollListener)
                 }
 
-                searchEmptyStateView.setTitle(CacheUtil.getInstance().getTranslations(Text.NO_RESULTS_FOUND, "No results found."))
+                searchEmptyStateView.setTitle(
+                    CacheUtil.getInstance()
+                        .getTranslations(Text.NO_RESULTS_FOUND, "No results found.")
+                )
 
                 layoutFooter.rootView.apply {
                     val tvViewBag = it.findViewById<TextView>(R.id.tvViewBag)
-                    tvViewBag.text = CacheUtil.getInstance().getTranslations(Text.VIEW_BAG, "View bag")
+                    tvViewBag.text =
+                        CacheUtil.getInstance().getTranslations(Text.VIEW_BAG, "View bag")
                 }
 
             }
@@ -397,7 +411,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                             appBarLayout.setExpanded(false, false)
                             rvMenuCategoriesItems.isNestedScrollingEnabled = false
                             layoutSearchEmptyStateView.apply {
-                                if(searchMenuAdapterItems.isEmpty()) {
+                                if (searchMenuAdapterItems.isEmpty()) {
                                     visible()
                                 } else {
                                     gone()
@@ -433,10 +447,15 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                         }
                         Toast.makeText(
                             this,
-                            CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
+                            CacheUtil.getInstance()
+                                .getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart"),
                             Toast.LENGTH_SHORT
                         ).show()
-                        FacebookAppEventUtil.addToCartEvent(this, menuItem, MenuUtil.getMenuItemTotalPrice(menuItem))
+                        FacebookAppEventUtil.addToCartEvent(
+                            this,
+                            menuItem,
+                            MenuUtil.getMenuItemTotalPrice(menuItem)
+                        )
                         EventBus.getDefault().post(AddToCartEvent())
                         setCartQuantity()
                     }
@@ -446,9 +465,18 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
         viewModel.showMessage.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { message ->
-                activity?.apply {
-                    runOnUiThread {
-                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                if (message == CacheUtil.getInstance()
+                        .getTranslations(Text.ADDED_TO_FAVORITES) || message == CacheUtil.getInstance()
+                        .getTranslations(Text.REMOVED_FROM_FAVORITES)
+                ) {
+                    isFavorites(
+                        message == CacheUtil.getInstance().getTranslations(Text.ADDED_TO_FAVORITES)
+                    )
+                } else {
+                    activity?.apply {
+                        runOnUiThread {
+                            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -503,9 +531,35 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     }
 
+    private fun isFavorites(isFavorite: Boolean) {
+        var text = CacheUtil.getInstance().getTranslations(Text.ADDED_TO_FAVORITES)
+        if (!isFavorite) {
+            text = CacheUtil.getInstance().getTranslations(Text.REMOVED_FROM_FAVORITES)
+        }
+        var background: Int = R.drawable.background_favorites
+        if (!isFavorite) {
+            background = R.drawable.background_unfavorite
+        }
+
+        var color: Int =
+            binding.rvMenuCategoriesItems.context.resources.getColor(R.color.fav_color)
+        if (!isFavorite) {
+            color =
+                binding.rvMenuCategoriesItems.context.resources.getColor(R.color.unfav_color)
+        }
+
+        SnackBarUtils.showCustomSnackBar(
+            binding.rvMenuCategoriesItems,
+            text!!,
+            isFavorite,
+            background,
+            color
+        )
+    }
+
     private fun showLoading(show: Boolean) {
         binding.apply {
-            if(show) {
+            if (show) {
                 shimmerMenuCategories.root.visible()
                 shimmerMenuItems.root.visible()
                 layoutSearch.gone()
@@ -557,8 +611,9 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
     fun scrollToMenuCategory(menuCategoryId: String) {
         menuCategoryAdapter.getPosition(menuCategoryId)?.let {
-            if(it != menuCategoryAdapter.getSelected() &&
-                it < menuCategoryAdapter.itemCount) {
+            if (it != menuCategoryAdapter.getSelected() &&
+                it < menuCategoryAdapter.itemCount
+            ) {
                 binding.rvMenuCategories.scrollToPosition(it)
                 menuCategoryAdapter.select(it)
             }
@@ -592,7 +647,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
             val btnViewBag = findViewById<ConstraintLayout>(R.id.btnViewBag)
             val cartQuantity = CacheUtil.getInstance().cartQuantity
             binding.orderTypeToolbar.setCart(cartQuantity)
-            if(cartQuantity > 0) {
+            if (cartQuantity > 0) {
                 tvCartQuantity.text = "$cartQuantity"
                 btnViewBag.setOnClickListener {
                     findNavController().navigateToDeepLink("nav_cart")
@@ -609,7 +664,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     }
 
     private fun navMenuItem(menuCategoryId: String, menuItemId: String, menu: MenuItem) {
-        val destinationLink = if(menu.isCombo) "nav_combo" else "nav_menu_item"
+        val destinationLink = if (menu.isCombo) "nav_combo" else "nav_menu_item"
         val isSoldOut = CacheUtil.getOrderStoreId() != null && menu.outOfStockLocations.contains(
             CacheUtil.getOrderStoreId()
         )

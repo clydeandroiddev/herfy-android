@@ -294,6 +294,10 @@ public class Text {
     public static final String CONFIRM_LOCATION = "confirm_location";
     public static final String ITEM_ADDED_TO_FAVORITES = "item_added_to_favorites";
     public static final String ERROR_ADD_TO_FAVORITES = "error_add_to_favorites";
+
+    public static final String ADDED_TO_FAVORITES = "added_to_favorites";
+
+    public static final String REMOVED_FROM_FAVORITES = "removed_from_favorites";
     public static final String ITEM_REMOVED_FROM_FAVORITES = "item_removed_from_favorites";
     public static final String ERROR_REMOVE_FROM_FAVORITES = "error_remove_from_favorites";
     public static final String FAVORITE_ADDED_TO_CART = "favorite_added_to_cart";
