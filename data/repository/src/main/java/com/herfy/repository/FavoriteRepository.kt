@@ -40,7 +40,7 @@ class FavoriteRepositoryImpl @Inject constructor(
                     favorites.add(menuItem.id)
                     CacheUtil.getInstance().favorites = favorites
                     result(
-                        CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_FAVORITES)
+                        CacheUtil.getInstance().getTranslations(Text.ADDED_TO_FAVORITES)
                     )
                 }
 
@@ -67,7 +67,7 @@ class FavoriteRepositoryImpl @Inject constructor(
                     favorites.remove(menuItem.id)
                     CacheUtil.getInstance().favorites = favorites
                     result(
-                        CacheUtil.getInstance().getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES)
+                        CacheUtil.getInstance().getTranslations(Text.REMOVED_FROM_FAVORITES)
                     )
                 }
 

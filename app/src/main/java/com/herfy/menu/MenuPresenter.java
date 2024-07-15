@@ -1228,7 +1228,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                     menuView.logAddToWishlistEvent(menuItem);
                     menuItem
                             .setFavorite(true);
-                    menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_FAVORITES));
+                    menuView.isFavorite(true);
                     menuView.updateFavoriteByPosition(position,menuItem);
 
                 }
@@ -1254,7 +1254,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                     menuItem
                             .setFavorite(false);
                     menuView.updateFavoriteByPosition(position,menuItem);
-                    menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES));
+                    menuView.isFavorite(false);
 
                 }
 
@@ -4678,7 +4678,8 @@ public class MenuPresenter implements MenuContract.Presenter {
 
                     menuView.setFavorite(MenuPresenter.this.menuItem);
 
-                    menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_FAVORITES));
+                    menuView.isFavorite(true);
+                   // menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_FAVORITES));
 
                 }
 
@@ -4701,7 +4702,8 @@ public class MenuPresenter implements MenuContract.Presenter {
 
                     menuView.setFavorite(MenuPresenter.this.menuItem);
 
-                    menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES));
+                    menuView.isFavorite(false);
+                    //menuView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES));
 
                 }
 

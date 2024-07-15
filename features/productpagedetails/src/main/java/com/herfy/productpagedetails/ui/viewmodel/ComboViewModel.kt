@@ -28,7 +28,6 @@ import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.deepCopy
-import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.toTranslate
 import com.herfy.utils.handler.ErrorHandler.getErrorMessage
 import com.herfy.utils.helper.AppLogger
@@ -54,8 +53,6 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.AddFavoriteItemBody
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import java.util.LinkedList
 import javax.inject.Inject
 
@@ -1858,7 +1855,7 @@ class ComboViewModel @Inject constructor(
                                 _logAddToWishlistEvent.value = item
                                 _setFavoriteItem.value = item
                                 _showToastMessage.value = CacheUtil.getInstance()
-                                    .getTranslations(Text.ITEM_ADDED_TO_FAVORITES)
+                                    .getTranslations(Text.ADDED_TO_FAVORITES)
 
                             }
 
@@ -1887,7 +1884,7 @@ class ComboViewModel @Inject constructor(
                                 CacheUtil.getInstance().setFavorites(favorites)
                                 _setFavoriteItem.value = item
                                 _showToastMessage.value = CacheUtil.getInstance()
-                                    .getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES)
+                                    .getTranslations(Text.REMOVED_FROM_FAVORITES)
 
                             }
 
@@ -2124,7 +2121,7 @@ class ComboViewModel @Inject constructor(
                         _logAddToWishlistEvent.value = menuItem
                         menuItem.isFavorite = true
                         _showToastMessage.value =
-                            CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_FAVORITES)
+                            CacheUtil.getInstance().getTranslations(Text.ADDED_TO_FAVORITES)
                         _updateFavoriteByPosition.value = Pair(position, menuItem)
                     } else {
                         error?.let {
@@ -2146,7 +2143,7 @@ class ComboViewModel @Inject constructor(
                         CacheUtil.getInstance().setFavorites(favorites)
                         menuItem.isFavorite = false
                         _showToastMessage.value = CacheUtil.getInstance()
-                            .getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES)
+                            .getTranslations(Text.REMOVED_FROM_FAVORITES)
                         _updateFavoriteByPosition.value = Pair(position, menuItem)
                     } else {
                         error?.let {

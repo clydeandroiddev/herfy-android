@@ -22,17 +22,21 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.herfy.R;
+import com.herfy.analytics.facebook.FacebookAppEventUtil;
 import com.herfy.auth.views.AuthActivity;
 import com.herfy.components.Amount;
 import com.herfy.components.AmountTextView;
-import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
-import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.main.MainActivity;
 import com.herfy.menu.MenuContract;
+import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
+import com.herfy.util.StringUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.LocaleUtil;
+import com.herfy.utils.helper.SnackBarUtils;
 import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
@@ -44,9 +48,6 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.analytics.facebook.FacebookAppEventUtil;
-import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -143,6 +144,7 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
     public void showStore(Store store) {
 
     }
+
     @Override
     public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
 
@@ -317,9 +319,9 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
         }).into(image);
 
         String orderStoreId = null;
-if (CacheUtil.getInstance().getOrderStore() != null) {
-    orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
-}
+        if (CacheUtil.getInstance().getOrderStore() != null) {
+            orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
+        }
         price.setAmount(new Amount(menuItem.getPrice(orderStoreId), "", LocaleUtil.getLocale()));
         name.setText(menuItem.getName(LocaleUtil.getInstance().getLanguage()));
 
@@ -515,7 +517,20 @@ if (CacheUtil.getInstance().getOrderStore() != null) {
 
     @Override
     public void isFavorite(boolean isFavorite) {
+        String text = CacheUtil.getInstance().getTranslations(Text.ADDED_TO_FAVORITES);
+        if (!isFavorite) {
+            text = CacheUtil.getInstance().getTranslations(Text.REMOVED_FROM_FAVORITES);
+        }
+        int background = R.drawable.background_favorites;
+        if (!isFavorite) {
+            background = R.drawable.background_unfavorite;
+        }
 
+        int color = favorite.getResources().getColor(com.herfy.R.color.fav_color);
+        if (!isFavorite) {
+            color = favorite.getResources().getColor(R.color.unfav_color);
+        }
+
+        SnackBarUtils.INSTANCE.showCustomSnackBar(favorite, text, isFavorite, background, color);
     }
-
 }
