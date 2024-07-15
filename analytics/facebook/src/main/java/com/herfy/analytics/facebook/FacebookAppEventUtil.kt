@@ -88,12 +88,13 @@ class FacebookAppEventUtil {
                     EVENT_PARAM_CURRENCY,
                     CacheUtil.getInstance().concept.currencyCode
                 )
-                params.putString(
-                    EVENT_PARAM_VALUE_TO_SUM,
-                    menuItem.attributes.getPrice(CacheUtil.getInstance().orderStore.id)
-                        .toString()
-                )
-
+                if (CacheUtil.getInstance().orderStore != null) {
+                    params.putString(
+                        EVENT_PARAM_VALUE_TO_SUM,
+                        menuItem.attributes.getPrice(CacheUtil.getInstance().orderStore.id)
+                            .toString()
+                    )
+                }
                 val appEventLogger = AppEventsLogger.newLogger(it)
                 appEventLogger.logEvent(EVENT_NAME_ADDED_TO_WISHLIST, params)
             }
@@ -116,7 +117,11 @@ class FacebookAppEventUtil {
             }
         }
 
-        fun initiateCheckoutEvent(context: Context?, menuItems: ArrayList<MenuItem>, totalPrice: Double) {
+        fun initiateCheckoutEvent(
+            context: Context?,
+            menuItems: ArrayList<MenuItem>,
+            totalPrice: Double
+        ) {
             context?.let {
                 val jsArray = JSONArray(menuItems)
                 val params = Bundle()
@@ -140,10 +145,10 @@ class FacebookAppEventUtil {
                 val jsArray = JSONArray(menuItems)
                 val params = Bundle()
                 params.putString("app_name", StringUtil.getAppName(it))
-                params.putString(EVENT_PARAM_CONTENT_TYPE,"product")
-                params.putString(EVENT_PARAM_CONTENT,jsArray.toString())
+                params.putString(EVENT_PARAM_CONTENT_TYPE, "product")
+                params.putString(EVENT_PARAM_CONTENT, jsArray.toString())
                 params.putString(EVENT_PARAM_CURRENCY, CacheUtil.getInstance().concept.currencyCode)
-                params.putString(EVENT_PARAM_VALUE_TO_SUM,totalPrice.toString())
+                params.putString(EVENT_PARAM_VALUE_TO_SUM, totalPrice.toString())
 
                 val appEventLogger = AppEventsLogger.newLogger(it)
                 appEventLogger.logEvent(EVENT_NAME_PURCHASED, params)

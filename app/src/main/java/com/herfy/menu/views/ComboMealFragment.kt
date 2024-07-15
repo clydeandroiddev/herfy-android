@@ -690,7 +690,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             color = binding.mainToolbar.context.resources.getColor(com.herfy.R.color.unfav_color)
         }
 
-        SnackBarUtils.showCustomSnackBar(binding.mainToolbar, text!!, isFavorite, background, color)
+        SnackBarUtils.showCustomSnackBar(binding.mainLayout, text!!, isFavorite, background, color)
     }
 
     private fun setupFrequentlyBoughtItems() {

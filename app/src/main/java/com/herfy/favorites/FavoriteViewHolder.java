@@ -235,6 +235,11 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
     }
 
     @Override
+    public void removeFavorites() {
+
+    }
+
+    @Override
     public void showSearchFavorites(ArrayList<Favorite> favorites) {
 
     }

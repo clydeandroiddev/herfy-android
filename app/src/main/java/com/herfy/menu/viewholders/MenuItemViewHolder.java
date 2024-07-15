@@ -531,6 +531,6 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
             color = favorite.getResources().getColor(R.color.unfav_color);
         }
 
-        SnackBarUtils.INSTANCE.showCustomSnackBar(favorite, text, isFavorite, background, color);
+        SnackBarUtils.INSTANCE.showCustomSnackBar(container, text, isFavorite, background, color);
     }
 }

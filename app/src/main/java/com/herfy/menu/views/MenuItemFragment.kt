@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -1558,7 +1557,14 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     }
 
+    private fun dismissLoadingDialog() {
+        activity?.cast<BaseActivity> {
+            it.dismissDialogs()
+        }
+    }
+
     override fun isFavorite(isFavorite: Boolean) {
+        dismissLoadingDialog()
         var text = CacheUtil.getInstance().getTranslations(Text.ADDED_TO_FAVORITES)
         if (!isFavorite) {
             text = CacheUtil.getInstance().getTranslations(Text.REMOVED_FROM_FAVORITES)
@@ -1573,7 +1579,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             color = binding.mainToolbar.context.resources.getColor(R.color.unfav_color)
         }
 
-        showCustomSnackBar(binding.mainToolbar, text!!, isFavorite, background, color)
+        showCustomSnackBar(binding.footer, text!!, isFavorite, background, color)
     }
 
     private fun navMenuItem(

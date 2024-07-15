@@ -30,6 +30,8 @@ public interface FavoritesContract {
 
         void showError(String error);
 
+        void removeFavorites();
+
         void showSearchFavorites(ArrayList<Favorite> favorites);
 
         void logFirebaseEvent(String event);

@@ -180,8 +180,7 @@ public class FavoritesPresenter implements FavoritesContract.Presenter {
                 } else {
                     favoritesView.showFavorites(favorites);
                 }
-                favoritesView.showMessage(CacheUtil.getInstance().getTranslations(Text.ITEM_REMOVED_FROM_FAVORITES));
-
+                favoritesView.removeFavorites();
             }
 
             @Override
