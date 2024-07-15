@@ -549,7 +549,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }
 
         SnackBarUtils.showCustomSnackBar(
-            binding.rvMenuCategoriesItems,
+            binding.layoutFooter,
             text!!,
             isFavorite,
             background,
