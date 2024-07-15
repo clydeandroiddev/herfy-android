@@ -2,7 +2,6 @@ package com.herfy.favorites;
 
 
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,19 +22,16 @@ import com.google.android.material.textview.MaterialTextView;
 import com.herfy.R;
 import com.herfy.analytics.firebase.FirebaseService;
 import com.herfy.base.BaseActivity;
-import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
+import com.herfy.util.StringUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.CacheUtil;
-import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
-import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -75,7 +71,7 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 
     private FavoritesAction action;
 
-    public FavoriteViewHolder(FavoritesContract.Presenter favoritesPresenter, View itemView,FavoritesAction action) {
+    public FavoriteViewHolder(FavoritesContract.Presenter favoritesPresenter, View itemView, FavoritesAction action) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         this.favoritesPresenter = favoritesPresenter;
@@ -134,28 +130,32 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
         add.setVisibility(quantity == 0 ? View.VISIBLE : View.GONE);
         favoriteIcon.setOnClickListener(view -> {
             ((BaseActivity) itemView.getContext()).showLoadingDialog();
-//            favoriteIcon.setColorFilter(Color.parseColor("#DEDEDE"));
             favoritesPresenter.deleteFavorite(favorite);
         });
-            String caloriesValue = favorite.getAttributes().getCalories();
-            Integer calorieCount = favorite.getAttributes().getCalorieCount();
-         if (calorieCount != null && calorieCount != 0) {
+
+        String caloriesValue = favorite.getAttributes().getCalories();
+
+        Integer calorieCount = favorite.getAttributes().getCalorieCount();
+
+        if (calorieCount != null && calorieCount != 0) {
             tvCalories.setVisibility(View.VISIBLE);
-             layoutCalories.setVisibility(View.VISIBLE);
+            layoutCalories.setVisibility(View.VISIBLE);
             tvCalories.setText(String.valueOf(calorieCount.intValue()));
         } else if (caloriesValue != null && !caloriesValue.isEmpty() && !caloriesValue.trim().equals("null") && !caloriesValue.trim().equals("0")) {
-             layoutCalories.setVisibility(View.VISIBLE);
+            layoutCalories.setVisibility(View.VISIBLE);
             tvCalories.setVisibility(View.VISIBLE);
             tvCalories.setText(caloriesValue);
         } else {
-             layoutCalories.setVisibility(View.GONE);
+            layoutCalories.setVisibility(View.GONE);
             tvCalories.setVisibility(View.GONE);
             tvCalories.setText("");
         }
+
         String imageUrl = favorite.getAttributes().getImageUri();
         if (imageUrl == null || imageUrl.equalsIgnoreCase("null") || imageUrl.isEmpty() || imageUrl.toLowerCase().contains("default-image.png")) {
             imageUrl = Values.DEFAULT_IMAGE_URL;
         }
+
         Glide.with(itemView.getContext()).load(imageUrl).skipMemoryCache(false).diskCacheStrategy(DiskCacheStrategy.ALL).apply(RequestOptions.centerCropTransform()).listener(new RequestListener<Drawable>() {
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -165,7 +165,6 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 
             @Override
             public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-//                progress.setVisibility(View.GONE);
                 image.setVisibility(View.VISIBLE);
                 return false;
             }
@@ -201,8 +200,8 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
         }
 
 
-
     }
+
     public int getQuantityByFavourites(Favorite favorite) {
         int quantity = 0;
         ArrayList<MenuItem> cart = CacheUtil.getInstance().getCart();
@@ -214,6 +213,7 @@ public class FavoriteViewHolder extends RecyclerView.ViewHolder implements Favor
 
         return quantity;
     }
+
     @Override
     public void showMenuItem(String categoryId, String menuItemId) {
 
