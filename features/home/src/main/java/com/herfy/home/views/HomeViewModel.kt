@@ -738,8 +738,15 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun onClickClaimPromo(promo: Campaign) {
+        if (promo.promotion != null && promo.promotion.attributes.type.equals(
+                "item", ignoreCase = true
+            )
+        ) {
+            getCampaignPromotionItem(promo)
+        }else {
+            validateDigitalCoupon(promo)
+        }
 
-        validateDigitalCoupon(promo)
     }
 
     override fun onRemovePromo() {
@@ -776,18 +783,11 @@ class HomeViewModel @Inject constructor(
                                     }
                                     menuItem.attributes.price = promotion.attributes.itemPrice
                                     menuItem.toCdn(orderStoreId)
-                                    MixpanelUtil.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
-                                    if (menuItem.isMustBeCustomized || menuItem.isCombo) {
-                                        val campaignToAdd = CampaignToAdd(
-                                            digitalCoupon, digitalCoupon.promotion, menuItem
-                                        )
-                                        CacheUtil.getInstance().campaignToAdd = campaignToAdd
-                                    } else {
-                                        CacheUtil.getInstance().campaign = digitalCoupon
-                                        CacheUtil.getInstance().campaignPromotion =
-                                            digitalCoupon.promotion
-                                        CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
-                                    }
+                                    MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
+                                    CacheUtil.getInstance().setCampaign(digitalCoupon)
+                                    CacheUtil.getInstance()
+                                        .setCampaignPromotion(digitalCoupon.promotion)
+                                    CacheUtil.getInstance().setCampaignPromotionMenuItem(menuItem)
                                     _showCart.value = Event(true)
                                 } else {
                                     onError("")

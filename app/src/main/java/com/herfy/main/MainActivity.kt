@@ -90,6 +90,7 @@ import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheHelper
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
+import com.herfy.utils.helper.CoroutineContextProvider
 import com.herfy.utils.helper.EnvUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
@@ -105,6 +106,9 @@ import com.skylinedynamics.solosdk.api.models.objects.cms.CmsPage
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.blurry.Blurry
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -1067,8 +1071,15 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun setCartQuantity() {
-        binding.toolbarMain.setCart(cacheUtilHelper.getCartQuantity())
+        GlobalScope.launch(context = CoroutineContextProvider().Main){
+            cacheUtilHelper.getCartItems {
+                cacheUtilHelper.setCartQuantity(it)
+                binding.toolbarMain.setCart(cacheUtilHelper.getCartQuantity())
+            }
+        }
+
     }
 
     fun cartExpired() {

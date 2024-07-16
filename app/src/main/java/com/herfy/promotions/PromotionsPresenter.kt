@@ -893,12 +893,6 @@ class PromotionsPresenter @Inject constructor(
                     })
             }
         }
-       /* if (CacheUtil.getInstance().getCartQuantity() > 0) {
-
-
-        } else {
-            view.showMenu()
-        }*/
     }
 
     fun getCampaignPromotionItem(campaign: Campaign) {
@@ -932,17 +926,6 @@ class PromotionsPresenter @Inject constructor(
                                 CacheUtil.getInstance()
                                     .setCampaignPromotion(campaign.promotion)
                                 CacheUtil.getInstance().setCampaignPromotionMenuItem(menuItem)
-                               /* if (menuItem.isMustBeCustomized || menuItem.isCombo) {
-                                    val campaignToAdd = CampaignToAdd(
-                                        campaign,
-                                        campaign.getPromotion(),
-                                        menuItem
-                                    )
-                                    CacheUtil.getInstance().setCampaignPromotionMenuItem(menuItem)
-                                    //CacheUtil.getInstance().setCampaignToAdd(campaignToAdd)
-                                } else {
-
-                                }*/
                                 view.showCart(true)
                             } else {
                                 onError("")

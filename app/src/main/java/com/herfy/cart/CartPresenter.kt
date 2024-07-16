@@ -15,6 +15,8 @@ import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.model.CampaignToAdd
 import com.herfy.model.CouponResult
 import com.herfy.model.CouponToAdd
+import com.herfy.model.MenuItemComponentItem
+import com.herfy.repository.MenuRepository
 import com.herfy.upsell.UpsellViewHolder
 import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
@@ -22,6 +24,7 @@ import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.deepCopy
 import com.herfy.utils.handler.ErrorHandler
 import com.herfy.utils.helper.ApiLogLevel
 import com.herfy.utils.helper.ApiLogUtil.Companion.sendMessageLog
@@ -45,6 +48,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Allergen
 import com.skylinedynamics.solosdk.api.models.objects.AllergenCdn
 import com.skylinedynamics.solosdk.api.models.objects.Application
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
+import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.Concept
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient
@@ -53,6 +57,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Integration
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemAttributes
+import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupCdn
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType
@@ -90,7 +95,8 @@ import javax.inject.Inject
 @DelicateCoroutinesApi
 @OptIn(DelicateCoroutinesApi::class)
 class CartPresenter @Inject constructor(
-    private val cartView: CartContract.View, private val cacheUtilHelper: CacheUtilHelper
+    private val cartView: CartContract.View, private val cacheUtilHelper: CacheUtilHelper,
+    private val menuRepository: MenuRepository
 ) : CartContract.Presenter {
     private var menuItems = ArrayList<MenuItem>()
     private val menuItemsCount = 0
@@ -1475,6 +1481,11 @@ class CartPresenter @Inject constructor(
                         modifierGroups.add(modifierGroup)
                     }
                 }
+                if(promoMenuItem.isCombo){
+                    menuItem.isCombo = true
+                    menuItem.combo = promoMenuItem.combo
+                }
+
                 menuItem.sizes = sizes
                 Collections.sort(modifierGroups) { modifierGroup1, modifierGroup2 -> modifierGroup1.attributes.displayOrder - modifierGroup2.attributes.displayOrder }
                 menuItem.modifierGroups = modifierGroups
@@ -1517,103 +1528,95 @@ class CartPresenter @Inject constructor(
     }
 
     fun prepareMenuItem(menuItem: MenuItem, campaign: Campaign?) {
-        val filteredModifierGroups = LinkedList<ModifierGroup>()
-        for (modifierGroup in menuItem.modifierGroups) {
-            if (modifierGroup.modifierItems.size > 0) {
-                filteredModifierGroups.add(modifierGroup)
-            }
-        }
-        if (menuItem.sizes.modifierItems.size > 0) {
-            menuItem.sizes.modifierItems[0].attributes.isSelected = true
-        }
-        menuItem.modifierGroups = filteredModifierGroups
-        for (modifierGroup in menuItem.modifierGroups) {
-            val defaultModifiers = modifierGroup.defaultModifiers
-            if (modifierGroup.modifierItems.size > 0 && modifierGroup.attributes.minimum > 0) {
-                if (defaultModifiers.size > 0) {
-                    var selected = 0
-                    for (i in modifierGroup.modifierItems.indices) {
-                        val modifierItem = modifierGroup.modifierItems[i]
-                        if (selected < modifierGroup.attributes.maximum && defaultModifiers.contains(
-                                modifierItem.id
-                            )
-                        ) {
-                            modifierGroup.modifierItems[i].attributes.isSelected = true
-                            selected++
-                        }
-                    }
-                } else if (modifierGroup.attributes.minimum == 1) {
-                    modifierGroup.modifierItems[0].attributes.isSelected = true
+        GlobalScope.launch(contextPool.Main) {
+            val filteredModifierGroups = LinkedList<ModifierGroup>()
+            for (modifierGroup in menuItem.modifierGroups) {
+                if (modifierGroup.modifierItems.size > 0) {
+                    filteredModifierGroups.add(modifierGroup)
                 }
             }
-        }
-        var visibilityConfig = menuItem.sizes.attributes.visibilityConfig
-        if (visibilityConfig != null) {
-            val rules = visibilityConfig.rules
-            if (rules != null && rules.size > 0) {
-                val rule = rules[0]
-                if (rule.targetType != null && rule.targetType.equals(
-                        "modifier-group", ignoreCase = true
-                    )
-                ) {
-                    for (modGroup in menuItem.modifierGroups) {
-                        if (menuItem.sizes.id != modGroup.id && rule.targetId == modGroup.id) {
-                            if (rule.targetIs != null && rule.targetIs.equals(
-                                    "selected", ignoreCase = true
+            var comboIndex = 0
+            if (menuItem.sizes.modifierItems.size > 0) {
+                if(menuItem.sizes.modifierItems.any { it.attributes.isSelected }){
+                    menuItem.sizes.modifierItems.forEachIndexed { index, modifierItem ->
+                        if(modifierItem.attributes.isSelected){
+                            comboIndex = index
+                        }
+                    }
+                }else {
+                    comboIndex = 0
+                    menuItem.sizes.modifierItems[0].attributes.isSelected = true
+                }
+            }
+            menuItem.modifierGroups = filteredModifierGroups
+            for (modifierGroup in menuItem.modifierGroups) {
+                val defaultModifiers = modifierGroup.defaultModifiers
+                if (modifierGroup.modifierItems.size > 0 && modifierGroup.attributes.minimum > 0) {
+                    if (defaultModifiers.size > 0) {
+                        var selected = 0
+                        for (i in modifierGroup.modifierItems.indices) {
+                            val modifierItem = modifierGroup.modifierItems[i]
+                            if (selected < modifierGroup.attributes.maximum && defaultModifiers.contains(
+                                    modifierItem.id
                                 )
                             ) {
-                                var selected = 0
-                                for (modItem in modGroup.modifierItems) {
-                                    if (modItem.attributes.isSelected) {
-                                        selected += 1
-                                    }
-                                }
-                                if (selected > 0) {
-                                    menuItem.sizes.attributes.visibilityConfig.initialValue = ""
-                                } else {
-                                    menuItem.sizes.attributes.visibilityConfig.initialValue =
-                                        "hidden"
-                                }
+                                modifierGroup.modifierItems[i].attributes.isSelected = true
+                                selected++
                             }
                         }
+                    } else if (modifierGroup.attributes.minimum == 1) {
+                        modifierGroup.modifierItems[0].attributes.isSelected = true
                     }
                 }
             }
-        }
-        for (group in menuItem.modifierGroups) {
-            visibilityConfig = group.attributes.visibilityConfig
+            var visibilityConfig = menuItem.sizes.attributes.visibilityConfig
             if (visibilityConfig != null) {
                 val rules = visibilityConfig.rules
                 if (rules != null && rules.size > 0) {
                     val rule = rules[0]
-                    if (rule.targetType != null) {
-                        if (rule.targetType.equals("modifier-group", ignoreCase = true)) {
-                            if (group.id != menuItem.sizes.id && rule.targetId == menuItem.sizes.id) {
+                    if (rule.targetType != null && rule.targetType.equals(
+                            "modifier-group", ignoreCase = true
+                        )
+                    ) {
+                        for (modGroup in menuItem.modifierGroups) {
+                            if (menuItem.sizes.id != modGroup.id && rule.targetId == modGroup.id) {
                                 if (rule.targetIs != null && rule.targetIs.equals(
                                         "selected", ignoreCase = true
                                     )
                                 ) {
                                     var selected = 0
-                                    for (modItem in menuItem.sizes.modifierItems) {
+                                    for (modItem in modGroup.modifierItems) {
                                         if (modItem.attributes.isSelected) {
                                             selected += 1
                                         }
                                     }
                                     if (selected > 0) {
-                                        group.attributes.visibilityConfig.initialValue = ""
+                                        menuItem.sizes.attributes.visibilityConfig.initialValue = ""
                                     } else {
-                                        group.attributes.visibilityConfig.initialValue = "hidden"
+                                        menuItem.sizes.attributes.visibilityConfig.initialValue =
+                                            "hidden"
                                     }
                                 }
                             }
-                            for (modGroup in menuItem.modifierGroups) {
-                                if (group.id != modGroup.id && rule.targetId == modGroup.id) {
+                        }
+                    }
+                }
+            }
+            for (group in menuItem.modifierGroups) {
+                visibilityConfig = group.attributes.visibilityConfig
+                if (visibilityConfig != null) {
+                    val rules = visibilityConfig.rules
+                    if (rules != null && rules.size > 0) {
+                        val rule = rules[0]
+                        if (rule.targetType != null) {
+                            if (rule.targetType.equals("modifier-group", ignoreCase = true)) {
+                                if (group.id != menuItem.sizes.id && rule.targetId == menuItem.sizes.id) {
                                     if (rule.targetIs != null && rule.targetIs.equals(
                                             "selected", ignoreCase = true
                                         )
                                     ) {
                                         var selected = 0
-                                        for (modItem in modGroup.modifierItems) {
+                                        for (modItem in menuItem.sizes.modifierItems) {
                                             if (modItem.attributes.isSelected) {
                                                 selected += 1
                                             }
@@ -1621,104 +1624,162 @@ class CartPresenter @Inject constructor(
                                         if (selected > 0) {
                                             group.attributes.visibilityConfig.initialValue = ""
                                         } else {
-                                            group.attributes.visibilityConfig.initialValue =
-                                                "hidden"
-                                        }
-                                    }
-                                    break
-                                }
-                            }
-                        } else if (rule.targetType.equals("modifier", ignoreCase = true)) {
-                            val selectedModifiers: MutableSet<String> = HashSet()
-                            for (modItem in menuItem.sizes.modifierItems) {
-                                if (modItem.attributes.isSelected) {
-                                    selectedModifiers.add(modItem.id)
-                                    break
-                                }
-                            }
-                            for (modGroup in menuItem.modifierGroups) {
-                                if (group.id != modGroup.id) {
-                                    for (modItem in modGroup.modifierItems) {
-                                        if (modItem.attributes.isSelected) {
-                                            selectedModifiers.add(modItem.id)
+                                            group.attributes.visibilityConfig.initialValue = "hidden"
                                         }
                                     }
                                 }
-                            }
+                                for (modGroup in menuItem.modifierGroups) {
+                                    if (group.id != modGroup.id && rule.targetId == modGroup.id) {
+                                        if (rule.targetIs != null && rule.targetIs.equals(
+                                                "selected", ignoreCase = true
+                                            )
+                                        ) {
+                                            var selected = 0
+                                            for (modItem in modGroup.modifierItems) {
+                                                if (modItem.attributes.isSelected) {
+                                                    selected += 1
+                                                }
+                                            }
+                                            if (selected > 0) {
+                                                group.attributes.visibilityConfig.initialValue = ""
+                                            } else {
+                                                group.attributes.visibilityConfig.initialValue =
+                                                    "hidden"
+                                            }
+                                        }
+                                        break
+                                    }
+                                }
+                            } else if (rule.targetType.equals("modifier", ignoreCase = true)) {
+                                val selectedModifiers: MutableSet<String> = HashSet()
+                                for (modItem in menuItem.sizes.modifierItems) {
+                                    if (modItem.attributes.isSelected) {
+                                        selectedModifiers.add(modItem.id)
+                                        break
+                                    }
+                                }
+                                for (modGroup in menuItem.modifierGroups) {
+                                    if (group.id != modGroup.id) {
+                                        for (modItem in modGroup.modifierItems) {
+                                            if (modItem.attributes.isSelected) {
+                                                selectedModifiers.add(modItem.id)
+                                            }
+                                        }
+                                    }
+                                }
 
-                            //for (ModifierGroup modGroup : menuItem.getModifierGroups()) {
-                            //if (!group.getId().equals(modGroup.getId())) {
-                            if (rule.targetId != null && selectedModifiers.contains(rule.targetId)) {
-                                if (rule.targetIs != null && rule.targetIs.equals(
-                                        "selected", ignoreCase = true
-                                    )
-                                ) {
-                                    group.attributes.visibilityConfig.initialValue = ""
-                                } else {
+                                //for (ModifierGroup modGroup : menuItem.getModifierGroups()) {
+                                //if (!group.getId().equals(modGroup.getId())) {
+                                if (rule.targetId != null && selectedModifiers.contains(rule.targetId)) {
+                                    if (rule.targetIs != null && rule.targetIs.equals(
+                                            "selected", ignoreCase = true
+                                        )
+                                    ) {
+                                        group.attributes.visibilityConfig.initialValue = ""
+                                    } else {
+                                        group.attributes.visibilityConfig.initialValue = "hidden"
+                                    }
+                                } else if (!rule.targetId.isEmpty()) {
                                     group.attributes.visibilityConfig.initialValue = "hidden"
                                 }
-                            } else if (!rule.targetId.isEmpty()) {
-                                group.attributes.visibilityConfig.initialValue = "hidden"
+                                //}
+                                //}
                             }
-                            //}
-                            //}
                         }
                     }
                 }
             }
-        }
-        val visibleModifierGroups = ArrayList<ModifierGroup>()
-        for (group in menuItem.modifierGroups) {
-            visibilityConfig = group.attributes.visibilityConfig
-            if (visibilityConfig != null) {
-                if (visibilityConfig.initialValue != null && !visibilityConfig.initialValue.equals(
-                        "hidden", ignoreCase = true
-                    )
-                ) {
+            val visibleModifierGroups = ArrayList<ModifierGroup>()
+            for (group in menuItem.modifierGroups) {
+                visibilityConfig = group.attributes.visibilityConfig
+                if (visibilityConfig != null) {
+                    if (visibilityConfig.initialValue != null && !visibilityConfig.initialValue.equals(
+                            "hidden", ignoreCase = true
+                        )
+                    ) {
+                        visibleModifierGroups.add(group)
+                    }
+                } else {
                     visibleModifierGroups.add(group)
                 }
-            } else {
-                visibleModifierGroups.add(group)
             }
-        }
-        for (modifierGroup in visibleModifierGroups) {
-            var selected = 0
-            for (modifierItem in modifierGroup.modifierItems) {
-                if (modifierItem.attributes.isSelected) {
-                    selected += modifierItem.attributes.quantity
+            for (modifierGroup in visibleModifierGroups) {
+                var selected = 0
+                for (modifierItem in modifierGroup.modifierItems) {
+                    if (modifierItem.attributes.isSelected) {
+                        selected += modifierItem.attributes.quantity
+                    }
                 }
             }
-        }
-        var orderStoreId: String? = null
-        if (CacheUtil.getInstance().orderStore != null) {
-            orderStoreId = CacheUtil.getInstance().orderStore.id
-        }
-        menuItem.toCdn(orderStoreId)
-        menuItem.isPromo = true
-        var hasPromoMenuItem = false
-        if (campaign == null) {
-            CacheUtil.getInstance().couponMenuItem = menuItem
-            val couponCode = CacheUtil.getInstance().couponCode
-            val couponName = CacheUtil.getInstance().couponName
-            if (couponCode != null && couponName != null) {
-                hasPromoMenuItem = true
-                cartView.showCoupon(couponCode, couponName)
-                cartView.addPromotionItem(menuItem)
+            var orderStoreId: String? = null
+            if (CacheUtil.getInstance().orderStore != null) {
+                orderStoreId = CacheUtil.getInstance().orderStore.id
             }
-        } else {
-            hasPromoMenuItem = true
-            CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
-            cartView.addPromotionItem(menuItem)
-            cartView.showDigitalCoupon(campaign)
+            if(menuItem.isCombo){
+                val comboItems = menuItem.combo[comboIndex]?.components
+                comboItems?.forEach { menuItemComponent->
+                    if(menuItemComponent.items.isNotEmpty()){
+                        menuItemComponent.items =  componentsSelectFirst(menuItemComponent)
+                        menuItemComponent.items.sortWith { menuItem1: ComponentModifierItem, menuItem2: ComponentModifierItem -> menuItem1.displayOrder - menuItem2.displayOrder }
+                        menuItemComponent.items.forEachIndexed { componentModifierPos, compoItem ->
+                            val applicationId = CacheUtil.getInstance().application.id
+
+                            menuRepository.getMenuItemDbBy(
+                                applicationId,
+                                compoItem.name.getValue(LocaleUtil.getInstance().language)
+                            ) { menuItemDb ->
+                                menuItemDb?.let {
+                                    val menuItemData =
+                                        GsonHelper.gsonFinal().fromJson(it.data, MenuItem::class.java)
+                                    menuItemData?.let {
+                                        compoItem.menuItem = it
+                                    }
+                                }
+                            }
+
+
+                            val modifierGroupIds = hashMapOf<String, ModifierGroup>()
+                            for (modifierGroup in compoItem.modifierGroupsMap) {
+                                modifierGroupIds[modifierGroup.id] = modifierGroup
+                            }
+                            if (modifierGroupIds.isNotEmpty()) {
+                                val modifierGroups =
+                                    parseComponentModifierGroup(applicationId, modifierGroupIds)
+                                compoItem.modifierGroups = ArrayList(modifierGroups)
+                                menuItemComponent.items[componentModifierPos] = compoItem
+                            }
+                        }
+                    }
+                }
+            }
+            menuItem.toCdn(orderStoreId)
+            menuItem.isPromo = true
+            var hasPromoMenuItem = false
+            if (campaign == null) {
+                CacheUtil.getInstance().couponMenuItem = menuItem
+                val couponCode = CacheUtil.getInstance().couponCode
+                val couponName = CacheUtil.getInstance().couponName
+                if (couponCode != null && couponName != null) {
+                    hasPromoMenuItem = true
+                    cartView.showCoupon(couponCode, couponName)
+                    cartView.addPromotionItem(menuItem)
+                }
+            } else {
+                hasPromoMenuItem = true
+                CacheUtil.getInstance().campaignPromotionMenuItem = menuItem
+                cartView.addPromotionItem(menuItem)
+                cartView.showDigitalCoupon(campaign)
+            }
+            if (validatedOrderData != null) {
+                showPrice(true, validatedOrderData!!, 0.0)
+            }
+            if(hasPromoMenuItem){
+                CacheUtil.getInstance().cart = menuItems
+                cartView.updateMenuItems(menuItems)
+            }
+            cartView.showPromotionItem()
         }
-        if (validatedOrderData != null) {
-            showPrice(true, validatedOrderData!!, 0.0)
-        }
-        if(hasPromoMenuItem){
-            CacheUtil.getInstance().cart = menuItems
-            cartView.updateMenuItems(menuItems)
-        }
-        cartView.showPromotionItem()
+
     }
 
     override fun removeCoupon() {
@@ -4733,4 +4794,264 @@ class CartPresenter @Inject constructor(
             }
         }
     }
+
+    private fun componentsSelectFirst(components: MenuItemComponents): ArrayList<ComponentModifierItem> {
+        val noItemSelected = checkIfNoItemSelected(components.items)
+        if (noItemSelected) {
+            if (components.minimum == 1) {
+                components.items[0].selected = true
+                components.items[0].quantity = 1
+            }
+        }
+        return components.items
+    }
+
+    private fun parseComponentModifierGroup(
+        applicationId: String,
+        modifierGroupIds: HashMap<String, ModifierGroup>
+    ): LinkedList<ModifierGroup> {
+        val modifierGroups = LinkedList<ModifierGroup>()
+        menuRepository.getAllModifierGroupBy(
+            applicationId, modifierGroupIds.keys.toTypedArray()
+        ) { modifierGroupDbs ->
+            for (modifierGroupDb in modifierGroupDbs) {
+                if (modifierGroupDb.type != ModifierGroupType.SIZES.value) {
+                    val modifierGroupCdn =
+                        MenuUtil.processModifierGroupCustomObject(
+                            GsonHelper.gsonFinal().fromJson(
+                                modifierGroupDb.data, ModifierGroupCdn::class.java
+                            )
+                        )
+                    val mapModifierGroup = modifierGroupIds[modifierGroupCdn.id]
+                    val modifierGroupModifierItems =
+                        modifierGroupIds[modifierGroupCdn.id]!!.modifiers
+                    val modifierGroupModifierItemIds = arrayListOf<String>()
+                    val excludedModifierItems = HashSet<String>()
+                    mapModifierGroup?.let {
+                        val excludedModifierIds =
+                            it.excludeModifiers.map { t -> t.toString() }
+                        excludedModifierItems.addAll(excludedModifierIds)
+                    }
+
+
+                    // Exclude by location
+                    val orderStore = CacheUtil.getInstance().getOrderStore()
+                    val excludedItemsByLocationId = Observable.fromArray(
+                        modifierGroupIds[modifierGroupCdn.id]
+                    ).map { modifierGroup: ModifierGroup? ->
+                        if (orderStore == null) return@map java.util.ArrayList<ModifierItem>()
+                        // if group contains store id in included location, add all modifiers within it to the excluded items
+                        // else check modifier item excluded location if it contains store id
+                        if (Observable.fromIterable(modifierGroup!!.excludedLocations)
+                                .map { obj: Int -> obj.toString() }
+                                .any { excludedLocation: String -> excludedLocation == orderStore.id }
+                                .blockingGet()
+                        ) {
+                            return@map modifierGroup!!.modifiers
+                        } else {
+                            return@map Observable.fromIterable<ModifierItem>(
+                                modifierGroup!!.modifierItems
+                            ).filter { modifierItem: ModifierItem ->
+                                Observable.fromIterable<Int>(
+                                    modifierItem.attributes.excludedLocations
+                                )
+                                    .any { item: Int -> item.toString() == orderStore.id }
+                                    .blockingGet()
+                            }.toList().blockingGet()
+                        }
+                    }.flatMap { source: List<ModifierItem>? ->
+                        Observable.fromIterable(
+                            source
+                        )
+                    }.map { obj: ModifierItem -> obj.id }.toList().blockingGet()
+                    excludedModifierItems.addAll(excludedItemsByLocationId)
+
+
+                    val modifierGroupModifierItemDisplayOrders =
+                        hashMapOf<String, Int>()
+                    for (modifierGroupModifierItem in modifierGroupModifierItems) {
+                        if (!excludedModifierItems.contains(
+                                modifierGroupModifierItem.id
+                            )
+                        ) {
+                            modifierGroupModifierItemIds.add(
+                                modifierGroupModifierItem.id
+                            )
+                            modifierGroupModifierItemDisplayOrders[modifierGroupModifierItem.id] =
+                                modifierGroupModifierItems.indexOf(
+                                    modifierGroupModifierItem
+                                )
+                        }
+                    }
+
+                    val modifierItems = LinkedList<ModifierItem>()
+                    menuRepository.getModifierItemBy(
+                        applicationId, modifierGroupModifierItemIds.toTypedArray()
+                    ) { modifierItemDbs ->
+                        for (modifierItemDb in modifierItemDbs) {
+                            val modifierItemCdn = GsonHelper.gsonFinal().fromJson(
+                                modifierItemDb.data, ModifierItemCdn::class.java
+                            )
+
+                            val modifierItem = ModifierItemCdn.convert(
+                                modifierItemCdn, LocaleUtil.getInstance().language
+                            )
+                            modifierItem.attributes.isSelected =
+                                modifierItem.attributes.minimum == 1
+                            if (modifierGroupModifierItemDisplayOrders.containsKey(
+                                    modifierItem.id
+                                ) && modifierGroupModifierItemDisplayOrders[modifierItem.id] != null
+                            ) {
+                                modifierGroupModifierItemDisplayOrders[modifierItem.id]?.let {
+                                    modifierItem.attributes.displayOrder = it
+                                }
+                            }
+                            val isExcluded =
+                                orderStore != null && Observable.fromIterable(
+                                    modifierItem.attributes.excludedLocations
+                                )
+                                    .any { item: Int -> item.toString() == orderStore.id }
+                                    .blockingGet()
+
+                            if (!isExcluded) {
+                                modifierItems.add(modifierItem)
+                            }
+                        }
+
+                        modifierItems.sortWith { modifierItem1, modifierItem2 -> modifierItem1.attributes.displayOrder - modifierItem2.attributes.displayOrder }
+                        val modifierGroup = ModifierGroupCdn.convert(
+                            modifierGroupCdn, LocaleUtil.getInstance().language
+                        )
+                        if (mapModifierGroup != null) {
+                            modifierGroup.attributes.minimum = mapModifierGroup.min
+                            modifierGroup.attributes.maximum = mapModifierGroup.max
+                            modifierGroup.attributes.displayOrder =
+                                mapModifierGroup.displayOrder
+                            modifierGroup.attributes.freeModifiersCount =
+                                mapModifierGroup.freeModifiersCount
+                            modifierGroup.setDefaultModifiers(
+                                java.util.ArrayList(
+                                    mapModifierGroup.defaultModifiers
+                                )
+                            )
+                            if (modifierGroup.attributes.visibilityConfig == null && mapModifierGroup.visibilityConfig != null) {
+                                modifierGroup.attributes.visibilityConfig =
+                                    mapModifierGroup.visibilityConfig
+                            }
+                        }
+                        val modifierItemsFinal =
+                            ArrayList<ModifierItem>(modifierItems)
+                        if (modifierItemsFinal.size > 0) {
+                            val defaultModifiers = modifierGroup.defaultModifiers
+                            if (modifierItemsFinal.size > 0 && modifierGroup.attributes.minimum > 0) {
+                                if (defaultModifiers.size > 0) {
+                                    var selected = 0
+                                    for (i in modifierItemsFinal.indices) {
+                                        val modifierItem = modifierItemsFinal[i]
+                                        if (selected < modifierGroup.attributes.maximum && defaultModifiers.contains(
+                                                modifierItem.id
+                                            )
+                                        ) {
+                                            modifierItemsFinal[i].attributes.isSelected =
+                                                true
+                                            selected++
+                                        }
+                                    }
+                                } else if (modifierGroup.attributes.minimum == 1) {
+                                    modifierItemsFinal[0].attributes.isSelected =
+                                        true
+                                }
+                            }
+                            modifierGroup.modifierItems = modifierItemsFinal
+                            modifierGroup.modifiers = modifierItemsFinal
+                            modifierGroups.add(modifierGroup)
+                        }
+                    }
+                }
+            }
+            modifierGroups.sortWith { modifierGroup1, modifierGroup2 -> modifierGroup1.attributes.displayOrder - modifierGroup2.attributes.displayOrder }
+            updateInitialModifierVisibility(modifierGroups)
+        }
+        return modifierGroups
+    }
+
+    private fun checkIfNoItemSelected(
+        items: ArrayList<ComponentModifierItem>
+    ): Boolean {
+        val size = items.size
+        for (i in 0 until size) {
+            if (items[i].selected) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun updateInitialModifierVisibility(
+        modifierGroups: List<ModifierGroup>
+    ) {
+        for (group in modifierGroups) {
+            val visibilityConfig = group.attributes.visibilityConfig
+            if (visibilityConfig != null) {
+                val rules = visibilityConfig.rules
+                if (rules != null && rules.size > 0) {
+                    val rule = rules[0]
+                    if (rule.targetType != null) {
+                        if (rule.targetType.equals("modifier-group", ignoreCase = true)) {
+                            for (modGroup in modifierGroups) {
+                                if (group.id != modGroup.id && rule.targetId == modGroup.id) {
+                                    if (rule.targetIs != null && rule.targetIs.equals(
+                                            "selected", ignoreCase = true
+                                        )
+                                    ) {
+                                        var selected = 0
+                                        for (modItem in modGroup.modifierItems) {
+                                            if (modItem.attributes.isSelected) {
+                                                selected += 1
+                                            }
+                                        }
+                                        if (selected > 0) {
+                                            group.attributes.visibilityConfig.initialValue = ""
+                                        } else {
+                                            group.attributes.visibilityConfig.initialValue =
+                                                "hidden"
+                                        }
+                                    }
+                                    break
+                                }
+                            }
+
+                        } else if (rule.targetType.equals("modifier", ignoreCase = true)) {
+                            val selectedModifiers: MutableSet<String> = java.util.HashSet()
+                            for (modGroup in modifierGroups) {
+                                if (group.id != modGroup.id) {
+                                    for (modItem in modGroup.modifierItems) {
+                                        if (modItem.attributes.isSelected) {
+                                            selectedModifiers.add(modItem.id)
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (rule.targetId != null && selectedModifiers.contains(rule.targetId)) {
+                                if (rule.targetIs != null && rule.targetIs.equals(
+                                        "selected", ignoreCase = true
+                                    )
+                                ) {
+                                    group.attributes.visibilityConfig.initialValue = ""
+                                } else {
+                                    group.attributes.visibilityConfig.initialValue = "hidden"
+                                }
+                            } else if (rule.targetId.isNotEmpty()) {
+                                group.attributes.visibilityConfig.initialValue = "hidden"
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        }
+    }
+
 }

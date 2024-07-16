@@ -216,14 +216,6 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
         } else {
             val menuItem: MenuItem? = if (isEdit) {
-                if (CacheUtil.getInstance().couponToAdd != null) {
-                    CacheUtil.getInstance().couponToAdd.menuItem
-                } else if (CacheUtil.getInstance().campaignToAdd != null) {
-                    CacheUtil.getInstance().campaignToAdd.menuItem
-                } else {
-                    null
-                }
-            } else {
                 if (CacheUtil.getInstance().couponCode != null && CacheUtil.getInstance().couponMenuItem != null) {
                     CacheUtil.getInstance().couponMenuItem
                 } else if (CacheUtil.getInstance().campaign != null && CacheUtil.getInstance().campaignPromotionMenuItem != null) {
@@ -231,6 +223,8 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 } else {
                     null
                 }
+            } else {
+                null
             }
             menuItem?.let {
                 viewModel.apply {
