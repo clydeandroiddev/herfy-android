@@ -374,6 +374,10 @@
             android:name="is_sold_out"
             android:defaultValue="false"
             app:argType="boolean"/>
+        <argument
+            android:name="is_favorite"
+            android:defaultValue="false"
+            app:argType="boolean" />
 
         <action
             android:id="@+id/action_combo_to_cart"
@@ -649,6 +653,12 @@
             app:popUpTo="@+id/nav_favorites">
 
         </action>
+
+        <action
+            android:id="@+id/action_favorites_to_combo"
+            app:destination="@+id/nav_combo"
+            app:popUpTo="@+id/nav_favorites"/>
+
         <action
             android:id="@+id/action_favorites_to_order_type"
             app:destination="@id/nav_order_type"

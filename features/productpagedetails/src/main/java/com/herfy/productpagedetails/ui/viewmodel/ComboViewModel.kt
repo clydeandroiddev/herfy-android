@@ -93,6 +93,8 @@ class ComboViewModel @Inject constructor(
             field = value
         }
 
+    var isFromFavorite = false
+
     private var frequentlyMenuItem = MenuItem()
     var currentSelectedModifierItem: ComponentModifierItem? = null
     var cartMenuItemsTotalPrice: Double = 0.0
@@ -1744,6 +1746,7 @@ class ComboViewModel @Inject constructor(
             menuItem!!.isSandwichOnly = false
             menuItem?.let {
                 invoke {
+                    it.isFavorite = isFromFavorite
                     cacheUtilHelper.addToCart(it) {
                         if (cartCount == 0) {
                             _showCartExpiry.value = true

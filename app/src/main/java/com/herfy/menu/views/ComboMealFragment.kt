@@ -106,12 +106,17 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
         args?.getBoolean(Values.KEY_IS_SOLD_OUT, false) ?: false
     }
 
+    private val isFromFavorite : Boolean by lazy {
+        args?.getBoolean(Values.KEY_IS_FAVORITE, false) ?: false
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
     override fun initViews() {
         super.initViews()
+        this@ComboMealFragment.viewModel.isFromFavorite = this.isFromFavorite
         binding.viewModel = this@ComboMealFragment.viewModel
         setupImageHeight()
         setupFrequentlyBoughtItems()

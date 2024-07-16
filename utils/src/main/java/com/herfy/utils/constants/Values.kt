@@ -106,6 +106,7 @@ object Values {
     const val KEY_IS_ADDED_TO_FAVORITES = "is_added_to_favorites"
     const val KEY_IS_ADDED_TO_CART = "is_added_to_cart"
     const val KEY_IS_SOLD_OUT = "is_sold_out"
+    const val KEY_IS_FAVORITE = "is_favorite"
     const val CATER_WITH_HERFY_URL = "https://www.herfy.com/"
     const val SLIDER_HOME_TOP_ASPECT_RATIO_WIDTH = 393.0
     const val SLIDER_HOME_TOP_ASPECT_RATIO_HEIGHT = 472.0
