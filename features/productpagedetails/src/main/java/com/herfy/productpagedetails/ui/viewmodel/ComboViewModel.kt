@@ -1451,7 +1451,7 @@ class ComboViewModel @Inject constructor(
                     if (item.id == component.id) {
                         if (item.modifierGroups.isNotEmpty()) {
                             updatedModifierGroupList?.let { selectedModifierGroup ->
-                                item.selected = ifHasSelected(selectedModifierGroup) > 0
+                                item.selected = ifHasSelectedModifierItems(selectedModifierGroup)
                                 item.attributes.price =
                                     item.price + selectedModifierPrice(selectedModifierGroup)
                                 item.modifierGroups.clear()
@@ -1493,8 +1493,7 @@ class ComboViewModel @Inject constructor(
                         if (_componentModifierItem.id == component.id) {
                             if (_componentModifierItem.modifierGroups.isNotEmpty()) {
                                 updatedModifierGroupList?.let { selectedModifierGroup ->
-                                    _componentModifierItem.selected =
-                                        ifHasSelected(selectedModifierGroup) > 0
+                                    _componentModifierItem.selected = ifHasSelectedModifierItems(selectedModifierGroup)
                                     _componentModifierItem.attributes.price =
                                         _componentModifierItem.price + selectedModifierPrice(
                                             selectedModifierGroup
@@ -1541,6 +1540,22 @@ class ComboViewModel @Inject constructor(
         }
 
         return counter
+    }
+
+    private fun ifHasSelectedModifierItems(items: List<ModifierGroup>): Boolean {
+        var counter = 0
+        items.forEach { mdg ->
+            if(mdg.attributes.minimum < 1){
+                counter++
+            }else {
+                mdg.modifierItems.filter { t -> t.attributes.isSelected }.let {
+                    counter += it.size
+                }
+            }
+
+        }
+
+        return counter > 0
     }
 
     fun updateCartItem(isPromo: Boolean, cartMenuItemPos: Int) {
@@ -1628,7 +1643,7 @@ class ComboViewModel @Inject constructor(
 
                     var selected = 0
                     components.items.filter { item -> item.selected }.forEach {
-                        selected += it.attributes.quantity
+                        selected += it.quantity
                     }
 
                     if (selected < components.minimum) {

@@ -661,6 +661,9 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
     }
 
     private fun showToastMessage(message: String) {
+        if(inProgress){
+            dismissLoading()
+        }
         if (message == CacheUtil.getInstance()
                 .getTranslations(Text.ADDED_TO_FAVORITES) || message == CacheUtil.getInstance()
                 .getTranslations(Text.REMOVED_FROM_FAVORITES)
