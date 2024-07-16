@@ -252,7 +252,10 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
         if(rules.isMet()){
 
             activity?.let {
-                binding.btnClaim.backgroundTintList = ContextCompat.getColorStateList(it, R.color.background_color_blue)
+                binding.btnClaim.apply {
+                    isEnabled = false
+                    backgroundTintList = ContextCompat.getColorStateList(it, R.color.background_color_blue)
+                }
             }
             binding.btnClaim.isEnabled = true
             binding.btnClaim.setOnClickListener {
@@ -309,7 +312,16 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                             }
                         }
                     } else {
-                        action?.onShowMenu()
+                        promo?.let {
+                            if (it.promotion != null && it.promotion.attributes.type.equals(
+                                    "item", ignoreCase = true
+                                )
+                            ){
+                                action?.onClickClaimPromo(it)
+                            }else {
+                                action?.onShowMenu()
+                            }
+                        }
                     }
                 } else {
                     CacheUtil.getInstance().couponCode = null

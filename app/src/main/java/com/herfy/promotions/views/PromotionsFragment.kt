@@ -344,7 +344,8 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
             object : PromotionDetailBottomSheet.onAction{
                 override fun onClickClaimPromo(promo: Campaign) {
                     showLoadingDialog()
-                    promotionsPresenter.validateDigitalCoupon(promo)
+                    //promotionsPresenter.validateDigitalCoupon(promo)
+                    promotionsPresenter.onAvailDigitalCoupon(promo)
                 }
 
                 override fun onRemovePromo() {

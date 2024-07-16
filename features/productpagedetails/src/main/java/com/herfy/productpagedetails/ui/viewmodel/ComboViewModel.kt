@@ -273,6 +273,30 @@ class ComboViewModel @Inject constructor(
         _showMenuItemDetails.value = menuItem
         _showMenuItemQuantity.value = menuItem.attributes.quantity
         _showComboSizes.value = menuItem.sizes.modifierItems
+        val applicationId = cacheUtilHelper.getApplication()?.id ?: ""
+        if (menuCategory == null) {
+            invokeAtBackground {
+                menuRepository.getMenuCategoryIdFromMenuItemEntityBy(
+                    menuItem.id,
+                    applicationId
+                ) {
+                    val menuCategory = MenuCategory()
+                    menuCategory.id = it
+                    this.menuCategory = menuCategory
+                }
+            }
+        }
+        if (menuItem.sizes.modifierItems.size > 0) {
+            var counter = 0
+            for (size in menuItem.sizes.modifierItems) {
+                if (size.attributes.isSelected) {
+                    comboIndex = counter
+                    break
+                }
+                counter++
+            }
+        }
+
         getComboMenuItemComponents()
         showHideModifierItemPrice(menuItem)
         getMenuItemTotalPrice(menuItem, -1)
