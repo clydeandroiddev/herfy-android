@@ -880,8 +880,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         .replace("(x)", "0")
                 emptyCart.visible()
                 rvCartItems.gone()
-                binding.paymentSummaryContainer.viewCoupon.isEnabled = false
-                layoutItemCoupons.contentMain.gone()
                 placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
             }
         }
@@ -1871,8 +1869,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     //quantityLayout.visibility = if (menuItem.isPromo || menuItemTotalPrice == 0.0) View.INVISIBLE else View.VISIBLE
 
 
-                    quantity.text = StringUtil.localize(menuItem.attributes.quantity.toString())
-
+                    var priceStr = StringUtil.localize("0" + menuItem.attributes.quantity.toString())
+                    if(menuItem.attributes.quantity > 9){
+                        priceStr = StringUtil.localize(menuItem.attributes.quantity.toString())
+                    }
+                    quantity.text = priceStr
                     if (menuItemTotalPrice > 0) {
                         totalPrice.text = StringUtil.getNewFormattedPrice(
                             menuItemTotalPrice * menuItem.attributes.quantity,
@@ -1944,7 +1945,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             } else {
                 null
             }
-            promoItem?.let { promoMenuItem ->
+            /*promoItem?.let { promoMenuItem ->
                 if (promoMenuItem.isMustBeCustomized && promoMenuItem.isCombo) {
                     NavigationUtils.navigateSafe(
                         findNavController(), CartFragmentDirections.actionCartToComboMeal(
@@ -1966,7 +1967,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         )
                     )
                 }
-            }
+            }*/
 
         }
     }
