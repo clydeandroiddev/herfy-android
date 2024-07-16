@@ -738,6 +738,7 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun onClickClaimPromo(promo: Campaign) {
+
         validateDigitalCoupon(promo)
     }
 

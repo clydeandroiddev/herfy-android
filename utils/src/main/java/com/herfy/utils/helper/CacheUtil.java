@@ -1163,26 +1163,30 @@ public class CacheUtil {
 
         String cartMenuItems = cacheSharedPreferences.getString(CART_MENU_ITEMS, null);
 
-        if (cartMenuItems != null) {
-            try {
+        try {
+            int quantity = 0;
+            if (cartMenuItems != null) {
                 List<MenuItem> menuItems = GsonHelper.gsonFinal().fromJson(cartMenuItems, new TypeToken<ArrayList<MenuItem>>() {
                 }.getType());
-                int quantity = 0;
+
                 for (MenuItem menuItem : menuItems) {
                     quantity += menuItem.getAttributes().getQuantity();
                 }
-                if (CacheUtil.getInstance().getCouponCode() != null && CacheUtil.getInstance().getCouponMenuItem() != null) {
-                    quantity += CacheUtil.getInstance().getCouponMenuItem().getAttributes().getQuantity();
-                }
-                if (CacheUtil.getInstance().getCampaign() != null && CacheUtil.getInstance().getCampaignPromotion() != null && CacheUtil.getInstance().getCampaignPromotionMenuItem() != null) {
-                    quantity += CacheUtil.getInstance().getCampaignPromotionMenuItem().getAttributes().getQuantity();
-                }
-                return quantity;
-            } catch (Exception e) {
-                e.printStackTrace();
-                setCart(new ArrayList<>());
             }
+
+            if (CacheUtil.getInstance().getCouponCode() != null && CacheUtil.getInstance().getCouponMenuItem() != null) {
+                quantity += CacheUtil.getInstance().getCouponMenuItem().getAttributes().getQuantity();
+            }
+            if (CacheUtil.getInstance().getCampaign() != null && CacheUtil.getInstance().getCampaignPromotion() != null && CacheUtil.getInstance().getCampaignPromotionMenuItem() != null) {
+                quantity += CacheUtil.getInstance().getCampaignPromotionMenuItem().getAttributes().getQuantity();
+            }
+            return quantity;
+        } catch (Exception e) {
+            e.printStackTrace();
+            setCart(new ArrayList<>());
         }
+
+
 
         return 0;
     }

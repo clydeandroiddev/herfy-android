@@ -2535,80 +2535,75 @@ class CartPresenter @Inject constructor(
                                     orderData.total = 0.0
                                 }
                                 var isPromoItem = false
-
-                                try {
-                                    val cartItems =
-                                        if (jsonObject.isNull("items")) "" else jsonObject.optString(
-                                            "items"
-                                        )
-                                    val itemsList =
-                                        GsonHelper.gsonFinal().fromJson<List<MenuItem>>(
-                                            cartItems,
-                                            object : TypeToken<List<MenuItem?>?>() {}.type
-                                        )
-                                    val size = itemsList.size
-                                    validatedPromoItemPrice = 0.0
-                                    validatedPromoItemQuantity = 0
-                                    for (i in 0 until size) {
-                                        if (itemsList[i].isPromotion) {
-                                            isPromoItem = true
-                                            val mItem = itemsList[i]
-                                            validatedPromoItemPrice = mItem.price
-                                            validatedPromoItemQuantity = mItem.quantity
-                                            val attributes = MenuItemAttributes()
-                                            attributes.price =
-                                                digitalCoupon.promotion.attributes.itemPrice
-                                            if (digitalCoupon.promotion != null && digitalCoupon.promotion.attributes.itemQuantity > 0) {
-                                                attributes.quantity =
-                                                    digitalCoupon.promotion.attributes.itemQuantity
-                                            } else {
-                                                attributes.quantity = 1
-                                            }
-                                            getCouponMenuItem(
-                                                mItem.id,
-                                                attributes.quantity,
-                                                attributes.price,
-                                                attributes,
-                                                digitalCoupon
+                                    try {
+                                        val cartItems =
+                                            if (jsonObject.isNull("items")) "" else jsonObject.optString(
+                                                "items"
                                             )
+                                        val itemsList =
+                                            GsonHelper.gsonFinal().fromJson<List<MenuItem>>(
+                                                cartItems,
+                                                object : TypeToken<List<MenuItem?>?>() {}.type
+                                            )
+                                        val size = itemsList.size
+                                        validatedPromoItemPrice = 0.0
+                                        validatedPromoItemQuantity = 0
+                                        for (i in 0 until size) {
+                                            if (itemsList[i].isPromotion) {
+                                                isPromoItem = true
+                                                val mItem = itemsList[i]
+                                                validatedPromoItemPrice = mItem.price
+                                                validatedPromoItemQuantity = mItem.quantity
+                                                val attributes = MenuItemAttributes()
+                                                attributes.price =
+                                                    digitalCoupon.promotion.attributes.itemPrice
+                                                if (digitalCoupon.promotion != null && digitalCoupon.promotion.attributes.itemQuantity > 0) {
+                                                    attributes.quantity =
+                                                        digitalCoupon.promotion.attributes.itemQuantity
+                                                } else {
+                                                    attributes.quantity = 1
+                                                }
+                                                getCouponMenuItem(
+                                                    mItem.id,
+                                                    attributes.quantity,
+                                                    attributes.price,
+                                                    attributes,
+                                                    digitalCoupon
+                                                )
+                                            }
                                         }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
                                     }
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                                if(fromApply) {
-                                    cartView.showMenuItems(menuItems, true, false)
-                                }
-                                cartView.setTax(
-                                    concept.vatType.equals("inclusive", ignoreCase = true),
-                                    StringUtil.getFormattedPrice(orderData.vatAmount),
-                                    orderData.vatAmount
-                                )
-                                if (orderData.discount > 0) {
-                                    cartView.setOriginalPrice(
-                                        true, orderData.subtotal + orderData.deliverCharge
+                                    if(fromApply) {
+                                        cartView.showMenuItems(menuItems, true, false)
+                                    }
+                                    cartView.setTax(
+                                        concept.vatType.equals("inclusive", ignoreCase = true),
+                                        StringUtil.getFormattedPrice(orderData.vatAmount),
+                                        orderData.vatAmount
                                     )
-                                }
-                                val discountValue = if(orderData.discountDisplay > 0.0) orderData.discountDisplay else orderData.discount
-                                if (!isPromoItem) {
-                                    cartView.setTotalPrice(
-                                        true,
-                                        orderData.subtotal,
-                                        discountValue,
-                                        orderData.total,
-                                        CacheUtil.getInstance().orderType == OrderType.DELIVERY,
-                                        orderData.deliverCharge,
-                                        orderData.charges,
-                                        0.0
-                                    )
-                                    cartView.showDigitalCoupon(digitalCoupon)
-                                } else {
-                                    validatedOrderData = orderData
-                                }
-
-
-                              /*  if (CacheUtil.getInstance().cartQuantity > 0) {
-
+                                    if (orderData.discount > 0) {
+                                        cartView.setOriginalPrice(
+                                            true, orderData.subtotal + orderData.deliverCharge
+                                        )
+                                    }
+                                    val discountValue = if(orderData.discountDisplay > 0.0) orderData.discountDisplay else orderData.discount
+                                    if (!isPromoItem) {
+                                        cartView.setTotalPrice(
+                                            true,
+                                            orderData.subtotal,
+                                            discountValue,
+                                            orderData.total,
+                                            CacheUtil.getInstance().orderType == OrderType.DELIVERY,
+                                            orderData.deliverCharge,
+                                            orderData.charges,
+                                            0.0
+                                        )
+                                        cartView.showDigitalCoupon(digitalCoupon)
+                                    } else {
+                                        validatedOrderData = orderData
+                                    }/*  if (CacheUtil.getInstance().cartQuantity > 0) {
                                 } else {
                                     digitalCoupons.clear()
                                     CacheUtil.getInstance().digitalCoupons = ""

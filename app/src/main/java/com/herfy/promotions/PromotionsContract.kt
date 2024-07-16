@@ -22,5 +22,6 @@ interface PromotionsContract {
         fun loadPromotions()
         fun getPromotionCategoryList()
         fun validateDigitalCoupon(digitalCoupon : Campaign)
+        fun onAvailDigitalCoupon(digitalCoupon : Campaign)
     }
 }
