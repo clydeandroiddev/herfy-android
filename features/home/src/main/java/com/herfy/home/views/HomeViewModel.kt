@@ -150,6 +150,9 @@ class HomeViewModel @Inject constructor(
     private val _showMenu = MutableLiveData<Event<Boolean>>()
     val showMenu : LiveData<Event<Boolean>> = _showMenu
 
+    private val _showPromotionsError = MutableLiveData<Event<ErrorMsgItem>>()
+    val showPromotionsError : LiveData<Event<ErrorMsgItem>> = _showPromotionsError
+
     fun getSliders() {
         invoke {
             val sliderId = CacheUtil.getInstance().getSliderId(Values.HOME_PAGE_TOP_BANNER_LABEL)
@@ -811,10 +814,10 @@ class HomeViewModel @Inject constructor(
                                         val errorObject = error.getJSONObject(0)
                                         detail = errorObject.getString("detail")
                                     }
-                                    _showError.value = Event(ErrorMsgItem(true, detail))
+                                    _showPromotionsError.value = Event(ErrorMsgItem(true, detail))
                                 } catch (e: JSONException) {
                                     e.printStackTrace()
-                                    _showError.value = Event(
+                                    _showPromotionsError.value = Event(
                                         ErrorMsgItem(
                                             true, CacheUtil.getInstance().getTranslations(
                                                 Text.YOU_ARE_NOT_ELIGIBLE_TO_CLAIM_THE_PROMOTION,
@@ -824,7 +827,7 @@ class HomeViewModel @Inject constructor(
                                     )
                                 }
                             } else {
-                                _showError.value = Event(
+                                _showPromotionsError.value = Event(
                                     ErrorMsgItem(
                                         true, CacheUtil.getInstance().getTranslations(
                                             Text.YOU_ARE_NOT_ELIGIBLE_TO_CLAIM_THE_PROMOTION,
@@ -841,8 +844,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun validateDigitalCoupon(digitalCoupon: Campaign?) {
-        if (digitalCoupon != null && CacheUtil.getInstance().getCartQuantity() > 0) {
-
+        if (digitalCoupon != null) {
             invoke {
                 homeRepository.getMenuCartItems {
                     val customer = AuthUtil.getInstance().getCustomer()
@@ -1119,8 +1121,7 @@ class HomeViewModel @Inject constructor(
                                 try {
                                     val jsonObject = JSONObject(o.toString())
                                     if (jsonObject.has("error") && !jsonObject.isNull("error")) {
-                                        _showError.value =
-                                            Event(ErrorMsgItem(true, jsonObject.getString("error")))
+                                        _showPromotionsError.value = Event(ErrorMsgItem(true, jsonObject.getString("error")))
                                     } else {
                                         if (digitalCoupon.getPromotion() != null && digitalCoupon.getPromotion()
                                                 .getAttributes().getType()
@@ -1135,7 +1136,12 @@ class HomeViewModel @Inject constructor(
                                             CacheUtil.getInstance()
                                                 .setCampaignPromotionMenuItem(null)
                                             CacheUtil.getInstance().setCampaignToAdd(null)
-                                            _showCart.value = Event(true)
+                                            if(CacheUtil.getInstance().getCartQuantity() > 0){
+                                                _showCart.value = Event(true)
+                                            }else {
+                                                _showMenu.value = Event(true)
+                                            }
+
                                         }
                                     }
                                 } catch (ex: JSONException) {
@@ -1146,7 +1152,7 @@ class HomeViewModel @Inject constructor(
 
                             override fun onError(o: Any) {
                                 AppLogger.printRetrofitError(o)
-                                _showError.value = Event(
+                                _showPromotionsError.value = Event(
                                     ErrorMsgItem(
                                         true, ErrorHandler.getErrorMessage(
                                             o, CacheUtil.getInstance().getTranslations(
@@ -1161,8 +1167,6 @@ class HomeViewModel @Inject constructor(
                 }
             }
 
-        } else {
-          _showMenu.value = Event(true)
         }
     }
 

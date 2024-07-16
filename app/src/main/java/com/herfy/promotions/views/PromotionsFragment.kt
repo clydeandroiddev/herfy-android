@@ -180,6 +180,7 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
                     error,
                     CacheUtil.getInstance().getTranslations(Text.OK)
                 ) { dialog, which ->
+                    promotionDetailBottomSheet?.dismissLoading()
                     if (back) {
                         activity.onBackPressed()
                     }

@@ -38,6 +38,7 @@ import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.loadSliderImage
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.observeNonNull
+import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.setInteractionDisabled
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
@@ -340,6 +341,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.showError.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { error ->
                 if (error.message.isNotEmpty()) {
+                    dismissProgressDialog()
                     showAlertDialog(
                         title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR"),
                         message = error.message
@@ -789,6 +791,20 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                 e.printStackTrace()
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        viewModel.showPromotionsError.observeNonNull(this){
+            it.getContentIfNotHandled()?.let { error ->
+                runOnMain {
+                    if (error.message.isNotEmpty()) {
+                        promotionDetailBottomSheet?.dismissLoading()
+                        showAlertDialog(
+                            title = "",
+                            message = error.message
+                        )
                     }
                 }
             }
