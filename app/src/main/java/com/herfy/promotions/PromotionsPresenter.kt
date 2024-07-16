@@ -698,6 +698,7 @@ class PromotionsPresenter @Inject constructor(
                         orderBody.addProperty(
                             "location",
                             CacheUtil.getInstance().getOrderStore().id
+
                         )
                         orderBody.addProperty(
                             "car-id",
@@ -868,7 +869,11 @@ class PromotionsPresenter @Inject constructor(
                                         CacheUtil.getInstance()
                                             .setCampaignPromotionMenuItem(null)
                                         CacheUtil.getInstance().setCampaignToAdd(null)
-                                        view.showCart(true)
+                                        if (CacheUtil.getInstance().getCartQuantity() > 0) {
+                                            view.showCart(true)
+                                        } else {
+                                            view.showMenu()
+                                        }
                                     }
                                 }
                             } catch (ex: JSONException) {

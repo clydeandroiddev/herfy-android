@@ -248,100 +248,73 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
             binding.btnClaim.text = CacheUtil.getInstance()
                 .getTranslations(Text.REMOVE_PROMO_LABEL, "Remove Promo")
         }
-        val cartQuantity = cacheUtilHelper?.getCartQuantity() ?: 0
-        if(rules.isMet()){
-
-            activity?.let {
-                binding.btnClaim.apply {
-                    isEnabled = false
-                    backgroundTintList = ContextCompat.getColorStateList(it, R.color.background_color_blue)
-                }
-            }
-            binding.btnClaim.isEnabled = true
-            binding.btnClaim.setOnClickListener {
-                if (!toRemove) {
-                    if(cartQuantity > 0){
-                        if (CacheUtil.getInstance().couponCode != null || CacheUtil.getInstance().campaign != null) {
-                            try {
-                                showPromptAlertDialog(
-                                    "",
-                                    CacheUtil.getInstance().getTranslations(
-                                        Text.ONE_DISCOUNT_ONLY_MESSAGE,
-                                        "You can only apply one discount at a time. Currently applied discount will be removed."
-                                    ),
-                                    CacheUtil.getInstance().getTranslations(
-                                        Text.YES_CAPS
-                                    ),
-                                    { dialogInterface, i ->
-                                        promo?.let { promoData ->
-                                            CacheUtil.getInstance().couponCode = null
-                                            CacheUtil.getInstance().couponName = null
-                                            CacheUtil.getInstance().couponMenuItem = null
-                                            CacheUtil.getInstance().couponToAdd = null
-                                            CacheUtil.getInstance().digitalCoupons = ""
-                                            CacheUtil.getInstance().campaign = null
-                                            CacheUtil.getInstance().campaignPromotion = null
-                                            CacheUtil.getInstance().campaignPromotionMenuItem = null
-                                            CacheUtil.getInstance().campaignToAdd = null
-                                            action?.onClickClaimPromo(promoData)
-                                        }
-                                    },
-                                    CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
-                                ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
-                            } catch (e: Exception) {
+        activity?.let {
+            binding.btnClaim.backgroundTintList = ContextCompat.getColorStateList(it, R.color.background_color_blue)
+        }
+        binding.btnClaim.isEnabled = true
+        binding.btnClaim.setOnClickListener {
+            if (!toRemove) {
+                if (CacheUtil.getInstance().couponCode != null || CacheUtil.getInstance().campaign != null) {
+                    try {
+                        showPromptAlertDialog(
+                            "",
+                            CacheUtil.getInstance().getTranslations(
+                                Text.ONE_DISCOUNT_ONLY_MESSAGE,
+                                "You can only apply one discount at a time. Currently applied discount will be removed."
+                            ),
+                            CacheUtil.getInstance().getTranslations(
+                                Text.YES_CAPS
+                            ),
+                            { dialogInterface, i ->
                                 promo?.let { promoData ->
-                                    if (CacheUtil.getInstance().couponCode != null) {
-                                        CacheUtil.getInstance().couponCode = null
-                                        CacheUtil.getInstance().couponName = null
-                                        CacheUtil.getInstance().couponMenuItem = null
-                                        CacheUtil.getInstance().couponToAdd = null
-                                        CacheUtil.getInstance().digitalCoupons = ""
-                                        CacheUtil.getInstance().campaign = null
-                                        CacheUtil.getInstance().campaignPromotion = null
-                                        CacheUtil.getInstance().campaignPromotionMenuItem = null
-                                        CacheUtil.getInstance().campaignToAdd = null
-                                        action?.onClickClaimPromo(promoData)
-                                    }
+                                    CacheUtil.getInstance().couponCode = null
+                                    CacheUtil.getInstance().couponName = null
+                                    CacheUtil.getInstance().couponMenuItem = null
+                                    CacheUtil.getInstance().couponToAdd = null
+                                    CacheUtil.getInstance().digitalCoupons = ""
+                                    CacheUtil.getInstance().campaign = null
+                                    CacheUtil.getInstance().campaignPromotion = null
+                                    CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                    CacheUtil.getInstance().campaignToAdd = null
+                                    action?.onClickClaimPromo(promoData)
                                 }
-                                e.printStackTrace()
-                            }
-                        } else {
-                            promo?.let { promoData ->
-                                binding.layoutLoading.root.visible()
+                            },
+                            CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
+                        ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
+                    } catch (e: Exception) {
+                        promo?.let { promoData ->
+                            if (CacheUtil.getInstance().couponCode != null) {
+                                CacheUtil.getInstance().couponCode = null
+                                CacheUtil.getInstance().couponName = null
+                                CacheUtil.getInstance().couponMenuItem = null
+                                CacheUtil.getInstance().couponToAdd = null
+                                CacheUtil.getInstance().digitalCoupons = ""
+                                CacheUtil.getInstance().campaign = null
+                                CacheUtil.getInstance().campaignPromotion = null
+                                CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                CacheUtil.getInstance().campaignToAdd = null
                                 action?.onClickClaimPromo(promoData)
                             }
                         }
-                    } else {
-                        promo?.let {
-                            if (it.promotion != null && it.promotion.attributes.type.equals(
-                                    "item", ignoreCase = true
-                                )
-                            ){
-                                action?.onClickClaimPromo(it)
-                            }else {
-                                action?.onShowMenu()
-                            }
-                        }
+                        e.printStackTrace()
                     }
                 } else {
-                    CacheUtil.getInstance().couponCode = null
-                    CacheUtil.getInstance().couponName = null
-                    CacheUtil.getInstance().couponMenuItem = null
-                    CacheUtil.getInstance().couponToAdd = null
-                    CacheUtil.getInstance().digitalCoupons = ""
-                    CacheUtil.getInstance().campaign = null
-                    CacheUtil.getInstance().campaignPromotion = null
-                    CacheUtil.getInstance().campaignPromotionMenuItem = null
-                    CacheUtil.getInstance().campaignToAdd = null
-                    action?.onRemovePromo()
+                    promo?.let { promoData ->
+                        binding.layoutLoading.root.visible()
+                        action?.onClickClaimPromo(promoData)
+                    }
                 }
-            }
-        } else {
-            activity?.let {
-                binding.btnClaim.apply {
-                    isEnabled = false
-                    backgroundTintList = ContextCompat.getColorStateList(it, R.color.disabled)
-                }
+            } else {
+                CacheUtil.getInstance().couponCode = null
+                CacheUtil.getInstance().couponName = null
+                CacheUtil.getInstance().couponMenuItem = null
+                CacheUtil.getInstance().couponToAdd = null
+                CacheUtil.getInstance().digitalCoupons = ""
+                CacheUtil.getInstance().campaign = null
+                CacheUtil.getInstance().campaignPromotion = null
+                CacheUtil.getInstance().campaignPromotionMenuItem = null
+                CacheUtil.getInstance().campaignToAdd = null
+                action?.onRemovePromo()
             }
         }
     }
@@ -479,6 +452,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, CacheUtil.getInstance().getTranslations(Text.OK)
                 ) { dialog, _ ->
                     dialog.dismiss()
+                    binding.layoutLoading.root.gone()
                 }
                 alertDialog.setOnShowListener(OnShowListener {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setAllCaps(false)
@@ -498,6 +472,10 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
         } catch (ex: java.lang.Exception) {
             ex.printStackTrace()
         }
+    }
+
+    fun dismissLoading() {
+        binding.layoutLoading.root.gone()
     }
 
 
