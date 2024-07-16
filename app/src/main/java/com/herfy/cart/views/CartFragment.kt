@@ -880,8 +880,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         .replace("(x)", "0")
                 emptyCart.visible()
                 rvCartItems.gone()
-                binding.paymentSummaryContainer.viewCoupon.isEnabled = false
-                layoutItemCoupons.contentMain.gone()
                 placeholderOrderDetails.shimmerOrderDetails.visibility = View.GONE
             }
         }
@@ -1944,7 +1942,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             } else {
                 null
             }
-            promoItem?.let { promoMenuItem ->
+            /*promoItem?.let { promoMenuItem ->
                 if (promoMenuItem.isMustBeCustomized && promoMenuItem.isCombo) {
                     NavigationUtils.navigateSafe(
                         findNavController(), CartFragmentDirections.actionCartToComboMeal(
@@ -1966,7 +1964,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         )
                     )
                 }
-            }
+            }*/
 
         }
     }
