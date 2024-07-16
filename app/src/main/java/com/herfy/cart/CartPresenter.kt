@@ -1736,6 +1736,7 @@ class CartPresenter @Inject constructor(
         if (validateDigitalCouponDisposable != null) validateDigitalCouponDisposable!!.dispose()
         if (digitalCall != null && digitalCall!!.isExecuted()) digitalCall!!.cancel();
         GlobalScope.launch(contextPool.Main){
+            cacheUtilHelper.setCartQuantity(menuItems)
             cacheUtilHelper.getCartItems {
                 menuItems = CacheUtil.getInstance().cart
                 cartView.showMenuItems(menuItems, true, true)
