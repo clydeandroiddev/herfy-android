@@ -242,6 +242,10 @@
             android:id="@+id/action_order_type_to_curbside"
             app:destination="@id/nav_curbside"
             app:popUpTo="@+id/nav_order_type" />
+        <action
+            android:id="@+id/action_order_type_to_combo"
+            app:destination="@id/nav_combo"
+            app:popUpTo="@+id/nav_favorites" />
 
     </fragment>
 
@@ -376,6 +380,10 @@
             app:argType="boolean"/>
         <argument
             android:name="is_favorite"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="isFromOrderType"
             android:defaultValue="false"
             app:argType="boolean" />
 

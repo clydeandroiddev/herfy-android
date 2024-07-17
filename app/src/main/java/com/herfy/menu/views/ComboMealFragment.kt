@@ -269,7 +269,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             )
             txtQuantity.text = cacheUtilHelper.getTranslations(Text.ITEM_QUANTITY, "Item quantity")
             if (cartMenuItemPos >= 0 || isEdit) {
-                add.text = cacheUtilHelper.getTranslations(Text.UPDATE)
+                add.text = cacheUtilHelper.getTranslations(Text.UPDATE, "Update")
             } else {
                 add.text =
                     cacheUtilHelper.getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
@@ -428,9 +428,14 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                         totalPrice, withSpace = true, ignoreDecimalPlaces = false
                     )
                     binding.tvTotal.text = formattedPrice
-                    binding.add.text =
-                        cacheUtilHelper.getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
-                            .replace("(x)", formattedPrice.toString())
+                    if(cartMenuItemPos >= 0 || isEdit){
+                        binding.add.text = cacheUtilHelper.getTranslations(Text.UPDATE, "Update")
+                    }else {
+                        binding.add.text =
+                            cacheUtilHelper.getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
+                                .replace("(x)", formattedPrice.toString())
+                    }
+
                 }
             }
             showComboSizes.observe(this@ComboMealFragment) {

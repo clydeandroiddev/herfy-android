@@ -1,4 +1,5 @@
 package com.herfy.payment;
+
 import android.location.Geocoder;
 import android.util.Pair;
 
@@ -409,70 +410,72 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         if (BuildUtil.isEkfc() && menuItem.getTotal() != 0) {
             totalPrice = menuItem.getTotal();
         } else {
-            if (menuItem.getSizes().getModifierItems().size() > 0) {
-                if (!menuItem.isPromo()) {
-                    totalPrice = 0.0;
+            if (!menuItem.isPromo()) {
+                if (menuItem.getSizes().getModifierItems().size() > 0) {
+                    if (!menuItem.isPromo()) {
+                        totalPrice = 0.0;
+                    }
+                    for (ModifierItem modifierItem : menuItem.getSizes().getModifierItems()) {
+                        if (modifierItem.getAttributes().isSelected()) {
+                            totalPrice += modifierItem.getAttributes().getPrice();
+                            comboIndex = counter;
+                            break;
+                        }
+                        counter++;
+                    }
                 }
-                for (ModifierItem modifierItem : menuItem.getSizes().getModifierItems()) {
+                for (ModifierItem modifierItem : menuItem.getDrinks().getModifierItems()) {
                     if (modifierItem.getAttributes().isSelected()) {
                         totalPrice += modifierItem.getAttributes().getPrice();
-                        comboIndex = counter;
                         break;
                     }
-                    counter++;
                 }
-            }
-            for (ModifierItem modifierItem : menuItem.getDrinks().getModifierItems()) {
-                if (modifierItem.getAttributes().isSelected()) {
-                    totalPrice += modifierItem.getAttributes().getPrice();
-                    break;
+                for (ModifierItem modifierItem : menuItem.getFries().getModifierItems()) {
+                    if (modifierItem.getAttributes().isSelected()) {
+                        totalPrice += modifierItem.getAttributes().getPrice();
+                        break;
+                    }
                 }
-            }
-            for (ModifierItem modifierItem : menuItem.getFries().getModifierItems()) {
-                if (modifierItem.getAttributes().isSelected()) {
-                    totalPrice += modifierItem.getAttributes().getPrice();
-                    break;
-                }
-            }
-            for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
-                VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
-                if (visibilityConfig == null || visibilityConfig.getInitialValue() == null || !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
-                    int selectedFreeModifier = 0;
-                    for (ModifierItem modifierItem : modifierGroup.getModifierItems()) {
-                        if (modifierItem.getAttributes().isSelected()) {
-                            if (modifierGroup.getAttributes().getFreeModifiersCount() > 0 && selectedFreeModifier < modifierGroup.getAttributes().getFreeModifiersCount()) {
-                                int totalSelectedFreeModifier = selectedFreeModifier + modifierItem.getAttributes().getQuantity();
-                                if (totalSelectedFreeModifier < modifierGroup.getAttributes().getFreeModifiersCount()) {
-                                    selectedFreeModifier += modifierItem.getAttributes().getQuantity();
+                for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
+                    VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
+                    if (visibilityConfig == null || visibilityConfig.getInitialValue() == null || !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
+                        int selectedFreeModifier = 0;
+                        for (ModifierItem modifierItem : modifierGroup.getModifierItems()) {
+                            if (modifierItem.getAttributes().isSelected()) {
+                                if (modifierGroup.getAttributes().getFreeModifiersCount() > 0 && selectedFreeModifier < modifierGroup.getAttributes().getFreeModifiersCount()) {
+                                    int totalSelectedFreeModifier = selectedFreeModifier + modifierItem.getAttributes().getQuantity();
+                                    if (totalSelectedFreeModifier < modifierGroup.getAttributes().getFreeModifiersCount()) {
+                                        selectedFreeModifier += modifierItem.getAttributes().getQuantity();
+                                    } else {
+                                        selectedFreeModifier = modifierGroup.getAttributes().getFreeModifiersCount();
+                                        totalPrice += modifierItem.getAttributes().getPrice() * (totalSelectedFreeModifier - modifierGroup.getAttributes().getFreeModifiersCount());
+                                    }
                                 } else {
-                                    selectedFreeModifier = modifierGroup.getAttributes().getFreeModifiersCount();
-                                    totalPrice += modifierItem.getAttributes().getPrice() * (totalSelectedFreeModifier - modifierGroup.getAttributes().getFreeModifiersCount());
+                                    totalPrice += modifierItem.getAttributes().getPrice() * modifierItem.getAttributes().getQuantity();
                                 }
-                            } else {
-                                totalPrice += modifierItem.getAttributes().getPrice() * modifierItem.getAttributes().getQuantity();
                             }
                         }
                     }
                 }
-            }
-            for (Ingredient ingredient : menuItem.getIngredients()) {
-                if (ingredient.getAttributes().isSelected()) {
-                    totalPrice += ingredient.getAttributes().getPrice();
+                for (Ingredient ingredient : menuItem.getIngredients()) {
+                    if (ingredient.getAttributes().isSelected()) {
+                        totalPrice += ingredient.getAttributes().getPrice();
+                    }
                 }
-            }
 
-            try {
-                if (menuItem.isCombo) {
-                    for (MenuItemComponents components : menuItem.combo.get(comboIndex).components) {
-                        for (ComponentModifierItem componentModifierItem : components.items) {
-                            if (componentModifierItem.selected) {
-                                if (!menuItem.isSandwichOnly)
-                                    totalPrice += componentModifierItem.price;
-                                if (!componentModifierItem.modifierGroups.isEmpty()) {
-                                    for (ModifierGroup modifierGroup : componentModifierItem.modifierGroups) {
-                                        for (int i = 0; i < modifierGroup.getModifierItems().size(); i++) {
-                                            if (modifierGroup.getModifierItems().get(i).getAttributes().isSelected()) {
-                                                totalPrice += (modifierGroup.getModifierItems().get(i).getAttributes().getPrice() * modifierGroup.getModifierItems().get(i).getAttributes().getQuantity());
+                try {
+                    if (menuItem.isCombo) {
+                        for (MenuItemComponents components : menuItem.combo.get(comboIndex).components) {
+                            for (ComponentModifierItem componentModifierItem : components.items) {
+                                if (componentModifierItem.selected) {
+                                    if (!menuItem.isSandwichOnly)
+                                        totalPrice += componentModifierItem.price;
+                                    if (!componentModifierItem.modifierGroups.isEmpty()) {
+                                        for (ModifierGroup modifierGroup : componentModifierItem.modifierGroups) {
+                                            for (int i = 0; i < modifierGroup.getModifierItems().size(); i++) {
+                                                if (modifierGroup.getModifierItems().get(i).getAttributes().isSelected()) {
+                                                    totalPrice += (modifierGroup.getModifierItems().get(i).getAttributes().getPrice() * modifierGroup.getModifierItems().get(i).getAttributes().getQuantity());
+                                                }
                                             }
                                         }
                                     }
@@ -480,9 +483,9 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                             }
                         }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
 
@@ -903,7 +906,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                 break;
             case DELIVERY:
                 orderBody.addProperty("type", "deliver");
-                if(validate){
+                if (validate) {
                     orderBody.addProperty("delivery-charge", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", deliveryCharge)));
                 }
                 //orderBody.addProperty("delivery-charge", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", deliveryCharge)));
@@ -1236,14 +1239,14 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         if (loyaltyPoints > 0) {
                             pointsSarValue = loyaltyPoints / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
                         }
-                        double discountValue = orderData.getDiscountDisplay() > 0.0?  orderData.getDiscountDisplay() : orderData.getDiscount();
+                        double discountValue = orderData.getDiscountDisplay() > 0.0 ? orderData.getDiscountDisplay() : orderData.getDiscount();
 
                         boolean hasPromoItem = CacheUtil.getInstance().getCouponMenuItem() != null ||
                                 CacheUtil.getInstance().getCampaignPromotionMenuItem() != null;
 
                         if (jsonObject.has("error") && !jsonObject.isNull("error")) {
                             ErrorHandler.getErrorCode(jsonObject, s -> {
-                                if(s.equals("1213")){
+                                if (s.equals("1213")) {
                                     loyaltyPointsUsed = 0;
                                 }
                                 return null;
@@ -1286,7 +1289,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                             JSONObject object = (JSONObject) o;
                             if (object.has("error") && !object.isNull("error")) {
                                 ErrorHandler.getErrorCode(object, s -> {
-                                    if(s.equals("1213")){
+                                    if (s.equals("1213")) {
                                         loyaltyPointsUsed = 0;
                                         double currentValidatedTotal = getValidatedSubtotal() - validatedDiscount;
                                         paymentView.setPriceDetails(getValidatedSubtotal(),
@@ -1361,7 +1364,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
                         Store store = CacheUtil.getInstance().getOrderStore();
 
-                        if(store != null && store.getAttributes() != null && store.getAttributes().getPromisedTimeDelta() != null){
+                        if (store != null && store.getAttributes() != null && store.getAttributes().getPromisedTimeDelta() != null) {
                             String promisedTime = store.getAttributes().getPromisedTimeDelta().getPickup().toString();
                             if (orderType == OrderType.DELIVERY) {
                                 promisedTime = store.getAttributes().getPromisedTimeDelta().getDelivery().toString();

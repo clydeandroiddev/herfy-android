@@ -190,28 +190,29 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
         adapter?.setOnAction(object : FavoritesAction {
 
             override fun onFavouriteAddToCart(favorite: Favorite) {
-                MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_FAVOURITES)
-                activity?.apply {
-                    val menuItem = MenuUtil.getFavoriteMenuItem(favorite)
-                    FacebookAppEventUtil.addToCartEvent(
-                        this, menuItem, MenuUtil.getMenuItemTotalPrice(menuItem)
-                    )
-                }
-                if(favorite.attributes.isCombo){
-                    findNavController().navigate(
-                        FavoritesFragmentDirections.actionFavoritesToCombo( "",
-                            favorite.id, isFavorite = true
-                        )
-                    )
-                }else {
-                    findNavController().navigate(
-                        FavoritesFragmentDirections.actionFavoritesToMenuItem(
-                            favorite.id, isFavorite = true
-                        )
-                    )
-                }
-                /*if (CacheUtil.getInstance().orderType != OrderType.NONE && args.isFromOrderType || CacheUtil.getInstance().cart.count { it.isFavorite } >= 1) {
 
+                if (CacheUtil.getInstance().orderType != OrderType.NONE && args.isFromOrderType || CacheUtil.getInstance().cart.count { it.isFavorite } >= 1) {
+                    MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_FAVOURITES)
+                    activity?.apply {
+                        val menuItem = MenuUtil.getFavoriteMenuItem(favorite)
+                        FacebookAppEventUtil.addToCartEvent(
+                            this, menuItem, MenuUtil.getMenuItemTotalPrice(menuItem)
+                        )
+                    }
+                    if (favorite.attributes.isCombo) {
+                        findNavController().navigate(
+                            FavoritesFragmentDirections.actionFavoritesToCombo(
+                                "",
+                                favorite.id, isFavorite = true
+                            )
+                        )
+                    } else {
+                        findNavController().navigate(
+                            FavoritesFragmentDirections.actionFavoritesToMenuItem(
+                                favorite.id, isFavorite = true
+                            )
+                        )
+                    }
                 } else {
                     CacheUtil.getInstance().saveFavoriteToAddToCart(favorite)
                     findNavController().navigate(
@@ -219,7 +220,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                             isFromFavorites = true
                         )
                     )
-                }*/
+                }
             }
 
 

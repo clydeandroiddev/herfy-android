@@ -12,15 +12,22 @@ import com.bumptech.glide.request.RequestOptions
 import com.herfy.model.modifiers.ModifierAdapterItem
 import com.herfy.model.modifiers.ModifierGroupAdapterItem
 import com.herfy.model.modifiers.ModifierItemAdapterItem
+import com.herfy.model.modifiers.ModifierLineAdapterItem
 import com.herfy.productpagedetails.R
+import com.herfy.productpagedetails.databinding.ItemComboModifierGroupHeaderBinding
+import com.herfy.productpagedetails.databinding.ItemComboModifierSeperatorBinding
 import com.herfy.productpagedetails.databinding.ItemModifierGroupHeaderBinding
 import com.herfy.productpagedetails.databinding.ItemModifierOptionTypeBinding
 import com.herfy.productpagedetails.ui.viewholder.ModifierItemOptionViewHolder
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.cast
+import com.herfy.utils.extensions.comboHeaderVisibility
+import com.herfy.utils.extensions.comboItemVisibility
+import com.herfy.utils.extensions.comboLineVisibility
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.headerVisibility
+import com.herfy.utils.extensions.invisible
 import com.herfy.utils.extensions.isVisible
 import com.herfy.utils.extensions.itemVisibility
 import com.herfy.utils.extensions.loadImageFromUrl
@@ -48,7 +55,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ModifierAdapterItem.VIEW_TYPE_MODIFIER_GROUP -> {
-                val binding = ItemModifierGroupHeaderBinding.inflate(
+                val binding = ItemComboModifierGroupHeaderBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -63,6 +70,15 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                     false
                 )
                 ModifierItemViewHolder(binding)
+            }
+
+            ModifierAdapterItem.VIEW_TYPE_MODIFIER_LINE -> {
+                val binding = ItemComboModifierSeperatorBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                ModifierLineViewHolder(binding)
             }
 
             else -> throw IllegalArgumentException("Unknown view type")
@@ -117,7 +133,22 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                                 quantityDown.isVisible()
                             )
                         }
+                        quantityMinus.setOnClickListener {
+                            onAction?.onQuantityChanged(
+                                false,
+                                modifierGroup = item.modifierGroup,
+                                modifierItem = item.modifierItem,
+                                quantityDown.isVisible()
+                            )
+                        }
                     }
+                }
+            }
+
+            ModifierAdapterItem.VIEW_TYPE_MODIFIER_LINE -> {
+                val item = itemList[position] as ModifierLineAdapterItem
+                holder.cast<ModifierLineViewHolder> {
+                    it.bind(item)
                 }
             }
 
@@ -159,6 +190,16 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                         else -> false
                     }
                 }
+
+                is ModifierLineAdapterItem -> {
+                    when (val newItem = newItem[newPosition]) {
+                        is ModifierLineAdapterItem -> {
+                            oldItem.modifierGroup.id == newItem.modifierGroup.id
+                        }
+
+                        else -> false
+                    }
+                }
             }
         }
 
@@ -173,7 +214,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
 
     //ViewHolder Classes
     class ModifierGroupItemViewHolder(
-        private val binding: ItemModifierGroupHeaderBinding
+        private val binding: ItemComboModifierGroupHeaderBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ModifierGroupAdapterItem) {
             binding.apply {
@@ -187,7 +228,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 ) {
                     isVisibileByConfig = false
                 }
-                itemView.headerVisibility(isVisibileByConfig)
+                itemView.comboHeaderVisibility(isVisibileByConfig)
                 name.text = data.attributes.name
 
                 var imageUrl: String? = data.attributes.image
@@ -212,23 +253,44 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                     visible()
 
                     text = when {
-                        data.attributes.minimum > 0 && data.attributes.maximum > data.attributes.minimum -> cacheUtil.getTranslations(
-                            Text.SELECT_AT_LEAST_X_OPTIONS,
-                            "(Select at least (x) options)"
-                        ).replace("(x)", localize(data.attributes.minimum.toString()))
+                        data.attributes.minimum > 0 && data.attributes.maximum > data.attributes.minimum ->{
+                            var selectStr = cacheUtil.getTranslations(Text.SELECT_AT_LEAST_X_OPTION, "(Select at least (x) option)")
+                            if(data.attributes.minimum > 1){
+                                selectStr = cacheUtil.getTranslations(
+                                    Text.SELECT_AT_LEAST_X_OPTIONS,
+                                    "(Select at least (x) options)"
+                                )
+                            }
+                            selectStr.replace("(x)", data.attributes.minimum.toString())
+                        }
 
-                        data.attributes.minimum > 0 && data.attributes.minimum == data.attributes.maximum -> cacheUtil.getTranslations(
-                            Text.SELECT_X_OPTIONS,
-                            "(Select (x) options)"
-                        ).replace("(x)", localize(data.attributes.maximum.toString()))
 
-                        else -> cacheUtil.getTranslations(
-                            Text.SELECT_UP_TO_X_OPTIONS,
-                            "(Select up to (x) options)"
-                        ).replace("(x)", localize(data.attributes.maximum.toString()))
+                        data.attributes.minimum > 0 && data.attributes.minimum == data.attributes.maximum -> {
+                            var selectStr = cacheUtil.getTranslations(Text.SELECT_X_OPTION, "(Select (x) option)")
+                            if(data.attributes.maximum > 1){
+                                selectStr = cacheUtil.getTranslations(
+                                    Text.SELECT_X_OPTIONS,
+                                    "(Select (x) options)"
+                                )
+                            }
+                            selectStr.replace("(x)", localize(data.attributes.maximum.toString()))
+                        }
+
+                        else -> {
+                            var selectStr =  cacheUtil.getTranslations(
+                                Text.SELECT_UP_TO_X_OPTION,
+                                "(Select up to (x) option)"
+                            )
+                            if(data.attributes.maximum > 1){
+                                selectStr = cacheUtil.getTranslations(
+                                    Text.SELECT_UP_TO_X_OPTIONS,
+                                    "(Select up to (x) options)"
+                                )
+                            }
+                            selectStr.replace("(x)", localize(data.attributes.maximum.toString()))
+                        }
                     }
                 }
-
                 minimum.text = cacheUtil.getTranslations(Text.REQUIRED, "Required")
                 if (item.hasSelectedModifierItems) {
                     checkBox.visible()
@@ -260,7 +322,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 ) {
                     isVisibileByConfig = false
                 }
-                itemView.itemVisibility(isVisibileByConfig)
+                itemView.comboItemVisibility(isVisibileByConfig)
                 modifierProcessor.processModifier(item.modifierItem)
 
                 val modifierGroupAttributes: ModifierGroupAttributes = modifierGroup.attributes
@@ -293,7 +355,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                         .diskCacheStrategy(DiskCacheStrategy.ALL).into(image)
                     image.visible()
                 } else {
-                    image.gone()
+                    image.invisible()
                 }
 
 
@@ -327,7 +389,13 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                     checkBox.gone()
                     quantityUp.visible()
                     quantityDownLayout.apply {
-                        if(isQuantityDownVisible) visible() else gone()
+                        if(modifierItem.attributes.quantity > 1){
+                            quantityMinus.visible()
+                            quantityDown.gone()
+                        }else {
+                            quantityMinus.gone()
+                            quantityDown.visible()
+                        }
                     }
                 }else {
                     radioButton.gone()
@@ -372,6 +440,10 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 }
 
                 val quantityDownIsClickable = modifierItem.attributes.quantity != 1
+                quantityMinus.apply {
+                    isFocusable = quantityDownIsClickable
+                    isClickable = quantityDownIsClickable
+                }
                 quantityDown.apply {
                     isFocusable = quantityDownIsClickable
                     isClickable = quantityDownIsClickable
@@ -398,8 +470,33 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                         )
                     }
                 }
-                txtmodifierPrice.text = formattedPrice
+                if(formattedPrice.isNotEmpty()){
+                    txtmodifierPrice.apply {
+                        text = formattedPrice
+                        visible()
+                    }
+                }else {
+                    txtmodifierPrice.gone()
+                }
+
+
             }
+        }
+    }
+
+    class ModifierLineViewHolder(val binding : ItemComboModifierSeperatorBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item : ModifierLineAdapterItem){
+            val data = item.modifierGroup
+            val visibilityConfig = data.attributes.visibilityConfig
+            var isVisibileByConfig = true
+            if (visibilityConfig != null && visibilityConfig.initialValue != null && visibilityConfig.initialValue.equals(
+                    "hidden",
+                    ignoreCase = true
+                )
+            ) {
+                isVisibileByConfig = false
+            }
+            itemView.comboLineVisibility(isVisibileByConfig)
         }
     }
 
@@ -438,6 +535,12 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 itemList.filterIsInstance<ModifierItemAdapterItem>().map { modifierItemAdapterItem ->
                     if (modifierItemAdapterItem.modifierGroup.id == groupId) {
                         modifierItemAdapterItem.modifierGroup.attributes.visibilityConfig.initialValue = visiblityValue
+                    }
+                }
+                itemList.filterIsInstance<ModifierGroupAdapterItem>().map { modifierLineItem ->
+                    val currentVisibilityModifierValue = modifierLineItem.modifierGroup.attributes.visibilityConfig?.initialValue
+                    if(modifierLineItem.modifierGroup.id == groupId && currentVisibilityModifierValue != null && currentVisibilityModifierValue != visiblityValue) {
+                        modifierLineItem.modifierGroup.attributes.visibilityConfig.initialValue = visiblityValue
                     }
                 }
             }

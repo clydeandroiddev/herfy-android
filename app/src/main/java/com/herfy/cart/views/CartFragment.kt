@@ -1392,6 +1392,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         KochavaTrackerUtil.trackEvent(EventType.CHECKOUT_START)
         runOnMain {
             continueCheckout = false
+            dismissProgressDialog()
             activity?.cast<BaseActivity> {
                 it.dismissDialogs()
                 val intent = Intent(it, CheckoutActivity::class.java)
@@ -1408,7 +1409,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     private fun hideRelatedCouponViews() {
         binding.orderDetailsContainer.apply {
-            layoutItemCoupons.contentMain.gone()
+            fmItemCoupons.gone()
         }
     }
 
@@ -1663,9 +1664,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun addPromotionItem(menuItem: MenuItem) {
         runOnMain {
-            if (menuItem != null) {
-                binding.orderDetailsContainer.layoutItemCoupons.apply {
-                    contentMain.visibility = View.VISIBLE
+            if(!continueCheckout){
+                dismissProgressDialog()
+            }
+
+            binding.orderDetailsContainer.apply {
+                fmItemCoupons.visible()
+                layoutItemCoupons.apply {
+
 
                     var imageUrl = menuItem.attributes.image
                     if ((imageUrl == null) || imageUrl.equals(
@@ -1869,11 +1875,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     //quantityLayout.visibility = if (menuItem.isPromo || menuItemTotalPrice == 0.0) View.INVISIBLE else View.VISIBLE
 
 
-                    var priceStr = StringUtil.localize("0" + menuItem.attributes.quantity.toString())
+                    var qtyStr = StringUtil.localize("0" + menuItem.attributes.quantity.toString())
                     if(menuItem.attributes.quantity > 9){
-                        priceStr = StringUtil.localize(menuItem.attributes.quantity.toString())
+                        qtyStr = StringUtil.localize(menuItem.attributes.quantity.toString())
                     }
-                    quantity.text = priceStr
+                    quantity.text = qtyStr
                     if (menuItemTotalPrice > 0) {
                         totalPrice.text = StringUtil.getNewFormattedPrice(
                             menuItemTotalPrice * menuItem.attributes.quantity,
@@ -1931,6 +1937,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     }
                 }
             }
+
+
+
+
         }
     }
 
@@ -2012,8 +2022,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showPromoError(error: String) {
         continueCheckout = false
         binding.placeOrder.isEnabled = cartPresenter.menuItemsCount > 0
-        activity?.cast<BaseActivity> {
-            val builder = AlertDialog.Builder(it)
+        activity?.cast<BaseActivity> { act ->
+            val builder = AlertDialog.Builder(act)
             builder.setCancelable(true)
             builder.setTitle("")
             builder.setMessage(error)
@@ -2024,15 +2034,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         Text.OK
                     )
                 ) { dialogInterface, i -> dialogInterface.dismiss() }
-                promoAlertDialog!!.setOnShowListener(object : DialogInterface.OnShowListener {
-                    override fun onShow(dialog: DialogInterface) {
-                        promoAlertDialog!!.getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps = false
-                        promoAlertDialog!!.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
-                            ContextCompat.getColor(it, R.color.primary_text)
-                        )
-                    }
-                })
-                it.dismissDialogs()
+                promoAlertDialog!!.setOnShowListener {
+                    promoAlertDialog!!.getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps = false
+                    promoAlertDialog!!.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                        ContextCompat.getColor(act, R.color.primary_text)
+                    )
+                }
+                act.dismissDialogs()
                 promoAlertDialog!!.show()
             }
         }

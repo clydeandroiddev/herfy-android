@@ -6,5 +6,6 @@ sealed class ModifierAdapterItem{
     companion object {
         const val VIEW_TYPE_MODIFIER_GROUP = 0
         const val VIEW_TYPE_MODIFIER_ITEM = 1
+        const val VIEW_TYPE_MODIFIER_LINE = 2
     }
 }

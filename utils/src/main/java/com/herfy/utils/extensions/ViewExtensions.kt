@@ -150,3 +150,60 @@ fun View.headerVisibility(isVisible: Boolean){
     }
 
 }
+
+fun View.comboHeaderVisibility(isVisible: Boolean){
+
+    if (isVisible) {
+        val param = RecyclerView.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT )
+        visible()
+        param.topMargin = context.resources.getDimensionPixelSize(R.dimen.margin_small)
+        param.bottomMargin = context.resources.getDimensionPixelSize(R.dimen.margin_small)
+        layoutParams = param
+    } else {
+        val param = RecyclerView.LayoutParams(0,0)
+        gone()
+        param.width = 0
+        param.height = 0
+        param.bottomMargin = 0
+        param.topMargin = 0
+        layoutParams = param
+    }
+
+}
+
+fun View.comboItemVisibility(isVisible: Boolean){
+    if (isVisible) {
+        val param = RecyclerView.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT )
+        visible()
+        param.topMargin = context.resources.getDimensionPixelSize(R.dimen.margin_small)
+        param.bottomMargin = context.resources.getDimensionPixelSize(R.dimen.margin_small)
+        param.marginStart = context.resources.getDimensionPixelSize(R.dimen.margin_small)
+        param.marginEnd = context.resources.getDimensionPixelSize(R.dimen.margin_small)
+        layoutParams = param
+    } else {
+        val param = RecyclerView.LayoutParams(0,0)
+        gone()
+        param.topMargin = 0
+        param.bottomMargin = 0
+        layoutParams = param
+    }
+
+}
+
+fun View.comboLineVisibility(isVisible: Boolean){
+    if (isVisible) {
+        val param = RecyclerView.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 2)
+        visible()
+        param.topMargin = context.resources.getDimensionPixelSize(R.dimen.margin_large)
+        param.marginStart = context.resources.getDimensionPixelSize(R.dimen.margin_small)
+        param.marginEnd = context.resources.getDimensionPixelSize(R.dimen.margin_small)
+        layoutParams = param
+    } else {
+        val param = RecyclerView.LayoutParams(0,0)
+        gone()
+        param.topMargin = 0
+        param.bottomMargin = 0
+        layoutParams = param
+    }
+
+}

@@ -17,6 +17,7 @@ import com.herfy.model.combo.ComponentModifierAdapterItem
 import com.herfy.model.modifiers.ModifierAdapterItem
 import com.herfy.model.modifiers.ModifierGroupAdapterItem
 import com.herfy.model.modifiers.ModifierItemAdapterItem
+import com.herfy.model.modifiers.ModifierLineAdapterItem
 import com.herfy.productpagedetails.ui.adapter.ComboItemDetailsModifierAdapter
 import com.herfy.productpagedetails.ui.adapter.ComboMealComponentAdapter
 import com.herfy.productpagedetails.ui.viewholder.FrequentlyBoughtItemViewholder
@@ -386,101 +387,104 @@ class ComboViewModel @Inject constructor(
         }
 
         var totalPrice: Double = item.getPrice(orderStoreId)
-        if (item.sizes.modifierItems.size > 0) {
-            if (!item.isPromotion) {
-                totalPrice = 0.0
+        if (!item.isPromo) {
+            if (item.sizes.modifierItems.size > 0) {
+                if (!item.isPromotion) {
+                    totalPrice = 0.0
+                }
+                for (modifierItem in item.sizes.modifierItems) {
+                    if (modifierItem.attributes.isSelected) {
+                        totalPrice += modifierItem.attributes.price
+                        comboIndex = counter
+                        break
+                    }
+                    counter++
+                }
             }
-            for (modifierItem in item.sizes.modifierItems) {
+            for (modifierItem in item.drinks.modifierItems) {
                 if (modifierItem.attributes.isSelected) {
                     totalPrice += modifierItem.attributes.price
-                    comboIndex = counter
                     break
                 }
-                counter++
             }
-        }
-        for (modifierItem in item.drinks.modifierItems) {
-            if (modifierItem.attributes.isSelected) {
-                totalPrice += modifierItem.attributes.price
-                break
+            for (modifierItem in item.getFries().getModifierItems()) {
+                if (modifierItem.attributes.isSelected) {
+                    totalPrice += modifierItem.attributes.price
+                    break
+                }
             }
-        }
-        for (modifierItem in item.getFries().getModifierItems()) {
-            if (modifierItem.attributes.isSelected) {
-                totalPrice += modifierItem.attributes.price
-                break
-            }
-        }
-        for (modifierGroup in item.getModifierGroups()) {
-            val visibilityConfig = modifierGroup.attributes.visibilityConfig
-            if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                    "hidden", ignoreCase = true
-                )
-            ) {
-                if (modifierGroup.attributes.freeModifiersCount == 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                        modifierGroup
+            for (modifierGroup in item.getModifierGroups()) {
+                val visibilityConfig = modifierGroup.attributes.visibilityConfig
+                if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
+                        "hidden", ignoreCase = true
                     )
                 ) {
-                    _showHideModifierItemPrice.value = Pair(true, modifierGroupPosition)
-                }
-                var selectedFreeModifier = 0
-                for (modifierItem in modifierGroup.modifierItems) {
-                    if (modifierItem.attributes.isSelected) {
-                        if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
-                            val totalSelectedFreeModifier =
-                                selectedFreeModifier + modifierItem.attributes.quantity
-                            if (totalSelectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
-                                if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                                        modifierGroup
-                                    )
-                                ) {
-                                    _showHideModifierItemPrice.value =
-                                        Pair(false, modifierGroupPosition)
+                    if (modifierGroup.attributes.freeModifiersCount == 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                            modifierGroup
+                        )
+                    ) {
+                        _showHideModifierItemPrice.value = Pair(true, modifierGroupPosition)
+                    }
+                    var selectedFreeModifier = 0
+                    for (modifierItem in modifierGroup.modifierItems) {
+                        if (modifierItem.attributes.isSelected) {
+                            if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                val totalSelectedFreeModifier =
+                                    selectedFreeModifier + modifierItem.attributes.quantity
+                                if (totalSelectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                    if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                                            modifierGroup
+                                        )
+                                    ) {
+                                        _showHideModifierItemPrice.value =
+                                            Pair(false, modifierGroupPosition)
+                                    }
+                                    selectedFreeModifier += modifierItem.attributes.quantity
+                                } else {
+                                    if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                                            modifierGroup
+                                        )
+                                    ) {
+                                        _showHideModifierItemPrice.value =
+                                            Pair(true, modifierGroupPosition)
+                                    }
+                                    selectedFreeModifier =
+                                        modifierGroup.attributes.freeModifiersCount
+                                    totalPrice += modifierItem.attributes.price * (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
                                 }
-                                selectedFreeModifier += modifierItem.attributes.quantity
                             } else {
-                                if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                                        modifierGroup
-                                    )
-                                ) {
-                                    _showHideModifierItemPrice.value =
-                                        Pair(true, modifierGroupPosition)
-                                }
-                                selectedFreeModifier = modifierGroup.attributes.freeModifiersCount
-                                totalPrice += modifierItem.attributes.price * (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
+                                totalPrice += modifierItem.attributes.price * modifierItem.attributes.quantity
                             }
-                        } else {
-                            totalPrice += modifierItem.attributes.price * modifierItem.attributes.quantity
                         }
                     }
-                }
-                if (selectedFreeModifier == 0 && modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                        modifierGroup
-                    )
-                ) {
-                    _showHideModifierItemPrice.value = Pair(false, modifierGroupPosition)
+                    if (selectedFreeModifier == 0 && modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                            modifierGroup
+                        )
+                    ) {
+                        _showHideModifierItemPrice.value = Pair(false, modifierGroupPosition)
+                    }
                 }
             }
-        }
-        for (ingredient in item.getIngredients()) {
-            if (ingredient.attributes.isSelected) {
-                totalPrice += ingredient.attributes.price
+            for (ingredient in item.getIngredients()) {
+                if (ingredient.attributes.isSelected) {
+                    totalPrice += ingredient.attributes.price
+                }
             }
-        }
 
-        try {
-            if (item.isCombo) {
-                val componentsList =
-                    menuItemComboList[comboIndex]?.values?.toList() ?: arrayListOf()
-                for (components in componentsList) {
-                    for (componentModifierItem in components.items) {
-                        if (componentModifierItem.selected) {
-                            if (!item.isSandwichOnly) totalPrice += componentModifierItem.price * componentModifierItem.quantity
-                            if (!componentModifierItem.modifierGroups.isEmpty()) {
-                                for (modifierGroup in componentModifierItem.modifierGroups) {
-                                    for (i in modifierGroup.modifierItems.indices) {
-                                        if (modifierGroup.modifierItems[i].attributes.isSelected) {
-                                            totalPrice += modifierGroup.modifierItems[i].attributes.price * modifierGroup.modifierItems[i].attributes.quantity
+            try {
+                if (item.isCombo) {
+                    val componentsList =
+                        menuItemComboList[comboIndex]?.values?.toList() ?: arrayListOf()
+                    for (components in componentsList) {
+                        for (componentModifierItem in components.items) {
+                            if (componentModifierItem.selected) {
+                                if (!item.isSandwichOnly) totalPrice += componentModifierItem.price * componentModifierItem.quantity
+                                if (!componentModifierItem.modifierGroups.isEmpty()) {
+                                    for (modifierGroup in componentModifierItem.modifierGroups) {
+                                        for (i in modifierGroup.modifierItems.indices) {
+                                            if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                                totalPrice += modifierGroup.modifierItems[i].attributes.price * modifierGroup.modifierItems[i].attributes.quantity
+                                            }
                                         }
                                     }
                                 }
@@ -488,11 +492,10 @@ class ComboViewModel @Inject constructor(
                         }
                     }
                 }
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
             }
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
         }
-
         val itemTotalPrice = totalPrice * item.attributes.quantity
         _showMenuItemTotal.value = itemTotalPrice
     }
@@ -622,7 +625,9 @@ class ComboViewModel @Inject constructor(
                     it.combo.forEachIndexed { comboIndex, menuItemCombo ->
                         val menuItemComponentList = hashMapOf<Int, MenuItemComponents>()
                         menuItemCombo.components?.forEachIndexed { menuItemComponentIndex, menuItemComponents ->
-                            menuItemComponentList[menuItemComponentIndex] = menuItemComponents
+                            if (menuItemComponents.items.isNotEmpty()) {
+                                menuItemComponentList[menuItemComponentIndex] = menuItemComponents
+                            }
                         }
                         menuItemComboList[comboIndex] = menuItemComponentList
                     }
@@ -661,95 +666,104 @@ class ComboViewModel @Inject constructor(
                     menuItemComboList[comboIndex]?.containsKey(menuItemComponentPos) ?: false
                 if (isContainMenuItemComponentKey) {
                     menuItemComboList[comboIndex]?.get(menuItemComponentPos)?.let {
-                        it.items = componentsSelectFirst(it)
-                        val showCheckBoxIndicator = it.items.any { it.selected }
+                        if (it.items.isNotEmpty()) {
+                            it.items = componentsSelectFirst(it)
+                            val showCheckBoxIndicator = it.items.any { it.selected }
+                            comboComponentAdapterList.add(
+                                ComponentAdapterItem(
+                                    it,
+                                    showCheckBoxIndicator,
+                                    menuItemComponentPos
+                                )
+                            )
+                            val isAboveMax =
+                                isAboveMaxComponent(it, componentModifierCount(it.items))
+                            it.items.forEachIndexed { componentModifierItemPos, componentModifierItem ->
+                                comboComponentAdapterList.add(
+                                    ComponentModifierAdapterItem(
+                                        it,
+                                        componentModifierItem,
+                                        isAboveMax,
+                                        menuItemComponentPos,
+                                        componentModifierItemPos
+                                    )
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    if (menuItemComponent.items.isNotEmpty()) {
+                        menuItemComponent.items = componentsSelectFirst(menuItemComponent)
+                        val showCheckBoxIndicator = menuItemComponent.items.any { it.selected }
                         comboComponentAdapterList.add(
                             ComponentAdapterItem(
-                                it,
+                                menuItemComponent,
                                 showCheckBoxIndicator,
                                 menuItemComponentPos
                             )
                         )
-                        val isAboveMax = isAboveMaxComponent(it, componentModifierCount(it.items))
-                        it.items.forEachIndexed { componentModifierItemPos, componentModifierItem ->
+
+                        menuItemComponent.items.sortWith { menuItem1: ComponentModifierItem, menuItem2: ComponentModifierItem -> menuItem1.displayOrder - menuItem2.displayOrder }
+                        menuItemComponent.items = componentsSelectFirst(menuItemComponent)
+                        val isAboveMax = isAboveMaxComponent(
+                            menuItemComponent,
+                            componentModifierCount(menuItemComponent.items)
+                        )
+                        menuItemComponent.items.forEachIndexed { componentModifierPos, compoItem ->
+
+                            val applicationId = CacheUtil.getInstance().application.id
+
+                            menuRepository.getMenuItemDbBy(
+                                applicationId,
+                                compoItem.name.getValue(LocaleUtil.getInstance().language)
+                            ) { menuItemDb ->
+                                menuItemDb?.let {
+                                    val menuItemData =
+                                        GsonHelper.gsonFinal()
+                                            .fromJson(it.data, MenuItem::class.java)
+                                    menuItemData?.let {
+                                        compoItem.menuItem = it
+                                    }
+                                }
+                            }
+
+
+                            val modifierGroupIds = hashMapOf<String, ModifierGroup>()
+                            for (modifierGroup in compoItem.modifierGroupsMap) {
+                                modifierGroupIds[modifierGroup.id] = modifierGroup
+                            }
+                            if (modifierGroupIds.isNotEmpty()) {
+                                val modifierGroups =
+                                    parseComponentModifierGroup(applicationId, modifierGroupIds)
+                                compoItem.modifierGroups = ArrayList(modifierGroups)
+                                menuItemComponent.items[componentModifierPos] = compoItem
+                            }
+
                             comboComponentAdapterList.add(
                                 ComponentModifierAdapterItem(
-                                    it,
-                                    componentModifierItem,
+                                    menuItemComponent,
+                                    compoItem,
                                     isAboveMax,
                                     menuItemComponentPos,
-                                    componentModifierItemPos
+                                    componentModifierPos
                                 )
                             )
+
                         }
-                    }
-                } else {
-                    menuItemComponent.items = componentsSelectFirst(menuItemComponent)
-                    val showCheckBoxIndicator = menuItemComponent.items.any { it.selected }
-                    comboComponentAdapterList.add(
-                        ComponentAdapterItem(
-                            menuItemComponent,
-                            showCheckBoxIndicator,
-                            menuItemComponentPos
-                        )
-                    )
-                    menuItemComponent.items.sortWith { menuItem1: ComponentModifierItem, menuItem2: ComponentModifierItem -> menuItem1.displayOrder - menuItem2.displayOrder }
-                    menuItemComponent.items = componentsSelectFirst(menuItemComponent)
-                    val isAboveMax = isAboveMaxComponent(
-                        menuItemComponent,
-                        componentModifierCount(menuItemComponent.items)
-                    )
-                    menuItemComponent.items.forEachIndexed { componentModifierPos, compoItem ->
 
-                        val applicationId = CacheUtil.getInstance().application.id
 
-                        menuRepository.getMenuItemDbBy(
-                            applicationId,
-                            compoItem.name.getValue(LocaleUtil.getInstance().language)
-                        ) { menuItemDb ->
-                            menuItemDb?.let {
-                                val menuItemData =
-                                    GsonHelper.gsonFinal().fromJson(it.data, MenuItem::class.java)
-                                menuItemData?.let {
-                                    compoItem.menuItem = it
+                        if (isAboveMax) {
+                            comboComponentAdapterList.map { adapterItem ->
+                                if (adapterItem is ComponentModifierAdapterItem && adapterItem.menuItemComponentPos == menuItemComponentPos) {
+                                    adapterItem.isAboveMax = true
                                 }
                             }
                         }
-
-
-                        val modifierGroupIds = hashMapOf<String, ModifierGroup>()
-                        for (modifierGroup in compoItem.modifierGroupsMap) {
-                            modifierGroupIds[modifierGroup.id] = modifierGroup
-                        }
-                        if (modifierGroupIds.isNotEmpty()) {
-                            val modifierGroups =
-                                parseComponentModifierGroup(applicationId, modifierGroupIds)
-                            compoItem.modifierGroups = ArrayList(modifierGroups)
-                            menuItemComponent.items[componentModifierPos] = compoItem
-                        }
-
-                        comboComponentAdapterList.add(
-                            ComponentModifierAdapterItem(
-                                menuItemComponent,
-                                compoItem,
-                                isAboveMax,
-                                menuItemComponentPos,
-                                componentModifierPos
-                            )
-                        )
-
+                        menuItemComponentList[menuItemComponentPos] = menuItemComponent
+                        menuItemComboList[comboIndex] = menuItemComponentList
                     }
 
 
-                    if (isAboveMax) {
-                        comboComponentAdapterList.map { adapterItem ->
-                            if (adapterItem is ComponentModifierAdapterItem && adapterItem.menuItemComponentPos == menuItemComponentPos) {
-                                adapterItem.isAboveMax = true
-                            }
-                        }
-                    }
-                    menuItemComponentList[menuItemComponentPos] = menuItemComponent
-                    menuItemComboList[comboIndex] = menuItemComponentList
                 }
             }
             _showComboMenuItemComponents.value = comboComponentAdapterList
@@ -1021,7 +1035,7 @@ class ComboViewModel @Inject constructor(
     private fun componentsSelectFirst(components: MenuItemComponents): ArrayList<ComponentModifierItem> {
         val noItemSelected = checkIfNoItemSelected(components, components.items)
         if (noItemSelected) {
-            if (components.minimum == 1) {
+            if (components.minimum == 1 && components.items.isNotEmpty()) {
                 components.items[0].selected = true
                 components.items[0].quantity = 1
                 selectedComponents[components.id] = 0
@@ -1217,6 +1231,14 @@ class ComboViewModel @Inject constructor(
                     )
                 ) {
                     item.selected = false
+                    if (item.modifierGroups.size > 0) {
+                        item.modifierGroups.forEach {
+                            it.modifierItems.forEach {
+                                it.attributes.quantity = 0
+                                it.attributes.isSelected = false
+                            }
+                        }
+                    }
                 }
             } else {
                 item?.let {
@@ -1485,7 +1507,9 @@ class ComboViewModel @Inject constructor(
                             }
                         } else {
                             item.selected = _isSelected
-                            item.quantity = 1
+                            if (item.quantity < 1) {
+                                item.quantity = 1
+                            }
                         }
                     } else {
                         item.selected = false
@@ -1519,7 +1543,8 @@ class ComboViewModel @Inject constructor(
                         if (_componentModifierItem.id == component.id) {
                             if (_componentModifierItem.modifierGroups.isNotEmpty()) {
                                 updatedModifierGroupList?.let { selectedModifierGroup ->
-                                    _componentModifierItem.selected = ifHasSelectedModifierItems(selectedModifierGroup)
+                                    _componentModifierItem.selected =
+                                        ifHasSelectedModifierItems(selectedModifierGroup)
                                     _componentModifierItem.attributes.price =
                                         _componentModifierItem.price + selectedModifierPrice(
                                             selectedModifierGroup
@@ -1534,7 +1559,9 @@ class ComboViewModel @Inject constructor(
                             }
 
                             if (!isSelected) {
-                                _componentModifierItem.quantity = 1
+                                if (_componentModifierItem.quantity < 1) {
+                                    _componentModifierItem.quantity = 1
+                                }
                             }
                         }
                     }
@@ -1571,9 +1598,9 @@ class ComboViewModel @Inject constructor(
     private fun ifHasSelectedModifierItems(items: List<ModifierGroup>): Boolean {
         var counter = 0
         items.forEach { mdg ->
-            if(mdg.attributes.minimum < 1){
+            if (mdg.attributes.minimum < 1) {
                 counter++
-            }else {
+            } else {
                 mdg.modifierItems.filter { t -> t.attributes.isSelected }.let {
                     counter += it.size
                 }
@@ -2295,7 +2322,7 @@ class ComboViewModel @Inject constructor(
 
     fun getModifierAdapterItem(modifierGroups: ArrayList<ModifierGroup>) {
         val adapterItems = mutableListOf<ModifierAdapterItem>()
-        modifierGroups.forEach { modifierGroup ->
+        modifierGroups.forEachIndexed { index, modifierGroup ->
             adapterItems.add(
                 ModifierGroupAdapterItem(
                     modifierGroup, hasSelectedModifierItemsBy(modifierGroup)
@@ -2306,6 +2333,14 @@ class ComboViewModel @Inject constructor(
                     ModifierItemAdapterItem(modifierGroup, modifierItem)
                 )
             }
+            if (index + 1 < modifierGroups.size) {
+                adapterItems.add(
+                    ModifierLineAdapterItem(
+                        modifierGroup
+                    )
+                )
+            }
+
         }
         _modifierAdapterItems.value = Event(adapterItems)
     }

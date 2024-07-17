@@ -928,9 +928,10 @@ class PromotionsPresenter @Inject constructor(
                                 menuItem.toCdn(orderStoreId)
                                 MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
                                 CacheUtil.getInstance().setCampaign(campaign)
+                                CacheUtil.getInstance().setCampaignPromotion(campaign.promotion)
                                 CacheUtil.getInstance()
-                                    .setCampaignPromotion(campaign.promotion)
-                                CacheUtil.getInstance().setCampaignPromotionMenuItem(menuItem)
+                                    .setCampaignPromotionMenuItem(null)
+                                CacheUtil.getInstance().setCampaignToAdd(null)
                                 view.showCart(true)
                             } else {
                                 onError("")
@@ -974,13 +975,6 @@ class PromotionsPresenter @Inject constructor(
     }
 
     override fun onAvailDigitalCoupon(digitalCoupon: Campaign) {
-        if (digitalCoupon.promotion != null && digitalCoupon.promotion.attributes.type.equals(
-                "item", ignoreCase = true
-            )
-        ) {
-            getCampaignPromotionItem(digitalCoupon)
-        }else {
-            validateDigitalCoupon(digitalCoupon)
-        }
+        validateDigitalCoupon(digitalCoupon)
     }
 }

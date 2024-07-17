@@ -741,15 +741,7 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun onClickClaimPromo(promo: Campaign) {
-        if (promo.promotion != null && promo.promotion.attributes.type.equals(
-                "item", ignoreCase = true
-            )
-        ) {
-            getCampaignPromotionItem(promo)
-        }else {
-            validateDigitalCoupon(promo)
-        }
-
+        validateDigitalCoupon(promo)
     }
 
     override fun onRemovePromo() {
@@ -988,12 +980,7 @@ class HomeViewModel @Inject constructor(
                         OrderType.NONE -> deliveryCharge = 0.0
                     }
 
-                    //}
                     val vatAmount = 0.0
-                    //        if (concept.getVatType().equalsIgnoreCase("exclusive")) {
-//            vatAmount = (discountedSubtotal + deliveryCharge) * (concept.getVatRate() / 100.0);
-//            orderBody.addProperty("vat-amount", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", vatAmount)));
-//        }
                     var total = String.format(
                         Locale.ENGLISH, "%.2f", discountedSubtotal + deliveryCharge + vatAmount
                     ).toDouble()
