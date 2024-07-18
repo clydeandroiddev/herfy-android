@@ -172,7 +172,7 @@ public class Text {
     public static final String RETRIEVING_ORDER_DETAILS_ERROR = "retrieving_order_details_error";
     public static final String RATING_ORDER = "rating_order";
     public static final String ORDER_RATING_SENT = "order_rating_sent";
-    public static final String UPDATE = "update";
+    public static final String UPDATE = "update_label";
     public static final String LOADING = "loading";
     public static final String SENDING_ORDER = "sending_order";
     public static final String VERIFYING_NUMBER = "verifying_number";
