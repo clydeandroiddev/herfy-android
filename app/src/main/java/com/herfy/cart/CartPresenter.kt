@@ -608,10 +608,10 @@ class CartPresenter @Inject constructor(
                                                     Locale.ENGLISH, "%.2f", compoItem.price
                                                 ).toDouble()
                                             )
-                                            comboItemObject.addProperty("quantity", 1)
+                                            comboItemObject.addProperty("quantity", compoItem.quantity)
                                             comboItemObject.add("ingredients", JsonArray())
                                             val modifierCombos = JsonArray()
-                                            if (!compoItem.modifierGroups.isEmpty()) {
+                                            if (compoItem.modifierGroups.isNotEmpty()) {
                                                 for (modifierGroup in compoItem.modifierGroups) {
                                                     for (i in modifierGroup.modifierItems.indices) {
                                                         if (modifierGroup.modifierItems[i].attributes.isSelected) {
@@ -1064,7 +1064,7 @@ class CartPresenter @Inject constructor(
                     for (components in item.combo[comboIndex].components) {
                         for (componentModifierItem in components.items) {
                             if (componentModifierItem.selected) {
-                                if (!item.isSandwichOnly) totalPrice += componentModifierItem.price
+                                if (!item.isSandwichOnly) totalPrice += componentModifierItem.price * componentModifierItem.quantity
                                 if (componentModifierItem.modifierGroups.isNotEmpty()) {
                                     for (modifierGroup in componentModifierItem.modifierGroups) {
                                         for (i in modifierGroup.modifierItems.indices) {
@@ -2589,7 +2589,7 @@ class CartPresenter @Inject constructor(
                                                     Locale.ENGLISH, "%.2f", compoItem.price
                                                 ).toDouble()
                                             )
-                                            comboItemObject.addProperty("quantity", 1)
+                                            comboItemObject.addProperty("quantity", compoItem.quantity)
                                             comboItemObject.add("ingredients", JsonArray())
                                             val modifierCombos = JsonArray()
                                             if (!compoItem.modifierGroups.isEmpty()) {
@@ -2971,6 +2971,8 @@ class CartPresenter @Inject constructor(
             item.addProperty("is-reorder", menuItem.attributes.isReorder)
             item.addProperty("is-promotion", menuItem.isPromo)
             item.addProperty("notes", menuItem.attributes.notes)
+            var comboIndex = 0
+            var trueIndex = 0
             for (size in menuItem.sizes.modifierItems) {
                 if (size.attributes.isSelected) {
                     val modifier = JsonObject()
@@ -2981,7 +2983,9 @@ class CartPresenter @Inject constructor(
                     )
                     modifier.addProperty("quantity", size.attributes.quantity)
                     modifiers.add(modifier)
+                    trueIndex = comboIndex
                 }
+                comboIndex++
             }
             for (drink in menuItem.drinks.modifierItems) {
                 if (drink.attributes.isSelected) {
@@ -3054,6 +3058,57 @@ class CartPresenter @Inject constructor(
             }
             item.add("ingredients", ingredients)
             item.add("modifiers", modifiers)
+            try {
+                if (menuItem.isCombo) {
+                    val comboItems = JsonArray()
+                    for (components in menuItem.combo[trueIndex].components) {
+                        for (compoItem in components.items) {
+                            if (compoItem.selected) {
+                                val comboItemObject = JsonObject()
+                                comboItemObject.addProperty("id", compoItem.id)
+                                comboItemObject.addProperty(
+                                    "price", String.format(
+                                        Locale.ENGLISH, "%.2f", compoItem.price
+                                    ).toDouble()
+                                )
+                                comboItemObject.addProperty("quantity", compoItem.quantity)
+                                comboItemObject.add("ingredients", JsonArray())
+                                val modifierCombos = JsonArray()
+                                if (!compoItem.modifierGroups.isEmpty()) {
+                                    for (modifierGroup in compoItem.modifierGroups) {
+                                        for (i in modifierGroup.modifierItems.indices) {
+                                            if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                                val comoModItemObject = JsonObject()
+                                                comoModItemObject.addProperty(
+                                                    "id",
+                                                    modifierGroup.modifierItems[i].id
+                                                )
+                                                comoModItemObject.addProperty(
+                                                    "price", String.format(
+                                                        Locale.ENGLISH,
+                                                        "%.2f",
+                                                        modifierGroup.modifierItems[i].attributes.price
+                                                    ).toDouble()
+                                                )
+                                                comoModItemObject.addProperty(
+                                                    "quantity",
+                                                    modifierGroup.modifierItems[i].attributes.quantity
+                                                )
+                                                modifierCombos.add(comoModItemObject)
+                                            }
+                                        }
+                                    }
+                                }
+                                comboItemObject.add("modifiers", modifierCombos)
+                                comboItems.add(comboItemObject)
+                            }
+                        }
+                    }
+                    item.add("combo-items", comboItems)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             items.add(item)
         }
         orderBody.add("items", items)
@@ -3881,6 +3936,8 @@ class CartPresenter @Inject constructor(
             item.addProperty("is-reorder", menuItem.attributes.isReorder)
             item.addProperty("is-promotion", menuItem.isPromo)
             item.addProperty("notes", menuItem.attributes.notes)
+            var comboIndex = 0
+            var trueIndex = 0
             for (size in menuItem.sizes.modifierItems) {
                 if (size.attributes.isSelected) {
                     val modifier = JsonObject()
@@ -3891,7 +3948,9 @@ class CartPresenter @Inject constructor(
                     )
                     modifier.addProperty("quantity", size.attributes.quantity)
                     modifiers.add(modifier)
+                    trueIndex = comboIndex
                 }
+                comboIndex++
             }
             for (drink in menuItem.drinks.modifierItems) {
                 if (drink.attributes.isSelected) {
@@ -3964,6 +4023,57 @@ class CartPresenter @Inject constructor(
             }
             item.add("ingredients", ingredients)
             item.add("modifiers", modifiers)
+            try {
+                if (menuItem.isCombo) {
+                    val comboItems = JsonArray()
+                    for (components in menuItem.combo[trueIndex].components) {
+                        for (compoItem in components.items) {
+                            if (compoItem.selected) {
+                                val comboItemObject = JsonObject()
+                                comboItemObject.addProperty("id", compoItem.id)
+                                comboItemObject.addProperty(
+                                    "price", String.format(
+                                        Locale.ENGLISH, "%.2f", compoItem.price
+                                    ).toDouble()
+                                )
+                                comboItemObject.addProperty("quantity", compoItem.quantity)
+                                comboItemObject.add("ingredients", JsonArray())
+                                val modifierCombos = JsonArray()
+                                if (!compoItem.modifierGroups.isEmpty()) {
+                                    for (modifierGroup in compoItem.modifierGroups) {
+                                        for (i in modifierGroup.modifierItems.indices) {
+                                            if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                                val comoModItemObject = JsonObject()
+                                                comoModItemObject.addProperty(
+                                                    "id",
+                                                    modifierGroup.modifierItems[i].id
+                                                )
+                                                comoModItemObject.addProperty(
+                                                    "price", String.format(
+                                                        Locale.ENGLISH,
+                                                        "%.2f",
+                                                        modifierGroup.modifierItems[i].attributes.price
+                                                    ).toDouble()
+                                                )
+                                                comoModItemObject.addProperty(
+                                                    "quantity",
+                                                    modifierGroup.modifierItems[i].attributes.quantity
+                                                )
+                                                modifierCombos.add(comoModItemObject)
+                                            }
+                                        }
+                                    }
+                                }
+                                comboItemObject.add("modifiers", modifierCombos)
+                                comboItems.add(comboItemObject)
+                            }
+                        }
+                    }
+                    item.add("combo-items", comboItems)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             items.add(item)
         }
         orderBody.add("items", items)
@@ -4245,7 +4355,7 @@ class CartPresenter @Inject constructor(
                                             Locale.ENGLISH, "%.2f", compoItem.price
                                         ).toDouble()
                                     )
-                                    comboItemObject.addProperty("quantity", 1)
+                                    comboItemObject.addProperty("quantity", compoItem.quantity)
                                     comboItemObject.add("ingredients", JsonArray())
                                     val modifierCombos = JsonArray()
                                     if (!compoItem.modifierGroups.isEmpty()) {
@@ -4518,6 +4628,8 @@ class CartPresenter @Inject constructor(
                     item.addProperty("is-reorder", menuItem.attributes.isReorder)
                     item.addProperty("is-promotion", menuItem.isPromo)
                     item.addProperty("notes", menuItem.attributes.notes)
+                    var comboIndex = 0
+                    var trueIndex = 0
                     for (size in menuItem.sizes.modifierItems) {
                         if (size.attributes.isSelected) {
                             val modifier = JsonObject()
@@ -4529,7 +4641,9 @@ class CartPresenter @Inject constructor(
                             )
                             modifier.addProperty("quantity", size.attributes.quantity)
                             modifiers.add(modifier)
+                            trueIndex = comboIndex
                         }
+                        comboIndex++
                     }
                     for (drink in menuItem.drinks.modifierItems) {
                         if (drink.attributes.isSelected) {
@@ -4611,6 +4725,57 @@ class CartPresenter @Inject constructor(
                     }
                     item.add("ingredients", ingredients)
                     item.add("modifiers", modifiers)
+                    try {
+                        if (menuItem.isCombo) {
+                            val comboItems = JsonArray()
+                            for (components in menuItem.combo[trueIndex].components) {
+                                for (compoItem in components.items) {
+                                    if (compoItem.selected) {
+                                        val comboItemObject = JsonObject()
+                                        comboItemObject.addProperty("id", compoItem.id)
+                                        comboItemObject.addProperty(
+                                            "price", String.format(
+                                                Locale.ENGLISH, "%.2f", compoItem.price
+                                            ).toDouble()
+                                        )
+                                        comboItemObject.addProperty("quantity", compoItem.quantity)
+                                        comboItemObject.add("ingredients", JsonArray())
+                                        val modifierCombos = JsonArray()
+                                        if (!compoItem.modifierGroups.isEmpty()) {
+                                            for (modifierGroup in compoItem.modifierGroups) {
+                                                for (i in modifierGroup.modifierItems.indices) {
+                                                    if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                                        val comoModItemObject = JsonObject()
+                                                        comoModItemObject.addProperty(
+                                                            "id",
+                                                            modifierGroup.modifierItems[i].id
+                                                        )
+                                                        comoModItemObject.addProperty(
+                                                            "price", String.format(
+                                                                Locale.ENGLISH,
+                                                                "%.2f",
+                                                                modifierGroup.modifierItems[i].attributes.price
+                                                            ).toDouble()
+                                                        )
+                                                        comoModItemObject.addProperty(
+                                                            "quantity",
+                                                            modifierGroup.modifierItems[i].attributes.quantity
+                                                        )
+                                                        modifierCombos.add(comoModItemObject)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        comboItemObject.add("modifiers", modifierCombos)
+                                        comboItems.add(comboItemObject)
+                                    }
+                                }
+                            }
+                            item.add("combo-items", comboItems)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                     items.add(item)
                 }
                 orderBody.add("items", items)

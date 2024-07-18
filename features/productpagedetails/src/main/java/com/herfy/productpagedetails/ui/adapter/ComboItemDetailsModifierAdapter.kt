@@ -15,6 +15,7 @@ import com.herfy.model.modifiers.ModifierItemAdapterItem
 import com.herfy.model.modifiers.ModifierLineAdapterItem
 import com.herfy.productpagedetails.R
 import com.herfy.productpagedetails.databinding.ItemComboModifierGroupHeaderBinding
+import com.herfy.productpagedetails.databinding.ItemComboModifierItemBinding
 import com.herfy.productpagedetails.databinding.ItemComboModifierSeperatorBinding
 import com.herfy.productpagedetails.databinding.ItemModifierGroupHeaderBinding
 import com.herfy.productpagedetails.databinding.ItemModifierOptionTypeBinding
@@ -64,7 +65,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
             }
 
             ModifierAdapterItem.VIEW_TYPE_MODIFIER_ITEM -> {
-                val binding = ItemModifierOptionTypeBinding.inflate(
+                val binding = ItemComboModifierItemBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -306,7 +307,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
     }
 
     class ModifierItemViewHolder(
-        val binding: ItemModifierOptionTypeBinding
+        val binding: ItemComboModifierItemBinding
     ) : RecyclerView.ViewHolder(binding.root), ModifierProcessorCallback {
         private var modifierProcessor = ModifierProcessor(this)
         fun bind(item: ModifierItemAdapterItem) {
@@ -355,7 +356,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                         .diskCacheStrategy(DiskCacheStrategy.ALL).into(image)
                     image.visible()
                 } else {
-                    image.invisible()
+                    image.gone()
                 }
 
 

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="@dimen/margin_large"
+    android:background="@drawable/bg_modifier_item_selector"
+    android:padding="10dp"
+    app:cardPreventCornerOverlap="false"
+    android:layout_marginHorizontal="@dimen/margin_large"
+    app:contentPadding="10dp"
+    android:id="@+id/optionCardView"
+    app:cardUseCompatPadding="false"
+    app:cardCornerRadius="20dp">
+    <LinearLayout
+        android:id="@+id/clickable_layout"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:scaleType="fitXY"
+            android:src="@drawable/product_page_details_border"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Corner8dp"
+            android:visibility="gone"
+            android:layout_marginEnd="@dimen/margin_large"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+
+            <TextView
+                android:id="@+id/txtModifierItemName"
+                style="@style/Styles.Text.Footnote.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+
+                android:fontFamily="@font/inter_semi_bold"
+                android:gravity="start|center_vertical"
+                android:paddingEnd="4dp"
+                android:textAlignment="viewStart"
+                android:textColor="#0C0C0C"
+                app:layout_constraintBottom_toTopOf="@id/txtmodifierPrice"
+                app:layout_constraintEnd_toStartOf="@+id/check_layout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="Marinara dip" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtmodifierPrice"
+                style="@style/Styles.Text.Footnote_Bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginBottom="@dimen/margin_large"
+                android:textColor="#0064AC"
+                app:layout_constraintTop_toBottomOf="@id/txtModifierItemName"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
+                tools:text="+Sar 2"
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnPopular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginStart="@dimen/margin_large"
+                android:background="@drawable/bg_rounded_background"
+                android:textAlignment="viewEnd"
+                android:visibility="gone"
+                app:cardCornerRadius="6dp"
+                app:cardUseCompatPadding="true"
+                app:contentPadding="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/check_layout"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeWidth="1dp"
+                tools:visibility="gone">
+
+                <com.google.android.material.textview.MaterialTextView
+                    style="@style/Styles.Text.Footnote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/padding_smallest"
+                    android:textColor="#CA3B32"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Popular" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <FrameLayout
+                android:id="@+id/check_layout"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:visibility="visible"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/checkBox"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/item_drawable_checked_state"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/radioButton"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:button="@drawable/item_drawable_radio_state"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/quantity_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corner"
+                android:backgroundTint="@color/white"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/check_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/check_layout">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/quantityDownLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/quantityUp"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="gone">
+
+
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/ln_quantity_down"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/quantity"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageButton
+                            android:id="@+id/quantityMinus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:textAlignment="viewEnd"
+                            android:src="@drawable/ic_new_minus"
+                            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                            android:visibility="gone"/>
+
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/quantityDown"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rounded_corner"
+                            android:backgroundTint="#952E1D"
+                            app:cardCornerRadius="@dimen/_80sdp"
+                            app:contentPadding="0dp"
+                            android:visibility="visible">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="@dimen/_8sdp"
+                                android:src="@drawable/ic_delete">
+
+                            </ImageView>
+                        </com.google.android.material.card.MaterialCardView>
+
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                    <TextView
+                        android:id="@+id/quantity"
+                        style="@style/Styles.Text.Headline_Regular"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginStart="@dimen/_6sdp"
+                        android:textColor="@color/color_light_blue"
+                        app:layout_constraintStart_toEndOf="@+id/ln_quantity_down"
+                        app:layout_constraintBottom_toBottomOf="@id/ln_quantity_down"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/ln_quantity_down"
+                        tools:text="100" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ImageButton
+                    android:id="@+id/quantityUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:textAlignment="viewEnd"
+                    tools:src="@drawable/quantity_up_blue"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/quantityDownLayout"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/ib_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_right_tail_blue"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="20dp" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

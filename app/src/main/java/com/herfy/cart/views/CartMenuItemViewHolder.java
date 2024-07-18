@@ -332,7 +332,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
                                     first = false;
                                 }
                                 modifierItemsCounter++;
-                                stringBuilder.append(translated(LocaleUtil.getInstance().getLanguage(), item.name) + " (" + StringUtil.localize(String.valueOf(1)) + ")");
+                                stringBuilder.append(translated(LocaleUtil.getInstance().getLanguage(), item.name) + " (" + StringUtil.localize(String.valueOf(item.quantity)) + ")");
                             }
                             if (!item.modifierGroups.isEmpty()) {
 //                                if (components.name.getEnglish().toLowerCase().contains("sandwich") || components.name.getFrench().toLowerCase().contains("sandwich")) {

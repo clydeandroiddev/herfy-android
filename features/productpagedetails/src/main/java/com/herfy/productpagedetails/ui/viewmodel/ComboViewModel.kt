@@ -661,6 +661,7 @@ class ComboViewModel @Inject constructor(
     }
 
     private fun getComboComponentAdapterItems(menuItemComponents: ArrayList<MenuItemComponentItem>) {
+        val applicationId = CacheUtil.getInstance().application.id
         invoke {
             val comboComponentAdapterList = arrayListOf<ComboComponentAdapterItem>()
             menuItemComponents.forEachIndexed { menuItemComponentPos, menuItemComponentItem ->
@@ -682,6 +683,18 @@ class ComboViewModel @Inject constructor(
                             val isAboveMax =
                                 isAboveMaxComponent(it, componentModifierCount(it.items))
                             it.items.forEachIndexed { componentModifierItemPos, componentModifierItem ->
+                                val modifierGroupIds = hashMapOf<String, ModifierGroup>()
+                                for (modifierGroup in componentModifierItem.modifierGroupsMap) {
+                                    modifierGroupIds[modifierGroup.id] = modifierGroup
+                                }
+
+                                if(componentModifierItem.modifierGroups.isEmpty() && modifierGroupIds.isNotEmpty()){
+                                    val modifierGroups =
+                                        parseComponentModifierGroup(applicationId, modifierGroupIds)
+                                    componentModifierItem.modifierGroups = ArrayList(modifierGroups)
+                                    menuItemComponent.items[componentModifierItemPos] = componentModifierItem
+                                }
+
                                 comboComponentAdapterList.add(
                                     ComponentModifierAdapterItem(
                                         it,
@@ -713,8 +726,6 @@ class ComboViewModel @Inject constructor(
                             componentModifierCount(menuItemComponent.items)
                         )
                         menuItemComponent.items.forEachIndexed { componentModifierPos, compoItem ->
-
-                            val applicationId = CacheUtil.getInstance().application.id
 
                             menuRepository.getMenuItemDbBy(
                                 applicationId,
