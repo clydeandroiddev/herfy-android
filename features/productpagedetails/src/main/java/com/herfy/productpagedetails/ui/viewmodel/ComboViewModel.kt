@@ -387,104 +387,106 @@ class ComboViewModel @Inject constructor(
         }
 
         var totalPrice: Double = item.getPrice(orderStoreId)
-        if (!item.isPromo) {
-            if (item.sizes.modifierItems.size > 0) {
-                if (!item.isPromotion) {
-                    totalPrice = 0.0
-                }
-                for (modifierItem in item.sizes.modifierItems) {
-                    if (modifierItem.attributes.isSelected) {
-                        totalPrice += modifierItem.attributes.price
-                        comboIndex = counter
-                        break
-                    }
-                    counter++
-                }
+        if (item.sizes.modifierItems.size > 0) {
+            if (!item.isPromotion) {
+                totalPrice = 0.0
             }
-            for (modifierItem in item.drinks.modifierItems) {
+            for (modifierItem in item.sizes.modifierItems) {
                 if (modifierItem.attributes.isSelected) {
                     totalPrice += modifierItem.attributes.price
+                    comboIndex = counter
                     break
                 }
-            }
-            for (modifierItem in item.getFries().getModifierItems()) {
-                if (modifierItem.attributes.isSelected) {
-                    totalPrice += modifierItem.attributes.price
-                    break
-                }
-            }
-            for (modifierGroup in item.getModifierGroups()) {
-                val visibilityConfig = modifierGroup.attributes.visibilityConfig
-                if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                        "hidden", ignoreCase = true
-                    )
-                ) {
-                    if (modifierGroup.attributes.freeModifiersCount == 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                            modifierGroup
-                        )
-                    ) {
-                        _showHideModifierItemPrice.value = Pair(true, modifierGroupPosition)
-                    }
-                    var selectedFreeModifier = 0
-                    for (modifierItem in modifierGroup.modifierItems) {
-                        if (modifierItem.attributes.isSelected) {
-                            if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
-                                val totalSelectedFreeModifier =
-                                    selectedFreeModifier + modifierItem.attributes.quantity
-                                if (totalSelectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
-                                    if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                                            modifierGroup
-                                        )
-                                    ) {
-                                        _showHideModifierItemPrice.value =
-                                            Pair(false, modifierGroupPosition)
-                                    }
-                                    selectedFreeModifier += modifierItem.attributes.quantity
-                                } else {
-                                    if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                                            modifierGroup
-                                        )
-                                    ) {
-                                        _showHideModifierItemPrice.value =
-                                            Pair(true, modifierGroupPosition)
-                                    }
-                                    selectedFreeModifier =
-                                        modifierGroup.attributes.freeModifiersCount
-                                    totalPrice += modifierItem.attributes.price * (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
-                                }
-                            } else {
-                                totalPrice += modifierItem.attributes.price * modifierItem.attributes.quantity
-                            }
-                        }
-                    }
-                    if (selectedFreeModifier == 0 && modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
-                            modifierGroup
-                        )
-                    ) {
-                        _showHideModifierItemPrice.value = Pair(false, modifierGroupPosition)
-                    }
-                }
-            }
-            for (ingredient in item.getIngredients()) {
-                if (ingredient.attributes.isSelected) {
-                    totalPrice += ingredient.attributes.price
-                }
+                counter++
             }
 
-            try {
-                if (item.isCombo) {
-                    val componentsList =
-                        menuItemComboList[comboIndex]?.values?.toList() ?: arrayListOf()
-                    for (components in componentsList) {
-                        for (componentModifierItem in components.items) {
-                            if (componentModifierItem.selected) {
-                                if (!item.isSandwichOnly) totalPrice += componentModifierItem.price * componentModifierItem.quantity
-                                if (!componentModifierItem.modifierGroups.isEmpty()) {
-                                    for (modifierGroup in componentModifierItem.modifierGroups) {
-                                        for (i in modifierGroup.modifierItems.indices) {
-                                            if (modifierGroup.modifierItems[i].attributes.isSelected) {
-                                                totalPrice += modifierGroup.modifierItems[i].attributes.price * modifierGroup.modifierItems[i].attributes.quantity
-                                            }
+            if(item.isCombo && item.isPromo){
+                totalPrice = item.attributes.price
+            }
+        }
+        for (modifierItem in item.drinks.modifierItems) {
+            if (modifierItem.attributes.isSelected) {
+                totalPrice += modifierItem.attributes.price
+                break
+            }
+        }
+        for (modifierItem in item.getFries().getModifierItems()) {
+            if (modifierItem.attributes.isSelected) {
+                totalPrice += modifierItem.attributes.price
+                break
+            }
+        }
+        for (modifierGroup in item.getModifierGroups()) {
+            val visibilityConfig = modifierGroup.attributes.visibilityConfig
+            if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
+                    "hidden", ignoreCase = true
+                )
+            ) {
+                if (modifierGroup.attributes.freeModifiersCount == 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                        modifierGroup
+                    )
+                ) {
+                    _showHideModifierItemPrice.value = Pair(true, modifierGroupPosition)
+                }
+                var selectedFreeModifier = 0
+                for (modifierItem in modifierGroup.modifierItems) {
+                    if (modifierItem.attributes.isSelected) {
+                        if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                            val totalSelectedFreeModifier =
+                                selectedFreeModifier + modifierItem.attributes.quantity
+                            if (totalSelectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                                        modifierGroup
+                                    )
+                                ) {
+                                    _showHideModifierItemPrice.value =
+                                        Pair(false, modifierGroupPosition)
+                                }
+                                selectedFreeModifier += modifierItem.attributes.quantity
+                            } else {
+                                if (modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                                        modifierGroup
+                                    )
+                                ) {
+                                    _showHideModifierItemPrice.value =
+                                        Pair(true, modifierGroupPosition)
+                                }
+                                selectedFreeModifier =
+                                    modifierGroup.attributes.freeModifiersCount
+                                totalPrice += modifierItem.attributes.price * (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
+                            }
+                        } else {
+                            totalPrice += modifierItem.attributes.price * modifierItem.attributes.quantity
+                        }
+                    }
+                }
+                if (selectedFreeModifier == 0 && modifierGroup.attributes.freeModifiersCount > 0 && modifierGroupPosition >= 0 && modifierGroupPosition == item.modifierGroups.indexOf(
+                        modifierGroup
+                    )
+                ) {
+                    _showHideModifierItemPrice.value = Pair(false, modifierGroupPosition)
+                }
+            }
+        }
+        for (ingredient in item.getIngredients()) {
+            if (ingredient.attributes.isSelected) {
+                totalPrice += ingredient.attributes.price
+            }
+        }
+
+        try {
+            if (item.isCombo) {
+                val componentsList =
+                    menuItemComboList[comboIndex]?.values?.toList() ?: arrayListOf()
+                for (components in componentsList) {
+                    for (componentModifierItem in components.items) {
+                        if (componentModifierItem.selected) {
+                            if (!item.isSandwichOnly) totalPrice += componentModifierItem.price * componentModifierItem.quantity
+                            if (!componentModifierItem.modifierGroups.isEmpty()) {
+                                for (modifierGroup in componentModifierItem.modifierGroups) {
+                                    for (i in modifierGroup.modifierItems.indices) {
+                                        if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                            totalPrice += modifierGroup.modifierItems[i].attributes.price * modifierGroup.modifierItems[i].attributes.quantity
                                         }
                                     }
                                 }
@@ -492,10 +494,11 @@ class ComboViewModel @Inject constructor(
                         }
                     }
                 }
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
             }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
         }
+
         val itemTotalPrice = totalPrice * item.attributes.quantity
         _showMenuItemTotal.value = itemTotalPrice
     }

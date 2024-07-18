@@ -894,7 +894,7 @@ class CartPresenter @Inject constructor(
                                 CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
                             )
                         }
-                    }else {
+                    } else {
                         cartView.showError(
                             CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
                         )
@@ -973,9 +973,9 @@ class CartPresenter @Inject constructor(
 
     override fun getMenuItemsCount(): Int {
         var itemCount = menuItems.size
-        if(CacheUtil.getInstance().couponMenuItem != null){
+        if (CacheUtil.getInstance().couponMenuItem != null) {
             itemCount += CacheUtil.getInstance().couponMenuItem.attributes.quantity
-        }else if(CacheUtil.getInstance().campaignPromotionMenuItem != null){
+        } else if (CacheUtil.getInstance().campaignPromotionMenuItem != null) {
             itemCount += CacheUtil.getInstance().campaignPromotionMenuItem.attributes.quantity
         }
 
@@ -998,75 +998,78 @@ class CartPresenter @Inject constructor(
         if (BuildUtil.isEkfc() && item.total != 0.0) {
             totalPrice = item.total
         } else {
-            if (!item.isPromo) {
-                if (item.sizes.modifierItems.size > 0) {
-                    if (!item.isPromo) {
-                        totalPrice = 0.0
+            if (item.sizes.modifierItems.size > 0) {
+                if (!item.isPromo) {
+                    totalPrice = 0.0
+                }
+                for (modifierItem in item.sizes.modifierItems) {
+                    if (modifierItem.attributes.isSelected) {
+                        totalPrice += modifierItem.attributes.price
+                        comboIndex = counter
+                        break
                     }
-                    for (modifierItem in item.sizes.modifierItems) {
+                    counter++
+                }
+
+                if(item.isCombo && item.isPromo){
+                    totalPrice = item.attributes.price
+                }
+            }
+            for (modifierItem in item.drinks.modifierItems) {
+                if (modifierItem.attributes.isSelected) {
+                    totalPrice += modifierItem.attributes.price
+                    break
+                }
+            }
+            for (modifierItem in item.fries.modifierItems) {
+                if (modifierItem.attributes.isSelected) {
+                    totalPrice += modifierItem.attributes.price
+                    break
+                }
+            }
+            for (modifierGroup in item.modifierGroups) {
+                val visibilityConfig = modifierGroup.attributes.visibilityConfig
+                if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
+                        "hidden", ignoreCase = true
+                    )
+                ) {
+                    var selectedFreeModifier = 0
+                    for (modifierItem in modifierGroup.modifierItems) {
                         if (modifierItem.attributes.isSelected) {
-                            totalPrice += modifierItem.attributes.price
-                            comboIndex = counter
-                            break
-                        }
-                        counter++
-                    }
-                }
-                for (modifierItem in item.drinks.modifierItems) {
-                    if (modifierItem.attributes.isSelected) {
-                        totalPrice += modifierItem.attributes.price
-                        break
-                    }
-                }
-                for (modifierItem in item.fries.modifierItems) {
-                    if (modifierItem.attributes.isSelected) {
-                        totalPrice += modifierItem.attributes.price
-                        break
-                    }
-                }
-                for (modifierGroup in item.modifierGroups) {
-                    val visibilityConfig = modifierGroup.attributes.visibilityConfig
-                    if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                            "hidden", ignoreCase = true
-                        )
-                    ) {
-                        var selectedFreeModifier = 0
-                        for (modifierItem in modifierGroup.modifierItems) {
-                            if (modifierItem.attributes.isSelected) {
-                                if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
-                                    val totalSelectedFreeModifier =
-                                        selectedFreeModifier + modifierItem.attributes.quantity
-                                    if (totalSelectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
-                                        selectedFreeModifier += modifierItem.attributes.quantity
-                                    } else {
-                                        selectedFreeModifier =
-                                            modifierGroup.attributes.freeModifiersCount
-                                        totalPrice += modifierItem.attributes.price * (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
-                                    }
+                            if (modifierGroup.attributes.freeModifiersCount > 0 && selectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                val totalSelectedFreeModifier =
+                                    selectedFreeModifier + modifierItem.attributes.quantity
+                                if (totalSelectedFreeModifier < modifierGroup.attributes.freeModifiersCount) {
+                                    selectedFreeModifier += modifierItem.attributes.quantity
                                 } else {
-                                    totalPrice += modifierItem.attributes.price * modifierItem.attributes.quantity
+                                    selectedFreeModifier =
+                                        modifierGroup.attributes.freeModifiersCount
+                                    totalPrice += modifierItem.attributes.price * (totalSelectedFreeModifier - modifierGroup.attributes.freeModifiersCount)
                                 }
+                            } else {
+                                totalPrice += modifierItem.attributes.price * modifierItem.attributes.quantity
                             }
                         }
                     }
                 }
-                for (ingredient in item.ingredients) {
-                    if (ingredient.attributes.isSelected) {
-                        totalPrice += ingredient.attributes.price
-                    }
+            }
+            for (ingredient in item.ingredients) {
+                if (ingredient.attributes.isSelected) {
+                    totalPrice += ingredient.attributes.price
                 }
-                try {
-                    if (item.isCombo) {
-                        for (components in item.combo[comboIndex].components) {
-                            for (componentModifierItem in components.items) {
-                                if (componentModifierItem.selected) {
-                                    if (!item.isSandwichOnly) totalPrice += componentModifierItem.price
-                                    if (!componentModifierItem.modifierGroups.isEmpty()) {
-                                        for (modifierGroup in componentModifierItem.modifierGroups) {
-                                            for (i in modifierGroup.modifierItems.indices) {
-                                                if (modifierGroup.modifierItems[i].attributes.isSelected) {
-                                                    totalPrice += modifierGroup.modifierItems[i].attributes.price * modifierGroup.modifierItems[i].attributes.quantity
-                                                }
+            }
+
+            try {
+                if (item.isCombo) {
+                    for (components in item.combo[comboIndex].components) {
+                        for (componentModifierItem in components.items) {
+                            if (componentModifierItem.selected) {
+                                if (!item.isSandwichOnly) totalPrice += componentModifierItem.price
+                                if (componentModifierItem.modifierGroups.isNotEmpty()) {
+                                    for (modifierGroup in componentModifierItem.modifierGroups) {
+                                        for (i in modifierGroup.modifierItems.indices) {
+                                            if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                                totalPrice += modifierGroup.modifierItems[i].attributes.price * modifierGroup.modifierItems[i].attributes.quantity
                                             }
                                         }
                                     }
@@ -1074,9 +1077,9 @@ class CartPresenter @Inject constructor(
                             }
                         }
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
         return totalPrice
@@ -1349,7 +1352,7 @@ class CartPresenter @Inject constructor(
 
             val data = getMenuItemData(appDatabase, menuItem.id)
             if (!data.isNullOrEmpty()) {
-                if(cachedPromoMenuItem != null && cachedPromoMenuItem.id == menuItem.id){
+                if (cachedPromoMenuItem != null && cachedPromoMenuItem.id == menuItem.id) {
                     if (attributes != null && campaign != null) {
                         cachedPromoMenuItem.attributes.price = attributes.price
                         cachedPromoMenuItem.attributes.quantity = attributes.quantity
@@ -1377,7 +1380,7 @@ class CartPresenter @Inject constructor(
                         CacheUtil.getInstance().cart = menuItems
                         cartView.updateMenuItems(menuItems)
                     }
-                }else {
+                } else {
                     val applicationId = CacheUtil.getInstance().application.id
                     promoMenuItem = MenuUtil.processMenuItemCustomObject(
                         GsonHelper.gsonFinal().fromJson(data, MenuItem::class.java)
@@ -1391,7 +1394,8 @@ class CartPresenter @Inject constructor(
                         applicationId, promoMenuItem.allergensIds.toTypedArray<String>()
                     )) {
                         val allergenCdn =
-                            GsonHelper.gsonFinal().fromJson(allergenDb.data, AllergenCdn::class.java)
+                            GsonHelper.gsonFinal()
+                                .fromJson(allergenDb.data, AllergenCdn::class.java)
                         allergens.add(
                             AllergenCdn.convert(
                                 allergenCdn, LocaleUtil.getInstance().language
@@ -1427,9 +1431,10 @@ class CartPresenter @Inject constructor(
                         modifierGroupIds[modifierGroup.id] = modifierGroup
                         //modifierGroupDisplayOrders.put(modifierGroup.getId(), menuItem.getModifierGroupIds().indexOf(modifierGroup));
                     }
-                    for (modifierGroupDb in appDatabase.modifierGroupDao().findAllByApplicationAndIds(
-                        applicationId, modifierGroupIds.keys.toTypedArray<String>()
-                    )) {
+                    for (modifierGroupDb in appDatabase.modifierGroupDao()
+                        .findAllByApplicationAndIds(
+                            applicationId, modifierGroupIds.keys.toTypedArray<String>()
+                        )) {
                         val modifierGroupCdn = MenuUtil.processModifierGroupCustomObject(
                             GsonHelper.gsonFinal()
                                 .fromJson(modifierGroupDb.data, ModifierGroupCdn::class.java)
@@ -1479,22 +1484,25 @@ class CartPresenter @Inject constructor(
                                     modifierGroupModifierItems.indexOf(modifierGroupModifierItem)
                             }
                         }
-                        for (modifierItemDb in appDatabase.modifierItemDao().findAllByApplicationAndIds(
-                            applicationId, modifierGroupModifierItemIds.toTypedArray<String>()
-                        )) {
+                        for (modifierItemDb in appDatabase.modifierItemDao()
+                            .findAllByApplicationAndIds(
+                                applicationId, modifierGroupModifierItemIds.toTypedArray<String>()
+                            )) {
                             val modifierItemCdn = GsonHelper.gsonFinal()
                                 .fromJson(modifierItemDb.data, ModifierItemCdn::class.java)
                             val modifierItem = ModifierItemCdn.convert(
                                 modifierItemCdn, LocaleUtil.getInstance().language
                             )
-                            modifierItem.attributes.isSelected = modifierItem.attributes.minimum == 1
+                            modifierItem.attributes.isSelected =
+                                modifierItem.attributes.minimum == 1
                             if (modifierGroupModifierItemDisplayOrders.containsKey(modifierItem.id) && modifierGroupModifierItemDisplayOrders[modifierItem.id] != null) {
                                 modifierItem.attributes.displayOrder =
                                     modifierGroupModifierItemDisplayOrders[modifierItem.id]!!
                             }
                             val isExcluded =
                                 orderStore != null && Observable.fromIterable(modifierItem.attributes.excludedLocations)
-                                    .any { item: Int -> item.toString() == orderStore.id }.blockingGet()
+                                    .any { item: Int -> item.toString() == orderStore.id }
+                                    .blockingGet()
                             if (!isExcluded) {
                                 modifierItems.add(modifierItem)
                             }
@@ -1533,7 +1541,7 @@ class CartPresenter @Inject constructor(
                             modifierGroups.add(modifierGroup)
                         }
                     }
-                    if(!menuItem.isCombo && promoMenuItem.isCombo){
+                    if (!menuItem.isCombo && promoMenuItem.isCombo) {
                         menuItem.isCombo = true
                         menuItem.combo = promoMenuItem.combo
                     }
@@ -2643,16 +2651,18 @@ class CartPresenter @Inject constructor(
                                 cartView.showPromoError(jsonObject.getString("error"))
                             } else if (fromApply) {
                                 trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
-                                if(CacheUtil.getInstance().campaign != null){
-                                    if(CacheUtil.getInstance().campaign.id != digitalCoupon.id){
+                                if (CacheUtil.getInstance().campaign != null) {
+                                    if (CacheUtil.getInstance().campaign.id != digitalCoupon.id) {
                                         CacheUtil.getInstance().campaign = digitalCoupon
-                                        CacheUtil.getInstance().campaignPromotion = digitalCoupon.promotion
+                                        CacheUtil.getInstance().campaignPromotion =
+                                            digitalCoupon.promotion
                                         CacheUtil.getInstance().campaignPromotionMenuItem = null
                                         CacheUtil.getInstance().campaignToAdd = null
                                     }
-                                }else {
+                                } else {
                                     CacheUtil.getInstance().campaign = digitalCoupon
-                                    CacheUtil.getInstance().campaignPromotion = digitalCoupon.promotion
+                                    CacheUtil.getInstance().campaignPromotion =
+                                        digitalCoupon.promotion
                                     CacheUtil.getInstance().campaignPromotionMenuItem = null
                                     CacheUtil.getInstance().campaignToAdd = null
                                 }
@@ -3253,13 +3263,6 @@ class CartPresenter @Inject constructor(
                     }
                 }
             })
-
-
-        /*  if (CacheUtil.getInstance().cartQuantity > 0) {
-
-          }else {
-
-          }*/
     }
 
     override fun availDigitalCoupon(position: Int) {

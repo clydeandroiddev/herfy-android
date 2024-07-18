@@ -1664,8 +1664,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun addPromotionItem(menuItem: MenuItem) {
         runOnMain {
-            if(!continueCheckout){
-                dismissProgressDialog()
+            activity?.cast<BaseActivity> {
+                it.dismissDialogs()
             }
 
             binding.orderDetailsContainer.apply {
