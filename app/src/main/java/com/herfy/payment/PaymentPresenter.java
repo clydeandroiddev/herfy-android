@@ -1,4 +1,5 @@
 package com.herfy.payment;
+
 import android.location.Geocoder;
 import android.util.Pair;
 
@@ -420,6 +421,10 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         break;
                     }
                     counter++;
+                }
+
+                if(menuItem.isCombo && menuItem.isPromo()){
+                    totalPrice = menuItem.getAttributes().getPrice();
                 }
             }
             for (ModifierItem modifierItem : menuItem.getDrinks().getModifierItems()) {
@@ -903,7 +908,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                 break;
             case DELIVERY:
                 orderBody.addProperty("type", "deliver");
-                if(validate){
+                if (validate) {
                     orderBody.addProperty("delivery-charge", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", deliveryCharge)));
                 }
                 //orderBody.addProperty("delivery-charge", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", deliveryCharge)));
@@ -1236,14 +1241,14 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         if (loyaltyPoints > 0) {
                             pointsSarValue = loyaltyPoints / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
                         }
-                        double discountValue = orderData.getDiscountDisplay() > 0.0?  orderData.getDiscountDisplay() : orderData.getDiscount();
+                        double discountValue = orderData.getDiscountDisplay() > 0.0 ? orderData.getDiscountDisplay() : orderData.getDiscount();
 
                         boolean hasPromoItem = CacheUtil.getInstance().getCouponMenuItem() != null ||
                                 CacheUtil.getInstance().getCampaignPromotionMenuItem() != null;
 
                         if (jsonObject.has("error") && !jsonObject.isNull("error")) {
                             ErrorHandler.getErrorCode(jsonObject, s -> {
-                                if(s.equals("1213")){
+                                if (s.equals("1213")) {
                                     loyaltyPointsUsed = 0;
                                 }
                                 return null;
@@ -1286,7 +1291,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                             JSONObject object = (JSONObject) o;
                             if (object.has("error") && !object.isNull("error")) {
                                 ErrorHandler.getErrorCode(object, s -> {
-                                    if(s.equals("1213")){
+                                    if (s.equals("1213")) {
                                         loyaltyPointsUsed = 0;
                                         double currentValidatedTotal = getValidatedSubtotal() - validatedDiscount;
                                         paymentView.setPriceDetails(getValidatedSubtotal(),
@@ -1361,7 +1366,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
                         Store store = CacheUtil.getInstance().getOrderStore();
 
-                        if(store != null && store.getAttributes() != null && store.getAttributes().getPromisedTimeDelta() != null){
+                        if (store != null && store.getAttributes() != null && store.getAttributes().getPromisedTimeDelta() != null) {
                             String promisedTime = store.getAttributes().getPromisedTimeDelta().getPickup().toString();
                             if (orderType == OrderType.DELIVERY) {
                                 promisedTime = store.getAttributes().getPromisedTimeDelta().getDelivery().toString();

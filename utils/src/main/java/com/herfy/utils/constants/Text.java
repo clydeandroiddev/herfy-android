@@ -1229,4 +1229,8 @@ public class Text {
     public static final String SELECT_AT_LEAST_X_OPTIONS = "select_at_least_x_options";
     public static final String SELECT_X_OPTIONS = "select_x_options";
     public static final String SELECT_UP_TO_X_OPTIONS = "select_up_to_x_options";
+
+    public static final String SELECT_AT_LEAST_X_OPTION="select_at_least_x_option";
+    public static final String SELECT_X_OPTION="select_x_option";
+    public static final String SELECT_UP_TO_X_OPTION="select_up_to_x_option";
 }

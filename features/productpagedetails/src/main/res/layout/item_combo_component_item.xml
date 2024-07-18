@@ -100,11 +100,13 @@
             android:backgroundTint="@color/white"
             android:layout_marginEnd="@dimen/_2sdp"
             android:orientation="horizontal"
-            android:visibility="gone"
             android:layout_gravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="@+id/check_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/check_layout">
+
+
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/quantityDownLayout"
@@ -116,29 +118,51 @@
                 android:layout_marginEnd="@dimen/margin_small"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/quantityDown"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/ln_quantity_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_corner"
-                    android:backgroundTint="#952E1D"
-                    app:cardCornerRadius="@dimen/_80sdp"
-                    app:contentPadding="0dp"
+                    android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/quantity"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <ImageView
+                    <ImageButton
+                        android:id="@+id/quantityMinus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/_8sdp"
-                        android:src="@drawable/ic_delete">
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:textAlignment="viewEnd"
+                        android:src="@drawable/ic_new_minus"
+                        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                        android:visibility="gone"/>
 
-                    </ImageView>
-                </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/quantityDown"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="#952E1D"
+                        app:cardCornerRadius="@dimen/_80sdp"
+                        app:contentPadding="0dp"
+                        android:visibility="visible">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/_8sdp"
+                            android:src="@drawable/ic_delete">
+
+                        </ImageView>
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
 
                 <TextView
                     android:id="@+id/quantity"
@@ -148,10 +172,10 @@
                     android:gravity="center"
                     android:layout_marginStart="@dimen/_6sdp"
                     android:textColor="@color/color_light_blue"
-                    app:layout_constraintStart_toEndOf="@+id/quantityDown"
-                    app:layout_constraintBottom_toBottomOf="@id/quantityDown"
+                    app:layout_constraintStart_toEndOf="@+id/ln_quantity_down"
+                    app:layout_constraintBottom_toBottomOf="@id/ln_quantity_down"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/quantityDown"
+                    app:layout_constraintTop_toTopOf="@id/ln_quantity_down"
                     tools:text="100" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 

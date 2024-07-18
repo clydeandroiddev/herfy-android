@@ -35,39 +35,40 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
 
             <TextView
                 android:id="@+id/txtModifierItemName"
                 style="@style/Styles.Text.Footnote.Medium"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/inter_semi_bold"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="@dimen/margin_large"
+                android:fontFamily="@font/inter_semi_bold"
                 android:gravity="start|center_vertical"
                 android:paddingEnd="4dp"
                 android:textAlignment="viewStart"
-
                 android:textColor="#0C0C0C"
+                app:layout_constraintBottom_toTopOf="@id/txtmodifierPrice"
+                app:layout_constraintEnd_toStartOf="@+id/check_layout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
                 tools:text="Marinara dip" />
 
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txtmodifierPrice"
                 style="@style/Styles.Text.Footnote_Bold"
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_small"
                 android:layout_marginBottom="@dimen/margin_large"
                 android:textColor="#0064AC"
+                app:layout_constraintTop_toBottomOf="@id/txtModifierItemName"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
-                app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
                 tools:text="+Sar 2" />
 
             <com.google.android.material.card.MaterialCardView
@@ -158,27 +159,51 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:visibility="gone">
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/quantityDown"
+
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/ln_quantity_down"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/rounded_corner"
-                        android:backgroundTint="#952E1D"
-                        app:cardCornerRadius="@dimen/_80sdp"
-                        app:contentPadding="0dp"
+                        android:orientation="horizontal"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/quantity"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
-                        <ImageView
+                        <ImageButton
+                            android:id="@+id/quantityMinus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:padding="@dimen/_8sdp"
-                            android:src="@drawable/ic_delete">
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:textAlignment="viewEnd"
+                            android:src="@drawable/ic_new_minus"
+                            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                            android:visibility="gone"/>
 
-                        </ImageView>
-                    </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/quantityDown"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rounded_corner"
+                            android:backgroundTint="#952E1D"
+                            app:cardCornerRadius="@dimen/_80sdp"
+                            app:contentPadding="0dp"
+                            android:visibility="visible">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="@dimen/_8sdp"
+                                android:src="@drawable/ic_delete">
+
+                            </ImageView>
+                        </com.google.android.material.card.MaterialCardView>
+
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
                     <TextView
                         android:id="@+id/quantity"
@@ -188,10 +213,10 @@
                         android:gravity="center"
                         android:layout_marginStart="@dimen/_6sdp"
                         android:textColor="@color/color_light_blue"
-                        app:layout_constraintStart_toEndOf="@+id/quantityDown"
-                        app:layout_constraintBottom_toBottomOf="@id/quantityDown"
+                        app:layout_constraintStart_toEndOf="@+id/ln_quantity_down"
+                        app:layout_constraintBottom_toBottomOf="@id/ln_quantity_down"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/quantityDown"
+                        app:layout_constraintTop_toTopOf="@id/ln_quantity_down"
                         tools:text="100" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -145,6 +145,16 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
                                 item.componentModifierItemPos
                             )
                         }
+                        quantityMinus.setOnClickListener {
+                            onAction?.onComponentQuantityChanged(
+                                false,
+                                menuItemComponent = item.menuItemComponents,
+                                componentModifierItem = item.componentModifierItem,
+                                quantityDown.isVisible(),
+                                item.menuItemComponentPos,
+                                item.componentModifierItemPos
+                            )
+                        }
                     }
                 }
             }
@@ -212,20 +222,42 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
                 select.apply {
                     visible()
                     text = when {
-                        data.minimum > 0 && data.maximum > data.minimum -> cacheUtil.getTranslations(
-                            Text.SELECT_AT_LEAST_X_OPTIONS,
-                            "(Select at least (x) options)"
-                        ).replace("(x)", localize(data.minimum.toString()))
+                        data.minimum > 0 && data.maximum > data.minimum ->{
+                            var selectStr = cacheUtil.getTranslations(Text.SELECT_AT_LEAST_X_OPTION, "(Select at least (x) option)")
+                            if(data.minimum > 1){
+                                selectStr = cacheUtil.getTranslations(
+                                    Text.SELECT_AT_LEAST_X_OPTIONS,
+                                    "(Select at least (x) options)"
+                                )
+                            }
+                            selectStr.replace("(x)", data.minimum.toString())
+                        }
 
-                        data.minimum > 0 && data.minimum == data.maximum -> cacheUtil.getTranslations(
-                            Text.SELECT_X_OPTIONS,
-                            "(Select (x) options)"
-                        ).replace("(x)", localize(data.maximum.toString()))
 
-                        else -> cacheUtil.getTranslations(
-                            Text.SELECT_UP_TO_X_OPTIONS,
-                            "(Select up to (x) options)"
-                        ).replace("(x)", localize(data.maximum.toString()))
+                        data.minimum > 0 && data.minimum == data.maximum -> {
+                            var selectStr = cacheUtil.getTranslations(Text.SELECT_X_OPTION, "(Select (x) option)")
+                            if(data.maximum > 1){
+                                selectStr = cacheUtil.getTranslations(
+                                    Text.SELECT_X_OPTIONS,
+                                    "(Select (x) options)"
+                                )
+                            }
+                            selectStr.replace("(x)", localize(data.maximum.toString()))
+                        }
+
+                        else -> {
+                            var selectStr =  cacheUtil.getTranslations(
+                                Text.SELECT_UP_TO_X_OPTION,
+                                "(Select up to (x) option)"
+                            )
+                            if(data.maximum > 1){
+                                selectStr = cacheUtil.getTranslations(
+                                    Text.SELECT_UP_TO_X_OPTIONS,
+                                    "(Select up to (x) options)"
+                                )
+                            }
+                            selectStr.replace("(x)", localize(data.maximum.toString()))
+                        }
                     }
                 }
                 minimum.text = cacheUtil.getTranslations(Text.REQUIRED, "Required")
@@ -373,7 +405,18 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
                     quantityDownLayout.gone()
                     quantityUp.visible()
                     quantityDownLayout.apply {
-                        if (isQuantityDownLayout) visible() else gone()
+                        if (isQuantityDownLayout) {
+                            visible()
+                            if(componentModifierItem.quantity > 1){
+                                quantityMinus.visible()
+                                quantityDown.gone()
+                            }else {
+                                quantityMinus.gone()
+                                quantityDown.visible()
+                            }
+                        }else {
+                            gone()
+                        }
                     }
                 } else {
                     quantityContainer.gone()
@@ -424,6 +467,10 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
                 }
 
                 val quantityDownIsClickable = componentModifierItem.quantity != 1
+                quantityMinus.apply {
+                    isFocusable = quantityDownIsClickable
+                    isClickable = quantityDownIsClickable
+                }
                 quantityDown.apply {
                     isFocusable = quantityDownIsClickable
                     isClickable = quantityDownIsClickable

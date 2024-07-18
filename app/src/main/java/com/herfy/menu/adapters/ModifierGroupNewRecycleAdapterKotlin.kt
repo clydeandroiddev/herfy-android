@@ -141,17 +141,37 @@ class ModifierGroupNewRecycleAdapterKotlin(
             when {
                 minimum > 0 -> {
                     binding.select.text = when {
-                        maximum > minimum -> CacheUtil.getInstance()
-                            .getTranslations(
-                                Text.SELECT_AT_LEAST_X_OPTIONS,
-                                "(Select at least (x) options)"
-                            )
+                        maximum > minimum -> {
+                            if(minimum > 1){
+                                CacheUtil.getInstance()
+                                    .getTranslations(
+                                        Text.SELECT_AT_LEAST_X_OPTIONS,
+                                        "(Select at least (x) options)"
+                                    )
+                            } else {
+                                CacheUtil.getInstance()
+                                    .getTranslations(
+                                        Text.SELECT_AT_LEAST_X_OPTION,
+                                        "(Select at least (x) option)"
+                                    )
+                            }
+                        }
 
-                        maximum == minimum -> CacheUtil.getInstance()
-                            .getTranslations(
-                                Text.SELECT_X_OPTIONS,
-                                "(Select (x) options)"
-                            )
+                        maximum == minimum -> {
+                            if(minimum > 1){
+                                CacheUtil.getInstance()
+                                    .getTranslations(
+                                        Text.SELECT_X_OPTIONS,
+                                        "(Select (x) options)"
+                                    )
+                            } else {
+                                CacheUtil.getInstance()
+                                    .getTranslations(
+                                        Text.SELECT_X_OPTION,
+                                        "(Select (x) option)"
+                                    )
+                            }
+                        }
 
                         else -> ""
                     }.replace("(x)", localize(minimum.toString()))
@@ -160,12 +180,21 @@ class ModifierGroupNewRecycleAdapterKotlin(
                 }
 
                 minimum == 0 && maximum > 0 -> {
-                    binding.select.text = CacheUtil.getInstance()
-                        .getTranslations(
-                            Text.SELECT_UP_TO_X_OPTIONS,
-                            "(Select up to (x) options)"
-                        )
-                        .replace("(x)", localize(maximum.toString()))
+                    binding.select.text = when {
+                        maximum > 1 -> CacheUtil.getInstance()
+                            .getTranslations(
+                                Text.SELECT_UP_TO_X_OPTIONS,
+                                "(Select up to (x) options)"
+                            )
+                            .replace("(x)", localize(maximum.toString()))
+
+                        else -> CacheUtil.getInstance()
+                            .getTranslations(
+                                Text.SELECT_UP_TO_X_OPTION,
+                                "(Select up to (x) option)"
+                            )
+                            .replace("(x)", localize(maximum.toString()))
+                    }
                     binding.select.visibility = View.VISIBLE
                 }
 

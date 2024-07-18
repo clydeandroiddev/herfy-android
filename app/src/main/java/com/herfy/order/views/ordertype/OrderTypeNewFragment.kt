@@ -864,11 +864,24 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
     }
 
     override fun navigateMenuItemDetails(menuItem: MenuItem?) {
-        findNavController().navigate(
-            OrderTypeNewFragmentDirections.actionOrderTypeToMenuItem(
-                menuItemId = menuItem?.id.orEmpty(), isFavorite = true, isFromOrderType = true
-            )
-        )
+        menuItem?.let {
+            if(it.isCombo){
+                findNavController().navigate(
+                    OrderTypeNewFragmentDirections.actionOrderTypeToCombo(
+                        menuCategoryId = "",
+                        menuItemId = it.id, isFavorite = true, isFromOrderType = true
+                    )
+                )
+            }else {
+                findNavController().navigate(
+                    OrderTypeNewFragmentDirections.actionOrderTypeToMenuItem(
+                        menuItemId = it.id, isFavorite = true, isFromOrderType = true
+                    )
+                )
+            }
+        }
+
+
     }
 
     override fun selectAddressWork(position: Int) {
