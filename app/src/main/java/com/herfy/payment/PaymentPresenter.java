@@ -472,7 +472,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         for (ComponentModifierItem componentModifierItem : components.items) {
                             if (componentModifierItem.selected) {
                                 if (!menuItem.isSandwichOnly)
-                                    totalPrice += componentModifierItem.price;
+                                    totalPrice += componentModifierItem.price * componentModifierItem.quantity;
                                 if (!componentModifierItem.modifierGroups.isEmpty()) {
                                     for (ModifierGroup modifierGroup : componentModifierItem.modifierGroups) {
                                         for (int i = 0; i < modifierGroup.getModifierItems().size(); i++) {
@@ -1125,7 +1125,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                                         JsonObject comboItemObject = new JsonObject();
                                         comboItemObject.addProperty("id", compoItem.id);
                                         comboItemObject.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", compoItem.price)));
-                                        comboItemObject.addProperty("quantity", 1);
+                                        comboItemObject.addProperty("quantity", compoItem.quantity);
                                         comboItemObject.add("ingredients", new JsonArray());
                                         JsonArray modifierCombos = new JsonArray();
                                         if (!compoItem.modifierGroups.isEmpty()) {
