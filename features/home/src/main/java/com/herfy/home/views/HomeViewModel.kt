@@ -2,7 +2,6 @@ package com.herfy.home.views
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonArray
@@ -12,7 +11,6 @@ import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.home.adapter.PromotionCategoryAdapter
 import com.herfy.home.adapter.PromotionsAdapter
 import com.herfy.home.adapter.SliderImageAdapter
-import com.herfy.model.CampaignToAdd
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.PromotionCategory
 import com.herfy.model.TierProgress
@@ -148,10 +146,13 @@ class HomeViewModel @Inject constructor(
     val catering: LiveData<Event<String?>> = _catering
 
     private val _showMenu = MutableLiveData<Event<Boolean>>()
-    val showMenu : LiveData<Event<Boolean>> = _showMenu
+    val showMenu: LiveData<Event<Boolean>> = _showMenu
+
+    private val _showOrderTypeFromCampaign = MutableLiveData<Event<Boolean>>()
+    val showOrderTypeFromCampaign: LiveData<Event<Boolean>> = _showOrderTypeFromCampaign
 
     private val _showPromotionsError = MutableLiveData<Event<ErrorMsgItem>>()
-    val showPromotionsError : LiveData<Event<ErrorMsgItem>> = _showPromotionsError
+    val showPromotionsError: LiveData<Event<ErrorMsgItem>> = _showPromotionsError
 
     fun getSliders() {
         invoke {
@@ -283,7 +284,7 @@ class HomeViewModel @Inject constructor(
                 res.data?.cast<Set<OrderType>> { orderTypes ->
                     val types = hashSetOf<OrderType>()
                     types.addAll(orderTypes)
-                    if(types.contains(OrderType.PICKUP) && types.contains(OrderType.CURBSIDE)) {
+                    if (types.contains(OrderType.PICKUP) && types.contains(OrderType.CURBSIDE)) {
                         types.remove(OrderType.CURBSIDE)
                     }
                     _orderTypes.postValue(types)
@@ -439,7 +440,7 @@ class HomeViewModel @Inject constructor(
                     .filter { tier: Tier -> totalPointsAccumulated <= tier.endPoint }.toList()
                     .blockingGet()
                 var pointsToNextTier = 0
-                if (loyalty.attributes.loyaltyTier == null){
+                if (loyalty.attributes.loyaltyTier == null) {
                     val tier = tiers[0]
                     val loyaltyTier = LoyaltyTier()
                     loyaltyTier.name = tier.name
@@ -741,7 +742,12 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun onClickClaimPromo(promo: Campaign) {
-        validateDigitalCoupon(promo)
+        if (CacheUtil.getInstance().orderTypeNotBlank()) {
+            validateDigitalCoupon(promo)
+        } else {
+            CacheUtil.getInstance().initialCampaign = promo
+            _showOrderTypeFromCampaign.value = Event(true)
+        }
     }
 
     override fun onRemovePromo() {
@@ -1108,7 +1114,8 @@ class HomeViewModel @Inject constructor(
                                 try {
                                     val jsonObject = JSONObject(o.toString())
                                     if (jsonObject.has("error") && !jsonObject.isNull("error")) {
-                                        _showPromotionsError.value = Event(ErrorMsgItem(true, jsonObject.getString("error")))
+                                        _showPromotionsError.value =
+                                            Event(ErrorMsgItem(true, jsonObject.getString("error")))
                                     } else {
                                         if (digitalCoupon.getPromotion() != null && digitalCoupon.getPromotion()
                                                 .getAttributes().getType()
@@ -1123,9 +1130,9 @@ class HomeViewModel @Inject constructor(
                                             CacheUtil.getInstance()
                                                 .setCampaignPromotionMenuItem(null)
                                             CacheUtil.getInstance().setCampaignToAdd(null)
-                                            if(CacheUtil.getInstance().getCartQuantity() > 0){
+                                            if (CacheUtil.getInstance().getCartQuantity() > 0) {
                                                 _showCart.value = Event(true)
-                                            }else {
+                                            } else {
                                                 _showMenu.value = Event(true)
                                             }
 

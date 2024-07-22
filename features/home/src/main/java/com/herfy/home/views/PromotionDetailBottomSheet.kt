@@ -33,7 +33,6 @@ import com.herfy.model.PromotionRequirement
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
-import com.herfy.utils.extensions.isMet
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
@@ -135,7 +134,8 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun initViews() {
         super.initViews()
-        val imageHeight = (Resources.getSystem().displayMetrics.widthPixels / Values.PROMO_IMAGE_ASPECT_RATIO).toInt()
+        val imageHeight =
+            (Resources.getSystem().displayMetrics.widthPixels / Values.PROMO_IMAGE_ASPECT_RATIO).toInt()
         promo?.let { promoData ->
             binding.apply {
                 ivPromo.layoutParams.height = imageHeight
@@ -155,7 +155,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
                 tvPromoDescription.apply {
                     val description = promoData.attributes?.description
-                    if(!description.isNullOrEmpty()) {
+                    if (!description.isNullOrEmpty()) {
                         text = description
                         visible()
                     } else {
@@ -165,7 +165,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
                 promoData.promotion?.attributes?.rules?.let {
                     it.find { r -> r.ruleKey.equals("total.gte", ignoreCase = true) }?.let { gte ->
-                        if(gte.ruleValue != "gte:0") {
+                        if (gte.ruleValue != "gte:0") {
                             tvPromoCategory.text = gte.text
                             fmPromoCategory.visible()
                         } else {
@@ -223,7 +223,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
         viewModel.showPromo.observeNonNull(this) {
             it.getContentIfNotHandled().let { campaign ->
-                if(campaign != null) {
+                if (campaign != null) {
                     promo = campaign
                     setRedeemButton(campaign.promotion.attributes.rules)
                 }
@@ -249,7 +249,8 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                 .getTranslations(Text.REMOVE_PROMO_LABEL, "Remove Promo")
         }
         activity?.let {
-            binding.btnClaim.backgroundTintList = ContextCompat.getColorStateList(it, R.color.background_color_blue)
+            binding.btnClaim.backgroundTintList =
+                ContextCompat.getColorStateList(it, R.color.background_color_blue)
         }
         binding.btnClaim.isEnabled = true
         binding.btnClaim.setOnClickListener {
@@ -269,6 +270,8 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                                 promo?.let { promoData ->
                                     CacheUtil.getInstance().couponCode = null
                                     CacheUtil.getInstance().couponName = null
+                                    CacheUtil.getInstance().initialCampaign = null
+                                    CacheUtil.getInstance().initialOrderType = null
                                     CacheUtil.getInstance().couponMenuItem = null
                                     CacheUtil.getInstance().couponToAdd = null
                                     CacheUtil.getInstance().digitalCoupons = ""
@@ -288,6 +291,8 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                                 CacheUtil.getInstance().couponName = null
                                 CacheUtil.getInstance().couponMenuItem = null
                                 CacheUtil.getInstance().couponToAdd = null
+                                CacheUtil.getInstance().initialCampaign = null
+                                CacheUtil.getInstance().initialOrderType = null
                                 CacheUtil.getInstance().digitalCoupons = ""
                                 CacheUtil.getInstance().campaign = null
                                 CacheUtil.getInstance().campaignPromotion = null
@@ -300,7 +305,9 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                     }
                 } else {
                     promo?.let { promoData ->
-                        binding.layoutLoading.root.visible()
+                        if (CacheUtil.getInstance().orderTypeNotBlank()) {
+                            binding.layoutLoading.root.visible()
+                        }
                         action?.onClickClaimPromo(promoData)
                     }
                 }
@@ -311,6 +318,8 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                 CacheUtil.getInstance().couponToAdd = null
                 CacheUtil.getInstance().digitalCoupons = ""
                 CacheUtil.getInstance().campaign = null
+                CacheUtil.getInstance().initialCampaign = null
+                CacheUtil.getInstance().initialOrderType = null
                 CacheUtil.getInstance().campaignPromotion = null
                 CacheUtil.getInstance().campaignPromotionMenuItem = null
                 CacheUtil.getInstance().campaignToAdd = null
@@ -444,12 +453,13 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
     fun showError(error: String) {
         try {
-            activity?.let {act ->
+            activity?.let { act ->
                 val builder = AlertDialog.Builder(act)
                 builder.setCancelable(true)
                 builder.setMessage(error)
                 val alertDialog = builder.create()
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, CacheUtil.getInstance().getTranslations(Text.OK)
+                alertDialog.setButton(
+                    AlertDialog.BUTTON_POSITIVE, CacheUtil.getInstance().getTranslations(Text.OK)
                 ) { dialog, _ ->
                     dialog.dismiss()
                     binding.layoutLoading.root.gone()

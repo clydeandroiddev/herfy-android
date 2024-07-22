@@ -86,6 +86,7 @@ import java.util.Date
 import java.util.GregorianCalendar
 import java.util.Locale
 import java.util.Objects
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 
@@ -95,6 +96,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     companion object {
         const val ARGS_KEY_FRAGMENT_RESULT = "fragmentResult"
         const val ARGS_KEY_CHECKOUT = "checkout"
+        const val ARGS_KEY_AVAIL_CAMPAIGN = "avail_campaign"
     }
 
     private lateinit var binding: FragmentHerfyCartBinding
@@ -156,6 +158,15 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         cartPresenter.start()
         cartPresenter.fetchCustomerCards()
         update()
+        checkForAutoApplyCampaign()
+    }
+
+    private fun checkForAutoApplyCampaign() {
+        if (CacheUtil.getInstance().initialCampaign != null && CacheUtil.getInstance()
+                .orderTypeNotBlank()
+        ) {
+            cartPresenter.availCouponFromCampaign()
+        }
     }
 
     private fun checkBackground() {
@@ -288,20 +299,22 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 }
             }
         }
+
         if (adapter != null) {
             adapter!!.notifyDataSetChanged()
         }
+
         if (cartPresenter != null) {
             if (!dontShowDigitalCoupons) {
                 cartPresenter.getMenuItems()
             } else {
-                binding.placeOrder.isEnabled =
-                    cartPresenter.menuItemsCount > 0
+                binding.placeOrder.isEnabled = cartPresenter.menuItemsCount > 0
             }
             cartPresenter.getIntegrations()
             cartPresenter.getConcept()
             cartPresenter.showCoupon()
             cartPresenter.getUpsells()
+
             if (CacheUtil.getInstance().campaign != null) {
                 if ((CacheUtil.getInstance().campaignPromotionMenuItem != null || CacheUtil.getInstance().couponMenuItem != null)) {
                     isFromPromotions = true
@@ -433,8 +446,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 var maxDays = CacheUtil.getInstance().concept.maxDaysAllowedInAdvanceOrder
                 if (maxDays == 0) {
                     maxDays = 1
-                }
-                /* binding.paymentSlidingPanel.calendarView.setOnDateChangedListener(this@CartFragment)
+                }/* binding.paymentSlidingPanel.calendarView.setOnDateChangedListener(this@CartFragment)
                  binding.paymentSlidingPanel.calendarView.showOtherDates =
                      MaterialCalendarView.SHOW_ALL
                  val instance = LocalDate.now()
@@ -480,8 +492,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     it.onBackPressed()
                 }
             }
-        }
-        /* binding.main.removeSched.setOnClickListener { v: View? ->
+        }/* binding.main.removeSched.setOnClickListener { v: View? ->
              removeSchedTotally()
              cartPresenter!!.removeMukafaa()
          }
@@ -600,8 +611,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        }
-        /*
+        }/*
         binding.main.promoCode.setOnEditorActionListener { v: TextView?, actionId: Int, event: KeyEvent? ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 binding.main.applyCode.performClick()
@@ -766,24 +776,21 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     CacheUtil.getInstance().getTranslations(Text.SELECTED_ADDRESS)
             } else {
                 if (selectedOrderType == OrderType.PICKUP || selectedOrderType == OrderType.CURBSIDE || selectedOrderType == OrderType.DRIVE_THRU) {
-                    binding.orderTypeContainer.orderTypeText.text =
-                        CacheUtil.getInstance()
-                            .getTranslations(Text.PICKUP_IN_MINS, "Pickup in (x) mins")
-                            .replace("(x)", "${store.attributes.promisedTimeDelta.delivery}")
+                    binding.orderTypeContainer.orderTypeText.text = CacheUtil.getInstance()
+                        .getTranslations(Text.PICKUP_IN_MINS, "Pickup in (x) mins")
+                        .replace("(x)", "${store.attributes.promisedTimeDelta.delivery}")
                     binding.orderTypeContainer.branchName.text =
                         CacheUtil.getInstance().orderStore.attributes.name
                 } else if (selectedOrderType == OrderType.DINE_IN) {
-                    binding.orderTypeContainer.orderTypeText.text =
-                        CacheUtil.getInstance()
-                            .getTranslations(Text.DINE_IN_MINS, "Dine In in (x) mins")
-                            .replace("(x)", "${store.attributes.promisedTimeDelta.delivery}")
+                    binding.orderTypeContainer.orderTypeText.text = CacheUtil.getInstance()
+                        .getTranslations(Text.DINE_IN_MINS, "Dine In in (x) mins")
+                        .replace("(x)", "${store.attributes.promisedTimeDelta.delivery}")
                     binding.orderTypeContainer.branchName.text =
                         CacheUtil.getInstance().orderStore.attributes.name
                 } else if (selectedOrderType == OrderType.DELIVERY) {
-                    binding.orderTypeContainer.orderTypeText.text =
-                        CacheUtil.getInstance()
-                            .getTranslations(Text.DELIVERY_IN_MINS, "Delivery in (x) mins")
-                            .replace("(x)", "${store.attributes.promisedTimeDelta.delivery}")
+                    binding.orderTypeContainer.orderTypeText.text = CacheUtil.getInstance()
+                        .getTranslations(Text.DELIVERY_IN_MINS, "Delivery in (x) mins")
+                        .replace("(x)", "${store.attributes.promisedTimeDelta.delivery}")
                 }
             }
         }
@@ -983,14 +990,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 binding.paymentSummaryContainer.discountLayout.gone()
                 binding.paymentSummaryContainer.deliveryLayout.gone()
                 binding.paymentSummaryContainer.total.text = CurrencyUtils.updateCurrency(
-                    0.0,
-                    withSpace = true,
-                    ignoreDecimalPlaces = true
+                    0.0, withSpace = true, ignoreDecimalPlaces = true
                 )
                 binding.footerTotalPrice.text = CurrencyUtils.updateCurrency(
-                    0.0,
-                    withSpace = true,
-                    ignoreDecimalPlaces = true
+                    0.0, withSpace = true, ignoreDecimalPlaces = true
                 )
             } else {
                 binding.paymentSummaryContainer.total.text = CurrencyUtils.updateCurrency(
@@ -1052,8 +1055,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
     }
 
-    override fun setOriginalPrice(hasPromotion: Boolean, originalPrice: Double) {
-        /* runOnMain {
+    override fun setOriginalPrice(hasPromotion: Boolean, originalPrice: Double) {/* runOnMain {
              binding.originalPrice.text = CurrencyUtils.updateCurrency(
                  originalPrice, withSpace = true, ignoreDecimalPlaces = hasPromotion
              )
@@ -1109,9 +1111,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 bundle.putBoolean(Values.KEY_IS_EDIT, true)
                 bundle.putInt(Values.KEY_CART_MENU_ITEM_POSITION, position)
                 NavigationUtils.navigateSafe(
-                    findNavController(),
-                    R.id.action_cart_to_combo_meal,
-                    bundle
+                    findNavController(), R.id.action_cart_to_combo_meal, bundle
                 )
             } else {
                 NavigationUtils.navigateSafe(
@@ -1168,9 +1168,69 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         this.signIn = signIn
     }
 
+    fun showOrderTypeFromCampaign() {
+        dismissDialogFragments()
+
+        setFragmentResultListener(ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
+            clearFragmentResultListener(requestKey = OrderTypeNewFragment.ARGS_KEY_FRAGMENT_RESULT)
+            val availCampaign = if (bundle.containsKey(ARGS_KEY_AVAIL_CAMPAIGN)) {
+                bundle.getBoolean(ARGS_KEY_AVAIL_CAMPAIGN, false)
+            } else {
+                false
+            }
+
+            if (availCampaign) {
+                checkForAutoApplyCampaign()
+            }
+        }
+
+        val storeId = CacheUtil.getOrderStoreId() ?: ""
+        NavigationUtils.navigateSafe(
+            findNavController(), CartFragmentDirections.actionCartToOrderType(
+                fromCart = true,
+                checkout = false,
+                storeId = storeId,
+                fromCampaign = true,
+                isBothType = checkBothType()
+            )
+        )
+    }
+
+    private fun checkBothType(): Boolean {
+        val campaign = CacheUtil.getInstance().initialCampaign
+        var types = 0
+        if (campaign != null) {
+            val promoRules = campaign.promotion.attributes.rules
+            if (promoRules.isNotEmpty() && promoRules.find { rule ->
+                    rule.ruleKey.equals(
+                        "order-type", true
+                    )
+                } != null) {
+                promoRules.find { rule -> rule.ruleKey.equals("order-type", true) }?.let {
+                    val orderTypes = it.text.split(Pattern.compile(","))
+                    for (orderType in orderTypes) {
+                        when (orderType.trim()) {
+                            "pickup", "curbside", "drive-thru" -> {
+                                types += 1
+                                CacheUtil.getInstance().initialOrderType = OrderType.PICKUP
+                            }
+
+                            "delivery", "deliver" -> {
+                                types += 1
+                                CacheUtil.getInstance().initialOrderType = OrderType.DELIVERY
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return types > 1
+    }
+
     override fun showOrderType(checkout: Boolean) {
         dismissDialogFragments()
         continueCheckout = false
+
         setFragmentResultListener(ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
             clearFragmentResultListener(requestKey = OrderTypeNewFragment.ARGS_KEY_FRAGMENT_RESULT)
             continueCheckout = if (bundle.containsKey(ARGS_KEY_CHECKOUT)) {
@@ -1185,6 +1245,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 continueCheckout = false
             }
         }
+
         val storeId = CacheUtil.getOrderStoreId() ?: ""
         NavigationUtils.navigateSafe(
             findNavController(), CartFragmentDirections.actionCartToOrderType(
@@ -1239,8 +1300,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun showMessage(message: String) {
         activity?.runOnUiThread {
-            binding.placeOrder.isEnabled =
-                cartPresenter!!.menuItemsCount > 0
+            binding.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
             activity?.cast<BaseActivity> {
                 it.dismissDialogs()
                 Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
@@ -1251,16 +1311,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showError(error: String) {
         activity?.runOnUiThread {
             continueCheckout = false
-            binding.placeOrder.isEnabled =
-                CacheUtil.getInstance().cartQuantity > 0
+            binding.placeOrder.isEnabled = CacheUtil.getInstance().cartQuantity > 0
             showAlertDialog("", error)
         }
     }
 
     override fun showValidateOrderError(errors: List<String>) {
         continueCheckout = false
-        binding.placeOrder.isEnabled =
-            CacheUtil.getInstance().cartQuantity > 0
+        binding.placeOrder.isEnabled = CacheUtil.getInstance().cartQuantity > 0
         val builder = StringBuilder()
         builder.append("")
         for (i in errors.indices) {
@@ -1276,8 +1334,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun showUnavailableMenuItems() {
         activity?.runOnUiThread {
             continueCheckout = false
-            binding.placeOrder.isEnabled =
-                cartPresenter!!.menuItemsCount > 0
+            binding.placeOrder.isEnabled = cartPresenter!!.menuItemsCount > 0
             activity?.cast<BaseActivity> { baseActivity ->
                 baseActivity.dismissDialogs()
                 val cartDialogFragment = CartDialogFragment.newInstance(cartPresenter)
@@ -1460,10 +1517,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 )
             } else if (!dontShowDigitalCoupons) {
                 digitalCouponsDialogFragment = CartPromoDialogFragment.newInstance(
-                    loading,
-                    selected,
-                    digitalCoupons,
-                    object : CartPromoDialogFragment.OnAction {
+                    loading, selected, digitalCoupons, object : CartPromoDialogFragment.OnAction {
                         override fun onClose() {
                             if (digitalCouponsDialogFragment != null) {
                                 try {
@@ -1480,19 +1534,27 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             try {
                                 digitalCouponsDialogFragment?.dismiss()
                             } catch (exception: Exception) {
-                                // do not dismiss when fragment is detaching or is not added
                                 exception.printStackTrace()
                             }
-                            activity?.cast<BaseActivity> {
-                                it.showLoadingDialog()
-                            }
-                            if (removeCoupon) {
-                                cartPresenter!!.removeCoupon()
-                            }
-                            if (selected < cartPresenter!!.digitalCouponsList.size) {
-                                Handler().postDelayed(
-                                    { cartPresenter!!.availDigitalCoupon(selected) }, 200
-                                )
+
+                            if (CacheUtil.getInstance().orderTypeNotBlank()) {
+                                activity?.cast<BaseActivity> {
+                                    it.showLoadingDialog()
+                                }
+                                if (removeCoupon) {
+                                    cartPresenter!!.removeCoupon()
+                                }
+                                if (selected < cartPresenter!!.digitalCouponsList.size) {
+                                    Handler().postDelayed(
+                                        { cartPresenter!!.availDigitalCoupon(selected) }, 200
+                                    )
+                                }
+                            } else {
+                                CacheUtil.getInstance().initialCampaign =
+                                    cartPresenter.getDigitalCouponByPosition(selected)
+                                if (CacheUtil.getInstance().initialCampaign != null) {
+                                    showOrderTypeFromCampaign()
+                                }
                             }
                         }
 
@@ -1510,8 +1572,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         override fun goToMenu() {
                             digitalCouponsDialogFragment?.dismiss()
                             NavigationUtils.navigateSafe(
-                                findNavController(),
-                                CartFragmentDirections.actionCartToMenu()
+                                findNavController(), CartFragmentDirections.actionCartToMenu()
                             )
                         }
 
@@ -1617,8 +1678,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
     }
 
-    override fun selectDigitalCoupon(position: Int) {
-        /*if (digitalCouponsDialogFragment != null) {
+    override fun selectDigitalCoupon(position: Int) {/*if (digitalCouponsDialogFragment != null) {
             digitalCouponsDialogFragment!!.selectDigitalCoupon(position)
         }*/
     }
@@ -1636,8 +1696,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     tvCouponDescription.text = it.attributes.description
                     var imageUrl = campaign.attributes.imageUri
                     if (imageUrl == null || imageUrl.equals(
-                            "null",
-                            ignoreCase = true
+                            "null", ignoreCase = true
                         ) || imageUrl.isEmpty() || imageUrl.lowercase(
                             Locale.getDefault()
                         ).contains("default-image.png")
@@ -1748,8 +1807,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     for (modifierGroup in menuItem.modifierGroups) {
                         val visibilityConfig = modifierGroup.attributes.visibilityConfig
                         if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                                "hidden",
-                                ignoreCase = true
+                                "hidden", ignoreCase = true
                             )
                         ) {
                             for (modifierItem in modifierGroup.modifierItems) {
@@ -1800,8 +1858,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                             modifierItemsCounter++
                                             stringBuilder.append(
                                                 translated(
-                                                    LocaleUtil.getInstance().language,
-                                                    item.name
+                                                    LocaleUtil.getInstance().language, item.name
                                                 ) + " (" + StringUtil.localize(1.toString()) + ")"
                                             )
                                         }
@@ -1876,14 +1933,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
 
                     var qtyStr = StringUtil.localize("0" + menuItem.attributes.quantity.toString())
-                    if(menuItem.attributes.quantity > 9){
+                    if (menuItem.attributes.quantity > 9) {
                         qtyStr = StringUtil.localize(menuItem.attributes.quantity.toString())
                     }
                     quantity.text = qtyStr
                     if (menuItemTotalPrice > 0) {
                         totalPrice.text = StringUtil.getNewFormattedPrice(
-                            menuItemTotalPrice * menuItem.attributes.quantity,
-                            true
+                            menuItemTotalPrice * menuItem.attributes.quantity, true
                         )
                     } else {
                         totalPrice.text =
@@ -1939,8 +1995,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             }
 
 
-
-
         }
     }
 
@@ -1954,8 +2008,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 CacheUtil.getInstance().campaignPromotionMenuItem
             } else {
                 null
-            }
-            /*promoItem?.let { promoMenuItem ->
+            }/*promoItem?.let { promoMenuItem ->
                 if (promoMenuItem.isMustBeCustomized && promoMenuItem.isCombo) {
                     NavigationUtils.navigateSafe(
                         findNavController(), CartFragmentDirections.actionCartToComboMeal(
@@ -2259,9 +2312,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun sendAddToCartFacebookEvent(menuItem: MenuItem) {
         activity?.apply {
             FacebookAppEventUtil.addToCartEvent(
-                this,
-                menuItem,
-                MenuUtil.getMenuItemTotalPrice(menuItem)
+                this, menuItem, MenuUtil.getMenuItemTotalPrice(menuItem)
             )
         }
     }
@@ -2285,8 +2336,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     alertDialog.setOnShowListener { dialogInterface ->
                         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isAllCaps = false
                         if (!CacheUtil.getInstance().colorMain.equals(
-                                "#FFFFFF",
-                                ignoreCase = true
+                                "#FFFFFF", ignoreCase = true
                             )
                         ) {
                             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
@@ -2294,8 +2344,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         } else {
                             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
                                 ContextCompat.getColor(
-                                    it,
-                                    R.color.primary_text
+                                    it, R.color.primary_text
                                 )
                             )
                         }

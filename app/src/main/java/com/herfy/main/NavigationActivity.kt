@@ -49,13 +49,15 @@ class NavigationActivity : BaseActivity(), MainContract.View {
         intent.extras?.let {
             //TODO: fix navigation
 
-            navigation =  it.getString("navigation")?.let { nav -> this.resources.getIdentifier(nav, "id", this.packageName) }?: it.getInt("navigation")
+            navigation = it.getString("navigation")
+                ?.let { nav -> this.resources.getIdentifier(nav, "id", this.packageName) }
+                ?: it.getInt("navigation")
 
-           /* it.getString("navigation")?.let { nav ->
-                navigation =
-            }?: run {
-                navigation =
-            }*/
+            /* it.getString("navigation")?.let { nav ->
+                 navigation =
+             }?: run {
+                 navigation =
+             }*/
 
             currentDestination = navigation
             graph.setStartDestination(navigation)
@@ -71,6 +73,8 @@ class NavigationActivity : BaseActivity(), MainContract.View {
                     bundle.putBoolean("checkout", it.getBoolean("checkout"))
                     bundle.putString("storeId", it.getString("storeId"))
                     bundle.putBoolean("fromHome", it.getBoolean("fromHome"))
+                    bundle.putBoolean("fromCampaign", it.getBoolean("fromCampaign"))
+                    bundle.putBoolean("isBothType", it.getBoolean("isBothType"))
                 }
 
                 R.id.nav_curbside -> {
@@ -186,16 +190,16 @@ class NavigationActivity : BaseActivity(), MainContract.View {
     }
 
     fun showScheduleBubble() {
-      /*  if (CacheUtil.getInstance().concept.allowAdvanceOrder && currentDestination == R.id.nav_cart) {
-            try {
-                binding.bubbleOrderLayout.visible()
-                binding.bubbleOrderLayout.postDelayed({
-                    binding.bubbleOrderLayout.gone()
-                }, 3000)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }*/
+        /*  if (CacheUtil.getInstance().concept.allowAdvanceOrder && currentDestination == R.id.nav_cart) {
+              try {
+                  binding.bubbleOrderLayout.visible()
+                  binding.bubbleOrderLayout.postDelayed({
+                      binding.bubbleOrderLayout.gone()
+                  }, 3000)
+              } catch (e: Exception) {
+                  e.printStackTrace()
+              }
+          }*/
     }
 
     override fun showCart() {

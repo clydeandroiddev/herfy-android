@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.core.view.isVisible
@@ -49,11 +50,11 @@ import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.helper.ViewUtil
-import com.santalu.diagonalimageview.Direction
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.regex.Pattern
 
 
 @AndroidEntryPoint
@@ -382,11 +383,18 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 findNavController().navigateToDeepLink("nav_menu/$menuCategoryId")
             }
         }
-        viewModel.showMenu.observeNonNull(this){
+        viewModel.showMenu.observeNonNull(this) {
             it.getContentIfNotHandled()?.let {
                 promotionDetailBottomSheet?.dismissAllowingStateLoss()
                 MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
                 findNavController().navigateToDeepLink("nav_menu")
+            }
+        }
+
+        viewModel.showOrderTypeFromCampaign.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let {
+                Log.e("ADADADADADAD","ADADADADAD1:" + it)
+                showOrderTypeFromCampaign()
             }
         }
 
@@ -483,9 +491,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         if (tierImageUrl.isNotEmpty()) {
                             binding.layoutLoyalty.ivLoyaltyCard.apply {
                                 this@HomeFragment.context?.let {
-                                    Glide.with(it)
-                                        .load(tierImageUrl)
-                                        .skipMemoryCache(false)
+                                    Glide.with(it).load(tierImageUrl).skipMemoryCache(false)
                                         .apply(RequestOptions.noTransformation())
                                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                                         .into(object : DrawableImageViewTarget(this) {
@@ -500,8 +506,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                                             cvEmptyState.gone()
                                                             cvShimmerLoyalty.gone()
                                                             cvLoyaltyDetails.visible()
-                                                        },
-                                                        500
+                                                        }, 500
                                                     )
                                                 }
 
@@ -796,14 +801,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-        viewModel.showPromotionsError.observeNonNull(this){
+        viewModel.showPromotionsError.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { error ->
                 runOnMain {
                     if (error.message.isNotEmpty()) {
                         promotionDetailBottomSheet?.dismissLoading()
                         showAlertDialog(
-                            title = "",
-                            message = error.message
+                            title = "", message = error.message
                         )
                     }
                 }
@@ -869,6 +873,58 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 intent.putExtra("navigation", "nav_order_type")
                 intent.putExtra("selectedOrderType", orderType.value)
                 intent.putExtra("fromHome", true)
+                intent.putExtra("fromCart", false)
+                intent.putExtra("fromCampaign", false)
+                intent.putExtra("isBothType", false)
+                intent.putExtra("checkout", false)
+                intent.putExtra("storeId", storeId)
+                it.startActivity(intent)
+            }
+        }
+    }
+
+    private fun checkBothType(): Boolean {
+        val campaign = CacheUtil.getInstance().initialCampaign
+        var types = 0
+        if (campaign != null) {
+            val promoRules = campaign.promotion.attributes.rules
+            if (promoRules.isNotEmpty() && promoRules.find { rule ->
+                    rule.ruleKey.equals(
+                        "order-type", true
+                    )
+                } != null) {
+                promoRules.find { rule -> rule.ruleKey.equals("order-type", true) }?.let {
+                    val orderTypes = it.text.split(Pattern.compile(","))
+                    for (orderType in orderTypes) {
+                        when (orderType.trim()) {
+                            "pickup", "curbside", "drive-thru" -> {
+                                types += 1
+                                CacheUtil.getInstance().initialOrderType = OrderType.PICKUP
+                            }
+
+                            "delivery", "deliver" -> {
+                                types += 1
+                                CacheUtil.getInstance().initialOrderType = OrderType.DELIVERY
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return types > 1
+    }
+
+    private fun showOrderTypeFromCampaign() {
+        activity?.let {
+            it.runOnUiThread {
+                val intent = Intent()
+                val storeId = CacheUtil.getOrderStoreId() ?: ""
+                intent.setClassName(it, Navigation.NAVIGATION_ACTIVITY)
+                intent.putExtra("navigation", "nav_order_type")
+                intent.putExtra("selectedOrderType", 0)
+                intent.putExtra("fromHome", true)
+                intent.putExtra("fromCampaign", true)
+                intent.putExtra("isBothType", checkBothType())
                 intent.putExtra("fromCart", false)
                 intent.putExtra("checkout", false)
                 intent.putExtra("storeId", storeId)
@@ -1027,9 +1083,9 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     cvCateringContent.layoutParams.height = sliderHeight
                     ivCater.layoutParams.height = sliderHeight
                     if (LocaleUtil.getInstance().isArabic) {
-                        ivCater.scaleX  = -1f
+                        ivCater.scaleX = -1f
                     } else {
-                        ivCater.scaleX  = 1f
+                        ivCater.scaleX = 1f
                     }
                 }
 
