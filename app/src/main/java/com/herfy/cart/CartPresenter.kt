@@ -3323,6 +3323,13 @@ class CartPresenter @Inject constructor(
             })
     }
 
+    override fun getDigitalCouponByPosition(position: Int): Campaign? {
+        if (position != -1 && position < digitalCoupons.size) {
+            return digitalCoupons[position]
+        }
+        return null
+    }
+
     override fun availDigitalCoupon(position: Int) {
         if (CacheUtil.getInstance().couponCode != null) {
             cartView.showMessage(

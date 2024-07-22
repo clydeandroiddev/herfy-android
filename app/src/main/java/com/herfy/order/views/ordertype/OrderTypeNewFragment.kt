@@ -347,7 +347,11 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             findNavController().popBackStack()
         } else if (proceed && (args.fromHome || args.fromCampaign)) {
             if (args.fromCampaign) {
-                findNavController().navigateToDeepLink("nav_cart")
+                if (args.fromCart) {
+                    sendFragmentResultFroCampaign()
+                } else {
+                    findNavController().navigateToDeepLink("nav_cart")
+                }
             } else {
                 findNavController().navigateToDeepLink("nav_menu")
             }
@@ -375,6 +379,17 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         setFragmentResult(
             ARGS_KEY_FRAGMENT_RESULT, bundleOf(
                 CartFragment.ARGS_KEY_CHECKOUT to args.checkout,
+                ARGS_KEY_IS_SAME_BRANCH to isSameBranch
+            )
+        )
+        findNavController().navigateUp()
+    }
+
+    private fun sendFragmentResultFroCampaign() {
+        val isSameBranch = args.storeId == (CacheUtil.getOrderStoreId() ?: "")
+        setFragmentResult(
+            ARGS_KEY_FRAGMENT_RESULT, bundleOf(
+                CartFragment.ARGS_KEY_AVAIL_CAMPAIGN to true,
                 ARGS_KEY_IS_SAME_BRANCH to isSameBranch
             )
         )

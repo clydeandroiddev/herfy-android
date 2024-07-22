@@ -199,6 +199,9 @@ public interface CartContract {
         void validateDigitalCoupon(boolean fromApply, Campaign campaign);
 
         void availDigitalCoupon(int position);
+
+        Campaign getDigitalCouponByPosition(int position);
+
         void availDigitalCouponCampaign(Campaign campaign);
         void selectPromo(int position);
         String getNotes(int position);
