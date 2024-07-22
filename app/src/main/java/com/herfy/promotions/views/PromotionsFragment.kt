@@ -1,5 +1,6 @@
 package com.herfy.promotions.views
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ import com.herfy.promotions.adapters.PromotionsAdapter
 import com.herfy.promotions.databinding.FragmentHerfyPromotionsBinding
 import com.herfy.util.AppLogger
 import com.herfy.utils.analytics.MixpanelUtil
+import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.invisible
@@ -31,11 +33,13 @@ import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -83,10 +87,10 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
     }
 
     override fun setupViews() {
-        binding.toolbarTitle.setNavButtonAction{
+        binding.toolbarTitle.setNavButtonAction {
             findNavController().navigateUp()
         }
-        binding.btnGoToMenu.setOnClickListener{
+        binding.btnGoToMenu.setOnClickListener {
             NavigationUtils.navigateSafe(
                 findNavController(),
                 PromotionsFragmentDirections.actionPromotionsToMenu()
@@ -148,9 +152,13 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
             toolbarTitle.title =
                 CacheUtil.getInstance().getTranslations(Text.PROMOTIONS, "Promotions")
             tvEmptyStateTitle.text = CacheUtil.getInstance()
-                    .getTranslations(Text.STAY_TUNED_PROMO, "Stay Tuned for Culinary Delights!")
-            tvEmptyStateContext.text = CacheUtil.getInstance().getTranslations(Text.PROMOTION_EMPTY_CONTENT, "Our promotions are on a brief pause, but get ready\nfor a mouthwatering comeback in just a few days.")
-            btnGoToMenu.text = CacheUtil.getInstance().getTranslations(Text.GO_TO_MENU, "Go to Menu")
+                .getTranslations(Text.STAY_TUNED_PROMO, "Stay Tuned for Culinary Delights!")
+            tvEmptyStateContext.text = CacheUtil.getInstance().getTranslations(
+                Text.PROMOTION_EMPTY_CONTENT,
+                "Our promotions are on a brief pause, but get ready\nfor a mouthwatering comeback in just a few days."
+            )
+            btnGoToMenu.text =
+                CacheUtil.getInstance().getTranslations(Text.GO_TO_MENU, "Go to Menu")
         }
     }
 
@@ -226,10 +234,10 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
 
     private fun checkCampaigns() {
         binding.grpPromo.apply {
-            if(digitalCoupons.isNotEmpty()) visible() else gone()
+            if (digitalCoupons.isNotEmpty()) visible() else gone()
         }
         binding.clEmptyState.apply {
-            if(digitalCoupons.isEmpty()) visible() else gone()
+            if (digitalCoupons.isEmpty()) visible() else gone()
         }
     }
 
@@ -329,7 +337,7 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
         )
     }
 
-    override fun showMenu(){
+    override fun showMenu() {
         promotionDetailBottomSheet?.dismissAllowingStateLoss()
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
         NavigationUtils.navigateSafe(
@@ -342,11 +350,15 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
     override fun onSelectedPromo(promo: Campaign) {
         promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(
             promo,
-            object : PromotionDetailBottomSheet.onAction{
+            object : PromotionDetailBottomSheet.onAction {
                 override fun onClickClaimPromo(promo: Campaign) {
-                    showLoadingDialog()
-                    //promotionsPresenter.validateDigitalCoupon(promo)
-                    promotionsPresenter.onAvailDigitalCoupon(promo)
+                    if (CacheUtil.getInstance().orderTypeNotBlank()) {
+                        showLoadingDialog()
+                        promotionsPresenter.onAvailDigitalCoupon(promo)
+                    } else {
+                        CacheUtil.getInstance().initialCampaign = promo
+                        showOrderTypeFromCampaign()
+                    }
                 }
 
                 override fun onRemovePromo() {
@@ -364,5 +376,54 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
         )
     }
 
+    private fun checkBothType(): Boolean {
+        val campaign = CacheUtil.getInstance().initialCampaign
+        var types = 0
+        if (campaign != null) {
+            val promoRules = campaign.promotion.attributes.rules
+            if (promoRules.isNotEmpty() && promoRules.find { rule ->
+                    rule.ruleKey.equals(
+                        "order-type", true
+                    )
+                } != null) {
+                promoRules.find { rule -> rule.ruleKey.equals("order-type", true) }?.let {
+                    val orderTypes = it.text.split(Pattern.compile(","))
+                    for (orderType in orderTypes) {
+                        when (orderType.trim()) {
+                            "pickup", "curbside", "drive-thru" -> {
+                                types += 1
+                                CacheUtil.getInstance().initialOrderType = OrderType.PICKUP
+                            }
+
+                            "delivery", "deliver" -> {
+                                types += 1
+                                CacheUtil.getInstance().initialOrderType = OrderType.DELIVERY
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return types > 1
+    }
+
+    private fun showOrderTypeFromCampaign() {
+        activity?.let {
+            it.runOnUiThread {
+                val intent = Intent()
+                val storeId = CacheUtil.getOrderStoreId() ?: ""
+                intent.setClassName(it, Navigation.NAVIGATION_ACTIVITY)
+                intent.putExtra("navigation", "nav_order_type")
+                intent.putExtra("selectedOrderType", 0)
+                intent.putExtra("fromHome", true)
+                intent.putExtra("fromCampaign", true)
+                intent.putExtra("isBothType", checkBothType())
+                intent.putExtra("fromCart", false)
+                intent.putExtra("checkout", false)
+                intent.putExtra("storeId", storeId)
+                it.startActivity(intent)
+            }
+        }
+    }
 
 }

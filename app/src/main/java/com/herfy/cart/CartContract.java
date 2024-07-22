@@ -116,6 +116,8 @@ public interface CartContract {
 
     interface Presenter extends BasePresenter {
 
+        void availCouponFromCampaign();
+
         void getApplication(boolean showUpsell);
 
         void scheduleOrder(Calendar originalCalendar, Calendar calendar, boolean checkingOnly);

@@ -2,7 +2,6 @@ package com.herfy.cart.adapters
 
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +22,11 @@ import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import java.util.Locale
 
-class CartPromoAdapter(private var campaigns: List<Campaign> = arrayListOf(), private val listener: CartPromoListener? = null, private val currentCartAmount : Double = 0.0) :
+class CartPromoAdapter(
+    private var campaigns: List<Campaign> = arrayListOf(),
+    private val listener: CartPromoListener? = null,
+    private val currentCartAmount: Double = 0.0
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     interface CartPromoListener {
         fun select(campaign: Campaign, position: Int)
@@ -32,8 +35,9 @@ class CartPromoAdapter(private var campaigns: List<Campaign> = arrayListOf(), pr
 
     @JvmField
     var selected = -1
+
     inner class ViewHolderData(val binding: ItemCouponsBinding) : RecyclerView.ViewHolder(
-       binding.root
+        binding.root
     )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -41,7 +45,7 @@ class CartPromoAdapter(private var campaigns: List<Campaign> = arrayListOf(), pr
             LayoutInflater.from(parent.context),
             parent,
             false
-            )
+        )
         return ViewHolderData(binding)
     }
 
@@ -62,46 +66,28 @@ class CartPromoAdapter(private var campaigns: List<Campaign> = arrayListOf(), pr
                         ignoreCase = true
                     )
                 ) {
-                    /*holder.digitalPrice!!.visibility = View.VISIBLE
-                    if (campaign.promotion.attributes.itemPrice == 0.0) {
-                        holder.digitalPrice!!.text =
-                            CacheUtil.getInstance().getTranslations(Text.FREE, "FREE").uppercase(
-                                Locale.getDefault()
-                            )
-                    } else {
-                        holder.digitalPrice!!.text = ("+" +
-                                StringUtil.getDigitalCouponPrice(
-                                    campaign.promotion.attributes.itemPrice,
-                                    false
-                                )
-                                + " " + CacheUtil.getInstance().getTranslations(Text.ONLY, "ONLY")
-                            .uppercase(Locale.getDefault()))
-                    }
-                } else {
-                    holder.digitalPrice!!.text = ""
-                    holder.digitalPrice!!.visibility = View.INVISIBLE
-                }*/
-
-                }else {
-
-                }
+                } else { }
                 tvCoupon.text = campaign.attributes.name
                 tvCouponDescription.text = campaign.attributes.description
-                val validFromDate = campaign.attributes.validFrom //campaign.attributes.validFrom.split(".")[0]
-                val validUntilDate = campaign.attributes.validUntil //campaign.attributes.validUntil.split(".")[0]
-                tvCouponExpiryDate.text = CacheUtil.getInstance().getTranslations(Text.EXPIRES_LABEL, "Expires: (x)").replace("(x)",validUntilDate.formatDate("MMMM dd, YYYY"))
+                val validFromDate =
+                    campaign.attributes.validFrom //campaign.attributes.validFrom.split(".")[0]
+                val validUntilDate =
+                    campaign.attributes.validUntil //campaign.attributes.validUntil.split(".")[0]
+                tvCouponExpiryDate.text =
+                    CacheUtil.getInstance().getTranslations(Text.EXPIRES_LABEL, "Expires: (x)")
+                        .replace("(x)", validUntilDate.formatDate("MMMM dd, YYYY"))
                 val validFromTime = validFromDate.formatDate("h a")
                 val validUntilTime = validUntilDate.formatDate("h a")
-                tvCouponValidTime.text = CacheUtil.getInstance().getTranslations(Text.VALID_TIME_LABEL, "Valid Time: (x) to (y)").replace("(x)", validFromTime).replace("(y)",validUntilTime)
-                if (campaign.attributes.isEligible && campaign.promotion != null && campaign.promotion.attributes.rules.isMet()) {
+                tvCouponValidTime.text = CacheUtil.getInstance()
+                    .getTranslations(Text.VALID_TIME_LABEL, "Valid Time: (x) to (y)")
+                    .replace("(x)", validFromTime).replace("(y)", validUntilTime)
+
+                if (campaign.promotion != null && campaign.promotion.attributes.rules.isMet()) {
                     tvFooterCoupon.text = CacheUtil.getInstance()
                         .getTranslations(Text.AVAILABLE_TO_REDEEM, "Available to Redeem")
                     val tvContext = tvFooterCoupon.context
-                    val textColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val textColor =
                         tvContext.resources.getColor(R.color.text_coupon_available, null)
-                    } else {
-                       tvContext.resources.getColor(R.color.text_coupon_available)
-                    }
                     tvFooterCoupon.setTextColor(ColorStateList.valueOf(textColor))
                     lnFooterCoupon.setBackgroundResource(R.drawable.background_available_to_redeem)
                     ivFooterCoupon.setImageResource(R.drawable.ic_coupon_available)
@@ -113,11 +99,8 @@ class CartPromoAdapter(private var campaigns: List<Campaign> = arrayListOf(), pr
                     }
                 } else {
                     val tvContext = tvFooterCoupon.context
-                    val textColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val textColor =
                         tvContext.resources.getColor(R.color.secondaryTextColor, null)
-                    } else {
-                        tvContext.resources.getColor(R.color.secondaryTextColor)
-                    }
                     tvFooterCoupon.text = campaign.attributes.error
                     tvFooterCoupon.setTextColor(ColorStateList.valueOf(textColor))
                     ivFooterCoupon.setImageResource(R.drawable.ic_coupon_unavailable)
@@ -133,28 +116,29 @@ class CartPromoAdapter(private var campaigns: List<Campaign> = arrayListOf(), pr
                 ) {
                     imageUrl = Values.DEFAULT_IMAGE_URL
                 }
-                Glide.with(ivCoupon.context).load(imageUrl).skipMemoryCache(false).diskCacheStrategy(
-                    DiskCacheStrategy.ALL
-                ).listener(object : RequestListener<Drawable?> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
+                Glide.with(ivCoupon.context).load(imageUrl).skipMemoryCache(false)
+                    .diskCacheStrategy(
+                        DiskCacheStrategy.ALL
+                    ).listener(object : RequestListener<Drawable?> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any,
+                            target: Target<Drawable?>,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+                        }
 
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any,
-                        target: Target<Drawable?>,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
-                }).into(ivCoupon)
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any,
+                            target: Target<Drawable?>,
+                            dataSource: DataSource,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+                        }
+                    }).into(ivCoupon)
 
             }
 

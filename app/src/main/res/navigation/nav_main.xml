@@ -193,6 +193,16 @@
             app:argType="boolean" />
 
         <argument
+            android:name="fromCampaign"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="isBothType"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
             android:name="checkout"
             android:defaultValue="false"
             app:argType="boolean" />
@@ -408,6 +418,7 @@
         tools:layout="@layout/fragment_herfy_cart">
 
         <deepLink app:uri="android-app://com.herfy/nav_cart" />
+
         <deepLink app:uri="android-app://com.herfy/nav_cart/{isFromPromotions}" />
         <argument
             android:name="isBranchPreselected"

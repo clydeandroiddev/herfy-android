@@ -1,102 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_coupons"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="24dp"
-    android:id="@+id/cl_coupons"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_marginBottom="24dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_details"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/background_coupon"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@drawable/background_coupon">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guide_iv_coupon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent=".335"/>
+            app:layout_constraintGuide_percent=".335" />
 
 
         <ImageView
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/guide_iv_coupon"
-            android:background="@drawable/background_coupon_img"
             android:id="@+id/iv_coupon"
             android:layout_width="0dp"
-            android:layout_height="0dp"/>
+            android:layout_height="0dp"
+            android:background="@drawable/background_coupon_img"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/guide_iv_coupon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="28dp"
+            android:orientation="vertical"
             android:paddingTop="14dp"
             android:paddingBottom="16dp"
-            android:orientation="vertical"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/guide_iv_coupon">
+            app:layout_constraintStart_toEndOf="@id/guide_iv_coupon"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tv_coupon"
+                style="@style/Styles.Text.Headline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="@color/background_color_blue"
                 android:textSize="16sp"
-                android:maxLines="1"
-                android:ellipsize="end"
-                style="@style/Styles.Text.Headline"
-                tools:text="Coupon Name"
-                />
+                tools:text="Coupon Name" />
 
             <TextView
                 android:id="@+id/tv_coupon_description"
-                android:layout_marginTop="5dp"
+                style="@style/Styles.Text.Caption.Regular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="2"
+                android:layout_marginTop="5dp"
                 android:ellipsize="end"
+                android:maxLines="2"
                 android:textColor="@color/secondaryTextColor"
-                style="@style/Styles.Text.Caption.Regular"
-                tools:text="Description"/>
+                tools:text="Description" />
 
             <View
-                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@drawable/coupon_dash_seperator"/>
+                android:layout_marginTop="10dp"
+                android:background="@drawable/coupon_dash_seperator" />
 
             <TextView
                 android:id="@+id/tv_coupon_expiry_date"
-                android:layout_marginTop="10dp"
+                style="@style/Styles.Text.Caption.Regular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/secondaryTextColor"
-                style="@style/Styles.Text.Caption.Regular"
-                tools:text="Expires: June 30, 2024"/>
+                tools:text="Expires: June 30, 2024" />
 
             <TextView
                 android:id="@+id/tv_coupon_valid_time"
-                android:layout_marginTop="8dp"
+                style="@style/Styles.Text.Caption.Regular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:textColor="@color/secondaryTextColor"
-                style="@style/Styles.Text.Caption.Regular"
-                tools:text="Valid Time: 6am to 12 pm"/>
+                tools:text="Valid Time: 6am to 12 pm" />
 
         </LinearLayout>
-
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -105,30 +102,30 @@
         android:id="@+id/ln_footer_coupon"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:paddingVertical="6dp"
-        app:layout_constraintStart_toStartOf="@id/cl_details"
-        app:layout_constraintEnd_toEndOf="@id/cl_details"
-        app:layout_constraintTop_toBottomOf="@id/cl_details"
         android:background="@drawable/background_available_to_redeem"
-        >
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingVertical="6dp"
+        app:layout_constraintEnd_toEndOf="@id/cl_details"
+        app:layout_constraintStart_toStartOf="@id/cl_details"
+        app:layout_constraintTop_toBottomOf="@id/cl_details">
 
         <ImageView
             android:id="@+id/iv_footer_coupon"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
-            android:src="@drawable/ic_coupon_available"
-            android:layout_marginEnd="5dp"/>
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/ic_coupon_available" />
 
         <TextView
             android:id="@+id/tv_footer_coupon"
+            style="@style/Styles.Text.SmallTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Styles.Text.SmallTitle"
-            tools:text="Available to Redeem"
+            android:maxLines="1"
+            android:textColor="@color/text_coupon_available"
             android:textSize="11sp"
-            android:textColor="@color/text_coupon_available"/>
+            tools:text="Available to Redeem" />
 
 
     </LinearLayout>

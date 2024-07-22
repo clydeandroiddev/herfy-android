@@ -2,7 +2,6 @@ package com.herfy.utils.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.util.Pair;
 
 import com.google.gson.Gson;
@@ -93,6 +92,8 @@ public class CacheUtil {
     private static final String CART_NOTES = "CartNotes";
     private static final String UPSELL = "Upsell";
     private static final String ORDER_TYPE = "OrderType";
+
+    private static final String INITIAL_ORDER_TYPE = "InitialOrderType";
     private static final String ORDER_LATITUDE = "OrderLatitude";
     private static final String ORDER_LONGITUDE = "OrderLongitude";
     private static final String ORDER_STORE = "OrderStore";
@@ -160,6 +161,8 @@ public class CacheUtil {
     private static final String PROMISED_TIME = "promised_time";
 
     private static final String LOYALTY_TIERS = "loyalty_tiers";
+
+    private static final String INITIAL_CAMPAIGN = "initial_campaign";
 
     private CacheUtil(Context context) {
 
@@ -271,6 +274,7 @@ public class CacheUtil {
         return defaultValue;
 
     }
+
     public String getArabicTranslations(String key, String defaultValue) {
 
         String translations = cacheSharedPreferences.getString(TRANSLATIONS, null);
@@ -378,6 +382,7 @@ public class CacheUtil {
     public String getCaterHerfyBannerId(String key) {
         return cacheSharedPreferences.getString(key, "");
     }
+
     public void setSliderId(String key, String id) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(key, id);
@@ -697,6 +702,7 @@ public class CacheUtil {
 
     public void clearLocationOnly() {
         setOrderType(OrderType.NONE);
+        setInitialOrderType(OrderType.NONE);
         setOrderLatitude(null);
         setOrderLongitude(null);
         setOrderStore(null);
@@ -716,6 +722,7 @@ public class CacheUtil {
         setCartNotes("");
         setUpsell(true);
         setOrderType(OrderType.NONE);
+        setInitialOrderType(OrderType.NONE);
         setOrderLatitude(null);
         setOrderLongitude(null);
         setOrderStore(null);
@@ -733,6 +740,7 @@ public class CacheUtil {
         setCouponMenuItem(null);
         setCouponToAdd(null);
         setCampaign(null);
+        setInitialCampaign(null);
         setDigitalCoupons("");
         setCampaignPromotion(null);
         setCampaignPromotionMenuItem(null);
@@ -1187,7 +1195,6 @@ public class CacheUtil {
         }
 
 
-
         return 0;
     }
 
@@ -1219,6 +1226,32 @@ public class CacheUtil {
 
     }
 
+    public void setInitialOrderType(OrderType orderType) {
+
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putInt(INITIAL_ORDER_TYPE, orderType.getValue());
+        editor.apply();
+
+    }
+
+    public OrderType getInitialOrderType() {
+        int orderType = cacheSharedPreferences.getInt(INITIAL_ORDER_TYPE, OrderType.NONE.getValue());
+        switch (orderType) {
+            case 1:
+                return OrderType.PICKUP;
+            case 2:
+                return OrderType.DINE_IN;
+            case 3:
+                return OrderType.DELIVERY;
+            case 4:
+                return OrderType.CURBSIDE;
+            case 5:
+                return OrderType.DRIVE_THRU;
+            default:
+                return OrderType.NONE;
+        }
+    }
+
     public void setOrderType(OrderType orderType) {
 
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
@@ -1248,6 +1281,15 @@ public class CacheUtil {
                 return OrderType.NONE;
         }
 
+    }
+
+    public boolean orderTypeNotBlank() {
+        if (CacheUtil.getInstance().getOrderType() != null) {
+            if (CacheUtil.getInstance().getOrderType() != OrderType.NONE) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setOrderLatitude(String latitude) {
@@ -1567,6 +1609,22 @@ public class CacheUtil {
             }.getType());
         }
 
+        return null;
+    }
+
+    public void setInitialCampaign(Campaign campaign) {
+        String campaignValue = new Gson().toJson(campaign);
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(INITIAL_CAMPAIGN, campaignValue);
+        editor.commit();
+    }
+
+    public Campaign getInitialCampaign() {
+        String couponValue = cacheSharedPreferences.getString(INITIAL_CAMPAIGN, null);
+        if (couponValue != null) {
+            return GsonHelper.gsonFinal().fromJson(couponValue, new TypeToken<Campaign>() {
+            }.getType());
+        }
         return null;
     }
 
@@ -2062,11 +2120,13 @@ public class CacheUtil {
         editor.putString(LOYALTY_TIERS, tierJson);
         editor.apply();
     }
-    public List<Tier> getLoyaltyTiers(){
+
+    public List<Tier> getLoyaltyTiers() {
         List<Tier> tiers = new ArrayList<>();
         String tierJson = cacheSharedPreferences.getString(LOYALTY_TIERS, "");
-        if(!tierJson.isEmpty()){
-            tiers = GsonHelper.gsonFinal().fromJson(tierJson, new TypeToken<List<Tier>>(){});
+        if (!tierJson.isEmpty()) {
+            tiers = GsonHelper.gsonFinal().fromJson(tierJson, new TypeToken<List<Tier>>() {
+            });
         }
         return tiers;
     }

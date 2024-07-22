@@ -156,6 +156,15 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         cartPresenter.start()
         cartPresenter.fetchCustomerCards()
         update()
+        checkForAutoApplyCampaign()
+    }
+
+    private fun checkForAutoApplyCampaign() {
+        if (CacheUtil.getInstance().initialCampaign != null && CacheUtil.getInstance().orderType != null) {
+            if (CacheUtil.getInstance().orderType != OrderType.NONE) {
+                cartPresenter.availCouponFromCampaign()
+            }
+        }
     }
 
     private fun checkBackground() {
@@ -288,9 +297,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 }
             }
         }
+
         if (adapter != null) {
             adapter!!.notifyDataSetChanged()
         }
+
         if (cartPresenter != null) {
             if (!dontShowDigitalCoupons) {
                 cartPresenter.getMenuItems()
@@ -302,6 +313,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             cartPresenter.getConcept()
             cartPresenter.showCoupon()
             cartPresenter.getUpsells()
+
             if (CacheUtil.getInstance().campaign != null) {
                 if ((CacheUtil.getInstance().campaignPromotionMenuItem != null || CacheUtil.getInstance().couponMenuItem != null)) {
                     isFromPromotions = true
@@ -1483,16 +1495,21 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                 // do not dismiss when fragment is detaching or is not added
                                 exception.printStackTrace()
                             }
-                            activity?.cast<BaseActivity> {
-                                it.showLoadingDialog()
-                            }
-                            if (removeCoupon) {
-                                cartPresenter!!.removeCoupon()
-                            }
-                            if (selected < cartPresenter!!.digitalCouponsList.size) {
-                                Handler().postDelayed(
-                                    { cartPresenter!!.availDigitalCoupon(selected) }, 200
-                                )
+
+                            if (CacheUtil.getInstance().orderStore != null) {
+                                activity?.cast<BaseActivity> {
+                                    it.showLoadingDialog()
+                                }
+                                if (removeCoupon) {
+                                    cartPresenter!!.removeCoupon()
+                                }
+                                if (selected < cartPresenter!!.digitalCouponsList.size) {
+                                    Handler().postDelayed(
+                                        { cartPresenter!!.availDigitalCoupon(selected) }, 200
+                                    )
+                                }
+                            } else {
+
                             }
                         }
 
@@ -1876,7 +1893,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
 
                     var qtyStr = StringUtil.localize("0" + menuItem.attributes.quantity.toString())
-                    if(menuItem.attributes.quantity > 9){
+                    if (menuItem.attributes.quantity > 9) {
                         qtyStr = StringUtil.localize(menuItem.attributes.quantity.toString())
                     }
                     quantity.text = qtyStr
@@ -1937,8 +1954,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     }
                 }
             }
-
-
 
 
         }

@@ -12,10 +12,7 @@ import com.herfy.cart.views.CartMenuItemViewHolder
 import com.herfy.database.AppDatabase
 import com.herfy.database.entities.MenuCategoryEntity.Companion.toDomain
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
-import com.herfy.model.CampaignToAdd
 import com.herfy.model.CouponResult
-import com.herfy.model.CouponToAdd
-import com.herfy.model.MenuItemComponentItem
 import com.herfy.repository.MenuRepository
 import com.herfy.upsell.UpsellViewHolder
 import com.herfy.util.AppLogger
@@ -24,7 +21,6 @@ import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
-import com.herfy.utils.extensions.deepCopy
 import com.herfy.utils.handler.ErrorHandler
 import com.herfy.utils.helper.ApiLogLevel
 import com.herfy.utils.helper.ApiLogUtil.Companion.sendMessageLog
@@ -73,6 +69,7 @@ import com.skylinedynamics.solosdk.util.GsonHelper
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.disposables.Disposable
+import io.shipbook.shipbooksdk.Log
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -608,7 +605,10 @@ class CartPresenter @Inject constructor(
                                                     Locale.ENGLISH, "%.2f", compoItem.price
                                                 ).toDouble()
                                             )
-                                            comboItemObject.addProperty("quantity", compoItem.quantity)
+                                            comboItemObject.addProperty(
+                                                "quantity",
+                                                compoItem.quantity
+                                            )
                                             comboItemObject.add("ingredients", JsonArray())
                                             val modifierCombos = JsonArray()
                                             if (compoItem.modifierGroups.isNotEmpty()) {
@@ -1011,7 +1011,7 @@ class CartPresenter @Inject constructor(
                     counter++
                 }
 
-                if(item.isCombo && item.isPromo){
+                if (item.isCombo && item.isPromo) {
                     totalPrice = item.attributes.price
                 }
             }
@@ -2589,7 +2589,10 @@ class CartPresenter @Inject constructor(
                                                     Locale.ENGLISH, "%.2f", compoItem.price
                                                 ).toDouble()
                                             )
-                                            comboItemObject.addProperty("quantity", compoItem.quantity)
+                                            comboItemObject.addProperty(
+                                                "quantity",
+                                                compoItem.quantity
+                                            )
                                             comboItemObject.add("ingredients", JsonArray())
                                             val modifierCombos = JsonArray()
                                             if (!compoItem.modifierGroups.isEmpty()) {
@@ -3387,6 +3390,87 @@ class CartPresenter @Inject constructor(
                 }
             } else {
                 validateDigitalCoupon(true, digitalCoupon)
+            }
+        }
+    }
+
+    override fun availCouponFromCampaign() {
+        if (CacheUtil.getInstance().couponCode != null) {
+            cartView.showMessage(
+                CacheUtil.getInstance().getTranslations(
+                    Text.REMOVE_COUPON_MESSAGE,
+                    "Please remove coupon code first before applying another promo."
+                )
+            )
+        } else {
+            val digitalCoupon = CacheUtil.getInstance().initialCampaign
+            if (digitalCoupon != null) {
+                CacheUtil.getInstance().initialCampaign = null
+                if (CacheUtil.getInstance().orderType != OrderType.NONE) {
+                    removeMukafaaRedemption()
+                    if (digitalCoupon.promotion != null && digitalCoupon.promotion.attributes.type.equals(
+                            "item", ignoreCase = true
+                        )
+                    ) {
+                        val promotion = digitalCoupon.promotion
+                        if (promotion != null) {
+                            MenuApiCall.getInstance()
+                                .getItemDetails(
+                                    promotion.attributes.itemId,
+                                    object : ApiRequestListener {
+                                        override fun onSuccess(o: Any) {
+                                            try {
+                                                val `object` = JSONObject(o.toString())
+                                                val dataArray = `object`.getJSONArray("data")
+                                                if (dataArray.length() > 0) {
+                                                    val menuItem = GsonHelper.gsonFinal().fromJson(
+                                                        dataArray.getJSONObject(0).toString(),
+                                                        MenuItem::class.java
+                                                    )
+                                                    menuItem.isPromo = true
+                                                    if (promotion.attributes.itemQuantity > 0) {
+                                                        menuItem.attributes.quantity =
+                                                            promotion.attributes.itemQuantity
+                                                    } else {
+                                                        menuItem.attributes.quantity = 1
+                                                    }
+                                                    var orderStoreId: String? = null
+                                                    if (CacheUtil.getInstance().orderStore != null) {
+                                                        orderStoreId =
+                                                            CacheUtil.getInstance().orderStore.id
+                                                    }
+                                                    menuItem.attributes.price =
+                                                        promotion.attributes.itemPrice
+                                                    menuItem.toCdn(orderStoreId)
+                                                    CacheUtil.getInstance().campaignPromotionMenuItem =
+                                                        menuItem
+                                                    validateDigitalCoupon(true, digitalCoupon)
+                                                } else {
+                                                    onError("")
+                                                }
+                                            } catch (e: JSONException) {
+                                                e.printStackTrace()
+                                                onError(e)
+                                            }
+                                        }
+
+                                        override fun onError(o: Any) {
+                                            AppLogger.printRetrofitError(o)
+                                            cartView.showDigitalCoupon(null)
+                                            cartView.showError(
+                                                ErrorHandler.getErrorMessage(
+                                                    o, CacheUtil.getInstance().getTranslations(
+                                                        Text.AN_ERROR_OCCURRED
+                                                    ), null
+                                                )
+                                            )
+                                        }
+                                    })
+                        }
+                    } else {
+                        validateDigitalCoupon(true, digitalCoupon)
+                    }
+                }
             }
         }
     }

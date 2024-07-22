@@ -83,6 +83,7 @@ import com.herfy.utils.helper.ViewUtil
 import com.herfy.utils.menu.MenuUtil
 import com.herfy.views.RecyclerViewUtil
 import com.location.FusedLocationProvider
+import com.ordertype.ImageRadioButton
 import com.skylinedynamics.solosdk.api.models.objects.*
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -344,8 +345,13 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             }
         } else if (isFromFavorites) {
             findNavController().popBackStack()
-        } else if (proceed && args.fromHome) {
-            findNavController().navigateToDeepLink("nav_menu")
+        } else if (proceed && (args.fromHome || args.fromCampaign)) {
+            if (args.fromCampaign) {
+                findNavController().navigateToDeepLink("nav_cart")
+            } else {
+                findNavController().navigateToDeepLink("nav_menu")
+            }
+
         } else {
             activity?.runOnUiThread {
                 activity?.cast<MainActivity> {
@@ -380,11 +386,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             isCurbsideAvailable = CacheUtil.getInstance().application.attributes.getOrderTypes()
                 .contains(OrderType.CURBSIDE)
             orderPresenter.getOrderTypes()
-            if (AuthUtil.getInstance().isSignedIn) {
-
-            } else if (CacheUtil.getInstance().orderDeliveryAddress != null) {
-
-            }
             selectOrderType(CacheUtil.getInstance().orderType)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -579,31 +580,69 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
             val hasOrderTypes = orderTypes.size > 1
             isSingleOrderType = !hasOrderTypes
             adjustOrderType(hasOrderTypes, orderTypes)
-            var title: String? = ""
-            initialTypeState()
-            for (orderType: OrderType in orderTypes) {
-                if (orderType === OrderType.DELIVERY) {
-                    title = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
-                } else if (orderType === OrderType.PICKUP) {
-                    title = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
-                } else if (orderType === OrderType.DINE_IN) {
-                    title = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
-                } else if (orderType === OrderType.CURBSIDE) {
-                    title = CacheUtil.getInstance()
-                        .getTranslations(Text.CURBSIDE_PICKUP_CAPS, "Curbside").uppercase(
-                            Locale.getDefault()
-                        )
+            if (!args.fromCampaign) {
+                var title: String? = ""
+                initialTypeState()
+                for (orderType: OrderType in orderTypes) {
+                    if (orderType === OrderType.DELIVERY) {
+                        title = CacheUtil.getInstance().getTranslations(Text.DELIVERY, "Delivery")
+                    } else if (orderType === OrderType.PICKUP) {
+                        title = CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
+                    } else if (orderType === OrderType.DINE_IN) {
+                        title = CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
+                    } else if (orderType === OrderType.CURBSIDE) {
+                        title = CacheUtil.getInstance()
+                            .getTranslations(Text.CURBSIDE_PICKUP_CAPS, "Curbside").uppercase(
+                                Locale.getDefault()
+                            )
+                    }
+                }
+                if (isSingleOrderType) {
+                    binding.typeGroup.gone()
+                    binding.soloType.visible()
+                    binding.soloType.text = title
+                } else {
+                    binding.typeGroup.visible()
+                    binding.soloType.gone()
+                }
+            } else {
+                if (!args.isBothType) {
+                    val params: ViewGroup.LayoutParams = binding.typeGroup.layoutParams
+                    params.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                    binding.typeGroup.layoutParams = params
+                    if (CacheUtil.getInstance().initialOrderType == OrderType.DELIVERY) {
+                        setPadding(binding.deliveryButton)
+                        binding.deliveryButton.visible()
+                        binding.pickupButton.gone()
+                        binding.dineInButton.gone()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            binding.typeGroup.check(R.id.deliveryButton)
+                            selectDelivery()
+                        }, 800)
+                    } else {
+                        setPadding(binding.pickupButton)
+                        binding.deliveryButton.gone()
+                        binding.pickupButton.visible()
+                        binding.dineInButton.gone()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            binding.typeGroup.check(R.id.pickupButton)
+                            selectPickup()
+                        }, 800)
+                    }
                 }
             }
-            if (isSingleOrderType) {
-                binding.typeGroup.gone()
-                binding.soloType.visible()
-                binding.soloType.text = title
-            } else {
-                binding.typeGroup.visible()
-                binding.soloType.gone()
-            }
         }
+    }
+
+    private fun setPadding(rb: ImageRadioButton) {
+        val params: ViewGroup.LayoutParams = rb.layoutParams
+        params.width = ViewGroup.LayoutParams.WRAP_CONTENT
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT
+        rb.layoutParams = params
+        val paddingInDp = 16
+        val scale = resources.displayMetrics.density
+        val paddingInPx = (paddingInDp * scale + 0.5f).toInt()
+        rb.setPadding(paddingInPx, 0, paddingInPx, 0)
     }
 
     override fun addToCartFavorite(menuItem: MenuItem?) {
@@ -701,10 +740,11 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
         } else if (orderType === OrderType.CURBSIDE) {
             binding.pickupButton.typeface = FontHandler.getSemiboldTypeface()
             selectPickup()
-            title = CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP_CAPS, "CURBSIDE")
-                .uppercase(
-                    Locale.getDefault()
-                )
+            title =
+                CacheUtil.getInstance().getTranslations(Text.CURBSIDE_PICKUP_CAPS, "CURBSIDE")
+                    .uppercase(
+                        Locale.getDefault()
+                    )
         }
 
         if (!isSingleOrderType && isNone) {
@@ -865,14 +905,16 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     override fun navigateMenuItemDetails(menuItem: MenuItem?) {
         menuItem?.let {
-            if(it.isCombo){
+            if (it.isCombo) {
                 findNavController().navigate(
                     OrderTypeNewFragmentDirections.actionOrderTypeToCombo(
                         menuCategoryId = "",
-                        menuItemId = it.id, isFavorite = true, isFromOrderType = true
+                        menuItemId = it.id,
+                        isFavorite = true,
+                        isFromOrderType = true
                     )
                 )
-            }else {
+            } else {
                 findNavController().navigate(
                     OrderTypeNewFragmentDirections.actionOrderTypeToMenuItem(
                         menuItemId = it.id, isFavorite = true, isFromOrderType = true
@@ -1653,7 +1695,8 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     private fun chooseType(activity: BaseActivity) {
         dismissPickupTypeDialog()
-        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(currentSelectedStore,
+        choosePickupTypeDialog = ChoosePickupTypeDialog.newInstance(
+            currentSelectedStore,
             object : ChoosePickupTypeDialog.OnSubmit {
                 override fun orderType(type: OrderType) {
                     if (args.isFromFavorites && !dineInTabSelected && !deliveryTabSelected && type != OrderType.DELIVERY && type != OrderType.DINE_IN) {
