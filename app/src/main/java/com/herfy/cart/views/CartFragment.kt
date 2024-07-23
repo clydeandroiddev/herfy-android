@@ -1859,7 +1859,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                             stringBuilder.append(
                                                 translated(
                                                     LocaleUtil.getInstance().language, item.name
-                                                ) + " (" + StringUtil.localize(1.toString()) + ")"
+                                                ) + " (" + StringUtil.localize(item.quantity.toString()) + ")"
                                             )
                                         }
                                         if (item.modifierGroups.isNotEmpty()) {
