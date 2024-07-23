@@ -68,11 +68,9 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
             dialog.window!!.setLayout(width, height)
             dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val typedValue = TypedValue()
-                dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                dialog.window!!.statusBarColor = typedValue.data
-            }
+            val typedValue = TypedValue()
+            dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            dialog.window!!.statusBarColor = typedValue.data
         }
     }
 

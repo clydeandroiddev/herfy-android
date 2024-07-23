@@ -352,13 +352,13 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
             promo,
             object : PromotionDetailBottomSheet.onAction {
                 override fun onClickClaimPromo(promo: Campaign) {
-                    if (CacheUtil.getInstance().orderTypeNotBlank()) {
-                        showLoadingDialog()
-                        promotionsPresenter.onAvailDigitalCoupon(promo)
-                    } else {
-                        CacheUtil.getInstance().initialCampaign = promo
-                        showOrderTypeFromCampaign()
-                    }
+//                    if (CacheUtil.getInstance().orderTypeNotBlank()) {
+//                        showLoadingDialog()
+//                        promotionsPresenter.onAvailDigitalCoupon(promo)
+//                    } else {
+                    CacheUtil.getInstance().initialCampaign = promo
+                    showOrderTypeFromCampaign()
+                    // }
                 }
 
                 override fun onRemovePromo() {
@@ -408,6 +408,7 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
     }
 
     private fun showOrderTypeFromCampaign() {
+        promotionDetailBottomSheet?.dismissAllowingStateLoss()
         activity?.let {
             it.runOnUiThread {
                 val intent = Intent()

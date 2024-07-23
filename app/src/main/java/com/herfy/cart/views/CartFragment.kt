@@ -1537,25 +1537,25 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                 exception.printStackTrace()
                             }
 
-                            if (CacheUtil.getInstance().orderTypeNotBlank()) {
-                                activity?.cast<BaseActivity> {
-                                    it.showLoadingDialog()
-                                }
-                                if (removeCoupon) {
-                                    cartPresenter!!.removeCoupon()
-                                }
-                                if (selected < cartPresenter!!.digitalCouponsList.size) {
-                                    Handler().postDelayed(
-                                        { cartPresenter!!.availDigitalCoupon(selected) }, 200
-                                    )
-                                }
-                            } else {
-                                CacheUtil.getInstance().initialCampaign =
-                                    cartPresenter.getDigitalCouponByPosition(selected)
-                                if (CacheUtil.getInstance().initialCampaign != null) {
-                                    showOrderTypeFromCampaign()
-                                }
+//                            if (CacheUtil.getInstance().orderTypeNotBlank()) {
+//                                activity?.cast<BaseActivity> {
+//                                    it.showLoadingDialog()
+//                                }
+//                                if (removeCoupon) {
+//                                    cartPresenter!!.removeCoupon()
+//                                }
+//                                if (selected < cartPresenter!!.digitalCouponsList.size) {
+//                                    Handler().postDelayed(
+//                                        { cartPresenter!!.availDigitalCoupon(selected) }, 200
+//                                    )
+//                                }
+//                            } else {
+                            CacheUtil.getInstance().initialCampaign =
+                                cartPresenter.getDigitalCouponByPosition(selected)
+                            if (CacheUtil.getInstance().initialCampaign != null) {
+                                showOrderTypeFromCampaign()
                             }
+                            //}
                         }
 
                         override fun onRemove() {

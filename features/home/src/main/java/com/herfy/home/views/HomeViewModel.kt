@@ -742,12 +742,12 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun onClickClaimPromo(promo: Campaign) {
-        if (CacheUtil.getInstance().orderTypeNotBlank()) {
-            validateDigitalCoupon(promo)
-        } else {
-            CacheUtil.getInstance().initialCampaign = promo
-            _showOrderTypeFromCampaign.value = Event(true)
-        }
+//        if (CacheUtil.getInstance().orderTypeNotBlank()) {
+//            validateDigitalCoupon(promo)
+//        } else {
+        CacheUtil.getInstance().initialCampaign = promo
+        _showOrderTypeFromCampaign.value = Event(true)
+        //}
     }
 
     override fun onRemovePromo() {

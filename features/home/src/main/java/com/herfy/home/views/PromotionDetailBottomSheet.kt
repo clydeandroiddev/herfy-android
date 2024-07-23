@@ -33,6 +33,7 @@ import com.herfy.model.PromotionRequirement
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.isMet
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
@@ -69,40 +70,35 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
         defaultOrderTypes.find { t -> t == OrderType.DELIVERY }?.let {
             typeList.add(
                 PromotionOrderType(
-                    cacheUtil.getTranslations(Text.DELIVERY),
-                    R.drawable.ic_delivery_promo
+                    cacheUtil.getTranslations(Text.DELIVERY), R.drawable.ic_delivery_promo
                 )
             )
         }
         defaultOrderTypes.find { t -> t == OrderType.PICKUP }?.let {
             typeList.add(
                 PromotionOrderType(
-                    cacheUtil.getTranslations(Text.PICKUP),
-                    R.drawable.ic_pickup_promo
+                    cacheUtil.getTranslations(Text.PICKUP), R.drawable.ic_pickup_promo
                 )
             )
         }
         defaultOrderTypes.find { t -> t == OrderType.DINE_IN }?.let {
             typeList.add(
                 PromotionOrderType(
-                    cacheUtil.getTranslations(Text.DINE_IN),
-                    R.drawable.ic_dine_in_promo
+                    cacheUtil.getTranslations(Text.DINE_IN), R.drawable.ic_dine_in_promo
                 )
             )
         }
         defaultOrderTypes.find { t -> t == OrderType.CURBSIDE }?.let {
             typeList.add(
                 PromotionOrderType(
-                    cacheUtil.getTranslations(Text.CURBSIDE_PICKUP),
-                    R.drawable.ic_drive_thru_promo
+                    cacheUtil.getTranslations(Text.CURBSIDE_PICKUP), R.drawable.ic_drive_thru_promo
                 )
             )
         }
         defaultOrderTypes.find { t -> t == OrderType.DRIVE_THRU }?.let {
             typeList.add(
                 PromotionOrderType(
-                    cacheUtil.getTranslations(Text.DRIVE_THRU),
-                    R.drawable.ic_drive_thru_promo
+                    cacheUtil.getTranslations(Text.DRIVE_THRU), R.drawable.ic_drive_thru_promo
                 )
             )
         }
@@ -119,14 +115,10 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.bottom_sheet_promotion_detail,
-            container,
-            false
+            inflater, R.layout.bottom_sheet_promotion_detail, container, false
         )
         return binding.root
     }
@@ -140,9 +132,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
             binding.apply {
                 ivPromo.layoutParams.height = imageHeight
                 activity?.let {
-                    Glide.with(it)
-                        .asGif()
-                        .load(R.drawable.loader)
+                    Glide.with(it).asGif().load(R.drawable.loader)
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(layoutLoading.ivLoader)
                 }
@@ -182,8 +172,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                         PromotionRequirement(
                             R.drawable.ic_promotion_rule_login_register,
                             cacheUtilHelper?.getTranslations(
-                                Text.LOGIN_REGISTER_LABEL,
-                                "Login/Register"
+                                Text.LOGIN_REGISTER_LABEL, "Login/Register"
                             ) ?: "",
                             requirement.isRegistered
                         )
@@ -192,8 +181,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                         PromotionRequirement(
                             R.drawable.ic_promotion_rule_repeating_offer,
                             cacheUtilHelper?.getTranslations(
-                                Text.REPEATING_OFFER_LABEL,
-                                "Repeating Offer"
+                                Text.REPEATING_OFFER_LABEL, "Repeating Offer"
                             ) ?: "",
                             requirement.isRepeating
                         )
@@ -205,9 +193,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                     rvRequirements.apply {
                         adapter = promotionRulesAdapter
                         layoutManager = LinearLayoutManager(
-                            context,
-                            LinearLayoutManager.VERTICAL,
-                            false
+                            context, LinearLayoutManager.VERTICAL, false
                         )
                         setHasFixedSize(true)
                         ContextCompat.getDrawable(context, R.drawable.divider_promo_rules)
@@ -238,92 +224,96 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
     private fun setRedeemButton(rules: List<PromotionRules>) {
         val cacheUtil = CacheUtil.getInstance()
         val cacheCampaign = cacheUtil.campaign
+
         var toRemove = false
         if (cacheCampaign != null && promo?.id.equals(
-                cacheCampaign.id,
-                ignoreCase = true
+                cacheCampaign.id, ignoreCase = true
             )
         ) {
             toRemove = true
-            binding.btnClaim.text = CacheUtil.getInstance()
-                .getTranslations(Text.REMOVE_PROMO_LABEL, "Remove Promo")
+            binding.btnClaim.text =
+                CacheUtil.getInstance().getTranslations(Text.REMOVE_PROMO_LABEL, "Remove Promo")
         }
+
         activity?.let {
             binding.btnClaim.backgroundTintList =
                 ContextCompat.getColorStateList(it, R.color.background_color_blue)
-        }
-        binding.btnClaim.isEnabled = true
-        binding.btnClaim.setOnClickListener {
-            if (!toRemove) {
-                if (CacheUtil.getInstance().couponCode != null || CacheUtil.getInstance().campaign != null) {
-                    try {
-                        showPromptAlertDialog(
-                            "",
-                            CacheUtil.getInstance().getTranslations(
-                                Text.ONE_DISCOUNT_ONLY_MESSAGE,
-                                "You can only apply one discount at a time. Currently applied discount will be removed."
-                            ),
-                            CacheUtil.getInstance().getTranslations(
-                                Text.YES_CAPS
-                            ),
-                            { dialogInterface, i ->
+            if (!rules.isMet() && !toRemove) {
+                binding.btnClaim.isEnabled = false
+                binding.btnClaim.alpha = 0.5f
+            } else {
+                binding.btnClaim.isEnabled = true
+                binding.btnClaim.alpha = 1f
+                binding.btnClaim.setOnClickListener {
+                    if (!toRemove) {
+                        if (CacheUtil.getInstance().couponCode != null || CacheUtil.getInstance().campaign != null) {
+                            try {
+                                showPromptAlertDialog(
+                                    "", CacheUtil.getInstance().getTranslations(
+                                        Text.ONE_DISCOUNT_ONLY_MESSAGE,
+                                        "You can only apply one discount at a time. Currently applied discount will be removed."
+                                    ), CacheUtil.getInstance().getTranslations(
+                                        Text.YES_CAPS
+                                    ), { dialogInterface, i ->
+                                        promo?.let { promoData ->
+                                            CacheUtil.getInstance().couponCode = null
+                                            CacheUtil.getInstance().couponName = null
+                                            CacheUtil.getInstance().initialCampaign = null
+                                            CacheUtil.getInstance().initialOrderType =
+                                                OrderType.NONE
+                                            CacheUtil.getInstance().couponMenuItem = null
+                                            CacheUtil.getInstance().couponToAdd = null
+                                            CacheUtil.getInstance().digitalCoupons = ""
+                                            CacheUtil.getInstance().campaign = null
+                                            CacheUtil.getInstance().campaignPromotion = null
+                                            CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                            CacheUtil.getInstance().campaignToAdd = null
+                                            action?.onClickClaimPromo(promoData)
+                                        }
+                                    }, CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
+                                ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
+                            } catch (e: Exception) {
                                 promo?.let { promoData ->
-                                    CacheUtil.getInstance().couponCode = null
-                                    CacheUtil.getInstance().couponName = null
-                                    CacheUtil.getInstance().initialCampaign = null
-                                    CacheUtil.getInstance().initialOrderType = null
-                                    CacheUtil.getInstance().couponMenuItem = null
-                                    CacheUtil.getInstance().couponToAdd = null
-                                    CacheUtil.getInstance().digitalCoupons = ""
-                                    CacheUtil.getInstance().campaign = null
-                                    CacheUtil.getInstance().campaignPromotion = null
-                                    CacheUtil.getInstance().campaignPromotionMenuItem = null
-                                    CacheUtil.getInstance().campaignToAdd = null
-                                    action?.onClickClaimPromo(promoData)
+                                    if (CacheUtil.getInstance().couponCode != null) {
+                                        CacheUtil.getInstance().couponCode = null
+                                        CacheUtil.getInstance().couponName = null
+                                        CacheUtil.getInstance().couponMenuItem = null
+                                        CacheUtil.getInstance().couponToAdd = null
+                                        CacheUtil.getInstance().initialCampaign = null
+                                        CacheUtil.getInstance().initialOrderType = OrderType.NONE
+                                        CacheUtil.getInstance().digitalCoupons = ""
+                                        CacheUtil.getInstance().campaign = null
+                                        CacheUtil.getInstance().campaignPromotion = null
+                                        CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                        CacheUtil.getInstance().campaignToAdd = null
+                                        action?.onClickClaimPromo(promoData)
+                                    }
                                 }
-                            },
-                            CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
-                        ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
-                    } catch (e: Exception) {
-                        promo?.let { promoData ->
-                            if (CacheUtil.getInstance().couponCode != null) {
-                                CacheUtil.getInstance().couponCode = null
-                                CacheUtil.getInstance().couponName = null
-                                CacheUtil.getInstance().couponMenuItem = null
-                                CacheUtil.getInstance().couponToAdd = null
-                                CacheUtil.getInstance().initialCampaign = null
-                                CacheUtil.getInstance().initialOrderType = null
-                                CacheUtil.getInstance().digitalCoupons = ""
-                                CacheUtil.getInstance().campaign = null
-                                CacheUtil.getInstance().campaignPromotion = null
-                                CacheUtil.getInstance().campaignPromotionMenuItem = null
-                                CacheUtil.getInstance().campaignToAdd = null
+                                e.printStackTrace()
+                            }
+                        } else {
+                            promo?.let { promoData ->
+                                if (CacheUtil.getInstance().orderTypeNotBlank()) {
+                                    binding.layoutLoading.root.visible()
+                                }
                                 action?.onClickClaimPromo(promoData)
                             }
                         }
-                        e.printStackTrace()
-                    }
-                } else {
-                    promo?.let { promoData ->
-                        if (CacheUtil.getInstance().orderTypeNotBlank()) {
-                            binding.layoutLoading.root.visible()
-                        }
-                        action?.onClickClaimPromo(promoData)
+                    } else {
+                        CacheUtil.getInstance().couponCode = null
+                        CacheUtil.getInstance().couponName = null
+                        CacheUtil.getInstance().couponMenuItem = null
+                        CacheUtil.getInstance().couponToAdd = null
+                        CacheUtil.getInstance().digitalCoupons = ""
+                        CacheUtil.getInstance().campaign = null
+                        CacheUtil.getInstance().initialCampaign = null
+                        CacheUtil.getInstance().initialOrderType = OrderType.NONE
+                        CacheUtil.getInstance().campaignPromotion = null
+                        CacheUtil.getInstance().campaignPromotionMenuItem = null
+                        CacheUtil.getInstance().campaignToAdd = null
+                        action?.onRemovePromo()
                     }
                 }
-            } else {
-                CacheUtil.getInstance().couponCode = null
-                CacheUtil.getInstance().couponName = null
-                CacheUtil.getInstance().couponMenuItem = null
-                CacheUtil.getInstance().couponToAdd = null
-                CacheUtil.getInstance().digitalCoupons = ""
-                CacheUtil.getInstance().campaign = null
-                CacheUtil.getInstance().initialCampaign = null
-                CacheUtil.getInstance().initialOrderType = null
-                CacheUtil.getInstance().campaignPromotion = null
-                CacheUtil.getInstance().campaignPromotionMenuItem = null
-                CacheUtil.getInstance().campaignToAdd = null
-                action?.onRemovePromo()
             }
         }
     }
@@ -384,8 +374,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
                     promoOrderTypeList.add(
                         PromotionOrderType(
-                            orderTypeLabel,
-                            orderTypeIcon
+                            orderTypeLabel, orderTypeIcon
                         )
                     )
                 }
@@ -407,13 +396,12 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
         const val KEY_PROMO = "key_promo"
 
         @JvmStatic
-        fun newInstance(promo: Campaign, action: onAction) =
-            PromotionDetailBottomSheet().apply {
-                this.action = action
-                arguments = Bundle().apply {
-                    putString(KEY_PROMO, GsonHelper.gsonFinal().toJson(promo))
-                }
+        fun newInstance(promo: Campaign, action: onAction) = PromotionDetailBottomSheet().apply {
+            this.action = action
+            arguments = Bundle().apply {
+                putString(KEY_PROMO, GsonHelper.gsonFinal().toJson(promo))
             }
+        }
     }
 
     interface onAction {
@@ -426,8 +414,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.setOnShowListener { dialogInterface ->
-            val bottomSheetDialog =
-                dialogInterface as BottomSheetDialog
+            val bottomSheetDialog = dialogInterface as BottomSheetDialog
             setupFullHeight(bottomSheetDialog)
         }
         return dialog
