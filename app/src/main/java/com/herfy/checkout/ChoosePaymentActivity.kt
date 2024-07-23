@@ -299,18 +299,18 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
             requestOTP.setVisibility(View.GONE)
             placeOrder.setVisibility(View.VISIBLE)
         }*/
-        if (CacheUtil.getInstance().orderType === OrderType.DELIVERY && checkoutPresenter.getValidatedTotal() != 0.0) {
-            val paymentDialogFragment = PaymentDialogFragment.newInstance(
-                checkoutPresenter
-            ) { dialog, cashPresented ->
-                dialog.dismiss()
-                checkoutPresenter.setCashPresented(cashPresented)
-            }
-            paymentDialogFragment.show(
-                supportFragmentManager,
-                PaymentDialogFragment::class.java.simpleName
-            )
-        }
+//        if (CacheUtil.getInstance().orderType === OrderType.DELIVERY && checkoutPresenter.getValidatedTotal() != 0.0) {
+//            val paymentDialogFragment = PaymentDialogFragment.newInstance(
+//                checkoutPresenter
+//            ) { dialog, cashPresented ->
+//                dialog.dismiss()
+//                checkoutPresenter.setCashPresented(cashPresented)
+//            }
+//            paymentDialogFragment.show(
+//                supportFragmentManager,
+//                PaymentDialogFragment::class.java.simpleName
+//            )
+//        }
     }
 
     override fun setupFonts() {
