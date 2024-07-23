@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.herfy.home.R
 import com.herfy.home.databinding.ItemPromotionBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
@@ -44,6 +45,8 @@ class PromotionsAdapter(
             val promoRules = promoList[position].promotion.attributes.rules
             tvPickupPromo.text = cacheUtil.getTranslations(Text.PICKUP)
             tvDeliveryPromo.text = cacheUtil.getTranslations(Text.DELIVERY)
+            pickupLabel.gone()
+            deliveryLabel.gone()
             if (promoRules.isNotEmpty() && promoRules.find { rule ->
                     rule.ruleKey.equals(
                         "order-type",

@@ -393,7 +393,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.showOrderTypeFromCampaign.observeNonNull(this) {
             it.getContentIfNotHandled()?.let {
-                Log.e("ADADADADADAD","ADADADADAD1:" + it)
+                promotionDetailBottomSheet?.dismissAllowingStateLoss()
                 showOrderTypeFromCampaign()
             }
         }

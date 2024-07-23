@@ -271,7 +271,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                                     CacheUtil.getInstance().couponCode = null
                                     CacheUtil.getInstance().couponName = null
                                     CacheUtil.getInstance().initialCampaign = null
-                                    CacheUtil.getInstance().initialOrderType = null
+                                    CacheUtil.getInstance().initialOrderType = OrderType.NONE
                                     CacheUtil.getInstance().couponMenuItem = null
                                     CacheUtil.getInstance().couponToAdd = null
                                     CacheUtil.getInstance().digitalCoupons = ""
@@ -292,7 +292,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                                 CacheUtil.getInstance().couponMenuItem = null
                                 CacheUtil.getInstance().couponToAdd = null
                                 CacheUtil.getInstance().initialCampaign = null
-                                CacheUtil.getInstance().initialOrderType = null
+                                CacheUtil.getInstance().initialOrderType = OrderType.NONE
                                 CacheUtil.getInstance().digitalCoupons = ""
                                 CacheUtil.getInstance().campaign = null
                                 CacheUtil.getInstance().campaignPromotion = null
@@ -319,7 +319,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                 CacheUtil.getInstance().digitalCoupons = ""
                 CacheUtil.getInstance().campaign = null
                 CacheUtil.getInstance().initialCampaign = null
-                CacheUtil.getInstance().initialOrderType = null
+                CacheUtil.getInstance().initialOrderType = OrderType.NONE
                 CacheUtil.getInstance().campaignPromotion = null
                 CacheUtil.getInstance().campaignPromotionMenuItem = null
                 CacheUtil.getInstance().campaignToAdd = null
