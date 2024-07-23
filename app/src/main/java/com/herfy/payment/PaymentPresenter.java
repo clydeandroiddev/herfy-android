@@ -10,16 +10,26 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.herfy.BuildConfig;
 import com.herfy.analytics.kochava.KochavaTrackerUtil;
+import com.herfy.summary.OrderSummaryMenuItemViewHolder;
+import com.herfy.util.AppLogger;
+import com.herfy.util.ShipBookLogger;
+import com.herfy.util.StringUtil;
+import com.herfy.utils.analytics.MixpanelUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
+import com.herfy.utils.handler.ErrorHandler;
+import com.herfy.utils.helper.ApiLogLevel;
+import com.herfy.utils.helper.ApiLogUtil;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.LocaleUtil;
+import com.herfy.utils.helper.TimeUtil;
 import com.kochava.tracker.events.EventType;
 import com.moneyhash.sdk.android.MoneyHash;
 import com.moneyhash.sdk.android.ResultType;
-import com.herfy.BuildConfig;
-import com.herfy.utils.constants.Text;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
@@ -52,16 +62,6 @@ import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
 import com.skylinedynamics.solosdk.util.GsonHelper;
-import com.herfy.summary.OrderSummaryMenuItemViewHolder;
-import com.herfy.utils.helper.ApiLogLevel;
-import com.herfy.utils.helper.ApiLogUtil;
-import com.herfy.util.AppLogger;
-import com.herfy.utils.handler.ErrorHandler;
-import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.utils.analytics.MixpanelUtil;
-import com.herfy.util.ShipBookLogger;
-import com.herfy.util.StringUtil;
-import com.herfy.utils.helper.TimeUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,16 +77,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -423,7 +419,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                     counter++;
                 }
 
-                if(menuItem.isCombo && menuItem.isPromo()){
+                if (menuItem.isCombo && menuItem.isPromo()) {
                     totalPrice = menuItem.getAttributes().getPrice();
                 }
             }
@@ -983,181 +979,181 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
         for (MenuItem menuItem : menuItems) {
 
-            if (!validate || !menuItem.isPromo()) {
+            //if (validate) {
 
-                eventAttributes.put("Item Name", menuItem.getAttributes().getName());
-                eventAttributes.put("Item Quantity", String.valueOf(menuItem.getAttributes().getQuantity()));
+            eventAttributes.put("Item Name", menuItem.getAttributes().getName());
+            eventAttributes.put("Item Quantity", String.valueOf(menuItem.getAttributes().getQuantity()));
 
-                JsonObject item = new JsonObject();
-                JsonArray modifiers = new JsonArray();
-                JsonArray ingredients = new JsonArray();
-                item.addProperty("id", menuItem.getId());
-                item.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId))));
-                item.addProperty("quantity", menuItem.getAttributes().getQuantity());
-                item.addProperty("is-reorder", menuItem.getAttributes().isReorder());
-                item.addProperty("is-promotion", menuItem.isPromo());
-                item.addProperty("notes", menuItem.getAttributes().getNotes());
+            JsonObject item = new JsonObject();
+            JsonArray modifiers = new JsonArray();
+            JsonArray ingredients = new JsonArray();
+            item.addProperty("id", menuItem.getId());
+            item.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId))));
+            item.addProperty("quantity", menuItem.getAttributes().getQuantity());
+            item.addProperty("is-reorder", menuItem.getAttributes().isReorder());
+            item.addProperty("is-promotion", menuItem.isPromo());
+            item.addProperty("notes", menuItem.getAttributes().getNotes());
 
-                int comboIndex = 0;
-                int trueIndex = 0;
-                for (ModifierItem size : menuItem.getSizes().getModifierItems()) {
-                    if (size.getAttributes().isSelected()) {
-                        JsonObject modifier = new JsonObject();
-                        modifier.addProperty("id", size.getId());
-                        modifier.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", size.getAttributes().getPrice())));
-                        modifier.addProperty("quantity", size.getAttributes().getQuantity());
-                        modifiers.add(modifier);
-                        eventAttributes.put("Modifier Name", size.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
-                        eventAttributes.put("Modifier Quantity", String.valueOf(size.getAttributes().getQuantity()));
-                        trueIndex = comboIndex;
-                    }
-                    comboIndex++;
+            int comboIndex = 0;
+            int trueIndex = 0;
+            for (ModifierItem size : menuItem.getSizes().getModifierItems()) {
+                if (size.getAttributes().isSelected()) {
+                    JsonObject modifier = new JsonObject();
+                    modifier.addProperty("id", size.getId());
+                    modifier.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", size.getAttributes().getPrice())));
+                    modifier.addProperty("quantity", size.getAttributes().getQuantity());
+                    modifiers.add(modifier);
+                    eventAttributes.put("Modifier Name", size.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+                    eventAttributes.put("Modifier Quantity", String.valueOf(size.getAttributes().getQuantity()));
+                    trueIndex = comboIndex;
                 }
+                comboIndex++;
+            }
 
-                for (ModifierItem drink : menuItem.getDrinks().getModifierItems()) {
-                    if (drink.getAttributes().isSelected()) {
-                        JsonObject modifier = new JsonObject();
-                        modifier.addProperty("id", drink.getId());
-                        modifier.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", drink.getAttributes().getPrice())));
-                        modifier.addProperty("quantity", drink.getAttributes().getQuantity());
-                        modifiers.add(modifier);
-                        eventAttributes.put("Modifier Name", drink.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
-                        eventAttributes.put("Modifier Quantity", String.valueOf(drink.getAttributes().getQuantity()));
-                    }
+            for (ModifierItem drink : menuItem.getDrinks().getModifierItems()) {
+                if (drink.getAttributes().isSelected()) {
+                    JsonObject modifier = new JsonObject();
+                    modifier.addProperty("id", drink.getId());
+                    modifier.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", drink.getAttributes().getPrice())));
+                    modifier.addProperty("quantity", drink.getAttributes().getQuantity());
+                    modifiers.add(modifier);
+                    eventAttributes.put("Modifier Name", drink.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+                    eventAttributes.put("Modifier Quantity", String.valueOf(drink.getAttributes().getQuantity()));
                 }
+            }
 
-                for (ModifierItem fries : menuItem.getFries().getModifierItems()) {
-                    if (fries.getAttributes().isSelected()) {
-                        JsonObject modifier = new JsonObject();
-                        modifier.addProperty("id", fries.getId());
-                        modifier.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", fries.getAttributes().getPrice())));
-                        modifier.addProperty("quantity", fries.getAttributes().getQuantity());
-                        modifiers.add(modifier);
-                        eventAttributes.put("Modifier Name", fries.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
-                        eventAttributes.put("Modifier Quantity", String.valueOf(fries.getAttributes().getQuantity()));
-                    }
+            for (ModifierItem fries : menuItem.getFries().getModifierItems()) {
+                if (fries.getAttributes().isSelected()) {
+                    JsonObject modifier = new JsonObject();
+                    modifier.addProperty("id", fries.getId());
+                    modifier.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", fries.getAttributes().getPrice())));
+                    modifier.addProperty("quantity", fries.getAttributes().getQuantity());
+                    modifiers.add(modifier);
+                    eventAttributes.put("Modifier Name", fries.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+                    eventAttributes.put("Modifier Quantity", String.valueOf(fries.getAttributes().getQuantity()));
                 }
+            }
 
-                for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
-                    VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
-                    if (visibilityConfig == null || visibilityConfig.getInitialValue() == null || !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
-                        int selectedFreeModifier = 0;
-                        for (ModifierItem modifierItem : modifierGroup.getModifierItems()) {
-                            if (modifierItem.getAttributes().isSelected()) {
+            for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
+                VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
+                if (visibilityConfig == null || visibilityConfig.getInitialValue() == null || !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
+                    int selectedFreeModifier = 0;
+                    for (ModifierItem modifierItem : modifierGroup.getModifierItems()) {
+                        if (modifierItem.getAttributes().isSelected()) {
 
-                                JsonObject freeModifier = null;
-                                JsonObject modifier = null;
+                            JsonObject freeModifier = null;
+                            JsonObject modifier = null;
 
-                                if (modifierGroup.getAttributes().getFreeModifiersCount() > 0 && selectedFreeModifier < modifierGroup.getAttributes().getFreeModifiersCount()) {
-                                    int totalSelectedFreeModifier = selectedFreeModifier + modifierItem.getAttributes().getQuantity();
-                                    if (totalSelectedFreeModifier <= modifierGroup.getAttributes().getFreeModifiersCount()) {
-                                        selectedFreeModifier += modifierItem.getAttributes().getQuantity();
-                                        freeModifier = new JsonObject();
-                                        freeModifier.addProperty("id", modifierItem.getId());
-                                        freeModifier.addProperty("price", 0);
-                                        freeModifier.addProperty("quantity", modifierItem.getAttributes().getQuantity());
-                                    } else {
-                                        selectedFreeModifier = modifierGroup.getAttributes().getFreeModifiersCount();
-
-                                        freeModifier = new JsonObject();
-                                        freeModifier.addProperty("id", modifierItem.getId());
-                                        freeModifier.addProperty("price", 0);
-                                        freeModifier.addProperty("quantity", modifierItem.getAttributes().getQuantity() - (totalSelectedFreeModifier - modifierGroup.getAttributes().getFreeModifiersCount()));
-
-                                        modifier = new JsonObject();
-                                        modifier.addProperty("id", modifierItem.getId());
-                                        modifier.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", modifierItem.getAttributes().getPrice())));
-                                        modifier.addProperty("quantity", totalSelectedFreeModifier - modifierGroup.getAttributes().getFreeModifiersCount());
-                                    }
+                            if (modifierGroup.getAttributes().getFreeModifiersCount() > 0 && selectedFreeModifier < modifierGroup.getAttributes().getFreeModifiersCount()) {
+                                int totalSelectedFreeModifier = selectedFreeModifier + modifierItem.getAttributes().getQuantity();
+                                if (totalSelectedFreeModifier <= modifierGroup.getAttributes().getFreeModifiersCount()) {
+                                    selectedFreeModifier += modifierItem.getAttributes().getQuantity();
+                                    freeModifier = new JsonObject();
+                                    freeModifier.addProperty("id", modifierItem.getId());
+                                    freeModifier.addProperty("price", 0);
+                                    freeModifier.addProperty("quantity", modifierItem.getAttributes().getQuantity());
                                 } else {
+                                    selectedFreeModifier = modifierGroup.getAttributes().getFreeModifiersCount();
+
+                                    freeModifier = new JsonObject();
+                                    freeModifier.addProperty("id", modifierItem.getId());
+                                    freeModifier.addProperty("price", 0);
+                                    freeModifier.addProperty("quantity", modifierItem.getAttributes().getQuantity() - (totalSelectedFreeModifier - modifierGroup.getAttributes().getFreeModifiersCount()));
+
                                     modifier = new JsonObject();
                                     modifier.addProperty("id", modifierItem.getId());
                                     modifier.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", modifierItem.getAttributes().getPrice())));
-                                    modifier.addProperty("quantity", modifierItem.getAttributes().getQuantity());
+                                    modifier.addProperty("quantity", totalSelectedFreeModifier - modifierGroup.getAttributes().getFreeModifiersCount());
                                 }
-
-                                if (freeModifier != null) {
-                                    modifiers.add(freeModifier);
-                                }
-
-                                if (modifier != null) {
-                                    modifiers.add(modifier);
-                                }
-
-                                eventAttributes.put("Modifier Name", modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
-                                eventAttributes.put("Modifier Quantity", String.valueOf(modifierItem.getAttributes().getQuantity()));
+                            } else {
+                                modifier = new JsonObject();
+                                modifier.addProperty("id", modifierItem.getId());
+                                modifier.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", modifierItem.getAttributes().getPrice())));
+                                modifier.addProperty("quantity", modifierItem.getAttributes().getQuantity());
                             }
+
+                            if (freeModifier != null) {
+                                modifiers.add(freeModifier);
+                            }
+
+                            if (modifier != null) {
+                                modifiers.add(modifier);
+                            }
+
+                            eventAttributes.put("Modifier Name", modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+                            eventAttributes.put("Modifier Quantity", String.valueOf(modifierItem.getAttributes().getQuantity()));
                         }
                     }
-
                 }
 
-                for (ModifierItem modifierItem : menuItem.getModifierItems()) {
-                    JsonObject modifier = new JsonObject();
-                    modifier.addProperty("id", modifierItem.getId());
-                    modifier.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", modifierItem.getAttributes().getPrice())));
-                    modifier.addProperty("quantity", modifierItem.getAttributes().getQuantity());
-                    modifiers.add(modifier);
-                    eventAttributes.put("Modifier Name", modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
-                    eventAttributes.put("Modifier Quantity", String.valueOf(modifierItem.getAttributes().getQuantity()));
-                }
+            }
 
-                for (Ingredient ingredient : menuItem.getIngredients()) {
-                    if (!ingredient.getAttributes().isSelected()) {
-                        JsonObject ingredientObject = new JsonObject();
-                        ingredientObject.addProperty("id", ingredient.getId());
-                        ingredientObject.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", ingredient.getAttributes().getPrice())));
-                        ingredientObject.addProperty("quantity", ingredient.getAttributes().getQuantity());
-                        ingredients.add(ingredientObject);
-                        eventAttributes.put("Ingredient Name", ingredient.getAttributes().getName());
-                        eventAttributes.put("Ingredient Quantity", String.valueOf(ingredient.getAttributes().getQuantity()));
-                    }
-                }
+            for (ModifierItem modifierItem : menuItem.getModifierItems()) {
+                JsonObject modifier = new JsonObject();
+                modifier.addProperty("id", modifierItem.getId());
+                modifier.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", modifierItem.getAttributes().getPrice())));
+                modifier.addProperty("quantity", modifierItem.getAttributes().getQuantity());
+                modifiers.add(modifier);
+                eventAttributes.put("Modifier Name", modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+                eventAttributes.put("Modifier Quantity", String.valueOf(modifierItem.getAttributes().getQuantity()));
+            }
 
-                try {
-                    if (menuItem.isCombo) {
-                        JsonArray comboItems = new JsonArray();
-                        for (MenuItemComponents components : menuItem.combo.get(trueIndex).components) {
-                            for (ComponentModifierItem compoItem : components.items) {
-                                if (compoItem.selected) {
-                                    boolean proceed = true;
-                                    if (proceed) {
-                                        JsonObject comboItemObject = new JsonObject();
-                                        comboItemObject.addProperty("id", compoItem.id);
-                                        comboItemObject.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", compoItem.price)));
-                                        comboItemObject.addProperty("quantity", compoItem.quantity);
-                                        comboItemObject.add("ingredients", new JsonArray());
-                                        JsonArray modifierCombos = new JsonArray();
-                                        if (!compoItem.modifierGroups.isEmpty()) {
-                                            for (ModifierGroup modifierGroup : compoItem.modifierGroups) {
-                                                for (int i = 0; i < modifierGroup.getModifierItems().size(); i++) {
-                                                    if (modifierGroup.getModifierItems().get(i).getAttributes().isSelected()) {
-                                                        JsonObject comoModItemObject = new JsonObject();
-                                                        comoModItemObject.addProperty("id", modifierGroup.getModifierItems().get(i).getId());
-                                                        comoModItemObject.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", modifierGroup.getModifierItems().get(i).getAttributes().getPrice())));
-                                                        comoModItemObject.addProperty("quantity", modifierGroup.getModifierItems().get(i).getAttributes().getQuantity());
-                                                        modifierCombos.add(comoModItemObject);
-                                                    }
+            for (Ingredient ingredient : menuItem.getIngredients()) {
+                if (!ingredient.getAttributes().isSelected()) {
+                    JsonObject ingredientObject = new JsonObject();
+                    ingredientObject.addProperty("id", ingredient.getId());
+                    ingredientObject.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", ingredient.getAttributes().getPrice())));
+                    ingredientObject.addProperty("quantity", ingredient.getAttributes().getQuantity());
+                    ingredients.add(ingredientObject);
+                    eventAttributes.put("Ingredient Name", ingredient.getAttributes().getName());
+                    eventAttributes.put("Ingredient Quantity", String.valueOf(ingredient.getAttributes().getQuantity()));
+                }
+            }
+
+            try {
+                if (menuItem.isCombo) {
+                    JsonArray comboItems = new JsonArray();
+                    for (MenuItemComponents components : menuItem.combo.get(trueIndex).components) {
+                        for (ComponentModifierItem compoItem : components.items) {
+                            if (compoItem.selected) {
+                                boolean proceed = true;
+                                if (proceed) {
+                                    JsonObject comboItemObject = new JsonObject();
+                                    comboItemObject.addProperty("id", compoItem.id);
+                                    comboItemObject.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", compoItem.price)));
+                                    comboItemObject.addProperty("quantity", compoItem.quantity);
+                                    comboItemObject.add("ingredients", new JsonArray());
+                                    JsonArray modifierCombos = new JsonArray();
+                                    if (!compoItem.modifierGroups.isEmpty()) {
+                                        for (ModifierGroup modifierGroup : compoItem.modifierGroups) {
+                                            for (int i = 0; i < modifierGroup.getModifierItems().size(); i++) {
+                                                if (modifierGroup.getModifierItems().get(i).getAttributes().isSelected()) {
+                                                    JsonObject comoModItemObject = new JsonObject();
+                                                    comoModItemObject.addProperty("id", modifierGroup.getModifierItems().get(i).getId());
+                                                    comoModItemObject.addProperty("price", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", modifierGroup.getModifierItems().get(i).getAttributes().getPrice())));
+                                                    comoModItemObject.addProperty("quantity", modifierGroup.getModifierItems().get(i).getAttributes().getQuantity());
+                                                    modifierCombos.add(comoModItemObject);
                                                 }
                                             }
                                         }
-                                        comboItemObject.add("modifiers", modifierCombos);
-                                        comboItems.add(comboItemObject);
                                     }
+                                    comboItemObject.add("modifiers", modifierCombos);
+                                    comboItems.add(comboItemObject);
                                 }
                             }
                         }
-                        item.add("combo-items", comboItems);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    item.add("combo-items", comboItems);
                 }
-
-                item.add("ingredients", ingredients);
-                item.add("modifiers", modifiers);
-                items.add(item);
-
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+            item.add("ingredients", ingredients);
+            item.add("modifiers", modifiers);
+            items.add(item);
+
+            //}
 
         }
 
@@ -1243,8 +1239,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         }
                         double discountValue = orderData.getDiscountDisplay() > 0.0 ? orderData.getDiscountDisplay() : orderData.getDiscount();
 
-                        boolean hasPromoItem = CacheUtil.getInstance().getCouponMenuItem() != null ||
-                                CacheUtil.getInstance().getCampaignPromotionMenuItem() != null;
+                        boolean hasPromoItem = CacheUtil.getInstance().getCouponMenuItem() != null || CacheUtil.getInstance().getCampaignPromotionMenuItem() != null;
 
                         if (jsonObject.has("error") && !jsonObject.isNull("error")) {
                             ErrorHandler.getErrorCode(jsonObject, s -> {
@@ -1268,11 +1263,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                             }
 
                         }
-                        paymentView.setPriceDetails(getValidatedSubtotal(),
-                                discountValue,
-                                getValidatedTotal(),
-                                validatedDeliveryCharge,
-                                pointsSarValue, pointsEarnable, loyaltyPoints, orderData.getCharges());
+                        paymentView.setPriceDetails(getValidatedSubtotal(), discountValue, getValidatedTotal(), validatedDeliveryCharge, pointsSarValue, pointsEarnable, loyaltyPoints, orderData.getCharges());
 
                         if (!hasPromoItem) {
                             validatedBody = (JsonObject) new JsonParser().parse(o.toString());
@@ -1294,11 +1285,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                                     if (s.equals("1213")) {
                                         loyaltyPointsUsed = 0;
                                         double currentValidatedTotal = getValidatedSubtotal() - validatedDiscount;
-                                        paymentView.setPriceDetails(getValidatedSubtotal(),
-                                                validatedDiscount,
-                                                currentValidatedTotal,
-                                                validatedDeliveryCharge,
-                                                0, 0, loyaltyPointsUsed, new ArrayList<>());
+                                        paymentView.setPriceDetails(getValidatedSubtotal(), validatedDiscount, currentValidatedTotal, validatedDeliveryCharge, 0, 0, loyaltyPointsUsed, new ArrayList<>());
                                     }
                                     return null;
                                 });
@@ -1375,12 +1362,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         }
 
                         paymentView.setOrderId(orderId);
-                        MixpanelUtil.Companion.checkout(
-                                orderId,
-                                store,
-                                finalObject.get("type").getAsString(),
-                                paymentType.getValue()
-                        );
+                        MixpanelUtil.Companion.checkout(orderId, store, finalObject.get("type").getAsString(), paymentType.getValue());
                         KochavaTrackerUtil.trackEvent(EventType.PURCHASE);
                         ApiLogUtil.sendOrderLog(ApiLogLevel.INFO, orderId, paymentType.getValue(), "Order Successful");
 
@@ -1730,8 +1712,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
     @Override
     public double getMukafaaTransactionAmount() {
         double mukafaaTransactionAmount = CacheUtil.getInstance().getMukafaaTransactionAmount();
-        if (mukafaaTransactionAmount < 0)
-            mukafaaTransactionAmount = 0;
+        if (mukafaaTransactionAmount < 0) mukafaaTransactionAmount = 0;
 
         return mukafaaTransactionAmount;
     }

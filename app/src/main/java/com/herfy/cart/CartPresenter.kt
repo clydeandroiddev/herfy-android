@@ -69,7 +69,6 @@ import com.skylinedynamics.solosdk.util.GsonHelper
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.disposables.Disposable
-import io.shipbook.shipbooksdk.Log
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -438,6 +437,7 @@ class CartPresenter @Inject constructor(
                 orderBody.addProperty("total", total)
                 val items = JsonArray()
                 val orderStoreId = CacheUtil.getOrderStoreId()
+
                 for (menuItem in menuItems) {
                     if (!menuItem.isPromo) {
                         val item = JsonObject()
@@ -643,6 +643,8 @@ class CartPresenter @Inject constructor(
                                 }
                                 item.add("combo-items", comboItems)
                             }
+
+
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
@@ -5124,8 +5126,10 @@ class CartPresenter @Inject constructor(
     private fun componentsSelectFirst(components: MenuItemComponents): ArrayList<ComponentModifierItem> {
         val noItemSelected = checkIfNoItemSelected(components.items)
         if (noItemSelected) {
-            if (components.minimum == 1) {
-                components.items[0].selected = true
+            components.items[0].selected = true
+            if (components.minimum >= 1) {
+                components.items[0].quantity = components.minimum
+            } else {
                 components.items[0].quantity = 1
             }
         }
