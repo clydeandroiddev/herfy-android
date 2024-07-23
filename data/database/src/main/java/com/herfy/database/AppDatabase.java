@@ -7,6 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
+import com.herfy.database.converters.CustomFieldsMapConverter;
 import com.herfy.database.converters.LocationPriceListConverter;
 import com.herfy.database.converters.StringListConverter;
 import com.herfy.database.converters.TranslatedEntityConverter;
@@ -35,11 +36,12 @@ import dev.matrix.roomigrant.GenerateRoomMigrations;
         FacilityEntity.class,
         MenuCategoryEntity.class,
         MenuItemEntity.class
-}, version = 1)
+}, version = 2)
 @TypeConverters(value = {
         LocationPriceListConverter.class,
         StringListConverter.class,
-        TranslatedEntityConverter.class
+        TranslatedEntityConverter.class,
+        CustomFieldsMapConverter.class
     }
 )
 @GenerateRoomMigrations(rules = {})

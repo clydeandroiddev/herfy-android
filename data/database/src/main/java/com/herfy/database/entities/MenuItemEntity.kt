@@ -26,7 +26,8 @@ data class MenuItemEntity(
     @ColumnInfo(name = "out_of_stock_locations") @SerializedName("out-of-stock-locations") var outOfStockLocations: List<String>? = emptyList(),
     @ColumnInfo(name = "excluded_apps") @SerializedName("excluded-apps") var excludedApps: List<String>? = emptyList(),
     @ColumnInfo(name = "calories") @SerializedName("calories") var calories : String? = "",
-    @ColumnInfo(name = "calorie_count") @SerializedName("calorie-count") var calorieCount : Int? = 0
+    @ColumnInfo(name = "calorie_count") @SerializedName("calorie-count") var calorieCount : Int? = 0,
+    @ColumnInfo(name = "custom_fields") @SerializedName("custom-fields") var customFields : Map<String, Any?>? = null
 ) {
 
     companion object {
@@ -51,6 +52,7 @@ data class MenuItemEntity(
             menuItem.excludedApps = excludedApps
             menuItem.calories = calories
             menuItem.calorieCount = calorieCount ?: 0
+            menuItem.customFieldsMap = customFields
             return menuItem
         }
 

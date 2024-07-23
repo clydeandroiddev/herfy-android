@@ -10,6 +10,7 @@ import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.database.entities.ModifierGroupDb
 import com.herfy.database.entities.ModifierItemDb
 import com.herfy.database.responses.MenuCategoryItemResponse
+import com.herfy.utils.extensions.cast
 import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
@@ -251,7 +252,15 @@ class MenuRepositoryImpl @Inject constructor(
             val menuCategoryDbs =
                 appDatabase.menuCategoryEntityDao().getAllByApplication(application.id)
             menuCategoryDbs.toDomain().forEach { menuCategory ->
-                if (menuCategory.enabled == 1 &&
+                val isHiddenFromMenuKey = "is_hidden_from_menu"
+
+                var isCategoryHiddenFromMenu = false
+                if(menuCategory.customFieldsMap.containsKey(isHiddenFromMenuKey)){
+                    menuCategory.customFieldsMap.get(isHiddenFromMenuKey)?.cast<String> {
+                        isCategoryHiddenFromMenu = it.equals("1", true)
+                    }
+                }
+                if (menuCategory.enabled == 1 && !isCategoryHiddenFromMenu &&
                     (storeId == null ||
                             (!menuCategory.excludedApps.contains(application.id) &&
                                     !menuCategory.excludedLocations.contains(storeId))
@@ -261,7 +270,14 @@ class MenuRepositoryImpl @Inject constructor(
                         .findAllByMenuCategoryId(application.id, menuCategory.id)
                     val filteredMenuItems = mutableListOf<MenuItem>()
                     menuItemDbs.toDomain().forEach { menuItem ->
-                        if (menuItem.enabled == 1 &&
+                        var isMenuItemHiddenFromMenu = false
+                        if(menuItem.customFieldsMap.containsKey(isHiddenFromMenuKey)){
+                            menuItem.customFieldsMap.get(isHiddenFromMenuKey)?.cast<String> {
+                                isMenuItemHiddenFromMenu = it.equals("1", true)
+                            }
+                        }
+
+                        if (menuItem.enabled == 1 && !isMenuItemHiddenFromMenu &&
                             (storeId == null ||
                                     (menuItem.excludedApps?.contains(application.id) == false &&
                                             menuItem.excludedLocations?.contains(storeId) == false)
