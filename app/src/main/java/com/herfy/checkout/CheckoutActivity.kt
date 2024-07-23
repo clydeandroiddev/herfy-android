@@ -1089,17 +1089,17 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.placeOrder.setVisibility(View.VISIBLE)
         }
         val validatedTotal = paymentPresenter?.validatedTotal?.toInt()
-        if (CacheUtil.getInstance().orderType === OrderType.DELIVERY && validatedTotal != null && validatedTotal != 0) {
-            val paymentDialogFragment: PaymentDialogFragment = PaymentDialogFragment.newInstance(
-                paymentPresenter
-            ) { dialog, cashPresented ->
-                dialog.dismiss()
-                paymentPresenter!!.cashPresented = cashPresented
-            }
-            paymentDialogFragment.show(
-                supportFragmentManager, PaymentDialogFragment::class.java.simpleName
-            )
-        }
+//        if (CacheUtil.getInstance().orderType === OrderType.DELIVERY && validatedTotal != null && validatedTotal != 0) {
+//            val paymentDialogFragment: PaymentDialogFragment = PaymentDialogFragment.newInstance(
+//                paymentPresenter
+//            ) { dialog, cashPresented ->
+//                dialog.dismiss()
+//                paymentPresenter!!.cashPresented = cashPresented
+//            }
+//            paymentDialogFragment.show(
+//                supportFragmentManager, PaymentDialogFragment::class.java.simpleName
+//            )
+//        }
     }
 
     override fun showValidateOrderError(errors: List<String>) {}
