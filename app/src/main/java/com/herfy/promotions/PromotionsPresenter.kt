@@ -967,25 +967,26 @@ class PromotionsPresenter @Inject constructor(
                                 if (jsonObject.has("error") && !jsonObject.isNull("error")) {
                                     view.showError(jsonObject.getString("error"), false)
                                 } else {
-                                    if (digitalCoupon.promotion != null && digitalCoupon.promotion
-                                            .getAttributes().getType()
-                                            .equals("item", ignoreCase = true)
-                                    ) {
-                                        getCampaignPromotionItem(digitalCoupon)
-                                    } else {
-                                        MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
-                                        CacheUtil.getInstance().setCampaign(digitalCoupon)
-                                        CacheUtil.getInstance()
-                                            .setCampaignPromotion(digitalCoupon.promotion)
-                                        CacheUtil.getInstance()
-                                            .setCampaignPromotionMenuItem(null)
-                                        CacheUtil.getInstance().setCampaignToAdd(null)
-                                        if (CacheUtil.getInstance().getCartQuantity() > 0) {
-                                            view.showCart(true)
-                                        } else {
-                                            view.showMenu()
-                                        }
-                                    }
+                                    view.showCart(true)
+//                                    if (digitalCoupon.promotion != null && digitalCoupon.promotion
+//                                            .getAttributes().getType()
+//                                            .equals("item", ignoreCase = true)
+//                                    ) {
+//                                        getCampaignPromotionItem(digitalCoupon)
+//                                    } else {
+//                                        MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
+//                                        CacheUtil.getInstance().setCampaign(digitalCoupon)
+//                                        CacheUtil.getInstance()
+//                                            .setCampaignPromotion(digitalCoupon.promotion)
+//                                        CacheUtil.getInstance()
+//                                            .setCampaignPromotionMenuItem(null)
+//                                        CacheUtil.getInstance().setCampaignToAdd(null)
+//                                        if (CacheUtil.getInstance().getCartQuantity() > 0) {
+//                                            view.showCart(true)
+//                                        } else {
+//                                            view.showMenu()
+//                                        }
+//                                    }
                                 }
                             } catch (ex: JSONException) {
                                 ex.printStackTrace()

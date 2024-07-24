@@ -352,11 +352,11 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
             promo,
             object : PromotionDetailBottomSheet.onAction {
                 override fun onClickClaimPromo(promo: Campaign) {
+                    CacheUtil.getInstance().initialCampaign = promo
                     if (CacheUtil.getInstance().orderTypeNotBlank()) {
                         showLoadingDialog()
                         promotionsPresenter.onAvailDigitalCoupon(promo)
                     } else {
-                        CacheUtil.getInstance().initialCampaign = promo
                         showOrderTypeFromCampaign()
                     }
                 }

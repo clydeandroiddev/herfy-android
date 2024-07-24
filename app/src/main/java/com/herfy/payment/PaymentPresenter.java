@@ -301,116 +301,27 @@ public class PaymentPresenter implements PaymentContract.Presenter {
     }
 
     @Override
-    public double getMenuItemTotalPrice(boolean isUpsell, MenuItem menuItem, int modifierGroupPosition) {
-        /*String orderStoreId = null;
-
-        if (CacheUtil.getInstance().getOrderStore() != null) {
-            orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
-        }
-        double totalPrice = menuItem.getPrice(orderStoreId);
-
-        int comboIndex = 0;
-        int trueIndex = 0;
-        if (!menuItem.isPromo() && menuItem.getSizes().getModifierItems().size() > 0) {
-            totalPrice = 0.0;
-            for (ModifierItem modifierItem : menuItem.getSizes().getModifierItems()) {
-                if (modifierItem.getAttributes().isSelected()) {
-                    totalPrice += modifierItem.getAttributes().getPrice();
-                    trueIndex = comboIndex;
-                    break;
-                }
-                comboIndex++;
-            }
-        }
-        for (ModifierItem modifierItem : menuItem.getDrinks().getModifierItems()) {
-            if (modifierItem.getAttributes().isSelected()) {
-                totalPrice += modifierItem.getAttributes().getPrice();
-                break;
-            }
-        }
-        for (ModifierItem modifierItem : menuItem.getFries().getModifierItems()) {
-            if (modifierItem.getAttributes().isSelected()) {
-                totalPrice += modifierItem.getAttributes().getPrice();
-                break;
-            }
-        }
-        for (Ingredient ingredient : menuItem.getIngredients()) {
-            if (ingredient.getAttributes().isSelected()) {
-                totalPrice += ingredient.getAttributes().getPrice();
-            }
-        }
-        for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
-            VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
-            if (visibilityConfig == null || !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
-                int selectedFreeModifier = 0;
-                for (ModifierItem modifierItem : modifierGroup.getModifierItems()) {
-                    if (modifierItem.getAttributes().isSelected()) {
-                        if (modifierGroup.getAttributes().getFreeModifiersCount() > 0 && selectedFreeModifier < modifierGroup.getAttributes().getFreeModifiersCount()) {
-                            int totalSelectedFreeModifier = selectedFreeModifier + modifierItem.getAttributes().getQuantity();
-                            if (totalSelectedFreeModifier < modifierGroup.getAttributes().getFreeModifiersCount()) {
-                                selectedFreeModifier += modifierItem.getAttributes().getQuantity();
-                            } else {
-                                selectedFreeModifier = modifierGroup.getAttributes().getFreeModifiersCount();
-                                totalPrice += modifierItem.getAttributes().getPrice() * (totalSelectedFreeModifier - modifierGroup.getAttributes().getFreeModifiersCount());
-                            }
-                        } else {
-                            totalPrice += modifierItem.getAttributes().getPrice() * modifierItem.getAttributes().getQuantity();
-                        }
-                    }
-                }
-            }
-        }
-
-        try {
-            if (menuItem.isCombo) {
-                for (MenuItemComponents components : menuItem.combo.get(trueIndex).components) {
-                    for (ComponentModifierItem item : components.items) {
-                        if (item.selected) {
-                            if (!menuItem.isSandwichOnly)
-                                totalPrice += item.price;
-                            if (!item.modifierGroups.isEmpty()) {
-                                for (ModifierGroup modifierGroup : item.modifierGroups) {
-                                    for (int i = 0; i < modifierGroup.getModifierItems().size(); i++) {
-                                        if (modifierGroup.getModifierItems().get(i).getAttributes().isSelected()) {
-                                            totalPrice += modifierGroup.getModifierItems().get(i).getAttributes().getPrice();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (!isUpsell || menuItem.getAttributes().getUpsellQuantity() > menuItem.getAttributes().getQuantity()) {
-            totalPrice *= menuItem.getAttributes().getQuantity();
-        } else {
-            totalPrice *= menuItem.getAttributes().getUpsellQuantity();
-        }
-
-        return totalPrice;*/
-
-
+    public double getMenuItemTotalPrice(boolean isUpsell, MenuItem item, int modifierGroupPosition) {
         String orderStoreId = null;
         int counter = 0;
         int comboIndex = 0;
         if (CacheUtil.getInstance().getOrderStore() != null) {
             orderStoreId = CacheUtil.getInstance().getOrderStore().getId();
         }
+        double price = item.getPrice(orderStoreId);
+        double totalPrice = (price == 0.0) ? item.getAttributes().getPrice() : price;
+        if (item.isPromo()) {
+            totalPrice = item.getAttributes().getPrice();
+        }
 
-        double totalPrice = menuItem.getPrice(orderStoreId);
-
-        if (BuildUtil.isEkfc() && menuItem.getTotal() != 0) {
-            totalPrice = menuItem.getTotal();
+        if (BuildUtil.isEkfc() && item.getTotal() != 0.0) {
+            totalPrice = item.getTotal();
         } else {
-            if (menuItem.getSizes().getModifierItems().size() > 0) {
-                if (!menuItem.isPromo()) {
+            if (item.getSizes().getModifierItems().size() > 0) {
+                if (!item.isPromo()) {
                     totalPrice = 0.0;
                 }
-                for (ModifierItem modifierItem : menuItem.getSizes().getModifierItems()) {
+                for (ModifierItem modifierItem : item.getSizes().getModifierItems()) {
                     if (modifierItem.getAttributes().isSelected()) {
                         totalPrice += modifierItem.getAttributes().getPrice();
                         comboIndex = counter;
@@ -419,23 +330,23 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                     counter++;
                 }
 
-                if (menuItem.isCombo && menuItem.isPromo()) {
-                    totalPrice = menuItem.getAttributes().getPrice();
+                if (item.isCombo && item.isPromo()) {
+                    totalPrice = item.getAttributes().getPrice();
                 }
             }
-            for (ModifierItem modifierItem : menuItem.getDrinks().getModifierItems()) {
+            for (ModifierItem modifierItem : item.getDrinks().getModifierItems()) {
                 if (modifierItem.getAttributes().isSelected()) {
                     totalPrice += modifierItem.getAttributes().getPrice();
                     break;
                 }
             }
-            for (ModifierItem modifierItem : menuItem.getFries().getModifierItems()) {
+            for (ModifierItem modifierItem : item.getFries().getModifierItems()) {
                 if (modifierItem.getAttributes().isSelected()) {
                     totalPrice += modifierItem.getAttributes().getPrice();
                     break;
                 }
             }
-            for (ModifierGroup modifierGroup : menuItem.getModifierGroups()) {
+            for (ModifierGroup modifierGroup : item.getModifierGroups()) {
                 VisibilityConfig visibilityConfig = modifierGroup.getAttributes().getVisibilityConfig();
                 if (visibilityConfig == null || visibilityConfig.getInitialValue() == null || !visibilityConfig.getInitialValue().equalsIgnoreCase("hidden")) {
                     int selectedFreeModifier = 0;
@@ -456,24 +367,24 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                     }
                 }
             }
-            for (Ingredient ingredient : menuItem.getIngredients()) {
+            for (Ingredient ingredient : item.getIngredients()) {
                 if (ingredient.getAttributes().isSelected()) {
                     totalPrice += ingredient.getAttributes().getPrice();
                 }
             }
 
             try {
-                if (menuItem.isCombo) {
-                    for (MenuItemComponents components : menuItem.combo.get(comboIndex).components) {
+                if (item.isCombo) {
+                    for (MenuItemComponents components : item.combo.get(comboIndex).components) {
                         for (ComponentModifierItem componentModifierItem : components.items) {
                             if (componentModifierItem.selected) {
-                                if (!menuItem.isSandwichOnly)
+                                if (!item.isSandwichOnly)
                                     totalPrice += componentModifierItem.price * componentModifierItem.quantity;
                                 if (!componentModifierItem.modifierGroups.isEmpty()) {
                                     for (ModifierGroup modifierGroup : componentModifierItem.modifierGroups) {
                                         for (int i = 0; i < modifierGroup.getModifierItems().size(); i++) {
                                             if (modifierGroup.getModifierItems().get(i).getAttributes().isSelected()) {
-                                                totalPrice += (modifierGroup.getModifierItems().get(i).getAttributes().getPrice() * modifierGroup.getModifierItems().get(i).getAttributes().getQuantity());
+                                                totalPrice += modifierGroup.getModifierItems().get(i).getAttributes().getPrice() * modifierGroup.getModifierItems().get(i).getAttributes().getQuantity();
                                             }
                                         }
                                     }
@@ -487,11 +398,11 @@ public class PaymentPresenter implements PaymentContract.Presenter {
             }
         }
 
-        if (!isUpsell || menuItem.isPromo() || menuItem.getAttributes().getUpsellQuantity() > menuItem.getAttributes().getQuantity()) {
-            totalPrice *= menuItem.getAttributes().getQuantity();
-        } else {
-            totalPrice *= menuItem.getAttributes().getUpsellQuantity();
-        }
+//        if (!isUpsell || item.isPromo() || item.getAttributes().getUpsellQuantity() > item.getAttributes().getQuantity()) {
+//            totalPrice *= item.getAttributes().getQuantity();
+//        } else {
+//            totalPrice *= item.getAttributes().getUpsellQuantity();
+//        }
 
         return totalPrice;
     }
@@ -614,27 +525,27 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
     public double getValidatedSubtotal() {
         double promoItemPrice = 0.0;
-        double subtotalForDisplay = validatedSubtotal - (validatedPromoItemPrice * validatedPromoItemQuantity);
-        if (CacheUtil.getInstance().getCouponMenuItem() != null) {
-            promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCouponMenuItem(), -1);
-        } else if (CacheUtil.getInstance().getCampaignPromotionMenuItem() != null) {
-            promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCampaignPromotionMenuItem(), -1);
-        }
-        subtotalForDisplay += promoItemPrice;
-        return subtotalForDisplay;
+//        double subtotalForDisplay = validatedSubtotal - (validatedPromoItemPrice * validatedPromoItemQuantity);
+//        if (CacheUtil.getInstance().getCouponMenuItem() != null) {
+//            promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCouponMenuItem(), -1);
+//        } else if (CacheUtil.getInstance().getCampaignPromotionMenuItem() != null) {
+//            promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCampaignPromotionMenuItem(), -1);
+//        }
+//        subtotalForDisplay += promoItemPrice;
+        return validatedSubtotal;
     }
 
     @Override
     public double getValidatedTotal() {
         double promoItemPrice = 0.0;
-        double totalForDisplay = validatedTotal - (validatedPromoItemPrice * validatedPromoItemQuantity);
-        if (CacheUtil.getInstance().getCouponMenuItem() != null) {
-            promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCouponMenuItem(), -1);
-        } else if (CacheUtil.getInstance().getCampaignPromotionMenuItem() != null) {
-            promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCampaignPromotionMenuItem(), -1);
-        }
-        totalForDisplay += promoItemPrice;
-        return totalForDisplay;
+//        double totalForDisplay = validatedTotal - (validatedPromoItemPrice * validatedPromoItemQuantity);
+//        if (CacheUtil.getInstance().getCouponMenuItem() != null) {
+//            promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCouponMenuItem(), -1);
+//        } else if (CacheUtil.getInstance().getCampaignPromotionMenuItem() != null) {
+//            promoItemPrice = getMenuItemTotalPrice(false, CacheUtil.getInstance().getCampaignPromotionMenuItem(), -1);
+//        }
+//        totalForDisplay += promoItemPrice;
+        return validatedTotal;
     }
 
     @Override
@@ -776,9 +687,11 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         }
 
         double subtotal = getMenuItemsTotalPrice();
+
         if (!validate) {
             subtotal = getValidatedSubtotal();
         }
+
         double deliveryCharge = concept.getDeliveryCharge();
 
         try {
