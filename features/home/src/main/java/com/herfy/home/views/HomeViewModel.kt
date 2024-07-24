@@ -742,10 +742,10 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun onClickClaimPromo(promo: Campaign) {
+        CacheUtil.getInstance().initialCampaign = promo
         if (CacheUtil.getInstance().orderTypeNotBlank()) {
             validateDigitalCoupon(promo)
         } else {
-            CacheUtil.getInstance().initialCampaign = promo
             _showOrderTypeFromCampaign.value = Event(true)
         }
     }
@@ -1117,26 +1117,27 @@ class HomeViewModel @Inject constructor(
                                         _showPromotionsError.value =
                                             Event(ErrorMsgItem(true, jsonObject.getString("error")))
                                     } else {
-                                        if (digitalCoupon.getPromotion() != null && digitalCoupon.getPromotion()
-                                                .getAttributes().getType()
-                                                .equals("item", ignoreCase = true)
-                                        ) {
-                                            getCampaignPromotionItem(digitalCoupon)
-                                        } else {
-                                            trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
-                                            CacheUtil.getInstance().setCampaign(digitalCoupon)
-                                            CacheUtil.getInstance()
-                                                .setCampaignPromotion(digitalCoupon.promotion)
-                                            CacheUtil.getInstance()
-                                                .setCampaignPromotionMenuItem(null)
-                                            CacheUtil.getInstance().setCampaignToAdd(null)
-                                            if (CacheUtil.getInstance().getCartQuantity() > 0) {
-                                                _showCart.value = Event(true)
-                                            } else {
-                                                _showMenu.value = Event(true)
-                                            }
-
-                                        }
+                                        _showCart.value = Event(true)
+//                                        if (digitalCoupon.getPromotion() != null && digitalCoupon.getPromotion()
+//                                                .getAttributes().getType()
+//                                                .equals("item", ignoreCase = true)
+//                                        ) {
+//                                            getCampaignPromotionItem(digitalCoupon)
+//                                        } else {
+//                                            trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
+//                                            CacheUtil.getInstance().setCampaign(digitalCoupon)
+//                                            CacheUtil.getInstance()
+//                                                .setCampaignPromotion(digitalCoupon.promotion)
+//                                            CacheUtil.getInstance()
+//                                                .setCampaignPromotionMenuItem(null)
+//                                            CacheUtil.getInstance().setCampaignToAdd(null)
+//                                            if (CacheUtil.getInstance().getCartQuantity() > 0) {
+//                                                _showCart.value = Event(true)
+//                                            } else {
+//                                                _showMenu.value = Event(true)
+//                                            }
+//
+//                                        }
                                     }
                                 } catch (ex: JSONException) {
                                     ex.printStackTrace()
