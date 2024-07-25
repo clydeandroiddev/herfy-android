@@ -158,13 +158,15 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         cartPresenter.start()
         cartPresenter.fetchCustomerCards()
         update()
-        checkForAutoApplyCampaign()
     }
 
     private fun checkForAutoApplyCampaign() {
         if (CacheUtil.getInstance().initialCampaign != null && CacheUtil.getInstance()
                 .orderTypeNotBlank()
         ) {
+            activity?.cast<BaseActivity> {
+                it.showLoadingDialog()
+            }
             cartPresenter.availCouponFromCampaign()
         }
     }
@@ -305,26 +307,34 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
 
         if (cartPresenter != null) {
+
             if (!dontShowDigitalCoupons) {
                 cartPresenter.getMenuItems()
             } else {
                 binding.placeOrder.isEnabled = cartPresenter.menuItemsCount > 0
             }
+
             cartPresenter.getIntegrations()
             cartPresenter.getConcept()
             cartPresenter.showCoupon()
             cartPresenter.getUpsells()
 
-            if (CacheUtil.getInstance().campaign != null) {
-                if ((CacheUtil.getInstance().campaignPromotionMenuItem != null || CacheUtil.getInstance().couponMenuItem != null)) {
-                    isFromPromotions = true
+            if (CacheUtil.getInstance().initialCampaign != null && CacheUtil.getInstance()
+                    .orderTypeNotBlank()
+            ) {
+                checkForAutoApplyCampaign()
+            } else {
+                if (CacheUtil.getInstance().campaign != null) {
+                    if ((CacheUtil.getInstance().campaignPromotionMenuItem != null || CacheUtil.getInstance().couponMenuItem != null)) {
+                        isFromPromotions = true
+                    }
+                    cartPresenter.validateDigitalCoupon(
+                        isFromPromotions, CacheUtil.getInstance().campaign
+                    )
+                    isFromPromotions = false
+                } else if (dontShowDigitalCoupons) {
+                    cartPresenter.validateOrder(false, false, null)
                 }
-                cartPresenter.validateDigitalCoupon(
-                    isFromPromotions, CacheUtil.getInstance().campaign
-                )
-                isFromPromotions = false
-            } else if (dontShowDigitalCoupons) {
-                cartPresenter.validateOrder(false, false, null)
             }
         }
     }
@@ -986,7 +996,15 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             if (_totalPrice < 0) {
                 _totalPrice = 0.0
             }
-            if (cartPresenter.menuItemsCount == 0) {
+
+            var itemsCount = cartPresenter.menuItemsCount
+            if (CacheUtil.getInstance().couponMenuItem != null) {
+                itemsCount += CacheUtil.getInstance().couponMenuItem.attributes.quantity
+            } else if (CacheUtil.getInstance().campaignPromotionMenuItem != null) {
+                itemsCount += CacheUtil.getInstance().campaignPromotionMenuItem.attributes.quantity
+            }
+
+            if (itemsCount == 0) {
                 binding.paymentSummaryContainer.discountLayout.gone()
                 binding.paymentSummaryContainer.deliveryLayout.gone()
                 binding.paymentSummaryContainer.total.text = CurrencyUtils.updateCurrency(
