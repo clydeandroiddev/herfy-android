@@ -1666,15 +1666,6 @@ public class CacheUtil {
         return null;
     }
 
-    public void setCampaignPromotionMenuItem(MenuItem menuItem) {
-
-        String promotionMenuItemValue = new Gson().toJson(menuItem);
-        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
-        editor.putString(CAMPAIGN_PROMOTION_MENU_ITEM, promotionMenuItemValue);
-        editor.commit();
-
-    }
-
     public CampaignToAdd getCampaignToAdd() {
 
         String campaignToAddValue = cacheSharedPreferences.getString(CAMPAIGN_TO_ADD, null);
@@ -1710,6 +1701,14 @@ public class CacheUtil {
         return false;
     }
 
+    public void setCampaignPromotionMenuItem(MenuItem menuItem) {
+
+        String promotionMenuItemValue = new Gson().toJson(menuItem);
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(CAMPAIGN_PROMOTION_MENU_ITEM, promotionMenuItemValue);
+        editor.commit();
+
+    }
     public MenuItem getCampaignPromotionMenuItem() {
 
         String promotionMenuItemValue = cacheSharedPreferences.getString(CAMPAIGN_PROMOTION_MENU_ITEM, null);
