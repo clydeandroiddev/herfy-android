@@ -253,6 +253,19 @@ public class SplashPresenter implements SplashContract.Presenter {
                             boolean isContactUsEnabled = firebaseRemoteConfig.getBoolean(isContactUsEnabledKey);
                             CacheUtil.getInstance().setIsContactUsEnabled(isContactUsEnabled);
 
+                            String languageVideoKey = "language_video";
+                            String languageVideoURL = firebaseRemoteConfig.getString(languageVideoKey);
+                            try {
+                                JSONObject jsonObject = new JSONObject(languageVideoURL);
+                                String androidUrl = jsonObject.getString("android");
+                                if (androidUrl.isEmpty()) {
+                                    androidUrl = Values.LANGUAGE_BACKGROUND_VIDEO_URL;
+                                }
+                                CacheUtil.getInstance().setLanguageStreamingURL(androidUrl);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
                             String supportCardTypesKey = "support_card_types";
                             String supportCardTypesValue = firebaseRemoteConfig.getString(supportCardTypesKey);
 
@@ -600,6 +613,9 @@ public class SplashPresenter implements SplashContract.Presenter {
                                 }
                                 if (label.equalsIgnoreCase(Values.CATER_HERFY_BANNER)) {
                                     CacheUtil.getInstance().setSliderId(Values.CATER_HERFY_BANNER, slider.getId());
+                                }
+                                if (label.equalsIgnoreCase(Values.LOGIN_BANNER)) {
+                                    CacheUtil.getInstance().setSliderId(Values.LOGIN_BANNER, slider.getId());
                                 }
                                 if (!key.isEmpty()) {
                                     CacheUtil.getInstance().setSliderId(key, slider.getId());

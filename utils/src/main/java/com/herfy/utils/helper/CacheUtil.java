@@ -15,6 +15,7 @@ import com.herfy.model.SupportedCountry;
 import com.herfy.model.SupportedCountryResponse;
 import com.herfy.utils.BuildConfig;
 import com.herfy.utils.analytics.MixpanelUtil;
+import com.herfy.utils.constants.Values;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Application;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
@@ -136,6 +137,8 @@ public class CacheUtil {
     private static final String PRESELECTED_BRANCH = "PreselectedBranch";
     private static final String IS_AUTHCREDENTIAL_MIGRATED = "isAuthCredentialMigrated";
     private static final String IS_CONTACT_US_ENABLED = "isContactUsEnabled";
+
+    private static final String LANGUAGE_STREAMING_ID = "languageStreamingId";
     private static final String MENU_CDN_LAST_MODIFIED = "MenuCdnLastModified";
     private static final String RELOAD_DIFFERENT_MENU = "reload_different_menu";
     private static final String DIFFERENT_MENU_ID = "different_menu_id";
@@ -373,10 +376,8 @@ public class CacheUtil {
         return null;
     }
 
-    public void setCaterHerfyBannerId(String key, String id) {
-        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
-        editor.putString(key, id);
-        editor.apply();
+    public String getLoginBannerId(String key) {
+        return cacheSharedPreferences.getString(key, "");
     }
 
     public String getCaterHerfyBannerId(String key) {
@@ -1709,6 +1710,7 @@ public class CacheUtil {
         editor.commit();
 
     }
+
     public MenuItem getCampaignPromotionMenuItem() {
 
         String promotionMenuItemValue = cacheSharedPreferences.getString(CAMPAIGN_PROMOTION_MENU_ITEM, null);
@@ -2017,6 +2019,16 @@ public class CacheUtil {
     public void setIsContactUsEnabled(boolean isContactUsEnabled) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putBoolean(IS_CONTACT_US_ENABLED, isContactUsEnabled);
+        editor.apply();
+    }
+
+    public String getLanguageStreamingURL() {
+        return cacheSharedPreferences.getString(LANGUAGE_STREAMING_ID, Values.LANGUAGE_BACKGROUND_VIDEO_URL);
+    }
+
+    public void setLanguageStreamingURL(String streamingId) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(LANGUAGE_STREAMING_ID, streamingId);
         editor.apply();
     }
 
