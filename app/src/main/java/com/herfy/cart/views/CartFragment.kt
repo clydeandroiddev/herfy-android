@@ -81,6 +81,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import com.skylinedynamics.solosdk.api.models.objects.Translated
 import dagger.hilt.android.AndroidEntryPoint
+import io.shipbook.shipbooksdk.Log
 import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
@@ -963,6 +964,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 binding.paymentSummaryContainer.discountLayout.visibility = View.GONE
             }
             val orderAddress = CacheUtil.getInstance().orderAddress
+
             if (isDelivery && orderAddress != null) {
                 if (deliveryChargeValue != 0.0) {
                     binding.paymentSummaryContainer.deliveryCharge.setText(
@@ -1744,158 +1746,159 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             activity?.cast<BaseActivity> {
                 it.dismissDialogs()
             }
+            try {
+                binding.orderDetailsContainer.apply {
+                    fmItemCoupons.visible()
+                    layoutItemCoupons.apply {
 
-            binding.orderDetailsContainer.apply {
-                fmItemCoupons.visible()
-                layoutItemCoupons.apply {
 
-
-                    var imageUrl = menuItem.attributes.image
-                    if ((imageUrl == null) || imageUrl.equals(
-                            "null", ignoreCase = true
-                        ) || imageUrl.isEmpty() || imageUrl.lowercase(
-                            Locale.getDefault()
-                        ).contains("default-image.png")
-                    ) {
-                        imageUrl = Values.DEFAULT_IMAGE_URL
-                    }
-
-                    image.loadImageFromUrl(
-                        imageUrl,
-                        isSkipMemoryCache = false,
-                        strategy = DiskCacheStrategy.ALL,
-                        requestOptions = RequestOptions.centerInsideTransform()
-                    )
-                    name.text = menuItem.attributes.name
-
-                    var first = true
-                    val stringBuilder = java.lang.StringBuilder()
-                    var modifierItemsCounter = 0
-                    var comboIndex = 0
-                    var trueIndex = 0
-                    for (size in menuItem.sizes.modifierItems) {
-                        if (size.attributes.isSelected) {
-                            if (!first) {
-                                stringBuilder.append("\n")
-                            } else {
-                                first = false
-                            }
-                            modifierItemsCounter++
-                            trueIndex = comboIndex
-                            stringBuilder.append(
-                                size.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + " (" + StringUtil.localize(
-                                    size.attributes.quantity.toString() + ")"
-                                )
-                            )
-                        }
-                        comboIndex++
-                    }
-                    for (drink in menuItem.drinks.modifierItems) {
-                        if (drink.attributes.isSelected) {
-                            if (!first) {
-                                stringBuilder.append("\n")
-                            } else {
-                                first = false
-                            }
-                            modifierItemsCounter++
-                            stringBuilder.append(
-                                drink.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + " (" + StringUtil.localize(
-                                    drink.attributes.quantity.toString() + ")"
-                                )
-                            )
-                        }
-                    }
-
-                    for (fries in menuItem.fries.modifierItems) {
-                        if (fries.attributes.isSelected) {
-                            if (!first) {
-                                stringBuilder.append("\n")
-                            } else {
-                                first = false
-                            }
-                            modifierItemsCounter++
-                            stringBuilder.append(
-                                fries.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + " (" + StringUtil.localize(
-                                    fries.attributes.quantity.toString() + ")"
-                                )
-                            )
-                        }
-                    }
-
-                    for (modifierGroup in menuItem.modifierGroups) {
-                        val visibilityConfig = modifierGroup.attributes.visibilityConfig
-                        if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
-                                "hidden", ignoreCase = true
-                            )
+                        var imageUrl = menuItem.attributes.image
+                        if ((imageUrl == null) || imageUrl.equals(
+                                "null", ignoreCase = true
+                            ) || imageUrl.isEmpty() || imageUrl.lowercase(
+                                Locale.getDefault()
+                            ).contains("default-image.png")
                         ) {
-                            for (modifierItem in modifierGroup.modifierItems) {
-                                if (modifierItem.attributes.isSelected) {
-                                    if (!first) {
-                                        stringBuilder.append("\n")
-                                    } else {
-                                        first = false
-                                    }
-                                    modifierItemsCounter++
-                                    stringBuilder.append(
-                                        modifierItem.attributes.translatedName.getValue(
-                                            LocaleUtil.getInstance().language
-                                        ) + " (" + StringUtil.localize(modifierItem.attributes.quantity.toString() + ")")
+                            imageUrl = Values.DEFAULT_IMAGE_URL
+                        }
+
+                        image.loadImageFromUrl(
+                            imageUrl,
+                            isSkipMemoryCache = false,
+                            strategy = DiskCacheStrategy.ALL,
+                            requestOptions = RequestOptions.centerInsideTransform()
+                        )
+                        name.text = menuItem.attributes.name
+
+                        var first = true
+                        val stringBuilder = java.lang.StringBuilder()
+                        var modifierItemsCounter = 0
+                        var comboIndex = 0
+                        var trueIndex = 0
+                        for (size in menuItem.sizes.modifierItems) {
+                            if (size.attributes.isSelected) {
+                                if (!first) {
+                                    stringBuilder.append("\n")
+                                } else {
+                                    first = false
+                                }
+                                modifierItemsCounter++
+                                trueIndex = comboIndex
+                                stringBuilder.append(
+                                    size.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + " (" + StringUtil.localize(
+                                        size.attributes.quantity.toString() + ")"
                                     )
+                                )
+                            }
+                            comboIndex++
+                        }
+                        for (drink in menuItem.drinks.modifierItems) {
+                            if (drink.attributes.isSelected) {
+                                if (!first) {
+                                    stringBuilder.append("\n")
+                                } else {
+                                    first = false
+                                }
+                                modifierItemsCounter++
+                                stringBuilder.append(
+                                    drink.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + " (" + StringUtil.localize(
+                                        drink.attributes.quantity.toString() + ")"
+                                    )
+                                )
+                            }
+                        }
+
+                        for (fries in menuItem.fries.modifierItems) {
+                            if (fries.attributes.isSelected) {
+                                if (!first) {
+                                    stringBuilder.append("\n")
+                                } else {
+                                    first = false
+                                }
+                                modifierItemsCounter++
+                                stringBuilder.append(
+                                    fries.attributes.translatedName.getValue(LocaleUtil.getInstance().language) + " (" + StringUtil.localize(
+                                        fries.attributes.quantity.toString() + ")"
+                                    )
+                                )
+                            }
+                        }
+
+                        for (modifierGroup in menuItem.modifierGroups) {
+                            val visibilityConfig = modifierGroup.attributes.visibilityConfig
+                            if (visibilityConfig == null || visibilityConfig.initialValue == null || !visibilityConfig.initialValue.equals(
+                                    "hidden", ignoreCase = true
+                                )
+                            ) {
+                                for (modifierItem in modifierGroup.modifierItems) {
+                                    if (modifierItem.attributes.isSelected) {
+                                        if (!first) {
+                                            stringBuilder.append("\n")
+                                        } else {
+                                            first = false
+                                        }
+                                        modifierItemsCounter++
+                                        stringBuilder.append(
+                                            modifierItem.attributes.translatedName.getValue(
+                                                LocaleUtil.getInstance().language
+                                            ) + " (" + StringUtil.localize(modifierItem.attributes.quantity.toString() + ")")
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    for (modifierItem in menuItem.modifierItems) {
-                        if (modifierItem.attributes.isSelected) {
-                            if (!first) {
-                                stringBuilder.append("\n")
-                            } else {
-                                first = false
+                        for (modifierItem in menuItem.modifierItems) {
+                            if (modifierItem.attributes.isSelected) {
+                                if (!first) {
+                                    stringBuilder.append("\n")
+                                } else {
+                                    first = false
+                                }
+                                modifierItemsCounter++
+                                stringBuilder.append(
+                                    modifierItem.attributes.translatedName.getValue(
+                                        LocaleUtil.getInstance().language
+                                    ) + " (" + StringUtil.localize(modifierItem.attributes.quantity.toString()) + ")"
+                                )
                             }
-                            modifierItemsCounter++
-                            stringBuilder.append(
-                                modifierItem.attributes.translatedName.getValue(
-                                    LocaleUtil.getInstance().language
-                                ) + " (" + StringUtil.localize(modifierItem.attributes.quantity.toString()) + ")"
-                            )
                         }
-                    }
 
-                    try {
-                        if (menuItem.isCombo) {
-                            for (components in menuItem.combo[trueIndex].components) {
-                                for (item in components.items) {
-                                    if (item.selected) {
-                                        if (!menuItem.isSandwichOnly) {
-                                            if (!first) {
-                                                stringBuilder.append("\n")
-                                            } else {
-                                                first = false
+                        try {
+                            if (menuItem.isCombo) {
+                                for (components in menuItem.combo[trueIndex].components) {
+                                    for (item in components.items) {
+                                        if (item.selected) {
+                                            if (!menuItem.isSandwichOnly) {
+                                                if (!first) {
+                                                    stringBuilder.append("\n")
+                                                } else {
+                                                    first = false
+                                                }
+                                                modifierItemsCounter++
+                                                stringBuilder.append(
+                                                    translated(
+                                                        LocaleUtil.getInstance().language, item.name
+                                                    ) + " (" + StringUtil.localize(item.quantity.toString()) + ")"
+                                                )
                                             }
-                                            modifierItemsCounter++
-                                            stringBuilder.append(
-                                                translated(
-                                                    LocaleUtil.getInstance().language, item.name
-                                                ) + " (" + StringUtil.localize(item.quantity.toString()) + ")"
-                                            )
-                                        }
-                                        if (item.modifierGroups.isNotEmpty()) {
-                                            for (modifierGroup in item.modifierGroups) {
-                                                for (i in modifierGroup.modifierItems.indices) {
-                                                    if (modifierGroup.modifierItems[i].attributes.isSelected) {
-                                                        if (!first) {
-                                                            stringBuilder.append("\n")
-                                                        } else {
-                                                            first = false
+                                            if (item.modifierGroups.isNotEmpty()) {
+                                                for (modifierGroup in item.modifierGroups) {
+                                                    for (i in modifierGroup.modifierItems.indices) {
+                                                        if (modifierGroup.modifierItems[i].attributes.isSelected) {
+                                                            if (!first) {
+                                                                stringBuilder.append("\n")
+                                                            } else {
+                                                                first = false
+                                                            }
+                                                            stringBuilder.append(
+                                                                modifierGroup.modifierItems[i].attributes.translatedName.getValue(
+                                                                    LocaleUtil.getInstance().language
+                                                                ) + "(" + StringUtil.localize(
+                                                                    modifierGroup.modifierItems[i].attributes.quantity.toString()
+                                                                ) + ")"
+                                                            )
                                                         }
-                                                        stringBuilder.append(
-                                                            modifierGroup.modifierItems[i].attributes.translatedName.getValue(
-                                                                LocaleUtil.getInstance().language
-                                                            ) + "(" + StringUtil.localize(
-                                                                modifierGroup.modifierItems[i].attributes.quantity.toString()
-                                                            ) + ")"
-                                                        )
                                                     }
                                                 }
                                             }
@@ -1903,116 +1906,118 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                     }
                                 }
                             }
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
                         }
-                    } catch (e: java.lang.Exception) {
-                        e.printStackTrace()
-                    }
 
 
-                    if (modifierItemsCounter > 1) {
-                        lnModifiersDropdown.visibility = View.VISIBLE
-                        tvModifiers.visibility = View.VISIBLE
-                        tvModifiers.text = stringBuilder
-                        txtAddOnTotal.text = modifierItemsCounter.toString()
-                    } else if (modifierItemsCounter > 0) {
-                        lnModifiersDropdown.visibility = View.GONE
-                        tvModifiers.visibility = View.VISIBLE
-                        tvModifiers.text = stringBuilder
-                    } else {
-                        lnModifiersDropdown.visibility = View.GONE
-                        tvModifiers.visibility = View.INVISIBLE
-                    }
-
-                    lnModifiersDropdown.setOnClickListener {
-                        if (tvModifiers.visibility == View.VISIBLE) {
-                            tvModifiers.collapse()
-                            icModifierItemsDropDown.rotation = 180f
+                        if (modifierItemsCounter > 1) {
+                            lnModifiersDropdown.visibility = View.VISIBLE
+                            tvModifiers.visibility = View.VISIBLE
+                            tvModifiers.text = stringBuilder
+                            txtAddOnTotal.text = modifierItemsCounter.toString()
+                        } else if (modifierItemsCounter > 0) {
+                            lnModifiersDropdown.visibility = View.GONE
+                            tvModifiers.visibility = View.VISIBLE
+                            tvModifiers.text = stringBuilder
                         } else {
-                            tvModifiers.expand()
-                            icModifierItemsDropDown.rotation = 0f
+                            lnModifiersDropdown.visibility = View.GONE
+                            tvModifiers.visibility = View.INVISIBLE
                         }
-                    }
 
-                    val menuItemNotes = menuItem.attributes.notes
-                    if (menuItemNotes != null && !menuItemNotes.isEmpty()) {
-                        flNotes.visibility = View.VISIBLE
-                        tvNotes.text = menuItemNotes
-                    } else {
-                        flNotes.visibility = View.GONE
-                    }
-
-                    val menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1)
-                    if (menuItem.attributes.quantity > 0) {
-                        quantityLayout.visible()
-                    } else {
-                        quantityLayout.invisible()
-                    }
-                    //quantityLayout.visibility = if (menuItem.isPromo || menuItemTotalPrice == 0.0) View.INVISIBLE else View.VISIBLE
-
-
-                    var qtyStr = StringUtil.localize("0" + menuItem.attributes.quantity.toString())
-                    if (menuItem.attributes.quantity > 9) {
-                        qtyStr = StringUtil.localize(menuItem.attributes.quantity.toString())
-                    }
-                    quantity.text = qtyStr
-                    if (menuItemTotalPrice > 0) {
-                        totalPrice.text = StringUtil.getNewFormattedPrice(
-                            menuItemTotalPrice * menuItem.attributes.quantity, true
-                        )
-                    } else {
-                        totalPrice.text =
-                            CacheUtil.getInstance().getTranslations(Text.FREE_CAPS, "FREE")
-                    }
-
-                    if (menuItem.isMustBeCustomized || menuItem.isCombo) {
-                        edit.apply {
-                            visible()
-                            setOnClickListener {
-                                editPromotionItem()
+                        lnModifiersDropdown.setOnClickListener {
+                            if (tvModifiers.visibility == View.VISIBLE) {
+                                tvModifiers.collapse()
+                                icModifierItemsDropDown.rotation = 180f
+                            } else {
+                                tvModifiers.expand()
+                                icModifierItemsDropDown.rotation = 0f
                             }
                         }
-                    } else {
-                        edit.gone()
-                    }
 
-                    delete.setOnClickListener(View.OnClickListener {
-                        activity?.cast<BaseActivity> {
-                            it.showDeleteAlertDialog("",
-                                CacheUtil.getInstance().getTranslations(Text.PROMPT_REMOVE_ITEM),
-                                CacheUtil.getInstance().getTranslations(
-                                    Text.YES_CAPS
-                                ),
-                                { dialogInterface, i ->
-                                    dialogInterface.dismiss()
-                                    dontShowDigitalCoupons = true
-                                    contentMain.gone()
-                                    showDigitalCoupon(null)
-                                    CacheUtil.getInstance().campaign = null
-                                    CacheUtil.getInstance().campaignPromotion = null
-                                    CacheUtil.getInstance().campaignPromotionMenuItem = null
-                                    CacheUtil.getInstance().campaignToAdd = null
-                                    cartPresenter.removeCoupon()
-                                },
-                                CacheUtil.getInstance().getTranslations(Text.NO_CAPS),
-                                { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() })
+                        val menuItemNotes = menuItem.attributes.notes
+                        if (menuItemNotes != null && !menuItemNotes.isEmpty()) {
+                            flNotes.visibility = View.VISIBLE
+                            tvNotes.text = menuItemNotes
+                        } else {
+                            flNotes.visibility = View.GONE
                         }
-                    })
 
-                    delete.alpha = 1f
-                    plus.alpha = 1f
+                        val menuItemTotalPrice = cartPresenter.getMenuItemTotalPrice(menuItem, -1)
+                        if (menuItem.attributes.quantity > 0) {
+                            quantityLayout.visible()
+                        } else {
+                            quantityLayout.invisible()
+                        }
+                        //quantityLayout.visibility = if (menuItem.isPromo || menuItemTotalPrice == 0.0) View.INVISIBLE else View.VISIBLE
 
-                    if (menuItem.isPromo) {
-                        delete.visible()
-                        minus.gone()
-                        plus.visible()
-                        delete.alpha = 0.5f
-                        plus.alpha = 0.5f
-                        delete.setOnClickListener(null)
+
+                        var qtyStr =
+                            StringUtil.localize("0" + menuItem.attributes.quantity.toString())
+                        if (menuItem.attributes.quantity > 9) {
+                            qtyStr = StringUtil.localize(menuItem.attributes.quantity.toString())
+                        }
+                        quantity.text = qtyStr
+                        if (menuItemTotalPrice > 0) {
+                            totalPrice.text = StringUtil.getNewFormattedPrice(
+                                menuItemTotalPrice * menuItem.attributes.quantity, true
+                            )
+                        } else {
+                            totalPrice.text =
+                                CacheUtil.getInstance().getTranslations(Text.FREE_CAPS, "FREE")
+                        }
+
+                        if (menuItem.isMustBeCustomized || menuItem.isCombo) {
+                            edit.apply {
+                                visible()
+                                setOnClickListener {
+                                    editPromotionItem()
+                                }
+                            }
+                        } else {
+                            edit.gone()
+                        }
+
+                        delete.setOnClickListener(View.OnClickListener {
+                            activity?.cast<BaseActivity> {
+                                it.showDeleteAlertDialog("",
+                                    CacheUtil.getInstance()
+                                        .getTranslations(Text.PROMPT_REMOVE_ITEM),
+                                    CacheUtil.getInstance().getTranslations(
+                                        Text.YES_CAPS
+                                    ),
+                                    { dialogInterface, i ->
+                                        dialogInterface.dismiss()
+                                        dontShowDigitalCoupons = true
+                                        contentMain.gone()
+                                        showDigitalCoupon(null)
+                                        CacheUtil.getInstance().campaign = null
+                                        CacheUtil.getInstance().campaignPromotion = null
+                                        CacheUtil.getInstance().campaignPromotionMenuItem = null
+                                        CacheUtil.getInstance().campaignToAdd = null
+                                        cartPresenter.removeCoupon()
+                                    },
+                                    CacheUtil.getInstance().getTranslations(Text.NO_CAPS),
+                                    { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() })
+                            }
+                        })
+
+                        delete.alpha = 1f
+                        plus.alpha = 1f
+
+                        if (menuItem.isPromo) {
+                            delete.visible()
+                            minus.gone()
+                            plus.visible()
+                            delete.alpha = 0.5f
+                            plus.alpha = 0.5f
+                            delete.setOnClickListener(null)
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-
-
         }
     }
 
