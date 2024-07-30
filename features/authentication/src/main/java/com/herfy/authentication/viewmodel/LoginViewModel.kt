@@ -1,16 +1,20 @@
 package com.herfy.authentication.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.herfy.authentication.state.LoginOTPPageViewState
 import com.herfy.authentication.state.LoginViewState
 import com.herfy.repository.AuthRepository
+import com.herfy.repository.HomeRepository
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.cast
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DispatcherProvider
-import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.launchWithTimber
 import com.skylinedynamics.solosdk.api.models.objects.Customer
+import com.skylinedynamics.solosdk.api.models.objects.Slide
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,8 +22,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository, private val dispatchers: DispatcherProvider
+    private val authRepository: AuthRepository,
+    private val homeRepository: HomeRepository,
+    private val dispatchers: DispatcherProvider
 ) : BaseViewModel() {
+
+    private val _bannerList = MutableLiveData<ArrayList<Slide>>()
+    val bannerList: LiveData<ArrayList<Slide>> = _bannerList
 
     private val _state: MutableSharedFlow<LoginViewState> = MutableSharedFlow()
 
@@ -37,6 +46,29 @@ class LoginViewModel @Inject constructor(
                 _state.emit(LoginViewState.ShowLoading(true))
                 val mobile = code + "" + phoneNumber
                 processLogin(mobile)
+            }
+        }
+    }
+
+    fun getBannerSlider() {
+        invoke {
+            val sliderId = CacheUtil.getInstance().getLoginBannerId(Values.LOGIN_BANNER)
+            if (!sliderId.isNullOrEmpty()) {
+                homeRepository.getSliders(sliderId) { homeResponse ->
+                    if (homeResponse.success) {
+                        homeResponse.data?.let {
+                            it.cast<ArrayList<Slide>> {
+                                _bannerList.value = it
+                            }
+                        } ?: run {
+                            _bannerList.value = arrayListOf()
+                        }
+                    } else {
+                        _bannerList.value = arrayListOf()
+                    }
+                }
+            } else {
+                _bannerList.value = arrayListOf()
             }
         }
     }

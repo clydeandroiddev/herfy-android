@@ -9,14 +9,15 @@
         android:background="@color/black">
 
         <ImageView
+            android:id="@+id/signupPic"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/signup_pic"
             app:layout_constraintBottom_toTopOf="@id/view"
             app:layout_constraintStart_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/signup_pic" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/closeButton"

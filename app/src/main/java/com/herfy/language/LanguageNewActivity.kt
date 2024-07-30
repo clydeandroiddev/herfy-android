@@ -12,7 +12,6 @@ import com.herfy.changelanguage.R
 import com.herfy.changelanguage.databinding.ActivityChangeLanguageBinding
 import com.herfy.main.MainActivity
 import com.herfy.utils.constants.Text
-import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
@@ -180,22 +179,28 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
 
 
     private fun initializePlayer() {
-        player = ExoPlayer.Builder(this)
-            .build()
-            .also { exoPlayer ->
-                binding.videoView.player = exoPlayer
-
-                val mediaItem = MediaItem.Builder()
-                    .setUri(Values.LANGUAGE_BACKGROUND_VIDEO_URL)
-                    .setMimeType(MimeTypes.APPLICATION_MPD)
+        try {
+            val cacheUtil = CacheUtil.getInstance()
+            if (!cacheUtil.languageStreamingURL.isNullOrBlank()) {
+                player = ExoPlayer.Builder(this)
                     .build()
+                    .also { exoPlayer ->
+                        binding.videoView.player = exoPlayer
+                        val mediaItem = MediaItem.Builder()
+                            .setUri(cacheUtil.languageStreamingURL)
+                            .setMimeType(MimeTypes.APPLICATION_MPD)
+                            .build()
 
-                exoPlayer.setMediaItems(listOf(mediaItem), mediaItemIndex, playbackPosition)
-                exoPlayer.playWhenReady = playWhenReady
-                exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-                exoPlayer.prepare()
-                exoPlayer.play()
+                        exoPlayer.setMediaItems(listOf(mediaItem), mediaItemIndex, playbackPosition)
+                        exoPlayer.playWhenReady = playWhenReady
+                        exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+                        exoPlayer.prepare()
+                        exoPlayer.play()
+                    }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun releasePlayer() {

@@ -27,6 +27,8 @@ import com.herfy.authentication.viewmodel.LoginViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.loadSliderImage
+import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.collectViewModelState
@@ -94,12 +96,11 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     .requestIdToken(BuildUtil.googleInClient(it)).requestEmail().build()
             googleSignInClient = GoogleSignIn.getClient(it, googleSignInOptions)
         }
-
     }
 
     override fun initViews() {
         super.initViews()
-
+        viewModel.getBannerSlider()
         binding.apply {
 
             binding.root.viewTreeObserver.addOnGlobalLayoutListener {
@@ -243,6 +244,16 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
     override fun observe() {
         super.observe()
+
+        viewModel.bannerList.observeNonNull(this) { slides ->
+            binding.apply {
+                signupPic.apply {
+                    if (slides.size > 0) {
+                        loadSliderImage(binding.signupPic, slides[0].imageUri)
+                    }
+                }
+            }
+        }
 
         viewModel.state.collectViewModelState(viewLifecycleOwner) {
             when (it) {
