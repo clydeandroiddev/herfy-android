@@ -180,21 +180,24 @@ class LanguageNewActivity : BaseActivity(), LanguageContract.View {
 
     private fun initializePlayer() {
         try {
-            player = ExoPlayer.Builder(this)
-                .build()
-                .also { exoPlayer ->
-                    binding.videoView.player = exoPlayer
-                    val mediaItem = MediaItem.Builder()
-                        .setUri(CacheUtil.getInstance().languageStreamingURL)
-                        .setMimeType(MimeTypes.APPLICATION_MPD)
-                        .build()
+            val cacheUtil = CacheUtil.getInstance()
+            if (!cacheUtil.languageStreamingURL.isNullOrBlank()) {
+                player = ExoPlayer.Builder(this)
+                    .build()
+                    .also { exoPlayer ->
+                        binding.videoView.player = exoPlayer
+                        val mediaItem = MediaItem.Builder()
+                            .setUri(cacheUtil.languageStreamingURL)
+                            .setMimeType(MimeTypes.APPLICATION_MPD)
+                            .build()
 
-                    exoPlayer.setMediaItems(listOf(mediaItem), mediaItemIndex, playbackPosition)
-                    exoPlayer.playWhenReady = playWhenReady
-                    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-                    exoPlayer.prepare()
-                    exoPlayer.play()
-                }
+                        exoPlayer.setMediaItems(listOf(mediaItem), mediaItemIndex, playbackPosition)
+                        exoPlayer.playWhenReady = playWhenReady
+                        exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+                        exoPlayer.prepare()
+                        exoPlayer.play()
+                    }
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
