@@ -473,10 +473,8 @@ class CartPresenter @Inject constructor(
                     item.addProperty("notes", menuItem.attributes.notes)
                     var comboIndex = 0
                     var trueIndex = 0
-                    AppLogger.error("menuItem.sizes.modifierItems ${menuItem.sizes.modifierItems.size}")
                     for (size in menuItem.sizes.modifierItems) {
                         if (size.attributes.isSelected) {
-                            AppLogger.error("cart size ${size.attributes.name}")
                             val modifier = JsonObject()
                             modifier.addProperty("id", size.id)
                             modifier.addProperty(
