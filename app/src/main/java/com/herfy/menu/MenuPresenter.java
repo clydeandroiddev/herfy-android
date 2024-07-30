@@ -40,6 +40,7 @@ import com.herfy.newmenu.viewholder.MenuFavoriteViewHolder;
 import com.herfy.newmenu.viewholder.MenuPopularViewHolder;
 import com.herfy.newmenu.viewholder.MenuRecentViewHolder;
 import com.herfy.utils.constants.Values;
+import com.herfy.utils.extensions.MenuItemExtKt;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
@@ -4771,7 +4772,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             }
         }
 
-        if (MenuUtil.isCustomizeable(menuItem)) {
+        if (MenuItemExtKt.canBeCustomized(menuItem)) {
             menuView.navigateToMenuItemDetails(menuCategory,menuItem);
             if (menuCategory == null) {
                 for (MenuCategory category : menuCategories) {

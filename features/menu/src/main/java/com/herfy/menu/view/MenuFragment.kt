@@ -36,6 +36,7 @@ import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.event.AddToCartEvent
+import com.herfy.utils.extensions.canBeCustomized
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.isVisible
@@ -81,7 +82,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }, onFavorite = { menuItem ->
             viewModel.addRemoveFavorite(menuItem)
         }, onAdd = { menuCategory, menuItem ->
-            if (MenuUtil.isCustomizeable(menuItem)) {
+            if (menuItem.canBeCustomized()) {
                 navMenuItem(menuCategory.id, menuItem.id, menuItem)
             } else {
                 viewModel.getMenuItem(menuCategory, menuItem)

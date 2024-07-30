@@ -162,13 +162,13 @@ class MenuViewModel @Inject constructor(
     fun getMenuItem(menuCategory: MenuCategory, menuItem: MenuItem) {
         invoke {
             _showLoading.postValue(Event(true))
-            menuRepository.getMenuItem(menuItemId = menuItem.id, result = {
+            menuRepository.getMenuItem(menuItemId = menuItem.id, result = { item ->
 
                 var invalid = false
 
                 val visibleModifierGroups = java.util.ArrayList<ModifierGroup>()
 
-                for (group in it.modifierGroups) {
+                for (group in item.modifierGroups) {
                     val visibilityConfig = group.attributes.visibilityConfig
                     if (visibilityConfig?.initialValue != null) {
                         if (!visibilityConfig.initialValue.equals(
@@ -205,14 +205,14 @@ class MenuViewModel @Inject constructor(
                 }
 
                 if (!invalid) {
-                    invalid = checkComboModifiers(menuItem)
+                    invalid = checkComboModifiers(item)
                 }
 
                 if (!invalid) {
-                    addToCart(menuItem)
+                    addToCart(item)
                 } else {
                     _showLoading.postValue(Event(false))
-                    _showMenuItem.postValue(Event(Triple(menuCategory.id, menuItem.id, menuItem)))
+                    _showMenuItem.postValue(Event(Triple(menuCategory.id, menuItem.id, item)))
                 }
             })
         }
