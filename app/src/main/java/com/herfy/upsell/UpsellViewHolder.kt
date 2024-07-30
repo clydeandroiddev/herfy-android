@@ -7,6 +7,7 @@ import com.herfy.cart.CartContract
 import com.herfy.cart.databinding.ItemUpsellBinding
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.canBeCustomized
 import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.menu.MenuUtil
@@ -20,7 +21,7 @@ class UpsellViewHolder(val binding: ItemUpsellBinding, private val upsellPresent
     fun setUpsell(upsell: MenuItem) {
         binding.apply {
             contentMain.setOnClickListener { v: View? ->
-                if (MenuUtil.isCustomizeable(upsell)) {
+                if (upsell.canBeCustomized()) {
                     upsellPresenter.goToItemDetails(adapterPosition, upsell)
                 } else {
                     upsell.attributes.quantity = 1
@@ -29,7 +30,7 @@ class UpsellViewHolder(val binding: ItemUpsellBinding, private val upsellPresent
             }
 
             plus.setOnClickListener {
-                if (MenuUtil.isCustomizeable(upsell)) {
+                if (upsell.canBeCustomized()) {
                     upsellPresenter.goToItemDetails(adapterPosition, upsell)
                 } else {
                     upsell.attributes.quantity = 1
