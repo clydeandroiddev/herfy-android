@@ -53,7 +53,7 @@ class BaseApplication : Application(), ImageLoaderFactory {
         CacheUtil.init(this)
         LocaleUtil.init(this)
         FontHandler.init(this)
-        KochavaTrackerUtil.init(applicationContext, reveal(Keychain.HERFY_GUID))
+        KochavaTrackerUtil.init(applicationContext, reveal(Keychain.KOCHAVA_GUID))
 
         //FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG);
         SoloApi.init(this, EnvUtil.getEnvironmentUrl(), BuildUtil.soloAppKey())
