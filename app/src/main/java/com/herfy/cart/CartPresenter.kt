@@ -955,11 +955,6 @@ class CartPresenter @Inject constructor(
                             )
                         }
                     }
-//                    else {
-//                        cartView.showError(
-//                            CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
-//                        )
-//                    }
                 }
             })
         }
