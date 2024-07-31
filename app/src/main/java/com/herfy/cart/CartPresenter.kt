@@ -954,11 +954,12 @@ class CartPresenter @Inject constructor(
                                 CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
                             )
                         }
-                    } else {
-                        cartView.showError(
-                            CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
-                        )
                     }
+//                    else {
+//                        cartView.showError(
+//                            CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
+//                        )
+//                    }
                 }
             })
         }
