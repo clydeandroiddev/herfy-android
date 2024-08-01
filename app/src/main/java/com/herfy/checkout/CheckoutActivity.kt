@@ -1434,7 +1434,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
         val currSubTotal = if (isDelivery) subtotalPrice + deliveryCharge else subtotalPrice
         val formattedCurrentSubtotal = updateCurrency(currSubTotal, true, false)
-        if (totalPrice != currSubTotal) {
+
+        if (totalPrice != currSubTotal && discount != 0.0) {
             binding?.tvOriginalPrice?.visible()
             binding?.tvOriginalPrice?.text = formattedCurrentSubtotal
         } else {
