@@ -246,10 +246,10 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
         super.observe()
 
         viewModel.bannerList.observeNonNull(this) { slides ->
-            binding.apply {
-                signupPic.apply {
-                    if (slides.size > 0) {
-                        loadSliderImage(binding.signupPic, slides[0].imageUri)
+            slides?.firstOrNull()?.let { slide ->
+                slide.imageUri?.let {
+                    if(it.isNotEmpty()) {
+                        loadSliderImage(binding.signupPic, it)
                     }
                 }
             }

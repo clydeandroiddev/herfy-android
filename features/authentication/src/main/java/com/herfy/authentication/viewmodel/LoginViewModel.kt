@@ -27,8 +27,8 @@ class LoginViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) : BaseViewModel() {
 
-    private val _bannerList = MutableLiveData<ArrayList<Slide>>()
-    val bannerList: LiveData<ArrayList<Slide>> = _bannerList
+    private val _bannerList = MutableLiveData<ArrayList<Slide>?>()
+    val bannerList: LiveData<ArrayList<Slide>?> = _bannerList
 
     private val _state: MutableSharedFlow<LoginViewState> = MutableSharedFlow()
 
@@ -57,8 +57,8 @@ class LoginViewModel @Inject constructor(
                 homeRepository.getSliders(sliderId) { homeResponse ->
                     if (homeResponse.success) {
                         homeResponse.data?.let {
-                            it.cast<ArrayList<Slide>> {
-                                _bannerList.value = it
+                            it.cast<ArrayList<Slide>> { slides ->
+                                _bannerList.value = slides
                             }
                         } ?: run {
                             _bannerList.value = arrayListOf()
