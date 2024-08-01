@@ -410,7 +410,8 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
         CacheUtil.getInstance().setCurrentOrderId(null)
         activity?.let {
             orderHistoryRate?.let { order ->
-                ratingBarDialog = RatingBarDialog.newInstance(order.createdAt,
+                ratingBarDialog = RatingBarDialog.newInstance(
+                    order.createdAt,
                     order.attrType.orderTypeString(),
                     order.locationName,
                     deviceHeight(it),
@@ -429,11 +430,14 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                         override fun exit() {
                             dismissRatingBarDialog()
                         }
-
-                    })
-                ratingBarDialog.show(
-                    it.supportFragmentManager, RatingBarDialog::class.java.simpleName
+                    }
                 )
+                if (!it.isFinishing && !it.supportFragmentManager.isStateSaved) {
+                    ratingBarDialog.show(
+                        it.supportFragmentManager,
+                        RatingBarDialog::class.java.simpleName
+                    )
+                }
             }
         }
     }

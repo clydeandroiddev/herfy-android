@@ -50,7 +50,11 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        if (!donTriggerClose) onAction!!.onClose()
+        if (!donTriggerClose) {
+            if (onAction != null) {
+                onAction!!.onClose()
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -176,7 +180,8 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
             tvApplyCoupons.text = CacheUtil.getInstance()
                 .getTranslations(Text.APPLY_DIGITAL_COUPONS, "Apply Digital Coupons")
             btnApply.text = CacheUtil.getInstance().getTranslations(Text.APPLY, "Apply")
-            txtEmptyTitle.text = CacheUtil.getInstance().getTranslations(Text.NO_COUPONS_FOUND, "No coupons found.")
+            txtEmptyTitle.text =
+                CacheUtil.getInstance().getTranslations(Text.NO_COUPONS_FOUND, "No coupons found.")
         }
     }
 
@@ -187,7 +192,8 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
     private fun showInvalidCouponDialog(message: String) {
         context?.let {
             if (message.isNotEmpty()) {
-                val commonCustomDialog = CommonCustomDialog(it,
+                val commonCustomDialog = CommonCustomDialog(
+                    it,
                     title = CacheUtil.getInstance()
                         .getTranslations(Text.INVALID_FOR_THIS_ORDER, "Invalid for this Order"),
                     message = message,
@@ -199,10 +205,10 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
                 )
                 commonCustomDialog.show()
                 commonCustomDialog.setCancelable(false)
-                commonCustomDialog.setButtonAListener{
+                commonCustomDialog.setButtonAListener {
                     commonCustomDialog.dismiss()
                 }
-                commonCustomDialog.setButtonBListener{
+                commonCustomDialog.setButtonBListener {
                     onAction?.goToMenu()
                     commonCustomDialog.dismiss()
                 }

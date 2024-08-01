@@ -186,6 +186,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private var isShowCardFailed = false
 
     private val permissionManager: PermissionManager by permissionProvider()
+
     private val markerOptionsList = arrayListOf<MarkerOptions>()
 
     private val mapOverlays: List<Overlay> = arrayListOf()
@@ -229,15 +230,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCheckoutPageBinding.inflate(layoutInflater)
-
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 handleBack()
             }
         }
-
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
-
         setContentView(binding!!.root)
         popupUpsellBackStack()
         passedTotalFromCart = intent.getDoubleExtra("totalPrice", 0.0)

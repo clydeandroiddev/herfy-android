@@ -1949,8 +1949,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         } else {
                             quantityLayout.invisible()
                         }
-                        //quantityLayout.visibility = if (menuItem.isPromo || menuItemTotalPrice == 0.0) View.INVISIBLE else View.VISIBLE
-
 
                         var qtyStr =
                             StringUtil.localize("0" + menuItem.attributes.quantity.toString())
