@@ -1228,11 +1228,12 @@ public class CacheUtil {
     }
 
     public void setInitialOrderType(OrderType orderType) {
-
+        if (orderType == null) {
+            orderType = OrderType.NONE;
+        }
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putInt(INITIAL_ORDER_TYPE, orderType.getValue());
         editor.apply();
-
     }
 
     public OrderType getInitialOrderType() {

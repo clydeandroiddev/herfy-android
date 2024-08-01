@@ -400,7 +400,7 @@ class ComboViewModel @Inject constructor(
                 counter++
             }
 
-            if(item.isCombo && item.isPromo){
+            if (item.isCombo && item.isPromo) {
                 totalPrice = item.attributes.price
             }
         }
@@ -688,11 +688,12 @@ class ComboViewModel @Inject constructor(
                                     modifierGroupIds[modifierGroup.id] = modifierGroup
                                 }
 
-                                if(componentModifierItem.modifierGroups.isEmpty() && modifierGroupIds.isNotEmpty()){
+                                if (componentModifierItem.modifierGroups.isEmpty() && modifierGroupIds.isNotEmpty()) {
                                     val modifierGroups =
                                         parseComponentModifierGroup(applicationId, modifierGroupIds)
                                     componentModifierItem.modifierGroups = ArrayList(modifierGroups)
-                                    menuItemComponent.items[componentModifierItemPos] = componentModifierItem
+                                    menuItemComponent.items[componentModifierItemPos] =
+                                        componentModifierItem
                                 }
 
                                 comboComponentAdapterList.add(
@@ -1135,7 +1136,7 @@ class ComboViewModel @Inject constructor(
                             item.quantity = 1
                         } else {
                             item.selected = false
-                            item.quantity = 0
+                            item.quantity = 1
                         }
                     }
                 } else {
@@ -1527,7 +1528,7 @@ class ComboViewModel @Inject constructor(
                         }
                     } else {
                         item.selected = false
-                        item.quantity = 0
+                        item.quantity = 1
                         if (item.modifierGroups.size > 0) {
                             item.modifierGroups.forEach {
                                 it.modifierItems.forEach {
