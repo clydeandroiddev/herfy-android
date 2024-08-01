@@ -93,19 +93,27 @@ class MixpanelUtil(val context: Context) {
         }
 
         fun checkout(
-            orderId: String,
-            store: Store,
-            orderType: String,
-            paymentMethod: String
+            orderId: String?,
+            store: Store?,
+            orderType: String?,
+            paymentMethod: String?
         ) {
             if(EnvUtil.isProduction()) {
                 val props = JSONObject()
-                props.put("branch_name", store.attributes.name)
-                props.put("branch_reference", store.id)
-                props.put("order_id", orderId)
+                store?.let {
+                    props.put("branch_name", it.attributes.name)
+                    props.put("branch_reference", it.id)
+                }
+                orderId?.let {
+                    props.put("order_id", it)
+                }
                 props.put("order_source", "Android")
-                props.put("order_type", orderType)
-                props.put("payment_method", paymentMethod)
+                orderType?.let {
+                    props.put("order_type", it)
+                }
+                paymentMethod?.let {
+                    props.put("payment_method", it)
+                }
                 instance?.track(EVENT_CHECKOUT, props)
             }
         }
