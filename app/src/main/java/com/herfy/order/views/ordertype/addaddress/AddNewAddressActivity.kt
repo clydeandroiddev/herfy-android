@@ -1,6 +1,7 @@
 package com.herfy.order.views.ordertype.addaddress
 
 import android.Manifest
+import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
@@ -48,6 +49,7 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.ViewUtil
 import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
@@ -57,6 +59,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import com.skylinedynamics.solosdk.api.models.objects.area.Area
+import io.shipbook.shipbooksdk.Log
 import java.util.Locale
 
 class AddNewAddressActivity : BaseActivity(), OrderContract.View {
@@ -66,8 +69,6 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     private lateinit var binding: AddressNewActivityBinding
 
     private lateinit var googleMap: GoogleMap
-
-    private lateinit var locationMarker: Marker
 
     private lateinit var addAddressDialog: AddAddressDialog
 
@@ -148,18 +149,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
                     initializeLocation()
                 }
                 googleMap.setOnMapClickListener { latLng ->
-                    if (this::locationMarker.isInitialized) {
-                        locationMarker.isVisible = true
-                    }
                     orderPresenter.getAddress(latLng)
                     googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
                 }
                 googleMap.setOnCameraIdleListener {
-                    if (!fromShowLocation && this::locationMarker.isInitialized) {
-                        locationMarker.isVisible = true
-                    } else {
-                        fromShowLocation = false
-                    }
                     orderPresenter.getAddress(googleMap.cameraPosition.target)
                 }
             })
@@ -258,7 +251,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         requestCode: Int, permissions: Array<String?>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (requestCode == Values.PERMISSION_LOCATION) {
                 getLocation()
             } else if (requestCode == Values.PERMISSION_CALL) {
@@ -284,35 +277,8 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun showLocation(isPlace: Boolean, latLng: LatLng?, address: String?) {
-        if (this::locationMarker.isInitialized) {
-            locationMarker.remove()
-        }
-        val markerOptions = MarkerOptions()
-        markerOptions.position(latLng!!)
-        try {
-            val bitmapDrawable = ContextCompat.getDrawable(
-                this, com.herfy.ordertype.R.drawable.ic_location_add_address
-            ) as BitmapDrawable?
-            val bitmap = Bitmap.createScaledBitmap(
-                bitmapDrawable!!.bitmap, 50, 50, true
-            )
-            val canvas = Canvas(bitmap)
-            val paint = Paint()
-            val filter: ColorFilter = PorterDuffColorFilter(
-                Color.parseColor(CacheUtil.getInstance().colorMain), PorterDuff.Mode.SRC_IN
-            )
-            paint.setColorFilter(filter)
-            canvas.drawBitmap(bitmap, 0f, 0f, paint)
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-            markerOptions.anchor(0.5f, 0.5f)
-            markerOptions.visible(false)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        locationMarker = googleMap.addMarker(markerOptions)!!
         fromShowLocation = true
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng!!, 15f))
-
         dismissDialogs()
     }
 

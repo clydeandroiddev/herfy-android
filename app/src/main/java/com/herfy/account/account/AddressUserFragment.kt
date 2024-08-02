@@ -1,12 +1,15 @@
 package com.herfy.account.account
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.Place
@@ -18,11 +21,13 @@ import com.herfy.order.views.ordertype.addaddress.AddAddressDialog
 import com.herfy.order.views.ordertype.addaddress.AddNewAddressActivity
 import com.herfy.profile.databinding.FragmentUserAddressesBinding
 import com.herfy.utils.constants.Text
+import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils
+import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -86,10 +91,37 @@ class AddressUserFragment : BaseFragment(), AddressesContract.View,
             }
         }
 
-    private fun goToAddAddress() {
+    private fun goToAddNewAddress() {
         val intent = Intent(activity, AddNewAddressActivity::class.java)
         intent.putExtra("fromProfile", true)
         addressLauncher.launch(intent)
+    }
+
+    private fun goToAddAddress() {
+        val activity: Activity? = activity
+        activity?.let {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                goToAddNewAddress()
+            } else {
+                requestPermissions(
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), Values.PERMISSION_LOCATION
+                )
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String?>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (requestCode == Values.PERMISSION_LOCATION) {
+                goToAddNewAddress()
+            }
+        }
     }
 
     override fun setupViews() {
