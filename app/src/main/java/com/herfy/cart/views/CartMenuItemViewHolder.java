@@ -223,7 +223,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
         ImageViewExtKt.loadImageFromUrl(image, imageUrl, false, DiskCacheStrategy.ALL, RequestOptions.centerCropTransform(), R.drawable.imagepicker_image_placeholder, null);
         String priceStr = StringUtil.localize("0" + menuItem.getAttributes().getQuantity());
         if(menuItem.getAttributes().getQuantity() > 9){
-            StringUtil.localize(String.valueOf(menuItem.getAttributes().getQuantity()));
+            priceStr = StringUtil.localize(String.valueOf(menuItem.getAttributes().getQuantity()));
         }
         quantity.setText(priceStr);
         totalPrice.setVisibility(View.VISIBLE);
