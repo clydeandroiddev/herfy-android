@@ -1546,12 +1546,12 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                     @Override
                     public void onError(Object o) {
                         AppLogger.printRetrofitError(o);
-                        orderView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                        orderView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS), null));
                     }
                 });
 
             } else {
-                orderView.showError(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
+                orderView.showError(CacheUtil.getInstance().getTranslations(Text.UNABLE_TO_SAVE_ADDRESS));
             }
 
         } else {
