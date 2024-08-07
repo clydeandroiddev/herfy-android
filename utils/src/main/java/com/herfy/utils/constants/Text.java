@@ -957,6 +957,7 @@ public class Text {
     public static final String CHOOSE_YOUR_LANG = "choose_your_lang";
 
     public static final String JOIN_NOW = "join_now";
+    public static final String JOIN_LABEL = "join";
     public static final String ENTER_THE_CODE = "enter_the_code";
     public static final String DID_NOT_GE_CODE = "did_not_get_code";
     public static final String SEND_AGAIN = "send_again";

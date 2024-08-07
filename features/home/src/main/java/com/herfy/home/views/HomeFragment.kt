@@ -245,7 +245,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         Text.BECOME_ASHAB_HERFY_DESCRIPTION,
                         "By creating an account or signing in to your existing one you get point on every order"
                     )
-                    btnContinue.text = cacheHelper.getTranslations(Text.CONTINUE_LABEL, "Continue")
+                    btnContinue.text = cacheHelper.getTranslations(Text.JOIN_LABEL, "Join")
                 }
             }
         }
