@@ -213,6 +213,7 @@ public class Text {
     public static final String CARD_ON_PICKUP = "card_on_pickup";
     public static final String ONLINE_CARD_PAYMENT = "online_card_payment";
     public static final String CARD = "card";
+
     public static final String UPLOAD_PHOTO = "upload_photo";
     public static final String TAKE_PHOTO = "take_photo";
     public static final String ORDER_HISTORY = "order_history";
@@ -1182,7 +1183,7 @@ public class Text {
 
     public static final String SPECIAL_INSTRUCTION_DESCRIPTION = "special_instruction_description";
     public static final String FREQUENTLY_BOUGHT_TOGETHER_LABEL = "frequently_bought_togehter_label";
-    public static final String COMBO_SIZES_LABEL = "combo_sizes_label";
+    public static final String COMBO_SIZES_LABEL = "combo_size";
 
     public static final String YOUR_ORDER_X = "your_order_template";
     public static final String DO_HAVE_OTHER_FEEDBACK = "do_have_other_feedback";
@@ -1233,4 +1234,6 @@ public class Text {
     public static final String SELECT_AT_LEAST_X_OPTION="select_at_least_x_option";
     public static final String SELECT_X_OPTION="select_x_option";
     public static final String SELECT_UP_TO_X_OPTION="select_up_to_x_option";
+
+    public static final String NEW_DEBIT_CREDIT_CARD = "new_debit_credit_card";
 }

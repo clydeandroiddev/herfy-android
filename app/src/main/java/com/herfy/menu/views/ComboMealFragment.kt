@@ -284,7 +284,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 )
                 btnAddDetails.text = cacheUtilHelper.getTranslations(Text.ADD, "Add")
             }
-            sizesLabel.text = cacheUtilHelper.getTranslations(Text.COMBO_SIZES_LABEL, "Combo Sizes")
+            sizesLabel.text = cacheUtilHelper.getTranslations(Text.COMBO_SIZES_LABEL, "Choose your meal size")
         }
     }
 

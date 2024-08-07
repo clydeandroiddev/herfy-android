@@ -350,7 +350,7 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
                 cardContainer = view.findViewById(R.id.container_card)
                 cardImage = view.findViewById(R.id.card_image)
                 cardPayment = view.findViewById(R.id.cards_layout)
-                cardLabel.text = CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
+                cardLabel.text = CacheUtil.getInstance().getTranslations(Text.NEW_DEBIT_CREDIT_CARD, "New Debit/Credit Card")
                 binding.paymentTypeContainer.addView(view)
                 cardContainer.setOnClickListener {
                     selectedPaymentType = PaymentType.CARD
