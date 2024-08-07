@@ -211,7 +211,6 @@ public class Text {
     public static final String CARD_ON_PICKUP = "card_on_pickup";
     public static final String ONLINE_CARD_PAYMENT = "online_card_payment";
     public static final String CARD = "card";
-
     public static final String UPLOAD_PHOTO = "upload_photo";
     public static final String TAKE_PHOTO = "take_photo";
     public static final String ORDER_HISTORY = "order_history";
