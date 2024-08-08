@@ -224,7 +224,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
         binding.apply {
             toolbar.title = cacheUtilHelper.getTranslations(Text.REWARDS_LABEL, "Rewards")
             layoutCard.apply {
-                tvAshabHerfy.text = cacheUtilHelper.getTranslations(Text.LOYALTY_REWARDS_LABEL, "Herfy Points")
+                tvAshabHerfy.text = cacheUtilHelper.getTranslations(Text.ASHAB_HERFY, "Ashab Herfy")
                 tvTotalPointsLabel.text =
                     cacheUtilHelper.getTranslations(Text.TOTAL_POINTS, "Total Points")
                 tvSarValueLabel.text =
