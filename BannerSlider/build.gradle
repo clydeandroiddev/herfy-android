@@ -1,0 +1,74 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'maven-publish'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdk 34
+    defaultConfig {
+        minSdkVersion 16
+        targetSdk 34
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        staging {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        stagingrelease {
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+        }
+        prod {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        releaselog {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        release {
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        consumer {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        kiosk {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        marketing {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        merchant {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+    }
+    buildFeatures {
+        viewBinding = true
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+}

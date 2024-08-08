@@ -76,7 +76,6 @@ dependencies {
     implementation "androidx.core:core-ktx:1.9.0"
     implementation 'com.google.android.material:material:1.9.0-alpha02'
     implementation 'com.github.mukeshsolanki:android-otpview-pinview:2.0.3'
-    implementation 'com.github.d-max:spots-dialog:1.1@aar'
     implementation 'com.google.android.material:material:1.11.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

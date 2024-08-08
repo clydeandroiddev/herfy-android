@@ -97,7 +97,7 @@ class AblyUtil {
 
     fun detachAll() {
         ablyRealtime?.apply {
-            channels?.values?.forEach {
+            channels?.values()?.forEach {
                 it.detach()
             }
         }
