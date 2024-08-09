@@ -1,5 +1,5 @@
 include ':oppwa.mobile-2.65.0-release'
-include ':app', ':solosdk', ':SingleDateAndTimePicker', ':imagepicker'
+include ':app', ':solosdk', ':SingleDateAndTimePicker', ':imagepicker', ':SwipeMenu', ':BannerSlider'
 
 project(":solosdk").projectDir = file("../solo-sdk-android/solosdk")
 include ':features:cart'
