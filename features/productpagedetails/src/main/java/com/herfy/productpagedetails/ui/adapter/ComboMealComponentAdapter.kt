@@ -53,7 +53,8 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
             menuItemComponent: MenuItemComponents,
             componentModifierItem: ComponentModifierItem,
             menuItemComponentPos: Int,
-            componentModifierItemPos: Int
+            componentModifierItemPos: Int,
+            fromArrowRight: Boolean = false
         )
 
         fun onComponentQuantityChanged(
@@ -107,22 +108,21 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
                     it.bind(item)
 
                     it.binding.apply {
-                        val clickListener = {
+
+                        val clickListener: (Boolean) -> Unit = { fromArrowRight ->
                             onAction?.onComponentCheckedChanged(
                                 !item.componentModifierItem.selected,
                                 menuItemComponent = item.menuItemComponents,
                                 componentModifierItem = item.componentModifierItem,
                                 item.menuItemComponentPos,
-                                item.componentModifierItemPos
+                                item.componentModifierItemPos,
+                                fromArrowRight
                             )
                         }
 
-                        if (item.componentModifierItem.modifierGroups.size >= 1) {
-                            clickableLayout.setOnClickListener(null)
-                            ivRightIcon.setOnClickListener { clickListener() }
-                        } else {
-                            clickableLayout.setOnClickListener { clickListener() }
-                        }
+                        clickableLayout.setOnClickListener { clickListener(false) }
+
+                        ivRightIcon.setOnClickListener { clickListener(true) }
 
                         checkLayout.setOnClickListener {
                             onAction?.onComponentCheckedChanged(
@@ -133,6 +133,7 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
                                 item.componentModifierItemPos
                             )
                         }
+
                         quantityUp.setOnClickListener {
                             onAction?.onComponentQuantityChanged(
                                 true,
@@ -143,6 +144,7 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
                                 item.componentModifierItemPos
                             )
                         }
+
                         quantityDown.setOnClickListener {
                             onAction?.onComponentQuantityChanged(
                                 false,
@@ -153,6 +155,7 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
                                 item.componentModifierItemPos
                             )
                         }
+
                         quantityMinus.setOnClickListener {
                             onAction?.onComponentQuantityChanged(
                                 false,
