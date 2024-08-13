@@ -35,6 +35,11 @@ android {
             shrinkResources false
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
+        prodrelease {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
+        }
         releaselog {
             debuggable true
             minifyEnabled false
