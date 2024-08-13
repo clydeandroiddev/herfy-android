@@ -420,7 +420,7 @@ dependencies {
     implementation 'io.moneyHash:android:0.1.4'
 
     // Chucker
-    def chucker = "2.5.2"
+    def chucker = "3.5.2"
     debugImplementation "com.github.chuckerteam.chucker:library:$chucker"
     stagingImplementation "com.github.chuckerteam.chucker:library:$chucker"
     stagingreleaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker"
