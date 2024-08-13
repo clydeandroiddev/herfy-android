@@ -419,16 +419,19 @@ dependencies {
 
     implementation 'io.moneyHash:android:0.1.4'
 
-    debugImplementation "com.github.chuckerteam.chucker:library:3.5.2"
-    stagingImplementation "com.github.chuckerteam.chucker:library:3.5.2"
-    stagingreleaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
-    prodImplementation "com.github.chuckerteam.chucker:library:3.5.2"
-    releaselogImplementation "com.github.chuckerteam.chucker:library:3.5.2"
-    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
-    consumerImplementation "com.github.chuckerteam.chucker:library:3.5.2"
-    kioskImplementation "com.github.chuckerteam.chucker:library:3.5.2"
-    marketingImplementation "com.github.chuckerteam.chucker:library:3.5.2"
-    merchantImplementation "com.github.chuckerteam.chucker:library:3.5.2"
+    // Chucker
+    def chucker = "2.5.2"
+    debugImplementation "com.github.chuckerteam.chucker:library:$chucker"
+    stagingImplementation "com.github.chuckerteam.chucker:library:$chucker"
+    stagingreleaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker"
+    prodImplementation "com.github.chuckerteam.chucker:library:$chucker"
+    prodreleaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker"
+    releaselogImplementation "com.github.chuckerteam.chucker:library:$chucker"
+    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker"
+    consumerImplementation "com.github.chuckerteam.chucker:library:$chucker"
+    kioskImplementation "com.github.chuckerteam.chucker:library:$chucker"
+    marketingImplementation "com.github.chuckerteam.chucker:library:$chucker"
+    merchantImplementation "com.github.chuckerteam.chucker:library:$chucker"
 
     implementation 'com.jakewharton:process-phoenix:2.1.2'
 
