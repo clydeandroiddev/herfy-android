@@ -31,6 +31,12 @@ android {
             minifyEnabled false
             shrinkResources false
         }
+        prodrelease {
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         releaselog {
             debuggable true
             minifyEnabled false

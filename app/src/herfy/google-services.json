@@ -98,6 +98,67 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:669493504227:android:fab8340f9a73a0c84bbdd6",
+        "android_client_info": {
+          "package_name": "com.herfy.order"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "669493504227-6utrfg4dheuv2dlf8shiiqij3o530vub.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.herfy.order",
+            "certificate_hash": "344014165ca26951d4ec3bb2f1dec773509efae9"
+          }
+        },
+        {
+          "client_id": "669493504227-dk9grsi70dhp7ru34oa62ghn2ru2akkm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.herfy.order",
+            "certificate_hash": "73869374539fdef9eb5539a9f74b4d743f09102b"
+          }
+        },
+        {
+          "client_id": "669493504227-rb0pn2h71ha59i8rlngdim8f9364hs7c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.herfy.order",
+            "certificate_hash": "57643b6ae3e9640c927f6039477c232367723aa7"
+          }
+        },
+        {
+          "client_id": "669493504227-3v0hq1lgrn0lbas1hqk2khsqh646bpj9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl3Q6IWY4oHNrDlCnpE6K7Pg936gXmGuk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "669493504227-3v0hq1lgrn0lbas1hqk2khsqh646bpj9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "669493504227-rt4ms8hbg34ut4lu7a98r9mav436c8vh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.herfy.consumer",
+                "app_store_id": "1585612762"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:669493504227:android:a819077a408ae5394bbdd6",
         "android_client_info": {
           "package_name": "sa.herfy.team"
