@@ -1114,12 +1114,13 @@ class ComboViewModel @Inject constructor(
         menuItemComponent: MenuItemComponents,
         componentModifierItem: ComponentModifierItem,
         menuItemComponentPos: Int,
-        componentModifierItemPos: Int
+        componentModifierItemPos: Int,
+        fromArrowRight: Boolean
     ) {
         var _isSelected = isSelected
         val showModifierDetail = checkToShowModifierDetail(componentModifierItem)
         menuItemComponent.apply {
-            if (showModifierDetail) {
+            if (showModifierDetail && fromArrowRight) {
                 _showComboMealItemDetails.value = ShowComboMealItemDetails(
                     menuItemComponent,
                     componentModifierItem, menuItemComponentPos, isSelected
