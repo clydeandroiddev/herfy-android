@@ -1082,11 +1082,12 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 layoutCatering.apply {
                     cvCateringContent.layoutParams.height = sliderHeight
                     ivCater.layoutParams.height = sliderHeight
-                    if (LocaleUtil.getInstance().isArabic) {
-                        ivCater.scaleX = -1f
-                    } else {
-                        ivCater.scaleX = 1f
-                    }
+                    ivCater.scaleX = 1f
+//                    if (LocaleUtil.getInstance().isArabic) {
+//                        ivCater.scaleX = -1f
+//                    } else {
+//                        ivCater.scaleX = 1f
+//                    }
                 }
 
             }
