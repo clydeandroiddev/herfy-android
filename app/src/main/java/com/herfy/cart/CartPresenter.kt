@@ -3168,6 +3168,28 @@ class CartPresenter @Inject constructor(
                                     promotionsHashMap[digitalCoupon.attributes.promotionId]
                             }
                         }
+
+                        val orderType = CacheUtil.getInstance().orderType
+                        digitalCoupons = when (orderType) {
+                            OrderType.PICKUP -> digitalCoupons.filter { coupon ->
+                                coupon.promotion.attributes.rules.any { rule ->
+                                    rule.ruleKey == "order-type" && (rule.ruleValue.contains("in:pickup") || rule.ruleValue.contains(
+                                        "in:deliver,pickup"
+                                    ))
+                                }
+                            }.toMutableList()
+
+                            OrderType.DELIVERY -> digitalCoupons.filter { coupon ->
+                                coupon.promotion.attributes.rules.any { rule ->
+                                    rule.ruleKey == "order-type" && (rule.ruleValue.contains("in:deliver") || rule.ruleValue.contains(
+                                        "in:deliver,pickup"
+                                    ))
+                                }
+                            }.toMutableList()
+
+                            else -> digitalCoupons.toMutableList()
+                        }
+
                         val digitalCouponString = Gson().toJson(digitalCoupons)
                         if (digitalCoupons.size > 0) {
                             if (digitalCoupons.size == 1) {
