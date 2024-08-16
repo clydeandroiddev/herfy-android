@@ -281,7 +281,7 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                             }, 5000);
                         }
                     }
-                }catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
 
                 }
@@ -401,15 +401,19 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
         }
 
     }
+
     private boolean isCanProceedFragmentTransaction(FragmentManager fragmentManager) {
         return !isFinishing() && !fragmentManager.isStateSaved();
     }
+
     private void dismissDialog(Dialog dialog) {
-            dialog.dismiss();
+        dialog.dismiss();
     }
+
     private boolean isDialogVisible(Dialog dialog) {
         return dialog != null && dialog.isShowing();
     }
+
     public void showForceUpdateDialog(String title, String message, String positive, DialogInterface.OnClickListener positiveOnClickListener, String negative, DialogInterface.OnClickListener negativeOnClickListener) {
         dismissDialogs();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -509,10 +513,10 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
 
             ImageView ivLoader = view.findViewById(R.id.ivLoader);
             Glide.with(this)
-                .asGif()
-                .load(R.drawable.loader)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(ivLoader);
+                    .asGif()
+                    .load(R.drawable.loader)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(ivLoader);
 
             loadingDialog = builder.create();
             loadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -638,9 +642,9 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        if(currentActivity instanceof NavigationActivity) {
+                        if (currentActivity instanceof NavigationActivity) {
                             ((NavigationActivity) currentActivity).cartExpired();
-                        } else if(currentActivity instanceof MainActivity) {
+                        } else if (currentActivity instanceof MainActivity) {
                             ((MainActivity) currentActivity).cartExpired();
                         } else {
                             Intent intent = new Intent(BaseActivity.this, MainActivity.class);
@@ -903,6 +907,7 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
         }
 
     }
+
     protected void proceedToCallUser() {
         try {
             String driveNumber = driverNumber;

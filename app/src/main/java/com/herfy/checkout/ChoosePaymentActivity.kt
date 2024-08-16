@@ -19,7 +19,6 @@ import com.herfy.base.BaseActivity
 import com.herfy.checkout.databinding.ActivityChoosePaymentMethodBinding
 import com.herfy.payment.PaymentContract
 import com.herfy.payment.PaymentPresenter
-import com.herfy.payment.views.PaymentDialogFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
@@ -288,29 +287,6 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
         selectedView(rbCash, cashImage, cashContainer, cashPayment)
         if (isCardPaymentAvailable) unselectedView(rbCard, cardImage, cardContainer, cardPayment)
         if (isCODPaymentAvailable) unselectedView(rbCod, codImage, codContainer, codPayment)
-
-
-        /*if (paymentPresenter.hasMukafaaTransactionId()) {
-            mukafaaPayment.setStrokeColor(Color.parseColor(CacheUtil.getInstance().colorMain))
-        } else {
-            mukafaaPayment.setStrokeColor(Color.TRANSPARENT)
-            mukafaaSelected = false
-            mukafaaNumbers.setVisibility(View.GONE)
-            requestOTP.setVisibility(View.GONE)
-            placeOrder.setVisibility(View.VISIBLE)
-        }*/
-//        if (CacheUtil.getInstance().orderType === OrderType.DELIVERY && checkoutPresenter.getValidatedTotal() != 0.0) {
-//            val paymentDialogFragment = PaymentDialogFragment.newInstance(
-//                checkoutPresenter
-//            ) { dialog, cashPresented ->
-//                dialog.dismiss()
-//                checkoutPresenter.setCashPresented(cashPresented)
-//            }
-//            paymentDialogFragment.show(
-//                supportFragmentManager,
-//                PaymentDialogFragment::class.java.simpleName
-//            )
-//        }
     }
 
     override fun setupFonts() {

@@ -630,7 +630,6 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                                 paymentView.showError(CacheUtil.getInstance().getTranslations(Text.LOCATION_PICKUP_DISABLED, "Your selected branch is no longer accepting orders. Please select another branch."));
                             } else {
                                 validateOrder(true, CacheUtil.getInstance().getOrderStore(), scheduleOrder ? date : null, loyaltyPointsUsed, false);
-                                //sendOrder(CacheUtil.getInstance().getOrderStore(), scheduleOrder ? date : null);
                             }
 
                         } else {
@@ -1087,7 +1086,6 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 //                double vatAmount = 0;
                     try {
                         JSONObject jsonObject = (JSONObject) o;
-
                         JSONArray itemsArray = jsonObject.getJSONArray("items");
                         boolean hasChanged = false;
                         for (int i = 0; i < itemsArray.length(); i++) {
@@ -1170,11 +1168,9 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                                 sendOrder(store, scheduledTime, validatedBody.toString(), loyaltyPoints);
                             }
                         } else {
-                            paymentView.dismissDialogs();
                             if (isShowCardFailed) {
                                 paymentView.showCardFailed();
                             }
-
                         }
                         paymentView.setPriceDetails(getValidatedSubtotal(), discountValue, getValidatedTotal(), validatedDeliveryCharge, pointsSarValue, pointsEarnable, loyaltyPoints, orderData.getCharges());
 
@@ -1282,7 +1278,6 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         if (paymentType != PaymentType.CARD || validatedTotal <= 0) {
                             sendUpsells();
                         } else {
-
                             String gateway = CacheUtil.getInstance().getApplication().getAttributes().getPaymentGateway();
                             switch (gateway) {
                                 case "tap":
