@@ -6,19 +6,26 @@ import com.kochava.tracker.Tracker
 import com.kochava.tracker.events.Event
 import com.kochava.tracker.events.EventType
 import com.kochava.tracker.events.Events
+import org.json.JSONObject
 
 
 object KochavaTrackerUtil {
-    fun init(context: Context, guid : String){
+    fun init(context: Context, guid: String) {
         Tracker.getInstance().startWithAppGuid(context, guid)
-        Events.getInstance().registerDefaultStringParameter("app_name", StringUtil.getAppName(context))
+        Events.getInstance()
+            .registerDefaultStringParameter("app_name", StringUtil.getAppName(context))
     }
 
     @JvmStatic
-    fun trackEvent(eventType : EventType){
+    fun trackEvent(eventType: EventType) {
         Event.buildWithEventType(eventType)
             .send()
     }
-    
 
+    @JvmStatic
+    fun trackEventWithData(eventType: String, obj: JSONObject) {
+        val event = Event.buildWithEventName(eventType)
+        event.mergeCustomDictionary(obj)
+        event.send()
+    }
 }

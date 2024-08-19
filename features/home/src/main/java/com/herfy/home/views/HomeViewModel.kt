@@ -6,6 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.herfy.analytics.kochava.KochavaEventType
+import com.herfy.analytics.kochava.KochavaEventUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.database.entities.MenuItemEntity
 import com.herfy.database.entities.MenuItemEntity.Companion.toDomain
 import com.herfy.home.adapter.PromotionCategoryAdapter
@@ -350,6 +353,10 @@ class HomeViewModel @Inject constructor(
     override fun onSelectedImage(slide: Slide) {
         slide.linkValue?.let {
             if (it.isNotEmpty()) {
+                KochavaTrackerUtil.trackEventWithData(
+                    KochavaEventType.HOME_PAGE_BANNER.eventName,
+                    KochavaEventUtil.slideObject(slide)
+                )
                 if (slide.linkType == "url") {
                     _showLink.value = Event(Uri.parse(slide.linkValue))
                 } else if (slide.linkType == "category") {

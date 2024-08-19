@@ -39,6 +39,9 @@ import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.firebase.FirebaseService
+import com.herfy.analytics.kochava.KochavaEventType
+import com.herfy.analytics.kochava.KochavaEventUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
@@ -91,6 +94,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import com.skylinedynamics.solosdk.api.models.objects.Translated
 import com.skylinedynamics.solosdk.util.GsonHelper
+import org.json.JSONObject
 import java.util.Locale
 
 
@@ -801,15 +805,19 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     } else {
                         menuPresenter.updateCartItem(true, cartMenuItem)
                     }
+                    val itemQuantity = Integer.parseInt(binding.quantity.text.toString())
                     FirebaseECommerceEventUtil.addToCartEvent(
                         activity,
                         menuItem,
                         menuCategory,
                         _totalPrice,
-                        Integer.parseInt(binding.quantity.text.toString())
+                        itemQuantity
                     );
                     FacebookAppEventUtil.addToCartEvent(baseActivity, menuItem, _totalPrice)
-                    com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent(EventType.ADD_TO_CART)
+                    KochavaTrackerUtil.trackEventWithData(
+                        EventType.ADD_TO_CART.eventName,
+                        KochavaEventUtil.itemObject(menuItem, itemQuantity)
+                    )
                 })
                 baseActivity.dismissDialogs()
                 menuItemSelected = menuItem

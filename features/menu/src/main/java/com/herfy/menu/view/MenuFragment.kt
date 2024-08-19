@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.kochava.KochavaEventUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.menu.R
 import com.herfy.menu.adapter.MenuCategoryAdapter
@@ -48,6 +50,7 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.SnackBarUtils
 import com.herfy.utils.helper.ViewUtil
 import com.herfy.utils.menu.MenuUtil
+import com.skylinedynamics.solosdk.api.models.objects.EventType
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
@@ -456,6 +459,10 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                             this,
                             menuItem,
                             MenuUtil.getMenuItemTotalPrice(menuItem)
+                        )
+                        KochavaTrackerUtil.trackEventWithData(
+                            "Add to Cart",
+                            KochavaEventUtil.itemObject(menuItem, menuItem.quantity)
                         )
                         EventBus.getDefault().post(AddToCartEvent())
                         setCartQuantity()
