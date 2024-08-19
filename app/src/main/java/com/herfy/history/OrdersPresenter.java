@@ -66,6 +66,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Rating;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfigRule;
+import com.skylinedynamics.solosdk.api.models.objects.combo.ComboItem;
 import com.skylinedynamics.solosdk.api.models.objects.combo.ComboItemMain;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
 import com.skylinedynamics.solosdk.api.models.objects.order.OrderIngredient;
@@ -89,10 +90,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -444,6 +447,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                                             }
                                         }
                                     }
+                                    menuItem.setModifierGroups(modifierGroups);
                                     menuItem.setModifierGroupIds(modifierGroups);
                                     menuItem.setOrderModifierItems(new LinkedList<>(menuItem.getOrderModifierItemsMap().values()));
                                 }
@@ -1119,13 +1123,14 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     @Override
     public void reorder() {
 
-        //CacheUtil.getInstance().setOrderStore(store);
+        CacheUtil.getInstance().setOrderStore(store);
         if (order.getDeliveryOption().equalsIgnoreCase("to-go") || order.getDeliveryOption().equalsIgnoreCase("pickup") || order.getDeliveryOption().equalsIgnoreCase("امسك")) {
             CacheUtil.getInstance().setOrderType(OrderType.PICKUP);
         } else if (order.getDeliveryOption().equalsIgnoreCase("dine-in") || order.getDeliveryOption().equalsIgnoreCase("eat-in") || order.getDeliveryOption().equalsIgnoreCase("أكلت داخل")) {
             CacheUtil.getInstance().setOrderType(OrderType.DINE_IN);
         } else if (order.getDeliveryOption().equalsIgnoreCase("deliver") || order.getDeliveryOption().equalsIgnoreCase("ايصال")) {
             CacheUtil.getInstance().setOrderType(OrderType.DELIVERY);
+            CacheUtil.getInstance().setOrderAddress(address);
         } else if (order.getDeliveryOption().equalsIgnoreCase("drive-thru")) {
             CacheUtil.getInstance().setOrderType(OrderType.DRIVE_THRU);
         }
@@ -1494,7 +1499,24 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                                 if (!components.items.isEmpty()) {
                                     try {
                                         for (ComponentModifierItem compoItem : components.items) {
-                                            compoItem.modifierGroups = getModifierGroups(compoItem.itemId);
+                                            List<ComboItem> comboItem = main.attributes.comboItems.stream().filter(it -> Objects.equals(it.id, compoItem.id)).collect(Collectors.toList());
+                                            if (!comboItem.isEmpty()) {
+                                                compoItem.modifierGroups = compoItem.modifierGroupsMap;
+                                                if (!compoItem.modifierGroups.isEmpty()) {
+                                                    for (ModifierGroup modifierGroup : compoItem.modifierGroups) {
+                                                        modifierGroup.setModifierItems(modifierGroup.getModifiers());
+                                                        for (int i = 0; i < modifierGroup.getModifierItems().size(); i++) {
+                                                            for (ModifierItem modifierItem : comboItem.get(0).modifiers) {
+                                                                if (modifierGroup.getModifierItems().get(i).getId().equals(modifierItem.getId())) {
+                                                                    modifierGroup.getModifierItems().get(i).setPrice(modifierItem.getPrice());
+                                                                    modifierGroup.getModifierItems().get(i).setQuantity(modifierItem.getQuantity());
+                                                                    modifierGroup.getModifierItems().get(i).getAttributes().setSelected(true);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                         Collections.sort(components.items, (menuItem1, menuItem2) -> menuItem1.displayOrder - menuItem2.displayOrder);
                                     } catch (Exception e) {
