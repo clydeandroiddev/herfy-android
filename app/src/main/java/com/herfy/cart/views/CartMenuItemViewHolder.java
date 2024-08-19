@@ -258,7 +258,7 @@ public class CartMenuItemViewHolder extends RecyclerView.ViewHolder implements C
                 } else {
                     first = false;
                 }
-                modifierItemsCounter++;
+                //modifierItemsCounter++;
                 trueIndex = comboIndex;
                 stringBuilder.append(size.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
             }

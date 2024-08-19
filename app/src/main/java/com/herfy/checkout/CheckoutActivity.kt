@@ -333,9 +333,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     override fun onResume() {
         super.onResume()
-        if (BuildUtil.isEkfc()) {
-            showLoadingDialog()
-        }
         if (isFromCheckout) {
             isFromCheckout = false
             return
@@ -607,27 +604,19 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         orderType = CacheUtil.getInstance().orderType
         requestPermissionLocation()
 
-        binding!!.layoutPayment.tvEditPaymentMethod.setOnClickListener { showPaymentMethod() }
+        binding!!.layoutPayment.tvEditPaymentMethod.setOnClickListener {
+            showPaymentMethod()
+        }
+
         val orderStore = CacheUtil.getInstance().orderStore
+
         if (orderStore != null && orderStore.attributes != null) {
             val branchImage = orderStore.attributes.image
             if (branchImage != null) {
                 isBranchImageAvailable = branchImage.isNotEmpty()
             }
-        }/*if (isScheduled) {
-            schedLayout.setVisibility(View.VISIBLE);
-            scheduleText.setText(TimeUtil.properSchedDate(goodDaySelected + " " + goodSelectedDateString));
-        } else {
-            schedLayout.setVisibility(View.GONE);
-        }*/
+        }
 
-        /*   String tableDineInNumber = CacheUtil.getInstance().getDineInTableNumber();
-        if (tableDineInNumber != null && !tableDineInNumber.isEmpty()) {
-            tableNumberLayout.setVisibility(View.VISIBLE);
-            tableNumber.setText(tableDineInNumber);
-        }*/
-
-//        slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         binding!!.tvMobileNumber.text = "+${AuthUtil.getInstance().customer.attributes.mobile}"
 
         binding!!.toolbarLayout.btnBack.setOnClickListener {
@@ -639,6 +628,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 false, CacheUtil.getInstance().orderStore, null, 0, false
             )
         }
+
         KeyboardUtils.addKeyboardToggleListener(this, object : SoftKeyboardToggleListener {
             override fun onToggleSoftKeyboard(isVisible: Boolean) {
                 binding?.layoutLoyalty?.apply {
@@ -648,10 +638,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 }
             }
         })
+
         if (orderType === OrderType.DELIVERY) {
-            binding!!.groupDeliveryInstruction.visible()/*showLoadingDialog();
-            Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
-            paymentPresenter.getStore(geocoder);*/
+            binding!!.groupDeliveryInstruction.visible()
             if (CacheUtil.getInstance().orderAddress != null) {
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress.attributes.line1
             }
@@ -659,12 +648,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.tvDeliveryInstruction.text = instruction
             binding!!.tvDeliveryInstruction.setVisible(instruction.isNotEmpty())
         } else {
-            binding!!.groupDeliveryInstruction.gone()/*Geocoder geocoder = new Geocoder(PaymentActivity.this, LocaleUtil.getInstance().isEnglish() ? new Locale("en", "us") : new Locale("ar", "sa"));
-            paymentPresenter.getAddresses(geocoder);*/
+            binding!!.groupDeliveryInstruction.gone()
             if (CacheUtil.getInstance().orderStore != null) {
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name
             }
         }
+
         when (CacheUtil.getInstance().orderType) {
             OrderType.PICKUP -> {
                 binding!!.tvOrderType.text =
@@ -740,6 +729,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 ).show()
             }
         }
+
         binding!!.layoutLoyalty.loyaltySwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 binding!!.layoutLoyalty.layoutLoyaltyPoints.visibility = View.VISIBLE
@@ -1073,6 +1063,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun updateTime(calendar: Calendar) {}
+
     override fun selectPaymentTypeCash() {
         CacheUtil.getInstance().orderPayment = PaymentType.CASH
 
@@ -1080,24 +1071,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
         binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
 
-
         if (paymentPresenter!!.hasMukafaaTransactionId()) {
         } else {
             mukafaaSelected = false
             binding!!.placeOrder.setVisibility(View.VISIBLE)
         }
-        val validatedTotal = paymentPresenter?.validatedTotal?.toInt()
-//        if (CacheUtil.getInstance().orderType === OrderType.DELIVERY && validatedTotal != null && validatedTotal != 0) {
-//            val paymentDialogFragment: PaymentDialogFragment = PaymentDialogFragment.newInstance(
-//                paymentPresenter
-//            ) { dialog, cashPresented ->
-//                dialog.dismiss()
-//                paymentPresenter!!.cashPresented = cashPresented
-//            }
-//            paymentDialogFragment.show(
-//                supportFragmentManager, PaymentDialogFragment::class.java.simpleName
-//            )
-//        }
     }
 
     override fun showValidateOrderError(errors: List<String>) {}
@@ -1186,8 +1164,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     dialogCheckout!!.dismissAllowingStateLoss()
                 }
             })
-
-
             dismissDialogs()
             dialogCheckout!!.show(
                 supportFragmentManager, CustomCheckoutDialog::class.java.simpleName
@@ -1238,50 +1214,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun showCompleted(orderId: String, orderType: OrderType) {
-        dismissDialogs()
         this.orderId = orderId
         CacheUtil.getInstance().setCurrentOrderId(orderId)
         continueOrder()
     }
 
-    override fun setSchedule() {
-//        try {
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//            if (!fragmentManager.isDestroyed()) {
-//                OrderDialogFragment fragment = OrderDialogFragment.newInstance(true);
-//                fragment.show(fragmentManager, OrderDialogFragment.class.getSimpleName());
-//            }
-//            String colorStr = DynamicTheme.getStringColor(CheckoutActivity.this);
-//            String start = CacheUtil.getInstance().getTranslations(Text.ORDER_SCHEDULED_FOR, "Order scheduled for:");
-//            String at = CacheUtil.getInstance().getTranslations(Text.AT, "at");
-//            String dayOnly = TimeUtil.dateToMonthAndDayOnly(daySelected);
-//            String timeOnly = TimeUtil.dateToHourOnly(selectedDate);
-//            goodDaySelected = daySelected;
-//            goodSelectedDate = selectedDate;
-//            String day = "<font color=" + colorStr + ">" + dayOnly + "</font>";
-//            String time = "<font color=" + colorStr + ">" + timeOnly + "</font>";
-//            schedTime.setText(Html.fromHtml(start + " " + day + " " + at + " " + time));
-//            removeLayout.setVisibility(View.VISIBLE);
-//            removeLabel.setVisibility(View.VISIBLE);
-//            noSchedLayout.setVisibility(View.GONE);
-//            spacingTop.setVisibility(View.VISIBLE);
-//            withSchedLayout.setVisibility(View.VISIBLE);
-//            placeOrder.setText(CacheUtil.getInstance().getTranslations(Text.PLACE_SCHEDULED_ORDER, "PLACE SCHEDULED ORDER"));
-//            isRemove = false;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-    }
+    override fun setSchedule() {}
 
-    override fun setTax(inclusive: Boolean, taxAmount: CharSequence) {
-//        vatLayout.setVisibility(View.VISIBLE);
-//        if (inclusive) {
-//            vatLayout.setVisibility(View.GONE);
-//        }
-//        tax.setText(taxAmount);
-//        taxLabel.setText(CacheUtil.getInstance().getConcept().getVatRate() + "% " + CacheUtil.getInstance().getTranslations(Text.VAT, "VAT"));
-    }
-
+    override fun setTax(inclusive: Boolean, taxAmount: CharSequence) {}
 
     override fun setPriceDetails(
         subtotalPrice: Double,
@@ -1312,30 +1252,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.layoutPaymentSummary.grpDiscount.visibility = View.GONE
         }
 
-//        if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
-//            if (deliveryCharge != 0) {
-//                deliveryText.setText(StringUtil.getFormattedPrice(deliveryCharge));
-//            } else {
-//                Campaign campaign = CacheUtil.getInstance().getCampaign();
-//                boolean hideDiscount = false;
-//                try {
-//                    if (campaign != null) {
-//                        if (campaign.getPromotion().getAttributes().getType().equals("delivery")) {
-//                            hideDiscount = true;
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                if (hideDiscount) {
-//                    grpDiscount.setVisibility(View.GONE);
-//                }
-//                deliveryText.setText(CacheUtil.getInstance().getTranslations(Text.FREE, "Free"));
-//            }
-//            deliveryLayout.setVisibility(View.VISIBLE);
-//        } else {
-//            deliveryLayout.setVisibility(View.GONE);
-//        }
         if (charges.size > 0) {
             val linearLayoutManager: LinearLayoutManager = object : LinearLayoutManager(this) {
                 override fun canScrollVertically(): Boolean {
@@ -1347,24 +1263,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.layoutPaymentSummary.rvServiceCharge.adapter =
                 orderServiceChargeRecyclerViewAdapter
         }
-
-//        if (deliveryCharge != 0) {
-//            deliveryLayout.setVisibility(View.VISIBLE);
-//            deliveryText.setText(StringUtil.getFormattedPrice(deliveryCharge));
-//        } else {
-//            Promotion promotion = CacheUtil.getInstance().getCampaignPromotion();
-//            if (promotion != null) {
-//                if (promotion.getAttributes().getType().equalsIgnoreCase("delivery")) {
-//                    deliveryLayout.setVisibility(View.VISIBLE);
-//                    deliveryText.setText(CacheUtil.getInstance().getTranslations(Text.FREE, "Free"));
-//                } else {
-//                    deliveryLayout.setVisibility(View.GONE);
-//                }
-//            } else {
-//                deliveryLayout.setVisibility(View.GONE);
-//            }
-//        }
-
 
         val mukafaaAmount = paymentPresenter!!.getMukafaaTransactionAmount();
         val _discount = discount - mukafaaAmount;
@@ -1403,6 +1301,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         } else {
             binding!!.layoutPaymentSummary.grpRedeemedPoints.gone()
         }
+
         if (totalPrice == 0.0 && pointsUsed > 0) {
             if (deliveryCharge <= 0) {
                 binding!!.layoutLoyalty.loyaltyPointsPaymentContainer.visibility = View.VISIBLE
@@ -1746,9 +1645,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun onDateSelected(
         materialCalendarView: MaterialCalendarView, calendarDay: CalendarDay, b: Boolean
     ) {
-//        oneDayDecorator.setDate(calendarDay.getDate());
-//        daySelected = calendarDay.getDate().toString();
-//        widget.invalidateDecorators();
     }
 
     override fun paymentSucceed(charge: Charge) {
@@ -1881,6 +1777,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     override fun userEnabledSaveCardOption(saveCardEnabled: Boolean) {}
     override fun cardTokenizedSuccessfully(token: Token, saveCardEnabled: Boolean) {}
+
     private fun checkTokenGenerated(
         token: String, cvv: String?, isSave: Boolean, orderIds: String
     ) {
@@ -1939,27 +1836,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         })
     }
 
-    private fun checkoutForce(data: JSONObject) {/*Intent intent = new Intent(PaymentActivity.this, CustomCheckoutActivity.class);
-        intent.putExtra(CustomCheckoutActivity.EXTRA_ORDER_ID , orderId);
-        intent.putExtra(CustomCheckoutActivity.EXTRA_PAYMENT_PROVIDER, paymentPresenter.getPaymentProvider());
-        intent.putExtra(CustomCheckoutActivity.EXTRA_3DS_DATA, data.toString());
-        checkoutActivityLauncher.launch(intent);
-        isFromCheckout = true;*/
+    private fun checkoutForce(data: JSONObject) {
         showCheckoutPaymentForm(orderId)
-
         Handler().postDelayed({ dialogCheckout?.handle3ds(data) }, 400)
-    }
-
-    private fun showPanel() {
-//        if (CacheUtil.getInstance().getOrderPayment() == PaymentType.NONE) {
-//            Toast.makeText(CheckoutActivity.this, CacheUtil.getInstance().getTranslations(Text.SELECT_PAYMENT_METHOD), Toast.LENGTH_SHORT).show();
-//        } else {
-//            if (isRemove) {
-//                widget.setSelectedDate(LocalDate.now());
-//                setUpDatePicker();
-//            }
-//            slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-//        }
     }
 
     private fun PermissionManager.RationaleCallback.showRationale() {
@@ -1972,10 +1851,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             positiveClickListener = { onRationaleRequested() },
             message = getString(R.string.permission_read_write_denied_msg)
         )
-    }
-
-    fun setUpdatedPhoneNumber(phoneNumber: String) {
-        binding?.tvMobileNumber?.text = phoneNumber
     }
 
     override fun otpResult(transactionId: String, amount: String, invalidMukafaa: Boolean) {
@@ -2028,6 +1903,4 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
         }
     }
-
-
 }
