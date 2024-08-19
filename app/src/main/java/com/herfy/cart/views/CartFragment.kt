@@ -156,7 +156,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
         checkBackground()
         cartPresenter.start()
-        cartPresenter.fetchCustomerCards()
         update()
     }
 
@@ -197,14 +196,28 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun update() {
         super.update()
-        if (binding.orderTypeContainer.orderTypeText != null) {
-            //binding.main.curbsideLayout.visibility = View.GONE
+        checkInitialCampaign()
+
+        if (!dontShowDigitalCoupons) {
+            cartPresenter.getMenuItems()
+        } else {
+            binding.placeOrder.isEnabled = cartPresenter.menuItemsCount > 0
+        }
+
+        if (adapter != null) {
+            adapter!!.notifyDataSetChanged()
+        }
+
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            //Do something after 100ms
             when (val oT = CacheUtil.getInstance().orderType) {
                 OrderType.PICKUP, OrderType.DRIVE_THRU -> {
                     cartPresenter.getStore()
-                    var headerText = CacheUtil.getInstance().getTranslations(Text.PICKUP_AT)
+                    val headerText: String?
                     if (oT == OrderType.PICKUP) {
                         headerText = CacheUtil.getInstance()
                             .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
@@ -215,10 +228,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_drivethru)
                     } else {
                         headerText = CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE)
-
                         binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_pickup_home)
                     }
                     binding.orderTypeContainer.orderTypeText.text = headerText
+
                     if (CacheUtil.getInstance().orderStore != null) {
                         binding.orderTypeContainer.branchName.text =
                             CacheUtil.getInstance().orderStore.attributes.name
@@ -300,41 +313,31 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     binding.orderTypeContainer.orderTypeIcon.setImageResource(0)
                 }
             }
-        }
-
-        if (adapter != null) {
-            adapter!!.notifyDataSetChanged()
-        }
-
-        if (cartPresenter != null) {
-
-            if (!dontShowDigitalCoupons) {
-                cartPresenter.getMenuItems()
-            } else {
-                binding.placeOrder.isEnabled = cartPresenter.menuItemsCount > 0
-            }
 
             cartPresenter.getIntegrations()
             cartPresenter.getConcept()
             cartPresenter.showCoupon()
             cartPresenter.getUpsells()
+            cartPresenter.fetchCustomerCards()
+        }, 100)
+    }
 
-            if (CacheUtil.getInstance().initialCampaign != null && CacheUtil.getInstance()
-                    .orderTypeNotBlank()
-            ) {
-                checkForAutoApplyCampaign()
-            } else {
-                if (CacheUtil.getInstance().campaign != null) {
-                    if ((CacheUtil.getInstance().campaignPromotionMenuItem != null || CacheUtil.getInstance().couponMenuItem != null)) {
-                        isFromPromotions = true
-                    }
-                    cartPresenter.validateDigitalCoupon(
-                        isFromPromotions, CacheUtil.getInstance().campaign
-                    )
-                    isFromPromotions = false
-                } else if (dontShowDigitalCoupons) {
-                    cartPresenter.validateOrder(false, false, null)
+    private fun checkInitialCampaign() {
+        if (CacheUtil.getInstance().initialCampaign != null && CacheUtil.getInstance()
+                .orderTypeNotBlank()
+        ) {
+            checkForAutoApplyCampaign()
+        } else {
+            if (CacheUtil.getInstance().campaign != null) {
+                if ((CacheUtil.getInstance().campaignPromotionMenuItem != null || CacheUtil.getInstance().couponMenuItem != null)) {
+                    isFromPromotions = true
                 }
+                cartPresenter.validateDigitalCoupon(
+                    isFromPromotions, CacheUtil.getInstance().campaign
+                )
+                isFromPromotions = false
+            } else if (dontShowDigitalCoupons) {
+                cartPresenter.validateOrder(false, false, null)
             }
         }
     }
@@ -1012,14 +1015,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     0.0, withSpace = true, ignoreDecimalPlaces = true
                 )
                 binding.footerTotalPrice.text = CurrencyUtils.updateCurrency(
-                    0.0, withSpace = true, ignoreDecimalPlaces = true
+                    0.0, withSpace = false, ignoreDecimalPlaces = true
                 )
             } else {
                 binding.paymentSummaryContainer.total.text = CurrencyUtils.updateCurrency(
                     _totalPrice, withSpace = true, ignoreDecimalPlaces = true
                 )
                 binding.footerTotalPrice.text = CurrencyUtils.updateCurrency(
-                    _totalPrice, withSpace = true, ignoreDecimalPlaces = false
+                    _totalPrice, withSpace = false, ignoreDecimalPlaces = false
                 )
             }
 
