@@ -354,6 +354,7 @@ class CartPresenter @Inject constructor(
                 if (CacheUtil.getInstance().campaign != null && CacheUtil.getInstance().campaignPromotion != null) {
                     orderBody.addProperty("campaign-id", CacheUtil.getInstance().campaign.id)
                 }
+
                 when (CacheUtil.getInstance().orderType) {
                     OrderType.PICKUP -> {
                         deliveryCharge = 0.0
@@ -905,56 +906,56 @@ class CartPresenter @Inject constructor(
                         ArrayList(),
                         0.0
                     )
-                    if (checkout || isCouponValidate) {
-                        if (o is JSONObject) {
-                            try {
-                                val `object` = o
-                                if (`object`.has("error") && !`object`.isNull("error")) {
-                                    cartView.showError(
-                                        ErrorHandler.getErrorMessage(
-                                            `object`, CacheUtil.getInstance().getTranslations(
-                                                Text.AN_ERROR_OCCURRED
-                                            ), null
-                                        )
-                                    )
-                                } else if (`object`.has("messages") && !`object`.isNull("messages")) {
-                                    val messages = `object`["messages"]
-                                    if (messages is JSONObject) {
-                                        val message = messages
-                                        val errorList: MutableList<String> = ArrayList()
-                                        val keys = message.keys()
-                                        while (keys.hasNext()) {
-                                            val key = keys.next()
-                                            if (message[key] is JSONArray) {
-                                                val array = message[key] as JSONArray
-                                                val type =
-                                                    object : TypeToken<List<String?>?>() {}.type
-                                                val error = GsonHelper.gsonFinal()
-                                                    .fromJson<List<String>>(array.toString(), type)
-                                                errorList.addAll(error)
-                                            }
-                                        }
-                                        cartView.showValidateOrderError(errorList)
-                                    }
-                                } else {
-                                    cartView.showError(
-                                        CacheUtil.getInstance()
-                                            .getTranslations(Text.AN_ERROR_OCCURRED)
-                                    )
-                                }
-                                sendLog(ApiLogLevel.ERROR, `object`.toString())
-                            } catch (e: JSONException) {
-                                e.printStackTrace()
+                    //if (checkout || isCouponValidate) {
+                    if (o is JSONObject) {
+                        try {
+                            val `object` = o
+                            if (`object`.has("error") && !`object`.isNull("error")) {
                                 cartView.showError(
-                                    CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
+                                    ErrorHandler.getErrorMessage(
+                                        `object`, CacheUtil.getInstance().getTranslations(
+                                            Text.AN_ERROR_OCCURRED
+                                        ), null
+                                    )
+                                )
+                            } else if (`object`.has("messages") && !`object`.isNull("messages")) {
+                                val messages = `object`["messages"]
+                                if (messages is JSONObject) {
+                                    val message = messages
+                                    val errorList: MutableList<String> = ArrayList()
+                                    val keys = message.keys()
+                                    while (keys.hasNext()) {
+                                        val key = keys.next()
+                                        if (message[key] is JSONArray) {
+                                            val array = message[key] as JSONArray
+                                            val type =
+                                                object : TypeToken<List<String?>?>() {}.type
+                                            val error = GsonHelper.gsonFinal()
+                                                .fromJson<List<String>>(array.toString(), type)
+                                            errorList.addAll(error)
+                                        }
+                                    }
+                                    cartView.showValidateOrderError(errorList)
+                                }
+                            } else {
+                                cartView.showError(
+                                    CacheUtil.getInstance()
+                                        .getTranslations(Text.AN_ERROR_OCCURRED)
                                 )
                             }
-                        } else {
+                            sendLog(ApiLogLevel.ERROR, `object`.toString())
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
                             cartView.showError(
                                 CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
                             )
                         }
+                    } else {
+                        cartView.showError(
+                            CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
+                        )
                     }
+                    //}
                 }
             })
         }
@@ -2914,6 +2915,7 @@ class CartPresenter @Inject constructor(
         orderBody.addProperty(
             "discount", String.format(Locale.ENGLISH, "%.2f", discount).toDouble()
         )
+
         if (validDelivery || validPickup) {
             when (CacheUtil.getInstance().orderType) {
                 OrderType.PICKUP -> {

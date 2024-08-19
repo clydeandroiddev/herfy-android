@@ -81,7 +81,6 @@ import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import com.skylinedynamics.solosdk.api.models.objects.Translated
 import dagger.hilt.android.AndroidEntryPoint
-import io.shipbook.shipbooksdk.Log
 import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
