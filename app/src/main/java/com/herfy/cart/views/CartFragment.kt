@@ -1015,14 +1015,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     0.0, withSpace = true, ignoreDecimalPlaces = true
                 )
                 binding.footerTotalPrice.text = CurrencyUtils.updateCurrency(
-                    0.0, withSpace = false, ignoreDecimalPlaces = true
+                    0.0, withSpace = true, ignoreDecimalPlaces = true
                 )
             } else {
                 binding.paymentSummaryContainer.total.text = CurrencyUtils.updateCurrency(
                     _totalPrice, withSpace = true, ignoreDecimalPlaces = true
                 )
                 binding.footerTotalPrice.text = CurrencyUtils.updateCurrency(
-                    _totalPrice, withSpace = false, ignoreDecimalPlaces = false
+                    _totalPrice, withSpace = true, ignoreDecimalPlaces = false
                 )
             }
 
