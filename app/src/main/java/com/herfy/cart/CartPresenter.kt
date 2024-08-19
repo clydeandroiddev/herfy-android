@@ -269,7 +269,6 @@ class CartPresenter @Inject constructor(
                 GlobalScope.launch(contextPool.Main) {
                     cartView.showMenuItems(menuItems, false, false)
                 }
-
             }
         }
     }
@@ -415,6 +414,7 @@ class CartPresenter @Inject constructor(
 
                     OrderType.NONE -> deliveryCharge = 0.0
                 }
+
                 var discountedSubtotal = subtotal - discount
                 if (discountedSubtotal < 0) {
                     discountedSubtotal = 0.0
@@ -585,6 +585,7 @@ class CartPresenter @Inject constructor(
                             }
                         }
                     }
+
                     for (modifierItem in menuItem.modifierItems) {
                         val modifier = JsonObject()
                         modifier.addProperty("id", modifierItem.id)
@@ -596,6 +597,7 @@ class CartPresenter @Inject constructor(
                         modifier.addProperty("quantity", modifierItem.attributes.quantity)
                         modifiers.add(modifier)
                     }
+
                     for (ingredient in menuItem.ingredients) {
                         if (!ingredient.attributes.isSelected) {
                             val ingredientObject = JsonObject()
@@ -611,6 +613,7 @@ class CartPresenter @Inject constructor(
                             ingredients.add(ingredientObject)
                         }
                     }
+
                     try {
                         if (menuItem.isCombo) {
                             val comboItems = JsonArray()
@@ -669,7 +672,6 @@ class CartPresenter @Inject constructor(
                     item.add("ingredients", ingredients)
                     item.add("modifiers", modifiers)
                     items.add(item)
-                    //}
                 }
 
 
@@ -3869,7 +3871,9 @@ class CartPresenter @Inject constructor(
                                     hasPromotion, orderData.subtotal + orderData.deliverCharge
                                 )
                             }
+
                             showPrice(hasPromotion, orderData, mokafaaAmount)
+
                             if (hasError) {
                                 CacheUtil.getInstance().couponCode = null
                                 CacheUtil.getInstance().couponName = null
