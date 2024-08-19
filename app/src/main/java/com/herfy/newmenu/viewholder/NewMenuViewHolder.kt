@@ -25,6 +25,7 @@ import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil.Companion.addToCartEvent
 import com.herfy.analytics.firebase.FirebaseService
+import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.auth.views.SignInActivity
 import com.herfy.common.view.SlantedTextView
 import com.herfy.databinding.ItemMenuItemNewBinding
@@ -338,6 +339,7 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
 
     override fun logAddToWishlistEvent(menuItem: MenuItem) {
         FacebookAppEventUtil.addToWishlistEvent(context, menuItem)
+        KochavaEventUtil.itemAddToWishList(menuItem)
     }
 
     override fun setOriginalMenuItemValue(value: String?) {

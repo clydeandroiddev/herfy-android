@@ -2340,7 +2340,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             )
             KochavaTrackerUtil.trackEventWithData(
                 EventType.ADD_TO_CART.eventName,
-                KochavaEventUtil.itemObject(menuItem, menuItem.quantity)
+                KochavaEventUtil.itemObject(menuItem)
             )
         }
     }

@@ -17,6 +17,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
+import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.base.BaseFragment
 import com.herfy.databinding.FragmentPopularNowBinding
 import com.herfy.main.MainActivity
@@ -257,6 +258,7 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
 
     override fun logAddToWishlistEvent(menuItem: MenuItem) {
         FacebookAppEventUtil.addToWishlistEvent(requireContext(), menuItem)
+        KochavaEventUtil.itemAddToWishList(menuItem)
     }
 
     override fun setOriginalMenuItemValue(value: String?) {

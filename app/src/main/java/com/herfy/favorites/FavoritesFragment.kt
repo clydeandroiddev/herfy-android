@@ -203,7 +203,7 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                         )
                         KochavaTrackerUtil.trackEventWithData(
                             EventType.ADD_TO_CART.eventName,
-                            KochavaEventUtil.itemObject(menuItem, menuItem.quantity)
+                            KochavaEventUtil.itemObject(menuItem)
                         )
                     }
                     if (favorite.attributes.isCombo) {

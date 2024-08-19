@@ -5,6 +5,9 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.herfy.analytics.kochava.KochavaEventType
+import com.herfy.analytics.kochava.KochavaEventUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.authentication.R
 import com.herfy.authentication.databinding.FragmentAddNewNameBinding
 import com.herfy.authentication.state.LoginOTPPageViewState
@@ -37,6 +40,10 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
             }
 
             skipButton.setOnClickListener {
+                KochavaTrackerUtil.trackEventWithData(
+                    KochavaEventType.REGISTER.eventName,
+                    KochavaEventUtil.customer(args.customerId)
+                )
                 requireActivity().setResult(Activity.RESULT_OK)
                 requireActivity().finish()
             }

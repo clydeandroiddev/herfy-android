@@ -462,7 +462,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                         )
                         KochavaTrackerUtil.trackEventWithData(
                             "Add to Cart",
-                            KochavaEventUtil.itemObject(menuItem, menuItem.quantity)
+                            KochavaEventUtil.itemObject(menuItem)
                         )
                         EventBus.getDefault().post(AddToCartEvent())
                         setCartQuantity()

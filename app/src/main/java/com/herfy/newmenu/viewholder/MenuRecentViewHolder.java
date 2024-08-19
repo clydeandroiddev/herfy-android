@@ -31,6 +31,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil;
 import com.herfy.analytics.firebase.FirebaseService;
+import com.herfy.analytics.kochava.KochavaEventUtil;
 import com.herfy.auth.views.SignInActivity;
 import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter;
 import com.herfy.utils.constants.Text;
@@ -540,6 +541,7 @@ public class MenuRecentViewHolder extends RecyclerView.ViewHolder implements Men
     @Override
     public void logAddToWishlistEvent(MenuItem menuItem) {
         FacebookAppEventUtil.Companion.addToWishlistEvent(context, menuItem);
+        KochavaEventUtil.Companion.itemAddToWishList(menuItem);
     }
 
     @Override

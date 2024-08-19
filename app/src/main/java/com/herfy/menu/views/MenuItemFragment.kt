@@ -805,18 +805,17 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     } else {
                         menuPresenter.updateCartItem(true, cartMenuItem)
                     }
-                    val itemQuantity = Integer.parseInt(binding.quantity.text.toString())
                     FirebaseECommerceEventUtil.addToCartEvent(
                         activity,
                         menuItem,
                         menuCategory,
                         _totalPrice,
-                        itemQuantity
-                    );
+                        Integer.parseInt(binding.quantity.text.toString())
+                    )
                     FacebookAppEventUtil.addToCartEvent(baseActivity, menuItem, _totalPrice)
                     KochavaTrackerUtil.trackEventWithData(
                         EventType.ADD_TO_CART.eventName,
-                        KochavaEventUtil.itemObject(menuItem, itemQuantity)
+                        KochavaEventUtil.itemObject(menuItem)
                     )
                 })
                 baseActivity.dismissDialogs()
@@ -838,6 +837,13 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuCategory
                     )
                     FacebookAppEventUtil.viewMenuItemEvent(activity, menuItem)
+                    KochavaTrackerUtil.trackEventWithData(
+                        KochavaEventType.VIEW_PRODUCT.eventName,
+                        KochavaEventUtil.viewProductObject(
+                            menuItem,
+                            menuCategory.getName(LocaleUtil.getInstance().getLanguage())
+                        )
+                    )
                 }
             }
         }
@@ -1543,6 +1549,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun logAddToWishlistEvent(menuItem: MenuItem) {
         FacebookAppEventUtil.addToWishlistEvent(requireContext(), menuItem)
+        KochavaEventUtil.itemAddToWishList(menuItem)
     }
 
     override fun setOriginalMenuItemValue(value: String?) {

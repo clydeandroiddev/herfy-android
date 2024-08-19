@@ -21,6 +21,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.firebase.FirebaseService
+import com.herfy.analytics.kochava.KochavaEventType
 import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.base.BaseActivity
@@ -187,15 +188,14 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                         this@ComboMealFragment.viewModel.menuCategory!!,
                         _totalPrice,
                         Integer.parseInt(binding.quantity.text.toString())
-                    );
+                    )
                     FacebookAppEventUtil.addToCartEvent(
                         it, this@ComboMealFragment.viewModel.menuItem!!, _totalPrice
                     )
                     KochavaTrackerUtil.trackEventWithData(
                         EventType.ADD_TO_CART.eventName,
                         KochavaEventUtil.itemObject(
-                            this@ComboMealFragment.viewModel.menuItem!!,
-                            this@ComboMealFragment.viewModel.menuItem!!.quantity
+                            this@ComboMealFragment.viewModel.menuItem!!
                         )
                     )
                 }
@@ -573,6 +573,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     dismissLoading()
                 }
             }
+
             showCartExpiry.observe(this@ComboMealFragment) {
                 activity?.cast<BaseActivity> {
                     it.runOnUiThread {
@@ -590,6 +591,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 }
 
             }
+
             logEvent.observe(this@ComboMealFragment) { attributes ->
                 activity?.cast<BaseActivity> {
                     it.logEventAttributesMetric(
@@ -600,15 +602,19 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     )
                 }
             }
+
             logAddToWishlistEvent.observe(this@ComboMealFragment) { menuItem ->
                 context?.let {
                     FacebookAppEventUtil.addToWishlistEvent(it, menuItem)
+                    KochavaEventUtil.itemAddToWishList(menuItem)
                 }
             }
+
             setFavoriteItem.observe(this@ComboMealFragment) {
                 dismissLoading()
                 setFavorite(it)
             }
+
             showFrequentBoughtItems.observe(this@ComboMealFragment) {
                 it.getContentIfNotHandled()?.let { list ->
                     binding.apply {
@@ -646,6 +652,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                     }
                 }
             }
+
             navigateToMenuItemDetails.observe(this@ComboMealFragment) {
                 it.getContentIfNotHandled()?.let { triple ->
                     val isCombo = triple.second.isCombo
@@ -768,7 +775,22 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
                 NutritionInfoFragmentBottomSheet.newInstance(bundle)
                     .show(childFragmentManager, NutritionInfoFragmentBottomSheet.TAG)
             }
+            setupKochava(data)
         }
+    }
+
+    private fun setupKochava(menuItem: MenuItem) {
+        var categoryName = ""
+        this@ComboMealFragment.viewModel.menuCategory?.let {
+            categoryName = it.getName(LocaleUtil.getInstance().language)
+        }
+        KochavaTrackerUtil.trackEventWithData(
+            KochavaEventType.VIEW_PRODUCT.eventName,
+            KochavaEventUtil.viewProductObject(
+                menuItem,
+                categoryName
+            )
+        )
     }
 
     private fun setFavorite(menuItem: MenuItem) {

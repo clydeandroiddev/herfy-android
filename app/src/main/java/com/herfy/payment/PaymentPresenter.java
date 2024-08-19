@@ -1272,7 +1272,9 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
                         paymentView.setOrderId(orderId);
                         MixpanelUtil.Companion.checkout(orderId, store, finalObject.get("type").getAsString(), paymentType.getValue());
+
                         KochavaTrackerUtil.trackEvent(EventType.PURCHASE);
+
                         ApiLogUtil.sendOrderLog(ApiLogLevel.INFO, orderId, paymentType.getValue(), "Order Successful");
 
                         if (paymentType != PaymentType.CARD || validatedTotal <= 0) {

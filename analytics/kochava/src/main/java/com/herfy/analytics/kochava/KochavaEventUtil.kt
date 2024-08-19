@@ -9,7 +9,7 @@ class KochavaEventUtil {
 
     companion object {
 
-        fun itemObject(menuItem: MenuItem, quantity: Int): JSONObject {
+        fun itemObject(menuItem: MenuItem): JSONObject {
             val jsonObject = JSONObject()
             jsonObject.put("item_id", menuItem.id)
             jsonObject.put("currency", "SAR")
@@ -19,7 +19,32 @@ class KochavaEventUtil {
             }
             jsonObject.put("item_name", menuItem.attributes.name)
             jsonObject.put("price", menuItem.attributes.price)
-            jsonObject.put("quantity", quantity)
+            jsonObject.put("quantity", menuItem.quantity)
+            return jsonObject
+        }
+
+        fun itemAddToWishList(menuItem: MenuItem): JSONObject {
+            val jsonObject = JSONObject()
+            jsonObject.put("item_id", menuItem.id)
+            jsonObject.put("currency", "SAR")
+            val user = AuthUtil.getInstance()
+            if (user.isSignedIn) {
+                jsonObject.put("user_id", user.customer.id)
+            }
+            jsonObject.put("item_name", menuItem.attributes.name)
+            jsonObject.put("price", menuItem.attributes.price)
+            jsonObject.put("quantity", menuItem.quantity)
+            return jsonObject
+        }
+
+        fun viewProductObject(menuItem: MenuItem, categoryName: String): JSONObject {
+            val jsonObject = JSONObject()
+            jsonObject.put("item_id", menuItem.id)
+            jsonObject.put("currency", "SAR")
+            val user = AuthUtil.getInstance()
+            jsonObject.put("category_name", categoryName)
+            jsonObject.put("item_name", menuItem.attributes.name)
+            jsonObject.put("price", menuItem.attributes.price)
             return jsonObject
         }
 
@@ -30,6 +55,12 @@ class KochavaEventUtil {
             jsonObject.put("link_label", slide.label)
             jsonObject.put("title", slide.title)
             jsonObject.put("link_value", slide.linkValue)
+            return jsonObject
+        }
+
+        fun customer(id: String): JSONObject {
+            val jsonObject = JSONObject()
+            jsonObject.put("customer_id", id)
             return jsonObject
         }
     }

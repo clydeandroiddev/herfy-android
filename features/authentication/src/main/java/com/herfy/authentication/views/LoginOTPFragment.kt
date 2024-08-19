@@ -9,6 +9,9 @@ import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.herfy.analytics.kochava.KochavaEventType
+import com.herfy.analytics.kochava.KochavaEventUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.authentication.R
 import com.herfy.authentication.databinding.FragmentOtpPageBinding
 import com.herfy.authentication.state.LoginOTPPageViewState
@@ -40,7 +43,7 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
         super.initViews()
         adjustWindow()
         binding.apply {
-            
+
             continueButton.setOnClickListener {
                 verify(binding.otpView.otp.orEmpty())
             }
@@ -162,6 +165,10 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
     private fun toNextPage() {
         if (args.isVerified) {
+            KochavaTrackerUtil.trackEventWithData(
+                KochavaEventType.LOGIN.eventName,
+                KochavaEventUtil.customer(args.customerId)
+            )
             requireActivity().setResult(Activity.RESULT_OK)
             requireActivity().finish()
         } else {
