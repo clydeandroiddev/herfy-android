@@ -1085,7 +1085,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             activity?.cast<MainActivity> { mainActivity ->
                 val whatsAppPackageName = "com.whatsapp"
                 try {
-                    val dialCode = CacheUtil.getInstance().concept.dialingCode.replace("+", "")
+                    val dialCode = CacheUtil.getInstance().concept.dialingCode.trim().replace("+", "")
                     var finalNumber = number.trim().replace("+", "")
                     if (!finalNumber.startsWith(dialCode)) {
                         finalNumber = dialCode + finalNumber
