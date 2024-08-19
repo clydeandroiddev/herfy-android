@@ -1085,9 +1085,14 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             activity?.cast<MainActivity> { mainActivity ->
                 val whatsAppPackageName = "com.whatsapp"
                 try {
+                    val dialCode = CacheUtil.getInstance().concept.dialingCode
+                    var finalNumber = number.trim().replace("+", "")
+                    if (!finalNumber.startsWith(dialCode)) {
+                        finalNumber = dialCode + finalNumber
+                    }
                     val packageManager = mainActivity.packageManager
                     val intent = Intent(Intent.ACTION_VIEW)
-                    val url = "https://api.whatsapp.com/send?phone=" + number.trim { it <= ' ' }
+                    val url = "https://api.whatsapp.com/send?phone=" + finalNumber
                     intent.setPackage(whatsAppPackageName)
                     intent.data = Uri.parse(url)
                     if (intent.resolveActivity(packageManager) != null) {
