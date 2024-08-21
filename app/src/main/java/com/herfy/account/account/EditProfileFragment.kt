@@ -133,8 +133,8 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
     }
 
     private fun saveUser() {
-        val fName: Array<String> =
-            fullName.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val fName =
+            fullName.trim().split(" ".toRegex()).filter { it.trim().isNotEmpty() }
         if (!StringUtil.isValidName(fullName)) {
             val error = CacheUtil.getInstance().getTranslations(
                 Text.NAME_VALIDATION, "Name fields should not accept numbers and special character."
@@ -147,14 +147,14 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
             showError(error)
         } else {
             showLoadingDialog()
-            val firstName = fName[0]
-            var lastName = ""
-            if (fName.size > 1) {
-                lastName = fName.drop(1).joinToString(" ")
+            val firstName = fName.first { it.isNotEmpty() }
+            val lastName = when {
+                fName.size > 1 ->  fName.drop(1).filter { it.isNotEmpty() }.joinToString(" ")
+                else -> "Customer"
             }
             accountPresenter?.save(
-                firstName,
-                lastName,
+                firstName.trim(),
+                lastName.trim(),
                 birthdaySelected,
                 genderSelected.toLowerCase(),
                 binding.mobileNum.text.toString(),
