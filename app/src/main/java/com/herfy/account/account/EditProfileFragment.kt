@@ -150,7 +150,7 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
             val firstName = fName.first { it.isNotEmpty() }
             val lastName = when {
                 fName.size > 1 ->  fName.drop(1).filter { it.isNotEmpty() }.joinToString(" ")
-                else -> ""
+                else -> "Customer"
             }
             accountPresenter?.save(
                 firstName.trim(),
