@@ -133,8 +133,8 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
     }
 
     private fun saveUser() {
-        val fName: Array<String> =
-            fullName.trim().split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val fName =
+            fullName.trim().split(" ".toRegex()).filter { it.trim().isNotEmpty() }
         if (!StringUtil.isValidName(fullName)) {
             val error = CacheUtil.getInstance().getTranslations(
                 Text.NAME_VALIDATION, "Name fields should not accept numbers and special character."
