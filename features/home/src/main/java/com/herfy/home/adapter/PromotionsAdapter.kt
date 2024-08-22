@@ -1,12 +1,10 @@
 package com.herfy.home.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.herfy.home.R
 import com.herfy.home.databinding.ItemPromotionBinding
 import com.herfy.utils.constants.Text
