@@ -54,13 +54,14 @@ class PromotionsAdapter(
                     )
                 } != null) {
                 promoRules.find { rule -> rule.ruleKey.equals("order-type", true) }?.let {
-                    val orderTypes = it.text.split(Pattern.compile(","))
+                    val orderTypes = it.ruleValue.replace("in:", "").split(Pattern.compile(","))
                     for (orderType in orderTypes) {
                         when (orderType.trim()) {
-                            "pickup", "curbside", "drive-thru" -> {
+                            "pickup", "curbside", "drive-thru", "الاستلام" -> {
                                 pickupLabel.visible()
                             }
-                            "delivery", "deliver" -> {
+
+                            "delivery", "deliver", "توصيل" -> {
                                 deliveryLabel.visible()
                             }
                         }
