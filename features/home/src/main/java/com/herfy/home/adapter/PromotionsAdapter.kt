@@ -1,10 +1,12 @@
 package com.herfy.home.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.herfy.home.R
 import com.herfy.home.databinding.ItemPromotionBinding
 import com.herfy.utils.constants.Text
@@ -54,13 +56,14 @@ class PromotionsAdapter(
                     )
                 } != null) {
                 promoRules.find { rule -> rule.ruleKey.equals("order-type", true) }?.let {
-                    val orderTypes = it.text.split(Pattern.compile(","))
+                    val orderTypes = it.ruleValue.replace("in:", "").split(Pattern.compile(","))
                     for (orderType in orderTypes) {
                         when (orderType.trim()) {
-                            "pickup", "curbside", "drive-thru" -> {
+                            "pickup", "curbside", "drive-thru", "الاستلام" -> {
                                 pickupLabel.visible()
                             }
-                            "delivery", "deliver" -> {
+
+                            "delivery", "deliver", "توصيل" -> {
                                 deliveryLabel.visible()
                             }
                         }
