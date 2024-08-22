@@ -1469,7 +1469,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun showPayment() {
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_PLACE_ORDER)
-        KochavaTrackerUtil.trackEventWithData(EventType.CHECKOUT_START.eventName, KochavaEventUtil.globalObj())
+        KochavaTrackerUtil.trackEventWithData(EventType.CHECKOUT_START.eventName, KochavaEventUtil.purchaseObj(cartPresenter.menuItemsTotalPrice, cartPresenter.menuItemsList))
         runOnMain {
             continueCheckout = false
             dismissProgressDialog()

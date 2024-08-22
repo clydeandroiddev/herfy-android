@@ -71,45 +71,39 @@ class KochavaEventUtil {
             return jsonObject
         }
 
-        fun purchaseObj(price : Double, items : List<MenuItem>): JSONObject{
+        fun purchaseObj(price: Double, items: List<MenuItem>): JSONObject {
             val jsonObject = JSONObject()
             jsonObject.put("app_name", Values.HERFY_SOLO_ANDROID)
+
             val user = AuthUtil.getInstance()
             if (user.isSignedIn) {
                 jsonObject.put("user_id", user.customer.id)
             }
+
             val couponCodeVal = when {
                 CacheUtil.getInstance().couponCode != null -> CacheUtil.getInstance().couponCode
                 else -> ""
             }
             jsonObject.put("coupon-code", couponCodeVal)
             jsonObject.put("currency", "SAR")
-
-
-            jsonObject.put("item_name", menuItem.attributes.name)
-            jsonObject.put("price", menuItem.attributes.price)
-            jsonObject.put("quantity", menuItem.quantity)
+            jsonObject.put("price", price)
+            val itemsArray = JSONArray()
+            for (menuItem in items) {
+                val itemObject = JSONObject()
+                itemObject.put("item_name", menuItem.attributes.name)
+                itemObject.put("price", menuItem.attributes.price)
+                itemObject.put("quantity", menuItem.quantity)
+                itemsArray.put(itemObject)
+            }
+            jsonObject.put("items", itemsArray)
             return jsonObject
         }
 
-        fun checkoutStartObj () : JSONObject{
-            val jsonObject = JSONObject()
-            return jsonObject
-        }
-
-        fun globalObj() : JSONObject {
+        fun globalObj(): JSONObject {
             val jsonObject = JSONObject()
             jsonObject.put("app_name", Values.HERFY_SOLO_ANDROID)
             return jsonObject
         }
 
-        private fun itemsObj(items : List<MenuItem>) : JSONArray{
-            val jsonArray = JSONArray()
-            items.forEach { menuItem ->
-                val jsonObj = JSONObject()
-                jsonObj.put("item-category", menuItem)
-                jsonArray.put(jsonObj)
-            }
-        }
     }
 }
