@@ -98,12 +98,5 @@ class KochavaEventUtil {
             jsonObject.put("items", itemsArray)
             return jsonObject
         }
-
-        fun globalObj(): JSONObject {
-            val jsonObject = JSONObject()
-            jsonObject.put("app_name", Values.HERFY_SOLO_ANDROID)
-            return jsonObject
-        }
-
     }
 }
