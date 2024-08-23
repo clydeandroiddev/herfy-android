@@ -198,3 +198,35 @@ com.samsung.android.game.cloudgame.dev.sdk.* { *;}
 -keep class com.kochava.tracker.legacyreferrer.LegacyReferrerReceiver {
     void onReceive(android.content.Context, android.content.Intent);
 }
+
+# Play Core Proguard Rules: Play In-app Review
+
+-keep class com.google.android.play.core.review.ReviewManager {
+  public com.google.android.gms.tasks.Task requestReviewFlow();
+  public com.google.android.gms.tasks.Task launchReviewFlow(android.app.Activity, com.google.android.play.core.review.ReviewInfo);
+}
+
+-keepnames class com.google.android.play.core.review.ReviewInfo
+
+-keep class com.google.android.play.core.review.ReviewManagerFactory {
+  <init>();
+
+  public static com.google.android.play.core.review.ReviewManager create(android.content.Context);
+}
+
+-keep class com.google.android.play.core.review.testing.FakeReviewManager {
+  public <init>(android.content.Context);
+  public com.google.android.gms.tasks.Task requestReviewFlow();
+  public com.google.android.gms.tasks.Task launchReviewFlow(android.app.Activity, com.google.android.play.core.review.ReviewInfo);
+}
+
+-keep class com.google.android.play.core.review.model.ReviewErrorCode {
+    public static int NO_ERROR;
+    public static int PLAY_STORE_NOT_FOUND;
+    public static int INVALID_REQUEST;
+    public static int INTERNAL_ERROR;
+}
+
+-keep class com.google.android.play.core.review.ReviewException {
+    public int getErrorCode();
+}
