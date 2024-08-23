@@ -158,7 +158,7 @@ public class UpsellActivity extends BaseActivity implements UpsellContract.View 
     public void setupTranslations() {
         back.setText(CacheUtil.getInstance().getTranslations(Text.BACK, "Back"));
         totalLabel.setText(CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total:"));
-        vat.setText(CacheUtil.getInstance().getTranslations(Text.TOTAL_INCLUSIVE_VAT, "(Total is inclusive of VAT)"));
+        vat.setText(CacheUtil.getInstance().getTranslations(Text.TOTAL_IS_INCLUSIVE_OF_VAT, "Total is inclusive of VAT"));
         placeOrder.setText(CacheUtil.getInstance().getTranslations(Text.SKIP_THIS, "SKIP THIS").toUpperCase());
         title.setText(CacheUtil.getInstance().getTranslations(Text.RECOMMENDED, "RECOMMENDED").toUpperCase());
         upsellTitle.setText(CacheUtil.getInstance().getTranslations(Text.WOULD_YOU_LIKE_TO_ADD_THESE, "Would you like to add these?").toUpperCase());

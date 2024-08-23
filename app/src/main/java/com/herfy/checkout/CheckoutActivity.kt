@@ -990,6 +990,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutLoyalty.tvSarAmountLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SAR_AMOUNT, "SAR Amount")
 
+        binding?.layoutPaymentSummary?.tvPaymentLabel?.text =
+            CacheUtil.getInstance().getTranslations(Text.PAYMENT_SUMMARY, "Payment Summary")
+
         binding!!.layoutPaymentSummary.tvDiscountLabel.text =
             CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
         binding!!.layoutLoyalty.tvLoyaltyPointsLabel.text = CacheUtil.getInstance()
@@ -1031,7 +1034,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPaymentSummary.tvDiscount.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
         binding!!.totalVatDescription.text = CacheUtil.getInstance()
-            .getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
+            .getTranslations(Text.TOTAL_IS_INCLUSIVE_OF_VAT, "Total is inclusive of VAT")
         binding?.layoutAlrahji?.apply {
             tvAlrhajiLabel.text = CacheUtil.getInstance().getTranslations(
                 Text.ALRHAJI_LABEL, "Al Rhaji Bank (Mokafa's Rewards)"
@@ -1044,7 +1047,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.text =
             CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
         binding!!.totalVatDescription.text = CacheUtil.getInstance()
-            .getTranslations(Text.TOTAL_VAT_DESCRIPTION, "Total is inclusive of VAT")
+            .getTranslations(Text.TOTAL_IS_INCLUSIVE_OF_VAT, "Total is inclusive of VAT")
         binding!!.layoutPaymentSummary.tvMukafaaLabel.text =
             CacheUtil.getInstance().getTranslations(Text.MOKAFAA_POINTS, "Mokafa’a Points")
     }
@@ -1068,7 +1071,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         CacheUtil.getInstance().orderPayment = PaymentType.CASH
 
         binding!!.layoutPayment.tvSelectedPayment.text =
-            CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
+            CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
         binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
 
         if (paymentPresenter!!.hasMukafaaTransactionId()) {
@@ -1572,7 +1575,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
             if (selectedPayment == PaymentType.CASH) {
                 binding!!.layoutPayment.tvSelectedPayment.text =
-                    CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
+                    CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_cash)
             } else if (selectedPayment == PaymentType.CARD) {
                 if (selectedCard != null) {

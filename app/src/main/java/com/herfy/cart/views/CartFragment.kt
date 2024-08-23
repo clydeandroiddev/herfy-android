@@ -740,7 +740,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         binding.placeOrder.text =
             CacheUtil.getInstance().getTranslations(Text.CHECKOUT_LABEL, "Checkout")
         binding.totalVatLabel.text = CacheUtil.getInstance()
-            .getTranslations(Text.TOTAL_INCLUSIVE_VAT, "(Total is inclusive of VAT)");
+            .getTranslations(Text.TOTAL_IS_INCLUSIVE_OF_VAT, "Total is inclusive of VAT");
         binding.upsellContainer.upsellLabel.text = CacheUtil.getInstance()
             .getTranslations(Text.WOULD_YOU_LIKE_TO_ADD_THESE, "Would you like to add these?")
         binding.paymentSummaryContainer.applyCouponLabel.text =

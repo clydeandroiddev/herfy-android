@@ -361,7 +361,7 @@ public class PreMadeStep1Activity extends BaseActivity implements PreMadeStep1Co
         deliveriesTogetherLabel.setText(CacheUtil.getInstance().getTranslations(Text.GET_ALL_YOUR_DELIVERIES_TOGETHER, "Get all deliveries together"));
         seeMeals.setText(CacheUtil.getInstance().getTranslations(Text.SEE_MEALS, "SEE MEALS"));
         totalLabel.setText(CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total:").replace(":", "") + ":");
-        totalVatLabel.setText(CacheUtil.getInstance().getTranslations(Text.TOTAL_INCLUSIVE_VAT, "Total is inclusive of VAT"));
+        totalVatLabel.setText(CacheUtil.getInstance().getTranslations(Text.TOTAL_IS_INCLUSIVE_OF_VAT, "Total is inclusive of VAT"));
         cancelButton.setText(CacheUtil.getInstance().getTranslations(Text.CANCEL, "CANCEL").toUpperCase());
         confirmButon.setText(CacheUtil.getInstance().getTranslations(Text.CONFIRM_CAPS, "CONFIRM").toUpperCase());
         addAddressFromDeliveryLabel.setText(CacheUtil.getInstance().getTranslations(Text.ADD_A_NEW_ADDRESS_PLUS, "+ ADD A NEW ADDRESS").toUpperCase());

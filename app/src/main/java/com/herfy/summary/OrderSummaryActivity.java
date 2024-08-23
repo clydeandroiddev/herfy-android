@@ -270,7 +270,7 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
         String payment = CacheUtil.getInstance().getOrderPayment().getValue();
 
         if (payment.equalsIgnoreCase(PaymentType.CASH.getValue())) {
-            paymentMethodText.setText(CacheUtil.getInstance().getTranslations(Text.CASH));
+            paymentMethodText.setText(CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash"));
         } else if (payment.equalsIgnoreCase(PaymentType.CARD.getValue())) {
             /*if (CacheUtil.getInstance().getOrderType() == OrderType.DELIVERY) {
                 paymentMethodText.setText(CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY));
