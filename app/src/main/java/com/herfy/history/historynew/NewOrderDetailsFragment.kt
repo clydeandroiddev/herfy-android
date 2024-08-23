@@ -314,7 +314,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                         )
                     ) {
                         cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_payment_type_cash_new)
-                        cardNumber.text = CacheUtil.getInstance().getTranslations(Text.CASH, "Cash")
+                        cardNumber.text = CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
                     } else if (order.payment.attributes.method.equals(
                             PaymentType.CARD_ON_DELIVERY.value, ignoreCase = true
                         )

@@ -181,7 +181,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                         PromotionRequirement(
                             R.drawable.ic_promotion_rule_repeating_offer,
                             cacheUtilHelper?.getTranslations(
-                                Text.REPEATING_OFFER_LABEL, "Repeating Offer"
+                                Text.REPEATING_OFFER, "Repeating Offer"
                             ) ?: "",
                             requirement.isRepeating
                         )
@@ -226,13 +226,14 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
         val cacheCampaign = cacheUtil.campaign
 
         var toRemove = false
-        if (cacheCampaign != null && promo?.id.equals(
+        binding.btnClaim.text = if (cacheCampaign != null && promo?.id.equals(
                 cacheCampaign.id, ignoreCase = true
             )
         ) {
             toRemove = true
-            binding.btnClaim.text =
-                CacheUtil.getInstance().getTranslations(Text.REMOVE_PROMO_LABEL, "Remove Promo")
+            CacheUtil.getInstance().getTranslations(Text.REMOVE_PROMO_LABEL, "Remove Promo")
+        } else {
+            CacheUtil.getInstance().getTranslations(Text.REDEEM, "Redeem")
         }
 
         activity?.let {

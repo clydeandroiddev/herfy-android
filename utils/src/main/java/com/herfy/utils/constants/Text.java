@@ -345,7 +345,6 @@ public class Text {
     public static final String FEEDBACK = "feedback";
     public static final String TRACKING_STATUS = "tracking_status";
     public static final String MODIFIER_MINIMUM_LIMIT = "modifier_minimum_limit";
-    public static final String TOTAL_INCLUSIVE_VAT = "total_is_inclusive_vat";
     public static final String TAX = "tax";
     public static final String SELECT_ATLEAST = "select_atleast";
     public static final String SELECT_X = "select_x";
@@ -476,7 +475,7 @@ public class Text {
     public static final String PLEASE_TYPE_YOUR_EMAIL_HERE = "please_type_your_email_here";
     public static final String PLEASE_TYPE_YOUR_PASSWORD_HERE = "please_type_your_password_here";
     public static final String WE_WILL_SEND_YOU_A_NEW_PASSWORD = "we_will_send_you_a_new_password";
-    public static final String TOTAL_IS_INCLUSIVE_OF_VAT = "Total is inclusive of VAT";
+    public static final String TOTAL_IS_INCLUSIVE_OF_VAT = "total_is_inclusive_vat";
     public static final String NOTE_PLACEHOLDER = "note_placeholder";
     public static final String NOTE_TO_DRIVER_CAPS = "note_to_driver_caps";
     public static final String NOTE_TO_DRIVER = "note_to_driver";
@@ -1190,7 +1189,7 @@ public class Text {
     public static final String SORRY_YOU_ARE_NOT_YET_ELIGIBLE = "sorry_you_are_not_yet_eligible";
     public static final String VALID_TIME_LABEL = "valid_time_value";
     public static final String LOGIN_REGISTER_LABEL = "login_register";
-    public static final String REPEATING_OFFER_LABEL = "repeating_offer_label";
+    public static final String REPEATING_OFFER = "repeating_offer";
     public static final String CANCELLED = "cancelled";
 
     public static final String FAILED = "failed";
@@ -1234,4 +1233,5 @@ public class Text {
     public static final String SELECT_UP_TO_X_OPTION="select_up_to_x_option";
 
     public static final String NEW_DEBIT_CREDIT_CARD = "new_debit_credit_card";
+    public static final String REDEEM = "redeem";
 }

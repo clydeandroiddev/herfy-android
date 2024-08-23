@@ -1,2367 +1,2482 @@
 {
-  "a_few_more_things":{
-    "ar_SA":"\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0625\u0636\u0627\u0641\u064a\u0629 \u0644\u0646\u0639\u0631\u0641\u0643 \u0628\u0634\u0643\u0644 \u0623\u0641\u0636\u0644",
-    "en_US":"A few more things to know you better",
-    "fr":""
-  },
-  "a_rider_will_be":{
-    "ar_SA":"\u0633\u064a\u062a\u0645 \u062a\u0639\u064a\u064a\u0646 \u0627\u0644\u0639\u0645\u064a\u0644 \u0644\u0637\u0644\u0628\u0643 \u0639\u0646\u062f\u0645\u0627 \u064a\u0643\u0648\u0646 \u062c\u0627\u0647\u0632\u064b\u0627. \u064a\u0645\u0643\u0646\u0643 \u062a\u062a\u0628\u0639 \u0637\u0644\u0628\u0643 \u0645\u0628\u0627\u0634\u0631\u0629",
-    "en_US":"A rider will be assigned to you when order is ready. You will be able to track your order in real time",
-    "fr":""
-  },
-  "abandon_alert_message":{
-    "ar_SA":"\u0644\u0642\u062f \u0623\u0636\u0641\u062a \u0639\u0646\u0627\u0635\u0631 \u0625\u0644\u0649 \u0627\u0644\u0633\u0644\u0629 \u0627\u0644\u062a\u0633\u0648\u0642 \u060c \u0644\u0643\u0646 \u0644\u0645 \u062a\u0642\u0645 \u0628\u0625\u0643\u0645\u0627\u0644 \u0627\u0644\u0637\u0644\u0628. \u0645\u0627 \u0639\u0644\u064a\u0643 \u0633\u0648\u0649 \u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u0633\u0644\u0629 \u0627\u0644\u062a\u0633\u0648\u0642 \u0644\u0625\u0643\u0645\u0627\u0644 \u0627\u0644\u0637\u0644\u0628 \u0639\u0646\u062f\u0645\u0627 \u062a\u0643\u0648\u0646 \u062c\u0627\u0647\u0632\u064b\u0627",
-    "en_US":"We noticed that you added one or more items to your cart, but didn't continue to checkout. When you are ready, simply visit your cart to complete your order.",
-    "fr":""
-  },
-  "about_us_label":{
-    "ar_SA":"\u0645\u0646 \u0646\u062d\u0646\u061f",
-    "en_US":"About us",
-    "fr":""
-  },
-  "accepted_cards":{
-    "ar_SA":"\u0627\u0644\u0628\u0637\u0627\u0642\u0627\u062a \u0627\u0644\u0645\u0642\u0628\u0648\u0644\u0629",
-    "en_US":"Accepted cards",
-    "fr":""
-  },
-  "account_deleted":{
-    "ar_SA":"\u062a\u0645 \u062d\u0630\u0641 \u0627\u0644\u062d\u0633\u0627\u0628",
-    "en_US":"Account deleted",
-    "fr":""
-  },
-  "add":{
-    "ar_SA":"\u0623\u0636\u0641",
-    "en_US":"Add",
-    "fr":""
-  },
-  "add_an_image_caps":{
-    "ar_SA":"\u0623\u0636\u0641 \u0635\u0648\u0631\u0629",
-    "en_US":"ADD AN IMAGE",
-    "fr":""
-  },
-  "add_debit_credit_card":{
-    "ar_SA":"\u0623\u0636\u0641 \u0628\u0637\u0627\u0642\u0629 \u0627\u0644\u062e\u0635\u0645\/\u0627\u0644\u0627\u0626\u062a\u0645\u0627\u0646",
-    "en_US":"Add Debit\/Credit Card",
-    "fr":""
-  },
-  "add_label":{
-    "ar_SA":"\u0625\u0636\u0627\u0641\u0629 \u062a\u0633\u0645\u064a\u0629",
-    "en_US":"Add label",
-    "fr":""
-  },
-  "add_more_item":{
-    "ar_SA":"\u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0632\u064a\u062f",
-    "en_US":"Add more item",
-    "fr":""
-  },
-  "add_more_items":{
-    "ar_SA":"\u0623\u0636\u0641 \u0627\u0644\u0645\u0632\u064a\u062f",
-    "en_US":"Add more items",
-    "fr":""
-  },
-  "add_new_address":{
-    "ar_SA":"\u0623\u0636\u0641 \u0639\u0646\u0648\u0627\u0646 \u062c\u062f\u064a\u062f",
-    "en_US":"Add new address",
-    "fr":""
-  },
-  "add_new_address_label":{
-    "ar_SA":"\u0625\u0636\u0627\u0641\u0629 \u0639\u0646\u0648\u0627\u0646 \u062c\u062f\u064a\u062f",
-    "en_US":"Add New Address",
-    "fr":""
-  },
-  "add_new_vehicle":{
-    "ar_SA":"\u0625\u0636\u0627\u0641\u0629 \u0633\u064a\u0627\u0631\u0629 \u062c\u062f\u064a\u062f\u0629",
-    "en_US":"Add New Vehicle",
-    "fr":""
-  },
-  "add_to_bag":{
-    "ar_SA":"\u0623\u0636\u0641 \u0627\u0644\u0649 \u0627\u0644\u0633\u0644\u0629",
-    "en_US":"Add to bag",
-    "fr":""
-  },
-  "add_to_bag_amount":{
-    "ar_SA":"\u0623\u0636\u0641 \u0625\u0644\u0649 \u0627\u0644\u0639\u0631\u0628\u0629 - (x)",
-    "en_US":"Add to bag - (x)",
-    "fr":""
-  },
-  "add_to_cart_amount":{
-    "ar_SA":"\u0623\u0636\u0641 \u0625\u0644\u0649 \u0627\u0644\u0639\u0631\u0628\u0629 - (x)",
-    "en_US":"Add to cart - (x)",
-    "fr":""
-  },
-  "add_your_curbside_vehicle":{
-    "ar_SA":"\u0623\u0636\u0641 \u0633\u064a\u0627\u0631\u062a\u0643",
-    "en_US":"Add your curbside vehicle",
-    "fr":""
-  },
-  "added_curbside":{
-    "ar_SA":"\u062a\u0645\u062a \u0627\u0644\u0625\u0636\u0627\u0641\u0629: (x)",
-    "en_US":"Added: (x)",
-    "fr":""
-  },
-  "added_to_favorites":{
-    "ar_SA":"\u062a\u0645\u062a \u0625\u0636\u0627\u0641\u062a\u0647\u0627 \u0625\u0644\u0649 \u0627\u0644\u0645\u0641\u0636\u0644\u0629.",
-    "en_US":"Added to favorites.",
-    "fr":""
-  },
-  "address_updated":{
-    "ar_SA":"\u062a\u0645 \u062a\u062d\u062f\u064a\u062b \u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0628\u0646\u062c\u0627\u062d",
-    "en_US":"Address successfully updated",
-    "fr":""
-  },
-  "addresses":{
-    "ar_SA":"\u0627\u0644\u0639\u0646\u0627\u0648\u064a\u0646",
-    "en_US":"Addresses",
-    "fr":""
-  },
-  "al_rajhi_mokafaa":{
-    "ar_SA":"\u0628\u0631\u0646\u0627\u0645\u062c \u0645\u0643\u0627\u0641\u0623\u0629 - \u0645\u0635\u0631\u0641 \u0627\u0644\u0631\u0627\u062c\u062d\u064a",
-    "en_US":"Al Rajhi Mokafa'a",
-    "fr":""
-  },
-  "albums":{
-    "ar_SA":"\u0627\u0644\u0623\u0644\u0628\u0648\u0645",
-    "en_US":"Albums",
-    "fr":""
-  },
-  "all_label":{
-    "ar_SA":"\u0627\u0644\u062c\u0645\u064a\u0639",
-    "en_US":"All",
-    "fr":""
-  },
-  "all_offers":{
-    "ar_SA":"\u062c\u0645\u064a\u0639 \u0627\u0644\u0639\u0631\u0648\u0636",
-    "en_US":"All Offers",
-    "fr":""
-  },
-  "alraji_bank_title":{
-    "ar_SA":"\u0628\u0646\u0643 \u0627\u0644\u0631\u0627\u062c\u062d\u064a (\u0628\u0631\u0646\u0627\u0645\u062c \u0645\u0643\u0627\u0641\u0623\u0629)",
-    "en_US":"Al Rhaji Bank (Mokafa's Rewards)",
-    "fr":""
-  },
-  "alraji_description":{
-    "ar_SA":"\u064a\u062c\u0628 \u0623\u0646 \u064a\u0643\u0648\u0646 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645 \u0645\u0633\u062c\u0644\u0627\u064b \u0641\u064a \u0628\u0631\u0646\u0627\u0645\u062c \u0645\u0643\u0627\u0641\u0623\u0629 \u0627\u0644\u0631\u0627\u062c\u062d\u064a\u060c \u0644\u0627\u0633\u062a\u0631\u062f\u0627\u062f \u0628\u0646\u062c\u0627\u062d",
-    "en_US":"The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful.",
-    "fr":""
-  },
-  "alraji_enter_amount_error_msg":{
-    "ar_SA":"\u064a\u062c\u0628 \u0623\u0646 \u064a\u0643\u0648\u0646 \u0627\u0644\u0645\u0628\u0644\u063a \u0623\u0642\u0644 \u0645\u0646 \u0627\u0644\u0645\u0628\u0644\u063a \u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a",
-    "en_US":"Amount cannot exceed the total amount",
-    "fr":""
-  },
-  "alrhaji_description":{
-    "ar_SA":"\u064a\u062c\u0628 \u0623\u0646 \u064a\u0643\u0648\u0646 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645 \u0645\u0633\u062c\u0644\u0627\u064b \u0641\u064a \u0628\u0631\u0646\u0627\u0645\u062c \u0645\u0643\u0627\u0641\u0623\u0629 \u0627\u0644\u0631\u0627\u062c\u062d\u064a\u060c \u0644\u0627\u0633\u062a\u0631\u062f\u0627\u062f \u0628\u0646\u062c\u0627\u062d",
-    "en_US":"The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful.",
-    "fr":""
-  },
-  "alrhaji_label":{
-    "ar_SA":"\u0645\u0635\u0631\u0641 \u0627\u0644\u0631\u0627\u062c\u062d\u064a (\u0627\u0644\u0645\u0643\u0627\u0641\u0622\u062a)",
-    "en_US":"Al Rhaji Bank (Mokafa's Rewards)",
-    "fr":""
-  },
-  "amount_spent_label":{
-    "ar_SA":"\u0627\u0644\u0645\u0628\u0644\u063a \u0627\u0644\u0645\u062f\u0641\u0648\u0639",
-    "en_US":"Amount Spent",
-    "fr":""
-  },
-  "apply_a_coupon":{
-    "ar_SA":"\u0627\u0633\u062a\u062e\u062f\u0645 \u0643\u0648\u0628\u0648\u0646",
-    "en_US":"Apply a coupon",
-    "fr":""
-  },
-  "apply_coupons_label":{
-    "ar_SA":"\u0627\u0633\u062a\u062e\u062f\u0645 \u0643\u0648\u0628\u0648\u0646\u0627\u062a",
-    "en_US":"Apply Coupons",
-    "fr":""
-  },
-  "apply_digital_coupons":{
-    "ar_SA":"\u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u0643\u0648\u0628\u0648\u0646 \u0627\u0644\u0631\u0642\u0645\u064a\u0629",
-    "en_US":"Apply Digital Coupons",
-    "fr":""
-  },
-  "apply_label":{
-    "ar_SA":"\u062a\u0637\u0628\u064a\u0642",
-    "en_US":"Apply",
-    "fr":""
-  },
-  "arabic_lang_key":{
-    "ar_SA":"\u0639\u0631\u0628\u064a",
-    "en_US":"Arabic",
-    "fr":""
-  },
-  "are_you_sure_cancel_order":{
-    "ar_SA":"\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0623\u0646\u0643 \u062a\u0631\u064a\u062f \u0625\u0644\u063a\u0627\u0621 \u0647\u0630\u0627 \u0627\u0644\u0637\u0644\u0628\u061f \u0644\u0627 \u064a\u0645\u0643\u0646 \u0627\u0644\u062a\u0631\u0627\u062c\u0639 \u0639\u0646 \u0647\u0630\u0627",
-    "en_US":"Are you sure you want to cancel this order? This can't be undone",
-    "fr":""
-  },
-  "are_you_sure_want_delete":{
-    "ar_SA":"\u0647\u0644 \u0627\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0627\u0646\u0643 \u062a\u0631\u064a\u062f \u062d\u0630\u0641 \u062d\u0633\u0627\u0628\u0643\u061f",
-    "en_US":"Are you sure you want to delete your account?",
-    "fr":""
-  },
-  "are_you_sure_want_logout":{
-    "ar_SA":"\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0623\u0646\u0643 \u062a\u0631\u064a\u062f \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062e\u0631\u0648\u062c\u061f",
-    "en_US":"Are you sure you want to log out?",
-    "fr":""
-  },
-  "arrived_serve_order":{
-    "ar_SA":"\u0648\u0635\u0644\u062a.. \u0623\u062d\u0636\u0631 \u0637\u0644\u0628\u064a",
-    "en_US":"Arrived - Serve my order",
-    "fr":""
-  },
-  "ashab_herfy":{
-    "ar_SA":"\u0627\u0635\u062d\u0627\u0628 \u0647\u0631\u0641\u064a",
-    "en_US":"Ashab Herfy",
-    "fr":""
-  },
-  "available_to_redeem":{
-    "ar_SA":"\u0645\u062a\u0627\u062d \u0644\u0644\u0627\u0633\u062a\u0631\u062f\u0627\u062f",
-    "en_US":"Available to Redeem",
-    "fr":""
-  },
-  "back":{
-    "ar_SA":"\u0627\u0644\u0639\u0648\u062f\u0629",
-    "en_US":"Back",
-    "fr":""
-  },
-  "become_ashab_herfy":{
-    "ar_SA":"\u0623\u0635\u0628\u062d \u0623\u0635\u062d\u0627\u0628 \u0647\u0631\u0641\u064a!",
-    "en_US":"Become an Ashab Herfy!",
-    "fr":""
-  },
-  "become_ashab_herfy_description":{
-    "ar_SA":"\u0639\u0646\u062f \u0625\u0646\u0634\u0627\u0621 \u062d\u0633\u0627\u0628 \u0623\u0648 \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644 \u0625\u0644\u0649 \u062d\u0633\u0627\u0628\u0643 \u0627\u0644\u062d\u0627\u0644\u064a\u060c \u062a\u062d\u0635\u0644 \u0639\u0644\u0649 \u0646\u0642\u0627\u0637 \u0639\u0644\u0649 \u0643\u0644 \u0637\u0644\u0628",
-    "en_US":"By creating an account or signing in to your existing one you get point on every order",
-    "fr":""
-  },
-  "best_event":{
-    "ar_SA":"\u0623\u0641\u0636\u0644 \u0627\u0644\u0623\u062d\u062f\u0627\u062b. \u0623\u0633\u0639\u0627\u0631 \u0631\u0627\u0626\u0639\u0629. \u062f\u0639\u0648\u0646\u0627 \u0646\u062e\u062f\u0645\u0643.",
-    "en_US":"Best event. Best budget. Order our catering.",
-    "fr":""
-  },
-  "bookmark_placeholder":{
-    "ar_SA":"\u0645\u062b\u0644: \u0645\u0646\u0632\u0644\u064a",
-    "en_US":"eg. My Home",
-    "fr":""
-  },
-  "branch_is_closed_error":{
-    "ar_SA":"\u0627\u0644\u0641\u0631\u0639 \u0645\u063a\u0644\u0642. \u064a\u0641\u062a\u062d \u0639\u0644\u0649 (x).",
-    "en_US":"This branch is closed. It opens (x).",
-    "fr":""
-  },
-  "call":{
-    "ar_SA":"\u0627\u062a\u0635\u0644 \u0628\u0646\u0627",
-    "en_US":"Call",
-    "fr":""
-  },
-  "calories_kcal":{
-    "ar_SA":"(x) \u0643\u0627\u0644",
-    "en_US":"(x) Kcal",
-    "fr":""
-  },
-  "can_not_be_edited":{
-    "ar_SA":"\u0627\u0644\u062a\u062d\u0631\u064a\u0631 \u063a\u064a\u0631 \u0645\u0645\u0643\u0646.",
-    "en_US":"Can not be edited.",
-    "fr":""
-  },
-  "cancel_label":{
-    "ar_SA":"\u0625\u0644\u063a\u0627\u0621",
-    "en_US":"Cancel",
-    "fr":""
-  },
-  "cancel_order":{
-    "ar_SA":"\u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"CANCEL ORDER",
-    "fr":""
-  },
-  "cancel_order_new":{
-    "ar_SA":"\u0627\u0644\u063a\u0627\u0621 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Cancel Order",
-    "fr":""
-  },
-  "cancel_order_not_allowed":{
-    "ar_SA":"\u0646\u062d\u0646 \u0628\u0635\u062f\u0642 \u0646\u0642\u062f\u0631 \u062c\u0645\u064a\u0639 \u0639\u0645\u0644\u0627\u0626\u0646\u0627. \u064a\u0631\u062c\u0649 \u0645\u0644\u0627\u062d\u0638\u0629 \u0623\u0646\u0646\u0627 \u0644\u0627 \u0646\u0633\u0645\u062d \u0628\u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u0637\u0644\u0628 \u0641\u064a \u0627\u0644\u0648\u0642\u062a \u0627\u0644\u062d\u0627\u0644\u064a.",
-    "en_US":"We appreciate wonderful customers like you. Kindly take note that we don't allow order cancellation at this time.",
-    "fr":""
-  },
-  "cancel_your_order_label":{
-    "ar_SA":"\u0625\u0644\u063a\u0627\u0621 \u0637\u0644\u0628\u0643\u061f",
-    "en_US":"Cancel you order?",
-    "fr":""
-  },
-  "cancel_your_order_mesage":{
-    "ar_SA":"\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0623\u0646\u0643 \u062a\u0631\u064a\u062f \u0625\u0644\u063a\u0627\u0621 \u0637\u0644\u0628\u0643\u061f",
-    "en_US":"Are you sure you want to cancel your order?",
-    "fr":""
-  },
-  "cancel_your_order_message":{
-    "ar_SA":"\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0623\u0646\u0643 \u062a\u0631\u064a\u062f \u0625\u0644\u063a\u0627\u0621 \u0637\u0644\u0628\u0643\u061f",
-    "en_US":"Are you sure you want to cancel your order?",
-    "fr":""
-  },
-  "cancelled":{
-    "ar_SA":"\u0645\u0644\u063a\u0649",
-    "en_US":"Cancelled",
-    "fr":""
-  },
-  "card":{
-    "ar_SA":"\u0628\u0637\u0627\u0642\u0629",
-    "en_US":"Card",
-    "fr":""
-  },
-  "card_details":{
-    "ar_SA":"\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0627\u0644\u0628\u0637\u0627\u0642\u0629",
-    "en_US":"Card Details",
-    "fr":""
-  },
-  "card_failed":{
-    "ar_SA":"\u0641\u0634\u0644 \u0627\u0644\u062f\u0641\u0639 \u0628\u0627\u0644\u0628\u0637\u0627\u0642\u0629",
-    "en_US":"Card payment failed",
-    "fr":""
-  },
-  "card_holder":{
-    "ar_SA":"\u062d\u0627\u0645\u0644 \u0627\u0644\u0628\u0637\u0627\u0642\u0629",
-    "en_US":"Card Holder",
-    "fr":""
-  },
-  "card_number":{
-    "ar_SA":"\u0631\u0642\u0645 \u0627\u0644\u0628\u0637\u0627\u0642\u0629",
-    "en_US":"Card number",
-    "fr":""
-  },
-  "card_on_delivery":{
-    "ar_SA":"\u0628\u0627\u0644\u0628\u0637\u0627\u0642\u0629 \u0639\u0646\u062f \u0627\u0644\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Card on Delivery",
-    "fr":""
-  },
-  "card_on_pickup":{
-    "ar_SA":"\u0628\u0627\u0644\u0628\u0637\u0627\u0642\u0629 \u0639\u0646\u062f \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645",
-    "en_US":"Card on Collection",
-    "fr":""
-  },
-  "cart_item_count_label":{
-    "ar_SA":"(x) \u0645\u0646\u062a\u062c\u0627\u062a",
-    "en_US":"(x) items",
-    "fr":""
-  },
-  "cash_on_delivery":{
-    "ar_SA":"\u0627\u0644\u062f\u0641\u0639 \u0639\u0646\u062f \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645",
-    "en_US":"Cash on Delivery",
-    "fr":""
-  },
-  "cash_on_pickup":{
-    "ar_SA":"\u0646\u0642\u062f\u064a",
-    "en_US":"Cash",
-    "fr":""
-  },
-  "cater_with_herfy":{
-    "ar_SA":"\u0627\u0644\u062a\u0645\u0648\u064a\u0646",
-    "en_US":"Cater with Herfy",
-    "fr":""
-  },
-  "ccv":{
-    "ar_SA":"CVV",
-    "en_US":"CVV",
-    "fr":""
-  },
-  "checkout":{
-    "ar_SA":"\u0627\u0644\u062f\u0641\u0639",
-    "en_US":"Checkout",
-    "fr":""
-  },
-  "checkout_enter_valid_card":{
-    "ar_SA":"\u0627\u0644\u0631\u062c\u0627\u0621 \u0625\u062f\u062e\u0627\u0644 \u0631\u0642\u0645 \u0628\u0637\u0627\u0642\u0629 \u0635\u0627\u0644\u062d",
-    "en_US":"Please enter a valid card number",
-    "fr":""
-  },
-  "checkout_enter_valid_cvv":{
-    "ar_SA":"\u064a\u0631\u062c\u0649 \u0625\u062f\u062e\u0627\u0644 \u0631\u0645\u0632 cvv \u0635\u0627\u0644\u062d",
-    "en_US":"Please enter a valid cvv code",
-    "fr":""
-  },
-  "checkout_month_placeholder":{
-    "ar_SA":"\u0627\u0644\u0634\u0647\u0631",
-    "en_US":"MM",
-    "fr":""
-  },
-  "checkout_security_code_caps":{
-    "ar_SA":"\u0631\u0642\u0645 \u0633\u0631\u064a",
-    "en_US":"Security code",
-    "fr":""
-  },
-  "checkout_year_placeholder":{
-    "ar_SA":"\u0627\u0644\u0633\u0646\u0629",
-    "en_US":"YY",
-    "fr":""
-  },
-  "choose_payment":{
-    "ar_SA":"\u0627\u062e\u062a\u0631 \u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062f\u0641\u0639",
-    "en_US":"CHOOSE PAYMENT METHOD",
-    "fr":""
-  },
-  "choose_payment_method":{
-    "ar_SA":"\u0627\u062e\u062a\u0631 \u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062f\u0641\u0639",
-    "en_US":"Choose Payment Method",
-    "fr":""
-  },
-  "choose_pickup_method":{
-    "ar_SA":"\u0627\u062e\u062a\u0631 \u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645",
-    "en_US":"Choose Pickup Method",
-    "fr":""
-  },
-  "choose_your_curbside_vehicle":{
-    "ar_SA":"\u0627\u062e\u062a\u0631 \u0633\u064a\u0627\u0631\u062a\u0643",
-    "en_US":"Choose your curbside vehicle",
-    "fr":""
-  },
-  "choose_your_lang":{
-    "ar_SA":"\u0627\u062e\u062a\u0631 \u0644\u063a\u062a\u0643 \u0644\u0644\u0645\u062a\u0627\u0628\u0639\u0629",
-    "en_US":"Choose your language to continue",
-    "fr":""
-  },
-  "choose_your_lang_subtitle":{
-    "ar_SA":"Choose your language to continue",
-    "en_US":"\u0627\u062e\u062a\u0631 \u0644\u063a\u062a\u0643 \u0644\u0644\u0645\u062a\u0627\u0628\u0639\u0629",
-    "fr":""
-  },
-  "chose_your_language_arabic":{
-    "ar_SA":"Choose your language to continue",
-    "en_US":"\u0627\u062e\u062a\u0631 \u0644\u063a\u062a\u0643 \u0644\u0644\u0645\u062a\u0627\u0628\u0639\u0629",
-    "fr":""
-  },
-  "chose_your_language_english":{
-    "ar_SA":"\u0627\u062e\u062a\u0631 \u0644\u063a\u062a\u0643 \u0644\u0644\u0645\u062a\u0627\u0628\u0639\u0629",
-    "en_US":"Choose your language to continue",
-    "fr":""
-  },
-  "cic_number":{
-    "ar_SA":"\u0631\u0642\u0645 CIC",
-    "en_US":"CIC Number",
-    "fr":""
-  },
-  "clear_basket":{
-    "ar_SA":"\u0625\u0641\u0631\u0627\u063a \u0627\u0644\u0639\u0631\u0628\u0629",
-    "en_US":"Clear Basket",
-    "fr":""
-  },
-  "clear_your_basket_descrption":{
-    "ar_SA":"\u0644\u062f\u064a\u0643 \u0623\u0634\u064a\u0627\u0621 \u0641\u064a \u0627\u0644\u0639\u0631\u0628\u0629 \u0645\u0639 \u0646\u0648\u0639 \u0637\u0644\u0628 \u0622\u062e\u0631. \u0633\u062a\u062a\u0645 \u0625\u0632\u0627\u0644\u0629 \u0647\u0630\u0647 \u0627\u0644\u0623\u0634\u064a\u0627\u0621 \u0644\u0644\u0645\u062a\u0627\u0628\u0639\u0629.",
-    "en_US":"You already have a items in your basket with another order type. Those will be removed to start a new one.",
-    "fr":""
-  },
-  "clear_your_current_basket":{
-    "ar_SA":"\u0625\u0641\u0631\u0627\u063a \u0627\u0644\u0639\u0631\u0628\u0629",
-    "en_US":"Clear your current basket",
-    "fr":""
-  },
-  "closed_open_store":{
-    "ar_SA":"\u0645\u063a\u0644\u0642 - \u064a\u0641\u062a\u062d \u0641\u064a (x)",
-    "en_US":"CLOSED - Opens (x)",
-    "fr":""
-  },
-  "combo_size":{
-    "ar_SA":"\u062d\u062c\u0645 \u0627\u0644\u0643\u0648\u0645\u0628\u0648",
-    "en_US":"Combo Size",
-    "fr":""
-  },
-  "complete_profile":{
-    "ar_SA":"\u0627\u0644\u0645\u0644\u0641 \u0627\u0644\u0634\u062e\u0635\u064a \u0627\u0644\u0643\u0627\u0645\u0644",
-    "en_US":"Complete Profile",
-    "fr":""
-  },
-  "complete_your_profile":{
-    "ar_SA":"\u0623\u0643\u0645\u0644 \u0645\u0639\u0644\u0648\u0645\u0627\u062a \u062d\u0633\u0627\u0628\u0643",
-    "en_US":"Complete your profile",
-    "fr":""
-  },
-  "confirm":{
-    "ar_SA":"\u0627\u0644\u062a\u0623\u0643\u064a\u062f",
-    "en_US":"Confirm",
-    "fr":""
-  },
-  "confirm_caps":{
-    "ar_SA":"\u0627\u0631\u0633\u0627\u0644",
-    "en_US":"CONFIRM",
-    "fr":""
-  },
-  "confirm_delivery_location":{
-    "ar_SA":"\u062a\u0623\u0643\u064a\u062f \u0645\u0648\u0642\u0639 \u0627\u0644\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Confirm delivery location",
-    "fr":""
-  },
-  "confirm_number":{
-    "ar_SA":"\u062a\u0627\u0643\u064a\u062f \u0631\u0642\u0645\u0643",
-    "en_US":"Confirm your number",
-    "fr":""
-  },
-  "confirm_your_number":{
-    "ar_SA":"\u062a\u0623\u0643\u064a\u062f \u0627\u0644\u0631\u0642\u0645",
-    "en_US":"Confirm your number",
-    "fr":""
-  },
-  "congrats_youve_reached_x":{
-    "ar_SA":"\u0645\u0628\u0631\u0648\u0643! \u0648\u0635\u0644\u062a (x)",
-    "en_US":"Congrats! You\u2019ve reached (x)",
-    "fr":""
-  },
-  "continue_as_guest":{
-    "ar_SA":"\u0627\u0633\u062a\u0645\u0631 \u0643\u0636\u064a\u0641",
-    "en_US":"Continue as Guest",
-    "fr":""
-  },
-  "continue_label":{
-    "ar_SA":"\u0627\u0633\u062a\u0645\u0631",
-    "en_US":"Continue",
-    "fr":""
-  },
-  "continue_with_apple":{
-    "ar_SA":"\u062a\u0648\u0627\u0635\u0644 \u0645\u0639 \u0623\u0628\u0644",
-    "en_US":"Continue with Apple",
-    "fr":""
-  },
-  "continue_with_google":{
-    "ar_SA":"\u062a\u0648\u0627\u0635\u0644 \u0645\u0639 \u062c\u0648\u062c\u0644",
-    "en_US":"Continue with Google",
-    "fr":""
-  },
-  "coupon_code_applied":{
-    "ar_SA":"\u062a\u0645 \u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u0643\u0648\u0628\u0648\u0646",
-    "en_US":"Coupon Code Applied",
-    "fr":""
-  },
-  "credit_debit_card":{
-    "ar_SA":"\u0628\u0637\u0627\u0642\u0629 \u0627\u0644\u0627\u0626\u062a\u0645\u0627\u0646\/\u0627\u0644\u062e\u0635\u0645",
-    "en_US":"Credit\/Debit Card",
-    "fr":""
-  },
-  "curbside":{
-    "ar_SA":"\u0641\u064a \u0627\u0644\u0633\u064a\u0627\u0631\u0629",
-    "en_US":"Curbside",
-    "fr":""
-  },
-  "curbside_description":{
-    "ar_SA":"\u0648\u0642\u0641 \u0633\u064a\u0627\u0631\u062a\u0643 \u0639\u0646\u062f \u0627\u0644\u0645\u0637\u0639\u0645 \u0648\u0633\u064a\u062a\u0645 \u062a\u0642\u062f\u064a\u0645 \u0627\u0644\u0637\u0644\u0628 \u0641\u064a \u0633\u064a\u0627\u0631\u062a\u0643",
-    "en_US":"Park at the restaurant and your order will be served in your car",
-    "fr":""
-  },
-  "curbside_pickup":{
-    "ar_SA":"\u0627\u0633\u062a\u0644\u0627\u0645 \u0627\u0644\u0637\u0644\u0628 \u0641\u064a \u0627\u0644\u0633\u064a\u0627\u0631\u0629",
-    "en_US":"Curbside pickup",
-    "fr":""
-  },
-  "curbside_pickup_caps":{
-    "ar_SA":"\u0627\u0633\u062a\u0644\u0627\u0645 \u0627\u0644\u0637\u0644\u0628 \u0641\u064a \u0627\u0644\u0633\u064a\u0627\u0631\u0629",
-    "en_US":"Cubside Pickup",
-    "fr":""
-  },
-  "curbside_vehicle":{
-    "ar_SA":"\u0627\u0644\u0633\u064a\u0627\u0631\u0629",
-    "en_US":"Curbside Vehicle",
-    "fr":""
-  },
-  "curbside_vehicles":{
-    "ar_SA":"\u0627\u0644\u0633\u064a\u0627\u0631\u0627\u062a",
-    "en_US":"Curbside Vehicles",
-    "fr":""
-  },
-  "date_of_birth":{
-    "ar_SA":"\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0645\u064a\u0644\u0627\u062f",
-    "en_US":"Date of Birth",
-    "fr":""
-  },
-  "date_of_birth_caps":{
-    "ar_SA":"\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0648\u0644\u0627\u062f\u0629",
-    "en_US":"DATE OF BIRTH",
-    "fr":""
-  },
-  "days_ago":{
-    "ar_SA":"\u0642\u0628\u0644 (x) \u0623\u064a\u0627\u0645",
-    "en_US":"(x) days ago",
-    "fr":""
-  },
-  "debit_credit_card":{
-    "ar_SA":"\u0628\u0637\u0627\u0642\u0629 \u0627\u0644\u0627\u0626\u062a\u0645\u0627\u0646\/\u0627\u0644\u0628\u0646\u0643",
-    "en_US":"Debit\/Credit Card",
-    "fr":""
-  },
-  "delete_account":{
-    "ar_SA":"\u062d\u0630\u0641 \u0627\u0644\u062d\u0633\u0627\u0628",
-    "en_US":"Delete Account",
-    "fr":""
-  },
-  "delete_account_and_remove":{
-    "ar_SA":"\u062d\u0630\u0641 \u0627\u0644\u062d\u0633\u0627\u0628 \u0648\u0625\u0632\u0627\u0644\u0629 \u0643\u0627\u0641\u0629 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a. \u064a\u0631\u062c\u0649 \u0645\u0644\u0627\u062d\u0638\u0629 \u0623\u0646 \u0647\u0630\u0627 \u0627\u0644\u0625\u062c\u0631\u0627\u0621 \u0644\u0627 \u064a\u0645\u0643\u0646 \u0627\u0644\u062a\u0631\u0627\u062c\u0639 \u0639\u0646\u0647.",
-    "en_US":"Delete account and remove all data. Please remember this action can not be reversed.",
-    "fr":""
-  },
-  "delete_label":{
-    "ar_SA":"\u0627\u0645\u0633\u062d",
-    "en_US":"Delete",
-    "fr":""
-  },
-  "delete_my_account":{
-    "ar_SA":"\u0627\u062d\u0630\u0641 \u062d\u0633\u0627\u0628\u064a",
-    "en_US":"Delete My Account",
-    "fr":""
-  },
-  "deliver":{
-    "ar_SA":"\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Deliver",
-    "fr":""
-  },
-  "delivered":{
-    "ar_SA":"\u062a\u0645 \u0627\u0644\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Delivered",
-    "fr":""
-  },
-  "delivery":{
-    "ar_SA":"\u0627\u0644\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Delivery",
-    "fr":""
-  },
-  "delivery_address":{
-    "ar_SA":"\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Delivery Address",
-    "fr":""
-  },
-  "delivery_addresses":{
-    "ar_SA":"\u0639\u0646\u0627\u0648\u064a\u0646 \u0627\u0644\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Delivery Addresses",
-    "fr":""
-  },
-  "delivery_charge":{
-    "ar_SA":"\u0631\u0633\u0648\u0645 \u0627\u0644\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Delivery Charges",
-    "fr":""
-  },
-  "delivery_details":{
-    "ar_SA":"\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Delivery Details",
-    "fr":""
-  },
-  "delivery_in_mins":{
-    "ar_SA":"\u0627\u0644\u062a\u0648\u0635\u064a\u0644 \u0641\u064a (x) \u062f\u0642\u064a\u0642\u0629",
-    "en_US":"Delivery in (x) mins",
-    "fr":""
-  },
-  "delivery_in_x_mins":{
-    "ar_SA":"\u0627\u0644\u062a\u0648\u0635\u064a\u0644 \u062e\u0644\u0627\u0644 (x) \u062f\u0642\u064a\u0642\u0629",
-    "en_US":"Delivery In (x) mins",
-    "fr":""
-  },
-  "delivery_instruction":{
-    "ar_SA":"\u062a\u0639\u0644\u064a\u0645\u0627\u062a \u0627\u0644\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Delivery Instruction",
-    "fr":""
-  },
-  "delivery_time":{
-    "ar_SA":"\u0648\u0642\u062a \u0627\u0644\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Delivery Time",
-    "fr":""
-  },
-  "did_not_get_code":{
-    "ar_SA":"\u0644\u0645 \u062a\u062d\u0635\u0644 \u0639\u0644\u0649 \u0627\u0644\u0643\u0648\u062f \u061f",
-    "en_US":"Did not get the code?",
-    "fr":""
-  },
-  "digital_coupon_applied":{
-    "ar_SA":"\u062a\u0645 \u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u0643\u0648\u0628\u0648\u0646 \u0627\u0644\u0631\u0642\u0645\u064a\u0629",
-    "en_US":"Digital Coupon Applied",
-    "fr":""
-  },
-  "dine_in":{
-    "ar_SA":"\u0637\u0644\u0628 \u0645\u062d\u0644\u064a",
-    "en_US":"Dine In",
-    "fr":""
-  },
-  "dine_in_details":{
-    "ar_SA":"\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0637\u0644\u0628 \u0627\u0644\u0633\u0641\u0631\u064a",
-    "en_US":"Dine In Details",
-    "fr":""
-  },
-  "dine_in_label":{
-    "ar_SA":"\u0645\u062d\u0644\u064a",
-    "en_US":"Dine-in",
-    "fr":""
-  },
-  "dine_in_mins":{
-    "ar_SA":"\u0637\u0644\u0628\u0643 \u062c\u0627\u0647\u0632 \u0641\u064a (x) \u062f\u0642\u064a\u0642\u0629",
-    "en_US":"Dine In in (x) mins",
-    "fr":""
-  },
-  "dine_in_x_mins":{
-    "ar_SA":"\u062c\u0627\u0647\u0632 \u0627\u0644\u0637\u0639\u0627\u0645 \u0641\u064a (x) \u062f\u0642\u064a\u0642\u0629",
-    "en_US":"Dine In (x) mins",
-    "fr":""
-  },
-  "dinein_address":{
-    "ar_SA":"\u0641\u0631\u0639 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Dine In Address",
-    "fr":""
-  },
-  "disabled_items_delivery":{
-    "ar_SA":"\u0639\u0630\u0631\u0627 \u060c \u0627\u0644\u0639\u0646\u0627\u0635\u0631 \u0627\u0644\u0645\u062f\u0631\u062c\u0629 \u0623\u062f\u0646\u0627\u0647 \u063a\u064a\u0631 \u0645\u062a\u0648\u0641\u0631\u0629 \u0641\u064a \u0647\u0630\u0627 \u0627\u0644\u0641\u0631\u0639. \u064a\u0631\u062c\u0649 \u0625\u0632\u0627\u0644\u062a\u0647\u0627 \u0644\u0644\u0645\u062a\u0627\u0628\u0639\u0629.",
-    "en_US":"Sorry, the items listed below are not available at your selected branch. Kindly remove them to proceed to checkout.",
-    "fr":""
-  },
-  "disabled_items_pickup":{
-    "ar_SA":"\u0639\u0630\u0631\u0627 \u060c \u0627\u0644\u0639\u0646\u0627\u0635\u0631 \u0627\u0644\u0645\u062f\u0631\u062c\u0629 \u0623\u062f\u0646\u0627\u0647 \u063a\u064a\u0631 \u0645\u062a\u0648\u0641\u0631\u0629 \u0641\u064a \u0647\u0630\u0627 \u0627\u0644\u0641\u0631\u0639. \u064a\u0631\u062c\u0649 \u0625\u0632\u0627\u0644\u062a\u0647\u0627 \u0644\u0644\u0645\u062a\u0627\u0628\u0639\u0629.",
-    "en_US":"Sorry, the items listed below are not available at your selected branch. Kindly remove them to proceed to checkout.",
-    "fr":""
-  },
-  "discount":{
-    "ar_SA":"\u062e\u0635\u0645",
-    "en_US":"Discount",
-    "fr":""
-  },
-  "do_have_other_feedback":{
-    "ar_SA":"\u0644\u062f\u064a\u0643 \u062a\u0639\u0644\u064a\u0642\u0627\u062a \u0623\u062e\u0631\u0649\u061f",
-    "en_US":"Do you have any other feedback?",
-    "fr":""
-  },
-  "do_not_call_ring_me":{
-    "ar_SA":"\u0644\u0627 \u062a\u062f\u0642 \u0627\u0644\u062c\u0631\u0633\u060c \u0627\u062a\u0635\u0644 \u0628\u064a",
-    "en_US":"Do not ring the bell, Call me",
-    "fr":""
-  },
-  "done":{
-    "ar_SA":"\u062a\u0645",
-    "en_US":"done",
-    "fr":""
-  },
-  "drive_thru":{
-    "ar_SA":"\u0627\u0637\u0644\u0628 \u0645\u0646 \u0627\u0644\u0633\u064a\u0627\u0631\u0629",
-    "en_US":"Drive Thru",
-    "fr":""
-  },
-  "drive_thru_description":{
-    "ar_SA":"\u0627\u0633\u062a\u0644\u0645 \u0637\u0644\u0628\u0643 \u0645\u0646 \u062e\u0637 \u0627\u0644\u0637\u0644\u0628\u0627\u062a \u0627\u0644\u0633\u064a\u0627\u0631\u0629",
-    "en_US":"Pick up your order from the drive thru.",
-    "fr":""
-  },
-  "drive_thru_pickup":{
-    "ar_SA":"\u0645\u0646 \u062e\u0637 \u0627\u0644\u0637\u0644\u0628\u0627\u062a \u0627\u0644\u0633\u064a\u0627\u0631\u0629",
-    "en_US":"Drive Thru Pickup",
-    "fr":""
-  },
-  "dyamic_code_digit":{
-    "ar_SA":"\u0623\u062f\u062e\u0644 \u0627\u0644\u0643\u0648\u062f \u0627\u0644\u0645\u0643\u0648\u0646 \u0645\u0646 (x) \u0627\u0644\u0630\u064a \u0625\u0631\u0633\u0644\u0646\u0627\u0647 \u0625\u0644\u0649 \u0631\u0642\u0645\u0643",
-    "en_US":"Enter the (x) digit code sent to your number",
-    "fr":""
-  },
-  "earned_label":{
-    "ar_SA":"\u0627\u0644\u0645\u0643\u062a\u0633\u0628\u0629",
-    "en_US":"Earned",
-    "fr":""
-  },
-  "edit":{
-    "ar_SA":"\u062a\u0639\u062f\u064a\u0644",
-    "en_US":"Edit",
-    "fr":""
-  },
-  "edit_profile":{
-    "ar_SA":"\u062a\u0639\u062f\u064a\u0644 \u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0627\u0644\u0634\u062e\u0635\u064a",
-    "en_US":"Edit Profile",
-    "fr":""
-  },
-  "email_address":{
-    "ar_SA":"\u0627\u0644\u0627\u064a\u0645\u064a\u0644",
-    "en_US":"Email Address",
-    "fr":""
-  },
-  "english_lang_key":{
-    "ar_SA":"\u0625\u0646\u062c\u0644\u064a\u0632\u064a",
-    "en_US":"English",
-    "fr":""
-  },
-  "enter_car_brand_name":{
-    "ar_SA":"\u0623\u062f\u062e\u0644 \u0646\u0648\u0639 \u0633\u064a\u0627\u0631\u062a\u0643.",
-    "en_US":"Enter the name of your car brand.",
-    "fr":""
-  },
-  "enter_coupon_code":{
-    "ar_SA":"\u0623\u062f\u062e\u0644 \u0631\u0645\u0632 \u0627\u0644\u0643\u0648\u0628\u0648\u0646\u061f",
-    "en_US":"Enter coupon code?",
-    "fr":""
-  },
-  "enter_cvv":{
-    "ar_SA":"\u0627\u062f\u062e\u0644 CVV",
-    "en_US":"Enter CVV",
-    "fr":""
-  },
-  "enter_full_name":{
-    "ar_SA":"\u0623\u062f\u062e\u0644 \u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644",
-    "en_US":"Enter full name",
-    "fr":""
-  },
-  "enter_new_phone_number":{
-    "ar_SA":"\u0623\u062f\u062e\u0644 \u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641 \u0627\u0644\u062c\u062f\u064a\u062f",
-    "en_US":"Enter New Phone Number",
-    "fr":""
-  },
-  "enter_number_description":{
-    "ar_SA":"\u0646\u062d\u062a\u0627\u062c \u0625\u0644\u0649 \u0631\u0642\u0645 \u0647\u0627\u062a\u0641\u0643 \u0627\u0644\u0645\u062d\u0645\u0648\u0644 \u0644\u0645\u0633\u0627\u0639\u062f\u062a\u0646\u0627 \u0641\u064a \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0628\u0643. \u0642\u062f \u064a\u062a\u0645 \u062a\u0637\u0628\u064a\u0642 \u0631\u0633\u0648\u0645 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0642\u064a\u0627\u0633\u064a\u0629.",
-    "en_US":"We need you mobile number to help us contact you in case of an order query. Standard data charge may apply.",
-    "fr":""
-  },
-  "enter_phone_number":{
-    "ar_SA":"\u0623\u062f\u062e\u0644 \u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641",
-    "en_US":"Enter Phone Number",
-    "fr":""
-  },
-  "enter_phone_number_label":{
-    "ar_SA":"\u0623\u062f\u062e\u0644 \u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641",
-    "en_US":"Enter Phone Number",
-    "fr":""
-  },
-  "enter_six_digit":{
-    "ar_SA":"\u0623\u062f\u062e\u0644 \u0627\u0644\u0643\u0648\u062f 6 \u0623\u0631\u0642\u0627\u0645 \u0627\u0644\u0630\u064a \u062a\u0645 \u0625\u0631\u0633\u0627\u0644\u0647 \u0625\u0644\u0649 \u0631\u0642\u0645\u0643",
-    "en_US":"Enter the 6 digit code sent to your number",
-    "fr":""
-  },
-  "enter_the_code":{
-    "ar_SA":"\u0623\u062f\u062e\u0644 \u0627\u0644\u0643\u0648\u062f \u0627\u0644\u0645\u0643\u0648\u0646 \u0645\u0646 (x) \u0627\u0631\u0642\u0627\u0645 \u0627\u0644\u0630\u064a \u0627\u0631\u0633\u0644\u0646\u0627\u0647 \u0625\u0644\u0649 \u0631\u0642\u0645\u0643",
-    "en_US":"Enter the (x) digit code sent to your number",
-    "fr":""
-  },
-  "enter_the_four_digit":{
-    "ar_SA":"\u0623\u062f\u062e\u0644 \u0627\u0644\u0643\u0648\u062f \u0627\u0644\u0645\u0643\u0648\u0646 \u0645\u0646 4 \u0627\u0631\u0642\u0627\u0645 \u0627\u0644\u0630\u064a \u0627\u0631\u0633\u0644\u0646\u0627\u0647 \u0625\u0644\u0649 \u0631\u0642\u0645\u0643",
-    "en_US":"Enter the 4 digit code sent to your number",
-    "fr":""
-  },
-  "error_caps":{
-    "ar_SA":"\u062e\u0637\u0623",
-    "en_US":"ERROR",
-    "fr":""
-  },
-  "estimate_pickup_time":{
-    "ar_SA":"\u0627\u0644\u0648\u0642\u062a \u0627\u0644\u0645\u0642\u062f\u0631 \u0644\u0644\u0627\u0633\u062a\u0644\u0627\u0645",
-    "en_US":"Estimate pickup time",
-    "fr":""
-  },
-  "estimate_time":{
-    "ar_SA":"\u0627\u0644\u0648\u0642\u062a \u0627\u0644\u0645\u0642\u062f\u0631",
-    "en_US":"Estimate time",
-    "fr":""
-  },
-  "estimated":{
-    "ar_SA":"\u0627\u0644\u0648\u0642\u062a \u0627\u0644\u0645\u0642\u062f\u0631",
-    "en_US":"Estimated",
-    "fr":""
-  },
-  "estimated_delivery_time":{
-    "ar_SA":"\u0627\u0644\u0648\u0642\u062a \u0627\u0644\u0645\u0642\u062f\u0631 \u0644\u0644\u062a\u0648\u0635\u064a\u0644",
-    "en_US":"Estimated delivery time",
-    "fr":""
-  },
-  "estimated_time":{
-    "ar_SA":"\u0627\u0644\u0648\u0642\u062a \u0627\u0644\u0645\u0642\u062f\u0631",
-    "en_US":"Estimated time",
-    "fr":""
-  },
-  "exp_date":{
-    "ar_SA":"\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0627\u0646\u062a\u0647\u0627\u0621",
-    "en_US":"Expiry Date",
-    "fr":""
-  },
-  "expiration_date":{
-    "ar_SA":"\u062a\u0627\u0631\u064a\u062e \u0627\u0646\u062a\u0647\u0627\u0621 \u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0629",
-    "en_US":"Expiration Date",
-    "fr":""
-  },
-  "expires_value":{
-    "ar_SA":"\u062a\u0646\u062a\u0647\u064a \u0635\u0644\u0627\u062d\u064a\u062a\u0647: (x)",
-    "en_US":"Expires: (x)",
-    "fr":""
-  },
-  "failed":{
-    "ar_SA":"\u0641\u0634\u0644",
-    "en_US":"Failed",
-    "fr":""
-  },
-  "faqs_label":{
-    "ar_SA":"\u0627\u0644\u0623\u0633\u0626\u0644\u0629 \u0627\u0644\u0634\u0627\u0626\u0639\u0629",
-    "en_US":"FAQs",
-    "fr":""
-  },
-  "favorite_added_to_cart":{
-    "ar_SA":"\u062a\u0645\u062a \u0627\u0644\u0625\u0636\u0627\u0641\u0629 \u0625\u0644\u0649 \u0627\u0644\u0633\u0644\u0629",
-    "en_US":"Favorite added to cart",
-    "fr":""
-  },
-  "favourites_label":{
-    "ar_SA":"\u0627\u0644\u0645\u0641\u0636\u0644\u0629",
-    "en_US":"Favourites",
-    "fr":""
-  },
-  "feedback":{
-    "ar_SA":"\u0645\u0644\u0627\u062d\u0638\u0627\u062a",
-    "en_US":"Feedback",
-    "fr":""
-  },
-  "feedback_label":{
-    "ar_SA":"\u0627\u0644\u0645\u0644\u0627\u062d\u0638\u0627\u062a",
-    "en_US":"Feedback",
-    "fr":""
-  },
-  "feedback_message":{
-    "ar_SA":"\u0646\u062d\u0646 \u0646\u0642\u062f\u0631 \u0631\u0623\u064a\u0643 \u060c \u0644\u0630\u0627 \u064a\u0631\u062c\u0649 \u0625\u062e\u0628\u0627\u0631\u0646\u0627 \u0628\u062a\u062c\u0631\u0628\u062a\u0643.",
-    "en_US":"We value your opinion, so please tell us about your experience with our app or about your meal.",
-    "fr":""
-  },
-  "feedback_sent":{
-    "ar_SA":"\u062a\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u062a\u0639\u0644\u064a\u0642\u0627\u062a",
-    "en_US":"Feedback Sent",
-    "fr":""
-  },
-  "female":{
-    "ar_SA":"\u0623\u0646\u062b\u0649",
-    "en_US":"Female",
-    "fr":""
-  },
-  "first_name_empty":{
-    "ar_SA":"\u0644\u0627 \u064a\u0645\u0643\u0646 \u0623\u0646 \u064a\u0643\u0648\u0646 \u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0623\u0648\u0644 \u0641\u0627\u0631\u063a\u064b\u0627",
-    "en_US":"First name cannot be empty",
-    "fr":""
-  },
-  "flat_number_label":{
-    "ar_SA":"\u0631\u0642\u0645 \u0627\u0644\u0634\u0642\u0629 \/ \u0627\u0644\u0645\u0628\u0646\u0649 \/ \u0627\u0644\u0641\u064a\u0644\u0627",
-    "en_US":"Flat \/ Building \/ Villa number",
-    "fr":""
-  },
-  "free":{
-    "ar_SA":"\u0645\u062c\u0627\u0646\u064a",
-    "en_US":"Free",
-    "fr":""
-  },
-  "frequently_bought":{
-    "ar_SA":"\u0627\u0644\u0623\u0643\u062b\u0631 \u0645\u0637\u0644\u0648\u0628 \u0645\u0639",
-    "en_US":"Frequently bought together",
-    "fr":""
-  },
-  "full_name":{
-    "ar_SA":"\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644",
-    "en_US":"Full name",
-    "fr":""
-  },
-  "full_name_empty":{
-    "ar_SA":"\u0644\u0627 \u064a\u0645\u0643\u0646 \u0623\u0646 \u064a\u0643\u0648\u0646 \u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644 \u0641\u0627\u0631\u063a\u064b\u0627",
-    "en_US":"Full name cannot be empty",
-    "fr":""
-  },
-  "full_name_label":{
-    "ar_SA":"\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644",
-    "en_US":"Full Name",
-    "fr":""
-  },
-  "gender":{
-    "ar_SA":"\u062c\u0646\u0633",
-    "en_US":"Gender",
-    "fr":""
-  },
-  "get_direction":{
-    "ar_SA":"\u0627\u062d\u0635\u0644 \u0639\u0644\u0649 \u0627\u0644\u0627\u062a\u062c\u0627\u0647\u0627\u062a",
-    "en_US":"Get Direction",
-    "fr":""
-  },
-  "get_started_label":{
-    "ar_SA":"\u0627\u0628\u062f\u0623 \u0637\u0644\u0628\u0643 \u0645\u0639 \u0647\u0631\u0641\u064a",
-    "en_US":"Get Started with Herfy",
-    "fr":""
-  },
-  "good_afternoon":{
-    "ar_SA":"\u0645\u0633\u0627\u0621 \u0627\u0644\u062e\u064a\u0631",
-    "en_US":"Good afternoon",
-    "fr":""
-  },
-  "good_afternoon_user":{
-    "ar_SA":"\u0645\u0633\u0627\u0621 \u0627\u0644\u062e\u064a\u0631\u060c (x)!",
-    "en_US":"Good afternoon, (x)!",
-    "fr":""
-  },
-  "good_evening":{
-    "ar_SA":"\u0645\u0633\u0627\u0621 \u0627\u0644\u062e\u064a\u0631",
-    "en_US":"Good evening",
-    "fr":""
-  },
-  "good_evening_user":{
-    "ar_SA":"\u0645\u0633\u0627\u0621 \u0627\u0644\u062e\u064a\u0631\u060c (x)!",
-    "en_US":"Good evening, (x)!",
-    "fr":""
-  },
-  "good_morning":{
-    "ar_SA":"\u0635\u0628\u0627\u062d \u0627\u0644\u062e\u064a\u0631",
-    "en_US":"Good morning",
-    "fr":""
-  },
-  "good_morning_user":{
-    "ar_SA":"\u0635\u0628\u0627\u062d \u0627\u0644\u062e\u064a\u0631\u060c (x)!",
-    "en_US":"Good morning, (x)!",
-    "fr":""
-  },
-  "got_it":{
-    "ar_SA":"\u062a\u0645",
-    "en_US":"Got it",
-    "fr":""
-  },
-  "have_a_trouble":{
-    "ar_SA":"\u0645\u0634\u0627\u0643\u0644 \u0645\u0639 \u0637\u0644\u0628\u0643\u061f",
-    "en_US":"Have a trouble with your order?",
-    "fr":""
-  },
-  "help":{
-    "ar_SA":"\u0645\u0633\u0627\u0639\u062f\u0629\u061f",
-    "en_US":"Help",
-    "fr":""
-  },
-  "help_support_label":{
-    "ar_SA":"\u0627\u0644\u0645\u0633\u0627\u0639\u062f\u0629",
-    "en_US":"Help & Support",
-    "fr":""
-  },
-  "herfy_support":{
-    "ar_SA":"\u0647\u0631\u0641\u064a \u062a\u0634\u0627\u0631\u0643 \u0641\u064a \u0627\u0644\u0645\u0633\u0624\u0648\u0644\u064a\u0629 \u0627\u0644\u0627\u062c\u062a\u0645\u0627\u0639\u064a\u0629",
-    "en_US":"Herfy Supporting The Cause",
-    "fr":""
-  },
-  "herfy_support_team":{
-    "ar_SA":"\u0646\u062d\u0646 \u0647\u0646\u0627 \u0644\u0645\u0633\u0627\u0639\u062f\u062a\u0643.",
-    "en_US":"Herfy\u2019s Support team is here to help you.",
-    "fr":""
-  },
-  "hi_label":{
-    "ar_SA":"\u0647\u0644\u0627 (x) !",
-    "en_US":"Hi (x)!",
-    "fr":"Salut (x) !"
-  },
-  "hi_logged_out":{
-    "ar_SA":"\u0623\u0647\u0644\u0627\u064b!",
-    "en_US":"Hi!",
-    "fr":""
-  },
-  "history_label":{
-    "ar_SA":"\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0637\u0644\u0628\u0627\u062a",
-    "en_US":"History",
-    "fr":""
-  },
-  "home":{
-    "ar_SA":"\u0627\u0644\u0645\u0646\u0632\u0644",
-    "en_US":"Home",
-    "fr":""
-  },
-  "how_was_your_order":{
-    "ar_SA":"\u0643\u064a\u0641 \u0643\u0627\u0646 \u0627\u0644\u0623\u0643\u0644\u061f",
-    "en_US":"How was your order?",
-    "fr":""
-  },
-  "how_will_you_order":{
-    "ar_SA":"\u0648\u0623\u064a\u0646 \u0628\u062a\u0623\u0643\u0644\u061f",
-    "en_US":"How will you order today?",
-    "fr":""
-  },
-  "hrs_ago":{
-    "ar_SA":"\u0642\u0628\u0644 (x) \u0633\u0627\u0639\u0629",
-    "en_US":"(x) hrs ago",
-    "fr":""
-  },
-  "in_progress":{
-    "ar_SA":"\u0642\u064a\u062f \u0627\u0644\u062a\u0646\u0641\u064a\u0630",
-    "en_US":"In Progress",
-    "fr":""
-  },
-  "invalid_for_this_order":{
-    "ar_SA":"\u063a\u064a\u0631 \u0635\u0627\u0644\u062d \u0644\u0647\u0630\u0627 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Invalid for this Order",
-    "fr":""
-  },
-  "invalid_name":{
-    "ar_SA":"\u0627\u0644\u0631\u062c\u0627\u0621 \u0625\u062f\u062e\u0627\u0644 \u0627\u0633\u0645\u0643 \u0627\u0644\u0643\u0627\u0645\u0644",
-    "en_US":"Please enter your full name eg. Firstname Lastname",
-    "fr":""
-  },
-  "item_added_to_cart":{
-    "ar_SA":"\u062a\u0645\u062a \u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0639\u0646\u0635\u0631 \u0625\u0644\u0649 \u0627\u0644\u0633\u0644\u0629",
-    "en_US":"Item added to cart",
-    "fr":""
-  },
-  "item_added_to_favorites":{
-    "ar_SA":"\u062a\u0645\u062a \u0625\u0636\u0627\u0641\u062a\u0647 \u0625\u0644\u0649 \u0627\u0644\u0645\u0641\u0636\u0644\u0629",
-    "en_US":"Item added to favorites",
-    "fr":""
-  },
-  "item_quantity":{
-    "ar_SA":"\u0627\u0644\u0643\u0645\u064a\u0629",
-    "en_US":"Item Quantity",
-    "fr":""
-  },
-  "item_removed_from_favorites":{
-    "ar_SA":"\u062a\u0645\u062a \u0625\u0632\u0627\u0644\u062a\u0647 \u0645\u0646 \u0627\u0644\u0645\u0641\u0636\u0644\u0629",
-    "en_US":"Item removed from favorites",
-    "fr":""
-  },
-  "item_updated":{
-    "ar_SA":"\u062a\u0645 \u0627\u0644\u062a\u062d\u062f\u064a\u062b",
-    "en_US":"Item updated",
-    "fr":""
-  },
-  "items":{
-    "ar_SA":"\u0645\u0646\u062a\u062c\u0627\u062a",
-    "en_US":"items",
-    "fr":""
-  },
-  "join_now":{
-    "ar_SA":"\u0627\u0634\u062a\u0631\u0643 \u0627\u0644\u0622\u0646 \u0648\u0627\u0628\u062f\u0623 \u0627\u0644\u0637\u0644\u0628\u0627\u062a\u060c \u0648\u0643\u0633\u0628 \u0627\u0644\u0646\u0642\u0627\u0637 \u0648\u0627\u0644\u0645\u0632\u064a\u062f",
-    "en_US":"Join now and start ordering, earning points and much more",
-    "fr":""
-  },
-  "join_now_and_start":{
-    "ar_SA":"\u0627\u0634\u062a\u0631\u0643 \u0627\u0644\u0622\u0646 \u0648\u0627\u0628\u062f\u0623 \u0627\u0644\u0637\u0644\u0628\u0627\u062a\u060c \u0648\u0643\u0633\u0628 \u0627\u0644\u0646\u0642\u0627\u0637 \u0648\u0627\u0644\u0645\u0632\u064a\u062f",
-    "en_US":"Join now and start ordering, earning points and much more",
-    "fr":""
-  },
-  "keep_current_basket":{
-    "ar_SA":"\u062d\u0641\u0638 \u0627\u0644\u0623\u0634\u064a\u0627\u0621 \u0641\u064a \u0627\u0644\u0639\u0631\u0628\u0629",
-    "en_US":"Keep Current Basket",
-    "fr":""
-  },
-  "kilometers":{
-    "ar_SA":"\u0643\u0645",
-    "en_US":"km",
-    "fr":""
-  },
-  "km_away":{
-    "ar_SA":"\u0645\u0633\u0627\u0641\u0629 (x)",
-    "en_US":"(x) away",
-    "fr":""
-  },
-  "last_name_empty":{
-    "ar_SA":"\u064a\u0631\u062c\u0649 \u0625\u062f\u062e\u0627\u0644 \u0627\u0633\u0645\u0643 \u0627\u0644\u0643\u0627\u0645\u0644",
-    "en_US":"Please complete your full name",
-    "fr":""
-  },
-  "let_us_know":{
-    "ar_SA":"\u0623\u062e\u0628\u0631\u0646\u0627 \u0639\u0646\u062f \u0648\u0635\u0648\u0644\u0643.",
-    "en_US":"Let us know when you arrive.",
-    "fr":""
-  },
-  "license_plate_number":{
-    "ar_SA":"\u0631\u0642\u0645 \u0644\u0648\u062d\u0629 \u0627\u0644\u0633\u064a\u0627\u0631\u0629",
-    "en_US":"License Plate Number",
-    "fr":""
-  },
-  "loading":{
-    "ar_SA":"\u062a\u062d\u0645\u064a\u0644",
-    "en_US":"Loading",
-    "fr":""
-  },
-  "login_register":{
-    "ar_SA":"\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644 \/ \u0627\u0644\u062a\u0633\u062c\u064a\u0644",
-    "en_US":"Login\/Register",
-    "fr":""
-  },
-  "logout":{
-    "ar_SA":"\u062a\u0633\u062c\u064a\u0644 \u062e\u0631\u0648\u062c",
-    "en_US":"Logout",
-    "fr":""
-  },
-  "loyalty_points_payment_label":{
-    "ar_SA":"(x) \u0646\u0642\u0637\u0629",
-    "en_US":"(x) points",
-    "fr":""
-  },
-  "loyalty_points_value":{
-    "ar_SA":"(x) \u0627\u0644\u0642\u064a\u0645\u0629",
-    "en_US":"(x) Value",
-    "fr":""
-  },
-  "loyalty_points_x":{
-    "ar_SA":"\u0646\u0642\u0627\u0637 \u0627\u0644\u0648\u0644\u0627\u0621 (x)",
-    "en_US":"Loyalty Points (x)",
-    "fr":""
-  },
-  "loyalty_rewards_label":{
-    "ar_SA":"\u0627\u0644\u0648\u0644\u0627\u0621 \u0648\u0627\u0644\u0645\u0643\u0627\u0641\u0622\u062a",
-    "en_US":"Loyalty & Rewards",
-    "fr":""
-  },
-  "male":{
-    "ar_SA":"\u0630\u0643\u0631",
-    "en_US":"Male",
-    "fr":""
-  },
-  "message":{
-    "ar_SA":"\u0631\u0633\u0627\u0644\u0629",
-    "en_US":"Message",
-    "fr":"last updated row on the backend"
-  },
-  "meters":{
-    "ar_SA":"\u0645\u062a\u0631",
-    "en_US":"m",
-    "fr":""
-  },
-  "minimum_cart_label":{
-    "ar_SA":"\u0623\u0636\u0641 (x) \u0644\u0644\u0648\u0635\u0648\u0644 \u0625\u0644\u0649 \u0627\u0644\u062d\u062f \u0627\u0644\u0623\u062f\u0646\u0649 \u0644\u0642\u064a\u0645\u0629 \u0627\u0644\u0637\u0644\u0628 \u0648\u0647\u0648 (y).",
-    "en_US":"Add (x) to reach minimum order value of (y).",
-    "fr":""
-  },
-  "mins_ago":{
-    "ar_SA":"\u0642\u0628\u0644 (x) \u062f\u0642\u0627\u0626\u0642",
-    "en_US":"(x) mins ago",
-    "fr":""
-  },
-  "mobile_number":{
-    "ar_SA":"\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641",
-    "en_US":"Mobile Number",
-    "fr":""
-  },
-  "modifier_maximum_limit":{
-    "ar_SA":"\u0648\u0635\u0644\u062a \u0625\u0644\u0649 \u0627\u0644\u062d\u062f \u0627\u0644\u0623\u0642\u0635\u0649 \u0644\u0639\u062f\u062f \u0627\u0644\u0645\u0639\u062f\u0644\u0627\u062a",
-    "en_US":"You have reached the maximum number of extras you can add.",
-    "fr":""
-  },
-  "modifier_minimum_limit":{
-    "ar_SA":"\u0644\u0645 \u062a\u0635\u0644 \u0625\u0644\u0649 \u0627\u0644\u062d\u062f \u0627\u0644\u0623\u062f\u0646\u0649 \u0645\u0646 \u0627\u0644\u0625\u0636\u0627\u0641\u0627\u062a (x) \u0644\u0640 (y)",
-    "en_US":"Minimum number of extras (x) not reached for (y)",
-    "fr":""
-  },
-  "more_info":{
-    "ar_SA":"\u0645\u0632\u064a\u062f \u0645\u0646 \u0627\u0644\u0645\u0639\u0644\u0648\u0645\u0627\u062a",
-    "en_US":"More info",
-    "fr":""
-  },
-  "move_pin_to_location":{
-    "ar_SA":"\u062d\u062f\u062f \u0627\u0644\u0645\u0648\u0642\u0639 \u0627\u0644\u0635\u062d\u064a\u062d \u0644\u0645\u0633\u0627\u0639\u062f\u062a\u0646\u0627 \u0641\u064a \u062a\u0648\u0635\u064a\u0644 \u0637\u0644\u0628\u0643 \u0628\u0634\u0643\u0644 \u0623\u0633\u0631\u0639",
-    "en_US":"Move the pin to the correct location to help rider deliver your order fast",
-    "fr":""
-  },
-  "my_orders":{
-    "ar_SA":"\u0637\u0644\u0628\u0627\u062a\u064a",
-    "en_US":"My Orders",
-    "fr":""
-  },
-  "my_profile_label":{
-    "ar_SA":"\u062d\u0633\u0627\u0628\u064a",
-    "en_US":"My Profile",
-    "fr":""
-  },
-  "name_label":{
-    "ar_SA":"\u0627\u0644\u0627\u0633\u0645",
-    "en_US":"Name",
-    "fr":""
-  },
-  "name_validation":{
-    "ar_SA":"\u0644\u0627 \u064a\u0645\u0643\u0646 \u0623\u0646 \u062a\u062d\u062a\u0648\u064a \u0627\u0644\u0623\u0633\u0645\u0627\u0621 \u0639\u0644\u0649 \u0623\u062d\u0631\u0641 \u062e\u0627\u0635\u0629",
-    "en_US":"Name fields should not accept numbers and special character.",
-    "fr":""
-  },
-  "nearest_label":{
-    "ar_SA":"\u0627\u0644\u0623\u0642\u0631\u0628",
-    "en_US":"Nearest",
-    "fr":""
-  },
-  "new_caps":{
-    "ar_SA":"\u062c\u062f\u064a\u062f",
-    "en_US":"NEW",
-    "fr":"last updated row on the backend"
-  },
-  "new_debit_credit_card":{
-    "ar_SA":"\u0628\u0637\u0627\u0642\u0629 \u0627\u0644\u062c\u062f\u064a\u062f\u0629",
-    "en_US":"New Debit\/Credit Card",
-    "fr":""
-  },
-  "next":{
-    "ar_SA":"\u0627\u0644\u062a\u0627\u0644\u064a",
-    "en_US":"Next",
-    "fr":""
-  },
-  "no_caps":{
-    "ar_SA":"\u0644\u0627",
-    "en_US":"NO",
-    "fr":""
-  },
-  "no_coupons_found":{
-    "ar_SA":"\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0643\u0648\u0628\u0648\u0646\u0627\u062a.",
-    "en_US":"No coupons found.",
-    "fr":""
-  },
-  "no_curbside_vehicles":{
-    "ar_SA":"\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0633\u064a\u0627\u0631\u0629",
-    "en_US":"No curbside vehicles found",
-    "fr":""
-  },
-  "no_favorite_found":{
-    "ar_SA":"\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0627\u0644\u0645\u0641\u0636\u0644\u0629.",
-    "en_US":"No favourites found.",
-    "fr":""
-  },
-  "no_label":{
-    "ar_SA":"\u0644\u0627",
-    "en_US":"No",
-    "fr":""
-  },
-  "no_notifications":{
-    "ar_SA":"\u0644\u0627 \u064a\u0648\u062c\u062f \u0625\u0634\u0639\u0627\u0631\u0627\u062a",
-    "en_US":"No notifications",
-    "fr":""
-  },
-  "no_order_type_selected":{
-    "ar_SA":"\u0627\u0636\u063a\u0637 \u0647\u0646\u0627 \u0644\u0627\u062e\u062a\u064a\u0627\u0631 \u0646\u0648\u0639 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Please tap here to select an order type",
-    "fr":""
-  },
-  "no_orders_found":{
-    "ar_SA":"\u0644\u0627 \u062a\u0648\u062c\u062f \u0637\u0644\u0628\u0627\u062a.",
-    "en_US":"No orders found.",
-    "fr":""
-  },
-  "no_payment_methods":{
-    "ar_SA":"\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0637\u0631\u0642 \u0627\u0644\u062f\u0641\u0639.",
-    "en_US":"No payment methods found.",
-    "fr":""
-  },
-  "no_points_history":{
-    "ar_SA":"\u0644\u0627 \u064a\u0648\u062c\u062f \u062a\u0627\u0631\u064a\u062e \u0645\u0646 \u0627\u0644\u0646\u0642\u0627\u0637.",
-    "en_US":"No points history found.",
-    "fr":""
-  },
-  "no_results_found":{
-    "ar_SA":"\u0644\u0627 \u062a\u0648\u062c\u062f \u0646\u062a\u0627\u0626\u062c",
-    "en_US":"No results found.",
-    "fr":""
-  },
-  "no_saved_addresses_found":{
-    "ar_SA":"\u0644\u0627 \u062a\u0648\u062c\u062f \u0639\u0646\u0627\u0648\u064a\u0646 \u0645\u062d\u0641\u0648\u0638\u0629",
-    "en_US":"No saved addresses found.",
-    "fr":""
-  },
-  "no_thanks_caps":{
-    "ar_SA":"\u0644\u0627 \u0634\u0643\u0631\u0627",
-    "en_US":"NO THANKS",
-    "fr":""
-  },
-  "note_for_the_driver":{
-    "ar_SA":"\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0644\u0644\u0633\u0627\u0626\u0642",
-    "en_US":"Note for the driver",
-    "fr":""
-  },
-  "note_for_the_driver_hint":{
-    "ar_SA":"\u0645\u062b\u0644\u060c \u0627\u0644\u0628\u0627\u0628 \u0639\u0644\u0649 \u0627\u0644\u064a\u0633\u0627\u0631\u060c \u0627\u0644\u0645\u0628\u0646\u0649 \u0623\u0628\u064a\u0636 \u0627\u0644\u0644\u0648\u0646\u060c \u0644\u0627 \u062a\u0642\u0631\u0639 \u0627\u0644\u062c\u0631\u0633",
-    "en_US":"e.g. Orange door on left, white coloured building, don\u2019t ring the bell",
-    "fr":""
-  },
-  "note_to_rider":{
-    "ar_SA":"\u0645\u0644\u0627\u062d\u0638\u0629 \u0644\u0645\u0646\u062f\u0648\u0628 \u0627\u0644\u062a\u0648\u0635\u064a\u0644:",
-    "en_US":"Note to rider:",
-    "fr":""
-  },
-  "note_to_rider_label":{
-    "ar_SA":"\u0645\u0644\u0627\u062d\u0638\u0629 \u0644\u0645\u0646\u062f\u0648\u0628 \u0627\u0644\u062a\u0648\u0635\u064a\u0644: (x)",
-    "en_US":"Note to rider: (x)",
-    "fr":""
-  },
-  "notes_description":{
-    "ar_SA":"\u0647\u0644 \u0644\u062f\u064a\u0643 \u062d\u0633\u0627\u0633\u064a\u0629 \u0636\u062f \u0623\u064a \u0634\u064a\u0621\u061f",
-    "en_US":"Please let us know if you are allergic to anything or if we need to avoid anything.",
-    "fr":""
-  },
-  "notes_for_menu_hint":{
-    "ar_SA":"\u0645\u062b\u0627\u0644: \u0644\u0627 \u0623\u0631\u064a\u062f \u0627\u0644\u0643\u0627\u062a\u0634\u0628",
-    "en_US":"e.g. no mayo",
-    "fr":""
-  },
-  "notes_placeholder":{
-    "ar_SA":"\u0645\u062b\u0627\u0644: \u0628\u0627\u0628 \u0623\u0628\u064a\u0636 \u0639\u0644\u0649 \u0627\u0644\u064a\u0633\u0627\u0631\u060c \u0645\u0628\u0646\u0649 \u0631\u0645\u0627\u062f\u064a \u0627\u0644\u0644\u0648\u0646\u060c \u0644\u0627 \u062a\u062f\u0642 \u0627\u0644\u062c\u0631\u0633 \u0648\u0645\u0627 \u0625\u0644\u0649 \u0630\u0644\u0643",
-    "en_US":"e.g. Orange door on left, white coloured building, don\u2019t ring the bell",
-    "fr":""
-  },
-  "notifications":{
-    "ar_SA":"\u0625\u0634\u0639\u0627\u0631\u0627\u062a",
-    "en_US":"Notifications",
-    "fr":""
-  },
-  "nutritional_info":{
-    "ar_SA":"\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u063a\u0630\u0627\u0626\u064a\u0629",
-    "en_US":"Nutritional Info",
-    "fr":""
-  },
-  "ok":{
-    "ar_SA":"\u062a\u0645",
-    "en_US":"Okay",
-    "fr":""
-  },
-  "on_way":{
-    "ar_SA":"\u0639\u0644\u0649 \u0627\u0644\u0637\u0631\u064a\u0642",
-    "en_US":"On Way",
-    "fr":""
-  },
-  "one_discount_only_message":{
-    "ar_SA":"\u064a\u0645\u0643\u0646\u0643 \u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u062e\u0635\u0645 \u0648\u0627\u062d\u062f \u0641\u0642\u0637 \u0641\u064a \u0643\u0644 \u0645\u0631\u0629. \u0633\u064a\u062a\u0645 \u0625\u0632\u0627\u0644\u0629 \u0627\u0644\u062e\u0635\u0645 \u0627\u0644\u0645\u0637\u0628\u0642.",
-    "en_US":"You can only apply one discount at a time. Currently applied discount will be removed",
-    "fr":""
-  },
-  "open_in_google_maps":{
-    "ar_SA":"\u0627\u0641\u062a\u062d \u0641\u064a \u062e\u0631\u0627\u0626\u0637 \u062c\u0648\u062c\u0644",
-    "en_US":"Show in Google Maps",
-    "fr":""
-  },
-  "optional_label":{
-    "ar_SA":"(\u062e\u064a\u0627\u0631\u064a)",
-    "en_US":"(Optional)",
-    "fr":""
-  },
-  "or_label":{
-    "ar_SA":"\u0623\u0648",
-    "en_US":"Or",
-    "fr":""
-  },
-  "or_label_new":{
-    "ar_SA":"\u0623\u0648",
-    "en_US":"Or",
-    "fr":""
-  },
-  "order_cancelled":{
-    "ar_SA":"\u062a\u0645 \u0627\u0644\u063a\u0627\u0621 \u0627\u0644\u0637\u0644\u0628!",
-    "en_US":"Order Cancelled!",
-    "fr":""
-  },
-  "order_catering":{
-    "ar_SA":"\u0627\u0637\u0644\u0628 \u062e\u062f\u0645\u0629 \u0627\u0644\u062a\u0645\u0648\u064a\u0646",
-    "en_US":"Order Catering",
-    "fr":""
-  },
-  "order_completed":{
-    "ar_SA":"\u062a\u0645 \u0627\u0643\u062a\u0645\u0627\u0644 \u0627\u0644\u0637\u0644\u0628!",
-    "en_US":"Order completed!",
-    "fr":""
-  },
-  "order_details":{
-    "ar_SA":"\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Order Details",
-    "fr":""
-  },
-  "order_history":{
-    "ar_SA":"\u0627\u0644\u0637\u0644\u0628\u0627\u062a \u0627\u0644\u0633\u0627\u0628\u0642\u0629",
-    "en_US":"Order History",
-    "fr":""
-  },
-  "order_items":{
-    "ar_SA":"\u0627\u0644\u0639\u0646\u0627\u0635\u0631 \u0627\u0644\u0645\u0637\u0644\u0648\u0628\u0629",
-    "en_US":"Order Items",
-    "fr":""
-  },
-  "order_minimum":{
-    "ar_SA":"\u0627\u0644\u0645\u0628\u0644\u063a \u0625\u062c\u0645\u0627\u0644\u064a \u0623\u0642\u0644 \u0645\u0646 \u0627\u0644\u062d\u062f \u0627\u0644\u0623\u062f\u0646\u0649 \u0644\u0644\u0637\u0644\u0628\u0627\u062a",
-    "en_US":"Total order is less than minimum amount",
-    "fr":""
-  },
-  "order_num":{
-    "ar_SA":"\u0631\u0642\u0645 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Order #",
-    "fr":""
-  },
-  "order_rating_sent":{
-    "ar_SA":"\u062a\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u062a\u0642\u064a\u064a\u0645",
-    "en_US":"Order rating sent",
-    "fr":""
-  },
-  "order_session_expired":{
-    "ar_SA":"\u0627\u0646\u062a\u0647\u0649 \u0648\u0642\u062a \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Order session has expired",
-    "fr":""
-  },
-  "order_total_atleast":{
-    "ar_SA":"\u0644\u0644\u0645\u062a\u0627\u0628\u0639\u0629 \u064a\u062c\u0628 \u0623\u0646 \u064a\u0643\u0648\u0646 \u0627\u0644\u0637\u0644\u0628 \u0639\u0644\u0649 \u0627\u0644\u0623\u0642\u0644 (x)",
-    "en_US":"Order must be atleast (x) to continue",
-    "fr":""
-  },
-  "order_tracker":{
-    "ar_SA":"\u0627\u062a\u0628\u0639 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Order Tracker",
-    "fr":""
-  },
-  "other":{
-    "ar_SA":"\u0622\u062e\u0631",
-    "en_US":"Other",
-    "fr":""
-  },
-  "other_feedback_placeholder":{
-    "ar_SA":"\u0645\u062b\u0644\u060c \u0623\u062d\u0628 \u0633\u0631\u0639\u0629 \u0627\u0644\u062e\u062f\u0645\u0629\u060c \u0627\u0644\u0637\u0639\u0645 \u0644\u0630\u064a\u0630!",
-    "en_US":"e.g: Loved the food and service!",
-    "fr":""
-  },
-  "past_orders":{
-    "ar_SA":"\u0627\u0644\u0637\u0644\u0628\u0627\u062a \u0627\u0644\u0633\u0627\u0628\u0642\u0629",
-    "en_US":"Past Orders",
-    "fr":""
-  },
-  "pay_now":{
-    "ar_SA":"\u0627\u062f\u0641\u0639 \u0627\u0644\u0622\u0646",
-    "en_US":"Pay Now",
-    "fr":""
-  },
-  "payment_details_caps":{
-    "ar_SA":"\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u062f\u0641\u0639",
-    "en_US":"PAYMENT DETAILS",
-    "fr":""
-  },
-  "payment_method":{
-    "ar_SA":"\u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062f\u0641\u0639",
-    "en_US":"Payment method",
-    "fr":""
-  },
-  "payment_method_not_caps":{
-    "ar_SA":"\u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062f\u0641\u0639",
-    "en_US":"Payment Method",
-    "fr":""
-  },
-  "payment_methods":{
-    "ar_SA":"\u0637\u0631\u0642 \u0627\u0644\u062f\u0641\u0639",
-    "en_US":"Payment Methods",
-    "fr":""
-  },
-  "payment_summary":{
-    "ar_SA":"\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u062f\u0641\u0639",
-    "en_US":"Payment Summary",
-    "fr":""
-  },
-  "percent_of_your_order":{
-    "ar_SA":"\u0633\u064a\u062a\u0645 \u062a\u062d\u0648\u064a\u0644 (x) \u0645\u0646 \u0642\u064a\u0645\u0629 \u0637\u0644\u0628\u0643 \u0625\u0644\u0649 \u0646\u0642\u0627\u0637.",
-    "en_US":"(x) of your order value converts to points.",
-    "fr":""
-  },
-  "phone_number":{
-    "ar_SA":"\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641",
-    "en_US":"PHONE NUMBER",
-    "fr":""
-  },
-  "phone_number_invalid":{
-    "ar_SA":"\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641 \u063a\u064a\u0631 \u0635\u062d\u064a\u062d",
-    "en_US":"Invalid phone number",
-    "fr":""
-  },
-  "phone_number_label":{
-    "ar_SA":"\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641 \u0627\u0644\u0645\u062d\u0645\u0648\u0644",
-    "en_US":"Phone number",
-    "fr":""
-  },
-  "phone_number_new":{
-    "ar_SA":"\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641",
-    "en_US":"Phone Number",
-    "fr":""
-  },
-  "phone_number_required":{
-    "ar_SA":"\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641 \u0645\u0637\u0644\u0648\u0628",
-    "en_US":"Phone number is required",
-    "fr":""
-  },
-  "photos":{
-    "ar_SA":"\u0627\u0644\u0635\u0648\u0631",
-    "en_US":"Photos",
-    "fr":""
-  },
-  "picked":{
-    "ar_SA":"\u062a\u0645 \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645",
-    "en_US":"Picked",
-    "fr":""
-  },
-  "picked_up":{
-    "ar_SA":"\u062a\u0645 \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645",
-    "en_US":"Picked up",
-    "fr":""
-  },
-  "pickup":{
-    "ar_SA":"\u0637\u0644\u0628 \u0633\u0641\u0631\u064a",
-    "en_US":"Pickup",
-    "fr":""
-  },
-  "pickup_address":{
-    "ar_SA":"\u0641\u0631\u0639 \u0627\u0644\u0637\u0644\u0628 \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645",
-    "en_US":"Pickup Address",
-    "fr":""
-  },
-  "pickup_description":{
-    "ar_SA":"\u0627\u0633\u062a\u0644\u0645 \u0637\u0644\u0628\u0643 \u0645\u0646 \u0627\u0644\u0645\u0637\u0639\u0645",
-    "en_US":"Pickup your order inside the restaurant",
-    "fr":""
-  },
-  "pickup_details":{
-    "ar_SA":"\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645",
-    "en_US":"Pickup Details",
-    "fr":""
-  },
-  "pickup_in_mins":{
-    "ar_SA":"\u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645 \u0627\u0644\u0637\u0644\u0628 \u0641\u064a (x) \u062f\u0642\u064a\u0642\u0629",
-    "en_US":"Pickup in (x) mins",
-    "fr":""
-  },
-  "pickup_in_x_mins":{
-    "ar_SA":"\u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645 \u062e\u0644\u0627\u0644 (x) \u062f\u0642\u064a\u0642\u0629",
-    "en_US":"Pickup in (x) mins",
-    "fr":""
-  },
-  "pickup_methods":{
-    "ar_SA":"\u0637\u0631\u0642 \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645",
-    "en_US":"Pickup Methods",
-    "fr":""
-  },
-  "pickup_time":{
-    "ar_SA":"\u0648\u0642\u062a \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645",
-    "en_US":"Pickup Time",
-    "fr":""
-  },
-  "place_order":{
-    "ar_SA":"\u0623\u0631\u0633\u0644 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Place order",
-    "fr":""
-  },
-  "plate_number_hint":{
-    "ar_SA":"KLK98898\u0645\u062b\u0644",
-    "en_US":"e.g. KLK98898",
-    "fr":""
-  },
-  "please_add_items_to_your_cart":{
-    "ar_SA":"\u0627\u0644\u0631\u062c\u0627\u0621 \u0625\u0636\u0627\u0641\u0629 \u0639\u0646\u0627\u0635\u0631 \u0625\u0644\u0649 \u0627\u0644\u0639\u0631\u0628\u0629 \u0644\u0644\u0627\u0633\u062a\u0641\u0627\u062f\u0629 \u0645\u0646 \u0647\u0630\u0627 \u0627\u0644\u0639\u0631\u0636.",
-    "en_US":"Please add items to your cart to avail this offer",
-    "fr":""
-  },
-  "please_feel_free":{
-    "ar_SA":"\u064a\u0631\u062c\u0649 \u0627\u0644\u0637\u0644\u0628 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649",
-    "en_US":"Please feel free to order again later.",
-    "fr":""
-  },
-  "please_select_payment_type":{
-    "ar_SA":"\u064a\u0631\u062c\u0649 \u0627\u062e\u062a\u064a\u0627\u0631 \u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062f\u0641\u0639",
-    "en_US":"Please select payment type",
-    "fr":""
-  },
-  "points":{
-    "ar_SA":"\u0627\u0644\u0646\u0642\u0627\u0637",
-    "en_US":"Points",
-    "fr":""
-  },
-  "points_equal_sar":{
-    "ar_SA":"(x) \u0646\u0642\u0627\u0637 = (y) \u0631\u064a\u0627\u0644",
-    "en_US":"(x) points = (y) SAR",
-    "fr":""
-  },
-  "points_until_next_tier":{
-    "ar_SA":"(x) \u0646\u0642\u0637\u0629 \u062d\u062a\u0649 (y)",
-    "en_US":"(x) points until (y)",
-    "fr":""
-  },
-  "preparing":{
-    "ar_SA":"\u0642\u064a\u062f \u0627\u0644\u0625\u0639\u062f\u0627\u062f",
-    "en_US":"Preparing",
-    "fr":""
-  },
-  "primary":{
-    "ar_SA":"\u0623\u0633\u0627\u0633\u064a",
-    "en_US":"Primary",
-    "fr":""
-  },
-  "profile_updated":{
-    "ar_SA":"\u062a\u0645 \u062a\u062d\u062f\u064a\u062b \u0627\u0644\u0645\u0644\u0641 \u0627\u0644\u0634\u062e\u0635\u064a",
-    "en_US":"Profile Updated",
-    "fr":""
-  },
-  "promised_time_mins":{
-    "ar_SA":"\u0641\u064a (x) \u062f\u0642\u064a\u0642\u0629",
-    "en_US":"in (x) mins",
-    "fr":""
-  },
-  "promotions":{
-    "ar_SA":"\u0627\u0644\u0639\u0631\u0648\u0636",
-    "en_US":"Promotions",
-    "fr":""
-  },
-  "prompt_remove_item":{
-    "ar_SA":"\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0645\u0646 \u0625\u0632\u0627\u0644\u0629 \u0647\u0630\u0627 \u0627\u0644\u0639\u0646\u0635\u0631\u061f",
-    "en_US":"Are you sure to remove this item?",
-    "fr":""
-  },
-  "rate_label":{
-    "ar_SA":"\u062a\u0642\u064a\u064a\u0645 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Rate",
-    "fr":""
-  },
-  "rated":{
-    "ar_SA":"\u062a\u0645 \u0627\u0644\u062a\u0642\u064a\u064a\u0645",
-    "en_US":"Rated",
-    "fr":""
-  },
-  "ready":{
-    "ar_SA":"\u062c\u0627\u0647\u0632",
-    "en_US":"Ready",
-    "fr":""
-  },
-  "ready_for_pickup":{
-    "ar_SA":"\u062c\u0627\u0647\u0632 \u0644\u0627\u0633\u062a\u0644\u0627\u0645",
-    "en_US":"Ready for pickup",
-    "fr":""
-  },
-  "recents":{
-    "ar_SA":"\u0627\u0644\u0623\u062e\u064a\u0631\u0629",
-    "en_US":"Recents",
-    "fr":""
-  },
-  "redeem":{
-    "ar_SA":"\u0627\u0633\u062a\u0628\u062f\u0627\u0644",
-    "en_US":"Redeem",
-    "fr":""
-  },
-  "redeemed_label":{
-    "ar_SA":"(x) \u0646\u0642\u0627\u0637 \u0645\u0633\u062a\u062e\u062f\u0645\u0629",
-    "en_US":"(x) pts redeemed",
-    "fr":""
-  },
-  "refer_and_earn_label":{
-    "ar_SA":"\u0623\u0634\u064a\u0631 \u0648\u0627\u0643\u0633\u0628",
-    "en_US":"Refer & Earn",
-    "fr":""
-  },
-  "remove_current_promo_to_proceed":{
-    "ar_SA":"\u0633\u062a\u062a\u0645 \u0625\u0632\u0627\u0644\u0629 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u062d\u0627\u0644\u064a  \u0648\u0633\u064a\u062a\u0645 \u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0627\u0644\u0639\u0631\u0636 \u0627\u0644\u062c\u062f\u064a\u062f.",
-    "en_US":"This will remove your current selected promotion and apply the new one instead.",
-    "fr":""
-  },
-  "remove_label":{
-    "ar_SA":"\u0625\u0632\u0627\u0644\u0629",
-    "en_US":"Remove",
-    "fr":""
-  },
-  "remove_this_payment":{
-    "ar_SA":"\u0625\u0632\u0627\u0644\u0629 \u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062f\u0641\u0639",
-    "en_US":"Remove this payment method",
-    "fr":""
-  },
-  "removed_from_favorites":{
-    "ar_SA":"\u062a\u0645\u062a \u0627\u0644\u0625\u0632\u0627\u0644\u0629 \u0645\u0646 \u0627\u0644\u0645\u0641\u0636\u0644\u0629.",
-    "en_US":"Removed from favorites.",
-    "fr":""
-  },
-  "reorder_label":{
-    "ar_SA":"\u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Reorder",
-    "fr":""
-  },
-  "repeating_offer":{
-    "ar_SA":"\u0639\u0631\u0648\u0636 \u0645\u062a\u0643\u0631\u0631\u0629",
-    "en_US":"Repeating offer",
-    "fr":""
-  },
-  "request_otp_label":{
-    "ar_SA":"\u0627\u0637\u0644\u0628 \u0627\u0644\u0643\u0648\u062f",
-    "en_US":"Request OTP",
-    "fr":""
-  },
-  "required_label":{
-    "ar_SA":"\u0645\u0637\u0644\u0648\u0628",
-    "en_US":"Required",
-    "fr":""
-  },
-  "requirements":{
-    "ar_SA":"\u0645\u062a\u0637\u0644\u0628\u0627\u062a \u0627\u0644\u0639\u0631\u0636",
-    "en_US":"Requirements",
-    "fr":""
-  },
-  "reward_tiers":{
-    "ar_SA":"\u0637\u0628\u0642\u0627\u062a \u0627\u0644\u0645\u0643\u0627\u0641\u0622\u062a",
-    "en_US":"Reward Tiers",
-    "fr":""
-  },
-  "rewards_title":{
-    "ar_SA":"\u0627\u0644\u0645\u0643\u0627\u0641\u0622\u062a",
-    "en_US":"Rewards",
-    "fr":""
-  },
-  "rider_assigned":{
-    "ar_SA":"\u062a\u0645 \u062a\u0639\u064a\u064a\u0646 \u0627\u0644\u0639\u0645\u064a\u0644.",
-    "en_US":"Rider assigned.",
-    "fr":""
-  },
-  "rider_assigned_description":{
-    "ar_SA":"\u0627\u0644\u0639\u0645\u064a\u0644 \u064a\u0623\u062e\u0630 \u0637\u0644\u0628\u0643 \u0627\u0644\u064a\u0643.",
-    "en_US":"A rider is assigned and is taking your order to you.",
-    "fr":""
-  },
-  "sar_amount":{
-    "ar_SA":"\u0627\u0644\u0645\u0628\u0644\u063a \u0628\u0627\u0644\u0631\u064a\u0627\u0644",
-    "en_US":"SAR Amount",
-    "fr":""
-  },
-  "sar_order_value_converts_to_points":{
-    "ar_SA":"\u0633\u064a\u062a\u0645 \u062a\u062d\u0648\u064a\u0644 (x) \u0631\u064a\u0627\u0644 \u0645\u0646 \u0642\u064a\u0645\u0629 \u0637\u0644\u0628\u0643 \u0625\u0644\u0649 (y) \u0646\u0642\u0637\u0629",
-    "en_US":"(x) SAR of your order value converts to (y) points",
-    "fr":""
-  },
-  "sar_value_label":{
-    "ar_SA":"\u0642\u064a\u0645\u0629 \u0628\u0631\u064a\u0627\u0644",
-    "en_US":"SR Value",
-    "fr":""
-  },
-  "save":{
-    "ar_SA":"\u062d\u0641\u0638",
-    "en_US":"SAVE",
-    "fr":""
-  },
-  "save_address":{
-    "ar_SA":"\u062d\u0641\u0638 \u0627\u0644\u0639\u0646\u0648\u0627\u0646",
-    "en_US":"Save Address",
-    "fr":""
-  },
-  "save_and_continue":{
-    "ar_SA":"\u062d\u0641\u0638 \u0648\u0645\u062a\u0627\u0628\u0639\u0629",
-    "en_US":"Save & Continue",
-    "fr":""
-  },
-  "save_caps":{
-    "ar_SA":"\u062d\u0641\u0638",
-    "en_US":"SAVE",
-    "fr":""
-  },
-  "save_card_desc":{
-    "ar_SA":"\u0647\u0644 \u062a\u0631\u064a\u062f \u0645\u0646\u0627 \u062d\u0641\u0638 \u0627\u0644\u0628\u0637\u0627\u0642\u0629 \u0627\u0644\u062a\u064a \u0627\u0633\u062a\u062e\u062f\u0645\u062a\u0647\u0627 \u0644\u0644\u0637\u0644\u0628\u0627\u062a \u0627\u0644\u0645\u0633\u062a\u0642\u0628\u0644\u064a\u0629\u061f",
-    "en_US":"Would you like us to save the card you used for future orders?",
-    "fr":""
-  },
-  "save_changes":{
-    "ar_SA":"\u062d\u0641\u0638 \u0627\u0644\u062a\u063a\u064a\u064a\u0631\u0627\u062a",
-    "en_US":"Save Changes",
-    "fr":""
-  },
-  "save_this_card":{
-    "ar_SA":"\u0627\u062d\u0641\u0638 \u0647\u0630\u0647 \u0627\u0644\u0628\u0637\u0627\u0642\u0629\u061f",
-    "en_US":"Save this card?",
-    "fr":""
-  },
-  "saved_addresses":{
-    "ar_SA":"\u0627\u0644\u0639\u0646\u0627\u0648\u064a\u0646 \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0629",
-    "en_US":"Saved Addresses",
-    "fr":""
-  },
-  "scan_points_description":{
-    "ar_SA":"\u0627\u0645\u0633\u062d \u0628\u0637\u0627\u0642\u062a\u0643 \u0644\u0643\u0633\u0628 \u0627\u0644\u0646\u0642\u0627\u0637 \u0644\u0645\u0627 \u062a\u0637\u0644\u0628 \u0639\u0646\u062f\u0646\u0627 \u0641\u064a \u0627\u0644\u0645\u0637\u0639\u0645.",
-    "en_US":"Scan your card to earn points on order in the restaurant.",
-    "fr":""
-  },
-  "scan_points_label":{
-    "ar_SA":"\u0627\u0645\u0633\u062d \u0644\u0643\u0633\u0628 \u0627\u0644\u0646\u0642\u0627\u0637",
-    "en_US":"Scan to earn points",
-    "fr":""
-  },
-  "search_area":{
-    "ar_SA":"\u0627\u0644\u0628\u062d\u062b \u0639\u0646 \u0627\u0644\u0645\u0646\u0637\u0642\u0629",
-    "en_US":"Search area",
-    "fr":""
-  },
-  "search_city":{
-    "ar_SA":"\u0627\u0644\u0628\u062d\u062b \u0639\u0646 \u0627\u0644\u0645\u062f\u064a\u0646\u0629",
-    "en_US":"Search city",
-    "fr":""
-  },
-  "search_empty_result":{
-    "ar_SA":"\u0644\u0627 \u062a\u0648\u062c\u062f \u0646\u062a\u0627\u0626\u062c (x)",
-    "en_US":"No result found for \"(x)",
-    "fr":""
-  },
-  "search_menu":{
-    "ar_SA":"\u0627\u0628\u062d\u062b \u0641\u064a \u0627\u0644\u0642\u0627\u0626\u0645\u0629",
-    "en_US":"Search menu",
-    "fr":""
-  },
-  "secs_ago":{
-    "ar_SA":"\u0642\u0628\u0644 (x) \u062b\u0627\u0646\u064a\u0629",
-    "en_US":"(x) secs ago",
-    "fr":""
-  },
-  "see_directions":{
-    "ar_SA":"\u0627\u0646\u0638\u0631 \u0627\u0644\u0627\u062a\u062c\u0627\u0647\u0627\u062a",
-    "en_US":"See Directions",
-    "fr":""
-  },
-  "see_my_rewards":{
-    "ar_SA":"\u0639\u0631\u0636 \u0627\u0644\u0645\u0643\u0627\u0641\u0627\u062a",
-    "en_US":"See my rewards",
-    "fr":""
-  },
-  "select_area":{
-    "ar_SA":"\u062d\u062f\u062f \u0627\u0644\u0645\u0646\u0637\u0642\u0629",
-    "en_US":"Select Area",
-    "fr":""
-  },
-  "select_atleast":{
-    "ar_SA":"(\u0627\u062e\u062a\u0631 (x) \u0639\u0644\u0649 \u0627\u0644\u0623\u0642\u0644))",
-    "en_US":"(Select at least (x))",
-    "fr":""
-  },
-  "select_city":{
-    "ar_SA":"\u0627\u062e\u062a\u0631 \u0627\u0644\u0645\u062f\u064a\u0646\u0629",
-    "en_US":"Select City",
-    "fr":""
-  },
-  "select_only_one":{
-    "ar_SA":"\u0627\u062e\u062a\u0631 \u0648\u0627\u062d\u062f",
-    "en_US":"Select only one",
-    "fr":""
-  },
-  "select_order_type":{
-    "ar_SA":"\u062d\u062f\u062f \u0646\u0648\u0639 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Select Order Type",
-    "fr":""
-  },
-  "select_up_to_x":{
-    "ar_SA":"(\u0627\u062e\u062a\u0631 \u0645\u0627 \u064a\u0635\u0644 \u0625\u0644\u0649 (x))",
-    "en_US":"(Select up to (x))",
-    "fr":""
-  },
-  "select_x":{
-    "ar_SA":"(\u0627\u062e\u062a\u0631 (x))",
-    "en_US":"(Select (x))",
-    "fr":""
-  },
-  "select_your_date_of_birth":{
-    "ar_SA":"\u0627\u062e\u062a\u0631 \u062a\u0627\u0631\u064a\u062e \u0645\u064a\u0644\u0627\u062f\u0643",
-    "en_US":"Select your date of birth",
-    "fr":""
-  },
-  "selected_address":{
-    "ar_SA":"\u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0645\u062d\u062f\u062f",
-    "en_US":"Selected Address",
-    "fr":""
-  },
-  "send_again":{
-    "ar_SA":"\u0623\u0639\u062f \u0627\u0644\u0625\u0631\u0633\u0627\u0644",
-    "en_US":"Send again",
-    "fr":""
-  },
-  "send_again_label":{
-    "ar_SA":"\u0623\u0631\u0633\u0644 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649 ((x) \u062b\u0627\u0646\u064a\u0629)",
-    "en_US":"Send again ((x)s)",
-    "fr":""
-  },
-  "send_code_label":{
-    "ar_SA":"\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0643\u0648\u062f",
-    "en_US":"Send Code",
-    "fr":""
-  },
-  "send_feedback_caps":{
-    "ar_SA":"\u0627\u0631\u0633\u0644 \u0631\u0623\u064a\u0643",
-    "en_US":"SEND FEEDBACK",
-    "fr":""
-  },
-  "served":{
-    "ar_SA":"\u062a\u0645 \u062a\u0642\u062f\u064a\u0645 \u0644\u0643",
-    "en_US":"Served",
-    "fr":""
-  },
-  "set_this_card_default":{
-    "ar_SA":"\u0627\u0633\u062a\u062e\u062f\u0645 \u0647\u0630\u0647 \u0627\u0644\u0628\u0637\u0627\u0642\u0629 \u0643\u0628\u0637\u0627\u0642\u0629 \u0627\u0641\u062a\u0631\u0627\u0636\u064a\u0629",
-    "en_US":"Set this card as default",
-    "fr":""
-  },
-  "setup_account":{
-    "ar_SA":"\u0625\u0646\u0634\u0623 \u062d\u0633\u0627\u0628\u0643",
-    "en_US":"Set up your account",
-    "fr":""
-  },
-  "skip":{
-    "ar_SA":"\u0627\u0644\u062a\u0627\u0644\u064a",
-    "en_US":"Skip",
-    "fr":""
-  },
-  "social_media_label":{
-    "ar_SA":"\u062a\u0627\u0628\u0639\u0646\u0627",
-    "en_US":"Follow Us On Social Media",
-    "fr":""
-  },
-  "sold_out":{
-    "ar_SA":"\u0646\u0641\u0630",
-    "en_US":"Sold out",
-    "fr":""
-  },
-  "sorry_error_payment_mada":{
-    "ar_SA":"\u0639\u0630\u0631\u064b\u0627 \u060c \u0644\u0627 \u064a\u0645\u0643\u0646\u0646\u0627 \u0645\u0639\u0627\u0644\u062c\u0629 \u0637\u0644\u0628 \u0627\u0644\u062f\u0641\u0639 \u0641\u064a \u0627\u0644\u0648\u0642\u062a \u0627\u0644\u062d\u0627\u0644\u064a. \u064a\u0631\u062c\u0649 \u0645\u062d\u0627\u0648\u0644\u0629 \u0627\u0644\u062f\u0641\u0639 \u0628\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0628\u0637\u0627\u0642\u0629 \u0645\u062f\u0649.",
-    "en_US":"Sorry we can't process your payment request at the moment. Please try a mada card.",
-    "fr":""
-  },
-  "sorry_you_are_not_yet_eligible":{
-    "ar_SA":"\u0639\u0630\u0631\u064b\u0627\u060c \u0623\u0646\u062a \u063a\u064a\u0631 \u0645\u0624\u0647\u0644.",
-    "en_US":"Sorry, you are not yet eligible.",
-    "fr":""
-  },
-  "sorry_you_have_insufficient":{
-    "ar_SA":"\u0639\u0630\u0631\u0627\u064b\u060c \u0644\u064a\u0633 \u0644\u062f\u064a\u0643 \u0646\u0642\u0627\u0637 \u0643\u0627\u0641\u064a\u0629.",
-    "en_US":"Sorry, you have insufficient points.",
-    "fr":""
-  },
-  "special_instruction":{
-    "ar_SA":"\u062a\u0639\u0644\u064a\u0645\u0627\u062a \u062e\u0627\u0635\u0629",
-    "en_US":"Special Instruction",
-    "fr":""
-  },
-  "status_template":{
-    "ar_SA":"\u0627\u0644\u062d\u0627\u0644\u0629: (x)",
-    "en_US":"Status: (x)",
-    "fr":""
-  },
-  "store_locater_label":{
-    "ar_SA":"\u0641\u0631\u0648\u0639\u0646\u0627",
-    "en_US":"Store Locater",
-    "fr":""
-  },
-  "store_locator":{
-    "ar_SA":"\u0641\u0631\u0648\u0639\u0646\u0627",
-    "en_US":"Store Locator",
-    "fr":""
-  },
-  "store_locator_label":{
-    "ar_SA":"\u0641\u0631\u0648\u0639\u0646\u0627",
-    "en_US":"Store Locator",
-    "fr":""
-  },
-  "story_label":{
-    "ar_SA":"\u062a\u0641\u0627\u0635\u064a\u0644",
-    "en_US":"Story",
-    "fr":""
-  },
-  "submit":{
-    "ar_SA":"\u0625\u0631\u0633\u0627\u0644",
-    "en_US":"Submit",
-    "fr":""
-  },
-  "submit_otp_label":{
-    "ar_SA":"\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0643\u0648\u062f",
-    "en_US":"Submit OTP",
-    "fr":""
-  },
-  "subtotal":{
-    "ar_SA":"\u0627\u0644\u0645\u062c\u0645\u0648\u0639 \u0627\u0644\u0641\u0631\u0639\u064a",
-    "en_US":"Subtotal",
-    "fr":""
-  },
-  "tap_on_track_order":{
-    "ar_SA":"\u0627\u0636\u063a\u0637 \u0639\u0644\u0649 \"\u062a\u062a\u0628\u0639 \u0627\u0644\u0637\u0644\u0628\" \u0644\u0644\u062d\u0635\u0648\u0644 \u0639\u0644\u0649 \u0627\u0644\u062a\u0641\u0627\u0635\u064a\u0644",
-    "en_US":"Tap on \u201cTrack Order\u201d for detailed tracking.",
-    "fr":""
-  },
-  "tap_to_select_location":{
-    "ar_SA":"\u0627\u0646\u0642\u0631 \u0644\u062a\u062d\u062f\u064a\u062f \u0627\u0644\u0645\u0648\u0642\u0639",
-    "en_US":"Tap to select location",
-    "fr":""
-  },
-  "tap_track_order":{
-    "ar_SA":"\u0627\u0636\u063a\u0637 \u0639\u0644\u0649 \"\u062a\u062a\u0628\u0639 \u0627\u0644\u0637\u0644\u0628\" \u0644\u0644\u062a\u0641\u0627\u0635\u064a\u0644.",
-    "en_US":"Tap on \u201cTrack Order\u201d for detailed tracking.",
-    "fr":""
-  },
-  "tell_the_order_num_deliver":{
-    "ar_SA":"\u0623\u062e\u0628\u0631 \u0631\u0642\u0645 \u0627\u0644\u0637\u0644\u0628 \u0644\u0644\u0639\u0645\u064a\u0644 \u0644\u0644\u062d\u0635\u0648\u0644 \u0639\u0644\u0649 \u0637\u0644\u0628\u0643",
-    "en_US":"Tell the order number to the rider to receive your order",
-    "fr":""
-  },
-  "tell_the_order_num_pickup":{
-    "ar_SA":"\u0623\u062e\u0628\u0631 \u0631\u0642\u0645 \u0627\u0644\u0637\u0644\u0628 \u0639\u0644\u0649 \u0627\u0644\u0643\u0627\u0648\u0646\u062a\u0631 \u0644\u0627\u0633\u062a\u0644\u0627\u0645 \u0637\u0644\u0628\u0643",
-    "en_US":"Tell the order number at the counter to pick you order",
-    "fr":""
-  },
-  "tell_the_order_number_curbside":{
-    "ar_SA":"\u0623\u062e\u0628\u0631\u0647\u0645 \u0628\u0631\u0642\u0645 \u0627\u0644\u0637\u0644\u0628 \u0639\u0646\u062f\u0645\u0627 \u064a\u064f\u0637\u0644\u0628 \u0645\u0646\u0643 \u0630\u0644\u0643.",
-    "en_US":"Tell the order number if asked.",
-    "fr":""
-  },
-  "tell_us_about_your_experience_here":{
-    "ar_SA":"\u0623\u062e\u0628\u0631\u0646\u0627 \u0639\u0646 \u062a\u062c\u0631\u0628\u062a\u0643 \u0647\u0646\u0627",
-    "en_US":"Tell us about your experience here",
-    "fr":""
-  },
-  "terms_label":{
-    "ar_SA":"\u0627\u0644\u0634\u0631\u0648\u0637 \u0648 \u0627\u0644\u0623\u062d\u0643\u0627\u0645",
-    "en_US":"Terms & Condition",
-    "fr":""
-  },
-  "thank_you":{
-    "ar_SA":"\u0634\u0643\u0631\u064b\u0627 \u0644\u0643!",
-    "en_US":"Thank you!",
-    "fr":""
-  },
-  "thank_you_ordering":{
-    "ar_SA":"\u0634\u0643\u0631\u064b\u0627 \u0644\u0643 \u0639\u0644\u0649 \u0637\u0644\u0628\u0643 \u0639\u0628\u0631 \u062a\u0637\u0628\u064a\u0642 \u0647\u0631\u0641\u064a.",
-    "en_US":"Thank you for ordering at Herfy mobile app.",
-    "fr":""
-  },
-  "thank_you_rating":{
-    "ar_SA":"\u0634\u0643\u0631\u0627 \u0644\u062a\u0642\u064a\u064a\u0645 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Thank you for rating the order",
-    "fr":""
-  },
-  "this_action_can_not_reverse":{
-    "ar_SA":"\u0644\u0627 \u064a\u0645\u0643\u0646 \u0627\u0644\u062a\u0631\u0627\u062c\u0639 \u0639\u0646 \u0647\u0630\u0627 \u0627\u0644\u0625\u062c\u0631\u0627\u0621.",
-    "en_US":"This action can not be reversed.",
-    "fr":""
-  },
-  "tier_member_label":{
-    "ar_SA":"\u0623\u0646\u062a \u0627\u0644\u0622\u0646 \u0641\u064a \u0627\u0644\u0645\u0633\u062a\u0648\u0649 (x).",
-    "en_US":"You are now a (x) Tier Member.",
-    "fr":""
-  },
-  "today":{
-    "ar_SA":"\u0627\u0644\u064a\u0648\u0645",
-    "en_US":"Today",
-    "fr":""
-  },
-  "total":{
-    "ar_SA":"\u0627\u0644\u0645\u062c\u0645\u0648\u0639",
-    "en_US":"Total",
-    "fr":""
-  },
-  "total_inclusive_vat":{
-    "ar_SA":"\u0627\u0644\u0645\u0628\u0644\u063a \u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a \u064a\u0634\u0645\u0644 \u0636\u0631\u064a\u0628\u0629 \u0627\u0644\u0642\u064a\u0645\u0629 \u0627\u0644\u0645\u0636\u0627\u0641\u0629",
-    "en_US":"Total is inclusive of VAT",
-    "fr":""
-  },
-  "total_is_inclusive_vat":{
-    "ar_SA":"\u0627\u0644\u0645\u0628\u0644\u063a \u064a\u0634\u0645\u0644 \u0636\u0631\u064a\u0628\u0629 \u0627\u0644\u0642\u064a\u0645\u0629 \u0627\u0644\u0645\u0636\u0627\u0641\u0629",
-    "en_US":"Total is inclusive of VAT",
-    "fr":""
-  },
-  "total_points":{
-    "ar_SA":"\u0639\u062f\u062f \u0627\u0644\u0646\u0642\u0627\u0637",
-    "en_US":"Total Points",
-    "fr":""
-  },
-  "track_order":{
-    "ar_SA":"\u062a\u062a\u0628\u0639 \u0627\u0644\u0637\u0644\u0628",
-    "en_US":"Track Order",
-    "fr":""
-  },
-  "update_new_phone_description":{
-    "ar_SA":"\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641 \u0647\u0630\u0627 \u0645\u062e\u0635\u0635 \u0644\u0647\u0630\u0627 \u0627\u0644\u0637\u0644\u0628 \u0641\u0642\u0637 \u0648\u0644\u0646 \u064a\u062a\u0645 \u062d\u0641\u0638\u0647.",
-    "en_US":"This phone number will only be used for this delivery and not be saved.",
-    "fr":""
-  },
-  "upload_image_caps":{
-    "ar_SA":"\u062a\u062d\u0645\u064a\u0644 \u0635\u0648\u0631\u0629",
-    "en_US":"UPLOAD IMAGE",
-    "fr":""
-  },
-  "upload_selected_image":{
-    "ar_SA":"\u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u0635\u0648\u0631\u0629",
-    "en_US":"UPLOAD SELECTED IMAGE",
-    "fr":""
-  },
-  "use_current_location":{
-    "ar_SA":"\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0627\u0644\u0645\u0648\u0642\u0639 \u0627\u0644\u062d\u0627\u0644\u064a",
-    "en_US":"Use current location",
-    "fr":""
-  },
-  "use_loyalty_points":{
-    "ar_SA":"\u0627\u0633\u062a\u062e\u062f\u0645 \u0646\u0642\u0627\u0637 \u0627\u0644\u0648\u0644\u0627\u0621",
-    "en_US":"Use loyalty points",
-    "fr":""
-  },
-  "use_loyalty_points_not_caps":{
-    "ar_SA":"\u0627\u0633\u062a\u062e\u062f\u0645 \u0646\u0642\u0627\u0637 \u0627\u0644\u0648\u0644\u0627\u0621",
-    "en_US":"Use Loyalty Points",
-    "fr":""
-  },
-  "used_label":{
-    "ar_SA":"\u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u0629",
-    "en_US":"Used",
-    "fr":""
-  },
-  "valid_time_value":{
-    "ar_SA":"\u0627\u0644\u0648\u0642\u062a \u0627\u0644\u0635\u0627\u0644\u062d: (x) \u0625\u0644\u0649 (y)",
-    "en_US":"Valid Time: (x) to (y)",
-    "fr":""
-  },
-  "vehicle_brand":{
-    "ar_SA":"\u0646\u0648\u0639 \u0627\u0644\u0633\u064a\u0627\u0631\u0629",
-    "en_US":"Vehicle Brand",
-    "fr":""
-  },
-  "vehicle_color":{
-    "ar_SA":"\u0644\u0648\u0646 \u0627\u0644\u0645\u0631\u0643\u0628\u0629",
-    "en_US":"Vehicle Color",
-    "fr":""
-  },
-  "version_value":{
-    "ar_SA":"\u0627\u0644\u0625\u0635\u062f\u0627\u0631 (x)",
-    "en_US":"Version (x)",
-    "fr":""
-  },
-  "view_bag":{
-    "ar_SA":"\u0639\u0631\u0636 \u0627\u0644\u0639\u0631\u0628\u0629",
-    "en_US":"View bag",
-    "fr":""
-  },
-  "view_basket":{
-    "ar_SA":"\u0639\u0631\u0636 \u0627\u0644\u0639\u0631\u0628\u0629",
-    "en_US":"View Basket",
-    "fr":""
-  },
-  "view_coupons":{
-    "ar_SA":"\u0639\u0631\u0636 \u0627\u0644\u0643\u0648\u0628\u0648\u0646",
-    "en_US":"View Coupons",
-    "fr":""
-  },
-  "view_details":{
-    "ar_SA":"\u0639\u0631\u0636 \u0627\u0644\u062a\u0641\u0627\u0635\u064a\u0644",
-    "en_US":"View Details",
-    "fr":""
-  },
-  "walk_in":{
-    "ar_SA":"\u0645\u0646 \u0627\u0644\u0645\u0637\u0639\u0645",
-    "en_US":"Walk In",
-    "fr":""
-  },
-  "walk_in_pickup":{
-    "ar_SA":"\u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645 \u0645\u0646 \u0627\u0644\u0645\u0637\u0639\u0645",
-    "en_US":"Walk In Pickup",
-    "fr":""
-  },
-  "we_do_not_deliver_to_your_area":{
-    "ar_SA":"\u0644\u0627 \u062a\u0648\u062c\u062f \u062e\u062f\u0645\u0629 \u0627\u0644\u062a\u0648\u0635\u064a\u0644 \u0641\u064a \u0645\u0646\u0637\u0642\u062a\u0643",
-    "en_US":"We do not deliver to your area",
-    "fr":""
-  },
-  "we_will_serve_your_order":{
-    "ar_SA":"\u0633\u0648\u0641 \u0646\u0642\u0648\u0645 \u0628\u062e\u062f\u0645\u0629 \u0637\u0644\u0628\u0643 \u0644\u0643 \u0639\u0646\u062f \u0648\u0635\u0648\u0644\u0643.",
-    "en_US":"We will serve your order to you when you are here.",
-    "fr":""
-  },
-  "weeks_ago":{
-    "ar_SA":"\u0642\u0628\u0644 (x) \u0623\u0633\u0627\u0628\u064a\u0639",
-    "en_US":"(x) weeks ago",
-    "fr":""
-  },
-  "welcome_to_herfy":{
-    "ar_SA":"\u0645\u0631\u062d\u0628\u0627 \u0628\u0643\u0645 \u0641\u064a \u0647\u0631\u0641\u064a!",
-    "en_US":"Welcome to Herfy!",
-    "fr":""
-  },
-  "whatsapp_message":{
-    "ar_SA":"\u0631\u0633\u0627\u0644\u0629 \u0648\u0627\u062a\u0633 \u0627\u0628",
-    "en_US":"Whatsapp Message",
-    "fr":""
-  },
-  "within_mins":{
-    "ar_SA":"\u062e\u0644\u0627\u0644 (x) \u062f\u0642\u064a\u0642\u0629",
-    "en_US":"Within (x) mins",
-    "fr":""
-  },
-  "work":{
-    "ar_SA":"\u0639\u0645\u0644",
-    "en_US":"Work",
-    "fr":""
-  },
-  "would_you_like_to_add":{
-    "ar_SA":"\u0647\u0644 \u062a\u0631\u063a\u0628 \u0641\u064a \u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0632\u064a\u062f\u061f",
-    "en_US":"Would you like to add these?",
-    "fr":""
-  },
-  "x_photos":{
-    "ar_SA":"(x) \u0635\u0648\u0631",
-    "en_US":"(x) photos",
-    "fr":""
-  },
-  "yes_cancel":{
-    "ar_SA":"\u0646\u0639\u0645 \u060c \u0625\u0644\u063a\u0627\u0621",
-    "en_US":"Yes, cancel",
-    "fr":""
-  },
-  "yes_caps":{
-    "ar_SA":"\u0646\u0639\u0645",
-    "en_US":"YES",
-    "fr":""
-  },
-  "yesterday":{
-    "ar_SA":"\u0623\u0645\u0633",
-    "en_US":"Yesterday",
-    "fr":""
-  },
-  "you_can_always_login":{
-    "ar_SA":"\u064a\u0645\u0643\u0646\u0643 \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649 \u0641\u064a \u0623\u064a \u0648\u0642\u062a.",
-    "en_US":"You can always log in again anytime.",
-    "fr":""
-  },
-  "you_have_no_notifications":{
-    "ar_SA":"\u0644\u064a\u0633 \u0644\u062f\u064a\u0643 \u0625\u0634\u0639\u0627\u0631\u0627\u062a \u062d\u062a\u0649 \u0627\u0644\u0622\u0646.",
-    "en_US":"You have no notifications yet.",
-    "fr":""
-  },
-  "you_rated_this":{
-    "ar_SA":"\u062a\u0645 \u062a\u0642\u064a\u064a\u0645 \u0637\u0644\u0628\u0643",
-    "en_US":"You rated this order",
-    "fr":""
-  },
-  "you_rated_this_order":{
-    "ar_SA":"\u062a\u0645 \u0627\u0644\u062a\u0642\u064a\u064a\u0645",
-    "en_US":"You rated this order.",
-    "fr":""
-  },
-  "your_bag":{
-    "ar_SA":"\u0627\u0644\u0639\u0631\u0628\u0629",
-    "en_US":"Your Bag",
-    "fr":""
-  },
-  "your_cart_is_empty":{
-    "ar_SA":"\u0639\u0631\u0628\u0629 \u0627\u0644\u062a\u0633\u0648\u0642 \u0641\u0627\u0631\u063a\u0629.",
-    "en_US":"Your cart is empty.",
-    "fr":""
-  },
-  "your_comment":{
-    "ar_SA":"\u062a\u0639\u0644\u064a\u0642\u0643",
-    "en_US":"YOUR COMMENT",
-    "fr":""
-  },
-  "your_delivery_order":{
-    "ar_SA":"\u0637\u0644\u0628\u0643 \u0645\u0646 \u0647\u0631\u0641\u064a",
-    "en_US":"Your delivery order from Herfy",
-    "fr":""
-  },
-  "your_order":{
-    "ar_SA":"\u0637\u0644\u0628\u0643 \u0645\u0646 \u0647\u0631\u0641\u064a",
-    "en_US":"Your order from Herfy",
-    "fr":""
-  },
-  "your_order_is_ready":{
-    "ar_SA":"\u0637\u0644\u0628\u0643 \u062c\u0627\u0647\u0632. \u064a\u0645\u0643\u0646\u0643 \u0627\u0633\u062a\u0644\u0627\u0645\u0647\u0627 \u0645\u0646 \u0627\u0644\u0643\u0627\u0648\u0646\u062a\u0631",
-    "en_US":"Your order is ready. Pick it up from the counter",
-    "fr":""
-  },
-  "your_order_template":{
-    "ar_SA":"\u0637\u0644\u0628\u0643 (x)",
-    "en_US":"Your Order (x)",
-    "fr":""
-  },
-  "your_order_will_be_served_shortly":{
-    "ar_SA":"\u0633\u064a\u062a\u0645 \u062a\u0642\u062f\u064a\u0645 \u0637\u0644\u0628\u0643 \u0642\u0631\u064a\u0628\u0627",
-    "en_US":"Your order will be served shortly",
-    "fr":""
-  },
-  "your_orders_label":{
-    "ar_SA":"\u0637\u0644\u0628\u0627\u062a\u0643",
-    "en_US":"Your Orders",
-    "fr":""
-  },
-  "your_recent_order":{
-    "ar_SA":"\u0637\u0644\u0628\u0643 \u0627\u0644\u0623\u062e\u064a\u0631",
-    "en_US":"Your recent order.",
-    "fr":""
-  },
-  "your_rider":{
-    "ar_SA":"\u0627\u0644\u0639\u0645\u064a\u0644",
-    "en_US":"Your rider",
-    "fr":""
-  },
-  "enable_cart_notifications_message":{
-    "ar_SA":"\u064a\u0631\u062c\u0649 \u062a\u0645\u0643\u064a\u0646 \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0648\u0627\u0644\u062a\u0630\u0643\u064a\u0631\u0627\u062a \u0644\u0644\u062a\u0637\u0628\u064a\u0642 \u0644\u0644\u062d\u0635\u0648\u0644 \u0639\u0644\u0649 \u0625\u0634\u0639\u0627\u0631\u0627\u062a \u0627\u0644\u0639\u0631\u0628\u0629",
-    "en_US":"Please enable alarms and reminders for the app to receive cart notifications",
-    "fr":""
-  },
-  "enable_cart_notifications_title":{
-    "ar_SA":"\u062a\u0641\u0639\u064a\u0644 \u0625\u0634\u0639\u0627\u0631\u0627\u062a \u0627\u0644\u0639\u0631\u0628\u0629",
-    "en_US":"Enable Cart Notifications",
-    "fr":""
+  "a_few_more_things": {
+    "ar_SA": "معلومات إضافية لنعرفك بشكل أفضل",
+    "en_US": "A few more things to know you better",
+    "fr": ""
+  },
+  "a_rider_will_be": {
+    "ar_SA": "سيتم تعيين العميل لطلبك عندما يكون جاهزًا. يمكنك تتبع طلبك مباشرة",
+    "en_US": "A rider will be assigned to you when order is ready. You will be able to track your order in real time",
+    "fr": ""
+  },
+  "abandon_alert_message": {
+    "ar_SA": "لاحظنا أنك أضفت كم وجبة للسلة. لا تخليها تبرد! كمل طلبك واستمتع بألذ طعم",
+    "en_US": "We noticed you’ve got some delicious choices waiting in your cart. Don’t let them get cold! Complete your order now and treat yourself to the flavors you’re craving",
+    "fr": ""
+  },
+  "about_us_label": {
+    "ar_SA": "من نحن؟",
+    "en_US": "About us",
+    "fr": ""
+  },
+  "accepted_cards": {
+    "ar_SA": "البطاقات المقبولة",
+    "en_US": "Accepted cards",
+    "fr": ""
+  },
+  "account_deleted": {
+    "ar_SA": "تم حذف الحساب",
+    "en_US": "Account deleted",
+    "fr": ""
+  },
+  "add": {
+    "ar_SA": "أضف",
+    "en_US": "Add",
+    "fr": ""
+  },
+  "add_an_image_caps": {
+    "ar_SA": "أضف صورة",
+    "en_US": "ADD AN IMAGE",
+    "fr": ""
+  },
+  "add_debit_credit_card": {
+    "ar_SA": "أضف بطاقة الخصم/الائتمان",
+    "en_US": "Add Debit/Credit Card",
+    "fr": ""
+  },
+  "add_label": {
+    "ar_SA": "إضافة تسمية",
+    "en_US": "Add label",
+    "fr": ""
+  },
+  "add_more_item": {
+    "ar_SA": "إضافة المزيد",
+    "en_US": "Add more item",
+    "fr": ""
+  },
+  "add_more_items": {
+    "ar_SA": "أضف المزيد",
+    "en_US": "Add more items",
+    "fr": ""
+  },
+  "add_new_address": {
+    "ar_SA": "أضف عنوان جديد",
+    "en_US": "Add new address",
+    "fr": ""
+  },
+  "add_new_address_label": {
+    "ar_SA": "إضافة عنوان جديد",
+    "en_US": "Add New Address",
+    "fr": ""
+  },
+  "add_new_vehicle": {
+    "ar_SA": "إضافة سيارة جديدة",
+    "en_US": "Add New Vehicle",
+    "fr": ""
+  },
+  "add_to_bag": {
+    "ar_SA": "أضف الى السلة",
+    "en_US": "Add to bag",
+    "fr": ""
+  },
+  "add_to_bag_amount": {
+    "ar_SA": "أضف إلى العربة - (x)",
+    "en_US": "Add to bag - (x)",
+    "fr": ""
+  },
+  "add_to_cart_amount": {
+    "ar_SA": "أضف إلى العربة - (x)",
+    "en_US": "Add to cart - (x)",
+    "fr": ""
+  },
+  "add_your_curbside_vehicle": {
+    "ar_SA": "أضف سيارتك",
+    "en_US": "Add your curbside vehicle",
+    "fr": ""
+  },
+  "added_curbside": {
+    "ar_SA": "تمت الإضافة: (x)",
+    "en_US": "Added: (x)",
+    "fr": ""
+  },
+  "added_to_favorites": {
+    "ar_SA": "تمت إضافتها إلى المفضلة.",
+    "en_US": "Added to favorites.",
+    "fr": ""
+  },
+  "address_updated": {
+    "ar_SA": "تم تحديث العنوان بنجاح",
+    "en_US": "Address successfully updated",
+    "fr": ""
+  },
+  "addresses": {
+    "ar_SA": "العناوين",
+    "en_US": "Addresses",
+    "fr": ""
+  },
+  "al_rajhi_mokafaa": {
+    "ar_SA": "برنامج مكافأة - مصرف الراجحي",
+    "en_US": "Al Rajhi Mokafa'a",
+    "fr": ""
+  },
+  "albums": {
+    "ar_SA": "الألبوم",
+    "en_US": "Albums",
+    "fr": ""
+  },
+  "all_label": {
+    "ar_SA": "الجميع",
+    "en_US": "All",
+    "fr": ""
+  },
+  "all_offers": {
+    "ar_SA": "جميع العروض",
+    "en_US": "All Offers",
+    "fr": ""
+  },
+  "alraji_bank_title": {
+    "ar_SA": "بنك الراجحي (برنامج مكافأة)",
+    "en_US": "Al Rhaji Bank (Mokafa's Rewards)",
+    "fr": ""
+  },
+  "alraji_description": {
+    "ar_SA": "يجب أن يكون المستخدم مسجلاً في برنامج مكافأة الراجحي، لاسترداد بنجاح",
+    "en_US": "The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful.",
+    "fr": ""
+  },
+  "alraji_enter_amount_error_msg": {
+    "ar_SA": "يجب أن يكون المبلغ أقل من المبلغ الإجمالي",
+    "en_US": "Amount cannot exceed the total amount",
+    "fr": ""
+  },
+  "alrhaji_description": {
+    "ar_SA": "يجب أن يكون المستخدم مسجلاً في برنامج مكافأة الراجحي، لاسترداد بنجاح",
+    "en_US": "The user has to be a registered mobile number with Mokafa'a Al Rajhi Program, otherwise the redemption will not be successful.",
+    "fr": ""
+  },
+  "alrhaji_label": {
+    "ar_SA": "مصرف الراجحي (المكافآت)",
+    "en_US": "Al Rhaji Bank (Mokafa's Rewards)",
+    "fr": ""
+  },
+  "amount_sar": {
+    "ar_SA": "المبلغ (بالريال)",
+    "en_US": "Amount (SAR)",
+    "fr": ""
+  },
+  "amount_spent_label": {
+    "ar_SA": "المبلغ المدفوع",
+    "en_US": "Amount Spent",
+    "fr": ""
+  },
+  "apply_a_coupon": {
+    "ar_SA": "استخدم كوبون",
+    "en_US": "Apply a coupon",
+    "fr": ""
+  },
+  "apply_coupons_label": {
+    "ar_SA": "استخدم كوبونات",
+    "en_US": "Apply Coupons",
+    "fr": ""
+  },
+  "apply_digital_coupons": {
+    "ar_SA": "تطبيق الكوبون الرقمية",
+    "en_US": "Apply Digital Coupons",
+    "fr": ""
+  },
+  "apply_label": {
+    "ar_SA": "تفعيل",
+    "en_US": "Apply",
+    "fr": ""
+  },
+  "arabic_lang_key": {
+    "ar_SA": "عربي",
+    "en_US": "Arabic",
+    "fr": ""
+  },
+  "are_you_sure_cancel_order": {
+    "ar_SA": "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟ لا يمكن التراجع عن هذا",
+    "en_US": "Are you sure you want to cancel this order? This can't be undone",
+    "fr": ""
+  },
+  "are_you_sure_want_delete": {
+    "ar_SA": "هل انت متأكد انك تريد حذف حسابك؟",
+    "en_US": "Are you sure you want to delete your account?",
+    "fr": ""
+  },
+  "are_you_sure_want_logout": {
+    "ar_SA": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+    "en_US": "Are you sure you want to log out?",
+    "fr": ""
+  },
+  "arrived_serve_order": {
+    "ar_SA": "وصلت.. أحضر طلبي",
+    "en_US": "Arrived - Serve my order",
+    "fr": ""
+  },
+  "ashab_herfy": {
+    "ar_SA": "نقاط هرفي",
+    "en_US": "Herfy Points",
+    "fr": ""
+  },
+  "available_to_redeem": {
+    "ar_SA": "متاح للاسترداد",
+    "en_US": "Available to Redeem",
+    "fr": ""
+  },
+  "back": {
+    "ar_SA": "العودة",
+    "en_US": "Back",
+    "fr": ""
+  },
+  "become_ashab_herfy": {
+    "ar_SA": "انضم إلى برنامج نقاط هرفي",
+    "en_US": "Join the Herfy Points program",
+    "fr": ""
+  },
+  "become_ashab_herfy_description": {
+    "ar_SA": "انضم للبرنامج و سجل دخول لحسابك و راح تجمع نقاط مع كل طلب",
+    "en_US": "By creating an account or signing in to your existing account, you can earn points on every order",
+    "fr": ""
+  },
+  "best_event": {
+    "ar_SA": "لأي فعالية , انت خطط و احنا مستعدين نخدمك",
+    "en_US": "Best event. Best budget. Order our catering.",
+    "fr": ""
+  },
+  "bookmark_placeholder": {
+    "ar_SA": "مثل: منزلي",
+    "en_US": "eg. My Home",
+    "fr": ""
+  },
+  "branch_is_closed_error": {
+    "ar_SA": "الفرع مغلق. يفتح على (x).",
+    "en_US": "This branch is closed. It opens (x).",
+    "fr": ""
+  },
+  "call": {
+    "ar_SA": "اتصل بنا",
+    "en_US": "Call",
+    "fr": ""
+  },
+  "calories_kcal": {
+    "ar_SA": "(x) كال",
+    "en_US": "(x) Kcal",
+    "fr": ""
+  },
+  "can_not_be_edited": {
+    "ar_SA": "التحرير غير ممكن.",
+    "en_US": "Can not be edited.",
+    "fr": ""
+  },
+  "cancel_label": {
+    "ar_SA": "إلغاء",
+    "en_US": "Cancel",
+    "fr": ""
+  },
+  "cancel_order": {
+    "ar_SA": "إلغاء الطلب",
+    "en_US": "CANCEL ORDER",
+    "fr": ""
+  },
+  "cancel_order_new": {
+    "ar_SA": "الغاء الطلب",
+    "en_US": "Cancel Order",
+    "fr": ""
+  },
+  "cancel_order_not_allowed": {
+    "ar_SA": "نحن بصدق نقدر جميع عملائنا. يرجى ملاحظة أننا لا نسمح بإلغاء الطلب في الوقت الحالي.",
+    "en_US": "We appreciate wonderful customers like you. Kindly take note that we don't allow order cancellation at this time.",
+    "fr": ""
+  },
+  "cancel_your_order_label": {
+    "ar_SA": "إلغاء طلبك؟",
+    "en_US": "Cancel you order?",
+    "fr": ""
+  },
+  "cancel_your_order_message": {
+    "ar_SA": "هل أنت متأكد أنك تريد إلغاء طلبك؟",
+    "en_US": "Are you sure you want to cancel your order?",
+    "fr": ""
+  },
+  "cancelled": {
+    "ar_SA": "ملغى",
+    "en_US": "Cancelled",
+    "fr": ""
+  },
+  "card": {
+    "ar_SA": "بطاقة",
+    "en_US": "Card",
+    "fr": ""
+  },
+  "card_details": {
+    "ar_SA": "معلومات البطاقة",
+    "en_US": "Card Details",
+    "fr": ""
+  },
+  "card_failed": {
+    "ar_SA": "فشل الدفع بالبطاقة",
+    "en_US": "Card payment failed",
+    "fr": ""
+  },
+  "card_holder": {
+    "ar_SA": "حامل البطاقة",
+    "en_US": "Card Holder",
+    "fr": ""
+  },
+  "card_number": {
+    "ar_SA": "رقم البطاقة",
+    "en_US": "Card number",
+    "fr": ""
+  },
+  "card_on_delivery": {
+    "ar_SA": "بالبطاقة عند التوصيل",
+    "en_US": "Card on Delivery",
+    "fr": ""
+  },
+  "card_on_pickup": {
+    "ar_SA": "بالبطاقة عند الاستلام",
+    "en_US": "Card on Collection",
+    "fr": ""
+  },
+  "cart_item_count_label": {
+    "ar_SA": "(x) منتجات",
+    "en_US": "(x) items",
+    "fr": ""
+  },
+  "cash_on_delivery": {
+    "ar_SA": "الدفع عند الاستلام",
+    "en_US": "Cash on Delivery",
+    "fr": ""
+  },
+  "cash_on_pickup": {
+    "ar_SA": "نقدي",
+    "en_US": "Cash",
+    "fr": ""
+  },
+  "cater_with_herfy": {
+    "ar_SA": "طلبات الفعاليات",
+    "en_US": "Cater with Herfy",
+    "fr": ""
+  },
+  "ccv": {
+    "ar_SA": "CVV",
+    "en_US": "CVV",
+    "fr": ""
+  },
+  "checkout": {
+    "ar_SA": "الدفع",
+    "en_US": "Checkout",
+    "fr": ""
+  },
+  "checkout_enter_valid_card": {
+    "ar_SA": "الرجاء إدخال رقم بطاقة صالح",
+    "en_US": "Please enter a valid card number",
+    "fr": ""
+  },
+  "checkout_enter_valid_cvv": {
+    "ar_SA": "يرجى إدخال رمز cvv صالح",
+    "en_US": "Please enter a valid cvv code",
+    "fr": ""
+  },
+  "checkout_month_placeholder": {
+    "ar_SA": "الشهر",
+    "en_US": "MM",
+    "fr": ""
+  },
+  "checkout_security_code_caps": {
+    "ar_SA": "رقم سري",
+    "en_US": "Security code",
+    "fr": ""
+  },
+  "checkout_year_placeholder": {
+    "ar_SA": "السنة",
+    "en_US": "YY",
+    "fr": ""
+  },
+  "choose_payment": {
+    "ar_SA": "اختر طريقة الدفع",
+    "en_US": "CHOOSE PAYMENT METHOD",
+    "fr": ""
+  },
+  "choose_payment_method": {
+    "ar_SA": "اختر طريقة الدفع",
+    "en_US": "Choose Payment Method",
+    "fr": ""
+  },
+  "choose_pickup_method": {
+    "ar_SA": "اختر طريقة الاستلام",
+    "en_US": "Choose Pickup Method",
+    "fr": ""
+  },
+  "choose_your_curbside_vehicle": {
+    "ar_SA": "اختر سيارتك",
+    "en_US": "Choose your curbside vehicle",
+    "fr": ""
+  },
+  "choose_your_lang": {
+    "ar_SA": "اختر لغتك للمتابعة",
+    "en_US": "Choose your language to continue",
+    "fr": ""
+  },
+  "choose_your_lang_subtitle": {
+    "ar_SA": "Choose your language to continue",
+    "en_US": "اختر لغتك للمتابعة",
+    "fr": ""
+  },
+  "chose_your_language_arabic": {
+    "ar_SA": "Choose your language to continue",
+    "en_US": "اختر لغتك للمتابعة",
+    "fr": ""
+  },
+  "chose_your_language_english": {
+    "ar_SA": "اختر لغتك للمتابعة",
+    "en_US": "Choose your language to continue",
+    "fr": ""
+  },
+  "cic_number": {
+    "ar_SA": "رقم CIC",
+    "en_US": "CIC Number",
+    "fr": ""
+  },
+  "clear_basket": {
+    "ar_SA": "إفراغ العربة",
+    "en_US": "Clear Basket",
+    "fr": ""
+  },
+  "clear_your_basket_descrption": {
+    "ar_SA": "لديك أشياء في العربة مع نوع طلب آخر. ستتم إزالة هذه الأشياء للمتابعة.",
+    "en_US": "You already have a items in your basket with another order type. Those will be removed to start a new one.",
+    "fr": ""
+  },
+  "clear_your_current_basket": {
+    "ar_SA": "إفراغ العربة",
+    "en_US": "Clear your current basket",
+    "fr": ""
+  },
+  "closed_open_store": {
+    "ar_SA": "مغلق - يفتح في (x)",
+    "en_US": "CLOSED - Opens (x)",
+    "fr": ""
+  },
+  "combo_size": {
+    "ar_SA": "اختر حجم وجبتك",
+    "en_US": "Choose your meal size",
+    "fr": ""
+  },
+  "comment_required": {
+    "ar_SA": "التعليق مطلوب",
+    "en_US": "Comment is required",
+    "fr": ""
+  },
+  "complete_profile": {
+    "ar_SA": "الملف الشخصي الكامل",
+    "en_US": "Complete Profile",
+    "fr": ""
+  },
+  "complete_your_profile": {
+    "ar_SA": "أكمل معلومات حسابك",
+    "en_US": "Complete your profile",
+    "fr": ""
+  },
+  "confirm": {
+    "ar_SA": "التأكيد",
+    "en_US": "Confirm",
+    "fr": ""
+  },
+  "confirm_caps": {
+    "ar_SA": "ارسال",
+    "en_US": "CONFIRM",
+    "fr": ""
+  },
+  "confirm_delivery_location": {
+    "ar_SA": "تأكيد موقع التوصيل",
+    "en_US": "Confirm delivery location",
+    "fr": ""
+  },
+  "confirm_number": {
+    "ar_SA": "تاكيد رقمك",
+    "en_US": "Confirm your number",
+    "fr": ""
+  },
+  "confirm_your_number": {
+    "ar_SA": "تأكيد الرقم",
+    "en_US": "Confirm your number",
+    "fr": ""
+  },
+  "congrats_youve_reached_x": {
+    "ar_SA": "مبروك! وصلت (x)",
+    "en_US": "Congrats! You’ve reached (x)",
+    "fr": ""
+  },
+  "continue_as_guest": {
+    "ar_SA": "استمر كضيف",
+    "en_US": "Continue as Guest",
+    "fr": ""
+  },
+  "continue_label": {
+    "ar_SA": "استمر",
+    "en_US": "Continue",
+    "fr": ""
+  },
+  "continue_with_apple": {
+    "ar_SA": "تواصل مع أبل",
+    "en_US": "Continue with Apple",
+    "fr": ""
+  },
+  "continue_with_google": {
+    "ar_SA": "تواصل مع جوجل",
+    "en_US": "Continue with Google",
+    "fr": ""
+  },
+  "coupon_code_applied": {
+    "ar_SA": "تم تطبيق الكوبون",
+    "en_US": "Coupon Code Applied",
+    "fr": ""
+  },
+  "credit_debit_card": {
+    "ar_SA": "بطاقة الائتمان/الخصم",
+    "en_US": "Credit/Debit Card",
+    "fr": ""
+  },
+  "curbside": {
+    "ar_SA": "في السيارة",
+    "en_US": "Curbside",
+    "fr": ""
+  },
+  "curbside_description": {
+    "ar_SA": "وقف سيارتك عند المطعم وسيتم تقديم الطلب في سيارتك",
+    "en_US": "Park at the restaurant and your order will be served in your car",
+    "fr": ""
+  },
+  "curbside_pickup": {
+    "ar_SA": "استلام الطلب في السيارة",
+    "en_US": "Curbside pickup",
+    "fr": ""
+  },
+  "curbside_pickup_caps": {
+    "ar_SA": "استلام الطلب في السيارة",
+    "en_US": "Cubside Pickup",
+    "fr": ""
+  },
+  "curbside_vehicle": {
+    "ar_SA": "السيارة",
+    "en_US": "Curbside Vehicle",
+    "fr": ""
+  },
+  "curbside_vehicles": {
+    "ar_SA": "السيارات",
+    "en_US": "Curbside Vehicles",
+    "fr": ""
+  },
+  "date_of_birth": {
+    "ar_SA": "تاريخ الميلاد",
+    "en_US": "Date of Birth",
+    "fr": ""
+  },
+  "date_of_birth_caps": {
+    "ar_SA": "تاريخ الولادة",
+    "en_US": "DATE OF BIRTH",
+    "fr": ""
+  },
+  "days_ago": {
+    "ar_SA": "قبل (x) أيام",
+    "en_US": "(x) days ago",
+    "fr": ""
+  },
+  "debit_credit_card": {
+    "ar_SA": "بطاقة بنكية",
+    "en_US": "Debit/Credit Card",
+    "fr": ""
+  },
+  "delete_account": {
+    "ar_SA": "حذف الحساب",
+    "en_US": "Delete Account",
+    "fr": ""
+  },
+  "delete_account_and_remove": {
+    "ar_SA": "حذف الحساب وإزالة كافة البيانات. يرجى ملاحظة أن هذا الإجراء لا يمكن التراجع عنه.",
+    "en_US": "Delete account and remove all data. Please remember this action can not be reversed.",
+    "fr": ""
+  },
+  "delete_label": {
+    "ar_SA": "امسح",
+    "en_US": "Delete",
+    "fr": ""
+  },
+  "delete_my_account": {
+    "ar_SA": "احذف حسابي",
+    "en_US": "Delete My Account",
+    "fr": ""
+  },
+  "deliver": {
+    "ar_SA": "توصيل",
+    "en_US": "Deliver",
+    "fr": ""
+  },
+  "delivered": {
+    "ar_SA": "تم التوصيل",
+    "en_US": "Delivered",
+    "fr": ""
+  },
+  "delivery": {
+    "ar_SA": "توصيل",
+    "en_US": "Delivery",
+    "fr": ""
+  },
+  "delivery_address": {
+    "ar_SA": "عنوان التوصيل",
+    "en_US": "Delivery Address",
+    "fr": ""
+  },
+  "delivery_addresses": {
+    "ar_SA": "عناوين التوصيل",
+    "en_US": "Delivery Addresses",
+    "fr": ""
+  },
+  "delivery_charge": {
+    "ar_SA": "رسوم التوصيل",
+    "en_US": "Delivery Charges",
+    "fr": ""
+  },
+  "delivery_details": {
+    "ar_SA": "تفاصيل التوصيل",
+    "en_US": "Delivery Details",
+    "fr": ""
+  },
+  "delivery_in_mins": {
+    "ar_SA": "التوصيل في (x) دقيقة",
+    "en_US": "Delivery in (x) mins",
+    "fr": ""
+  },
+  "delivery_in_x_mins": {
+    "ar_SA": "التوصيل خلال (x) دقيقة",
+    "en_US": "Delivery In (x) mins",
+    "fr": ""
+  },
+  "delivery_instruction": {
+    "ar_SA": "تعليمات التوصيل",
+    "en_US": "Delivery Instruction",
+    "fr": ""
+  },
+  "delivery_time": {
+    "ar_SA": "وقت التوصيل",
+    "en_US": "Delivery Time",
+    "fr": ""
+  },
+  "did_not_get_code": {
+    "ar_SA": "لم تحصل على الكود ؟",
+    "en_US": "Did not get the code?",
+    "fr": ""
+  },
+  "digital_coupon_applied": {
+    "ar_SA": "تم تطبيق الكوبون الرقمية",
+    "en_US": "Digital Coupon Applied",
+    "fr": ""
+  },
+  "dine_in": {
+    "ar_SA": "طلب محلي",
+    "en_US": "Dine In",
+    "fr": ""
+  },
+  "dine_in_details": {
+    "ar_SA": "تفاصيل الطلب السفري",
+    "en_US": "Dine In Details",
+    "fr": ""
+  },
+  "dine_in_label": {
+    "ar_SA": "محلي",
+    "en_US": "Dine-in",
+    "fr": ""
+  },
+  "dine_in_mins": {
+    "ar_SA": "طلبك جاهز في (x) دقيقة",
+    "en_US": "Dine In in (x) mins",
+    "fr": ""
+  },
+  "dine_in_x_mins": {
+    "ar_SA": "جاهز الطعام في (x) دقيقة",
+    "en_US": "Dine In (x) mins",
+    "fr": ""
+  },
+  "dinein_address": {
+    "ar_SA": "فرع الطلب",
+    "en_US": "Dine In Address",
+    "fr": ""
+  },
+  "disabled_items": {
+    "ar_SA": "عذرا ، العناصر المدرجة أدناه غير متوفرة. يرجى إزالتها للمتابعة.",
+    "en_US": "Sorry, the items listed below are no longer available. Kindly remove them to proceed to checkout.",
+    "fr": ""
+  },
+  "disabled_items_delivery": {
+    "ar_SA": "عذرا ، العناصر المدرجة أدناه غير متوفرة في هذا الفرع. يرجى إزالتها للمتابعة.",
+    "en_US": "Sorry, the items listed below are not available at your selected branch. Kindly remove them to proceed to checkout.",
+    "fr": ""
+  },
+  "disabled_items_pickup": {
+    "ar_SA": "عذرا ، العناصر المدرجة أدناه غير متوفرة في هذا الفرع. يرجى إزالتها للمتابعة.",
+    "en_US": "Sorry, the items listed below are not available at your selected branch. Kindly remove them to proceed to checkout.",
+    "fr": ""
+  },
+  "discount": {
+    "ar_SA": "خصم",
+    "en_US": "Discount",
+    "fr": ""
+  },
+  "do_have_other_feedback": {
+    "ar_SA": "لديك تعليقات أخرى؟",
+    "en_US": "Do you have any other feedback?",
+    "fr": ""
+  },
+  "do_not_call_ring_me": {
+    "ar_SA": "لا تدق الجرس، اتصل بي",
+    "en_US": "Do not ring the bell, Call me",
+    "fr": ""
+  },
+  "done": {
+    "ar_SA": "تم",
+    "en_US": "done",
+    "fr": ""
+  },
+  "drive_thru": {
+    "ar_SA": "اطلب من السيارة",
+    "en_US": "Drive Thru",
+    "fr": ""
+  },
+  "drive_thru_description": {
+    "ar_SA": "استلم طلبك من خط الطلبات السيارة",
+    "en_US": "Pick up your order from the drive thru.",
+    "fr": ""
+  },
+  "drive_thru_pickup": {
+    "ar_SA": "من خط الطلبات السيارة",
+    "en_US": "Drive Thru Pickup",
+    "fr": ""
+  },
+  "driver_minute_away": {
+    "ar_SA": "على بعد (x) دقيقة",
+    "en_US": "(x) min away",
+    "fr": ""
+  },
+  "driver_minutes_away": {
+    "ar_SA": "على بعد (x) دقائق",
+    "en_US": "(x) mins away",
+    "fr": ""
+  },
+  "dyamic_code_digit": {
+    "ar_SA": "أدخل الكود المكون من (x) الذي إرسلناه إلى رقمك",
+    "en_US": "Enter the (x) digit code sent to your number",
+    "fr": ""
+  },
+  "earned_label": {
+    "ar_SA": "المكتسبة",
+    "en_US": "Earned",
+    "fr": ""
+  },
+  "edit": {
+    "ar_SA": "تعديل",
+    "en_US": "Edit",
+    "fr": ""
+  },
+  "edit_profile": {
+    "ar_SA": "تعديل معلومات الشخصي",
+    "en_US": "Edit Profile",
+    "fr": ""
+  },
+  "email_address": {
+    "ar_SA": "الايميل",
+    "en_US": "Email Address",
+    "fr": ""
+  },
+  "enable_cart_notifications_message": {
+    "ar_SA": "يرجى تمكين التنبيهات والتذكيرات للتطبيق للحصول على إشعارات العربة",
+    "en_US": "Please enable alarms and reminders for the app to receive cart notifications",
+    "fr": ""
+  },
+  "enable_cart_notifications_title": {
+    "ar_SA": "تفعيل إشعارات العربة",
+    "en_US": "Enable Cart Notifications",
+    "fr": ""
+  },
+  "english_lang_key": {
+    "ar_SA": "إنجليزي",
+    "en_US": "English",
+    "fr": ""
+  },
+  "enter_car_brand_name": {
+    "ar_SA": "أدخل نوع سيارتك.",
+    "en_US": "Enter the name of your car brand.",
+    "fr": ""
+  },
+  "enter_coupon_code": {
+    "ar_SA": "أدخل رمز الكوبون؟",
+    "en_US": "Enter coupon code?",
+    "fr": ""
+  },
+  "enter_cvv": {
+    "ar_SA": "ادخل CVV",
+    "en_US": "Enter CVV",
+    "fr": ""
+  },
+  "enter_full_name": {
+    "ar_SA": "أدخل الاسم الكامل",
+    "en_US": "Enter full name",
+    "fr": ""
+  },
+  "enter_new_phone_number": {
+    "ar_SA": "أدخل رقم الهاتف الجديد",
+    "en_US": "Enter New Phone Number",
+    "fr": ""
+  },
+  "enter_number_description": {
+    "ar_SA": "نحتاج إلى رقم هاتفك المحمول لمساعدتنا في الاتصال بك. قد يتم تطبيق رسوم البيانات القياسية.",
+    "en_US": "We need you mobile number to help us contact you in case of an order query. Standard data charge may apply.",
+    "fr": ""
+  },
+  "enter_phone_number": {
+    "ar_SA": "أدخل رقم الهاتف",
+    "en_US": "Enter Phone Number",
+    "fr": ""
+  },
+  "enter_phone_number_label": {
+    "ar_SA": "أدخل رقم الهاتف",
+    "en_US": "Enter Phone Number",
+    "fr": ""
+  },
+  "enter_six_digit": {
+    "ar_SA": "أدخل الكود 6 أرقام الذي تم إرساله إلى رقمك",
+    "en_US": "Enter the 6 digit code sent to your number",
+    "fr": ""
+  },
+  "enter_the_code": {
+    "ar_SA": "أدخل الكود المكون من (x) ارقام الذي ارسلناه إلى رقمك",
+    "en_US": "Enter the (x) digit code sent to your number",
+    "fr": ""
+  },
+  "enter_the_four_digit": {
+    "ar_SA": "أدخل الكود المكون من 4 ارقام الذي ارسلناه إلى رقمك",
+    "en_US": "Enter the 4 digit code sent to your number",
+    "fr": ""
+  },
+  "error_caps": {
+    "ar_SA": "خطأ",
+    "en_US": "ERROR",
+    "fr": ""
+  },
+  "estimate_pickup_time": {
+    "ar_SA": "الوقت المقدر للاستلام",
+    "en_US": "Estimate pickup time",
+    "fr": ""
+  },
+  "estimate_time": {
+    "ar_SA": "الوقت المقدر",
+    "en_US": "Estimate time",
+    "fr": ""
+  },
+  "estimated": {
+    "ar_SA": "الوقت المقدر",
+    "en_US": "Estimated",
+    "fr": ""
+  },
+  "estimated_delivery_time": {
+    "ar_SA": "الوقت المقدر للتوصيل",
+    "en_US": "Estimated delivery time",
+    "fr": ""
+  },
+  "estimated_time": {
+    "ar_SA": "الوقت المقدر",
+    "en_US": "Estimated time",
+    "fr": ""
+  },
+  "exp_date": {
+    "ar_SA": "تاريخ الانتهاء",
+    "en_US": "Expiry Date",
+    "fr": ""
+  },
+  "expiration_date": {
+    "ar_SA": "تاريخ انتهاء الصلاحية",
+    "en_US": "Expiration Date",
+    "fr": ""
+  },
+  "expires_value": {
+    "ar_SA": "تنتهي صلاحيته: (x)",
+    "en_US": "Expires: (x)",
+    "fr": ""
+  },
+  "failed": {
+    "ar_SA": "فشل",
+    "en_US": "Failed",
+    "fr": ""
+  },
+  "faqs_label": {
+    "ar_SA": "الأسئلة الشائعة",
+    "en_US": "FAQs",
+    "fr": ""
+  },
+  "favorite_added_to_cart": {
+    "ar_SA": "تمت الإضافة إلى السلة",
+    "en_US": "Favorite added to cart",
+    "fr": ""
+  },
+  "favourites_label": {
+    "ar_SA": "المفضلة",
+    "en_US": "Favourites",
+    "fr": ""
+  },
+  "feedback": {
+    "ar_SA": "ملاحظات",
+    "en_US": "Feedback",
+    "fr": ""
+  },
+  "feedback_label": {
+    "ar_SA": "الملاحظات",
+    "en_US": "Feedback",
+    "fr": ""
+  },
+  "feedback_message": {
+    "ar_SA": "نحن نقدر رأيك ، لذا يرجى إخبارنا بتجربتك.",
+    "en_US": "We value your opinion, so please tell us about your experience with our app or about your meal.",
+    "fr": ""
+  },
+  "feedback_sent": {
+    "ar_SA": "تم إرسال التعليقات",
+    "en_US": "Feedback Sent",
+    "fr": ""
+  },
+  "female": {
+    "ar_SA": "أنثى",
+    "en_US": "Female",
+    "fr": ""
+  },
+  "first_name_empty": {
+    "ar_SA": "لا يمكن أن يكون الاسم الأول فارغًا",
+    "en_US": "First name cannot be empty",
+    "fr": ""
+  },
+  "flat_number_label": {
+    "ar_SA": "رقم الشقة / المبنى / الفيلا",
+    "en_US": "Flat / Building / Villa number",
+    "fr": ""
+  },
+  "force_update_message": {
+    "ar_SA": "إصدار جديد من (appname) متاح الآن. يرجى التحديث الآن.",
+    "en_US": "A new version of (appname) is now available. Please update now.",
+    "fr": ""
+  },
+  "free": {
+    "ar_SA": "مجاني",
+    "en_US": "Free",
+    "fr": ""
+  },
+  "frequently_bought": {
+    "ar_SA": "الأكثر مطلوب مع",
+    "en_US": "Frequently bought together",
+    "fr": ""
+  },
+  "full_name": {
+    "ar_SA": "الاسم الكامل",
+    "en_US": "Full name",
+    "fr": ""
+  },
+  "full_name_empty": {
+    "ar_SA": "لا يمكن أن يكون الاسم الكامل فارغًا",
+    "en_US": "Full name cannot be empty",
+    "fr": ""
+  },
+  "full_name_label": {
+    "ar_SA": "الاسم الكامل",
+    "en_US": "Full Name",
+    "fr": ""
+  },
+  "gender": {
+    "ar_SA": "جنس",
+    "en_US": "Gender",
+    "fr": ""
+  },
+  "get_direction": {
+    "ar_SA": "احصل على الاتجاهات",
+    "en_US": "Get Direction",
+    "fr": ""
+  },
+  "get_started_label": {
+    "ar_SA": "ابدأ طلبك مع هرفي",
+    "en_US": "Get Started with Herfy",
+    "fr": ""
+  },
+  "go_to_menu": {
+    "ar_SA": "إلى القائمة",
+    "en_US": "Go to Menu",
+    "fr": ""
+  },
+  "good_afternoon": {
+    "ar_SA": "مساء الخير",
+    "en_US": "Good afternoon",
+    "fr": ""
+  },
+  "good_afternoon_user": {
+    "ar_SA": "مساء الخير، (x)!",
+    "en_US": "Good afternoon, (x)!",
+    "fr": ""
+  },
+  "good_evening": {
+    "ar_SA": "مساء الخير",
+    "en_US": "Good evening",
+    "fr": ""
+  },
+  "good_evening_user": {
+    "ar_SA": "مساء الخير، (x)!",
+    "en_US": "Good evening, (x)!",
+    "fr": ""
+  },
+  "good_morning": {
+    "ar_SA": "صباح الخير",
+    "en_US": "Good morning",
+    "fr": ""
+  },
+  "good_morning_user": {
+    "ar_SA": "صباح الخير، (x)!",
+    "en_US": "Good morning, (x)!",
+    "fr": ""
+  },
+  "got_it": {
+    "ar_SA": "تم",
+    "en_US": "Got it",
+    "fr": ""
+  },
+  "have_a_trouble": {
+    "ar_SA": "مشاكل مع طلبك؟",
+    "en_US": "Have a trouble with your order?",
+    "fr": ""
+  },
+  "help": {
+    "ar_SA": "مساعدة؟",
+    "en_US": "Help",
+    "fr": ""
+  },
+  "help_support_label": {
+    "ar_SA": "المساعدة",
+    "en_US": "Help & Support",
+    "fr": ""
+  },
+  "herfy_support": {
+    "ar_SA": "عروض التوصيل",
+    "en_US": "Delivery Deals",
+    "fr": ""
+  },
+  "herfy_support_team": {
+    "ar_SA": "نحن هنا لمساعدتك.",
+    "en_US": "Herfy’s Support team is here to help you.",
+    "fr": ""
+  },
+  "hi_label": {
+    "ar_SA": "هلا (x) !",
+    "en_US": "Hi (x)!",
+    "fr": "Salut (x) !"
+  },
+  "hi_logged_out": {
+    "ar_SA": "أهلاً!",
+    "en_US": "Hi!",
+    "fr": ""
+  },
+  "history_label": {
+    "ar_SA": "تاريخ الطلبات",
+    "en_US": "History",
+    "fr": ""
+  },
+  "home": {
+    "ar_SA": "المنزل",
+    "en_US": "Home",
+    "fr": ""
+  },
+  "how_was_your_order": {
+    "ar_SA": "كيف كان الأكل؟",
+    "en_US": "How was your order?",
+    "fr": ""
+  },
+  "how_will_you_order": {
+    "ar_SA": "كيف ودك تطلب اليوم؟",
+    "en_US": "How will you Order Today",
+    "fr": ""
+  },
+  "hrs_ago": {
+    "ar_SA": "قبل (x) ساعة",
+    "en_US": "(x) hrs ago",
+    "fr": ""
+  },
+  "in_progress": {
+    "ar_SA": "قيد التنفيذ",
+    "en_US": "In Progress",
+    "fr": ""
+  },
+  "invalid_for_this_order": {
+    "ar_SA": "غير صالح لهذا الطلب",
+    "en_US": "Invalid for this Order",
+    "fr": ""
+  },
+  "invalid_name": {
+    "ar_SA": "الرجاء إدخال اسمك الكامل",
+    "en_US": "Please enter your full name eg. Firstname Lastname",
+    "fr": ""
+  },
+  "item_added_to_cart": {
+    "ar_SA": "تمت إضافة العنصر إلى السلة",
+    "en_US": "Item added to cart",
+    "fr": ""
+  },
+  "item_added_to_favorites": {
+    "ar_SA": "تمت إضافته إلى المفضلة",
+    "en_US": "Item added to favorites",
+    "fr": ""
+  },
+  "item_not_available_for_delivery": {
+    "ar_SA": "(x) غير متوفر لطلبات التوصيل.",
+    "en_US": "(x) is not available for Delivery.",
+    "fr": ""
+  },
+  "item_not_available_for_pickup": {
+    "ar_SA": "(x) غير متوفر للطلبات الاستلام.",
+    "en_US": "(x) is not available for Pickup.",
+    "fr": ""
+  },
+  "item_quantity": {
+    "ar_SA": "الكمية",
+    "en_US": "Item Quantity",
+    "fr": ""
+  },
+  "item_removed_from_favorites": {
+    "ar_SA": "تمت إزالته من المفضلة",
+    "en_US": "Item removed from favorites",
+    "fr": ""
+  },
+  "item_updated": {
+    "ar_SA": "تم التحديث",
+    "en_US": "Item updated",
+    "fr": ""
+  },
+  "items": {
+    "ar_SA": "منتجات",
+    "en_US": "items",
+    "fr": ""
+  },
+  "join": {
+    "ar_SA": "سجل الدخول",
+    "en_US": "Join",
+    "fr": ""
+  },
+  "join_now": {
+    "ar_SA": "اشترك الآن وابدأ الطلبات، وكسب النقاط والمزيد",
+    "en_US": "Join now and start ordering, earning points and much more",
+    "fr": ""
+  },
+  "join_now_and_start": {
+    "ar_SA": "اشترك الآن وابدأ الطلبات، وكسب النقاط والمزيد",
+    "en_US": "Join now and start ordering, earning points and much more",
+    "fr": ""
+  },
+  "keep_current_basket": {
+    "ar_SA": "حفظ الأشياء في العربة",
+    "en_US": "Keep Current Basket",
+    "fr": ""
+  },
+  "Key": {
+    "ar_SA": "Arabic",
+    "en_US": "English",
+    "fr": ""
+  },
+  "kilometers": {
+    "ar_SA": "كم",
+    "en_US": "km",
+    "fr": ""
+  },
+  "km_away": {
+    "ar_SA": "مسافة (x)",
+    "en_US": "(x) away",
+    "fr": ""
+  },
+  "last_name_empty": {
+    "ar_SA": "يرجى إدخال اسمك الكامل",
+    "en_US": "Please complete your full name",
+    "fr": ""
+  },
+  "let_us_know": {
+    "ar_SA": "أخبرنا عند وصولك.",
+    "en_US": "Let us know when you arrive.",
+    "fr": ""
+  },
+  "license_plate_number": {
+    "ar_SA": "رقم لوحة السيارة",
+    "en_US": "License Plate Number",
+    "fr": ""
+  },
+  "loading": {
+    "ar_SA": "تحميل",
+    "en_US": "Loading",
+    "fr": ""
+  },
+  "login_register": {
+    "ar_SA": "تسجيل الدخول / التسجيل",
+    "en_US": "Login/Register",
+    "fr": ""
+  },
+  "logout": {
+    "ar_SA": "تسجيل خروج",
+    "en_US": "Logout",
+    "fr": ""
+  },
+  "loyalty_points_payment_label": {
+    "ar_SA": "(x) نقطة",
+    "en_US": "(x) points",
+    "fr": ""
+  },
+  "loyalty_points_value": {
+    "ar_SA": "القيمة بالريال",
+    "en_US": "(x) Value",
+    "fr": ""
+  },
+  "loyalty_points_x": {
+    "ar_SA": "نقاط الولاء (x)",
+    "en_US": "Loyalty Points (x)",
+    "fr": ""
+  },
+  "loyalty_rewards_label": {
+    "ar_SA": "نقاط هرفي",
+    "en_US": "Herfy Points",
+    "fr": ""
+  },
+  "male": {
+    "ar_SA": "ذكر",
+    "en_US": "Male",
+    "fr": ""
+  },
+  "message": {
+    "ar_SA": "رسالة",
+    "en_US": "Message",
+    "fr": ""
+  },
+  "meters": {
+    "ar_SA": "متر",
+    "en_US": "m",
+    "fr": ""
+  },
+  "minimum_cart_label": {
+    "ar_SA": "أضف (x) للوصول إلى الحد الأدنى لقيمة الطلب وهو (y).",
+    "en_US": "Add (x) to reach minimum order value of (y).",
+    "fr": ""
+  },
+  "mins_ago": {
+    "ar_SA": "قبل (x) دقائق",
+    "en_US": "(x) mins ago",
+    "fr": ""
+  },
+  "mobile_number": {
+    "ar_SA": "رقم الهاتف",
+    "en_US": "Mobile Number",
+    "fr": ""
+  },
+  "modifier_maximum_limit": {
+    "ar_SA": "وصلت إلى الحد الأقصى لعدد المعدلات",
+    "en_US": "You have reached the maximum number of extras you can add.",
+    "fr": ""
+  },
+  "modifier_minimum_limit": {
+    "ar_SA": "لم تصل إلى الحد الأدنى من الإضافات (x) لـ (y)",
+    "en_US": "Minimum number of extras (x) not reached for (y)",
+    "fr": ""
+  },
+  "mokafaa_points": {
+    "ar_SA": "نقاط المكافأة",
+    "en_US": "Mokafa’a Points",
+    "fr": ""
+  },
+  "more_info": {
+    "ar_SA": "مزيد من المعلومات",
+    "en_US": "More info",
+    "fr": ""
+  },
+  "move_pin_to_location": {
+    "ar_SA": "حدد الموقع الصحيح لمساعدتنا في توصيل طلبك بشكل أسرع",
+    "en_US": "Move the pin to the correct location to help rider deliver your order fast",
+    "fr": ""
+  },
+  "my_orders": {
+    "ar_SA": "طلباتي",
+    "en_US": "My Orders",
+    "fr": ""
+  },
+  "my_profile_label": {
+    "ar_SA": "حسابي",
+    "en_US": "My Profile",
+    "fr": ""
+  },
+  "name_label": {
+    "ar_SA": "الاسم",
+    "en_US": "Name",
+    "fr": ""
+  },
+  "name_validation": {
+    "ar_SA": "لا يمكن أن تحتوي الأسماء على أحرف خاصة",
+    "en_US": "Name fields should not accept numbers and special character.",
+    "fr": ""
+  },
+  "nearest_label": {
+    "ar_SA": "الأقرب",
+    "en_US": "Nearest",
+    "fr": ""
+  },
+  "new_caps": {
+    "ar_SA": "جديد",
+    "en_US": "NEW",
+    "fr": ""
+  },
+  "new_debit_credit_card": {
+    "ar_SA": "اضافة بطاقة بنكية",
+    "en_US": "New Debit/Credit Card",
+    "fr": ""
+  },
+  "next": {
+    "ar_SA": "التالي",
+    "en_US": "Next",
+    "fr": ""
+  },
+  "no_caps": {
+    "ar_SA": "لا",
+    "en_US": "NO",
+    "fr": ""
+  },
+  "no_coupons_found": {
+    "ar_SA": "لم يتم العثور على كوبونات.",
+    "en_US": "No coupons found.",
+    "fr": ""
+  },
+  "no_curbside_vehicles": {
+    "ar_SA": "لم يتم العثور على سيارة",
+    "en_US": "No curbside vehicles found",
+    "fr": ""
+  },
+  "no_favorite_found": {
+    "ar_SA": "لم يتم العثور على المفضلة.",
+    "en_US": "No favourites found.",
+    "fr": ""
+  },
+  "no_label": {
+    "ar_SA": "لا",
+    "en_US": "No",
+    "fr": ""
+  },
+  "no_notifications": {
+    "ar_SA": "لا يوجد إشعارات",
+    "en_US": "No notifications",
+    "fr": ""
+  },
+  "no_order_type_selected": {
+    "ar_SA": "اضغط هنا لاختيار نوع الطلب",
+    "en_US": "Please tap here to select an order type",
+    "fr": ""
+  },
+  "no_orders_found": {
+    "ar_SA": "لا توجد طلبات.",
+    "en_US": "No orders found.",
+    "fr": ""
+  },
+  "no_payment_methods": {
+    "ar_SA": "لم يتم العثور على طرق الدفع.",
+    "en_US": "No payment methods found.",
+    "fr": ""
+  },
+  "no_points_history": {
+    "ar_SA": "لا يوجد تاريخ من النقاط.",
+    "en_US": "No points history found.",
+    "fr": ""
+  },
+  "no_results_found": {
+    "ar_SA": "لا توجد نتائج",
+    "en_US": "No results found.",
+    "fr": ""
+  },
+  "no_saved_addresses_found": {
+    "ar_SA": "لا توجد عناوين محفوظة",
+    "en_US": "No saved addresses found.",
+    "fr": ""
+  },
+  "no_thanks_caps": {
+    "ar_SA": "لا شكرا",
+    "en_US": "NO THANKS",
+    "fr": ""
+  },
+  "note_for_the_driver": {
+    "ar_SA": "ملاحظات للسائق",
+    "en_US": "Note for the driver",
+    "fr": ""
+  },
+  "note_for_the_driver_hint": {
+    "ar_SA": "مثل، الباب على اليسار، المبنى أبيض اللون، لا تقرع الجرس",
+    "en_US": "e.g. Orange door on left, white coloured building, don’t ring the bell",
+    "fr": ""
+  },
+  "note_to_rider": {
+    "ar_SA": "ملاحظة لمندوب التوصيل:",
+    "en_US": "Note to rider:",
+    "fr": ""
+  },
+  "note_to_rider_label": {
+    "ar_SA": "ملاحظة لمندوب التوصيل: (x)",
+    "en_US": "Note to rider: (x)",
+    "fr": ""
+  },
+  "notes_description": {
+    "ar_SA": "هل لديك حساسية ضد أي شيء؟",
+    "en_US": "Please let us know if you are allergic to anything or if we need to avoid anything.",
+    "fr": ""
+  },
+  "notes_for_menu_hint": {
+    "ar_SA": "مثال: لا أريد الكاتشب",
+    "en_US": "e.g. no mayo",
+    "fr": ""
+  },
+  "notes_placeholder": {
+    "ar_SA": "مثال: باب أبيض على اليسار، مبنى رمادي اللون، لا تدق الجرس وما إلى ذلك",
+    "en_US": "e.g. Orange door on left, white coloured building, don’t ring the bell",
+    "fr": ""
+  },
+  "notifications": {
+    "ar_SA": "إشعارات",
+    "en_US": "Notifications",
+    "fr": ""
+  },
+  "nutritional_info": {
+    "ar_SA": "معلومات غذائية",
+    "en_US": "Nutritional Info",
+    "fr": ""
+  },
+  "ok": {
+    "ar_SA": "تم",
+    "en_US": "Okay",
+    "fr": ""
+  },
+  "on_way": {
+    "ar_SA": "على الطريق",
+    "en_US": "On Way",
+    "fr": ""
+  },
+  "one_discount_only_message": {
+    "ar_SA": "يمكنك استخدام خصم واحد فقط في كل مرة. سيتم إزالة الخصم المطبق.",
+    "en_US": "You can only apply one discount at a time. Currently applied discount will be removed",
+    "fr": ""
+  },
+  "open_in_google_maps": {
+    "ar_SA": "افتح في خرائط جوجل",
+    "en_US": "Show in Google Maps",
+    "fr": ""
+  },
+  "optional_label": {
+    "ar_SA": "(خياري)",
+    "en_US": "(Optional)",
+    "fr": ""
+  },
+  "or_label": {
+    "ar_SA": "أو",
+    "en_US": "Or",
+    "fr": ""
+  },
+  "or_label_new": {
+    "ar_SA": "أو",
+    "en_US": "Or",
+    "fr": ""
+  },
+  "order_cancelled": {
+    "ar_SA": "تم الغاء الطلب!",
+    "en_US": "Order Cancelled!",
+    "fr": ""
+  },
+  "order_catering": {
+    "ar_SA": "إبدا التجهيز لفعاليتك",
+    "en_US": "Order catering",
+    "fr": ""
+  },
+  "order_completed": {
+    "ar_SA": "تم اكتمال الطلب!",
+    "en_US": "Order completed!",
+    "fr": ""
+  },
+  "order_details": {
+    "ar_SA": "تفاصيل الطلب",
+    "en_US": "Order Details",
+    "fr": ""
+  },
+  "order_history": {
+    "ar_SA": "الطلبات السابقة",
+    "en_US": "Order History",
+    "fr": ""
+  },
+  "order_items": {
+    "ar_SA": "العناصر المطلوبة",
+    "en_US": "Order Items",
+    "fr": ""
+  },
+  "order_minimum": {
+    "ar_SA": "المبلغ إجمالي أقل من الحد الأدنى للطلبات",
+    "en_US": "Total order is less than minimum amount",
+    "fr": ""
+  },
+  "order_num": {
+    "ar_SA": "رقم الطلب",
+    "en_US": "Order #",
+    "fr": ""
+  },
+  "order_rating_sent": {
+    "ar_SA": "تم إرسال التقييم",
+    "en_US": "Order rating sent",
+    "fr": ""
+  },
+  "order_session_expired": {
+    "ar_SA": "انتهى وقت الطلب",
+    "en_US": "Order session has expired",
+    "fr": ""
+  },
+  "order_total_atleast": {
+    "ar_SA": "للمتابعة يجب أن يكون الطلب على الأقل (x)",
+    "en_US": "Order must be atleast (x) to continue",
+    "fr": ""
+  },
+  "order_tracker": {
+    "ar_SA": "اتبع الطلب",
+    "en_US": "Order Tracker",
+    "fr": ""
+  },
+  "other": {
+    "ar_SA": "آخر",
+    "en_US": "Other",
+    "fr": ""
+  },
+  "other_feedback_placeholder": {
+    "ar_SA": "مثل، أحب سرعة الخدمة، الطعم لذيذ!",
+    "en_US": "e.g: Loved the food and service!",
+    "fr": ""
+  },
+  "past_orders": {
+    "ar_SA": "الطلبات السابقة",
+    "en_US": "Past Orders",
+    "fr": ""
+  },
+  "pay_now": {
+    "ar_SA": "ادفع الآن",
+    "en_US": "Pay Now",
+    "fr": ""
+  },
+  "payment_details_caps": {
+    "ar_SA": "تفاصيل الدفع",
+    "en_US": "PAYMENT DETAILS",
+    "fr": ""
+  },
+  "payment_method": {
+    "ar_SA": "طريقة الدفع",
+    "en_US": "Payment method",
+    "fr": ""
+  },
+  "payment_method_not_caps": {
+    "ar_SA": "طريقة الدفع",
+    "en_US": "Payment Method",
+    "fr": ""
+  },
+  "payment_methods": {
+    "ar_SA": "طرق الدفع",
+    "en_US": "Payment Methods",
+    "fr": ""
+  },
+  "payment_summary": {
+    "ar_SA": "تفاصيل الدفع",
+    "en_US": "Payment Summary",
+    "fr": ""
+  },
+  "percent_of_your_order": {
+    "ar_SA": "سيتم تحويل (x) من قيمة طلبك إلى نقاط.",
+    "en_US": "(x) of your order value converts to points.",
+    "fr": ""
+  },
+  "phone_number": {
+    "ar_SA": "رقم الهاتف",
+    "en_US": "PHONE NUMBER",
+    "fr": ""
+  },
+  "phone_number_invalid": {
+    "ar_SA": "رقم الهاتف غير صحيح",
+    "en_US": "Invalid phone number",
+    "fr": ""
+  },
+  "phone_number_label": {
+    "ar_SA": "رقم الهاتف المحمول",
+    "en_US": "Phone number",
+    "fr": ""
+  },
+  "phone_number_new": {
+    "ar_SA": "رقم الهاتف",
+    "en_US": "Phone Number",
+    "fr": ""
+  },
+  "phone_number_required": {
+    "ar_SA": "رقم الهاتف مطلوب",
+    "en_US": "Phone number is required",
+    "fr": ""
+  },
+  "photos": {
+    "ar_SA": "الصور",
+    "en_US": "Photos",
+    "fr": ""
+  },
+  "picked": {
+    "ar_SA": "تم الاستلام",
+    "en_US": "Picked",
+    "fr": ""
+  },
+  "picked_up": {
+    "ar_SA": "تم الاستلام",
+    "en_US": "Picked up",
+    "fr": ""
+  },
+  "pickup": {
+    "ar_SA": "استلام",
+    "en_US": "Pick Up",
+    "fr": ""
+  },
+  "pickup_address": {
+    "ar_SA": "فرع الطلب الاستلام",
+    "en_US": "Pickup Address",
+    "fr": ""
+  },
+  "pickup_description": {
+    "ar_SA": "استلم طلبك من المطعم",
+    "en_US": "Pickup your order inside the restaurant",
+    "fr": ""
+  },
+  "pickup_details": {
+    "ar_SA": "تفاصيل الاستلام",
+    "en_US": "Pickup Details",
+    "fr": ""
+  },
+  "pickup_in_mins": {
+    "ar_SA": "الاستلام الطلب في (x) دقيقة",
+    "en_US": "Pickup in (x) mins",
+    "fr": ""
+  },
+  "pickup_in_x_mins": {
+    "ar_SA": "طلبك بيكون جاهز في (x) دقيقة",
+    "en_US": "Pick Up in (x) mins",
+    "fr": ""
+  },
+  "pickup_methods": {
+    "ar_SA": "طريقة الاستلام",
+    "en_US": "Pick Up Methods",
+    "fr": ""
+  },
+  "pickup_time": {
+    "ar_SA": "وقت الاستلام",
+    "en_US": "Pickup Time",
+    "fr": ""
+  },
+  "place_order": {
+    "ar_SA": "أرسل الطلب",
+    "en_US": "Place order",
+    "fr": ""
+  },
+  "plate_number_hint": {
+    "ar_SA": "KLK98898مثل",
+    "en_US": "e.g. KLK98898",
+    "fr": ""
+  },
+  "please_add_items_to_your_cart": {
+    "ar_SA": "الرجاء إضافة عناصر إلى العربة للاستفادة من هذا العرض.",
+    "en_US": "Please add items to your cart to avail this offer",
+    "fr": ""
+  },
+  "please_feel_free": {
+    "ar_SA": "يرجى الطلب مرة أخرى",
+    "en_US": "Please feel free to order again later.",
+    "fr": ""
+  },
+  "please_select_payment_type": {
+    "ar_SA": "يرجى اختيار طريقة الدفع",
+    "en_US": "Please select payment type",
+    "fr": ""
+  },
+  "points": {
+    "ar_SA": "النقاط",
+    "en_US": "Points",
+    "fr": ""
+  },
+  "points_equal_sar": {
+    "ar_SA": "(x) نقاط = (y) ريال",
+    "en_US": "(x) points = (y) SAR",
+    "fr": ""
+  },
+  "points_until_next_tier": {
+    "ar_SA": "(x) نقطة حتى المستوى (y)",
+    "en_US": "(x) points until (y)",
+    "fr": ""
+  },
+  "preparing": {
+    "ar_SA": "قيد الإعداد",
+    "en_US": "Preparing",
+    "fr": ""
+  },
+  "primary": {
+    "ar_SA": "أساسي",
+    "en_US": "Primary",
+    "fr": ""
+  },
+  "profile_updated": {
+    "ar_SA": "تم تحديث الملف الشخصي",
+    "en_US": "Profile Updated",
+    "fr": ""
+  },
+  "promised_time_mins": {
+    "ar_SA": "طلبك بيكون جاهز في (x) دقيقة",
+    "en_US": "in (x) mins",
+    "fr": ""
+  },
+  "promotion_empty_content": {
+    "ar_SA": "توقفت عروضنا الترويجية لفترة ، ولكن استعد لعودة لذيذة في بعد أيام قليلة.",
+    "en_US": "Our promotions are on a brief pause, but get ready\nfor a mouthwatering comeback in just a few days.",
+    "fr": ""
+  },
+  "promotion_not_available": {
+    "ar_SA": "العرض ليس لهذا النوع من الطلب",
+    "en_US": "Promotion is not available for the selected order type",
+    "fr": ""
+  },
+  "promotions": {
+    "ar_SA": "العروض",
+    "en_US": "Promotions",
+    "fr": ""
+  },
+  "prompt_remove_item": {
+    "ar_SA": "هل أنت متأكد من إزالة هذا العنصر؟",
+    "en_US": "Are you sure to remove this item?",
+    "fr": ""
+  },
+  "rate_label": {
+    "ar_SA": "تقييم الطلب",
+    "en_US": "Rate",
+    "fr": ""
+  },
+  "rated": {
+    "ar_SA": "تم التقييم",
+    "en_US": "Rated",
+    "fr": ""
+  },
+  "ready": {
+    "ar_SA": "جاهز",
+    "en_US": "Ready",
+    "fr": ""
+  },
+  "ready_for_pickup": {
+    "ar_SA": "جاهز لاستلام",
+    "en_US": "Ready for pickup",
+    "fr": ""
+  },
+  "recents": {
+    "ar_SA": "الأخيرة",
+    "en_US": "Recents",
+    "fr": ""
+  },
+  "redeem": {
+    "ar_SA": "استبدال",
+    "en_US": "Redeem",
+    "fr": ""
+  },
+  "redeemed_label": {
+    "ar_SA": "(x) نقاط مستخدمة",
+    "en_US": "(x) pts redeemed",
+    "fr": ""
+  },
+  "refer_and_earn_label": {
+    "ar_SA": "أشير واكسب",
+    "en_US": "Refer & Earn",
+    "fr": ""
+  },
+  "remove_current_promo_to_proceed": {
+    "ar_SA": "ستتم إزالة العرض الحالي  وسيتم استخدام العرض الجديد.",
+    "en_US": "This will remove your current selected promotion and apply the new one instead.",
+    "fr": ""
+  },
+  "remove_label": {
+    "ar_SA": "إزالة",
+    "en_US": "Remove",
+    "fr": ""
+  },
+  "remove_this_payment": {
+    "ar_SA": "إزالة طريقة الدفع",
+    "en_US": "Remove this payment method",
+    "fr": ""
+  },
+  "removed_from_favorites": {
+    "ar_SA": "تمت الإزالة من المفضلة.",
+    "en_US": "Removed from favorites.",
+    "fr": ""
+  },
+  "reorder_label": {
+    "ar_SA": "إعادة الطلب",
+    "en_US": "Reorder",
+    "fr": ""
+  },
+  "repeating_offer": {
+    "ar_SA": "عروض متكررة",
+    "en_US": "Repeating offer",
+    "fr": ""
+  },
+  "request_otp_label": {
+    "ar_SA": "اطلب الكود",
+    "en_US": "Request OTP",
+    "fr": ""
+  },
+  "required_label": {
+    "ar_SA": "مطلوب",
+    "en_US": "Required",
+    "fr": ""
+  },
+  "requirements": {
+    "ar_SA": "متطلبات العرض",
+    "en_US": "Requirements",
+    "fr": ""
+  },
+  "reward_tiers": {
+    "ar_SA": "مستوى المكافآت",
+    "en_US": "Reward Rank",
+    "fr": ""
+  },
+  "rewards_title": {
+    "ar_SA": "المكافآت",
+    "en_US": "Rewards",
+    "fr": ""
+  },
+  "rider_assigned": {
+    "ar_SA": "تم تعيين العميل.",
+    "en_US": "Rider assigned.",
+    "fr": ""
+  },
+  "rider_assigned_description": {
+    "ar_SA": "العميل يأخذ طلبك اليك.",
+    "en_US": "A rider is assigned and is taking your order to you.",
+    "fr": ""
+  },
+  "sar_amount": {
+    "ar_SA": "المبلغ بالريال",
+    "en_US": "SAR Amount",
+    "fr": ""
+  },
+  "sar_order_value_converts_to_points": {
+    "ar_SA": "سيتم تحويل (x) ريال من قيمة طلبك إلى (y) نقطة",
+    "en_US": "(x) SAR of your order value converts to (y) points",
+    "fr": ""
+  },
+  "sar_value_label": {
+    "ar_SA": "القيمة بالريال",
+    "en_US": "SR Value",
+    "fr": ""
+  },
+  "save": {
+    "ar_SA": "حفظ",
+    "en_US": "SAVE",
+    "fr": ""
+  },
+  "save_address": {
+    "ar_SA": "حفظ العنوان",
+    "en_US": "Save Address",
+    "fr": ""
+  },
+  "save_and_continue": {
+    "ar_SA": "حفظ ومتابعة",
+    "en_US": "Save & Continue",
+    "fr": ""
+  },
+  "save_caps": {
+    "ar_SA": "حفظ",
+    "en_US": "SAVE",
+    "fr": ""
+  },
+  "save_card_desc": {
+    "ar_SA": "هل تريد منا حفظ البطاقة التي استخدمتها للطلبات المستقبلية؟",
+    "en_US": "Would you like us to save the card you used for future orders?",
+    "fr": ""
+  },
+  "save_changes": {
+    "ar_SA": "حفظ التغييرات",
+    "en_US": "Save Changes",
+    "fr": ""
+  },
+  "save_this_card": {
+    "ar_SA": "احفظ هذه البطاقة؟",
+    "en_US": "Save this card?",
+    "fr": ""
+  },
+  "saved_addresses": {
+    "ar_SA": "العناوين المحفوظة",
+    "en_US": "Saved Addresses",
+    "fr": ""
+  },
+  "scan_points_description": {
+    "ar_SA": "امسح بطاقتك لكسب النقاط لما تطلب عندنا في المطعم.",
+    "en_US": "Scan your card to earn points on order in the restaurant.",
+    "fr": ""
+  },
+  "scan_points_label": {
+    "ar_SA": "امسح لكسب النقاط",
+    "en_US": "Scan to earn points",
+    "fr": ""
+  },
+  "search_area": {
+    "ar_SA": "البحث عن المنطقة",
+    "en_US": "Search area",
+    "fr": ""
+  },
+  "search_city": {
+    "ar_SA": "البحث عن المدينة",
+    "en_US": "Search city",
+    "fr": ""
+  },
+  "search_empty_result": {
+    "ar_SA": "لا توجد نتائج (x)",
+    "en_US": "No result found for \"(x)",
+    "fr": ""
+  },
+  "search_menu": {
+    "ar_SA": "ابحث في القائمة",
+    "en_US": "Search menu",
+    "fr": ""
+  },
+  "secs_ago": {
+    "ar_SA": "قبل (x) ثانية",
+    "en_US": "(x) secs ago",
+    "fr": ""
+  },
+  "see_directions": {
+    "ar_SA": "انظر الاتجاهات",
+    "en_US": "See Directions",
+    "fr": ""
+  },
+  "see_my_rewards": {
+    "ar_SA": "عرض المكافات",
+    "en_US": "See my rewards",
+    "fr": ""
+  },
+  "select_area": {
+    "ar_SA": "حدد المنطقة",
+    "en_US": "Select Area",
+    "fr": ""
+  },
+  "select_at_least_x_option": {
+    "ar_SA": "(حدد (x) على الأقل)",
+    "en_US": "(Select at least (x) option)",
+    "fr": ""
+  },
+  "select_at_least_x_options": {
+    "ar_SA": "(حدد (x) على الأقل)",
+    "en_US": "(Select at least (x) options)",
+    "fr": ""
+  },
+  "select_atleast": {
+    "ar_SA": "(اختر (x) على الأقل))",
+    "en_US": "(Select at least (x))",
+    "fr": ""
+  },
+  "select_city": {
+    "ar_SA": "اختر المدينة",
+    "en_US": "Select City",
+    "fr": ""
+  },
+  "select_only_one": {
+    "ar_SA": "اختر واحد",
+    "en_US": "Select only one",
+    "fr": ""
+  },
+  "select_order_type": {
+    "ar_SA": "حدد نوع الطلب",
+    "en_US": "Select Order Type",
+    "fr": ""
+  },
+  "select_up_to_x": {
+    "ar_SA": "(اختر ما يصل إلى (x))",
+    "en_US": "(Select up to (x))",
+    "fr": ""
+  },
+  "select_up_to_x_option": {
+    "ar_SA": "اختر إلى (x) اختيارات",
+    "en_US": "(Select up to (x) option)",
+    "fr": ""
+  },
+  "select_up_to_x_options": {
+    "ar_SA": "اختر إلى (x) اختيارات",
+    "en_US": "(Select up to (x) options)",
+    "fr": ""
+  },
+  "select_x": {
+    "ar_SA": "(اختر (x))",
+    "en_US": "(Select (x))",
+    "fr": ""
+  },
+  "select_x_option": {
+    "ar_SA": "(اختر (x))",
+    "en_US": "(Select (x) option)",
+    "fr": ""
+  },
+  "select_x_options": {
+    "ar_SA": "(اختر (x))",
+    "en_US": "(Select (x) options)",
+    "fr": ""
+  },
+  "select_your_date_of_birth": {
+    "ar_SA": "اختر تاريخ ميلادك",
+    "en_US": "Select your date of birth",
+    "fr": ""
+  },
+  "selected_address": {
+    "ar_SA": "العنوان المحدد",
+    "en_US": "Selected Address",
+    "fr": ""
+  },
+  "send_again": {
+    "ar_SA": "أعد الإرسال",
+    "en_US": "Send again",
+    "fr": ""
+  },
+  "send_again_label": {
+    "ar_SA": "أرسل مرة أخرى ((x) ثانية)",
+    "en_US": "Send again ((x)s)",
+    "fr": ""
+  },
+  "send_code_label": {
+    "ar_SA": "إرسال الكود",
+    "en_US": "Send Code",
+    "fr": ""
+  },
+  "send_feedback_caps": {
+    "ar_SA": "ارسل رأيك",
+    "en_US": "SEND FEEDBACK",
+    "fr": ""
+  },
+  "served": {
+    "ar_SA": "تم تقديم لك",
+    "en_US": "Served",
+    "fr": ""
+  },
+  "set_this_card_default": {
+    "ar_SA": "استخدم هذه البطاقة كبطاقة افتراضية",
+    "en_US": "Set this card as default",
+    "fr": ""
+  },
+  "setup_account": {
+    "ar_SA": "إنشأ حسابك",
+    "en_US": "Set up your account",
+    "fr": ""
+  },
+  "skip": {
+    "ar_SA": "التالي",
+    "en_US": "Skip",
+    "fr": ""
+  },
+  "social_media_label": {
+    "ar_SA": "تابعنا",
+    "en_US": "Follow Us On Social Media",
+    "fr": ""
+  },
+  "sold_out": {
+    "ar_SA": "نفذ",
+    "en_US": "Sold out",
+    "fr": ""
+  },
+  "sorry_error_payment_mada": {
+    "ar_SA": "عذرًا ، لا يمكننا معالجة طلب الدفع في الوقت الحالي. يرجى محاولة الدفع باستخدام بطاقة مدى.",
+    "en_US": "Sorry we can't process your payment request at the moment. Please try a mada card.",
+    "fr": ""
+  },
+  "sorry_you_are_not_yet_eligible": {
+    "ar_SA": "عذرًا، أنت غير مؤهل.",
+    "en_US": "Sorry, you are not yet eligible.",
+    "fr": ""
+  },
+  "sorry_you_have_insufficient": {
+    "ar_SA": "عذراً، ليس لديك نقاط كافية.",
+    "en_US": "Sorry, you have insufficient points.",
+    "fr": ""
+  },
+  "special_instruction": {
+    "ar_SA": "تعليمات خاصة",
+    "en_US": "Special Instruction",
+    "fr": ""
+  },
+  "status_template": {
+    "ar_SA": "الحالة: (x)",
+    "en_US": "Status: (x)",
+    "fr": ""
+  },
+  "stay_tuned_promo": {
+    "ar_SA": "ترقبوا للمسرات اللذيذة!",
+    "en_US": "Stay Tuned for Culinary Delights!",
+    "fr": ""
+  },
+  "store_locater_label": {
+    "ar_SA": "فروعنا",
+    "en_US": "Store Locater",
+    "fr": ""
+  },
+  "store_locator": {
+    "ar_SA": "فروعنا",
+    "en_US": "Store Locator",
+    "fr": ""
+  },
+  "store_locator_label": {
+    "ar_SA": "فروعنا",
+    "en_US": "Store Locator",
+    "fr": ""
+  },
+  "story_label": {
+    "ar_SA": "تفاصيل",
+    "en_US": "Story",
+    "fr": ""
+  },
+  "submit": {
+    "ar_SA": "إرسال",
+    "en_US": "Submit",
+    "fr": ""
+  },
+  "submit_otp_label": {
+    "ar_SA": "إرسال الكود",
+    "en_US": "Submit OTP",
+    "fr": ""
+  },
+  "subtotal": {
+    "ar_SA": "المجموع الفرعي",
+    "en_US": "Subtotal",
+    "fr": ""
+  },
+  "tap_on_track_order": {
+    "ar_SA": "اضغط على \"تتبع الطلب\" للحصول على التفاصيل",
+    "en_US": "Tap on “Track Order” for detailed tracking.",
+    "fr": ""
+  },
+  "tap_to_select_location": {
+    "ar_SA": "انقر لتحديد الموقع",
+    "en_US": "Tap to select location",
+    "fr": ""
+  },
+  "tap_track_order": {
+    "ar_SA": "اضغط على \"تتبع الطلب\" للتفاصيل.",
+    "en_US": "Tap on “Track Order” for detailed tracking.",
+    "fr": ""
+  },
+  "tell_the_order_num_deliver": {
+    "ar_SA": "أخبر رقم الطلب للعميل للحصول على طلبك",
+    "en_US": "Tell the order number to the rider to receive your order",
+    "fr": ""
+  },
+  "tell_the_order_num_pickup": {
+    "ar_SA": "أخبر رقم الطلب على الكاونتر لاستلام طلبك",
+    "en_US": "Tell the order number at the counter to pick you order",
+    "fr": ""
+  },
+  "tell_the_order_number_curbside": {
+    "ar_SA": "أخبرهم برقم الطلب عندما يُطلب منك ذلك.",
+    "en_US": "Tell the order number if asked.",
+    "fr": ""
+  },
+  "tell_us_about_your_experience_here": {
+    "ar_SA": "أخبرنا عن تجربتك هنا",
+    "en_US": "Tell us about your experience here",
+    "fr": ""
+  },
+  "terms_label": {
+    "ar_SA": "الشروط و الأحكام",
+    "en_US": "Terms & Condition",
+    "fr": ""
+  },
+  "thank_you": {
+    "ar_SA": "شكرًا لك!",
+    "en_US": "Thank you!",
+    "fr": ""
+  },
+  "thank_you_ordering": {
+    "ar_SA": "شكرًا لك على طلبك عبر تطبيق هرفي.",
+    "en_US": "Thank you for ordering at Herfy mobile app.",
+    "fr": ""
+  },
+  "thank_you_rating": {
+    "ar_SA": "شكرا لتقييم الطلب",
+    "en_US": "Thank you for rating the order",
+    "fr": ""
+  },
+  "this_action_can_not_reverse": {
+    "ar_SA": "لا يمكن التراجع عن هذا الإجراء.",
+    "en_US": "This action can not be reversed.",
+    "fr": ""
+  },
+  "tier_member_label": {
+    "ar_SA": "أنت الآن في المستوى (x).",
+    "en_US": "You are now a (x) Tier Member.",
+    "fr": ""
+  },
+  "today": {
+    "ar_SA": "اليوم",
+    "en_US": "Today",
+    "fr": ""
+  },
+  "total": {
+    "ar_SA": "المجموع",
+    "en_US": "Total",
+    "fr": ""
+  },
+  "total_cart_value": {
+    "ar_SA": "المبلغ الإجمالي",
+    "en_US": "Total Cart Value:",
+    "fr": ""
+  },
+  "total_inclusive_vat": {
+    "ar_SA": "المبلغ الإجمالي يشمل ضريبة القيمة المضافة",
+    "en_US": "Total is inclusive of VAT",
+    "fr": ""
+  },
+  "total_is_inclusive_vat": {
+    "ar_SA": "المبلغ يشمل ضريبة القيمة المضافة",
+    "en_US": "Total is inclusive of VAT",
+    "fr": ""
+  },
+  "total_points": {
+    "ar_SA": "عدد النقاط",
+    "en_US": "Total Points",
+    "fr": ""
+  },
+  "track_order": {
+    "ar_SA": "تتبع الطلب",
+    "en_US": "Track Order",
+    "fr": ""
+  },
+  "update_label": {
+    "ar_SA": "تحديث",
+    "en_US": "Update",
+    "fr": ""
+  },
+  "update_new_phone_description": {
+    "ar_SA": "رقم الهاتف هذا مخصص لهذا الطلب فقط ولن يتم حفظه.",
+    "en_US": "This phone number will only be used for this delivery and not be saved.",
+    "fr": ""
+  },
+  "upload_image_caps": {
+    "ar_SA": "تحميل صورة",
+    "en_US": "UPLOAD IMAGE",
+    "fr": ""
+  },
+  "upload_selected_image": {
+    "ar_SA": "تحميل الصورة",
+    "en_US": "UPLOAD SELECTED IMAGE",
+    "fr": ""
+  },
+  "use_current_location": {
+    "ar_SA": "استخدام الموقع الحالي",
+    "en_US": "Use current location",
+    "fr": ""
+  },
+  "use_loyalty_points": {
+    "ar_SA": "استخدم نقاط هرفي",
+    "en_US": "Use Herfy Points",
+    "fr": ""
+  },
+  "use_loyalty_points_not_caps": {
+    "ar_SA": "استخدم نقاط الولاء",
+    "en_US": "Use Loyalty Points",
+    "fr": ""
+  },
+  "used_label": {
+    "ar_SA": "المستخدمة",
+    "en_US": "Used",
+    "fr": ""
+  },
+  "valid_time_value": {
+    "ar_SA": "الوقت الصالح: (x) إلى (y)",
+    "en_US": "Valid Time: (x) to (y)",
+    "fr": ""
+  },
+  "vehicle_brand": {
+    "ar_SA": "نوع السيارة",
+    "en_US": "Vehicle Brand",
+    "fr": ""
+  },
+  "vehicle_color": {
+    "ar_SA": "لون المركبة",
+    "en_US": "Vehicle Color",
+    "fr": ""
+  },
+  "version_value": {
+    "ar_SA": "الإصدار (x)",
+    "en_US": "Version (x)",
+    "fr": ""
+  },
+  "view_bag": {
+    "ar_SA": "عرض الطلب",
+    "en_US": "View Order",
+    "fr": ""
+  },
+  "view_basket": {
+    "ar_SA": "عرض العربة",
+    "en_US": "View Basket",
+    "fr": ""
+  },
+  "view_coupons": {
+    "ar_SA": "عرض الكوبون",
+    "en_US": "View Coupons",
+    "fr": ""
+  },
+  "view_details": {
+    "ar_SA": "عرض التفاصيل",
+    "en_US": "View Details",
+    "fr": ""
+  },
+  "walk_in": {
+    "ar_SA": "من المطعم",
+    "en_US": "Walk In",
+    "fr": ""
+  },
+  "walk_in_pickup": {
+    "ar_SA": "الاستلام من المطعم",
+    "en_US": "Walk In Pickup",
+    "fr": ""
+  },
+  "we_do_not_deliver_to_your_area": {
+    "ar_SA": "لا توجد خدمة التوصيل في منطقتك",
+    "en_US": "We do not deliver to your area",
+    "fr": ""
+  },
+  "we_will_serve_your_order": {
+    "ar_SA": "سوف نقوم بخدمة طلبك لك عند وصولك.",
+    "en_US": "We will serve your order to you when you are here.",
+    "fr": ""
+  },
+  "weeks_ago": {
+    "ar_SA": "قبل (x) أسابيع",
+    "en_US": "(x) weeks ago",
+    "fr": ""
+  },
+  "welcome_to_herfy": {
+    "ar_SA": "مرحبا بكم في هرفي!",
+    "en_US": "Welcome to Herfy!",
+    "fr": ""
+  },
+  "whatsapp_message": {
+    "ar_SA": "رسالة واتس اب",
+    "en_US": "Whatsapp Message",
+    "fr": ""
+  },
+  "within_mins": {
+    "ar_SA": "خلال (x) دقيقة",
+    "en_US": "Within (x) mins",
+    "fr": ""
+  },
+  "work": {
+    "ar_SA": "عمل",
+    "en_US": "Work",
+    "fr": ""
+  },
+  "would_you_like_to_add": {
+    "ar_SA": "هل ترغب في إضافة المزيد؟",
+    "en_US": "Would you like to add these?",
+    "fr": ""
+  },
+  "x_photos": {
+    "ar_SA": "(x) صور",
+    "en_US": "(x) photos",
+    "fr": ""
+  },
+  "yes_cancel": {
+    "ar_SA": "نعم ، إلغاء",
+    "en_US": "Yes, cancel",
+    "fr": ""
+  },
+  "yes_caps": {
+    "ar_SA": "نعم",
+    "en_US": "YES",
+    "fr": ""
+  },
+  "yesterday": {
+    "ar_SA": "أمس",
+    "en_US": "Yesterday",
+    "fr": ""
+  },
+  "you_can_always_login": {
+    "ar_SA": "يمكنك تسجيل الدخول مرة أخرى في أي وقت.",
+    "en_US": "You can always log in again anytime.",
+    "fr": ""
+  },
+  "you_have_no_notifications": {
+    "ar_SA": "ليس لديك إشعارات حتى الآن.",
+    "en_US": "You have no notifications yet.",
+    "fr": ""
+  },
+  "you_rated_this": {
+    "ar_SA": "تم تقييم طلبك",
+    "en_US": "You rated this order",
+    "fr": ""
+  },
+  "you_rated_this_order": {
+    "ar_SA": "تم التقييم",
+    "en_US": "You rated this order.",
+    "fr": ""
+  },
+  "your_bag": {
+    "ar_SA": "طلبك",
+    "en_US": "Your Order",
+    "fr": ""
+  },
+  "your_cart_is_empty": {
+    "ar_SA": "عربة التسوق فارغة.",
+    "en_US": "Your cart is empty.",
+    "fr": ""
+  },
+  "your_comment": {
+    "ar_SA": "تعليقك",
+    "en_US": "YOUR COMMENT",
+    "fr": ""
+  },
+  "your_delivery_order": {
+    "ar_SA": "طلبك من هرفي",
+    "en_US": "Your delivery order from Herfy",
+    "fr": ""
+  },
+  "your_order": {
+    "ar_SA": "طلبك من هرفي",
+    "en_US": "Your order from Herfy",
+    "fr": ""
+  },
+  "your_order_from": {
+    "ar_SA": "طلبك (x) من هرفي",
+    "en_US": "Your (x) order from Herfy",
+    "fr": ""
+  },
+  "your_order_is_ready": {
+    "ar_SA": "طلبك جاهز. يمكنك استلامها من الكاونتر",
+    "en_US": "Your order is ready. Pick it up from the counter",
+    "fr": ""
+  },
+  "your_order_template": {
+    "ar_SA": "طلبك (x)",
+    "en_US": "Your Order (x)",
+    "fr": ""
+  },
+  "your_order_will_be_served_shortly": {
+    "ar_SA": "سيتم تقديم طلبك قريبا",
+    "en_US": "Your order will be served shortly",
+    "fr": ""
+  },
+  "your_orders_label": {
+    "ar_SA": "طلباتك",
+    "en_US": "Your Orders",
+    "fr": ""
+  },
+  "your_recent_order": {
+    "ar_SA": "طلبك الأخير",
+    "en_US": "Your recent order.",
+    "fr": ""
+  },
+  "your_rider": {
+    "ar_SA": "العميل",
+    "en_US": "Your rider",
+    "fr": ""
   }
 }

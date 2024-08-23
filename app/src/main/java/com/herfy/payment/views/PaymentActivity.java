@@ -997,7 +997,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         title.setText(CacheUtil.getInstance().getTranslations(Text.ORDER_SUMMARY, "ORDER SUMMARY").toUpperCase());
         chooseMethodLabel.setText(CacheUtil.getInstance().getTranslations(Text.CHOOSE_METHOD, "CHOOSE METHOD"));
         if (cashLabel != null)
-            cashLabel.setText(CacheUtil.getInstance().getTranslations(Text.CASH));
+            cashLabel.setText(CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash"));
         pickADayLabel.setText(CacheUtil.getInstance().getTranslations(Text.PICK_A_DAY, "PICK A DAY").toUpperCase());
         pickATimeLabel.setText(CacheUtil.getInstance().getTranslations(Text.PICK_A_TIME, "PICK A TIME").toUpperCase());
         cancelButton.setText(CacheUtil.getInstance().getTranslations(Text.CANCEL, "CANCEL").toUpperCase());

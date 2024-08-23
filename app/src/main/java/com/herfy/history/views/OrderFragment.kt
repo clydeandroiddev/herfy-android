@@ -684,7 +684,7 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
             }
             if (orderDetails.paymentMethod.equals(PaymentType.CASH.value, ignoreCase = true)) {
                 binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(
-                    Text.CASH)
+                    Text.CASH_ON_PICKUP, "Cash")
             } else if (orderDetails.paymentMethod.equals(PaymentType.CARD.value, ignoreCase = true)) {
                 binding.paymentMethod.text = CacheUtil.getInstance().getTranslations(
                     Text.CARD, "Card")

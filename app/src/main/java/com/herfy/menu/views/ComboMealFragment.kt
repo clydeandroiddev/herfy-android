@@ -261,8 +261,8 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             notesLabel.text =
                 cacheUtilHelper.getTranslations(Text.SPECIAL_INSTRUCTION, "Special Instruction")
             notesDescription.text = cacheUtilHelper.getTranslations(
-                Text.SPECIAL_INSTRUCTION_DESCRIPTION,
-                "Please let us know if you are allergic to anything or if we need to avoid anything"
+                Text.NOTES_DESCRIPTION,
+        "Please let us know if you are allergic to anything or if we need to avoid anything."
             )
             txtFrequntlyBought.text = cacheUtilHelper.getTranslations(
                 Text.FREQUENTLY_BOUGHT_TOGETHER_LABEL, "Frequently bought together"
@@ -280,7 +280,7 @@ class ComboMealFragment : BaseFragment<ComboViewModel, FragmentComboMealBinding>
             }
             layoutBottomSheetComboDetail.apply {
                 tvTotalLabel.text = cacheUtilHelper.getTranslations(
-                    Text.TOTAL_INCLUSIVE_VAT, "Total is inclusive of VAT"
+                    Text.TOTAL_IS_INCLUSIVE_OF_VAT, "Total is inclusive of VAT"
                 )
                 btnAddDetails.text = cacheUtilHelper.getTranslations(Text.ADD, "Add")
             }
