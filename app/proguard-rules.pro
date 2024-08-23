@@ -200,6 +200,7 @@ com.samsung.android.game.cloudgame.dev.sdk.* { *;}
 }
 
 # Play Core Proguard Rules: Play In-app Review
+-keep class com.google.android.play.core.common.PlayCoreDialogWrapperActivity { *; }
 
 -keep class com.google.android.play.core.review.ReviewManager {
   public com.google.android.gms.tasks.Task requestReviewFlow();
