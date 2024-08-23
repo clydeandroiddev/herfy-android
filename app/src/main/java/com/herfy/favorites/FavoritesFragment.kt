@@ -21,6 +21,8 @@ import butterknife.OnClick
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.kochava.KochavaEventUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
@@ -37,6 +39,7 @@ import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.*
 import com.herfy.utils.menu.MenuUtil
+import com.kochava.tracker.events.EventType
 import com.skylinedynamics.solosdk.api.models.objects.Favorite
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -197,6 +200,10 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                         val menuItem = MenuUtil.getFavoriteMenuItem(favorite)
                         FacebookAppEventUtil.addToCartEvent(
                             this, menuItem, MenuUtil.getMenuItemTotalPrice(menuItem)
+                        )
+                        KochavaTrackerUtil.trackEventWithData(
+                            EventType.ADD_TO_CART.eventName,
+                            KochavaEventUtil.itemObject(menuItem)
                         )
                     }
                     if (favorite.attributes.isCombo) {

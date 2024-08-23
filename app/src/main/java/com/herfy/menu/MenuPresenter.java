@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.BuildConfig;
+import com.herfy.analytics.kochava.KochavaEventUtil;
 import com.herfy.analytics.kochava.KochavaTrackerUtil;
 import com.herfy.base.BaseView;
 import com.herfy.database.AppDatabase;
@@ -1214,8 +1215,10 @@ public class MenuPresenter implements MenuContract.Presenter {
                 public void onSuccess(Object o) {
 
                     MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM);
-                    KochavaTrackerUtil.trackEvent(EventType.ADD_TO_WISH_LIST);
-
+                    KochavaTrackerUtil.trackEventWithData(
+                        EventType.ADD_TO_WISH_LIST.getEventName(),
+                        KochavaEventUtil.Companion.itemAddToWishList(menuItem)
+                    );
 
                     Set<String> favorites = CacheUtil.getInstance().getFavorites();
                     favorites.add(menuItem.getId());
@@ -3720,13 +3723,16 @@ public class MenuPresenter implements MenuContract.Presenter {
     @Override
     public void search(String query) {
         MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_SEARCH_ITEM);
-        KochavaTrackerUtil.trackEvent(EventType.SEARCH);
         String storeId = CacheUtil.getOrderStoreId();
         AppDatabase appDatabase = AppDatabase.getInstance();
         ArrayList<MenuItem> menuItemData = getMenuItemDataByName(appDatabase, "%" + query + "%");
         if (menuItemData != null && !menuItemData.isEmpty()) {
             try {
                 searchedMenuItems.clear();
+                KochavaTrackerUtil.trackEventWithData(
+                    EventType.SEARCH.getEventName(),
+                    KochavaEventUtil.Companion.searchItems(menuItemData)
+                );
                 for (MenuItem searchMenuItem : menuItemData) {
                     if (storeId == null || (storeId != null && !searchMenuItem.getExcludedLocations().contains(storeId))) {
                         searchedMenuItems.add(searchMenuItem);
@@ -4662,7 +4668,10 @@ public class MenuPresenter implements MenuContract.Presenter {
                 public void onSuccess(Object o) {
 
                     MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM);
-                    KochavaTrackerUtil.trackEvent(EventType.ADD_TO_WISH_LIST);
+                    KochavaTrackerUtil.trackEventWithData(
+                        EventType.ADD_TO_WISH_LIST.getEventName(),
+                        KochavaEventUtil.Companion.itemAddToWishList(menuItem)
+                    );
 
                     getFavorites(true, 1);
 

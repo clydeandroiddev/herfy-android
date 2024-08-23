@@ -155,7 +155,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore'
 
     //Kochava Events
-    def kochava_tracker_version = "5.2.0"
+    def kochava_tracker_version = "5.4.0"
     implementation("com.kochava.tracker:events:$kochava_tracker_version")
 
 }

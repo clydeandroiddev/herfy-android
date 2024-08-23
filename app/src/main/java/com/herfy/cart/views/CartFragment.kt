@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
+import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
@@ -1468,7 +1469,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     override fun showPayment() {
         MixpanelUtil.trackEvent(MixpanelUtil.EVENT_PLACE_ORDER)
-        KochavaTrackerUtil.trackEvent(EventType.CHECKOUT_START)
+        KochavaTrackerUtil.trackEventWithData(EventType.CHECKOUT_START.eventName, KochavaEventUtil.purchaseObj(cartPresenter.menuItemsTotalPrice, cartPresenter.menuItemsList))
         runOnMain {
             continueCheckout = false
             dismissProgressDialog()
@@ -2336,6 +2337,10 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         activity?.apply {
             FacebookAppEventUtil.addToCartEvent(
                 this, menuItem, MenuUtil.getMenuItemTotalPrice(menuItem)
+            )
+            KochavaTrackerUtil.trackEventWithData(
+                EventType.ADD_TO_CART.eventName,
+                KochavaEventUtil.itemObject(menuItem)
             )
         }
     }

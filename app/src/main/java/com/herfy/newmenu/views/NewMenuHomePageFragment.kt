@@ -37,6 +37,7 @@ import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
+import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.browser.BrowserActivity
@@ -1531,6 +1532,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
 
     override fun logAddToWishlistEvent(menuItem: MenuItem) {
         FacebookAppEventUtil.addToWishlistEvent(requireContext(), menuItem)
+        KochavaEventUtil.itemAddToWishList(menuItem)
     }
 
     override fun setOriginalMenuItemValue(value: String?) {

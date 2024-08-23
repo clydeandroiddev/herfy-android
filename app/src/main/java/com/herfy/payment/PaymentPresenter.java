@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.BuildConfig;
+import com.herfy.analytics.kochava.KochavaEventUtil;
 import com.herfy.analytics.kochava.KochavaTrackerUtil;
 import com.herfy.summary.OrderSummaryMenuItemViewHolder;
 import com.herfy.util.AppLogger;
@@ -1236,9 +1237,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
     public void sendOrder(Store store, String scheduledTime, String object, int loyaltyPoints) {
 
         Pair<JsonObject, HashMap<String, String>> orderBody = getOrderBody(false, store, scheduledTime, true, loyaltyPoints, null);
-
         JsonObject finalObject = GsonHelper.gsonFinal().fromJson(object, JsonObject.class);
-
         OrdersApiCall.getInstance().sendOrder(finalObject, new ApiRequestListener() {
 
             @Override
@@ -1272,7 +1271,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
                         paymentView.setOrderId(orderId);
                         MixpanelUtil.Companion.checkout(orderId, store, finalObject.get("type").getAsString(), paymentType.getValue());
-                        KochavaTrackerUtil.trackEvent(EventType.PURCHASE);
+                        KochavaTrackerUtil.trackEventWithData(EventType.PURCHASE.getEventName(), KochavaEventUtil.Companion.purchaseObj(orderTotalPrice, menuItems));
                         ApiLogUtil.sendOrderLog(ApiLogLevel.INFO, orderId, paymentType.getValue(), "Order Successful");
 
                         if (paymentType != PaymentType.CARD || validatedTotal <= 0) {

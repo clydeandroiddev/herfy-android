@@ -39,6 +39,9 @@ import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.firebase.FirebaseService
+import com.herfy.analytics.kochava.KochavaEventType
+import com.herfy.analytics.kochava.KochavaEventUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
@@ -91,6 +94,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import com.skylinedynamics.solosdk.api.models.objects.Translated
 import com.skylinedynamics.solosdk.util.GsonHelper
+import org.json.JSONObject
 import java.util.Locale
 
 
@@ -807,9 +811,12 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuCategory,
                         _totalPrice,
                         Integer.parseInt(binding.quantity.text.toString())
-                    );
+                    )
                     FacebookAppEventUtil.addToCartEvent(baseActivity, menuItem, _totalPrice)
-                    com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent(EventType.ADD_TO_CART)
+                    KochavaTrackerUtil.trackEventWithData(
+                        EventType.ADD_TO_CART.eventName,
+                        KochavaEventUtil.itemObject(menuItem)
+                    )
                 })
                 baseActivity.dismissDialogs()
                 menuItemSelected = menuItem
@@ -830,6 +837,13 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         menuCategory
                     )
                     FacebookAppEventUtil.viewMenuItemEvent(activity, menuItem)
+                    KochavaTrackerUtil.trackEventWithData(
+                        KochavaEventType.VIEW_PRODUCT.eventName,
+                        KochavaEventUtil.viewProductObject(
+                            menuItem,
+                            menuCategory.getName(LocaleUtil.getInstance().getLanguage())
+                        )
+                    )
                 }
             }
         }
@@ -1535,6 +1549,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
 
     override fun logAddToWishlistEvent(menuItem: MenuItem) {
         FacebookAppEventUtil.addToWishlistEvent(requireContext(), menuItem)
+        KochavaEventUtil.itemAddToWishList(menuItem)
     }
 
     override fun setOriginalMenuItemValue(value: String?) {

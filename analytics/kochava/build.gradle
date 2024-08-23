@@ -82,10 +82,11 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
+    implementation project(':solosdk')
     implementation project(path: ':utils')
 
     //Kochava
-    def kochava_tracker_version = "5.2.0"
+    def kochava_tracker_version = "5.6.0"
     implementation("com.kochava.tracker:tracker:$kochava_tracker_version")
     implementation("com.kochava.tracker:events:$kochava_tracker_version")
     implementation("com.kochava.tracker:engagement:$kochava_tracker_version")

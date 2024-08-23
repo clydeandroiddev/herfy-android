@@ -20,6 +20,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.herfy.analytics.kochava.KochavaEventType
+import com.herfy.analytics.kochava.KochavaEventUtil
+import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.authentication.R
 import com.herfy.authentication.databinding.FragmentLoginBinding
 import com.herfy.authentication.state.LoginViewState
@@ -248,7 +251,7 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
         viewModel.bannerList.observeNonNull(this) { slides ->
             slides?.firstOrNull()?.let { slide ->
                 slide.imageUri?.let {
-                    if(it.isNotEmpty()) {
+                    if (it.isNotEmpty()) {
                         loadSliderImage(binding.signupPic, it)
                     }
                 }
@@ -266,6 +269,10 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                 }
 
                 is LoginViewState.GoogleSuccess -> {
+                    KochavaTrackerUtil.trackEventWithData(
+                        KochavaEventType.LOGIN.eventName,
+                        KochavaEventUtil.customer(it.customer.id)
+                    )
                     requireActivity().setResult(Activity.RESULT_OK)
                     requireActivity().finish()
                 }

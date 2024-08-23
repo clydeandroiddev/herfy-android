@@ -23,6 +23,7 @@ import com.bumptech.glide.request.target.Target;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.herfy.R;
 import com.herfy.analytics.facebook.FacebookAppEventUtil;
+import com.herfy.analytics.kochava.KochavaEventUtil;
 import com.herfy.auth.views.AuthActivity;
 import com.herfy.components.Amount;
 import com.herfy.components.AmountTextView;
@@ -493,6 +494,7 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements MenuC
     @Override
     public void logAddToWishlistEvent(MenuItem menuItem) {
         FacebookAppEventUtil.Companion.addToWishlistEvent(context, menuItem);
+        KochavaEventUtil.Companion.itemAddToWishList(menuItem);
     }
 
     @Override
