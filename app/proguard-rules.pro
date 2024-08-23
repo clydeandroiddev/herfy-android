@@ -63,3 +63,138 @@
 -keep class com.herfy.menu.adapters.model.ModifierItemClickParams { *; }
 -keep class com.moyasar.android.sdk.** { *; }
 -keep class android.databinding.** { *; }
+
+# KochavaCore: Ignore SDK warnings for missing dependencies.
+-dontwarn com.kochava.core**
+
+# KochavaCore: Keep annotations used for json serialization.
+-keepattributes Signature
+-keepattributes *Annotation*
+
+# KochavaCore: BuildConfig
+-keep class com.kochava.core.BuildConfig { *; }
+
+# KochavaCore: Google Instant Apps Collection.
+-keep class com.google.android.gms.common.wrappers.InstantApps {
+    boolean isInstantApp(android.content.Context);
+}
+
+# KochavaTracker: Ignore SDK warnings for missing dependencies.
+-dontwarn com.kochava.tracker**
+
+# KochavaTracker: BuildConfig
+-keep class com.kochava.tracker.BuildConfig { *; }
+
+# KochavaTracker: Internal SDK
+-keep class com.kochava.tracker.modules.internal.Module {
+    void setController(***);
+    *** getController();
+}
+-keep class com.kochava.tracker.Tracker {
+    static com.kochava.tracker.TrackerApi getInstance();
+}
+
+# KochavaTracker: Google ADID Collection.
+-keep class com.google.android.gms.ads.identifier.AdvertisingIdClient {
+    com.google.android.gms.ads.identifier.AdvertisingIdClient$Info getAdvertisingIdInfo(android.content.Context);
+}
+-keep class com.google.android.gms.ads.identifier.AdvertisingIdClient$Info {
+    java.lang.String getId();
+    boolean isLimitAdTrackingEnabled();
+}
+
+# KochavaTracker: Google Install Referrer Collection.
+-keep class com.android.installreferrer.api.InstallReferrerClient { *; }
+-keep class com.android.installreferrer.api.InstallReferrerClient$InstallReferrerResponse { *; }
+-keep class com.android.installreferrer.api.InstallReferrerStateListener { *; }
+-keep class com.android.installreferrer.api.ReferrerDetails { *; }
+
+# KochavaTracker: Google App Set ID Collection
+-keep class com.google.android.gms.appset.AppSet {
+    com.google.android.gms.appset.AppSetIdClient getClient(android.content.Context);
+}
+-keep class com.google.android.gms.appset.AppSetIdClient {
+    com.google.android.gms.tasks.Task getAppSetIdInfo();
+}
+-keep class com.google.android.gms.appset.AppSetIdInfo {
+    java.lang.String getId();
+    int getScope();
+}
+-keep class com.google.android.gms.tasks.Tasks {
+    *** await(com.google.android.gms.tasks.Task, long, java.util.concurrent.TimeUnit);
+}
+
+# KochavaTracker: Huawei OAID Collection.
+-keep class com.huawei.hms.ads.identifier.AdvertisingIdClient {
+    com.huawei.hms.ads.identifier.AdvertisingIdClient$Info getAdvertisingIdInfo(android.content.Context);
+}
+-keep class com.huawei.hms.ads.identifier.AdvertisingIdClient$Info {
+    java.lang.String getId();
+    boolean isLimitAdTrackingEnabled();
+}
+
+# KochavaTracker: Huawei Install Referrer Collection.
+-keep class com.huawei.hms.ads.installreferrer.api.InstallReferrerClient { *; }
+-keep class com.huawei.hms.ads.installreferrer.api.InstallReferrerClient$InstallReferrerResponse { *; }
+-keep class com.huawei.hms.ads.installreferrer.api.InstallReferrerStateListener { *; }
+-keep class com.huawei.hms.ads.installreferrer.api.ReferrerDetails { *; }
+
+# KochavaTracker: Samsung Install Referrer Collection.
+-keep class com.samsung.android.sdk.sinstallreferrer.api.InstallReferrerClient { *; }
+-keep class com.samsung.android.sdk.sinstallreferrer.api.InstallReferrerClient$InstallReferrerResponse { *; }
+-keep class com.samsung.android.sdk.sinstallreferrer.api.InstallReferrerStateListener { *; }
+-keep class com.samsung.android.sdk.sinstallreferrer.api.ReferrerDetails { *; }
+
+# KochavaTracker: Notifications Enabled Collection.
+-keep class androidx.core.app.NotificationManagerCompat {
+    static androidx.core.app.NotificationManagerCompat from(android.content.Context);
+    boolean areNotificationsEnabled();
+}
+
+# KochavaTracker: Samsung Cloud Game Dev
+-keepclassmembers, includecode class
+com.samsung.android.game.cloudgame.dev.sdk.* { *;}
+
+# KochavaTrackerDatapointNetwork: Ignore SDK warnings for missing dependencies.
+-dontwarn com.kochava.tracker.datapointnetwork**
+
+# KochavaTrackerDatapointNetwork: BuildConfig
+-keep class com.kochava.tracker.datapointnetwork.BuildConfig { *; }
+
+# KochavaTrackerDatapointNetwork: Internal SDK
+-keep class com.kochava.tracker.datapointnetwork.internal.DataPointCollectionNetwork {
+    public <methods>;
+}
+
+# KochavaTrackerEngagement: Ignore SDK warnings for missing dependencies.
+-dontwarn com.kochava.tracker.engagement**
+
+# KochavaTrackerEngagement: BuildConfig
+-keep class com.kochava.tracker.engagement.BuildConfig { *; }
+
+# KochavaTrackerEngagement: Internal SDK
+-keep class com.kochava.tracker.engagement.Engagement {
+    static com.kochava.tracker.engagement.EngagementApi getInstance();
+}
+
+# KochavaTrackerEvents: Ignore SDK warnings for missing dependencies.
+-dontwarn com.kochava.tracker.events**
+
+# KochavaTrackerEvents: BuildConfig
+-keep class com.kochava.tracker.events.BuildConfig { *; }
+
+# KochavaTrackerEvents: Internal SDK
+-keep class com.kochava.tracker.events.Events {
+    static com.kochava.tracker.events.EventsApi getInstance();
+}
+
+# KochavaTrackerLegacyReferrer: Ignore SDK warnings for missing dependencies.
+-dontwarn com.kochava.tracker.legacyreferrer**
+
+# KochavaTrackerLegacyReferrer: BuildConfig
+-keep class com.kochava.tracker.legacyreferrer.BuildConfig { *; }
+
+# KochavaTrackerLegacyReferrer: Referrer Receiver
+-keep class com.kochava.tracker.legacyreferrer.LegacyReferrerReceiver {
+    void onReceive(android.content.Context, android.content.Intent);
+}

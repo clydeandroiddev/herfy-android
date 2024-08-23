@@ -262,7 +262,6 @@ public class MainPresenter implements MainContract.Presenter {
         OrdersApiCall.getInstance().sendOrderFeedback(order.getId(), orderFeedbackBody, null, new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
-                KochavaTrackerUtil.trackEvent(EventType.RATING);
                 mainView.showMessage(CacheUtil.getInstance().getTranslations(Text.ORDER_RATING_SENT));
             }
 

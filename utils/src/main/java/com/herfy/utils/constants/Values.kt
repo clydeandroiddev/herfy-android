@@ -4,7 +4,6 @@ import android.os.Bundle
 
 object Values {
 
-
     const val TRANSLATIONS_URL = "https://cdn.getsolo.io/content/solo-mobile-apps2.json"
     const val DEFAULT_IMAGE_URL = "https://cdn.getsolo.io/system/default-image.png"
     const val CLOUDINARY_IMAGE_URL =
@@ -137,6 +136,4 @@ object Values {
     const val ARGS_KEY_ACTION_VALUE = "action_value"
 
     const val PROMO_IMAGE_ASPECT_RATIO = 1.54
-
-    const val HERFY_SOLO_ANDROID = "Herfy Solo Android"
 }

@@ -4,8 +4,8 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.herfy.analytics.firebase.FirebaseEventUtilHelper
+import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
-import com.herfy.analytics.kochava.KochavaTrackerUtil.trackEvent
 import com.herfy.database.entities.MenuItemDb
 import com.herfy.model.ErrorMsgItem
 import com.herfy.model.EventAttributesMetric
@@ -1925,7 +1925,10 @@ class ComboViewModel @Inject constructor(
                         object : ApiRequestListener {
                             override fun onSuccess(o: Any) {
                                 trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM)
-                                KochavaTrackerUtil.trackEvent(EventType.ADD_TO_WISH_LIST)
+                                KochavaTrackerUtil.trackEventWithData(
+                                    EventType.ADD_TO_WISH_LIST.eventName,
+                                    KochavaEventUtil.itemAddToWishList(item)
+                                )
                                 val favorites = CacheUtil.getInstance().getFavorites()
                                 favorites.add(item.id)
                                 CacheUtil.getInstance().setFavorites(favorites)
@@ -2189,7 +2192,10 @@ class ComboViewModel @Inject constructor(
                 menuRepository.addItemToFavorite(menuItem) { isSuccess, error ->
                     if (isSuccess) {
                         trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM)
-                        trackEvent(EventType.ADD_TO_WISH_LIST)
+                        KochavaTrackerUtil.trackEventWithData(
+                            EventType.ADD_TO_WISH_LIST.eventName,
+                            KochavaEventUtil.itemAddToWishList(menuItem)
+                        )
                         val favorites = CacheUtil.getInstance().getFavorites()
                         favorites.add(menuItem.id)
                         CacheUtil.getInstance().setFavorites(favorites)

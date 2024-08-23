@@ -1,8 +1,8 @@
 package com.herfy.analytics.kochava
 
-import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import org.json.JSONArray
@@ -14,7 +14,6 @@ class KochavaEventUtil {
 
         fun itemObject(menuItem: MenuItem): JSONObject {
             val jsonObject = JSONObject()
-            jsonObject.put("app_name", Values.HERFY_SOLO_ANDROID)
             jsonObject.put("item_id", menuItem.id)
             jsonObject.put("currency", "SAR")
             val user = AuthUtil.getInstance()
@@ -29,7 +28,6 @@ class KochavaEventUtil {
 
         fun itemAddToWishList(menuItem: MenuItem): JSONObject {
             val jsonObject = JSONObject()
-            jsonObject.put("app_name", Values.HERFY_SOLO_ANDROID)
             jsonObject.put("item_id", menuItem.id)
             jsonObject.put("currency", "SAR")
             val user = AuthUtil.getInstance()
@@ -44,7 +42,6 @@ class KochavaEventUtil {
 
         fun viewProductObject(menuItem: MenuItem, categoryName: String): JSONObject {
             val jsonObject = JSONObject()
-            jsonObject.put("app_name", Values.HERFY_SOLO_ANDROID)
             jsonObject.put("item_id", menuItem.id)
             jsonObject.put("currency", "SAR")
             val user = AuthUtil.getInstance()
@@ -66,14 +63,12 @@ class KochavaEventUtil {
 
         fun customer(id: String): JSONObject {
             val jsonObject = JSONObject()
-            jsonObject.put("app_name", Values.HERFY_SOLO_ANDROID)
             jsonObject.put("customer_id", id)
             return jsonObject
         }
 
         fun purchaseObj(price: Double, items: List<MenuItem>): JSONObject {
             val jsonObject = JSONObject()
-            jsonObject.put("app_name", Values.HERFY_SOLO_ANDROID)
 
             val user = AuthUtil.getInstance()
             if (user.isSignedIn) {
@@ -96,6 +91,22 @@ class KochavaEventUtil {
                 itemsArray.put(itemObject)
             }
             jsonObject.put("items", itemsArray)
+            return jsonObject
+        }
+
+        fun searchItems(items: List<MenuItem>): JSONObject {
+            val jsonObject = JSONObject()
+            val pairItems: List<Map<String, Any>> = items.map { item ->
+                val pairItem: Map<String, Any> = mapOf(
+                    "item-id" to (item.id ?: 0),
+                    "item-name" to (item.getName(LocaleUtil.EN_US) ?: ""),
+                    "item-price" to (item.price)
+                )
+                pairItem
+            }
+
+            jsonObject.put("currency", CacheUtil.getInstance().concept.currencySymbol)
+            jsonObject.put("items", pairItems)
             return jsonObject
         }
     }
