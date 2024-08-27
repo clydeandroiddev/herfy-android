@@ -327,7 +327,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
         if (page > 1 || !appDatabase.storeDao().hasByApplication(applicationId)) {
 
-            LocationApiCall.getInstance().getStoreLocationsWithLatLng(String.valueOf(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), "20", new ApiRequestListener() {
+            LocationApiCall.getInstance().getStoreLocationsWithLatLng(String.valueOf(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), "30", new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
                     try {
