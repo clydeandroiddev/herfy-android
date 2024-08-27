@@ -1834,8 +1834,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         noDriverLayout.isVisible = false
                         val driver = appDriver.driver
                         val driverOrder = orderPresenter?.driverDetail
-                        riderMotor.text = driver.licensePlate.orEmpty()
-                        riderName.text = driver.name.orEmpty()
+                        riderMotor.text = driver?.licensePlate.orEmpty()
+                        riderName.text = driver?.name.orEmpty()
                         if (driverOrder != null) {
                             driverInitial.isVisible = true
                             driverInitial.text =
@@ -1843,7 +1843,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         } else {
                             driverInitial.isVisible = false
                         }
-                        Glide.with(it).load(driver.photoURL.orEmpty())
+                        Glide.with(it).load(driver?.photoURL.orEmpty())
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .apply(RequestOptions.centerInsideTransform())
                             .listener(object : RequestListener<Drawable?> {
@@ -1868,7 +1868,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                     return false
                                 }
                             }).into(driverImage)
-                        checkDriverMobile(driver.mobile)
+                        checkDriverMobile(driver?.mobile)
                     }
                 }
             }

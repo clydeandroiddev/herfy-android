@@ -715,7 +715,14 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                             JSONObject dataObject = data.getJSONObject(i);
                             Employee employee = Employee.parse(dataObject);
                             JSONObject attributes = dataObject.optJSONObject("attributes");
-                            if (attributes != null) {
+                            //TODO: for testing ably messages via python script
+                            LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
+                            LatLng driverLatLng = new LatLng(14.722181642825772, 121.0514142675921);
+                            ordersView.showDriver(customerLatLng, driverLatLng, 10);
+                            if (!isLocationUpdateSubscribed) {
+                                subscribeToOrderDriverLocationUpdate(order.getId());
+                            }
+                            /*if (attributes != null) {
                                 JSONObject lyveDriverObject = attributes.getJSONObject("lyve-driver");
                                 try {
                                     LyveDriver lyveDriver = new Gson().fromJson(lyveDriverObject.toString(), LyveDriver.class);
@@ -732,6 +739,11 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
+                            }*/
+
+                            //TODO: call driver bearing api
+                            if(driver == null) {
+
                             }
                         }
 
@@ -2227,10 +2239,11 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
 
     private Unit onOrderDriverLocationUpdate(Message message) {
         OrderStatus orderStatus = order.getOrderStatus();
-        if (driver != null && orderStatus != null && orderStatus.getSequence() >= OrderStatusType.DELIVERY_IN_PROGRESS.getValue() && orderStatus.getSequence() <= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue()) {
+        if (orderStatus != null && orderStatus.getSequence() >= OrderStatusType.DELIVERY_IN_PROGRESS.getValue() && orderStatus.getSequence() <= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue()) {
             try {
                 JSONObject jsonObject = new JSONObject(message.data.toString());
                 DeliveryDriver appDriver = new Gson().fromJson(jsonObject.toString(), DeliveryDriver.class);
+                AppLogger.error("onOrderDriverLocationUpdate " + appDriver.getBearing().toString());
                 ordersView.updateDriver(appDriver);
             } catch (JSONException e) {
                 e.printStackTrace();
