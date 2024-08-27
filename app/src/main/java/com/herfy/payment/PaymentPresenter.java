@@ -1583,7 +1583,10 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
     @Override
     public String getValidatedBody() {
-        return validatedBody.toString();
+        if(validatedBody != null) {
+            return validatedBody.toString();
+        }
+        return "";
     }
 
     @Override
