@@ -185,7 +185,8 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery Charges")
             discountLabel.text = CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
             totalLabel.text = CacheUtil.getInstance().getTranslations(Text.TOTAL, "Total")
-            mukafaaLabel.text = CacheUtil.getInstance().getTranslations(Text.MOKAFAA_POINTS, "Mokafa’a Points")
+            mukafaaLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.MOKAFAA_POINTS, "Mokafa’a Points")
         }
     }
 
@@ -267,22 +268,23 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 var mukafaaAmount = 0.0
                 orderPresenter?.let {
                     val mukafaaTransaction = it.mukafaaTransaction
-                    if(mukafaaTransaction != null && it.isMukafaaEnabled){
+                    if (mukafaaTransaction != null && it.isMukafaaEnabled) {
                         mukafaaContainer.visible()
                         mukafaaAmount = mukafaaTransaction.attributes.amount
                         var dc = "-" + StringUtil.getFormattedPrice(mukafaaAmount)
                         dc = dc.replace("--", "-")
                         mukafaaTotal.text = dc
-                    }else {
+                    } else {
                         mukafaaContainer.gone()
                     }
                 }
 
-                val discountAmount = (if(order.discountDisplay != 0.0) order.discountDisplay else order.discount) - mukafaaAmount
+                val discountAmount =
+                    (if (order.discountDisplay != 0.0) order.discountDisplay else order.discount) - mukafaaAmount
                 if (discountAmount > 0.0) {
                     discountContainer.isVisible = true
-                    discountTotal.text = StringUtil.getNewFormattedPrice(
-                        item.discount, true
+                    discountTotal.text = "-" + StringUtil.getNewFormattedPrice(
+                        (item.discount - mukafaaAmount), true
                     )
                 } else {
                     discountContainer.isVisible = false
@@ -314,7 +316,8 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                         )
                     ) {
                         cardImage.setImageResource(com.herfy.commonstyles.R.drawable.ic_payment_type_cash_new)
-                        cardNumber.text = CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
+                        cardNumber.text =
+                            CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
                     } else if (order.payment.attributes.method.equals(
                             PaymentType.CARD_ON_DELIVERY.value, ignoreCase = true
                         )
