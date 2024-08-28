@@ -119,7 +119,7 @@ public interface OrdersContract {
 
         void customerArrived(String orderId);
 
-        void getDriverBearing();
+        void getDriverBearing(String employeeId);
 
         void detachAbly();
 

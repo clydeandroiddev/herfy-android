@@ -1135,7 +1135,7 @@ public class Text {
     public static final String DELIVERY_INSTRUCTION_LABEL = "delivery_instruction";
 
     public static final String YOUR_RIDER = "your_rider";
-    public static final String A_RIDER_WILL_BE = "A rider will be assigned to you when order is ready. You will be able to track your order in real time";
+    public static final String A_RIDER_WILL_BE = "a_rider_will_be";
     public static final String PICKUP_ADDRESS = "pickup_address";
 
     public static final String MESSAGE = "message";

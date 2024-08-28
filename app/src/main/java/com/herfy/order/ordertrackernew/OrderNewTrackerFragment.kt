@@ -1085,7 +1085,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             activity?.cast<MainActivity> { mainActivity ->
                 val whatsAppPackageName = "com.whatsapp"
                 try {
-                    val dialCode = CacheUtil.getInstance().concept.dialingCode.trim().replace("+", "")
+                    val dialCode =
+                        CacheUtil.getInstance().concept.dialingCode.trim().replace("+", "")
                     var finalNumber = number.trim().replace("+", "")
                     if (!finalNumber.startsWith(dialCode)) {
                         finalNumber = dialCode + finalNumber
@@ -1683,22 +1684,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 driverIcon.setImageResource(R.drawable.ic_delivery_right)
                             }
 
-//                            val currentDistance = currentLocationToUse?.latitude?.let {
-//                                currentLocationToUse!!.longitude.let { it1 ->
-//                                    latLng.latitude.let { it2 ->
-//                                        latLng.longitude.let { it3 ->
-//                                            DistanceCalculator.calculateDistance(
-//                                                it, it1, it2, it3
-//                                            )
-//                                        }
-//                                    }
-//                                }
-//                            }
-//
-//                            distanceValue = StringUtil.getDistance(
-//                                currentDistance ?: 0.0
-//                            )
-
                             textView.text = if (eta > 1) {
                                 CacheUtil.getInstance().getTranslations(
                                     Text.DRIVER_MINUTES_AWAY,
@@ -1834,8 +1819,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         noDriverLayout.isVisible = false
                         val driver = appDriver.driver
                         val driverOrder = orderPresenter?.driverDetail
-                        riderMotor.text = driver.licensePlate.orEmpty()
-                        riderName.text = driver.name.orEmpty()
+                        riderMotor.text = driver?.licensePlate.orEmpty()
+                        riderName.text = driver?.name.orEmpty()
                         if (driverOrder != null) {
                             driverInitial.isVisible = true
                             driverInitial.text =
@@ -1843,7 +1828,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         } else {
                             driverInitial.isVisible = false
                         }
-                        Glide.with(it).load(driver.photoURL.orEmpty())
+                        Glide.with(it).load(driver?.photoURL.orEmpty())
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .apply(RequestOptions.centerInsideTransform())
                             .listener(object : RequestListener<Drawable?> {
@@ -1868,7 +1853,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                     return false
                                 }
                             }).into(driverImage)
-                        checkDriverMobile(driver.mobile)
+                        checkDriverMobile(driver?.mobile)
                     }
                 }
             }
