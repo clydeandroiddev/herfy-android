@@ -327,7 +327,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
         if (page > 1 || !appDatabase.storeDao().hasByApplication(applicationId)) {
 
-            LocationApiCall.getInstance().getStoreLocationsWithLatLng(String.valueOf(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), "20", new ApiRequestListener() {
+            LocationApiCall.getInstance().getStoreLocationsWithLatLngNew(String.valueOf(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
                     try {
@@ -507,80 +507,20 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     }
 
     private void sortStoresByDistance() {
-
-        Collections.sort(dineInStores, new Comparator<Store>() {
-            @Override
-            public int compare(Store store1, Store store2) {
-                if (store1 != null && store1.getAttributes() != null && store1.getAttributes().getDistance() != null && store2 != null && store2.getAttributes() != null && store2.getAttributes().getDistance() != null) {
-                    return store1.getAttributes().getDistance().compareTo(store2.getAttributes().getDistance());
-                } else {
-                    throw new IllegalStateException("One or more required objects or attributes are null.");
-
-                }
+        Comparator<Store> distanceComparator = (store1, store2) -> {
+            if (store1 == null || store1.getAttributes() == null || store1.getAttributes().getDistance() == null ||
+                    store2 == null || store2.getAttributes() == null || store2.getAttributes().getDistance() == null) {
+                throw new IllegalStateException("One or more required objects or attributes are null.");
             }
-        });
-        Collections.sort(pickupCurbsideStores, new Comparator<Store>() {
-            @Override
-            public int compare(Store store1, Store store2) {
-                if (store1 != null && store1.getAttributes() != null && store1.getAttributes().getDistance() != null && store2 != null && store2.getAttributes() != null && store2.getAttributes().getDistance() != null) {
-                    return store1.getAttributes().getDistance().compareTo(store2.getAttributes().getDistance());
-                } else {
-                    throw new IllegalStateException("One or more required objects or attributes are null.");
-                }
-            }
+            return store1.getAttributes().getDistance().compareTo(store2.getAttributes().getDistance());
+        };
 
-        });
+        dineInStores.sort(distanceComparator);
+        pickupCurbsideStores.sort(distanceComparator);
     }
-
-
-    private HashMap<String, Double> storeDistances = new HashMap<>();
 
     @Override
     public void getDistances() {
-//        if (location != null) {
-//            for (Store store : pickupStores) {
-//
-//                Location storeLocation = new Location("Store Location");
-//                storeLocation.setLatitude(store.getAttributes().getLat());
-//                storeLocation.setLongitude(store.getAttributes().getLng());
-//
-//                double distance = location.distanceTo(storeLocation);
-//                store.getAttributes().setDistance(distance);
-//
-//                //distances.put(store.getId(), distance);
-//
-//            }
-//
-//            for (Store store : curbsideStores) {
-//
-//                Location storeLocation = new Location("Store Location");
-//                storeLocation.setLatitude(store.getAttributes().getLat());
-//                storeLocation.setLongitude(store.getAttributes().getLng());
-//
-//                double distance = location.distanceTo(storeLocation);
-//                store.getAttributes().setDistance(distance);
-//
-//                //distances.put(store.getId(), distance);
-//
-//            }
-//
-//        }
-//        Collections.sort(pickupStores, new Comparator<Store>() {
-//            @Override
-//            public int compare(Store store1, Store store2) {
-//                return (int) Math.round(store1.getAttributes().getDistance()) - (int) Math.round(store2.getAttributes().getDistance());
-//            }
-//        });
-//
-//        Collections.sort(curbsideStores, new Comparator<Store>() {
-//            @Override
-//            public int compare(Store store1, Store store2) {
-//                return (int) Math.round(store1.getAttributes().getDistance()) - (int) Math.round(store2.getAttributes().getDistance());
-//            }
-//        });
-//
-//        orderView.showStores(pickupStores, curbsideStores);
-
     }
 
     @Override

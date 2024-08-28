@@ -64,7 +64,7 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
 
     @Override
     public void getBranches(int page) {
-        LocationApiCall.getInstance().getStoreLocationsWithLatLng(String.valueOf(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
+        LocationApiCall.getInstance().getStoreLocationsWithLatLngNew(String.valueOf(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
