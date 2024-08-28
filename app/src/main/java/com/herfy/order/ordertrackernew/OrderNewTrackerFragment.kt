@@ -1471,8 +1471,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     (if (order.discountDisplay != 0.0) order.discountDisplay else order.discount) - mukafaaAmount
                 if (discountAmount > 0.0) {
                     orderPaymentDetails.discountContainer.isVisible = true
-                    orderPaymentDetails.discountTotal.text = StringUtil.getNewFormattedPrice(
-                        item.discount, true
+                    orderPaymentDetails.discountTotal.text = "-" + StringUtil.getNewFormattedPrice(
+                        (item.discount - mukafaaAmount), true
                     )
                 } else {
                     orderPaymentDetails.discountContainer.isVisible = false
