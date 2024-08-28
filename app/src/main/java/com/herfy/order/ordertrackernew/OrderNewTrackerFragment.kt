@@ -2003,4 +2003,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             e.printStackTrace()
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        orderPresenter?.detachAbly()
+    }
 }
