@@ -866,13 +866,15 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                 } else if (!phoneNumber.getText().toString().isEmpty() && !StringUtil.isValidMobileNumber(number)) {
                     showMessage(CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_INVALID));
                 } else {
-                    Intent intent = new Intent(PaymentActivity.this, MukafaaOTPActivity.class);
-                    intent.putExtra("number", number);
-                    intent.putExtra("total", String.valueOf(paymentPresenter.getValidatedTotal()));
-                    intent.putExtra("cart", paymentPresenter.getValidatedBody());
-                    intent.putExtra("delivery_charge", paymentPresenter.getValidatedDeliveryCharge());
-                    startActivityForResult(intent, OTP_REQUEST);
-
+                    String validatedBody = paymentPresenter.getValidatedBody();
+                    if(!validatedBody.isEmpty()) {
+                        Intent intent = new Intent(PaymentActivity.this, MukafaaOTPActivity.class);
+                        intent.putExtra("number", number);
+                        intent.putExtra("total", String.valueOf(paymentPresenter.getValidatedTotal()));
+                        intent.putExtra("cart", validatedBody);
+                        intent.putExtra("delivery_charge", paymentPresenter.getValidatedDeliveryCharge());
+                        startActivityForResult(intent, OTP_REQUEST);
+                    }
                 }
             }
         });

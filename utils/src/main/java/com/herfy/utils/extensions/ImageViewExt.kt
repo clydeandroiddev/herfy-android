@@ -1,5 +1,6 @@
 package com.herfy.utils.extensions
 
+import android.app.Activity
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -15,12 +16,23 @@ fun ImageView.loadImageFromUrl(imageUrl:String,
                                placeholder: Int = R.drawable.imagepicker_image_placeholder,
                                listener: RequestListener<Drawable>? = null
 ) {
-    Glide.with(this.context)
-        .load(imageUrl)
-        .listener(listener)
-        .skipMemoryCache(isSkipMemoryCache)
-        .apply(requestOptions)
-        .diskCacheStrategy(strategy)
-        .placeholder(placeholder)
-        .into(this)
+    var isContextDestroyed = false
+    this.context.cast<Activity> {
+        isContextDestroyed = !it.isDestroyed
+    }
+    if(!isContextDestroyed) {
+        try {
+            Glide.with(this.context)
+                .load(imageUrl)
+                .listener(listener)
+                .skipMemoryCache(isSkipMemoryCache)
+                .apply(requestOptions)
+                .diskCacheStrategy(strategy)
+                .placeholder(placeholder)
+                .into(this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
 }

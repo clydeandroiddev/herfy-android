@@ -64,9 +64,13 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BottomSheetDialogStyle)
 
         arguments?.let {
-            total = it.getDouble(KEY_TOTAL, 0.0)
-            cartBody = it.getString(KEY_CART_BODY, "")
-            deliveryCharge = it.getDouble(KEY_DELIVERY_CHARGE, 0.0)
+            try {
+                total = it.getDouble(KEY_TOTAL, 0.0)
+                cartBody = it.getString(KEY_CART_BODY, "")
+                deliveryCharge = it.getDouble(KEY_DELIVERY_CHARGE, 0.0)
+            } catch (e: NumberFormatException) {
+                e.printStackTrace()
+            }
         }
         observe()
     }
