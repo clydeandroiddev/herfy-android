@@ -482,18 +482,24 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        ordersView.showError(CacheUtil.getInstance().getTranslations(!reorder ? Text.RETRIEVING_ORDER_DETAILS_ERROR : Text.REORDER_ERROR));
+                        if (!statusUpdate) {
+                            ordersView.showError(CacheUtil.getInstance().getTranslations(!reorder ? Text.RETRIEVING_ORDER_DETAILS_ERROR : Text.REORDER_ERROR));
+                        }
                     }
 
                 } else {
-                    ordersView.showError(CacheUtil.getInstance().getTranslations(!reorder ? Text.RETRIEVING_ORDER_DETAILS_ERROR : Text.REORDER_ERROR));
+                    if (!statusUpdate) {
+                        ordersView.showError(CacheUtil.getInstance().getTranslations(!reorder ? Text.RETRIEVING_ORDER_DETAILS_ERROR : Text.REORDER_ERROR));
+                    }
                 }
             }
 
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                ordersView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(!reorder ? Text.RETRIEVING_ORDER_DETAILS_ERROR : Text.REORDER_ERROR), null));
+                if (!statusUpdate) {
+                    ordersView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(!reorder ? Text.RETRIEVING_ORDER_DETAILS_ERROR : Text.REORDER_ERROR), null));
+                }
             }
         });
     }
@@ -523,11 +529,9 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        //ordersView.showError(CacheUtil.getInstance().getTranslations(Text.RETRIEVING_ORDER_DETAILS_ERROR));
                         this.onError("");
                     }
                 } else {
-                    //ordersView.showError(CacheUtil.getInstance().getTranslations(Text.RETRIEVING_ORDER_DETAILS_ERROR));
                     this.onError("");
                 }
 
@@ -536,7 +540,6 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                //ordersView.showError(CacheUtil.getInstance().getTranslations(Text.RETRIEVING_ORDER_DETAILS_ERROR));
                 store = new Store();
                 store.setId(String.valueOf(order.getLocationId()));
                 store.getAttributes().setName(order.getLocationName());
@@ -710,19 +713,11 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                     try {
                         JSONObject jsonObject = (JSONObject) o;
                         JSONArray data = jsonObject.getJSONArray("data");
-
                         for (int i = 0; i < data.length(); i++) {
                             JSONObject dataObject = data.getJSONObject(i);
-                            Employee employee = Employee.parse(dataObject);
                             JSONObject attributes = dataObject.optJSONObject("attributes");
-                            //TODO: for testing ably messages via python script
-                            LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
-                            LatLng driverLatLng = new LatLng(14.722181642825772, 121.0514142675921);
-                            ordersView.showDriver(customerLatLng, driverLatLng, 10);
-                            if (!isLocationUpdateSubscribed) {
-                                subscribeToOrderDriverLocationUpdate(order.getId());
-                            }
-                            /*if (attributes != null) {
+                            String employeeId = dataObject.getString("id");
+                            if (attributes != null) {
                                 JSONObject lyveDriverObject = attributes.getJSONObject("lyve-driver");
                                 try {
                                     LyveDriver lyveDriver = new Gson().fromJson(lyveDriverObject.toString(), LyveDriver.class);
@@ -735,24 +730,22 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                                         if (!isLocationUpdateSubscribed) {
                                             subscribeToOrderDriverLocationUpdate(order.getId());
                                         }
+                                    } else {
+                                        getDriverBearing(employeeId);
                                     }
                                 } catch (Exception e) {
+                                    getDriverBearing(employeeId);
                                     e.printStackTrace();
                                 }
-                            }*/
-
-                            //TODO: call driver bearing api
-                            if(driver == null) {
-
+                            }
+                            if (driver == null) {
+                                getDriverBearing(employeeId);
                             }
                         }
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-
             }
 
             @Override
@@ -780,8 +773,8 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     }
 
     @Override
-    public void getDriverBearing() {
-        OrdersApiCall.getInstance().getDriverBearing(driver.getEmployee().getEmployeeId(), new ApiRequestListener() {
+    public void getDriverBearing(String employeeId) {
+        OrdersApiCall.getInstance().getDriverBearing(employeeId, new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
 
@@ -789,10 +782,12 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                     JSONObject bearingObject = new JSONObject(o.toString());
                     JSONObject dataObject = bearingObject.getJSONObject("data");
                     JSONObject attributesObject = dataObject.getJSONObject("attributes");
-
                     LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
                     LatLng driverLatLng = new LatLng(attributesObject.getDouble("lat"), attributesObject.getDouble("long"));
                     ordersView.showDriver(customerLatLng, driverLatLng, attributesObject.getInt("eta"));
+                    if (!isLocationUpdateSubscribed) {
+                        subscribeToOrderDriverLocationUpdate(order.getId());
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -2243,9 +2238,9 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
             try {
                 JSONObject jsonObject = new JSONObject(message.data.toString());
                 DeliveryDriver appDriver = new Gson().fromJson(jsonObject.toString(), DeliveryDriver.class);
-                AppLogger.error("onOrderDriverLocationUpdate " + appDriver.getBearing().toString());
                 ordersView.updateDriver(appDriver);
             } catch (JSONException e) {
+                getDriver();
                 e.printStackTrace();
             }
         }
