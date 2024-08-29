@@ -136,6 +136,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
     private Employee driver = null;
     private boolean isCategoryUnavailable;
     private int orderTypeCount = 0;
+    private int totalStoresCount = 0;
 
     private List<Rating> ratings = new ArrayList<>();
     public boolean hasLocation = false;
@@ -336,19 +337,25 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
                         Pagination pagination = Pagination.parse(object);
                         if (page == 1) {
+                            totalStoresCount = 0;
                             dineInStores = new ArrayList<>();
                             pickupCurbsideStores = new ArrayList<>();
                         }
+
+                        totalStoresCount += array.length();
+
                         List<StoreDb> storeDbs = new ArrayList<>();
                         List<FacilityEntity> facilityEntities = new ArrayList<>();
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject storeObject = array.getJSONObject(i);
+
                             if (hasLocation) {
                                 StoreDb storeDb = new StoreDb();
                                 storeDb.id = storeObject.getString("id");
                                 storeDb.applicationId = applicationId;
                                 storeDb.data = storeObject.toString();
-                                storeDbs.add(storeDb);
+                                Executor executor = Executors.newSingleThreadExecutor();
+                                executor.execute(() -> storeDbs.add(storeDb));
                             }
                             Store store = Store.parseStore(storeObject);
                             if (store.getAttributes().getPickupEnabled() == 1) {
@@ -418,9 +425,10 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                             });
                         }
 
-                        if (pagination.getTotalPages() > 1 && page < pagination.getTotalPages()) {
+                        if (totalStoresCount < pagination.getTotal()) {
                             getStores(page + 1);
                         }
+
                         sortStoresByDistance();
                         orderView.showStores(dineInStores, pickupCurbsideStores);
 

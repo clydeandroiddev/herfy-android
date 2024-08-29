@@ -46,9 +46,9 @@ public class AppLogger {
         if (BuildConfig.DEBUG) {
             if (!string.isEmpty()) {
                 int maxLogSize = 4000;
-                for(int i = 0; i <= string.length() / maxLogSize; i++) {
+                for (int i = 0; i <= string.length() / maxLogSize; i++) {
                     int start = i * maxLogSize;
-                    int end = (i+1) * maxLogSize;
+                    int end = (i + 1) * maxLogSize;
                     end = end > string.length() ? string.length() : end;
                     Log.e(TAG, string.substring(start, end));
                 }
@@ -57,7 +57,7 @@ public class AppLogger {
             }
         }
     }
-  
+
     public static void warn(String string) {
         if (BuildConfig.DEBUG) {
             if (!string.isEmpty()) {
@@ -84,18 +84,18 @@ public class AppLogger {
     }
 
     public static void longInfo(String msg) {
-        if (!msg.isEmpty()) {
-            if (msg.length() > 4000) {
-                info(msg.substring(0, 4000));
-                longInfo(msg.substring(4000));
-            } else {
-                info(msg);
-            }
-        } else {
-            error("LongInfo msg is empty");
-        }
+//        if (!msg.isEmpty()) {
+//            if (msg.length() > 4000) {
+//                info(msg.substring(0, 4000));
+//                longInfo(msg.substring(4000));
+//            } else {
+//                info(msg);
+//            }
+//        } else {
+//            error("LongInfo msg is empty");
+//        }
     }
-  
+
     public static void longError(String msg) {
         if (!msg.isEmpty()) {
             if (msg.length() > 4000) {
@@ -121,7 +121,7 @@ public class AppLogger {
             error("LongWarn msg is empty");
         }
     }
-  
+
     public static void prettyPrint(JSONObject object) {
         try {
             String text = object.toString(2);
@@ -134,7 +134,7 @@ public class AppLogger {
         }
     }
 
-    public static void  printJSONObject(String tag, JSONObject object) {
+    public static void printJSONObject(String tag, JSONObject object) {
         if (BuildConfig.DEBUG) {
             try {
                 String text = object.toString(2);
@@ -195,7 +195,7 @@ public class AppLogger {
             error("Nothing to log");
         }
     }
-  
+
     public static void printMap(Map<String, String> map) {
         for (String key : map.keySet()) {
             longInfo(key + ": " + map.get(key));
