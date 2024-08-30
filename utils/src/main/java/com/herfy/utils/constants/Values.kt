@@ -139,5 +139,4 @@ object Values {
 
     const val LOCATION_LIMIT = "1000"
     const val INITIAL_SIZE = "20"
-    const val SECOND_PAGE = 2
 }

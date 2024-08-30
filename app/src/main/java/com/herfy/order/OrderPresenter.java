@@ -29,7 +29,6 @@ import com.herfy.order.viewholders.AddressViewHolder;
 import com.herfy.order.viewholders.StoreViewHolder;
 import com.herfy.order.viewholders.TimeLineViewHolder;
 import com.herfy.util.AppLogger;
-import com.herfy.util.LocationUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.utils.constants.Text;
@@ -450,7 +449,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                     }
                 });
             } else {
-                LocationApiCall.getInstance().getStoreLocationsWithLatLngLimitOffset(Values.LOCATION_LIMIT, LocationUtil.INSTANCE.locationOffset(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
+                LocationApiCall.getInstance().getStoreLocationsWithLatLngLimitOffset(Values.LOCATION_LIMIT, String.valueOf(totalStoresCount), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
                     @Override
                     public void onSuccess(Object o) {
                         handleLocationResponse(o, appDatabase, page, applicationId);

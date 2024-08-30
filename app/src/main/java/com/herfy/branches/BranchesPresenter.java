@@ -5,7 +5,6 @@ import android.location.Location;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.util.AppLogger;
-import com.herfy.util.LocationUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.handler.ErrorHandler;
@@ -130,7 +129,7 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
                 }
             });
         } else {
-            LocationApiCall.getInstance().getStoreLocationsWithLatLngLimitOffset(Values.LOCATION_LIMIT, LocationUtil.INSTANCE.locationOffset(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
+            LocationApiCall.getInstance().getStoreLocationsWithLatLngLimitOffset(Values.LOCATION_LIMIT, String.valueOf(totalBranchesCount), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
                     handleLocationResponse(o, page);
