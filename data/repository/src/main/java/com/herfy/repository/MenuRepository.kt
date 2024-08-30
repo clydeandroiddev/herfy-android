@@ -34,6 +34,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupCdn
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItemCdn
+import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.requestbodies.AddFavoriteItemBody
 import com.skylinedynamics.solosdk.util.GsonHelper
 import okhttp3.Headers
@@ -275,6 +276,15 @@ class MenuRepositoryImpl @Inject constructor(
                             menuItem.customFieldsMap.get(isHiddenFromMenuKey)?.cast<String> {
                                 isMenuItemHiddenFromMenu = it.equals("1", true)
                             }
+                        }
+
+                        val orderType = CacheUtil.getInstance().orderType
+                        if(orderType == OrderType.DELIVERY) {
+                            isMenuItemHiddenFromMenu = menuItem.disableForDelivery == 1
+                        }
+                        val pickupOrderTypes = listOf(OrderType.PICKUP, OrderType.DRIVE_THRU, OrderType.CURBSIDE)
+                        if(orderType in pickupOrderTypes) {
+                            isMenuItemHiddenFromMenu = menuItem.disableForPickup == 1
                         }
 
                         if (menuItem.enabled == 1 && !isMenuItemHiddenFromMenu &&
