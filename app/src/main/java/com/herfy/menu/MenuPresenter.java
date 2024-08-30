@@ -5718,7 +5718,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 applicationAttributes.getOrderTypes().size() == 1 &&
                 !applicationAttributes.getOrderTypes().contains(OrderType.DELIVERY)) {
 
-            LocationApiCall.getInstance().getStoreLocationsNew("1", new ApiRequestListener() {
+            LocationApiCall.getInstance().getStoreLocationsWithLatLngPageSize("1", Values.INITIAL_SIZE, "", "", new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
                     try {

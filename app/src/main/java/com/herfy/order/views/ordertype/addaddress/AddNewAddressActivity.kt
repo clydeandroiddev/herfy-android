@@ -257,6 +257,8 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
             } else if (requestCode == Values.PERMISSION_CALL) {
                 orderPresenter.callStore()
             }
+        } else {
+            dismissDialogs()
         }
     }
 
@@ -267,6 +269,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
         ) {
             orderPresenter.getLocation(FusedLocationProvider(this))
         } else {
+            dismissDialogs()
             permissions = true
             CacheUtil.getInstance().orderLatitude = Values.DEFAULT_LATITUDE.toString()
             CacheUtil.getInstance().orderLongitude = Values.DEFAULT_LONGITUDE.toString()

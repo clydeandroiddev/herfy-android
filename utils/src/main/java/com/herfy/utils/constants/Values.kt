@@ -136,4 +136,7 @@ object Values {
     const val ARGS_KEY_ACTION_VALUE = "action_value"
 
     const val PROMO_IMAGE_ASPECT_RATIO = 1.54
+
+    const val LOCATION_LIMIT = "1000"
+    const val INITIAL_SIZE = "20"
 }

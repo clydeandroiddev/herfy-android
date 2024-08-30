@@ -6,6 +6,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.constants.Text;
+import com.herfy.utils.constants.Values;
 import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.CacheUtil;
 import com.location.FusedLocationProvider;
@@ -37,6 +38,8 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
 
     private Store callBranch = new Store();
 
+    private int totalBranchesCount = 0;
+
     public BranchesPresenter(BranchesContract.View branchesView) {
         this.branchesView = branchesView;
         this.branchesView.setPresenter(this);
@@ -62,60 +65,83 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
         this.fusedLocationProvider.connect();
     }
 
+    private void handleLocationResponse(Object o, int page) {
+        try {
+            JSONObject object = new JSONObject(o.toString());
+            JSONArray array = object.getJSONArray("data");
+
+            Pagination pagination = Pagination.parse(object);
+            if (page == 1) {
+                totalBranchesCount = 0;
+                branches = new ArrayList<>();
+            }
+
+            for (int i = 0; i < array.length(); i++) {
+                branches.add(Store.parseStore(array.getJSONObject(i)));
+            }
+
+            totalBranchesCount += array.length();
+
+            if (object.has("included") && !object.isNull("included")) {
+                ArrayList<Facility> facilities = GsonHelper.gsonFinal().fromJson(object.getJSONArray("included").toString(), new TypeToken<ArrayList<Facility>>() {
+                }.getType());
+                for (Facility facility : facilities) {
+                    for (Store store : branches) {
+                        if (store.getFacilitiesIds().contains(facility.getId())) {
+                            List<Facility> items = new ArrayList<>(store.getFacilities());
+                            items.add(facility);
+                            store.setFacilities(items);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (totalBranchesCount < pagination.getTotal()) {
+                getBranches(page + 1);
+            } else {
+                if (!branches.isEmpty()) {
+                    getDistances();
+                } else {
+                    branchesView.showBranches(branches);
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            branchesView.showError(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
+        }
+    }
+
     @Override
     public void getBranches(int page) {
-        LocationApiCall.getInstance().getStoreLocationsWithLatLngNew(String.valueOf(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
-            @Override
-            public void onSuccess(Object o) {
-                try {
-                    JSONObject object = new JSONObject(o.toString());
-                    JSONArray array = object.getJSONArray("data");
-
-                    Pagination pagination = Pagination.parse(object);
-                    if (page == 1) {
-                        branches = new ArrayList<>();
-                    }
-                    for (int i = 0; i < array.length(); i++) {
-                        branches.add(Store.parseStore(array.getJSONObject(i)));
-                    }
-
-                    if (object.has("included") && !object.isNull("included")) {
-                        ArrayList<Facility> facilities = GsonHelper.gsonFinal().fromJson(object.getJSONArray("included").toString(), new TypeToken<ArrayList<Facility>>() {
-                        }.getType());
-                        for (Facility facility : facilities) {
-                            for (Store store : branches) {
-                                if (store.getFacilitiesIds().contains(facility.getId())) {
-                                    List<Facility> items = new ArrayList<>(store.getFacilities());
-                                    items.add(facility);
-                                    store.setFacilities(items);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    if (page == pagination.getTotalPages()) {
-                        if (branches.size() > 0) {
-                            getDistances();
-                        } else {
-                            branchesView.showBranches(branches);
-                        }
-                    } else {
-                        getBranches(page + 1);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    branchesView.showError(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
+        if (page == 1) {
+            LocationApiCall.getInstance().getStoreLocationsWithLatLngPageSize(String.valueOf(page), Values.INITIAL_SIZE, CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
+                @Override
+                public void onSuccess(Object o) {
+                    handleLocationResponse(o, page);
                 }
 
-            }
+                @Override
+                public void onError(Object o) {
+                    AppLogger.printRetrofitError(o);
+                    branchesView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                }
+            });
+        } else {
+            LocationApiCall.getInstance().getStoreLocationsWithLatLngLimitOffset(Values.LOCATION_LIMIT, String.valueOf(totalBranchesCount), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
+                @Override
+                public void onSuccess(Object o) {
+                    handleLocationResponse(o, page);
+                }
 
-            @Override
-            public void onError(Object o) {
-                AppLogger.printRetrofitError(o);
-                branchesView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
-            }
-        });
+                @Override
+                public void onError(Object o) {
+                    AppLogger.printRetrofitError(o);
+                    branchesView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                }
+            });
+        }
     }
 
     @Override
