@@ -19,6 +19,7 @@ import com.herfy.menu.viewholders.FrequentBoughtViewHolder;
 import com.herfy.model.CampaignToAdd;
 import com.herfy.model.CouponToAdd;
 import com.herfy.model.SupportedCountry;
+import com.herfy.util.LocationUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.database.entities.AllergenDb;
 import com.herfy.database.entities.IngredientDb;
@@ -5718,7 +5719,7 @@ public class MenuPresenter implements MenuContract.Presenter {
                 applicationAttributes.getOrderTypes().size() == 1 &&
                 !applicationAttributes.getOrderTypes().contains(OrderType.DELIVERY)) {
 
-            LocationApiCall.getInstance().getStoreLocationsNew("1", Values.OOM_OFFSET, new ApiRequestListener() {
+            LocationApiCall.getInstance().getStoreLocationsNew("1", Values.INITIAL_SIZE, Values.OOM_OFFSET, LocationUtil.INSTANCE.locationOffset(1), new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
                     try {
