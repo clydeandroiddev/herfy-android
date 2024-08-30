@@ -1,9 +1,6 @@
 package com.herfy.utils.constants
 
 import android.os.Bundle
-import com.herfy.utils.constants.Values.INITIAL_SIZE
-import com.herfy.utils.constants.Values.OOM_OFFSET
-import com.herfy.utils.constants.Values.SECOND_PAGE
 
 object Values {
 
@@ -140,7 +137,7 @@ object Values {
 
     const val PROMO_IMAGE_ASPECT_RATIO = 1.54
 
-    const val OOM_OFFSET = 1000
-    const val INITIAL_SIZE = 20
+    const val LOCATION_LIMIT = "1000"
+    const val INITIAL_SIZE = "20"
     const val SECOND_PAGE = 2
 }

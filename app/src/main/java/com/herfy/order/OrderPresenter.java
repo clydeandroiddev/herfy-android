@@ -321,6 +321,114 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         return dineInStores;
     }
 
+    private void handleLocationResponse(Object o, AppDatabase appDatabase, int page, String applicationId) {
+        try {
+            JSONObject object = new JSONObject(o.toString());
+            JSONArray array = object.getJSONArray("data");
+
+            Pagination pagination = Pagination.parse(object);
+            if (page == 1) {
+                totalStoresCount = 0;
+                dineInStores = new ArrayList<>();
+                pickupCurbsideStores = new ArrayList<>();
+            }
+
+            totalStoresCount += array.length();
+
+            List<StoreDb> storeDbs = new ArrayList<>();
+            List<FacilityEntity> facilityEntities = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject storeObject = array.getJSONObject(i);
+
+                if (hasLocation) {
+                    StoreDb storeDb = new StoreDb();
+                    storeDb.id = storeObject.getString("id");
+                    storeDb.applicationId = applicationId;
+                    storeDb.data = storeObject.toString();
+                    Executor executor = Executors.newSingleThreadExecutor();
+                    executor.execute(() -> storeDbs.add(storeDb));
+                }
+                Store store = Store.parseStore(storeObject);
+                if (store.getAttributes().getPickupEnabled() == 1) {
+                    dineInStores.add(store);
+                }
+                boolean curbsideEnabled = CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.CURBSIDE);
+                if (store.getAttributes().getPickupEnabled() == 1 || (curbsideEnabled && store.getAttributes().getCurbsideEnabled() == 1)) {
+                    pickupCurbsideStores.add(store);
+                }
+            }
+
+            if (object.has("included") && !object.isNull("included")) {
+                JSONArray facilitiesArray = object.getJSONArray("included");
+                if (hasLocation) {
+                    for (int i = 0; i < facilitiesArray.length(); i++) {
+                        JSONObject facilityObject = facilitiesArray.getJSONObject(i);
+                        FacilityEntity facilityEntity = new FacilityEntity();
+                        facilityEntity.id = facilityObject.getString("id");
+                        facilityEntity.applicationId = applicationId;
+                        facilityEntity.data = facilityObject.toString();
+                        facilityEntities.add(facilityEntity);
+                    }
+                }
+                ArrayList<Facility> facilities = GsonHelper.gsonFinal().fromJson(facilitiesArray.toString(), new TypeToken<ArrayList<Facility>>() {
+                }.getType());
+                if (facilities.size() > 0) {
+                    for (Store store : dineInStores) {
+                        for (String id : store.getFacilitiesIds()) {
+                            for (Facility facility : facilities) {
+                                if (id.equals(facility.getId())) {
+                                    if (!store.getFacilities().contains(facility)) {
+                                        store.getFacilities().add(facility);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    for (Store store : pickupCurbsideStores) {
+                        for (String id : store.getFacilitiesIds()) {
+                            for (Facility facility : facilities) {
+                                if (id.equals(facility.getId())) {
+                                    if (store.getFacilities().contains(facility)) {
+                                        store.getFacilities().add(facility);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (hasLocation) {
+                Executor executor = Executors.newSingleThreadExecutor();
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (page == 1) {
+                                appDatabase.storeDao().deleteByApplication(applicationId);
+                                appDatabase.facilityDao().deleteByApplication(applicationId);
+                            }
+                            appDatabase.storeDao().insertAll(storeDbs.toArray(new StoreDb[storeDbs.size()]));
+                            appDatabase.facilityDao().insertAll(facilityEntities.toArray(new FacilityEntity[facilityEntities.size()]));
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                        }
+                    }
+                });
+            }
+
+            if (totalStoresCount < pagination.getTotal()) {
+                getStores(page + 1);
+            }
+
+            sortStoresByDistance();
+            orderView.showStores(dineInStores, pickupCurbsideStores);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            orderView.showError(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
+        }
+    }
+
     @Override
     public void getStores(int page) {
 
@@ -328,129 +436,35 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         AppDatabase appDatabase = AppDatabase.getInstance();
 
         if (page > 1 || !appDatabase.storeDao().hasByApplication(applicationId)) {
-
-            LocationApiCall.getInstance().getStoreLocationsWithLatLngNew(String.valueOf(page), Values.INITIAL_SIZE, Values.OOM_OFFSET, LocationUtil.INSTANCE.locationOffset(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
-                @Override
-                public void onSuccess(Object o) {
-                    try {
-                        JSONObject object = new JSONObject(o.toString());
-                        JSONArray array = object.getJSONArray("data");
-
-                        Pagination pagination = Pagination.parse(object);
-                        if (page == 1) {
-                            totalStoresCount = 0;
-                            dineInStores = new ArrayList<>();
-                            pickupCurbsideStores = new ArrayList<>();
-                        }
-
-                        totalStoresCount += array.length();
-
-                        List<StoreDb> storeDbs = new ArrayList<>();
-                        List<FacilityEntity> facilityEntities = new ArrayList<>();
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject storeObject = array.getJSONObject(i);
-
-                            if (hasLocation) {
-                                StoreDb storeDb = new StoreDb();
-                                storeDb.id = storeObject.getString("id");
-                                storeDb.applicationId = applicationId;
-                                storeDb.data = storeObject.toString();
-                                Executor executor = Executors.newSingleThreadExecutor();
-                                executor.execute(() -> storeDbs.add(storeDb));
-                            }
-                            Store store = Store.parseStore(storeObject);
-                            if (store.getAttributes().getPickupEnabled() == 1) {
-                                dineInStores.add(store);
-                            }
-                            boolean curbsideEnabled = CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.CURBSIDE);
-                            if (store.getAttributes().getPickupEnabled() == 1 || (curbsideEnabled && store.getAttributes().getCurbsideEnabled() == 1)) {
-                                pickupCurbsideStores.add(store);
-                            }
-                        }
-
-                        if (object.has("included") && !object.isNull("included")) {
-                            JSONArray facilitiesArray = object.getJSONArray("included");
-                            if (hasLocation) {
-                                for (int i = 0; i < facilitiesArray.length(); i++) {
-                                    JSONObject facilityObject = facilitiesArray.getJSONObject(i);
-                                    FacilityEntity facilityEntity = new FacilityEntity();
-                                    facilityEntity.id = facilityObject.getString("id");
-                                    facilityEntity.applicationId = applicationId;
-                                    facilityEntity.data = facilityObject.toString();
-                                    facilityEntities.add(facilityEntity);
-                                }
-                            }
-                            ArrayList<Facility> facilities = GsonHelper.gsonFinal().fromJson(facilitiesArray.toString(), new TypeToken<ArrayList<Facility>>() {
-                            }.getType());
-                            if (facilities.size() > 0) {
-                                for (Store store : dineInStores) {
-                                    for (String id : store.getFacilitiesIds()) {
-                                        for (Facility facility : facilities) {
-                                            if (id.equals(facility.getId())) {
-                                                if (!store.getFacilities().contains(facility)) {
-                                                    store.getFacilities().add(facility);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                for (Store store : pickupCurbsideStores) {
-                                    for (String id : store.getFacilitiesIds()) {
-                                        for (Facility facility : facilities) {
-                                            if (id.equals(facility.getId())) {
-                                                if (store.getFacilities().contains(facility)) {
-                                                    store.getFacilities().add(facility);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (hasLocation) {
-                            Executor executor = Executors.newSingleThreadExecutor();
-                            executor.execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        if (page == 1) {
-                                            appDatabase.storeDao().deleteByApplication(applicationId);
-                                            appDatabase.facilityDao().deleteByApplication(applicationId);
-                                        }
-                                        appDatabase.storeDao().insertAll(storeDbs.toArray(new StoreDb[storeDbs.size()]));
-                                        appDatabase.facilityDao().insertAll(facilityEntities.toArray(new FacilityEntity[facilityEntities.size()]));
-                                    } catch (ArrayIndexOutOfBoundsException e) {
-                                    }
-                                }
-                            });
-                        }
-
-                        if (totalStoresCount < pagination.getTotal()) {
-                            getStores(page + 1);
-                        }
-
-                        sortStoresByDistance();
-                        orderView.showStores(dineInStores, pickupCurbsideStores);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        orderView.showError(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED));
+            if (page == 1) {
+                LocationApiCall.getInstance().getStoreLocationsWithLatLngPageSize(String.valueOf(page), Values.INITIAL_SIZE, CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        handleLocationResponse(o, appDatabase, page, applicationId);
                     }
 
-                }
+                    @Override
+                    public void onError(Object o) {
+                        AppLogger.printRetrofitError(o);
+                        orderView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                    }
+                });
+            } else {
+                LocationApiCall.getInstance().getStoreLocationsWithLatLngLimitOffset(Values.LOCATION_LIMIT, LocationUtil.INSTANCE.locationOffset(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        handleLocationResponse(o, appDatabase, page, applicationId);
+                    }
 
-                @Override
-                public void onError(Object o) {
-                    AppLogger.printRetrofitError(o);
-                    orderView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
-                }
-            });
-
+                    @Override
+                    public void onError(Object o) {
+                        AppLogger.printRetrofitError(o);
+                        orderView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                    }
+                });
+            }
         } else {
-
             Executor executor = Executors.newSingleThreadExecutor();
-
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
