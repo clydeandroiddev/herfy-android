@@ -136,4 +136,6 @@ object Values {
     const val ARGS_KEY_ACTION_VALUE = "action_value"
 
     const val PROMO_IMAGE_ASPECT_RATIO = 1.54
+
+    const val OOM_OFFSET = 1000
 }

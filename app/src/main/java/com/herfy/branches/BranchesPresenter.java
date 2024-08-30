@@ -6,6 +6,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.constants.Text;
+import com.herfy.utils.constants.Values;
 import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.CacheUtil;
 import com.location.FusedLocationProvider;
@@ -64,7 +65,7 @@ public class BranchesPresenter implements BranchesContract.Presenter, FusedLocat
 
     @Override
     public void getBranches(int page) {
-        LocationApiCall.getInstance().getStoreLocationsWithLatLngNew(String.valueOf(page), CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
+        LocationApiCall.getInstance().getStoreLocationsWithLatLngNew(String.valueOf(page), Values.OOM_OFFSET, CacheUtil.getInstance().getOrderLatitude(), CacheUtil.getInstance().getOrderLongitude(), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {

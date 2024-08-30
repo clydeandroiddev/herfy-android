@@ -84,16 +84,16 @@ public class AppLogger {
     }
 
     public static void longInfo(String msg) {
-//        if (!msg.isEmpty()) {
-//            if (msg.length() > 4000) {
-//                info(msg.substring(0, 4000));
-//                longInfo(msg.substring(4000));
-//            } else {
-//                info(msg);
-//            }
-//        } else {
-//            error("LongInfo msg is empty");
-//        }
+        if (!msg.isEmpty()) {
+            if (msg.length() > 4000) {
+                info(msg.substring(0, 4000));
+                longInfo(msg.substring(4000));
+            } else {
+                info(msg);
+            }
+        } else {
+            error("LongInfo msg is empty");
+        }
     }
 
     public static void longError(String msg) {
