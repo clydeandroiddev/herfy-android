@@ -302,7 +302,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     @Override
     public void getOrder(String id, int position, boolean statusUpdate, boolean reorder) {
 
-        OrdersApiCall.getInstance().getOrderNew(id, "items,location,customerAddress,campaign.promotion,payments,loyalty-points-transactions,feedbacks,car", new ApiRequestListener() {
+        OrdersApiCall.getInstance().getOrderNew(id, "items,location,customerAddress,campaign.promotion,payments,loyalty-points-transactions,feedbacks,car,combos", new ApiRequestListener() {
 
             @Override
             public void onSuccess(Object o) {
@@ -377,21 +377,37 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                             }
 
                             menuItems = new ArrayList<>();
+                            HashMap<String, Double> comboPrices = new HashMap<>();
                             if (jsonObject.has("included") && !jsonObject.isNull("included")) {
                                 JSONArray included = jsonObject.getJSONArray("included");
                                 for (int i = 0; i < included.length(); i++) {
                                     JSONObject includedObject = included.getJSONObject(i);
-                                    if (includedObject.getString("type").equals("order-item")) {
+                                    String includedType = includedObject.getString("type");
+                                    if (includedType.equals("order-item")) {
                                         MenuItem menuItem = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<MenuItem>() {
                                         }.getType());
                                         menuItems.add(menuItem);
-                                    } else if (includedObject.getString("type").equals("location")) {
+                                    } else if (includedType.equals("location")) {
                                         store = Store.parseStore(includedObject);
-                                    } else if (includedObject.getString("type").equals("customer-address")) {
+                                    } else if (includedType.equals("customer-address")) {
                                         address = Address.parseAddress(includedObject);
+                                    } else if (includedType.equals("combo")) {
+                                        MenuItem combo = GsonHelper.gsonFinal().fromJson(includedObject.toString(), new TypeToken<MenuItem>() {
+                                        }.getType());
+                                        comboPrices.put(String.valueOf(combo.getAttributes().getItemId()), combo.getAttributes().getFinalPrice());
                                     }
                                 }
                                 for (MenuItem menuItem : menuItems) {
+                                    if(menuItem.getAttributes().isCombo()) {
+                                        String menuItemId = String.valueOf(menuItem.getAttributes().getItemId());
+                                        if(comboPrices.containsKey(menuItemId)) {
+                                            Double price = comboPrices.get(menuItemId);
+                                            if(price != null && price != 0.00) {
+                                                menuItem.setPrice(price);
+                                                menuItem.getAttributes().setPrice(price);
+                                            }
+                                        }
+                                    }
                                     ArrayList<ModifierGroup> modifierGroups = new ArrayList<>();
                                     for (int i = 0; i < included.length(); i++) {
                                         JSONObject includedObject = included.getJSONObject(i);
