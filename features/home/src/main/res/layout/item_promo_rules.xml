@@ -28,7 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@+id/iv_rule"
-            app:layout_constraintEnd_toEndOf="@+id/cb_rules"
+            app:layout_constraintEnd_toEndOf="@+id/iv_is_met"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginStart="12dp"
@@ -43,19 +43,12 @@
             android:text="@{requirement.label}"
             style="@style/Styles.Text.Caption.Semibold"/>
 
-        <CheckBox
-            android:id="@+id/cb_rules"
-            android:focusable="false"
-            android:clickable="false"
-            android:enabled="false"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_is_met"
             android:layout_width="20dp"
             android:layout_height="20dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@drawable/cb_promo_rules_state"
-            android:button="@null"
-            android:checked="@{requirement.isRequired}"
-            tools:checked="false"/>
+            app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

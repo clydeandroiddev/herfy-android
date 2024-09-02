@@ -31,6 +31,13 @@ class PromotionRulesAdapter(val requirements: List<PromotionRequirement>) :
             val rule = requirements[position]
             requirement = rule
             holder.binding.ivRule.setImageResource(rule.icon)
+            holder.binding.ivIsMet.setImageResource(
+                if (rule.isRequired) {
+                    R.drawable.ic_promotion_required
+                } else {
+                    R.drawable.ic_promotion_not_required
+                }
+            )
         }
     }
 
