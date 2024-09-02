@@ -30,7 +30,6 @@ import com.herfy.favourites.databinding.FragmentNewFavoritesBinding
 import com.herfy.favourites.ui.DialogClearCurrentBasketFragment
 import com.herfy.main.MainActivity
 import com.herfy.main.NavigationActivity
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
@@ -195,7 +194,6 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
             override fun onFavouriteAddToCart(favorite: Favorite) {
 
                 if (CacheUtil.getInstance().orderType != OrderType.NONE && args.isFromOrderType || CacheUtil.getInstance().cart.count { it.isFavorite } >= 1) {
-                    MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_FAVOURITES)
                     activity?.apply {
                         val menuItem = MenuUtil.getFavoriteMenuItem(favorite)
                         FacebookAppEventUtil.addToCartEvent(

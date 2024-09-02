@@ -215,9 +215,6 @@ dependencies {
     //Gson
     implementation 'com.google.code.gson:gson:2.10.1'
 
-    // Mixpanel
-    implementation 'com.mixpanel.android:mixpanel-android:7.3.1'
-
     //Secured Preferences
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
 

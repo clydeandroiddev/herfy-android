@@ -14,7 +14,6 @@ import com.herfy.model.Popup;
 import com.herfy.model.SupportedCountry;
 import com.herfy.model.SupportedCountryResponse;
 import com.herfy.utils.BuildConfig;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.utils.constants.Values;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Application;
@@ -1136,7 +1135,6 @@ public class CacheUtil {
         Pair<Boolean, ArrayList<MenuItem>> pair = compareMenuItem(-1, menuItem);
 
         if (!pair.first) {
-            MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_ADD_TO_CART);
             pair.second.add(menuItem);
         }
 

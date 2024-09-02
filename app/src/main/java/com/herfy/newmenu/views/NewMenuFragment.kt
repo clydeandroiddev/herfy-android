@@ -67,7 +67,6 @@ import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
 import com.herfy.utils.helper.CacheHelper
 import com.herfy.util.StringUtil
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.smoothSnapToPosition
@@ -1206,7 +1205,6 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     override fun selectMenuItem(menuCategory: MenuCategory?, menuItem: MenuItem?) {
         if (menuCategory != null && menuItem != null) {
             activity?.let {
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
                 fromMenuItem = true
                 val intent = Intent(it, NavigationActivity::class.java)
                 intent.putExtra("navigation", R.id.nav_menu_item)
@@ -1439,7 +1437,6 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     override fun showMenuItem(categoryId: String, menuItemId: String) {
         activity?.let {
             it.runOnUiThread {
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
                 fromMenuItem = true
                 val intent = Intent(it, NavigationActivity::class.java)
                 intent.putExtra("navigation", R.id.nav_menu_item)

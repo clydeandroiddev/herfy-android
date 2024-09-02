@@ -15,7 +15,6 @@ import com.herfy.favorites.FavoritesFragmentDirections
 import com.herfy.menu.views.MenuItemFragmentDirections
 import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.newmenu.views.PopularNowFragmentDirections
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.NavigationUtils
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
@@ -206,7 +205,6 @@ class NavigationActivity : BaseActivity(), MainContract.View {
         if (CacheUtil.getInstance().application.attributes.menuOnly) {
             return
         }
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
         when (currentDestination) {
             /*R.id.nav_menu -> NavigationUtils.navigateSafe(
                 navController,

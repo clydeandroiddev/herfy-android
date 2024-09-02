@@ -48,7 +48,6 @@ import com.herfy.payment.views.OrderDialogFragment
 import com.herfy.upsell.UpsellRecyclerViewAdapter
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.OnLayoutLoadingCompleted
@@ -1468,7 +1467,6 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun showPayment() {
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_PLACE_ORDER)
         KochavaTrackerUtil.trackEventWithData(EventType.CHECKOUT_START.eventName, KochavaEventUtil.purchaseObj(cartPresenter.menuItemsTotalPrice, cartPresenter.menuItemsList))
         runOnMain {
             continueCheckout = false

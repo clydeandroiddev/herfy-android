@@ -23,7 +23,6 @@ import com.herfy.base.BaseFragment
 import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentDigitalCouponBinding
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.helper.NavigationUtils
 import java.lang.Exception
 import java.util.*
@@ -127,7 +126,6 @@ class DigitalCouponFragment : BaseFragment(), DigitalCouponsContract.View {
     }
 
     override fun showCart() {
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
         NavigationUtils.navigateSafe(
             NavHostFragment.findNavController(this),
             DigitalCouponFragmentDirections.actionDigitalCouponToCart(

@@ -5,10 +5,8 @@ package com.herfy.promotions
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
-import com.herfy.model.CampaignToAdd
 import com.herfy.model.PromotionCategory
 import com.herfy.repository.HomeRepository
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.handler.ErrorHandler
@@ -1038,7 +1036,6 @@ class PromotionsPresenter @Inject constructor(
                                 }
                                 menuItem.attributes.price = promotion.attributes.itemPrice
                                 menuItem.toCdn(orderStoreId)
-                                MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
                                 CacheUtil.getInstance().setCampaign(campaign)
                                 CacheUtil.getInstance().setCampaignPromotion(campaign.promotion)
                                 CacheUtil.getInstance()

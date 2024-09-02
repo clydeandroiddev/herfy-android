@@ -73,7 +73,6 @@ import com.herfy.ordertype.databinding.FragmentOrderTypeBinding
 import com.herfy.util.*
 import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.*
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateToDeepLink
@@ -1432,7 +1431,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 CacheUtil.getInstance().curbsideCar = null
             }
             if (args.isFromFavorites) {
-                MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_ORDER_TYPE)
                 orderPresenter.addToCartFavorite(
                     CacheUtil.getInstance().retrieveFavoriteToAddToCart()
                 )
@@ -1718,7 +1716,6 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                         val currentFavourite = CacheUtil.getInstance().retrieveFavoriteToAddToCart()
 
                         if (currentFavourite != null) {
-                            MixpanelUtil.trackEvent(MixpanelUtil.ADD_TO_CART_FROM_ORDER_TYPE)
                             orderPresenter.addToCartFavorite(
                                 currentFavourite
                             )

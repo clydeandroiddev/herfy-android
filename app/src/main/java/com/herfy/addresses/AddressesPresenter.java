@@ -19,7 +19,6 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.herfy.addresses.viewholders.AddressViewHolder;
 import com.herfy.addresses.viewholders.PlaceViewHolder;
 import com.herfy.util.AppLogger;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.AuthUtil;
@@ -444,7 +443,6 @@ public class AddressesPresenter implements AddressesContract.Presenter, FusedLoc
         CustomersApiCall.getInstance().addCustomerAddress(createCustomerAddressBody, AuthUtil.getInstance().getCustomer().getId(), "1", new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
-                MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_ADD_ADDRESS);
                 getAddresses(true);
             }
 

@@ -63,7 +63,6 @@ import com.herfy.util.AppLogger;
 import com.herfy.utils.helper.DeviceUtil;
 import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.utils.analytics.MixpanelUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -397,7 +396,6 @@ public class MainPresenter implements MainContract.Presenter {
                                     Concept concept = new Concept();
                                     concept = concept.parse(included.getJSONObject(i));
                                     CacheUtil.getInstance().setConcept(concept);
-                                    MixpanelUtil.Companion.registerSuperProperties();
                                 } else if (included.getJSONObject(i).optString("type").equalsIgnoreCase("popup")) {
                                     CacheUtil.getInstance().setPopup(included.getJSONObject(i));
                                 }

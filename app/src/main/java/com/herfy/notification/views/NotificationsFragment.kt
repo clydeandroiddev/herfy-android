@@ -22,7 +22,6 @@ import com.herfy.notification.adapter.NotificationAdapter
 import com.herfy.notification.adapter.RecyclerTouchListener
 import com.herfy.notification.adapter.RecyclerTouchListener.OnRowClickListener
 import com.herfy.notification.databinding.FragmentNewNotificationBinding
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.ninjaTap
@@ -252,7 +251,6 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
             }
             "digital-coupon", "promotions", "promo" -> findNavController().navigateToDeepLink("nav_promotions")
             "shoppingcart", "shopping-cart", "cart" -> {
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
                 findNavController().navigateToDeepLink("nav_cart")
             }
             "order" -> findNavController().navigateToDeepLink("nav_order/$value")

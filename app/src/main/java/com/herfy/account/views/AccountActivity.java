@@ -31,7 +31,6 @@ import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard;
 import com.herfy.utils.helper.AnimUtil;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;
@@ -174,7 +173,6 @@ public class AccountActivity extends BaseActivity implements AccountContract.Vie
                 accountPresenter.removeMukafaaRedemption();
                 CacheUtil.getInstance().clearOrder();
                 SoloAuth.getInstance().logout();
-                MixpanelUtil.Companion.logout();
                 AuthUtil.getInstance().setCustomer(null);
                 isFromLogOut = true;
                 onBackPressed();

@@ -66,7 +66,6 @@ import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
 import com.herfy.utils.helper.CacheHelper
 import com.herfy.util.StringUtil
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.navigateToDeepLink
@@ -822,7 +821,6 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             activity?.startActivity(intent)
         })
         binding.homeOption4.checkOutMenu.setOnClickListener {
-            MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
             findNavController().navigateToDeepLink("nav_menu")
         }
         binding.homeOption4.findBranches.setOnClickListener {
@@ -831,7 +829,6 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             )
         }
         binding.browseMenu.setOnClickListener {
-            MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
             findNavController().navigateToDeepLink("nav_menu")
         }
         binding.totalContainer.setOnClickListener(View.OnClickListener {
@@ -959,7 +956,6 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     override fun selectMenuItem(menuCategory: MenuCategory?, menuItem: MenuItem?) {
         if (menuCategory != null && menuItem != null) {
             activity?.let {
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
                 val intent = Intent(it, NavigationActivity::class.java)
                 intent.putExtra("navigation", R.id.nav_menu_item)
                 intent.putExtra("menu_category_id", menuCategory.id)
@@ -1395,7 +1391,6 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
 
     override fun showMenuItem(categoryId: String, menuItemId: String) {
         activity?.runOnUiThread {
-            MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
             NavigationUtils.navigateSafe(
                 findNavController(),
                 NewMenuHomePageFragmentDirections.actionHomeToMenuItem(categoryId, menuItemId, -1)
@@ -1541,7 +1536,6 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
 
     override fun selectItem(menuCategory: MenuCategory, position: Int) {
         activity?.runOnUiThread {
-            MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
             findNavController().navigateToDeepLink("nav_menu/${menuCategory.id}")
         }
     }

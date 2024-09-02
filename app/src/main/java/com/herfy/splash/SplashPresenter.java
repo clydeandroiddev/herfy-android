@@ -28,7 +28,6 @@ import com.herfy.database.responses.MenuCategoryItemResponse;
 import com.herfy.model.SupportedCountry;
 import com.herfy.util.AppLogger;
 import com.herfy.util.StringUtil;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.handler.ErrorHandler;
@@ -538,10 +537,8 @@ public class SplashPresenter implements SplashContract.Presenter {
                             ConsumerData data = GsonHelper.gsonFinal().fromJson(obj.toString(), new TypeToken<ConsumerData>() {
                             }.getType());
                             CacheUtil.getInstance().setConsumerData(obj.toString());
-                            MixpanelUtil.Companion.registerSuperProperties();
                         } catch (Exception e) {
                             e.printStackTrace();
-                            MixpanelUtil.Companion.registerSuperProperties();
                         }
 
 
@@ -551,11 +548,8 @@ public class SplashPresenter implements SplashContract.Presenter {
                 @Override
                 public void onError(Object o) {
                     AppLogger.printRetrofitError(o);
-                    MixpanelUtil.Companion.registerSuperProperties();
                 }
             });
-        } else {
-            MixpanelUtil.Companion.registerSuperProperties();
         }
 
     }

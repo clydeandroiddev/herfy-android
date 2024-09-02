@@ -21,7 +21,6 @@ import com.herfy.util.AppLogger
 import com.herfy.util.glide.UnsafeOkHttpClient
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
@@ -78,8 +77,6 @@ class BaseApplication : Application(), ImageLoaderFactory {
 
         ShipBook.start(this, reveal(Keychain.SHIP_BOOK_APP_ID), reveal(Keychain.SHIP_BOOK_APP_KEY))
         ShipBook.enableInnerLog(BuildConfig.DEBUG)
-
-        MixpanelUtil(applicationContext)
 
         RxJavaPlugins.setErrorHandler { e ->
             if (e is UndeliverableException) {

@@ -31,7 +31,6 @@ import com.herfy.history.historynew.adapter.OrderMenuItemsAdapter
 import com.herfy.history.historynew.adapter.RatingOrderAdapter
 import com.herfy.main.MainActivity
 import com.herfy.util.StringUtil
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
@@ -115,7 +114,6 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
     }
 
     private fun reOrder() {
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_REORDER)
         if (CacheUtil.getInstance().application.attributes.menuOnly) {
             FirebaseService.newNotification(
                 CacheUtil.getInstance().getTranslations(
@@ -399,7 +397,6 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                     Toast.LENGTH_SHORT
                 ).show()
                 it.dismissDialogs()
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
                 it.showCartFromHerfyHome()
                 findNavController().popBackStack(R.id.new_history_fragment, true)
             }

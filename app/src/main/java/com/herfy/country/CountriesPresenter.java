@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.reflect.TypeToken;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.database.AppDatabase;
 import com.herfy.database.entities.*;
 import com.herfy.database.responses.MenuCategoryItemResponse;
@@ -93,7 +92,6 @@ public class CountriesPresenter implements CountriesContract.Presenter {
                             Concept concept = new Concept();
                             concept = concept.parse(included.getJSONObject(i));
                             CacheUtil.getInstance().setConcept(concept);
-                            MixpanelUtil.Companion.registerSuperProperties();
                         } else if (included.getJSONObject(i).optString("type").equalsIgnoreCase("popup")) {
                             CacheUtil.getInstance().setPopup(included.getJSONObject(i));
                         }

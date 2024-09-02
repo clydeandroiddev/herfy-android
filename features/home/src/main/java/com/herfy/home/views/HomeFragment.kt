@@ -30,7 +30,6 @@ import com.herfy.home.adapter.PromotionCategoryAdapter
 import com.herfy.home.adapter.PromotionsAdapter
 import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.home.databinding.FragmentHomeBinding
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
@@ -139,7 +138,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         }
 
                         "category" -> {
-                            MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
                             findNavController().navigateToDeepLink("nav_menu/$actionValue")
                         }
 
@@ -371,7 +369,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             it.getContentIfNotHandled()?.let { pair ->
                 activity?.apply {
                     runOnUiThread {
-                        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
                         findNavController().navigateToDeepLink("nav_menu_item/${pair.first}/${pair.second}")
                     }
                 }
@@ -379,14 +376,12 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
         viewModel.showMenuCategory.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { menuCategoryId ->
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
                 findNavController().navigateToDeepLink("nav_menu/$menuCategoryId")
             }
         }
         viewModel.showMenu.observeNonNull(this) {
             it.getContentIfNotHandled()?.let {
                 promotionDetailBottomSheet?.dismissAllowingStateLoss()
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
                 findNavController().navigateToDeepLink("nav_menu")
             }
         }
@@ -655,7 +650,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.showCart.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { isAvail ->
                 promotionDetailBottomSheet?.dismissAllowingStateLoss()
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
                 findNavController().navigateToDeepLink("nav_cart/$isAvail")
             }
         }
@@ -723,7 +717,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     }
 
                     otherDetails.setOnClickListener {
-                        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_DETAILS)
                         findNavController().navigateToDeepLink("nav_new_order_tracker/${orderDetails.id}")
                     }
                 }
