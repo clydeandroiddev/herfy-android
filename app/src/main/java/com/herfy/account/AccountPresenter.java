@@ -18,7 +18,6 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerPasswo
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdatePasswordCustomerBody;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.util.StringUtil;
 
@@ -287,7 +286,6 @@ public class AccountPresenter implements AccountContract.Presenter {
                     @Override
                     public void onSuccess(Object o) {
                         if (o instanceof JSONObject) {
-                            MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_UPDATE_ACCOUNT);
                             updateCustomer();
                         } else {
                             accountView.showError(CacheUtil.getInstance().getTranslations(Text.SAVING_PROFILE_ERROR));
@@ -501,7 +499,6 @@ public class AccountPresenter implements AccountContract.Presenter {
         CustomersApiCall.getInstance().delete(new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
-                MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_DELETE_ACCOUNT);
                 accountView.accountDeleted();
             }
 

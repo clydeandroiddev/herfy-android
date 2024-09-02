@@ -30,7 +30,6 @@ import com.herfy.order.viewholders.StoreViewHolder;
 import com.herfy.order.viewholders.TimeLineViewHolder;
 import com.herfy.util.AppLogger;
 import com.herfy.util.StringUtil;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.handler.ErrorHandler;
@@ -1501,7 +1500,6 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                 CustomersApiCall.getInstance().addCustomerAddress(createCustomerAddressBody, AuthUtil.getInstance().getCustomer().getId(), "1", new ApiRequestListener() {
                     @Override
                     public void onSuccess(Object o) {
-                        MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_ADD_ADDRESS);
                         getAddresses(true);
                     }
 

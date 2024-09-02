@@ -17,8 +17,6 @@ import com.herfy.repository.MenuRepository
 import com.herfy.upsell.UpsellViewHolder
 import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
-import com.herfy.utils.analytics.MixpanelUtil
-import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.handler.ErrorHandler
@@ -773,9 +771,6 @@ class CartPresenter @Inject constructor(
                             cartView.showPromoError(jsonObject.getString("error"))
                         } else {
                             if (CacheUtil.getInstance().couponCode != null && orderData.promotionName != null || orderData.promotionName == null && orderData.promotionName.isNotEmpty()) {
-                                if (isCouponValidate) {
-                                    trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
-                                }
                                 CacheUtil.getInstance().couponName = orderData.promotionName
                                 var isFreeItem = false
                                 for (i in 0 until itemsArray.length()) {
@@ -1160,11 +1155,6 @@ class CartPresenter @Inject constructor(
 
     override fun changeQuantity(position: Int, add: Boolean) {
         if (position != -1) {
-            if (add) {
-                trackEvent(MixpanelUtil.EVENT_INCREASE_ITEM_QUANTITY_CART)
-            } else {
-                trackEvent(MixpanelUtil.EVENT_DECREASE_ITEM_QUANTITY_CART)
-            }
             val menuItem = menuItems[position]
             var addingItem = false
             if (!add && menuItem.attributes.quantity != 1) {
@@ -1202,7 +1192,6 @@ class CartPresenter @Inject constructor(
         if (!delete) {
             cartView.deleteCartItem(position)
         } else if (position >= 0 && position < menuItems.size) {
-            trackEvent(MixpanelUtil.EVENT_REMOVE_FROM_CART)
             if (menuItems[position].isPromo) {
                 removeCoupon()
             } else {
@@ -1252,7 +1241,6 @@ class CartPresenter @Inject constructor(
     override fun editCartItem(
         position: Int, menuItem: MenuItem
     ) {
-        trackEvent(MixpanelUtil.EVENT_EDIT_ITEM_FROM_CART)
         cartView.editCartItem(position, menuItem)
     }
 
@@ -2677,7 +2665,6 @@ class CartPresenter @Inject constructor(
                                 removeCoupon()
                                 cartView.showPromoError(jsonObject.getString("error"))
                             } else if (fromApply) {
-                                trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
                                 if (CacheUtil.getInstance().campaign != null) {
                                     if (CacheUtil.getInstance().campaign.id != digitalCoupon.id) {
                                         CacheUtil.getInstance().campaign = digitalCoupon
@@ -3892,7 +3879,6 @@ class CartPresenter @Inject constructor(
                                 )
                             } else {
                                 if (orderData.promotionName != null || orderData.promotionName == null && orderData.promotionName.isNotEmpty()) {
-                                    trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
                                     CacheUtil.getInstance().couponCode = couponCode
                                     CacheUtil.getInstance().couponName = orderData.promotionName
                                     var isFreeItem = false

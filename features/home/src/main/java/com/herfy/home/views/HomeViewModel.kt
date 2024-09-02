@@ -19,8 +19,6 @@ import com.herfy.model.PromotionCategory
 import com.herfy.model.TierProgress
 import com.herfy.repository.CmsRepository
 import com.herfy.repository.HomeRepository
-import com.herfy.utils.analytics.MixpanelUtil
-import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
@@ -791,7 +789,6 @@ class HomeViewModel @Inject constructor(
                                     }
                                     menuItem.attributes.price = promotion.attributes.itemPrice
                                     menuItem.toCdn(orderStoreId)
-                                    MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
                                     CacheUtil.getInstance().setCampaign(digitalCoupon)
                                     CacheUtil.getInstance()
                                         .setCampaignPromotion(digitalCoupon.promotion)
@@ -1125,26 +1122,6 @@ class HomeViewModel @Inject constructor(
                                             Event(ErrorMsgItem(true, jsonObject.getString("error")))
                                     } else {
                                         _showCart.value = Event(true)
-//                                        if (digitalCoupon.getPromotion() != null && digitalCoupon.getPromotion()
-//                                                .getAttributes().getType()
-//                                                .equals("item", ignoreCase = true)
-//                                        ) {
-//                                            getCampaignPromotionItem(digitalCoupon)
-//                                        } else {
-//                                            trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
-//                                            CacheUtil.getInstance().setCampaign(digitalCoupon)
-//                                            CacheUtil.getInstance()
-//                                                .setCampaignPromotion(digitalCoupon.promotion)
-//                                            CacheUtil.getInstance()
-//                                                .setCampaignPromotionMenuItem(null)
-//                                            CacheUtil.getInstance().setCampaignToAdd(null)
-//                                            if (CacheUtil.getInstance().getCartQuantity() > 0) {
-//                                                _showCart.value = Event(true)
-//                                            } else {
-//                                                _showMenu.value = Event(true)
-//                                            }
-//
-//                                        }
                                     }
                                 } catch (ex: JSONException) {
                                     ex.printStackTrace()

@@ -49,7 +49,6 @@ import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard;
 import com.herfy.util.AppLogger;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;
 
 import org.json.JSONArray;
@@ -591,7 +590,6 @@ public class EditProfileActivity extends BaseActivity implements AccountContract
                 googleSignInClient.signOut();
                 CacheUtil.getInstance().clearOrder();
                 SoloAuth.getInstance().logout();
-                MixpanelUtil.Companion.logout();
                 AuthUtil.getInstance().setCustomer(null);
                 Intent intent = new Intent(this, AuthActivity.class);
                 intent.putExtra("from_delete", true);

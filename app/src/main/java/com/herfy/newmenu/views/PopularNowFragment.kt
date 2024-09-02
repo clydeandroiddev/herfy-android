@@ -25,7 +25,6 @@ import com.herfy.menu.MenuContract
 import com.herfy.menu.MenuPresenter
 import com.herfy.menu.adapters.ModifierItemsNewRecyclerViewAdapter
 import com.herfy.newmenu.adapter.PopularMenuItemAdapter
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.cast
 import com.herfy.utils.helper.CacheHelper
@@ -93,7 +92,6 @@ class PopularNowFragment : BaseFragment(), MenuContract.View {
     override fun selectMenuItem(menuCategory: MenuCategory?, menuItem: MenuItem?) {
         if(menuCategory != null && menuItem != null) {
             activity?.runOnUiThread {
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ITEM)
                 NavigationUtils.navigateSafe(
                     findNavController(),
                     PopularNowFragmentDirections.actionPopularNowToMenuItem(

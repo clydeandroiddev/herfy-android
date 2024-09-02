@@ -20,7 +20,6 @@ import com.herfy.base.BaseFragment
 import com.herfy.commonstyles.R
 import com.herfy.curbside.curbsidenew.CurbsideNewActivity
 import com.herfy.profile.databinding.FragmentUserProfileBinding
-import com.herfy.utils.analytics.MixpanelUtil.Companion.logout
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.AuthUtil
@@ -271,7 +270,6 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
         googleSignInClient.signOut()
         CacheUtil.getInstance().clearOrder()
         SoloAuth.getInstance().logout()
-        logout()
         CacheUtil.getInstance().setCurrentOrderId(null)
         AuthUtil.getInstance().customer = null
         navigateUp()
@@ -313,7 +311,6 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
         CacheUtil.getInstance().setCurrentOrderId(null)
         AuthUtil.getInstance().customerLoyalty = null
         AuthUtil.getInstance().customerLoyaltyTier = null
-        logout()
         AuthUtil.getInstance().customer = null
         navigateUp()
     }

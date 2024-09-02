@@ -18,7 +18,6 @@ import com.herfy.util.AppLogger;
 import com.herfy.utils.helper.DeviceUtil;
 import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.SoloAuth;
@@ -555,12 +554,8 @@ public class VerificationPresenter implements VerificationContract.Presenter {
                 if(obj instanceof JSONObject){
                     try{
                         CacheUtil.getInstance().setConsumerData(obj.toString());
-                        MixpanelUtil.Companion.registerSuperProperties();
-                        MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_LOGIN);
                     }catch (Exception e){
                         e.printStackTrace();
-                        MixpanelUtil.Companion.registerSuperProperties();
-                        MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_LOGIN);
                     }
 
 
@@ -569,8 +564,6 @@ public class VerificationPresenter implements VerificationContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o);
-                MixpanelUtil.Companion.registerSuperProperties();
-                MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_LOGIN);
             }
         });
     }

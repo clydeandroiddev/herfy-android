@@ -48,7 +48,6 @@ import com.herfy.loyalty.LoyaltyActivity
 import com.herfy.main.MainActivity
 import com.herfy.util.*
 import com.herfy.util.extensions.dialPhoneNumber
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.hasDecimalPart
@@ -177,7 +176,6 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
             }
         }
         binding.cancel.setOnClickListener {
-            MixpanelUtil.trackEvent(MixpanelUtil.EVENT_CANCEL_ORDER)
             if (cancelOrderDialog != null) cancelOrderDialog!!.dismiss()
             cancelOrderDialog = newInstance()
             cancelOrderDialog!!.show(childFragmentManager, null)
@@ -196,7 +194,6 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
             }
         }
         binding.reorder.setOnClickListener(View.OnClickListener {
-            MixpanelUtil.trackEvent(MixpanelUtil.EVENT_REORDER)
             if (CacheUtil.getInstance().application.attributes.menuOnly) {
                 FirebaseService.newNotification(
                     CacheUtil.getInstance().getTranslations(
@@ -793,7 +790,6 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
                     Toast.LENGTH_SHORT
                 ).show()
                 it.dismissDialogs()
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
                 NavigationUtils.navigateSafe(findNavController(), OrderFragmentDirections.actionOrderToCart())
             }
         }

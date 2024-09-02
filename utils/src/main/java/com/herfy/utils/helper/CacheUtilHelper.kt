@@ -5,8 +5,6 @@ import android.content.SharedPreferences
 import android.util.Pair
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.herfy.utils.analytics.MixpanelUtil
-import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.skylinedynamics.solosdk.api.models.objects.Application
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemCombo
@@ -158,7 +156,6 @@ class CacheUtilHelper(val context : Context) {
      suspend fun addToCart(menuItem: MenuItem, result: () -> Unit) {
         compareMenuItem(-1, menuItem){ pair ->
             if (!pair.first) {
-                trackEvent(MixpanelUtil.EVENT_ADD_TO_CART)
                 pair.second.add(menuItem)
             }
             if (menuItem.attributes.notes.isNotEmpty() && pair.second.size == 1) {

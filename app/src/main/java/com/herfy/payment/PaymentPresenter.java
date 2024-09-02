@@ -17,7 +17,6 @@ import com.herfy.summary.OrderSummaryMenuItemViewHolder;
 import com.herfy.util.AppLogger;
 import com.herfy.util.ShipBookLogger;
 import com.herfy.util.StringUtil;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.handler.ErrorHandler;
@@ -1270,7 +1269,6 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         }
 
                         paymentView.setOrderId(orderId);
-                        MixpanelUtil.Companion.checkout(orderId, store, finalObject.get("type").getAsString(), paymentType.getValue());
                         KochavaTrackerUtil.trackEventWithData(EventType.PURCHASE.getEventName(), KochavaEventUtil.Companion.purchaseObj(orderTotalPrice, menuItems));
                         ApiLogUtil.sendOrderLog(ApiLogLevel.INFO, orderId, paymentType.getValue(), "Order Successful");
 

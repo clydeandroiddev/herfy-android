@@ -22,7 +22,6 @@ import com.herfy.history.OrdersPresenter
 import com.herfy.history.adapters.OrdersRecyclerViewAdapter
 import com.herfy.main.MainActivity
 import com.herfy.utils.helper.CacheHelper
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.CacheUtil
@@ -175,7 +174,6 @@ class OrdersFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun selectOrder(order: OrderHistory) {
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_DETAILS)
         NavigationUtils.navigateSafe(findNavController(), OrdersFragmentDirections.actionOrdersToOrder(order.id))
     }
 
@@ -218,7 +216,6 @@ class OrdersFragment : BaseFragment(), OrdersContract.View {
                     Toast.LENGTH_SHORT
                 ).show()
                 baseActivity.dismissDialogs()
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
                 NavigationUtils.navigateSafe(findNavController(), OrdersFragmentDirections.actionOrdersToCart())
             }
         }

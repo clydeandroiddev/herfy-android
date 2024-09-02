@@ -32,7 +32,6 @@ import com.herfy.menu.adapter.MenuCategoryItemAdapter
 import com.herfy.menu.databinding.FragmentMenuBinding
 import com.herfy.menu.viewmodel.MenuViewModel
 import com.herfy.menu.widgets.CenterLayoutManager
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
@@ -532,7 +531,6 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
         viewModel.showMenuCategory.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { menuCategoryId ->
-                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
                 findNavController().navigateToDeepLink("nav_menu/$menuCategoryId")
             }
         }

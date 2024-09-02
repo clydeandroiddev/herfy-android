@@ -77,7 +77,6 @@ import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
@@ -521,7 +520,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 CacheUtil.getInstance().lastOrderId = orderId
 
                 if (orderId != "") {
-                    MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_DETAILS)
                     val fragment =
                         supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
                     showOrderDetails(orderId)
@@ -733,7 +731,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             showNotifications()
         }
         binding.sidebar.fmAccount.setOnClickListener {
-            MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ACCOUNT)
             binding.drawerLayout.closeDrawer(GravityCompat.START)
 //            val intent = Intent(this@MainActivity, AccountActivity::class.java)
 //            startActivity(intent)
@@ -742,12 +739,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             navController.navigateToDeepLink("profile_fragment_nav")
         }
         binding.sidebar.fmStoreLocator.setOnClickListener {
-            MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_STORE_LOCATOR)
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             navController.navigateToDeepLink("store_locator_nav")
         }
         binding.sidebar.fmFavorites.setOnClickListener {
-            MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_FAVORITE_ITEMS)
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             navController.navigateToDeepLink("nav_favorites")
         }
@@ -821,7 +816,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     private fun showNotifications() {
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_NOTIFICATIONS)/*if (isDefaultHomeScreenDesign || currentDestination == R.id.nav_menu) {
+        /*if (isDefaultHomeScreenDesign || currentDestination == R.id.nav_menu) {
             NavigationUtils.navigateSafe(
                 navController,
                 NewMenuFragmentDirections.actionMenuToNotifications()
@@ -963,7 +958,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         val googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
         googleSignInClient.signOut()
         SoloAuth.getInstance().logout()
-        MixpanelUtil.logout()
         AuthUtil.getInstance().customer = null
         CacheUtil.getInstance().setConsumerData(null)
     }
@@ -1051,7 +1045,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             val googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
             googleSignInClient.signOut()
             SoloAuth.getInstance().logout()
-            MixpanelUtil.logout()
             AuthUtil.getInstance().customer = null
         }
         CacheUtil.getInstance().clearOrder()
@@ -1250,7 +1243,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         if (CacheUtil.getInstance().application.attributes.menuOnly) {
             return
         }
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
         when (currentDestination) {
             R.id.nav_herfy_home -> NavigationUtils.navigateSafe(
                 navController, HomeFragmentDirections.actionHomeToCart(
@@ -1419,7 +1411,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     fun showHistory() {
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_ORDER_HISTORY)
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         navController.navigateToDeepLink("new_history_fragment_nav")

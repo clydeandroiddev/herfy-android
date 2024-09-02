@@ -446,9 +446,6 @@ dependencies {
 
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
 
-    // Mixpanel
-    implementation 'com.mixpanel.android:mixpanel-android:7.3.1'
-
     //Checkout Sdk
     implementation 'com.github.checkout:frames-android:4.1.0'
     implementation "com.google.accompanist:accompanist-navigation-animation:0.31.5-beta"

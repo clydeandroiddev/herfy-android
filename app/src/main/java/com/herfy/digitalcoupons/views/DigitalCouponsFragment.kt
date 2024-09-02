@@ -18,7 +18,6 @@ import com.herfy.digitalcoupons.DigitalCouponsContract
 import com.herfy.digitalcoupons.DigitalCouponsPresenter
 import com.herfy.digitalcoupons.DigitalCouponsRecyclerViewAdapter
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.helper.NavigationUtils
 import java.util.HashMap
 import com.herfy.utils.helper.*
@@ -136,7 +135,6 @@ class DigitalCouponsFragment : BaseFragment(), DigitalCouponsContract.View {
     }
 
     override fun showCart() {
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
         NavigationUtils.navigateSafe(
             findNavController(),
             DigitalCouponsFragmentDirections.actionDigitalCouponsToCart(

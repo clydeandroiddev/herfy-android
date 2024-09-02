@@ -23,8 +23,6 @@ import com.herfy.productpagedetails.ui.adapter.ComboMealComponentAdapter
 import com.herfy.productpagedetails.ui.viewholder.FrequentlyBoughtItemViewholder
 import com.herfy.productpagedetails.ui.viewholder.SizesItemViewholder
 import com.herfy.repository.MenuRepository
-import com.herfy.utils.analytics.MixpanelUtil
-import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
@@ -1924,7 +1922,6 @@ class ComboViewModel @Inject constructor(
                         ),
                         object : ApiRequestListener {
                             override fun onSuccess(o: Any) {
-                                trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM)
                                 KochavaTrackerUtil.trackEventWithData(
                                     EventType.ADD_TO_WISH_LIST.eventName,
                                     KochavaEventUtil.itemAddToWishList(item)
@@ -2191,7 +2188,6 @@ class ComboViewModel @Inject constructor(
             if (!favorite) {
                 menuRepository.addItemToFavorite(menuItem) { isSuccess, error ->
                     if (isSuccess) {
-                        trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM)
                         KochavaTrackerUtil.trackEventWithData(
                             EventType.ADD_TO_WISH_LIST.eventName,
                             KochavaEventUtil.itemAddToWishList(menuItem)

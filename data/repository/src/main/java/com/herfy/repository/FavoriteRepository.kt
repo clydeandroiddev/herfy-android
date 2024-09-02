@@ -2,8 +2,6 @@ package com.herfy.repository
 
 import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
-import com.herfy.utils.analytics.MixpanelUtil
-import com.herfy.utils.analytics.MixpanelUtil.Companion.trackEvent
 import com.herfy.utils.constants.Text
 import com.herfy.utils.handler.ErrorHandler
 import com.herfy.utils.helper.AuthUtil
@@ -35,7 +33,6 @@ class FavoriteRepositoryImpl @Inject constructor(
             AddFavoriteItemBody.getCdn(LocaleUtil.getInstance().language, menuItem),
             object : ApiRequestListener {
                 override fun onSuccess(o: Any) {
-                    trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM)
                     KochavaTrackerUtil.trackEventWithData(
                         EventType.ADD_TO_WISH_LIST.eventName,
                         KochavaEventUtil.itemAddToWishList(menuItem)

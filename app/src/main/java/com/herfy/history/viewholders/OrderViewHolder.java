@@ -32,7 +32,6 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType;
 import com.skylinedynamics.solosdk.api.models.objects.Rating;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.herfy.utils.helper.CurrencyUtils;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;
 
@@ -219,7 +218,6 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements OrdersCo
                     return;
                 }
                 ((BaseActivity) itemView.getContext()).showLoadingDialog();
-                MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_REORDER);
                 ordersPresenter.getOrder(order.getId(), getAdapterPosition(), false, true);
             }
         });

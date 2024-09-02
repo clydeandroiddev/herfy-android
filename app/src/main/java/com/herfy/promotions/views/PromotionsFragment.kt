@@ -19,7 +19,6 @@ import com.herfy.promotions.PromotionsContract
 import com.herfy.promotions.adapters.PromotionsAdapter
 import com.herfy.promotions.databinding.FragmentHerfyPromotionsBinding
 import com.herfy.util.AppLogger
-import com.herfy.utils.analytics.MixpanelUtil
 import com.herfy.utils.constants.Navigation
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.gone
@@ -265,7 +264,6 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
                                 }
                                 menuItem.attributes.price = promotion.attributes.itemPrice
                                 menuItem.toCdn(orderStoreId)
-                                MixpanelUtil.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO)
                                 if (menuItem.isMustBeCustomized || menuItem.isCombo) {
                                     val campaignToAdd = CampaignToAdd(
                                         digitalCoupon,
@@ -328,7 +326,6 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
 
     override fun showCart(isAvail: Boolean) {
         promotionDetailBottomSheet?.dismissAllowingStateLoss()
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_CART)
         NavigationUtils.navigateSafe(
             findNavController(),
             PromotionsFragmentDirections.actionPromotionsToCart(
@@ -339,7 +336,6 @@ class PromotionsFragment : BaseFragment(), PromotionsContract.View,
 
     override fun showMenu() {
         promotionDetailBottomSheet?.dismissAllowingStateLoss()
-        MixpanelUtil.trackEvent(MixpanelUtil.EVENT_VIEW_MENU)
         NavigationUtils.navigateSafe(
             findNavController(),
             PromotionsFragmentDirections.actionPromotionsToMenu()

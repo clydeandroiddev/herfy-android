@@ -27,7 +27,6 @@ import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.VisibilityConfig;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.utils.handler.ErrorHandler;
 
 import org.json.JSONArray;
@@ -531,7 +530,6 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
                             if (digitalCoupon.getPromotion() != null && digitalCoupon.getPromotion().getAttributes().getType().equalsIgnoreCase("item")) {
                                 getCampaignPromotionItem();
                             } else {
-                                MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO);
                                 CacheUtil.getInstance().setCampaign(digitalCoupon);
                                 CacheUtil.getInstance().setCampaignPromotion(digitalCoupon.getPromotion());
                                 CacheUtil.getInstance().setCampaignPromotionMenuItem(null);
@@ -585,8 +583,6 @@ public class DigitalCouponsPresenter implements DigitalCouponsContract.Presenter
                             }
                             menuItem.getAttributes().setPrice(promotion.getAttributes().getItemPrice());
                             menuItem.toCdn(orderStoreId);
-
-                            MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_APPLY_PROMO);
 
                             CacheUtil.getInstance().setCampaign(digitalCoupon);
                             CacheUtil.getInstance().setCampaignPromotion(digitalCoupon.getPromotion());

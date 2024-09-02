@@ -94,7 +94,6 @@ import com.skylinedynamics.solosdk.util.BooleanTypeAdapter;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 import com.herfy.util.AppLogger;
 import com.herfy.utils.handler.ErrorHandler;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.util.StringUtil;
 
 import org.json.JSONArray;
@@ -1216,7 +1215,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                 @Override
                 public void onSuccess(Object o) {
 
-                    MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM);
                     KochavaTrackerUtil.trackEventWithData(
                             EventType.ADD_TO_WISH_LIST.getEventName(),
                             KochavaEventUtil.Companion.itemAddToWishList(menuItem)
@@ -3727,17 +3725,16 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void search(String query) {
-        MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_SEARCH_ITEM);
         String storeId = CacheUtil.getOrderStoreId();
         AppDatabase appDatabase = AppDatabase.getInstance();
         ArrayList<MenuItem> menuItemData = getMenuItemDataByName(appDatabase, "%" + query + "%");
         if (menuItemData != null && !menuItemData.isEmpty()) {
             try {
                 searchedMenuItems.clear();
-                KochavaTrackerUtil.trackEventWithData(
-                        EventType.SEARCH.getEventName(),
-                        KochavaEventUtil.Companion.searchItems(menuItemData)
-                );
+                /*KochavaTrackerUtil.trackEventWithData(
+                    EventType.SEARCH.getEventName(),
+                    KochavaEventUtil.Companion.searchItems(menuItemData)
+                );*/
                 for (MenuItem searchMenuItem : menuItemData) {
                     if (storeId == null || (storeId != null && !searchMenuItem.getExcludedLocations().contains(storeId))) {
                         searchedMenuItems.add(searchMenuItem);
@@ -4670,7 +4667,6 @@ public class MenuPresenter implements MenuContract.Presenter {
                 @Override
                 public void onSuccess(Object o) {
 
-                    MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_FAVORITE_ITEM);
                     KochavaTrackerUtil.trackEventWithData(
                             EventType.ADD_TO_WISH_LIST.getEventName(),
                             KochavaEventUtil.Companion.itemAddToWishList(menuItem)

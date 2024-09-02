@@ -2,7 +2,6 @@ package com.herfy.feedback;
 
 import com.herfy.utils.constants.Text;
 import com.herfy.util.AppLogger;
-import com.herfy.utils.analytics.MixpanelUtil;
 import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.helper.CacheUtil;
@@ -75,8 +74,6 @@ public class FeedbackPresenter implements FeedbackContract.Presenter {
 			FeedbackApiCall.getInstance().postFeedbackWithSubject(fullName, emailAddress, phoneNumber, subject, comment, image, new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
-
-                    MixpanelUtil.Companion.trackEvent(MixpanelUtil.EVENT_SEND_FEEDBACK);
 
                     HashMap<String, String> eventAttributes = new HashMap<>();
                     eventAttributes.put("Name", fullName);
