@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -24,7 +23,7 @@ class MenuCategoryAdapter(
 ) : RecyclerView.Adapter<MenuCategoryAdapter.MenuCategoryViewHolder>() {
 
     private var selected = 0
-    private var itemList: List<MenuCategory> = mutableListOf()
+    private var itemList = mutableListOf<MenuCategory>()
 
     /**
      * [MenuCategoryViewHolder] for binding the views
@@ -125,9 +124,9 @@ class MenuCategoryAdapter(
     override fun getItemCount(): Int = itemList.size
 
     fun addData(items: List<MenuCategory>) {
-        val diffResult = DiffUtil.calculateDiff(Diff(itemList, items))
-        this.itemList = items
-        diffResult.dispatchUpdatesTo(this)
+        this.itemList.clear()
+        this.itemList.addAll(items)
+        notifyDataSetChanged()
     }
 
     fun select(position: Int) {
@@ -146,22 +145,6 @@ class MenuCategoryAdapter(
             }
         }
         return null
-    }
-
-    class Diff(private val old: List<MenuCategory>, private val newItem: List<MenuCategory>) :
-        DiffUtil.Callback() {
-        override fun areItemsTheSame(oldItemPos: Int, newPosition: Int): Boolean {
-            val oldItem = old[oldItemPos]
-            val newItem = newItem[newPosition]
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-            old[oldItemPosition] == newItem[newItemPosition]
-
-        override fun getOldListSize(): Int = old.size
-
-        override fun getNewListSize(): Int = newItem.size
     }
 
 }
