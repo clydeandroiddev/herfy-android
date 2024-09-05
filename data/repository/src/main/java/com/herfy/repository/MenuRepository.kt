@@ -278,13 +278,20 @@ class MenuRepositoryImpl @Inject constructor(
                             }
                         }
 
-                        val orderType = CacheUtil.getInstance().orderType
-                        if(orderType == OrderType.DELIVERY) {
-                            isMenuItemHiddenFromMenu = menuItem.disableForDelivery == 1
+                        if(!isMenuItemHiddenFromMenu) {
+                            val orderType = CacheUtil.getInstance().orderType
+                            if (orderType == OrderType.DELIVERY) {
+                                isMenuItemHiddenFromMenu = menuItem.disableForDelivery == 1
+                            }
                         }
-                        val pickupOrderTypes = listOf(OrderType.PICKUP, OrderType.DRIVE_THRU, OrderType.CURBSIDE)
-                        if(orderType in pickupOrderTypes) {
-                            isMenuItemHiddenFromMenu = menuItem.disableForPickup == 1
+
+                        if(!isMenuItemHiddenFromMenu) {
+                            val pickupOrderTypes =
+                                listOf(OrderType.PICKUP, OrderType.DRIVE_THRU, OrderType.CURBSIDE)
+                            val orderType = CacheUtil.getInstance().orderType
+                            if (orderType in pickupOrderTypes) {
+                                isMenuItemHiddenFromMenu = menuItem.disableForPickup == 1
+                            }
                         }
 
                         if (menuItem.enabled == 1 && !isMenuItemHiddenFromMenu &&
