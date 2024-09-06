@@ -522,7 +522,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 if (orderId != "") {
                     val fragment =
                         supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
-                    showOrderDetails(true, orderId)
+                    showOrderDetails("true", orderId)
                     fragment?.cast<HomeFragment> {
                         setCartQuantity(CacheUtil.getInstance().cartQuantity)
                     }
@@ -1406,7 +1406,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
     }
 
-    fun showOrderDetails(fromPayment: Boolean, orderId: String) {
+    fun showOrderDetails(fromPayment: String, orderId: String) {
         navController.navigateToDeepLink("nav_new_order_tracker/${fromPayment}/${orderId}")
     }
 
