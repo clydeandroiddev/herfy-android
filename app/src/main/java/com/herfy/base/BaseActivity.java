@@ -123,13 +123,6 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
         super.onResume();
         currentActivity = this;
         currentBaseMainActivity = this;
-        Concept concept = CacheUtil.getInstance().getConcept();
-        if (concept != null) {
-            long promptRatingSeconds = concept.getPromptRatingSeconds();
-            if (promptRatingSeconds > 0 && CacheUtil.getInstance().getAppReview()) {
-                showAppReview();
-            }
-        }
         Intent intent = new Intent(this, CartNotificationBroadcastReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
