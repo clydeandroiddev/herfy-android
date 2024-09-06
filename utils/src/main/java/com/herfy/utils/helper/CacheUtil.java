@@ -165,6 +165,7 @@ public class CacheUtil {
     private static final String LOYALTY_TIERS = "loyalty_tiers";
 
     private static final String INITIAL_CAMPAIGN = "initial_campaign";
+    private static final String IN_APP_REVIEW_ENABLE = "enable_in_app_review";
 
     private CacheUtil(Context context) {
 
@@ -2140,4 +2141,15 @@ public class CacheUtil {
         }
         return tiers;
     }
+
+    public boolean getInAppReviewEnable() {
+        return cacheSharedPreferences.getBoolean(IN_APP_REVIEW_ENABLE, false);
+    }
+
+    public void setInAppReviewEnable(boolean inAppReviewEnable) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putBoolean(IN_APP_REVIEW_ENABLE, inAppReviewEnable);
+        editor.apply();
+    }
+
 }

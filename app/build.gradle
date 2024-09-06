@@ -196,7 +196,7 @@ android {
         herfy {
             signingConfig signingConfigs.release
             applicationId "com.herfy.order"
-            versionCode 300004
+            versionCode 300008
             versionName "3.0.2"
             buildConfigField "String", "TAG", "\"Herfy\""
             buildConfigField "String", "SOLO_CONCEPT", "\"\""
@@ -259,13 +259,13 @@ android {
     }
 }
 
-configurations {
+/*configurations {
     all {
         exclude group: "com.google.android.play", module: "core"
         exclude group: "com.google.android.play", module: "core-common"
         exclude group: "com.google.android.play", module: "feature-delivery"
     }
-}
+}*/
 
 kapt {
     generateStubs = true
@@ -310,6 +310,7 @@ dependencies {
     implementation project(path: ':features:promotions')
     implementation project(path: ':common')
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
+    implementation 'com.google.android.play:review:2.0.1'
     implementation 'com.google.android.play:review-ktx:2.0.1'
 
 

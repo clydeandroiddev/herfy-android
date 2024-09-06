@@ -123,13 +123,6 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
         super.onResume();
         currentActivity = this;
         currentBaseMainActivity = this;
-        Concept concept = CacheUtil.getInstance().getConcept();
-        if (concept != null) {
-            long promptRatingSeconds = concept.getPromptRatingSeconds();
-            if (promptRatingSeconds > 0 && CacheUtil.getInstance().getAppReview()) {
-                showAppReview();
-            }
-        }
         Intent intent = new Intent(this, CartNotificationBroadcastReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -676,8 +669,11 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
 
     public void showAppReview() {
         try {
-            if (currentActivity != null) {
-                CacheUtil.getInstance().setAppReview(false);
+            if (currentActivity != null &&
+                    !currentActivity.isDestroyed() &&
+                    !currentActivity.isFinishing() &&
+                    CacheUtil.getInstance().getInAppReviewEnable() &&
+                    !CacheUtil.getInstance().getAppReview()) {
                 new ReviewManagerUtil(currentActivity).showReviewDialog();
             }
         } catch (Exception e) {

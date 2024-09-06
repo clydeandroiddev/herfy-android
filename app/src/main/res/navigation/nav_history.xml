@@ -25,6 +25,11 @@
             app:popUpTo="@+id/new_history_fragment">
 
             <argument
+                android:name="fromPayment"
+                app:argType="string"
+                app:nullable="false" />
+
+            <argument
                 android:name="orderId"
                 app:argType="string"
                 app:nullable="false" />

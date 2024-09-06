@@ -279,7 +279,7 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                 status.text = history.description
                 trackButton.setOnClickListener {
                     findNavController().navigate(
-                        NewHistoryFragmentDirections.actionHistoryToTracker(history.id)
+                        NewHistoryFragmentDirections.actionHistoryToTracker("false", history.id)
                     )
                 }
             }
