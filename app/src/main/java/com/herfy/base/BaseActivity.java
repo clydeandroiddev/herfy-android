@@ -676,8 +676,11 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
 
     public void showAppReview() {
         try {
-            if (currentActivity != null) {
-                CacheUtil.getInstance().setAppReview(false);
+            if (currentActivity != null &&
+                    !currentActivity.isDestroyed() &&
+                    !currentActivity.isFinishing() &&
+                    CacheUtil.getInstance().getInAppReviewEnable() &&
+                    !CacheUtil.getInstance().getAppReview()) {
                 new ReviewManagerUtil(currentActivity).showReviewDialog();
             }
         } catch (Exception e) {

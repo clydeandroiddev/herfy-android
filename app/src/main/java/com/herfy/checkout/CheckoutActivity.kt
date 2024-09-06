@@ -2,13 +2,10 @@ package com.herfy.checkout
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -92,7 +89,6 @@ import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.ApiLogLevel
 import com.herfy.utils.helper.ApiLogUtil.Companion.sendOrderLog
 import com.herfy.utils.helper.AuthUtil
-import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CurrencyUtils.Companion.updateCurrency
 import com.herfy.utils.helper.DialogUtils
@@ -1365,40 +1361,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 runOnUiThread {
                     binding?.blocker?.isVisible = true
                     binding?.blocker?.setOnClickListener(null)
-                    val concept = CacheUtil.getInstance().concept
-                    if (concept != null) {
-                        var promptRatingSeconds =
-                            CacheUtil.getInstance().concept.promptRatingSeconds.toLong()
-                        if (promptRatingSeconds > 0) {
-                            promptRatingSeconds = promptRatingSeconds * 1000L
-                            val intent = Intent(this, AppRatingBroadcastReceiver::class.java)
-                            val pendingIntent = PendingIntent.getBroadcast(
-                                this,
-                                0,
-                                intent,
-                                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                            )
-                            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-                            if (alarmManager != null) {
-                                alarmManager.cancel(pendingIntent)
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || alarmManager.canScheduleExactAlarms()) {
-                                        alarmManager.setExactAndAllowWhileIdle(
-                                            AlarmManager.RTC_WAKEUP,
-                                            System.currentTimeMillis() + promptRatingSeconds,
-                                            pendingIntent
-                                        )
-                                    }
-                                } else {
-                                    alarmManager.setExact(
-                                        AlarmManager.RTC_WAKEUP,
-                                        System.currentTimeMillis() + promptRatingSeconds,
-                                        pendingIntent
-                                    )
-                                }
-                            }
-                        }
-                    }
                     dismissDialogs()
                     val intent = Intent(this@CheckoutActivity, MainActivity::class.java)
                     intent.putExtra("payment", true)

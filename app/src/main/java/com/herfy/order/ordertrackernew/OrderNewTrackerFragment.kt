@@ -249,6 +249,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             val baseActivity = it as BaseActivity
             baseActivity.showLoadingDialog()
         }
+        if(args.fromPayment == "true") {
+            activity?.cast<BaseActivity> { it.showAppReview() }
+        }
         getOrderId()
         orderPresenter?.getOrder(orderId, -1, false, false)
     }

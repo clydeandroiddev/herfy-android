@@ -232,3 +232,5 @@ com.samsung.android.game.cloudgame.dev.sdk.* { *;}
 -keep class com.google.android.play.core.review.ReviewException {
     public int getErrorCode();
 }
+
+-keep class com.google.android.play.core.** { *; }

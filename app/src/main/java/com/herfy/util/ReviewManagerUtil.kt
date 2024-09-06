@@ -11,17 +11,22 @@ class ReviewManagerUtil(val activity: Activity) {
         StateUtil.INSTANCE.hasShownRating = true
         val manager = ReviewManagerFactory.create(activity)
         val request = manager.requestReviewFlow()
-        request.addOnCompleteListener { request ->
-            if (request.isSuccessful) {
-                val reviewInfo = request.result
+        request.addOnCompleteListener { requestReview ->
+            if (requestReview.isSuccessful) {
+                val reviewInfo = requestReview.result
 
-                val flow = manager.launchReviewFlow(activity, reviewInfo)
-                flow.addOnCompleteListener { _ ->
+                val reviewFlow = manager.launchReviewFlow(activity, reviewInfo)
+                reviewFlow.addOnCompleteListener {
+
+                }
+                reviewFlow.addOnFailureListener {
 
                 }
             } else {
 
             }
+        }.addOnFailureListener {
+
         }
     }
 }

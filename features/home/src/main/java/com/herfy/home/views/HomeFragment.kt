@@ -717,7 +717,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     }
 
                     otherDetails.setOnClickListener {
-                        findNavController().navigateToDeepLink("nav_new_order_tracker/${orderDetails.id}")
+                        findNavController().navigateToDeepLink("nav_new_order_tracker/false/${orderDetails.id}")
                     }
                 }
             }

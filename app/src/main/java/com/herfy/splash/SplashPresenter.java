@@ -248,6 +248,11 @@ public class SplashPresenter implements SplashContract.Presenter {
                     if (task.isSuccessful()) {
 
                         try {
+
+                            String inAppReviewEnableKey = "android_enable_in_app_review";
+                            boolean inAppReviewEnable = firebaseRemoteConfig.getBoolean(inAppReviewEnableKey);
+                            CacheUtil.getInstance().setInAppReviewEnable(inAppReviewEnable);
+
                             String isContactUsEnabledKey = "is_contact_us_enabled";
                             boolean isContactUsEnabled = firebaseRemoteConfig.getBoolean(isContactUsEnabledKey);
                             CacheUtil.getInstance().setIsContactUsEnabled(isContactUsEnabled);
