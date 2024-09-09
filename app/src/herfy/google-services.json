@@ -129,6 +129,14 @@
           }
         },
         {
+          "client_id": "669493504227-rhp06om0b66n34obacaol8l33coso3u8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.herfy.order",
+            "certificate_hash": "95eabf8a1659995ee6022119029ea8b122ecec30"
+          }
+        },
+        {
           "client_id": "669493504227-3v0hq1lgrn0lbas1hqk2khsqh646bpj9.apps.googleusercontent.com",
           "client_type": 3
         }
