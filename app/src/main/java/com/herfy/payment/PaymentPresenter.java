@@ -102,12 +102,12 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
     private double validatedPromoItemPrice = 0.0;
     private int validatedPromoItemQuantity = 0;
-    private double validatedSubtotal;
-    private double validatedDiscount;
+    private double validatedSubtotal = 0.0;
+    private double validatedDiscount = 0.0;
     private double validatedRound;
-    private double validatedDeliveryCharge = 0.0;
+    private Double validatedDeliveryCharge = 0.0;
     private ArrayList<ServiceCharge> validatedCharges = new ArrayList<>();
-    private double validatedTotal;
+    private Double validatedTotal = 0.0;
     private int loyaltyPointsUsed;
     private int pointsEarnable;
     private String mukafaaTransactionId;
@@ -536,7 +536,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
     }
 
     @Override
-    public double getValidatedTotal() {
+    public @Nullable Double getValidatedTotal() {
         double promoItemPrice = 0.0;
 //        double totalForDisplay = validatedTotal - (validatedPromoItemPrice * validatedPromoItemQuantity);
 //        if (CacheUtil.getInstance().getCouponMenuItem() != null) {
@@ -1588,7 +1588,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
     }
 
     @Override
-    public double getValidatedDeliveryCharge() {
+    public @Nullable Double getValidatedDeliveryCharge() {
         return validatedDeliveryCharge;
     }
 

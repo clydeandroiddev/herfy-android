@@ -124,7 +124,7 @@ public interface PaymentContract {
 
         double getTotalPrice();
 
-        double getValidatedTotal();
+        @Nullable Double getValidatedTotal();
 
         double getCashPresented();
 
@@ -172,7 +172,7 @@ public interface PaymentContract {
 
         String getValidatedBody();
 
-        double getValidatedDeliveryCharge();
+        @Nullable Double getValidatedDeliveryCharge();
 
         void removeMukafaaRedemption();
 
