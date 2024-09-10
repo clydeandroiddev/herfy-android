@@ -286,6 +286,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        requestPermissionLocation()
+    }
+
     private fun deletePolyline() {
         myPolyline?.remove()
         myPolyline = null  // Clear the reference
@@ -304,6 +309,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
         }
     }
+
 
     private fun requestPermissionLocation() {
         permissionManager.requestPermissions(permissions = arrayOf(
@@ -598,8 +604,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun setupViews() {
 
         orderType = CacheUtil.getInstance().orderType
-        requestPermissionLocation()
-
         binding!!.layoutPayment.tvEditPaymentMethod.setOnClickListener {
             showPaymentMethod()
         }
