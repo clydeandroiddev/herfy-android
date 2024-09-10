@@ -201,8 +201,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
         } else {
             paymentPresenter?.let {
+                val total = it.validatedTotal ?: 0.0
+                val deliveryCharge = it.validatedDeliveryCharge ?: 0.0
                 bottomSheetAlrhaji = BottomSheetAlrhaji.newInstance(
-                    it.validatedTotal, it.validatedBody, it.validatedDeliveryCharge
+                    total, it.validatedBody, deliveryCharge
                 )
                 bottomSheetAlrhaji?.isCancelable = false
                 bottomSheetAlrhaji?.show(
@@ -370,206 +372,209 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
 
     private fun showMap() {
-        markerOptionsList.clear()
-        var currentMarkerIcon = com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
-            this, R.drawable.user_current_location
-        )
-        val storeLat = CacheUtil.getInstance().orderStore.attributes.lat
-        val storeLon = CacheUtil.getInstance().orderStore.attributes.lng
-        val storeLocation = LatLng(storeLat, storeLon)
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val markerOptions = MarkerOptions()
-        val supportMapFragment =
-            supportFragmentManager.findFragmentById(R.id.checkout_map) as OrderSupportMapFragment?
-        supportMapFragment?.setListener {
-            binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
-                true
-            )
-        }
-        supportMapFragment?.getMapAsync { googleMap ->
-            mMap = googleMap
-            mMap?.uiSettings?.isCompassEnabled = false
-            mMap?.uiSettings?.isZoomControlsEnabled = false
-            mMap?.uiSettings?.isMapToolbarEnabled = false
+        val store = CacheUtil.getInstance().orderStore
+        if(store != null) {
+            markerOptionsList.clear()
+            var currentMarkerIcon =
+                com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
+                    this, R.drawable.user_current_location
+                )
+            val storeLat = store.attributes.lat
+            val storeLon = store.attributes.lng
+            val storeLocation = LatLng(storeLat, storeLon)
+            val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val markerOptions = MarkerOptions()
+            val supportMapFragment =
+                supportFragmentManager.findFragmentById(R.id.checkout_map) as OrderSupportMapFragment?
+            supportMapFragment?.setListener {
+                binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
+                    true
+                )
+            }
+            supportMapFragment?.getMapAsync { googleMap ->
+                mMap = googleMap
+                mMap?.uiSettings?.isCompassEnabled = false
+                mMap?.uiSettings?.isZoomControlsEnabled = false
+                mMap?.uiSettings?.isMapToolbarEnabled = false
 
-            if (orderType == OrderType.DELIVERY) {
-                currentMarkerIcon =
-                    com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
-                        this, R.drawable.ic_address_user_home
-                    )
-                if (CacheUtil.getInstance().orderAddress.attributes.label.equals(
-                        "work",
-                        ignoreCase = true
-                    )
-                ) {
+                if (orderType == OrderType.DELIVERY) {
                     currentMarkerIcon =
                         com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
-                            this, R.drawable.ic_address_user_work
+                            this, R.drawable.ic_address_user_home
                         )
-                }
-                val lat = CacheUtil.getInstance().orderAddress.attributes.lat.toDouble()
-                val lon = CacheUtil.getInstance().orderAddress.attributes.longt.toDouble()
-                val addressLocation = LatLng(lat, lon)
-                val view = inflater.inflate(R.layout.marker_store_new, null)
-                val textView = view.findViewById<TextView>(R.id.kmAway)
-                val image = view.findViewById<ImageView>(R.id.icon)
-                image.setImageResource(R.drawable.delivery_marker_selected)
-                val currentLocation =
-                    LatLng(addressLocation.latitude, addressLocation.longitude)
-                val currentDistance = DistanceCalculator.calculateDistance(
-                    currentLocation.latitude,
-                    currentLocation.longitude,
-                    storeLocation.latitude,
-                    storeLocation.longitude
-                )
-                val distanceValue = StringUtil.getDistance(currentDistance)
-                textView.text =
-                    CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                        .replace("(x)", distanceValue).toLowerCase()
-                val icon = BitmapDescriptorFactory.fromBitmap(
-                    ViewUtil.createDrawableFromView(
-                        this@CheckoutActivity, view
-                    )
-                )
-                val currentLocationMarker = MarkerOptions()
-                currentLocationMarker.icon(currentMarkerIcon)
-                currentLocationMarker.position(addressLocation)
-                currentLocationMarker.anchor(0.5f, 1f)
-                markerOptionsList.add(currentLocationMarker)
-                mMap?.addMarker(currentLocationMarker)
-                val storeLocationMarker = MarkerOptions()
-                storeLocationMarker.icon(icon)
-                storeLocationMarker.position(storeLocation)
-                storeLocationMarker.anchor(0.5f, 1f)
-                markerOptionsList.add(storeLocationMarker)
-                val markerStore = mMap?.addMarker(storeLocationMarker)
-                markerStore?.tag = "storeMarker"
-                mMap?.setOnMarkerClickListener { marker ->
-                    if (marker.tag == "storeMarker") {
-                        goToStoreInMap(storeLocation)
-                        true // Consume the click event
-                    } else {
-                        false // Default behavior (showing the InfoWindow)
+                    if (CacheUtil.getInstance().orderAddress.attributes.label.equals(
+                            "work",
+                            ignoreCase = true
+                        )
+                    ) {
+                        currentMarkerIcon =
+                            com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
+                                this, R.drawable.ic_address_user_work
+                            )
                     }
-                }
-                val builder = LatLngBounds.Builder()
-                builder.include(addressLocation)
-                builder.include(storeLocation)
-                val bounds = builder.build()
-                val width = Resources.getSystem().displayMetrics.widthPixels
-                val padding = (width * 0.21).toInt()
-                val cu = CameraUpdateFactory.newLatLngBounds(
-                    bounds, padding
-                )
-                mMap?.animateCamera(cu, object : CancelableCallback {
-                    override fun onCancel() {}
-                    override fun onFinish() {
-                        val zout = CameraUpdateFactory.zoomBy(-1.0f)
-                        mMap?.animateCamera(zout)
-                    }
-                })
-                try {
-                    deletePolyline()
-                    val storeLoc = LatLng(
-                        storeLocation.latitude, storeLocation.longitude
+                    val lat = CacheUtil.getInstance().orderAddress.attributes.lat.toDouble()
+                    val lon = CacheUtil.getInstance().orderAddress.attributes.longt.toDouble()
+                    val addressLocation = LatLng(lat, lon)
+                    val view = inflater.inflate(R.layout.marker_store_new, null)
+                    val textView = view.findViewById<TextView>(R.id.kmAway)
+                    val image = view.findViewById<ImageView>(R.id.icon)
+                    image.setImageResource(R.drawable.delivery_marker_selected)
+                    val currentLocation =
+                        LatLng(addressLocation.latitude, addressLocation.longitude)
+                    val currentDistance = DistanceCalculator.calculateDistance(
+                        currentLocation.latitude,
+                        currentLocation.longitude,
+                        storeLocation.latitude,
+                        storeLocation.longitude
                     )
-                    myPolyline = drawArcPolyline(
-                        mMap, currentLocation, storeLoc, view.context
+                    val distanceValue = StringUtil.getDistance(currentDistance)
+                    textView.text =
+                        CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                            .replace("(x)", distanceValue).toLowerCase()
+                    val icon = BitmapDescriptorFactory.fromBitmap(
+                        ViewUtil.createDrawableFromView(
+                            this@CheckoutActivity, view
+                        )
                     )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            } else {
-                markerOptions.position(storeLocation)
-                val view = inflater.inflate(R.layout.marker_store_new, null)
-                val textView = view.findViewById<TextView>(R.id.kmAway)
-                val imageView = view.findViewById<AppCompatImageView>(R.id.icon)
-                imageView.setImageResource(R.drawable.ic_marker_red)
-                lifecycleScope.launchWithTimber {
-                    val task = fusedLocationProviderClient?.lastLocation
-                    task?.addOnSuccessListener { location ->
-                        location?.let {
-                            val currentLocation = LatLng(it.latitude, it.longitude)
-                            val currentDistance = DistanceCalculator.calculateDistance(
-                                currentLocation.latitude,
-                                currentLocation.longitude,
-                                storeLocation.latitude,
-                                storeLocation.longitude
-                            )
-
-                            val distanceValue = StringUtil.getDistance(currentDistance)
-
-                            textView.text =
-                                CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                    .replace("(x)", distanceValue).toLowerCase()
-                            val icon = BitmapDescriptorFactory.fromBitmap(
-                                ViewUtil.createDrawableFromView(
-                                    this@CheckoutActivity, view
-                                )
-                            )
-                            val currentLocationMarker = MarkerOptions()
-                            currentLocationMarker.icon(currentMarkerIcon)
-                            currentLocationMarker.position(currentLocation)
-                            currentLocationMarker.anchor(0.5f, 0.5f)
-                            markerOptionsList.add(currentLocationMarker)
-                            mMap?.addMarker(currentLocationMarker)
-
-                            val storeLocationMarker = MarkerOptions()
-                            storeLocationMarker.icon(icon)
-                            storeLocationMarker.position(storeLocation)
-                            storeLocationMarker.anchor(0.5f, 1f)
-                            markerOptionsList.add(storeLocationMarker)
-                            val markerStore = mMap?.addMarker(storeLocationMarker)
-                            markerStore?.tag = "storeMarker"
-                            mMap?.setOnMarkerClickListener { marker ->
-                                if (marker.tag == "storeMarker") {
-                                    goToStoreInMap(storeLocation)
-                                    true // Consume the click event
-                                } else {
-                                    false // Default behavior (showing the InfoWindow)
-                                }
-                            }
-
-                            val builder = LatLngBounds.Builder()
-                            builder.include(currentLocation)
-                            builder.include(storeLocation)
-                            val bounds = builder.build()
-                            val width = Resources.getSystem().displayMetrics.widthPixels
-                            val padding = (width * 0.21).toInt()
-                            val cu = CameraUpdateFactory.newLatLngBounds(
-                                bounds, padding
-                            )
-                            mMap?.animateCamera(cu, object : CancelableCallback {
-                                override fun onCancel() {}
-                                override fun onFinish() {
-                                    val zout = CameraUpdateFactory.zoomBy(-1.0f)
-                                    mMap?.animateCamera(zout)
-                                }
-                            })
-                            try {
-                                deletePolyline()
-                                val storeLoc = LatLng(
-                                    storeLocation.latitude, storeLocation.longitude
-                                )
-                                myPolyline = drawArcPolyline(
-                                    mMap, currentLocation, storeLoc, view.context
-                                )
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-
+                    val currentLocationMarker = MarkerOptions()
+                    currentLocationMarker.icon(currentMarkerIcon)
+                    currentLocationMarker.position(addressLocation)
+                    currentLocationMarker.anchor(0.5f, 1f)
+                    markerOptionsList.add(currentLocationMarker)
+                    mMap?.addMarker(currentLocationMarker)
+                    val storeLocationMarker = MarkerOptions()
+                    storeLocationMarker.icon(icon)
+                    storeLocationMarker.position(storeLocation)
+                    storeLocationMarker.anchor(0.5f, 1f)
+                    markerOptionsList.add(storeLocationMarker)
+                    val markerStore = mMap?.addMarker(storeLocationMarker)
+                    markerStore?.tag = "storeMarker"
+                    mMap?.setOnMarkerClickListener { marker ->
+                        if (marker.tag == "storeMarker") {
+                            goToStoreInMap(storeLocation)
+                            true // Consume the click event
+                        } else {
+                            false // Default behavior (showing the InfoWindow)
                         }
-                    }?.addOnFailureListener {
-                        it.printStackTrace()
-                        AppLogger.printRetrofitError(it)
                     }
+                    val builder = LatLngBounds.Builder()
+                    builder.include(addressLocation)
+                    builder.include(storeLocation)
+                    val bounds = builder.build()
+                    val width = Resources.getSystem().displayMetrics.widthPixels
+                    val padding = (width * 0.21).toInt()
+                    val cu = CameraUpdateFactory.newLatLngBounds(
+                        bounds, padding
+                    )
+                    mMap?.animateCamera(cu, object : CancelableCallback {
+                        override fun onCancel() {}
+                        override fun onFinish() {
+                            val zout = CameraUpdateFactory.zoomBy(-1.0f)
+                            mMap?.animateCamera(zout)
+                        }
+                    })
+                    try {
+                        deletePolyline()
+                        val storeLoc = LatLng(
+                            storeLocation.latitude, storeLocation.longitude
+                        )
+                        myPolyline = drawArcPolyline(
+                            mMap, currentLocation, storeLoc, view.context
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                } else {
+                    markerOptions.position(storeLocation)
+                    val view = inflater.inflate(R.layout.marker_store_new, null)
+                    val textView = view.findViewById<TextView>(R.id.kmAway)
+                    val imageView = view.findViewById<AppCompatImageView>(R.id.icon)
+                    imageView.setImageResource(R.drawable.ic_marker_red)
+                    lifecycleScope.launchWithTimber {
+                        val task = fusedLocationProviderClient?.lastLocation
+                        task?.addOnSuccessListener { location ->
+                            location?.let {
+                                val currentLocation = LatLng(it.latitude, it.longitude)
+                                val currentDistance = DistanceCalculator.calculateDistance(
+                                    currentLocation.latitude,
+                                    currentLocation.longitude,
+                                    storeLocation.latitude,
+                                    storeLocation.longitude
+                                )
 
+                                val distanceValue = StringUtil.getDistance(currentDistance)
+
+                                textView.text =
+                                    CacheUtil.getInstance()
+                                        .getTranslations(Text.KM_AWAY, "(x) away")
+                                        .replace("(x)", distanceValue).toLowerCase()
+                                val icon = BitmapDescriptorFactory.fromBitmap(
+                                    ViewUtil.createDrawableFromView(
+                                        this@CheckoutActivity, view
+                                    )
+                                )
+                                val currentLocationMarker = MarkerOptions()
+                                currentLocationMarker.icon(currentMarkerIcon)
+                                currentLocationMarker.position(currentLocation)
+                                currentLocationMarker.anchor(0.5f, 0.5f)
+                                markerOptionsList.add(currentLocationMarker)
+                                mMap?.addMarker(currentLocationMarker)
+
+                                val storeLocationMarker = MarkerOptions()
+                                storeLocationMarker.icon(icon)
+                                storeLocationMarker.position(storeLocation)
+                                storeLocationMarker.anchor(0.5f, 1f)
+                                markerOptionsList.add(storeLocationMarker)
+                                val markerStore = mMap?.addMarker(storeLocationMarker)
+                                markerStore?.tag = "storeMarker"
+                                mMap?.setOnMarkerClickListener { marker ->
+                                    if (marker.tag == "storeMarker") {
+                                        goToStoreInMap(storeLocation)
+                                        true // Consume the click event
+                                    } else {
+                                        false // Default behavior (showing the InfoWindow)
+                                    }
+                                }
+
+                                val builder = LatLngBounds.Builder()
+                                builder.include(currentLocation)
+                                builder.include(storeLocation)
+                                val bounds = builder.build()
+                                val width = Resources.getSystem().displayMetrics.widthPixels
+                                val padding = (width * 0.21).toInt()
+                                val cu = CameraUpdateFactory.newLatLngBounds(
+                                    bounds, padding
+                                )
+                                mMap?.animateCamera(cu, object : CancelableCallback {
+                                    override fun onCancel() {}
+                                    override fun onFinish() {
+                                        val zout = CameraUpdateFactory.zoomBy(-1.0f)
+                                        mMap?.animateCamera(zout)
+                                    }
+                                })
+                                try {
+                                    deletePolyline()
+                                    val storeLoc = LatLng(
+                                        storeLocation.latitude, storeLocation.longitude
+                                    )
+                                    myPolyline = drawArcPolyline(
+                                        mMap, currentLocation, storeLoc, view.context
+                                    )
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+
+                            }
+                        }?.addOnFailureListener {
+                            it.printStackTrace()
+                            AppLogger.printRetrofitError(it)
+                        }
+
+                    }
                 }
+
             }
-
         }
-
-
     }
 
     private fun goToStoreInMap(store: LatLng) {

@@ -6,6 +6,7 @@ import android.location.Geocoder;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -339,12 +340,15 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                 JSONObject storeObject = array.getJSONObject(i);
 
                 if (hasLocation) {
-                    StoreDb storeDb = new StoreDb();
-                    storeDb.id = storeObject.getString("id");
-                    storeDb.applicationId = applicationId;
-                    storeDb.data = storeObject.toString();
-                    Executor executor = Executors.newSingleThreadExecutor();
-                    executor.execute(() -> storeDbs.add(storeDb));
+                    String storeId = storeObject.optString("id", "");
+                    if(storeId != null && !storeId.isEmpty()) {
+                        StoreDb storeDb = new StoreDb();
+                        storeDb.id = storeId;
+                        storeDb.applicationId = applicationId;
+                        storeDb.data = storeObject.toString();
+                        Executor executor = Executors.newSingleThreadExecutor();
+                        executor.execute(() -> storeDbs.add(storeDb));
+                    }
                 }
                 Store store = Store.parseStore(storeObject);
                 if (store.getAttributes().getPickupEnabled() == 1) {
@@ -414,12 +418,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                 });
             }
 
-            if (totalStoresCount < pagination.getTotal()) {
-                getStores(page + 1);
-            }
-
-            sortStoresByDistance();
-            orderView.showStores(dineInStores, pickupCurbsideStores);
+            sortStoresByDistance(page, pagination.getTotal());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -514,7 +513,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    sortStoresByDistance();
+                    sortStoresByDistance(null, null);
                     orderView.showStores(dineInStores, pickupCurbsideStores);
                 }
             });
@@ -527,7 +526,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         addCartItem(favorite);
     }
 
-    private void sortStoresByDistance() {
+    private void sortStoresByDistance(@Nullable Integer page, @Nullable Integer paginationTotal) {
         Comparator<Store> distanceComparator = (store1, store2) -> {
             if (store1 == null || store1.getAttributes() == null || store1.getAttributes().getDistance() == null ||
                     store2 == null || store2.getAttributes() == null || store2.getAttributes().getDistance() == null) {
@@ -538,6 +537,12 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
         dineInStores.sort(distanceComparator);
         pickupCurbsideStores.sort(distanceComparator);
+        if(page != null && paginationTotal != null) {
+            orderView.showStores(dineInStores, pickupCurbsideStores);
+            if (totalStoresCount < paginationTotal) {
+                getStores(page + 1);
+            }
+        }
     }
 
     @Override

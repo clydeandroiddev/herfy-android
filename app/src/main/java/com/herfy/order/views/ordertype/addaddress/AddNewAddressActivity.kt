@@ -1,25 +1,15 @@
 package com.herfy.order.views.ordertype.addaddress
 
 import android.Manifest
-import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
@@ -31,11 +21,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.tabs.TabLayout
 import com.herfy.R
 import com.herfy.base.BaseActivity
@@ -49,7 +36,6 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
-import com.herfy.utils.helper.ViewUtil
 import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
@@ -59,20 +45,19 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import com.skylinedynamics.solosdk.api.models.objects.area.Area
-import io.shipbook.shipbooksdk.Log
 import java.util.Locale
 
 class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
-    private lateinit var orderPresenter: OrderContract.Presenter
+    private var orderPresenter: OrderContract.Presenter? = null
 
-    private lateinit var binding: AddressNewActivityBinding
+    private var binding: AddressNewActivityBinding? = null
 
-    private lateinit var googleMap: GoogleMap
+    private var googleMap: GoogleMap? = null
 
-    private lateinit var addAddressDialog: AddAddressDialog
+    private var addAddressDialog: AddAddressDialog? = null
 
-    private lateinit var selectCityDialog: SelectCityDialog
+    private var selectCityDialog: SelectCityDialog? = null
 
     private var permissions = false
 
@@ -86,10 +71,10 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = AddressNewActivityBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
         orderPresenter = OrderPresenter(this)
-        orderPresenter.setGeocoder(Geocoder(this, LocaleUtil.getInstance().createLocale()))
-        orderPresenter.start()
+        orderPresenter?.setGeocoder(Geocoder(this, LocaleUtil.getInstance().createLocale()))
+        orderPresenter?.start()
     }
 
     override fun setPresenter(presenter: OrderContract.Presenter) {
@@ -111,29 +96,32 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun setupViews() {
-        binding.closeButton.setOnClickListener {
-            onBackPressed()
+        binding?.apply {
+            closeButton.setOnClickListener {
+                onBackPressed()
+            }
+
+            selectArea.setOnClickListener {
+                selectCityDialog()
+            }
+
+            selectAreaLabel.text =
+                CacheUtil.getInstance().getTranslations(Text.SELECT_AREA, "Select Area")
+
+            descriptionLocation.text = CacheUtil.getInstance().getTranslations(
+                Text.MOVE_THE_PIN,
+                "Move the pin to the correct location to help rider deliver your order fast"
+            )
+
+            continueButton.text = CacheUtil.getInstance().getTranslations(
+                Text.CONFIRM_DELIVERY_LOCATION, "Confirm delivery location"
+            )
+
+            continueButton.setOnClickListener {
+                proceedToAddAddress()
+            }
         }
 
-        binding.selectArea.setOnClickListener {
-            selectCityDialog()
-        }
-
-        binding.selectAreaLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.SELECT_AREA, "Select Area")
-
-        binding.descriptionLocation.text = CacheUtil.getInstance().getTranslations(
-            Text.MOVE_THE_PIN,
-            "Move the pin to the correct location to help rider deliver your order fast"
-        )
-
-        binding.continueButton.text = CacheUtil.getInstance().getTranslations(
-            Text.CONFIRM_DELIVERY_LOCATION, "Confirm delivery location"
-        )
-
-        binding.continueButton.setOnClickListener {
-            proceedToAddAddress()
-        }
 
         val supportMapFragment =
             supportFragmentManager.findFragmentById(R.id.address_map) as SupportMapFragment?
@@ -141,27 +129,27 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
             setUpMapLocale()
             supportMapFragment.getMapAsync(OnMapReadyCallback { map ->
                 googleMap = map
-                googleMap.uiSettings.isCompassEnabled = false
-                googleMap.uiSettings.isZoomControlsEnabled = false
-                googleMap.uiSettings.isMapToolbarEnabled = false
-                googleMap.setOnMapLoadedCallback {
+                googleMap?.uiSettings?.isCompassEnabled = false
+                googleMap?.uiSettings?.isZoomControlsEnabled = false
+                googleMap?.uiSettings?.isMapToolbarEnabled = false
+                googleMap?.setOnMapLoadedCallback {
                     showLoadingDialog()
                     initializeLocation()
                 }
-                googleMap.setOnMapClickListener { latLng ->
-                    orderPresenter.getAddress(latLng)
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+                googleMap?.setOnMapClickListener { latLng ->
+                    orderPresenter?.getAddress(latLng)
+                    googleMap?.animateCamera(CameraUpdateFactory.newLatLng(latLng))
                 }
-                googleMap.setOnCameraIdleListener {
-                    orderPresenter.getAddress(googleMap.cameraPosition.target)
+                googleMap?.setOnCameraIdleListener {
+                    orderPresenter?.getAddress(googleMap?.cameraPosition?.target)
                 }
             })
         }
 
-        binding.location.setOnClickListener { initializeLocation() }
+        binding?.location?.setOnClickListener { initializeLocation() }
 
         if (intent.getBooleanExtra("goToLocation", false)) {
-            binding.location.performClick()
+            binding?.location?.performClick()
         }
     }
 
@@ -190,7 +178,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     }
 
     override fun addToCartFavorite(menuItem: MenuItem?) {
-        TODO("Not yet implemented")
+
     }
 
     override fun createOrderType(orderType: OrderType?) {
@@ -255,7 +243,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
             if (requestCode == Values.PERMISSION_LOCATION) {
                 getLocation()
             } else if (requestCode == Values.PERMISSION_CALL) {
-                orderPresenter.callStore()
+                orderPresenter?.callStore()
             }
         } else {
             dismissDialogs()
@@ -267,7 +255,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
                 this, Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            orderPresenter.getLocation(FusedLocationProvider(this))
+            orderPresenter?.getLocation(FusedLocationProvider(this))
         } else {
             dismissDialogs()
             permissions = true
@@ -281,13 +269,13 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
 
     override fun showLocation(isPlace: Boolean, latLng: LatLng?, address: String?) {
         fromShowLocation = true
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng!!, 15f))
+        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng!!, 15f))
         dismissDialogs()
     }
 
     private fun dismissAddressDialog() {
         try {
-            if (addAddressDialog.isAdded) addAddressDialog.dismiss()
+            if (addAddressDialog?.isAdded == true) addAddressDialog?.dismiss()
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
@@ -296,7 +284,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
     private fun proceedToAddAddress() {
         dismissAddressDialog()
         addAddressDialog = AddAddressDialog.newInstance(null,
-            orderPresenter.currentAddress,
+            orderPresenter?.currentAddress,
             false,
             object : AddAddressDialog.OnSubmit {
                 override fun onSuccess(
@@ -310,9 +298,9 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
                     driverNote = note
                     addressLabel2 = flatNumber
                     addressLabel = labelValue
-                    orderPresenter.address = address
+                    orderPresenter?.address = address
                     showLoadingDialog()
-                    orderPresenter.addAddress(
+                    orderPresenter?.addAddress(
                         phoneNumber, addressLabel, driverNote, addressLabel2
                     )
                 }
@@ -326,14 +314,14 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
                 }
 
             })
-        addAddressDialog.show(
+        addAddressDialog?.show(
             this.supportFragmentManager, AddAddressDialog::class.java.simpleName
         )
     }
 
     private fun dismissCityDialog() {
         try {
-            selectCityDialog.dismiss()
+            selectCityDialog?.dismiss()
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
@@ -345,7 +333,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
             override fun onSuccess(
                 area: Area
             ) {
-                googleMap.animateCamera(CameraUpdateFactory.newLatLng(LatLng(area.lat, area.long)))
+                googleMap?.animateCamera(CameraUpdateFactory.newLatLng(LatLng(area.lat, area.long)))
                 dismissCityDialog()
             }
 
@@ -353,7 +341,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
                 dismissAddressDialog()
             }
         })
-        selectCityDialog.show(
+        selectCityDialog?.show(
             this.supportFragmentManager, SelectCityDialog::class.java.simpleName
         )
     }
@@ -445,7 +433,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
                 "fromProfile", false
             )
         ) {
-            orderPresenter.getStore(orderPresenter.selectedAddress)
+            orderPresenter?.getStore(orderPresenter?.selectedAddress)
         } else {
             finalizeDismiss(address.orEmpty())
         }
@@ -543,7 +531,7 @@ class AddNewAddressActivity : BaseActivity(), OrderContract.View {
             dismissDialogs()
             showAlertDialog(
                 "", error, CacheUtil.getInstance().getTranslations(Text.OK)
-            ) { _: DialogInterface?, i: Int -> orderPresenter.setOrderType() }
+            ) { _: DialogInterface?, i: Int -> orderPresenter?.setOrderType() }
         }
     }
 
