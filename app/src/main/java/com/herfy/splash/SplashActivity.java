@@ -100,9 +100,28 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
 
     private boolean videoCompleted = false;
 
+    private boolean isFetchingDone = false;
+    private boolean isNotificationPermissionShowing = false;
+
+
     private final ActivityResultLauncher<String> notificationsPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                checkAlarmPermission();
+                isNotificationPermissionShowing = false;
+                if(isFetchingDone){
+                    boolean forceLocation = false;
+                    if (CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0) {
+                        forceLocation = true;
+                    }
+
+                    if (CacheUtil.getInstance().isSeparatedMenus() && CacheUtil.getInstance().getCartQuantity() == 0) {
+                        forceLocation = false;
+                    }
+                    checkAlarmPermission();
+                    proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), forceLocation);
+                }else {
+                    checkAlarmPermission();
+                }
+
             });
 
     @Override
@@ -114,18 +133,22 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         splashPresenter.setAreas();
         proceesDeeplink();
         isAuthCredentialMigrated();
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        boolean fromChangeLanguage = getIntent().getBooleanExtra("fromChangeLanguage", false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !fromChangeLanguage) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                isNotificationPermissionShowing = true;
                 notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             } else {
                 checkAlarmPermission();
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         setStatusBarColor();
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -307,36 +330,38 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
     @Override
     public void proceed(boolean language, boolean onboarding, boolean forceLocation) {
         new Handler(getMainLooper()).post(() -> {
-            if (!router) {
-                Values.sDeepLinkUtm = null;
-            }
+            if(!isNotificationPermissionShowing){
+                if (!router) {
+                    Values.sDeepLinkUtm = null;
+                }
 
-            if (!BuildConfig.SUBSCRIPTION_ENABLED) {
-                CacheUtil.getInstance().setUpMode(1);
-            }
+                if (!BuildConfig.SUBSCRIPTION_ENABLED) {
+                    CacheUtil.getInstance().setUpMode(1);
+                }
 
-            Intent intent = new Intent(this, MainActivity.class);
-            proceedMain = true;
-            if (!language) {
-                proceedMain = false;
-                intent = new Intent(this, LanguageNewActivity.class);
-            } else {
-                intent.putExtra("home", true);
-            }
-
-            intent.putExtra("forceLocation", forceLocation);
-
-            final Intent finalIntent = intent;
-
-            if (CacheUtil.getInstance().getConceptKey().equalsIgnoreCase("CGqbTzpyKa9")) {
-                Bundle bundle = ActivityOptionsCompat.makeCustomAnimation(SplashActivity.this, android.R.anim.fade_in, android.R.anim.fade_out).toBundle();
-                startActivity(intent, bundle);
-                finish();
-            } else {
-                if (BuildConfig.DISABLE_SPLASH_ANIMATION || (BuildUtil.splashBackgroundApp() || BuildUtil.splashGIFApp()) || videoCompleted) {
-                    proceedNext(false, finalIntent);
+                Intent intent = new Intent(this, MainActivity.class);
+                proceedMain = true;
+                if (!language) {
+                    proceedMain = false;
+                    intent = new Intent(this, LanguageNewActivity.class);
                 } else {
-                    animateLogo(false, finalIntent);
+                    intent.putExtra("home", true);
+                }
+
+                intent.putExtra("forceLocation", forceLocation);
+
+                final Intent finalIntent = intent;
+
+                if (CacheUtil.getInstance().getConceptKey().equalsIgnoreCase("CGqbTzpyKa9")) {
+                    Bundle bundle = ActivityOptionsCompat.makeCustomAnimation(SplashActivity.this, android.R.anim.fade_in, android.R.anim.fade_out).toBundle();
+                    startActivity(intent, bundle);
+                    finish();
+                } else {
+                    if (BuildConfig.DISABLE_SPLASH_ANIMATION || (BuildUtil.splashBackgroundApp() || BuildUtil.splashGIFApp()) || videoCompleted) {
+                        proceedNext(false, finalIntent);
+                    } else {
+                        animateLogo(false, finalIntent);
+                    }
                 }
             }
         });
