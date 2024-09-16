@@ -15,10 +15,25 @@
         app:cardUseCompatPadding="true"
         app:cardBackgroundColor="@color/white">
 
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_alrhaji"
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:visibility="visible">
+
+            <View
+                android:background="@color/placeholder_color"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_alrhaji"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp">
+            android:layout_margin="10dp"
+            android:visibility="gone">
 
             <FrameLayout
                 android:id="@+id/fm_alrhaji_logo"
