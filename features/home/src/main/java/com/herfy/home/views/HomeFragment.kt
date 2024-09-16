@@ -806,6 +806,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 }
             }
         }
+
+        viewModel.showMenuItemCombo.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let { pair ->
+                runOnMain {
+                    findNavController().navigateToDeepLink("nav_combo/${pair.first}/${pair.second}")
+                }
+            }
+        }
     }
 
     private fun removeTimer() {
