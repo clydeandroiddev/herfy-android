@@ -240,9 +240,11 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
 
             btnSubmit.setOnClickListener {
                 val totalMinusDC = total - deliveryCharge
-                val amount = etAmount.text.toString().toDouble()
                 val o = StringUtil.toEnglish(otpAlrhaji.text.toString()) ?: ""
                 val a = StringUtil.toEnglish(etAmount.text.toString()) ?: ""
+
+                val amount = if(a.isNotEmpty()) etAmount.text.toString().toDouble() else 0.0
+
                 if (o.isEmpty()) {
                     otpAlrhaji.requestFocus()
                     showMessage(
@@ -259,12 +261,15 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                     etAmount.text.clear()
                     tvAmountError.visible()
                 } else {
-                    viewModel.verifyOTP(
-                        o, a, GsonHelper.gsonFinal().fromJson(
-                            cartBody,
-                            JsonObject::class.java
+                    if(cartBody.isNotEmpty()){
+                        viewModel.verifyOTP(
+                            o, a, GsonHelper.gsonFinal().fromJson(
+                                cartBody,
+                                JsonObject::class.java
+                            )
                         )
-                    )
+                    }
+
                 }
             }
 

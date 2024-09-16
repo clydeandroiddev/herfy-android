@@ -1241,6 +1241,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         pointsUsed: Int,
         charges: ArrayList<ServiceCharge>
     ) {
+        binding?.layoutAlrahji?.apply {
+            shimmerAlrhaji.gone()
+            clAlrhaji.visible()
+        }
+
         val isDelivery = CacheUtil.getInstance().orderType == OrderType.DELIVERY
         val hasPromotion = CacheUtil.getInstance().hasPromotion()
         val total = updateCurrency(subtotalPrice, true, hasPromotion).toString()
