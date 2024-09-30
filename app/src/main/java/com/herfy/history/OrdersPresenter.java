@@ -41,7 +41,6 @@ import com.skylinedynamics.solosdk.api.models.objects.AllergenCdn;
 import com.skylinedynamics.solosdk.api.models.objects.Application;
 import com.skylinedynamics.solosdk.api.models.objects.ComponentModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.Customer;
-import com.skylinedynamics.solosdk.api.models.objects.Employee;
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
 import com.skylinedynamics.solosdk.api.models.objects.IngredientCdn;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsTransaction;
@@ -2235,6 +2234,33 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
 
     private Unit onOrderDetailsStatusUpdate(Message message) {
         fromAbly = true;
+        try {
+            JSONObject jsonObject = new JSONObject(message.data.toString());
+            JSONObject orderObject = jsonObject.optJSONObject("order");
+            if(orderObject != null) {
+                OrderData orderData = OrderData.parse(jsonObject.getJSONObject("order"));
+                OrderStatus orderStatus = orderData.getOrderStatus();
+                if (orderStatus != null && orderStatus.getSequence() >= OrderStatusType.DELIVERY_IN_PROGRESS.getValue() && orderStatus.getSequence() <= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue()) {
+                    JSONObject lyveDriverObject = orderObject.optJSONObject("lyve-driver");
+                    if (lyveDriverObject != null) {
+                        LyveDriver lyveDriver = new Gson().fromJson(lyveDriverObject.toString(), LyveDriver.class);
+                        if (lyveDriver != null) {
+                            driver = lyveDriver;
+                            ordersView.showWhatsApp(driver.getEmployee().getMobile());
+                            LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
+                            LatLng driverLatLng = new LatLng(Double.parseDouble(lyveDriver.getLat()), Double.parseDouble(lyveDriver.getLng()));
+                            ordersView.showDriver(customerLatLng, driverLatLng, lyveDriver.getEta());
+                        } else {
+                           getDriver();
+                        }
+                    } else {
+                        getDriver();
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         getOrderStatuses();
         getOrder(order.getId(), -1, true, false);
         return Unit.INSTANCE;
