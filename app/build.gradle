@@ -138,7 +138,6 @@ android {
             buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
         }
         consumer {
-            signingConfig null
             debuggable true
             minifyEnabled false
             shrinkResources false
@@ -151,7 +150,6 @@ android {
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         kiosk {
-            signingConfig null
             debuggable true
             minifyEnabled false
             shrinkResources false
@@ -164,7 +162,6 @@ android {
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         marketing {
-            signingConfig null
             debuggable true
             minifyEnabled false
             shrinkResources false
@@ -177,7 +174,6 @@ android {
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         merchant {
-            signingConfig null
             debuggable true
             minifyEnabled false
             shrinkResources false
@@ -196,8 +192,8 @@ android {
         herfy {
             signingConfig signingConfigs.release
             applicationId "com.herfy.order"
-            versionCode 300008
-            versionName "3.0.2"
+            versionCode 300009
+            versionName "3.0.3"
             buildConfigField "String", "TAG", "\"Herfy\""
             buildConfigField "String", "SOLO_CONCEPT", "\"\""
             buildConfigField "String", "SPLASH_COLOR", "\"#FAFBFC\""
@@ -259,13 +255,11 @@ android {
     }
 }
 
-/*configurations {
+configurations {
     all {
         exclude group: "com.google.android.play", module: "core"
-        exclude group: "com.google.android.play", module: "core-common"
-        exclude group: "com.google.android.play", module: "feature-delivery"
     }
-}*/
+}
 
 kapt {
     generateStubs = true

@@ -1178,7 +1178,6 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     String getMenuItemData(AppDatabase appDatabase, String id) {
         String data = "";
         try {
-            //TODO: Use file cache only for Lorenzo for now
             if (BuildUtil.soloAppKey().equalsIgnoreCase("7r5YQwmSgZCtM0ux")) {
                 data = ordersView.getFromCache(id);
             } else {
@@ -2238,7 +2237,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
             JSONObject jsonObject = new JSONObject(message.data.toString());
             JSONObject orderObject = jsonObject.optJSONObject("order");
             if(orderObject != null) {
-                OrderData orderData = OrderData.parse(jsonObject.getJSONObject("order"));
+                OrderData orderData = OrderData.parse(orderObject);
                 OrderStatus orderStatus = orderData.getOrderStatus();
                 if (orderStatus != null && orderStatus.getSequence() >= OrderStatusType.DELIVERY_IN_PROGRESS.getValue() && orderStatus.getSequence() <= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue()) {
                     JSONObject lyveDriverObject = orderObject.optJSONObject("lyve-driver");
