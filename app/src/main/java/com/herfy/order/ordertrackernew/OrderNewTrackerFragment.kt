@@ -246,12 +246,16 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         orderPresenter?.start()
+        if(args.fromPayment == "true") {
+            activity?.cast<BaseActivity> { it.showAppReview() }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
         activity?.let {
             val baseActivity = it as BaseActivity
             baseActivity.showLoadingDialog()
-        }
-        if(args.fromPayment == "true") {
-            activity?.cast<BaseActivity> { it.showAppReview() }
         }
         getOrderId()
         orderPresenter?.getOrder(orderId, -1, false, false)
