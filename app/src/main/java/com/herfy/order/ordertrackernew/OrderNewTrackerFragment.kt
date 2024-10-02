@@ -1824,10 +1824,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     binding.statusDriverDetails.apply {
                         updateDriverLocation(
                             LatLng(
-                                (appDriver.bearing.lat ?: "0").toDouble(),
-                                (appDriver.bearing.lng ?: "0").toDouble()
+                                (appDriver.bearing?.lat ?: "0").toDouble(),
+                                (appDriver.bearing?.lng ?: "0").toDouble()
                             ),
-                            appDriver.bearing.eta ?: "0".toInt()
+                            appDriver.bearing?.eta ?: "0".toInt()
                         )
                         withDriverLayout.isVisible = true
                         noDriverLayout.isVisible = false
