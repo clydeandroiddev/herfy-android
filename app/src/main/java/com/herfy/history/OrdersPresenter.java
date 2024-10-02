@@ -33,6 +33,7 @@ import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall;
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall;
+import com.skylinedynamics.solosdk.api.models.kotlin.Bearing;
 import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver;
 import com.skylinedynamics.solosdk.api.models.kotlin.LyveDriver;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
@@ -473,8 +474,8 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                             } else {
                                 checkReorder();
                             }
-                            if (!reorder && driver == null && order.getOrderStatus() != null && order.getOrderStatus().getSequence() >= OrderStatusType.DELIVERY_IN_PROGRESS.getValue() && order.getOrderStatus().getSequence() <= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue()) {
-                                getDriver();
+                            if (!reorder && driver == null) {
+                                parseLyveDriver(data);
                             }
                         } else {
                             if (position >= 0) {
@@ -487,8 +488,8 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                                 }
                             } else {
                                 ordersView.updateStatus(order, order.getOrderStatus());
-                                if (driver == null && order.getOrderStatus() != null && order.getOrderStatus().getSequence() >= OrderStatusType.DELIVERY_IN_PROGRESS.getValue() && order.getOrderStatus().getSequence() <= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue()) {
-                                    getDriver();
+                                if (driver == null) {
+                                    parseLyveDriver(data);
                                 }
                                 ordersView.showRatings(order.getOrderStatus(), ratings);
                             }
@@ -517,6 +518,36 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                 }
             }
         });
+    }
+
+    private void parseLyveDriver(JSONObject data) {
+        try {
+            JSONObject attributes = data.optJSONObject("attributes");
+            if (attributes != null) {
+                JSONObject lyveDriverObject = attributes.getJSONObject("lyve-driver");
+                LyveDriver lyveDriver = new Gson().fromJson(lyveDriverObject.toString(), LyveDriver.class);
+                if (lyveDriver != null) {
+                    driver = lyveDriver;
+                    ordersView.showWhatsApp(driver.getMobile());
+                    Bearing bearing = lyveDriver.getBearing();
+                    if (bearing != null) {
+                        LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
+                        LatLng driverLatLng = new LatLng(Double.parseDouble(bearing.getLat()), Double.parseDouble(bearing.getLng()));
+                        ordersView.showDriver(customerLatLng, driverLatLng, bearing.getEta());
+                    }
+                    if (!isLocationUpdateSubscribed) {
+                        subscribeToOrderDriverLocationUpdate(order.getId());
+                    }
+                } else {
+                    getDriver();
+                }
+            } else {
+                getDriver();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -738,10 +769,13 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                                     LyveDriver lyveDriver = new Gson().fromJson(lyveDriverObject.toString(), LyveDriver.class);
                                     if (lyveDriver != null) {
                                         driver = lyveDriver;
-                                        ordersView.showWhatsApp(driver.getEmployee().getMobile());
-                                        LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
-                                        LatLng driverLatLng = new LatLng(Double.parseDouble(lyveDriver.getLat()), Double.parseDouble(lyveDriver.getLng()));
-                                        ordersView.showDriver(customerLatLng, driverLatLng, lyveDriver.getEta());
+                                        ordersView.showWhatsApp(driver.getMobile());
+                                        Bearing bearing = lyveDriver.getBearing();
+                                        if (bearing != null) {
+                                            LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
+                                            LatLng driverLatLng = new LatLng(Double.parseDouble(bearing.getLat()), Double.parseDouble(bearing.getLng()));
+                                            ordersView.showDriver(customerLatLng, driverLatLng, bearing.getEta());
+                                        }
                                         if (!isLocationUpdateSubscribed) {
                                             subscribeToOrderDriverLocationUpdate(order.getId());
                                         }
@@ -2233,6 +2267,8 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
 
     private Unit onOrderDetailsStatusUpdate(Message message) {
         fromAbly = true;
+        getOrderStatuses();
+        getOrder(order.getId(), -1, true, false);
         try {
             JSONObject jsonObject = new JSONObject(message.data.toString());
             JSONObject orderObject = jsonObject.optJSONObject("order");
@@ -2240,24 +2276,30 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                 JSONObject lyveDriverObject = orderObject.optJSONObject("lyve-driver");
                 if (lyveDriverObject != null) {
                     LyveDriver lyveDriver = new Gson().fromJson(lyveDriverObject.toString(), LyveDriver.class);
-                    if (lyveDriver != null) {
+                    if(lyveDriver != null) {
+                        Bearing bearing = lyveDriver.getBearing();
                         driver = lyveDriver;
-                        ordersView.showWhatsApp(driver.getEmployee().getMobile());
-                        LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
-                        LatLng driverLatLng = new LatLng(Double.parseDouble(lyveDriver.getLat()), Double.parseDouble(lyveDriver.getLng()));
-                        ordersView.showDriver(customerLatLng, driverLatLng, lyveDriver.getEta());
+                        ordersView.showWhatsApp(driver.getMobile());
+                        if (bearing != null) {
+                            LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
+                            LatLng driverLatLng = new LatLng(Double.parseDouble(bearing.getLat()), Double.parseDouble(bearing.getLng()));
+                            ordersView.showDriver(customerLatLng, driverLatLng, bearing.getEta());
+                        } else {
+                            getDriver();
+                        }
                     } else {
-                       getDriver();
+                        getDriver();
                     }
                 } else {
                     getDriver();
                 }
+            } else {
+                getDriver();
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            getDriver();
         }
-        getOrderStatuses();
-        getOrder(order.getId(), -1, true, false);
         return Unit.INSTANCE;
     }
 
@@ -2271,7 +2313,7 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
 
     private Unit onOrderDriverLocationUpdate(Message message) {
         OrderStatus orderStatus = order.getOrderStatus();
-        if (orderStatus != null && orderStatus.getSequence() >= OrderStatusType.DELIVERY_IN_PROGRESS.getValue() && orderStatus.getSequence() <= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue()) {
+        if (orderStatus != null) {
             try {
                 JSONObject jsonObject = new JSONObject(message.data.toString());
                 DeliveryDriver appDriver = new Gson().fromJson(jsonObject.toString(), DeliveryDriver.class);
