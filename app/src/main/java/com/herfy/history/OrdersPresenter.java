@@ -2237,24 +2237,20 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
             JSONObject jsonObject = new JSONObject(message.data.toString());
             JSONObject orderObject = jsonObject.optJSONObject("order");
             if(orderObject != null) {
-                OrderData orderData = OrderData.parse(orderObject);
-                OrderStatus orderStatus = orderData.getOrderStatus();
-                if (orderStatus != null && orderStatus.getSequence() >= OrderStatusType.DELIVERY_IN_PROGRESS.getValue() && orderStatus.getSequence() <= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue()) {
-                    JSONObject lyveDriverObject = orderObject.optJSONObject("lyve-driver");
-                    if (lyveDriverObject != null) {
-                        LyveDriver lyveDriver = new Gson().fromJson(lyveDriverObject.toString(), LyveDriver.class);
-                        if (lyveDriver != null) {
-                            driver = lyveDriver;
-                            ordersView.showWhatsApp(driver.getEmployee().getMobile());
-                            LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
-                            LatLng driverLatLng = new LatLng(Double.parseDouble(lyveDriver.getLat()), Double.parseDouble(lyveDriver.getLng()));
-                            ordersView.showDriver(customerLatLng, driverLatLng, lyveDriver.getEta());
-                        } else {
-                           getDriver();
-                        }
+                JSONObject lyveDriverObject = orderObject.optJSONObject("lyve-driver");
+                if (lyveDriverObject != null) {
+                    LyveDriver lyveDriver = new Gson().fromJson(lyveDriverObject.toString(), LyveDriver.class);
+                    if (lyveDriver != null) {
+                        driver = lyveDriver;
+                        ordersView.showWhatsApp(driver.getEmployee().getMobile());
+                        LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
+                        LatLng driverLatLng = new LatLng(Double.parseDouble(lyveDriver.getLat()), Double.parseDouble(lyveDriver.getLng()));
+                        ordersView.showDriver(customerLatLng, driverLatLng, lyveDriver.getEta());
                     } else {
-                        getDriver();
+                       getDriver();
                     }
+                } else {
+                    getDriver();
                 }
             }
         } catch (JSONException e) {
