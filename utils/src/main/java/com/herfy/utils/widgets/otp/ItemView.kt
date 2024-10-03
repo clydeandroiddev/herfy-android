@@ -126,11 +126,12 @@ class ItemView : FrameLayout {
 
         val textViewParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
         textViewParams.gravity = Gravity.CENTER
-        textView = TextView(context)
-        textView?.gravity = Gravity.CENTER
-        textView?.typeface = Typeface.createFromAsset(context.assets, "font/inter_regular.ttf")
-        textView?.setTextColor(textColor)
-        textView?.setTextSize(TypedValue.COMPLEX_UNIT_PX, otpTextSize)
+        textView = TextView(context).apply {
+            gravity = Gravity.CENTER
+            typeface = Typeface.createFromAsset(context.assets, "font/inter_regular.ttf")
+            setTextColor(textColor)
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, otpTextSize)
+        }
         this.addView(textView, textViewParams)
 
         if (barEnabled) {
@@ -146,7 +147,9 @@ class ItemView : FrameLayout {
             barViewParams.rightMargin = barMarginRight.toInt()
             barViewParams.bottomMargin = barMarginBottom.toInt()
             barViewParams.topMargin = barMarginTop.toInt()
-            view = View(context)
+            view = View(context).apply {
+                this.setBackgroundColor(barInactiveColor)
+            }
             this.addView(view, barViewParams)
         }
     }
