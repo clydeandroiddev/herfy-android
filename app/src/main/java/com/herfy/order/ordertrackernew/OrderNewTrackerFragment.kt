@@ -88,6 +88,7 @@ import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.ViewUtil
 import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver
+import com.skylinedynamics.solosdk.api.models.kotlin.LyveDriver
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -1633,24 +1634,34 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     @SuppressLint("SetTextI18n")
     private fun updateDriverFromOrder() {
-        binding.statusDriverDetails.apply {
-            val driver = orderPresenter?.driverDetail
-            if (driver != null) {
-                if (!isOverHeadFrameShows && orderPresenter?.fromAbly == true) {
-                    showOverHeadFrame()
+        activity?.runOnUiThread {
+            binding.statusDriverDetails.apply {
+                val driver = orderPresenter?.driverDetail
+                if (driver != null) {
+                    if (!isOverHeadFrameShows && orderPresenter?.fromAbly == true) {
+                        showOverHeadFrame()
+                    }
+                    withDriverLayout.isVisible = true
+                    noDriverLayout.isVisible = false
+                    riderMotor.text = driver.licensePlate
+                    riderName.text = "${driver.name}"
+                    updateDriverInitials(driver)
+                    checkDriverMobile(driver.mobile)
+                } else {
+                    noDriverLayout.isVisible = true
+                    withDriverLayout.isVisible = false
                 }
-                withDriverLayout.isVisible = true
-                noDriverLayout.isVisible = false
-                riderMotor.text = driver.plateNumber
-                riderName.text = "${driver.employee.firstName} ${driver.employee.lastName}"
-                driverInitial.text =
-                    "${driver.employee.firstName.first()}${driver.employee.lastName.first()}"
-                checkDriverMobile(driver.employee.mobile)
-            } else {
-                noDriverLayout.isVisible = true
-                withDriverLayout.isVisible = false
             }
         }
+    }
+
+    private fun updateDriverInitials(driver: LyveDriver) {
+        val driverNames = driver.name?.trim()?.split(" ")
+        var driverInitials = ""
+        driverNames?.forEach {
+            driverInitials += "${it.first()}"
+        }
+        binding.statusDriverDetails.driverInitial.text = driverInitials
     }
 
     private fun updateDriverLocation(latLng: LatLng?, eta: Int) {
@@ -1813,10 +1824,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     binding.statusDriverDetails.apply {
                         updateDriverLocation(
                             LatLng(
-                                (appDriver.bearing.lat ?: "0").toDouble(),
-                                (appDriver.bearing.lng ?: "0").toDouble()
+                                (appDriver.bearing?.lat ?: "0").toDouble(),
+                                (appDriver.bearing?.lng ?: "0").toDouble()
                             ),
-                            appDriver.bearing.eta ?: "0".toInt()
+                            appDriver.bearing?.eta ?: "0".toInt()
                         )
                         withDriverLayout.isVisible = true
                         noDriverLayout.isVisible = false
@@ -1826,8 +1837,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         riderName.text = driver?.name.orEmpty()
                         if (driverOrder != null) {
                             driverInitial.isVisible = true
-                            driverInitial.text =
-                                "${driverOrder.employee.firstName.first()}${driverOrder.employee.lastName.first()}"
+                            updateDriverInitials(driverOrder)
                         } else {
                             driverInitial.isVisible = false
                         }

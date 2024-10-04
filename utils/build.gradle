@@ -39,6 +39,7 @@ android {
             signingConfig null
             debuggable true
             minifyEnabled false
+            shrinkResources false
             buildConfigField "String", "BASE_URL", "\"https://dev-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
@@ -49,6 +50,7 @@ android {
         staging {
             debuggable true
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "BASE_URL", "\"https://staging-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
@@ -61,7 +63,8 @@ android {
         //Use this for VAPT builds
         stagingrelease {
             debuggable false
-            minifyEnabled true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "BASE_URL", "\"https://staging-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
@@ -73,6 +76,7 @@ android {
         prod {
             debuggable true
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
@@ -82,7 +86,8 @@ android {
         }
         prodrelease {
             debuggable false
-            minifyEnabled true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
@@ -92,7 +97,8 @@ android {
         }
         releaselog {
             debuggable true
-            minifyEnabled true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
@@ -102,7 +108,8 @@ android {
         }
         release {
             debuggable false
-            minifyEnabled true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "BASE_URL", "\"https://api.solo.skylinedynamics.com/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
@@ -111,9 +118,9 @@ android {
             buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
         }
         consumer {
-            signingConfig null
             debuggable true
             minifyEnabled false
+            shrinkResources false
             buildConfigField "String", "BASE_URL", "\"https://test-consumer-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
@@ -122,9 +129,9 @@ android {
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         kiosk {
-            signingConfig null
             debuggable true
             minifyEnabled false
+            shrinkResources false
             buildConfigField "String", "BASE_URL", "\"https://test-kiosk-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
@@ -133,9 +140,9 @@ android {
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         marketing {
-            signingConfig null
             debuggable true
             minifyEnabled false
+            shrinkResources false
             buildConfigField "String", "BASE_URL", "\"https://test-marketing-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
@@ -144,9 +151,9 @@ android {
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         merchant {
-            signingConfig null
             debuggable true
             minifyEnabled false
+            shrinkResources false
             buildConfigField "String", "BASE_URL", "\"https://test-merchant-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
