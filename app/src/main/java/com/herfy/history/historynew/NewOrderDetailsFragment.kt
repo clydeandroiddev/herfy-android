@@ -407,7 +407,7 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
 
     }
 
-    override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?, eta: Int) {
+    override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?, eta: Int?) {
 
     }
 

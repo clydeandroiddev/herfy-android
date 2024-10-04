@@ -462,10 +462,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(it, 11f))
             }
             if (driverMarker != null && driverLastLocation != null) {
-                if (driverMarker!!.position != driverLastLocation) updateDriverLocation(
-                    driverLastLocation,
-                    driverLastLastEta ?: 0
-                )
+                if (driverMarker?.position != driverLastLocation) {
+                    updateDriverLocation(driverLastLocation, driverLastLastEta)
+                }
             } else {
                 orderStore?.let {
                     showStoreMarker(true)
@@ -1631,7 +1630,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         orderPresenter?.getOrderStatuses()
     }
 
-    override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?, eta: Int) {
+    override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?, eta: Int?) {
         updateDriverFromOrder()
         updateDriverLocation(driverLatLng, eta)
     }
@@ -1668,7 +1667,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         binding.statusDriverDetails.driverInitial.text = driverInitials
     }
 
-    private fun updateDriverLocation(latLng: LatLng?, eta: Int) {
+    private fun updateDriverLocation(latLng: LatLng?, eta: Int?) {
         activity?.runOnUiThread {
             latLng?.let {
                 try {
@@ -1692,33 +1691,35 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 }
                             }
 
-                            val isLocationLeft = isAboveOrBelowAndLeft(
-                                latLng, currentLocationToUse!!, true
-                            ) || isAboveOrBelowAndLeft(
-                                latLng, currentLocationToUse!!, false
-                            )
+                            currentLocationToUse?.let { locationToUse ->
+                                val isLocationLeft = isAboveOrBelowAndLeft(
+                                    it, locationToUse, true
+                                ) || isAboveOrBelowAndLeft(
+                                    it, locationToUse, false
+                                )
 
-                            if (isLocationLeft) {
-                                driverIcon.setImageResource(R.drawable.ic_delivery_right)
+                                if (isLocationLeft) {
+                                    driverIcon.setImageResource(R.drawable.ic_delivery_right)
+                                }
                             }
 
-                            textView.text = if (eta > 1) {
-                                CacheUtil.getInstance().getTranslations(
-                                    Text.DRIVER_MINUTES_AWAY,
-                                    "(x) mins away"
-                                ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
-                            } else {
-                                CacheUtil.getInstance().getTranslations(
-                                    Text.DRIVER_MINUTE_AWAY,
-                                    "(x) min away"
-                                ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
-                            }
-
-                            if (eta == 0) {
+                            if(eta == null || eta == 0) {
                                 textView.isInvisible = true
                             } else {
+                                textView.text = if (eta > 1) {
+                                    CacheUtil.getInstance().getTranslations(
+                                        Text.DRIVER_MINUTES_AWAY,
+                                        "(x) mins away"
+                                    ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
+                                } else {
+                                    CacheUtil.getInstance().getTranslations(
+                                        Text.DRIVER_MINUTE_AWAY,
+                                        "(x) min away"
+                                    ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
+                                }
                                 textView.isVisible = true
                             }
+
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -1826,13 +1827,14 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             activity?.runOnUiThread {
                 activity?.cast<MainActivity> {
                     binding.statusDriverDetails.apply {
-                        updateDriverLocation(
-                            LatLng(
-                                (appDriver.bearing?.lat ?: "0").toDouble(),
-                                (appDriver.bearing?.lng ?: "0").toDouble()
-                            ),
-                            appDriver.bearing?.eta ?: "0".toInt()
-                        )
+                        appDriver.bearing?.lat?.let { lat ->
+                            appDriver.bearing?.lng?.let { lng ->
+                                updateDriverLocation(
+                                    LatLng(lat.toDouble(), lng.toDouble()),
+                                    appDriver.bearing?.eta
+                                )
+                            }
+                        }
                         withDriverLayout.isVisible = true
                         noDriverLayout.isVisible = false
                         val driver = appDriver.driver

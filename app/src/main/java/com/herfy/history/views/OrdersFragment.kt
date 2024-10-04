@@ -222,7 +222,7 @@ class OrdersFragment : BaseFragment(), OrdersContract.View {
     }
 
     override fun updateStatus(orderDetails: OrderDetails, orderStatus: OrderStatus) {}
-    override fun showDriver(customerLatLng: LatLng, driverLatLng: LatLng, eta: Int) {}
+    override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?, eta: Int?) {}
     override fun updateDriver(appDriver: DeliveryDriver) {}
     override fun cancel() {}
     override fun showRatings(orderStatus: OrderStatus, ratings: List<Rating>) {}

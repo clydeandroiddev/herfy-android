@@ -880,40 +880,48 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
         }
     }
 
-    override fun showDriver(customerLatLng: LatLng, driverLatLng: LatLng, eta: Int) {
+    override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?, eta: Int?) {
         activity?.cast<BaseActivity> {
             it.runOnUiThread {
                 if (customerMarker != null) {
-                    customerMarker!!.remove()
+                    customerMarker?.remove()
                 }
                 if (driverMarker != null) {
-                    driverMarker!!.remove()
+                    driverMarker?.remove()
                 }
                 if (googleMap != null) {
                     var markerOptions = MarkerOptions()
-                    markerOptions.position(customerLatLng)
-                    markerOptions.anchor(0.5f, 0.8f)
-                    markerOptions.icon(
-                        ViewUtil.vectorDrawableToBitmapDescriptor(
-                            it,
-                            R.drawable.ic_marker_customer
+                    if(customerLatLng != null) {
+                        markerOptions.position(customerLatLng)
+                        markerOptions.anchor(0.5f, 0.8f)
+                        markerOptions.icon(
+                            ViewUtil.vectorDrawableToBitmapDescriptor(
+                                it,
+                                R.drawable.ic_marker_customer
+                            )
                         )
-                    )
-                    customerMarker = googleMap!!.addMarker(markerOptions)
-                    markerOptions = MarkerOptions()
-                    markerOptions.position(driverLatLng)
-                    markerOptions.anchor(0.5f, 0.5f)
-                    markerOptions.icon(
-                        ViewUtil.vectorDrawableToBitmapDescriptor(
-                            it,
-                            R.drawable.ic_marker_driver
+                        customerMarker = googleMap?.addMarker(markerOptions)
+                    }
+                    if(driverLatLng != null) {
+                        markerOptions = MarkerOptions()
+                        markerOptions.position(driverLatLng)
+                        markerOptions.anchor(0.5f, 0.5f)
+                        markerOptions.icon(
+                            ViewUtil.vectorDrawableToBitmapDescriptor(
+                                it,
+                                R.drawable.ic_marker_driver
+                            )
                         )
-                    )
-                    driverMarker = googleMap!!.addMarker(markerOptions)
+                        driverMarker = googleMap?.addMarker(markerOptions)
+                    }
                     val builder = LatLngBounds.Builder()
-                    builder.include(customerLatLng)
-                    builder.include(driverLatLng)
-                    googleMap!!.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100))
+                    customerLatLng?.let {
+                        builder.include(customerLatLng)
+                    }
+                    driverLatLng?.let {
+                        builder.include(driverLatLng)
+                    }
+                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100))
                 }
             }
         }
