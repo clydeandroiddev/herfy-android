@@ -1,5 +1,7 @@
 package com.herfy.utils.constants;
 
+import org.jetbrains.annotations.Nullable;
+
 public class Text {
 
     public static final String CART = "cart";
@@ -1234,4 +1236,10 @@ public class Text {
 
     public static final String NEW_DEBIT_CREDIT_CARD = "new_debit_credit_card";
     public static final String REDEEM = "redeem";
+    public static final String CUSTOMER_NAME="customer_name";
+    public static final String PREFERRED_LANGUAGE="preferred_language";
+    public static final String CUSTOMER_MOBILE_NUMBER="customer_mobile_number";
+    public static final String ORDER_NUMBER="order_number";
+    public static final String STORE_NAME="store_name";
+
 }

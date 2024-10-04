@@ -10,7 +10,7 @@ object MessagingUtil {
     fun Context.whatsAppMessage(orderId : String, storeName : String): String {
         val msg = StringBuilder()
         AuthUtil.getInstance().customer?.attributes?.apply {
-            msg.append("Customer Name: $firstName $lastName")
+            msg.append("${CacheUtil.getInstance().getTranslations(Text.CUSTOMER_NAME, "Customer Name:")} $firstName $lastName")
         }
         msg.append("\n")
         val preferredLanguage = when {
@@ -18,15 +18,15 @@ object MessagingUtil {
             LocaleUtil.getInstance().isFrench -> resources.getString(R.string.french_language)
             else -> resources.getString(R.string.english_language)
         }
-        msg.append("Preferred Language: $preferredLanguage")
+        msg.append("${CacheUtil.getInstance().getTranslations(Text.PREFERRED_LANGUAGE, "Preferred Language:")} $preferredLanguage")
         msg.append("\n")
         AuthUtil.getInstance().customer?.attributes?.apply {
-            msg.append("Customer Mobile Number: $mobile")
+            msg.append("${CacheUtil.getInstance().getTranslations(Text.CUSTOMER_MOBILE_NUMBER, "Customer Mobile Number:")} $mobile")
         }
         msg.append("\n")
-        msg.append("Order Number: $orderId")
+        msg.append("${CacheUtil.getInstance().getTranslations(Text.ORDER_NUMBER, "Order Number:")} $orderId")
         msg.append("\n")
-        msg.append("Store Name: $storeName")
+        msg.append("${CacheUtil.getInstance().getTranslations(Text.STORE_NAME, "Store Name:")} $storeName")
         return msg.toString()
     }
 
