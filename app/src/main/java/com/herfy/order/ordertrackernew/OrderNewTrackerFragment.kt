@@ -463,6 +463,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             }
             if (driverMarker != null && driverLastLocation != null) {
                 if (driverMarker?.position != driverLastLocation) {
+                    AppLogger.error("466 driverLastLastEta $driverLastLastEta")
                     updateDriverLocation(driverLastLocation, driverLastLastEta)
                 }
             } else {
@@ -1632,6 +1633,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?, eta: Int?) {
         updateDriverFromOrder()
+        AppLogger.error("1635 eta $eta")
         updateDriverLocation(driverLatLng, eta)
     }
 
@@ -1670,6 +1672,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     private fun updateDriverLocation(latLng: LatLng?, eta: Int?) {
         activity?.runOnUiThread {
             latLng?.let {
+                AppLogger.error("updateDriverLocation $latLng")
                 try {
                     val activity: Activity? = activity
                     val inflater =
@@ -1683,28 +1686,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
                     try {
                         if (orderAddress != null) {
-                            currentLocationToUse = orderAddress?.attributes?.lat?.toDouble()?.let {
-                                orderAddress?.attributes?.longt?.toDouble()?.let { it1 ->
-                                    LatLng(
-                                        it, it1
-                                    )
-                                }
-                            }
-
-                            currentLocationToUse?.let { locationToUse ->
-                                val isLocationLeft = isAboveOrBelowAndLeft(
-                                    it, locationToUse, true
-                                ) || isAboveOrBelowAndLeft(
-                                    it, locationToUse, false
-                                )
-
-                                if (isLocationLeft) {
-                                    driverIcon.setImageResource(R.drawable.ic_delivery_right)
-                                }
-                            }
+                            AppLogger.error("1688")
 
                             if(eta == null || eta == 0) {
-                                textView.isInvisible = true
+                                textView.visibility = View.INVISIBLE
                             } else {
                                 textView.text = if (eta > 1) {
                                     CacheUtil.getInstance().getTranslations(
@@ -1717,11 +1702,28 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                         "(x) min away"
                                     ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
                                 }
-                                textView.isVisible = true
+                                textView.visibility = View.VISIBLE
+                            }
+
+                            currentLocationToUse = orderAddress?.attributes?.lat?.toDouble()?.let { orderAddressLat ->
+                                orderAddress?.attributes?.longt?.toDouble()?.let { orderAddressLng ->
+                                    LatLng(orderAddressLat, orderAddressLng)
+                                }
+                            }
+
+                            val isLocationLeft = isAboveOrBelowAndLeft(
+                                latLng, currentLocationToUse!!, true
+                            ) || isAboveOrBelowAndLeft(
+                                latLng, currentLocationToUse!!, false
+                            )
+
+                            if (isLocationLeft) {
+                                driverIcon.setImageResource(R.drawable.ic_delivery_right)
                             }
 
                         }
                     } catch (e: Exception) {
+                        AppLogger.error("1728 " + e.message)
                         e.printStackTrace()
                     }
 
@@ -1829,6 +1831,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     binding.statusDriverDetails.apply {
                         appDriver.bearing?.lat?.let { lat ->
                             appDriver.bearing?.lng?.let { lng ->
+                                AppLogger.error("1834 appDriver.bearing?.eta ${appDriver.bearing?.eta}")
                                 updateDriverLocation(
                                     LatLng(lat.toDouble(), lng.toDouble()),
                                     appDriver.bearing?.eta

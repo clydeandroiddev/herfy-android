@@ -46,7 +46,7 @@ android {
 
     buildTypes {
         // Update these when creating new builds
-        def dateToday = "yyyyMMdd" // Today's Date with Format: yyyyMMdd
+        def dateToday = "20241007" // Today's Date with Format: yyyyMMdd
         def apkCountForToday = "1" // Increment for every new build for today
         debug {
             signingConfig null
@@ -192,7 +192,7 @@ android {
         herfy {
             signingConfig signingConfigs.release
             applicationId "com.herfy.order"
-            versionCode 300011
+            versionCode 300012
             versionName "3.0.4"
             buildConfigField "String", "TAG", "\"Herfy\""
             buildConfigField "String", "SOLO_CONCEPT", "\"\""
