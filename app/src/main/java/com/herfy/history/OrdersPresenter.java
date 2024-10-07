@@ -34,6 +34,7 @@ import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall;
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall;
 import com.skylinedynamics.solosdk.api.models.kotlin.Bearing;
+import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver;
 import com.skylinedynamics.solosdk.api.models.kotlin.LyveDriver;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Allergen;
@@ -2293,24 +2294,6 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         fromAbly = true;
         getOrderStatuses();
         getOrder(order.getId(), -1, true, false);
-        parseAblyLyveDriver(message);
-        return Unit.INSTANCE;
-    }
-
-    private Unit onOrderDriverAssign(Message message) {
-        fromAbly = true;
-        AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
-        ablyUtil.detachToOrderDriverAssign(order.getId());
-        getDriver();
-        return Unit.INSTANCE;
-    }
-
-    private Unit onOrderDriverLocationUpdate(Message message) {
-        parseAblyLyveDriver(message);
-        return Unit.INSTANCE;
-    }
-
-    public void parseAblyLyveDriver(Message message) {
         try {
             JSONObject jsonObject = new JSONObject(message.data.toString());
             JSONObject orderObject = jsonObject.optJSONObject("order");
@@ -2346,6 +2329,36 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
             e.printStackTrace();
             getDriver();
         }
+        return Unit.INSTANCE;
+    }
+
+    private Unit onOrderDriverAssign(Message message) {
+        fromAbly = true;
+        AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
+        ablyUtil.detachToOrderDriverAssign(order.getId());
+        getDriver();
+        return Unit.INSTANCE;
+    }
+
+    private Unit onOrderDriverLocationUpdate(Message message) {
+        try {
+            JSONObject jsonObject = new JSONObject(message.data.toString());
+            JSONObject orderObject = jsonObject.optJSONObject("order");
+            if(orderObject != null) {
+                JSONObject currentStatusObject = orderObject.optJSONObject("current-status");
+                if(currentStatusObject != null && currentStatusObject.has("sequence") && !currentStatusObject.isNull("sequence")) {
+                    int sequence = currentStatusObject.optInt("sequence", -1);
+                    if (sequence != -1 && sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.getValue() && sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.getValue()) {
+                        JSONObject appDriverObject = new JSONObject(message.data.toString());
+                        DeliveryDriver appDriver = new Gson().fromJson(appDriverObject.toString(), DeliveryDriver.class);
+                        ordersView.updateDriver(appDriver);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return Unit.INSTANCE;
     }
 
     @Override

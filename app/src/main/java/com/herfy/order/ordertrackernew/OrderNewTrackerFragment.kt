@@ -1670,7 +1670,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     private fun updateDriverLocation(latLng: LatLng?, eta: Int?) {
         activity?.runOnUiThread {
             latLng?.let {
-                AppLogger.error("updateDriverLocation $latLng")
                 try {
                     val activity: Activity? = activity
                     val inflater =
@@ -1829,10 +1828,12 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     binding.statusDriverDetails.apply {
                         appDriver.bearing?.lat?.let { lat ->
                             appDriver.bearing?.lng?.let { lng ->
-                                updateDriverLocation(
-                                    LatLng(lat.toDouble(), lng.toDouble()),
-                                    appDriver.bearing?.eta
-                                )
+                                if(lat.isNotEmpty() && lng.isNotEmpty()) {
+                                    updateDriverLocation(
+                                        LatLng(lat.toDouble(), lng.toDouble()),
+                                        appDriver.bearing?.eta
+                                    )
+                                }
                             }
                         }
                         withDriverLayout.isVisible = true
