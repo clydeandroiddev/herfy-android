@@ -34,7 +34,6 @@ import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall;
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall;
 import com.skylinedynamics.solosdk.api.models.kotlin.Bearing;
-import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver;
 import com.skylinedynamics.solosdk.api.models.kotlin.LyveDriver;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Allergen;
@@ -521,8 +520,6 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     }
 
     private void parseLyveDriver(JSONObject data) {
-        AppLogger.error("parseLyveDriver");
-        AppLogger.longError(data.toString());
         try {
             JSONObject attributes = data.optJSONObject("attributes");
             if (attributes != null) {
@@ -532,7 +529,6 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                     driver = lyveDriver;
                     ordersView.showWhatsApp(driver.getMobile());
                     Bearing bearing = lyveDriver.getBearing();
-
                     if (bearing != null) {
                         String lat = bearing.getLat();
                         String lng = bearing.getLng();
@@ -859,11 +855,13 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                                 LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
                                 LatLng driverLatLng = new LatLng(lat, lng);
                                 ordersView.showDriver(customerLatLng, driverLatLng, eta);
+                                if (!isLocationUpdateSubscribed) {
+                                    subscribeToOrderDriverLocationUpdate(order.getId());
+                                }
                             }
                         }
                     }
                 } catch (Exception e) {
-                    AppLogger.error("866 " + e.getMessage());
                     e.printStackTrace();
                 }
 
@@ -2292,8 +2290,6 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     }
 
     private Unit onOrderDetailsStatusUpdate(Message message) {
-        AppLogger.error("onOrderDetailsStatusUpdate");
-        AppLogger.longError(message.data.toString());
         fromAbly = true;
         getOrderStatuses();
         getOrder(order.getId(), -1, true, false);
@@ -2310,8 +2306,6 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
     }
 
     private Unit onOrderDriverLocationUpdate(Message message) {
-        AppLogger.error("onOrderDriverLocationUpdate");
-        //AppLogger.longError(message.data.toString());
         parseAblyLyveDriver(message);
         return Unit.INSTANCE;
     }
@@ -2328,15 +2322,12 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                         Bearing bearing = lyveDriver.getBearing();
                         driver = lyveDriver;
                         ordersView.showWhatsApp(driver.getMobile());
-                        AppLogger.error("2331");
                         if (bearing != null) {
                             String lat = bearing.getLat();
                             String lng = bearing.getLng();
-                            AppLogger.error("2334");
                             if(lat != null && !lat.isEmpty() && lng != null && !lng.isEmpty()) {
                                 LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
                                 LatLng driverLatLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
-                                AppLogger.error("2337");
                                 ordersView.showDriver(customerLatLng, driverLatLng, bearing.getEta());
                             }
                         } else {
@@ -2346,15 +2337,12 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
                         getDriver();
                     }
                 } else {
-                    AppLogger.error("2349");
                     getDriver();
                 }
             } else {
-                AppLogger.error("2351");
                 getDriver();
             }
         } catch (JSONException e) {
-            AppLogger.error("2357 " + e.getMessage());
             e.printStackTrace();
             getDriver();
         }

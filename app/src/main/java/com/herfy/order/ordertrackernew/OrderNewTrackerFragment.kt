@@ -463,7 +463,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             }
             if (driverMarker != null && driverLastLocation != null) {
                 if (driverMarker?.position != driverLastLocation) {
-                    AppLogger.error("466 driverLastLastEta $driverLastLastEta")
                     updateDriverLocation(driverLastLocation, driverLastLastEta)
                 }
             } else {
@@ -1633,7 +1632,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?, eta: Int?) {
         updateDriverFromOrder()
-        AppLogger.error("1635 eta $eta")
         updateDriverLocation(driverLatLng, eta)
     }
 
@@ -1686,7 +1684,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
                     try {
                         if (orderAddress != null) {
-                            AppLogger.error("1688")
 
                             if(eta == null || eta == 0) {
                                 textView.visibility = View.INVISIBLE
@@ -1711,19 +1708,20 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 }
                             }
 
-                            val isLocationLeft = isAboveOrBelowAndLeft(
-                                latLng, currentLocationToUse!!, true
-                            ) || isAboveOrBelowAndLeft(
-                                latLng, currentLocationToUse!!, false
-                            )
+                            currentLocationToUse?.let { locationToUse ->
+                                val isLocationLeft = isAboveOrBelowAndLeft(
+                                    latLng, locationToUse, true
+                                ) || isAboveOrBelowAndLeft(
+                                    latLng, locationToUse, false
+                                )
 
-                            if (isLocationLeft) {
-                                driverIcon.setImageResource(R.drawable.ic_delivery_right)
+                                if (isLocationLeft) {
+                                    driverIcon.setImageResource(R.drawable.ic_delivery_right)
+                                }
                             }
 
                         }
                     } catch (e: Exception) {
-                        AppLogger.error("1728 " + e.message)
                         e.printStackTrace()
                     }
 
@@ -1831,7 +1829,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     binding.statusDriverDetails.apply {
                         appDriver.bearing?.lat?.let { lat ->
                             appDriver.bearing?.lng?.let { lng ->
-                                AppLogger.error("1834 appDriver.bearing?.eta ${appDriver.bearing?.eta}")
                                 updateDriverLocation(
                                     LatLng(lat.toDouble(), lng.toDouble()),
                                     appDriver.bearing?.eta
