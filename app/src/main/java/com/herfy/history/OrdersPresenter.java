@@ -2267,6 +2267,11 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         this.orders = orders;
     }
 
+    @Override
+    public void cancelDriveLocationUpdates() {
+
+    }
+
     private void subscribeToOrderStatusUpdate(String orderId) {
         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
         ablyUtil.subscribeToOrderStatusUpdate(orderId, OrdersPresenter.this::onOrderDetailsStatusUpdate);
