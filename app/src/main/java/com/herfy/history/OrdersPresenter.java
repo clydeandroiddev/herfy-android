@@ -5,6 +5,7 @@ import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -27,6 +28,7 @@ import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.helper.ably.AblyUtil;
 import com.herfy.utils.menu.MenuUtil;
+import com.herfy.utils.poller.CoroutinePoller;
 import com.location.FusedLocationProvider;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
@@ -74,6 +76,7 @@ import com.skylinedynamics.solosdk.api.models.objects.order.OrderModifierItem;
 import com.skylinedynamics.solosdk.api.models.requestbodies.OrderFeedbackBody;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,6 +104,8 @@ import javax.annotation.Nullable;
 
 import io.ably.lib.types.Message;
 import kotlin.Unit;
+import kotlinx.coroutines.Dispatchers;
+import kotlinx.coroutines.flow.Flow;
 
 public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationProvider.LocationResultCallback {
 
@@ -128,6 +133,11 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
 
     private List<Rating> ratings = new ArrayList<>();
 
+    private CoroutinePoller coroutinePoller;
+    private FirebaseRemoteConfig firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+    private int pollingValue = 5;
+
+
     private int orderSequence = -1;
 
     public OrdersPresenter(OrdersContract.View ordersView) {
@@ -140,6 +150,14 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         ordersView.setupTranslations();
         ordersView.setupViews();
         ordersView.setupFonts();
+        firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                String pollingVal = firebaseRemoteConfig.getString("ttl");
+                if(!pollingVal.isEmpty() && StringUtils.isNumeric(pollingVal)){
+                    pollingValue = Integer.parseInt(pollingVal);
+                }
+            }
+        });
     }
 
 
@@ -2293,6 +2311,21 @@ public class OrdersPresenter implements OrdersContract.Presenter, FusedLocationP
         isLocationUpdateSubscribed = true;
         AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
         ablyUtil.subscribeToOrderDriverLocationUpdate(orderId, OrdersPresenter.this::onOrderDriverLocationUpdate);
+    }
+
+
+    private Unit sendLogisticsPoll (String orderId){
+        OrdersApiCall.getInstance().sendLogisticsPoll(orderId, new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object obj) {
+            }
+
+            @Override
+            public void onError(Object error) {
+            }
+        });
+
+        return Unit.INSTANCE;
     }
 
     private Unit onOrderDetailsStatusUpdate(Message message) {
