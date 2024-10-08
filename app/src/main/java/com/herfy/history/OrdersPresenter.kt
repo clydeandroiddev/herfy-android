@@ -704,6 +704,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                             orderStatuses.add(orderStatus)
                             if (orderStatus.sequence >= OrderStatusType.ARRIVED_AT_CUSTOMER.value && orderStatus.isDone) {
                                 isDone = true
+                                cancelDriveLocationUpdates()
                             }
                         }
                         Collections.sort(orderStatuses) { orderStatus, t1 -> orderStatus.sequence - t1.sequence }
@@ -2588,7 +2589,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                     if (lyveDriver != null) {
                         val bearing = lyveDriver.bearing
                         driver = lyveDriver
-                        ordersView.showWhatsApp(driver!!.mobile)
+                        ordersView.showWhatsApp(driver?.mobile?:"")
                         if (bearing != null) {
                             val lat = bearing.lat
                             val lng = bearing.lng
@@ -2598,6 +2599,9 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                 )
                                 val driverLatLng = LatLng(lat.toDouble(), lng.toDouble())
                                 ordersView.showDriver(customerLatLng, driverLatLng, bearing.eta)
+                                if(!isLocationUpdateSubscribed){
+                                    subscribeToOrderDriverLocationUpdate(order.id)
+                                }
                             }
                         } else {
                             getDriver()
