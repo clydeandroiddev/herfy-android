@@ -73,11 +73,6 @@ import io.ably.lib.types.Message
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -291,6 +286,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     }
 
     override fun getOrder(id: String, position: Int, statusUpdate: Boolean, reorder: Boolean) {
+        coroutinePoller?.cancel()
         OrdersApiCall.getInstance().getOrderNew(
             id,
             "items,location,customerAddress,campaign.promotion,payments,loyalty-points-transactions,feedbacks,car,combos",
@@ -2553,7 +2549,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
             ) { getDriverLocationUpdates(orderId) }
             val flow = coroutinePoller?.poll(pollingValue * 1000)
             GlobalScope.launch(Dispatchers.IO) {
-                flow?.collect { it.invoke() }
+                flow?.collectLatest { it.invoke() }
             }
         } else {
             val ablyUtil = instance
@@ -2579,34 +2575,29 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                             val employeeId = dataObject.getString("id")
                             if (attributes != null) {
                                 val lyveDriverObject = attributes.getJSONObject("lyve-driver")
-                                /*try {
-                                    LyveDriver lyveDriver = new Gson().fromJson(lyveDriverObject.toString(), LyveDriver.class);
+                                try {
+                                    val lyveDriver = Gson().fromJson(lyveDriverObject.toString(), LyveDriver::class.java)
                                     if (lyveDriver != null) {
                                         driver = lyveDriver;
-                                        ordersView.showWhatsApp(driver.getMobile());
-                                        Bearing bearing = lyveDriver.getBearing();
+                                        ordersView.showWhatsApp(driver?.mobile?:"");
+                                        val bearing = lyveDriver.bearing
                                         if (bearing != null) {
-                                            String lat = bearing.getLat();
-                                            String lng = bearing.getLng();
-                                            if(lat != null && !lat.isEmpty() && lng != null && !lng.isEmpty()) {
-                                                LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
-                                                LatLng driverLatLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
-                                                ordersView.showDriver(customerLatLng, driverLatLng, bearing.getEta());
+                                            val lat = bearing.lat
+                                            val lng = bearing.lng
+                                            if(!lat.isNullOrEmpty() && !lng.isNullOrEmpty()) {
+                                                val customerLatLng = LatLng(order.customerLat, order.customerLng);
+                                                val driverLatLng = LatLng(lat.toDouble(), lng.toDouble());
+                                                ordersView.showDriver(customerLatLng, driverLatLng, bearing.eta);
                                             }
                                         }
-                                        if (!isLocationUpdateSubscribed) {
-                                            subscribeToOrderDriverLocationUpdate(order.getId());
-                                        }
-                                    } else {
-                                        getDriverBearing(employeeId);
+                                    }else{
+                                        getDriver()
                                     }
-                                } catch (Exception e) {
-                                    getDriverBearing(employeeId);
+                                } catch (e : JSONException) {
                                     e.printStackTrace();
-                                }*/
-                            }
-                            if (driver == null) {
-                                getDriverBearing(employeeId)
+                                }
+                            }else {
+                                getDriver()
                             }
                         }
                     } catch (e: JSONException) {
@@ -2620,73 +2611,6 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
             }
 
         })
-
-    var job: Job? = null
-    private fun fetchDriverLocationUpdates(orderId: String, pollValue: Long) = callbackFlow {
-        job = launch(Dispatchers.Main) {
-            while (isActive) {
-                OrdersApiCall.getInstance().getDriver(orderId, object : ApiRequestListener {
-                    override fun onSuccess(o: Any?) {
-                        if (o is JSONObject) {
-                            try {
-                                val data = o.getJSONArray("data")
-
-                                for (i in 0 until data.length()) {
-                                    val dataObject = data.getJSONObject(i)
-                                    val attributes = dataObject.optJSONObject("attributes")
-                                    val employeeId = dataObject.getString("id")
-                                    if (attributes != null) {
-                                        val lyveDriverObject =
-                                            attributes.getJSONObject("lyve-driver")
-                                        trySend(lyveDriverObject)
-                                        /*try {
-                                            LyveDriver lyveDriver = new Gson().fromJson(lyveDriverObject.toString(), LyveDriver.class);
-                                            if (lyveDriver != null) {
-                                                driver = lyveDriver;
-                                                ordersView.showWhatsApp(driver.getMobile());
-                                                Bearing bearing = lyveDriver.getBearing();
-                                                if (bearing != null) {
-                                                    String lat = bearing.getLat();
-                                                    String lng = bearing.getLng();
-                                                    if(lat != null && !lat.isEmpty() && lng != null && !lng.isEmpty()) {
-                                                        LatLng customerLatLng = new LatLng(order.getCustomerLat(), order.getCustomerLng());
-                                                        LatLng driverLatLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
-                                                        ordersView.showDriver(customerLatLng, driverLatLng, bearing.getEta());
-                                                    }
-                                                }
-                                                if (!isLocationUpdateSubscribed) {
-                                                    subscribeToOrderDriverLocationUpdate(order.getId());
-                                                }
-                                            } else {
-                                                getDriverBearing(employeeId);
-                                            }
-                                        } catch (Exception e) {
-                                            getDriverBearing(employeeId);
-                                            e.printStackTrace();
-                                        }*/
-                                    }
-                                    if (driver == null) {
-                                        getDriverBearing(employeeId)
-                                    }
-                                }
-                            } catch (e: JSONException) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-
-                    override fun onError(o: Any?) {
-                        AppLogger.printRetrofitError(o)
-                    }
-
-                })
-                delay(pollValue)
-            }
-        }
-        awaitClose {
-            cancel()
-        }
-    }
 
 
     private fun onOrderDetailsStatusUpdate(message: Message) {
@@ -2792,5 +2716,9 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
             }
         }
         return ""
+    }
+
+    override fun cancelDriveLocationUpdates() {
+        coroutinePoller?.cancel()
     }
 }

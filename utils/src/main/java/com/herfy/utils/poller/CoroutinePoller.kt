@@ -18,9 +18,9 @@ import org.json.JSONObject
 class CoroutinePoller(
     private val dispatcher: CoroutineDispatcher,
     private val fetchData: suspend () -> Unit
-) : Poller{
+) {
 
-    /* var job: Job? = null
+     var job: Job? = null
 
     fun poll(delay: Long) = callbackFlow {
         job = launch(dispatcher) {
@@ -40,8 +40,8 @@ class CoroutinePoller(
     fun cancel() {
         job?.cancel()
         job = null
-    }*/
-    override fun poll(delayValue: Long): Flow<suspend () -> Unit> {
+    }
+    /*override fun poll(delayValue: Long): Flow<suspend () -> Unit> {
        return channelFlow {
            while(!isClosedForSend){
                delay(delayValue)
@@ -53,5 +53,5 @@ class CoroutinePoller(
 
     override fun close() {
         dispatcher.cancel()
-    }
+    }*/
 }
