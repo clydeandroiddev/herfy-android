@@ -71,6 +71,7 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.OrderFeedbackBody
 import com.skylinedynamics.solosdk.util.GsonHelper
 import io.ably.lib.types.Message
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
@@ -127,7 +128,8 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         ordersView.setupViews()
         ordersView.setupFonts()
 
-        firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener { task: Task<Boolean?>? -> }
+        firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener { task: Task<Boolean?>? ->
+        }
     }
 
 
@@ -287,6 +289,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
 
     override fun getOrder(id: String, position: Int, statusUpdate: Boolean, reorder: Boolean) {
         coroutinePoller?.cancel()
+        coroutinePoller = null
         OrdersApiCall.getInstance().getOrderNew(
             id,
             "items,location,customerAddress,campaign.promotion,payments,loyalty-points-transactions,feedbacks,car,combos",
@@ -2541,76 +2544,34 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun subscribeToOrderDriverLocationUpdate(orderId: String) {
         isLocationUpdateSubscribed = true
-        if (pullDriverApiEnable) {
+        val ablyUtil = instance
+        ablyUtil.subscribeToOrderDriverLocationUpdate(orderId) { message: Message ->
+            this@OrdersPresenter.onOrderDriverLocationUpdate(
+                message
+            )
+        }
+        if(coroutinePoller == null){
             coroutinePoller = CoroutinePoller(
                 Dispatchers.IO
-            ) { getDriverLocationUpdates(orderId) }
+            ) { sendLogisticsPoll(orderId) }
             val flow = coroutinePoller?.poll(pollingValue * 1000)
             GlobalScope.launch(Dispatchers.IO) {
                 flow?.collectLatest { it.invoke() }
             }
-        } else {
-            val ablyUtil = instance
-            ablyUtil.subscribeToOrderDriverLocationUpdate(orderId) { message: Message ->
-                this@OrdersPresenter.onOrderDriverLocationUpdate(
-                    message
-                )
-            }
         }
+
     }
 
 
-    private fun getDriverLocationUpdates(orderId: String): Unit =
-        OrdersApiCall.getInstance().getDriver(orderId, object : ApiRequestListener {
-            override fun onSuccess(o: Any?) {
-                if (o is JSONObject) {
-                    try {
-                        val data = o.getJSONArray("data")
-
-                        for (i in 0 until data.length()) {
-                            val dataObject = data.getJSONObject(i)
-                            val attributes = dataObject.optJSONObject("attributes")
-                            val employeeId = dataObject.getString("id")
-                            if (attributes != null) {
-                                val lyveDriverObject = attributes.getJSONObject("lyve-driver")
-                                try {
-                                    val lyveDriver = Gson().fromJson(lyveDriverObject.toString(), LyveDriver::class.java)
-                                    if (lyveDriver != null) {
-                                        driver = lyveDriver;
-                                        ordersView.showWhatsApp(driver?.mobile?:"");
-                                        val bearing = lyveDriver.bearing
-                                        if (bearing != null) {
-                                            val lat = bearing.lat
-                                            val lng = bearing.lng
-                                            if(!lat.isNullOrEmpty() && !lng.isNullOrEmpty()) {
-                                                val customerLatLng = LatLng(order.customerLat, order.customerLng);
-                                                val driverLatLng = LatLng(lat.toDouble(), lng.toDouble());
-                                                ordersView.showDriver(customerLatLng, driverLatLng, bearing.eta);
-                                            }
-                                        }
-                                    }else{
-                                        getDriver()
-                                    }
-                                } catch (e : JSONException) {
-                                    e.printStackTrace();
-                                }
-                            }else {
-                                getDriver()
-                            }
-                        }
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                    }
-                }
-            }
-
-            override fun onError(o: Any?) {
-                AppLogger.printRetrofitError(o)
-            }
-
-        })
+    private fun sendLogisticsPoll(orderId: String): Unit = OrdersApiCall.getInstance().sendLogisticsPoll(orderId, object : ApiRequestListener {
+        override fun onSuccess(obj: Any?) {
+        }
+        override fun onError(error: Any?) {
+        }
+    })
 
 
     private fun onOrderDetailsStatusUpdate(message: Message) {
