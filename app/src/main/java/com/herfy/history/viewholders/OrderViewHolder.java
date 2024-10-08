@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -285,7 +286,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements OrdersCo
     }
 
     @Override
-    public void showDriver(LatLng customerLatLng, LatLng driverLatLng, int eta) {
+    public void showDriver(@Nullable LatLng customerLatLng, @Nullable LatLng driverLatLng, @Nullable Integer eta) {
 
     }
 

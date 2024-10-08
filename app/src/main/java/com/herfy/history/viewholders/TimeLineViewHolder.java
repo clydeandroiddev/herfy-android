@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -204,7 +205,7 @@ public class TimeLineViewHolder extends RecyclerView.ViewHolder implements Order
     }
 
     @Override
-    public void showDriver(LatLng customerLatLng, LatLng driverLatLng, int eta) {
+    public void showDriver(@Nullable LatLng customerLatLng, @Nullable LatLng driverLatLng, @Nullable Integer eta) {
 
     }
 

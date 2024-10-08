@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -288,7 +289,7 @@ public class OrderMenuItemViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void showDriver(LatLng customerLatLng, LatLng driverLatLng, int eta) {
+    public void showDriver(@Nullable LatLng customerLatLng, @Nullable LatLng driverLatLng, @Nullable Integer eta) {
 
     }
 
