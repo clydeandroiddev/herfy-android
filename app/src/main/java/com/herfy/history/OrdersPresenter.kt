@@ -127,9 +127,12 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         ordersView.setupFonts()
         firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener { task: Task<Boolean?> ->
             if (task.isSuccessful) {
-                val pollingVal: String = firebaseRemoteConfig.getString("ttl")
-                if (pollingVal.isNotEmpty() && StringUtils.isNumeric(pollingVal)) {
-                    pollingValue = pollingVal.toInt()
+                val lyvePolling: String = firebaseRemoteConfig.getString("lyve_polling")
+                if(lyvePolling.isNotEmpty()){
+                    val lyvePollingObj = JSONObject(lyvePolling)
+                    if (lyvePollingObj.has("ttl")) {
+                        pollingValue = lyvePollingObj.getInt("ttl")
+                    }
                 }
             }
         }
@@ -137,12 +140,10 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
 
 
     override fun getLocation(fusedLocationProvider: FusedLocationProvider) {
-        if (this.fusedLocationProvider != null) {
-            this.fusedLocationProvider!!.disconnect()
-        }
+        this.fusedLocationProvider?.disconnect()
         this.fusedLocationProvider = fusedLocationProvider
-        this.fusedLocationProvider!!.setLocationResultCallback(this)
-        this.fusedLocationProvider!!.connect()
+        this.fusedLocationProvider?.setLocationResultCallback(this)
+        this.fusedLocationProvider?.connect()
     }
 
     override fun getOrders() {
@@ -246,8 +247,10 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
             val jsonObject = JSONObject(message.data.toString())
             val orderData = OrderData.parse(jsonObject.getJSONObject("order"))
             val orderId = orderData.id
-            if (ordersMap.containsKey(orderId) && ordersMap[orderId] != null) {
-                getOrder(orderId, ordersMap[orderId]!!, true, false)
+            if (ordersMap.containsKey(orderId)) {
+                ordersMap[orderId]?.let {
+                    getOrder(orderId, it, true, false)
+                }
             }
         } catch (e: JSONException) {
             e.printStackTrace()
@@ -352,7 +355,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                             val dataObj = dataArr.optJSONObject(i)
                                             if (dataObj != null) {
                                                 if ((dataObj.getString("type") == "loyalty-points-transaction")) {
-                                                    transactions!!.add(
+                                                    transactions?.add(
                                                         GsonHelper.gsonFinal().fromJson(
                                                             dataObj.toString(),
                                                             object :
@@ -567,167 +570,182 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     }
 
     private fun parseLyveDriver(data: JSONObject) {
-        try {
-            val attributes = data.optJSONObject("attributes")
-            if (attributes != null) {
-                val lyveDriverObject = attributes.getJSONObject("lyve-driver")
-                val lyveDriver =
-                    Gson().fromJson(lyveDriverObject.toString(), LyveDriver::class.java)
-                if (lyveDriver != null) {
-                    driver = lyveDriver
-                    ordersView.showWhatsApp(driver!!.mobile)
-                    val bearing = lyveDriver.bearing
-                    if (bearing != null) {
-                        val lat = bearing.lat
-                        val lng = bearing.lng
-                        if ((lat != null) && !lat.isEmpty() && (lng != null) && !lng.isEmpty()) {
-                            val customerLatLng = LatLng(
-                                order!!.customerLat, order!!.customerLng
-                            )
-                            val driverLatLng = LatLng(lat.toDouble(), lng.toDouble())
-                            ordersView.showDriver(customerLatLng, driverLatLng, bearing.eta)
+        order?.let { order ->
+            try {
+                val attributes = data.optJSONObject("attributes")
+                if (attributes != null) {
+                    val lyveDriverObject = attributes.getJSONObject("lyve-driver")
+                    val lyveDriver =
+                        Gson().fromJson(lyveDriverObject.toString(), LyveDriver::class.java)
+                    if (lyveDriver != null) {
+                        driver = lyveDriver
+                        ordersView.showWhatsApp(driver?.mobile?:"")
+                        val bearing = lyveDriver.bearing
+                        if (bearing != null) {
+                            val lat = bearing.lat
+                            val lng = bearing.lng
+                            if (!lat.isNullOrEmpty() && !lng.isNullOrEmpty()) {
+                                val customerLatLng = LatLng(
+                                    order.customerLat, order.customerLng
+                                )
+                                val driverLatLng = LatLng(lat.toDouble(), lng.toDouble())
+                                ordersView.showDriver(customerLatLng, driverLatLng, bearing.eta)
+                            }
                         }
-                    }
-                    if (!isLocationUpdateSubscribed) {
-                        subscribeToOrderDriverLocationUpdate(order!!.id)
+                        if (!isLocationUpdateSubscribed) {
+                            subscribeToOrderDriverLocationUpdate(order.id)
+                            setLogisticsPolling(order.id, order.orderStatus.sequence)
+                        }
+                    } else {
+                        getDriver()
                     }
                 } else {
                     getDriver()
                 }
-            } else {
-                getDriver()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
+
     }
 
     override fun getStore(reorder: Boolean) {
-        LocationApiCall.getInstance()
-            .getStoreDetails(order!!.locationId.toString(), object : ApiRequestListener {
-                override fun onSuccess(o: Any) {
-                    if (o is JSONObject) {
-                        try {
-                            val data = o.getJSONObject("data")
+        order?.let { order ->
+            LocationApiCall.getInstance()
+                .getStoreDetails(order.locationId.toString(), object : ApiRequestListener {
+                    override fun onSuccess(o: Any) {
+                        if (o is JSONObject) {
+                            try {
+                                val data = o.getJSONObject("data")
 
-                            store = Store.parseStore(data)
+                                store = Store.parseStore(data)
 
-                            if (!order!!.customerAddressId.isEmpty()) {
-                                getAddress(reorder)
-                            } else if (reorder) {
-                                checkReorder()
-                            } else {
-                                ordersView.showOrder(order, store, address)
-                                ordersView.showMenuItems(order, menuItems)
+                                if (order.customerAddressId.isNotEmpty()) {
+                                    getAddress(reorder)
+                                } else if (reorder) {
+                                    checkReorder()
+                                } else {
+                                    ordersView.showOrder(order, store, address)
+                                    ordersView.showMenuItems(order, menuItems)
+                                }
+                            } catch (e: JSONException) {
+                                e.printStackTrace()
+                                this.onError("")
                             }
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
+                        } else {
                             this.onError("")
                         }
-                    } else {
-                        this.onError("")
                     }
-                }
 
-                override fun onError(o: Any) {
-                    AppLogger.printRetrofitError(o)
-                    store = Store()
-                    store!!.id = order!!.locationId.toString()
-                    store!!.attributes.name = order!!.locationName
-                    if (!order!!.customerAddressId.isEmpty()) {
-                        getAddress(reorder)
-                    } else if (reorder) {
-                        checkReorder()
-                    } else {
-                        ordersView.showOrder(order, store, address)
-                        ordersView.showMenuItems(order, menuItems)
+                    override fun onError(o: Any) {
+                        AppLogger.printRetrofitError(o)
+                        store = Store()
+                        store?.apply {
+                            id = order.locationId.toString()
+                            attributes.name = order.locationName
+                        }
+
+                        if (order.customerAddressId.isNotEmpty()) {
+                            getAddress(reorder)
+                        } else if (reorder) {
+                            checkReorder()
+                        } else {
+                            ordersView.showOrder(order, store, address)
+                            ordersView.showMenuItems(order, menuItems)
+                        }
                     }
-                }
-            })
+                })
+        }
+
     }
 
     override fun getAddress(reorder: Boolean) {
-        CustomersApiCall.getInstance().getCustomerAddress(
-            AuthUtil.getInstance().customer.id,
-            order!!.customerAddressId,
-            object : ApiRequestListener {
-                override fun onSuccess(o: Any) {
-                    if (o is JSONObject) {
-                        try {
-                            val data = o.getJSONObject("data")
+        order?.let { order ->
+            CustomersApiCall.getInstance().getCustomerAddress(
+                AuthUtil.getInstance().customer.id,
+                order.customerAddressId,
+                object : ApiRequestListener {
+                    override fun onSuccess(o: Any) {
+                        if (o is JSONObject) {
+                            try {
+                                val data = o.getJSONObject("data")
 
-                            address = Address.parseAddress(data)
+                                address = Address.parseAddress(data)
 
-                            if (!reorder) {
-                                ordersView.showOrder(order, store, address)
-                                ordersView.showMenuItems(order, menuItems)
-                            } else {
-                                checkReorder()
+                                if (!reorder) {
+                                    ordersView.showOrder(order, store, address)
+                                    ordersView.showMenuItems(order, menuItems)
+                                } else {
+                                    checkReorder()
+                                }
+                            } catch (e: JSONException) {
+                                e.printStackTrace()
+                                ordersView.showError(
+                                    CacheUtil.getInstance()
+                                        .getTranslations(if (!reorder) Text.RETRIEVING_ORDER_DETAILS_ERROR else Text.REORDER_ERROR)
+                                )
                             }
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
+                        } else {
                             ordersView.showError(
                                 CacheUtil.getInstance()
                                     .getTranslations(if (!reorder) Text.RETRIEVING_ORDER_DETAILS_ERROR else Text.REORDER_ERROR)
                             )
                         }
-                    } else {
+                    }
+
+                    override fun onError(o: Any) {
+                        AppLogger.printRetrofitError(o)
                         ordersView.showError(
-                            CacheUtil.getInstance()
-                                .getTranslations(if (!reorder) Text.RETRIEVING_ORDER_DETAILS_ERROR else Text.REORDER_ERROR)
+                            getErrorMessage(
+                                o,
+                                "",
+                                CacheUtil.getInstance()
+                                    .getTranslations(if (!reorder) Text.RETRIEVING_ORDER_DETAILS_ERROR else Text.REORDER_ERROR)
+                            )
                         )
+                    }
+                })
+        }
+
+    }
+
+    override fun getOrderStatuses() {
+        order?.let { order ->
+            OrdersApiCall.getInstance().getOrderStatuses(order.id, object : ApiRequestListener {
+                override fun onSuccess(obj: Any) {
+                    if (obj is JSONObject) {
+                        try {
+                            val itemsArray = obj.getJSONArray("data")
+                            orderStatuses.clear()
+                            for (i in 0 until itemsArray.length()) {
+                                val orderStatus = OrderStatus.parse(itemsArray.getJSONObject(i))
+                                orderStatuses.add(orderStatus)
+                                if (orderStatus.sequence >= OrderStatusType.ARRIVED_AT_CUSTOMER.value && orderStatus.isDone) {
+                                    isDone = true
+                                    cancelDriveLocationUpdates()
+                                }
+                            }
+                            Collections.sort(orderStatuses) { orderStatus, t1 -> orderStatus.sequence - t1.sequence }
+                            val isCancelled =
+                                order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value
+                            if (isCancelled) {
+                                orderStatuses = filterOrderStatuses(orderStatuses)
+                            }
+                            ordersView.showOrderStatuses(orderStatuses, isDone)
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                            this.onError(e)
+                        }
                     }
                 }
 
                 override fun onError(o: Any) {
-                    AppLogger.printRetrofitError(o)
-                    ordersView.showError(
-                        getErrorMessage(
-                            o,
-                            "",
-                            CacheUtil.getInstance()
-                                .getTranslations(if (!reorder) Text.RETRIEVING_ORDER_DETAILS_ERROR else Text.REORDER_ERROR)
-                        )
-                    )
+                    AppLogger.printRetrofitError(o.toString())
+                    orderStatuses.clear()
+                    ordersView.showOrderStatuses(orderStatuses, isDone)
                 }
             })
-    }
-
-    override fun getOrderStatuses() {
-        OrdersApiCall.getInstance().getOrderStatuses(order!!.id, object : ApiRequestListener {
-            override fun onSuccess(obj: Any) {
-                if (obj is JSONObject) {
-                    try {
-                        val itemsArray = obj.getJSONArray("data")
-                        orderStatuses.clear()
-                        for (i in 0 until itemsArray.length()) {
-                            val orderStatus = OrderStatus.parse(itemsArray.getJSONObject(i))
-                            orderStatuses.add(orderStatus)
-                            if (orderStatus.sequence >= OrderStatusType.ARRIVED_AT_CUSTOMER.value && orderStatus.isDone) {
-                                isDone = true
-                                cancelDriveLocationUpdates()
-                            }
-                        }
-                        Collections.sort(orderStatuses) { orderStatus, t1 -> orderStatus.sequence - t1.sequence }
-                        val isCancelled =
-                            order!!.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value
-                        if (isCancelled) {
-                            orderStatuses = filterOrderStatuses(orderStatuses)
-                        }
-                        ordersView.showOrderStatuses(orderStatuses, isDone)
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                        this.onError(e)
-                    }
-                }
-            }
-
-            override fun onError(o: Any) {
-                AppLogger.printRetrofitError(o.toString())
-                orderStatuses.clear()
-                ordersView.showOrderStatuses(orderStatuses, isDone)
-            }
-        })
+        }
     }
 
     override fun onBindTimeLineViewAtPosition(
@@ -737,9 +755,10 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         noDriver: Boolean
     ) {
         if (orderPosition == -1) {
-            val isCancelled =
-                order!!.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value
-            timeLineViewHolder.setTimeLine(isCancelled, orderStatuses[position], noDriver)
+            order?.let { order ->
+                val isCancelled = order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value
+                timeLineViewHolder.setTimeLine(isCancelled, orderStatuses[position], noDriver)
+            }
         } else {
             val isCancelled =
                 orders[orderPosition].sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value
@@ -800,72 +819,76 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         orderSequence = sequence
     }
 
-    override fun getOrder(): OrderDetails {
-        return order!!
+    override fun getOrder(): OrderDetails? {
+        return order
     }
 
     override fun getDriver() {
-        OrdersApiCall.getInstance().getDriver(order!!.id, object : ApiRequestListener {
-            override fun onSuccess(o: Any) {
-                if (o is JSONObject) {
-                    try {
-                        val data = o.getJSONArray("data")
-                        for (i in 0 until data.length()) {
-                            val dataObject = data.getJSONObject(i)
-                            val attributes = dataObject.optJSONObject("attributes")
-                            val employeeId = dataObject.getString("id")
-                            if (attributes != null) {
-                                val lyveDriverObject = attributes.getJSONObject("lyve-driver")
-                                try {
-                                    val lyveDriver = Gson().fromJson(
-                                        lyveDriverObject.toString(),
-                                        LyveDriver::class.java
-                                    )
-                                    if (lyveDriver != null) {
-                                        driver = lyveDriver
-                                        ordersView.showWhatsApp(driver!!.mobile)
-                                        val bearing = lyveDriver.bearing
-                                        if (bearing != null) {
-                                            val lat = bearing.lat
-                                            val lng = bearing.lng
-                                            if ((lat != null) && !lat.isEmpty() && (lng != null) && !lng.isEmpty()) {
-                                                val customerLatLng = LatLng(
-                                                    order!!.customerLat, order!!.customerLng
-                                                )
-                                                val driverLatLng =
-                                                    LatLng(lat.toDouble(), lng.toDouble())
-                                                ordersView.showDriver(
-                                                    customerLatLng,
-                                                    driverLatLng,
-                                                    bearing.eta
-                                                )
+        order?.let { order ->
+            OrdersApiCall.getInstance().getDriver(order.id, object : ApiRequestListener {
+                override fun onSuccess(o: Any) {
+                    if (o is JSONObject) {
+                        try {
+                            val data = o.getJSONArray("data")
+                            for (i in 0 until data.length()) {
+                                val dataObject = data.getJSONObject(i)
+                                val attributes = dataObject.optJSONObject("attributes")
+                                val employeeId = dataObject.getString("id")
+                                if (attributes != null) {
+                                    val lyveDriverObject = attributes.getJSONObject("lyve-driver")
+                                    try {
+                                        val lyveDriver = Gson().fromJson(
+                                            lyveDriverObject.toString(),
+                                            LyveDriver::class.java
+                                        )
+                                        if (lyveDriver != null) {
+                                            driver = lyveDriver
+                                            ordersView.showWhatsApp(driver?.mobile?:"")
+                                            val bearing = lyveDriver.bearing
+                                            if (bearing != null) {
+                                                val lat = bearing.lat
+                                                val lng = bearing.lng
+                                                if ((lat != null) && !lat.isEmpty() && (lng != null) && !lng.isEmpty()) {
+                                                    val customerLatLng = LatLng(
+                                                        order.customerLat, order.customerLng
+                                                    )
+                                                    val driverLatLng =
+                                                        LatLng(lat.toDouble(), lng.toDouble())
+                                                    ordersView.showDriver(
+                                                        customerLatLng,
+                                                        driverLatLng,
+                                                        bearing.eta
+                                                    )
+                                                }
                                             }
+                                            if (!isLocationUpdateSubscribed) {
+                                                subscribeToOrderDriverLocationUpdate(order.id)
+                                                setLogisticsPolling(order.id, order.orderStatus.sequence)
+                                            }
+                                        } else {
+                                            getDriverBearing(employeeId)
                                         }
-                                        if (!isLocationUpdateSubscribed) {
-                                            subscribeToOrderDriverLocationUpdate(order!!.id)
-                                        }
-                                    } else {
+                                    } catch (e: Exception) {
                                         getDriverBearing(employeeId)
+                                        e.printStackTrace()
                                     }
-                                } catch (e: Exception) {
+                                }
+                                if (driver == null) {
                                     getDriverBearing(employeeId)
-                                    e.printStackTrace()
                                 }
                             }
-                            if (driver == null) {
-                                getDriverBearing(employeeId)
-                            }
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
                         }
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
                     }
                 }
-            }
 
-            override fun onError(o: Any) {
-                AppLogger.printRetrofitError(o)
-            }
-        })
+                override fun onError(o: Any) {
+                    AppLogger.printRetrofitError(o)
+                }
+            })
+        }
+
     }
 
     override fun customerArrived(orderId: String) {
@@ -909,16 +932,20 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                             if (attributesObject.has("eta") && !attributesObject.isNull("eta")) {
                                 eta = attributesObject.optInt("eta")
                             }
-                            if (lat != null && lng != null) {
-                                val customerLatLng = LatLng(
-                                    order!!.customerLat, order!!.customerLng
-                                )
-                                val driverLatLng = LatLng(lat, lng)
-                                ordersView.showDriver(customerLatLng, driverLatLng, eta)
-                                if (!isLocationUpdateSubscribed) {
-                                    subscribeToOrderDriverLocationUpdate(order!!.id)
+                            order?.let { order ->
+                                if (lat != null && lng != null) {
+                                    val customerLatLng = LatLng(
+                                        order.customerLat, order.customerLng
+                                    )
+                                    val driverLatLng = LatLng(lat, lng)
+                                    ordersView.showDriver(customerLatLng, driverLatLng, eta)
+                                    if (!isLocationUpdateSubscribed) {
+                                        subscribeToOrderDriverLocationUpdate(order.id)
+                                        setLogisticsPolling(order.id, order.orderStatus.sequence)
+                                    }
                                 }
                             }
+
                         }
                     }
                 } catch (e: Exception) {
@@ -937,9 +964,9 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     }
 
     override fun getOrderFeedbackTopics() {
-        if (order != null) {
+        order?.let { order ->
             OrdersApiCall.getInstance()
-                .getOrderFeedbackTopics(order!!.id, object : ApiRequestListener {
+                .getOrderFeedbackTopics(order.id, object : ApiRequestListener {
                     override fun onSuccess(o: Any) {
                         ratings.clear()
                         try {
@@ -959,14 +986,14 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                             getOrderFeedbacks()
                         } catch (e: JSONException) {
                             e.printStackTrace()
-                            this.onError(e.message!!)
+                            this.onError(e.message?:"")
                         }
                     }
 
                     override fun onError(o: Any) {
                         AppLogger.printRetrofitError(o)
                         ratings.clear()
-                        ordersView.showRatings(order!!.orderStatus, ratings)
+                        ordersView.showRatings(order.orderStatus, ratings)
                     }
                 })
         }
@@ -993,7 +1020,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                     getOrderFeedbacks(orderId)
                 } catch (e: JSONException) {
                     e.printStackTrace()
-                    this.onError(e.message!!)
+                    this.onError(e.message?:"")
                 }
             }
 
@@ -1054,7 +1081,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                     ordersView.showRatings(null, ratings)
                 } catch (e: JSONException) {
                     e.printStackTrace()
-                    this.onError(e.message!!)
+                    this.onError(e.message?:"")
                 }
             }
 
@@ -1066,63 +1093,66 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     }
 
     override fun getOrderFeedbacks() {
-        OrdersApiCall.getInstance().getOrderFeedbacks(order!!.id, object : ApiRequestListener {
-            override fun onSuccess(o: Any) {
-                try {
-                    val jsonObject = JSONObject(o.toString())
-                    val dataArray = jsonObject.optJSONArray("data")
-                    val includedArray = jsonObject.optJSONArray("included")
+        order?.let { order ->
+            OrdersApiCall.getInstance().getOrderFeedbacks(order.id, object : ApiRequestListener {
+                override fun onSuccess(o: Any) {
+                    try {
+                        val jsonObject = JSONObject(o.toString())
+                        val dataArray = jsonObject.optJSONArray("data")
+                        val includedArray = jsonObject.optJSONArray("included")
 
-                    val orderFeedbacks: MutableList<OrderFeedback> = ArrayList()
+                        val orderFeedbacks: MutableList<OrderFeedback> = ArrayList()
 
-                    if (dataArray != null) {
-                        orderFeedbacks.addAll(
-                            GsonHelper.gsonFinal().fromJson(
-                                dataArray.toString(),
-                                object : TypeToken<List<OrderFeedback?>?>() {
-                                }.type
-                            )
-                        )
-                    }
-
-                    if (orderFeedbacks.size > 0) {
-                        val orderFeedback = orderFeedbacks[orderFeedbacks.size - 1]
-
-                        if (includedArray != null) {
-                            for (i in 0 until includedArray.length()) {
-                                val rating = GsonHelper.gsonFinal().fromJson<Rating>(
-                                    includedArray.getJSONObject(i).toString(),
-                                    object : TypeToken<Rating?>() {
+                        if (dataArray != null) {
+                            orderFeedbacks.addAll(
+                                GsonHelper.gsonFinal().fromJson(
+                                    dataArray.toString(),
+                                    object : TypeToken<List<OrderFeedback?>?>() {
                                     }.type
                                 )
-                                if (orderFeedback.ratingIds.contains(rating.id)) {
-                                    for (ratingTopic in ratings) {
-                                        if (rating.attributes.topic.equals(
-                                                ratingTopic.attributes.name,
-                                                ignoreCase = true
-                                            )
-                                        ) {
-                                            ratingTopic.attributes.rating = rating.attributes.rating
-                                            break
+                            )
+                        }
+
+                        if (orderFeedbacks.size > 0) {
+                            val orderFeedback = orderFeedbacks[orderFeedbacks.size - 1]
+
+                            if (includedArray != null) {
+                                for (i in 0 until includedArray.length()) {
+                                    val rating = GsonHelper.gsonFinal().fromJson<Rating>(
+                                        includedArray.getJSONObject(i).toString(),
+                                        object : TypeToken<Rating?>() {
+                                        }.type
+                                    )
+                                    if (orderFeedback.ratingIds.contains(rating.id)) {
+                                        for (ratingTopic in ratings) {
+                                            if (rating.attributes.topic.equals(
+                                                    ratingTopic.attributes.name,
+                                                    ignoreCase = true
+                                                )
+                                            ) {
+                                                ratingTopic.attributes.rating = rating.attributes.rating
+                                                break
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+
+                        ordersView.showRatings(order.orderStatus, ratings)
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                        this.onError(e.message?:"")
                     }
-
-                    ordersView.showRatings(order!!.orderStatus, ratings)
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                    this.onError(e.message!!)
                 }
-            }
 
-            override fun onError(o: Any) {
-                AppLogger.printRetrofitError(o)
-                ordersView.showRatings(order!!.orderStatus, ratings)
-            }
-        })
+                override fun onError(o: Any) {
+                    AppLogger.printRetrofitError(o)
+                    ordersView.showRatings(order.orderStatus, ratings)
+                }
+            })
+        }
+
     }
 
     override fun getRatings(): List<Rating> {
@@ -1140,27 +1170,30 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
             "Order Feedback",
             this.ratings
         )
-        OrdersApiCall.getInstance()
-            .sendOrderFeedback(order!!.id, orderFeedbackBody, null, object : ApiRequestListener {
-                override fun onSuccess(o: Any) {
-                    ordersView.showMessage(
-                        CacheUtil.getInstance()
-                            .getTranslations(Text.ORDER_RATING_SENT, "Order ratings sent")
-                    )
-                }
-
-                override fun onError(o: Any) {
-                    AppLogger.printRetrofitError(o)
-                    ordersView.showError(
-                        getErrorMessage(
-                            o,
+        order?.let { order ->
+            OrdersApiCall.getInstance()
+                .sendOrderFeedback(order.id, orderFeedbackBody, null, object : ApiRequestListener {
+                    override fun onSuccess(o: Any) {
+                        ordersView.showMessage(
                             CacheUtil.getInstance()
-                                .getTranslations(Text.RETRIEVING_ORDER_DETAILS_ERROR),
-                            null
+                                .getTranslations(Text.ORDER_RATING_SENT, "Order ratings sent")
                         )
-                    )
-                }
-            })
+                    }
+
+                    override fun onError(o: Any) {
+                        AppLogger.printRetrofitError(o)
+                        ordersView.showError(
+                            getErrorMessage(
+                                o,
+                                CacheUtil.getInstance()
+                                    .getTranslations(Text.RETRIEVING_ORDER_DETAILS_ERROR),
+                                null
+                            )
+                        )
+                    }
+                })
+        }
+
     }
 
     override fun sendOrderFeedback(
@@ -1175,7 +1208,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         }
         val customer = AuthUtil.getInstance().customer
         var email = customer.attributes.email
-        if (email!!.isEmpty()) {
+        if (email.isEmpty()) {
             email = null
         }
         val orderFeedbackBody = OrderFeedbackBody(
@@ -1210,149 +1243,158 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     }
 
     override fun cancel() {
-        OrdersApiCall.getInstance().cancelOrder(order!!.id, object : ApiRequestListener {
-            override fun onSuccess(o: Any) {
-                ordersView.showMessage(
-                    CacheUtil.getInstance().getTranslations(Text.ORDER_CANCELLED)
-                )
-                ordersView.cancel()
-            }
-
-            override fun onError(o: Any) {
-                AppLogger.printRetrofitError(o)
-                ordersView.showMessage(
-                    getErrorMessage(
-                        o, "", CacheUtil.getInstance().getTranslations(
-                            Text.CANCEL_ORDER_NOT_ALLOWED
-                        )
-                    )
-                )
-            }
-        })
-    }
-
-    override fun checkReorder() {
-        OrdersApiCall.getInstance().getOrderNew(
-            order!!.id,
-            "items,campaign.promotion,combo-order,combos",
-            object : ApiRequestListener {
+        order?.let { order ->
+            OrdersApiCall.getInstance().cancelOrder(order.id, object : ApiRequestListener {
                 override fun onSuccess(o: Any) {
-                    try {
-                        val jsonObject = o as JSONObject
-                        val included = jsonObject.getJSONArray("included")
-                        comboItems.clear()
-                        var reorderable = true
-                        for (i in 0 until included.length()) {
-                            val includedObject = included.getJSONObject(i)
-                            val type = includedObject.getString("type")
-                            if (type.equals("order-item", ignoreCase = true)) {
-                                val menuItem = GsonHelper.gsonFinal().fromJson<MenuItem>(
-                                    includedObject.toString(),
-                                    object : TypeToken<MenuItem?>() {
-                                    }.type
-                                )
-                                if (!menuItem.attributes.isActive) {
-                                    reorderable = false
-                                    break
-                                }
-                            } else if (type.equals("modifier-group", ignoreCase = true)) {
-                                val modifierGroup = GsonHelper.gsonFinal().fromJson<ModifierGroup>(
-                                    includedObject.toString(),
-                                    object : TypeToken<ModifierGroup?>() {
-                                    }.type
-                                )
-                                if (modifierGroup.attributes.enabled == 0) {
-                                    reorderable = false
-                                    break
-                                }
-                            } else if (type.equals("modifier", ignoreCase = true)) {
-                                val modifierItem = GsonHelper.gsonFinal().fromJson<ModifierItem>(
-                                    includedObject.toString(),
-                                    object : TypeToken<ModifierItem?>() {
-                                    }.type
-                                )
-                                if (modifierItem.attributes.enabled == 0) {
-                                    reorderable = false
-                                    break
-                                }
-                            } else if (type.equals("item-ingredient", ignoreCase = true)) {
-                                val ingredient = GsonHelper.gsonFinal().fromJson<Ingredient>(
-                                    includedObject.toString(),
-                                    object : TypeToken<Ingredient?>() {
-                                    }.type
-                                )
-                                if (ingredient.attributes.enabled == 0) {
-                                    reorderable = false
-                                    break
-                                }
-                            } else if (type.equals("combo", ignoreCase = true)) {
-                                try {
-                                    val comboItem = GsonHelper.gsonFinal().fromJson<ComboItemMain>(
-                                        includedObject.toString(),
-                                        object : TypeToken<ComboItemMain?>() {
-                                        }.type
-                                    )
-                                    comboItems.add(comboItem)
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                            }
-                        }
-                        if (!reorderable) {
-                            this.onError("")
-                        } else {
-                            reorder()
-                        }
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                        this.onError("")
-                    }
+                    ordersView.showMessage(
+                        CacheUtil.getInstance().getTranslations(Text.ORDER_CANCELLED)
+                    )
+                    ordersView.cancel()
                 }
 
                 override fun onError(o: Any) {
-                    AppLogger.printRetrofitError(o.toString())
-                    ordersView.showError(
+                    AppLogger.printRetrofitError(o)
+                    ordersView.showMessage(
                         getErrorMessage(
                             o, "", CacheUtil.getInstance().getTranslations(
-                                Text.REORDER_ERROR,
-                                "Some items are no longer available in this order."
+                                Text.CANCEL_ORDER_NOT_ALLOWED
                             )
                         )
                     )
                 }
             })
+        }
+
+    }
+
+    override fun checkReorder() {
+        order?.let { order ->
+            OrdersApiCall.getInstance().getOrderNew(
+                order.id,
+                "items,campaign.promotion,combo-order,combos",
+                object : ApiRequestListener {
+                    override fun onSuccess(o: Any) {
+                        try {
+                            val jsonObject = o as JSONObject
+                            val included = jsonObject.getJSONArray("included")
+                            comboItems.clear()
+                            var reorderable = true
+                            for (i in 0 until included.length()) {
+                                val includedObject = included.getJSONObject(i)
+                                val type = includedObject.getString("type")
+                                if (type.equals("order-item", ignoreCase = true)) {
+                                    val menuItem = GsonHelper.gsonFinal().fromJson<MenuItem>(
+                                        includedObject.toString(),
+                                        object : TypeToken<MenuItem?>() {
+                                        }.type
+                                    )
+                                    if (!menuItem.attributes.isActive) {
+                                        reorderable = false
+                                        break
+                                    }
+                                } else if (type.equals("modifier-group", ignoreCase = true)) {
+                                    val modifierGroup = GsonHelper.gsonFinal().fromJson<ModifierGroup>(
+                                        includedObject.toString(),
+                                        object : TypeToken<ModifierGroup?>() {
+                                        }.type
+                                    )
+                                    if (modifierGroup.attributes.enabled == 0) {
+                                        reorderable = false
+                                        break
+                                    }
+                                } else if (type.equals("modifier", ignoreCase = true)) {
+                                    val modifierItem = GsonHelper.gsonFinal().fromJson<ModifierItem>(
+                                        includedObject.toString(),
+                                        object : TypeToken<ModifierItem?>() {
+                                        }.type
+                                    )
+                                    if (modifierItem.attributes.enabled == 0) {
+                                        reorderable = false
+                                        break
+                                    }
+                                } else if (type.equals("item-ingredient", ignoreCase = true)) {
+                                    val ingredient = GsonHelper.gsonFinal().fromJson<Ingredient>(
+                                        includedObject.toString(),
+                                        object : TypeToken<Ingredient?>() {
+                                        }.type
+                                    )
+                                    if (ingredient.attributes.enabled == 0) {
+                                        reorderable = false
+                                        break
+                                    }
+                                } else if (type.equals("combo", ignoreCase = true)) {
+                                    try {
+                                        val comboItem = GsonHelper.gsonFinal().fromJson<ComboItemMain>(
+                                            includedObject.toString(),
+                                            object : TypeToken<ComboItemMain?>() {
+                                            }.type
+                                        )
+                                        comboItems.add(comboItem)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                            }
+                            if (!reorderable) {
+                                this.onError("")
+                            } else {
+                                reorder()
+                            }
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                            this.onError("")
+                        }
+                    }
+
+                    override fun onError(o: Any) {
+                        AppLogger.printRetrofitError(o.toString())
+                        ordersView.showError(
+                            getErrorMessage(
+                                o, "", CacheUtil.getInstance().getTranslations(
+                                    Text.REORDER_ERROR,
+                                    "Some items are no longer available in this order."
+                                )
+                            )
+                        )
+                    }
+                })
+        }
+
     }
 
     override fun reorder() {
         CacheUtil.getInstance().orderStore = store
-        if (order!!.deliveryOption.equals(
-                "to-go",
-                ignoreCase = true
-            ) || order!!.deliveryOption.equals(
-                "pickup",
-                ignoreCase = true
-            ) || order!!.deliveryOption.equals("امسك", ignoreCase = true)
-        ) {
-            CacheUtil.getInstance().orderType = OrderType.PICKUP
-        } else if (order!!.deliveryOption.equals(
-                "dine-in",
-                ignoreCase = true
-            ) || order!!.deliveryOption.equals(
-                "eat-in",
-                ignoreCase = true
-            ) || order!!.deliveryOption.equals("أكلت داخل", ignoreCase = true)
-        ) {
-            CacheUtil.getInstance().orderType = OrderType.DINE_IN
-        } else if (order!!.deliveryOption.equals(
-                "deliver",
-                ignoreCase = true
-            ) || order!!.deliveryOption.equals("ايصال", ignoreCase = true)
-        ) {
-            CacheUtil.getInstance().orderType = OrderType.DELIVERY
-            CacheUtil.getInstance().orderAddress = address
-        } else if (order!!.deliveryOption.equals("drive-thru", ignoreCase = true)) {
-            CacheUtil.getInstance().orderType = OrderType.DRIVE_THRU
+        order?.let { order ->
+            if (order.deliveryOption.equals(
+                    "to-go",
+                    ignoreCase = true
+                ) || order.deliveryOption.equals(
+                    "pickup",
+                    ignoreCase = true
+                ) || order.deliveryOption.equals("امسك", ignoreCase = true)
+            ) {
+                CacheUtil.getInstance().orderType = OrderType.PICKUP
+            } else if (order.deliveryOption.equals(
+                    "dine-in",
+                    ignoreCase = true
+                ) || order.deliveryOption.equals(
+                    "eat-in",
+                    ignoreCase = true
+                ) || order.deliveryOption.equals("أكلت داخل", ignoreCase = true)
+            ) {
+                CacheUtil.getInstance().orderType = OrderType.DINE_IN
+            } else if (order.deliveryOption.equals(
+                    "deliver",
+                    ignoreCase = true
+                ) || order.deliveryOption.equals("ايصال", ignoreCase = true)
+            ) {
+                CacheUtil.getInstance().orderType = OrderType.DELIVERY
+                CacheUtil.getInstance().orderAddress = address
+            } else if (order.deliveryOption.equals("drive-thru", ignoreCase = true)) {
+                CacheUtil.getInstance().orderType = OrderType.DRIVE_THRU
+            }
         }
+
 
         val reorderMenuItem = menuItems[menuItemsCount]
         if (reorderMenuItem.isPromo || reorderMenuItem.attributes.isPromotion) {
@@ -1433,7 +1475,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                         .fromJson(ingredientDb.data, IngredientCdn::class.java)
                     val ingredient =
                         IngredientCdn.convert(ingredientCdn, LocaleUtil.getInstance().language)
-                    ingredient.id = ingredientIds[ingredientCdn.id]!!.id
+                    ingredient.id = ingredientIds[ingredientCdn.id]?.id
                     ingredients.add(ingredient)
                 }
                 Collections.sort(ingredients) { ingredient1, ingredient2 -> ingredient1.attributes.displayOrder - ingredient2.attributes.displayOrder }
@@ -1456,18 +1498,20 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                             .fromJson(modifierGroupDb.data, ModifierGroupCdn::class.java)
                     )
                     val modifierItems = LinkedList<ModifierItem>()
-                    val modifierGroupModifierItems = modifierGroupIds[modifierGroupCdn.id]!!
-                        .modifiers
+                    val modifierGroupModifierItems = modifierGroupIds[modifierGroupCdn.id]?.modifiers
                     val modifierGroupModifierItemIds = ArrayList<String>()
-                    val excludeModifierItems = modifierGroupIds[modifierGroupCdn.id]!!
-                        .excludeModifiers
+                    val excludeModifierItems = modifierGroupIds[modifierGroupCdn.id]?.excludeModifiers
                     val excludedModifierItems: MutableSet<String> = HashSet()
-                    for (exclude: Int in excludeModifierItems) {
-                        excludedModifierItems.add(exclude.toString())
+                    excludeModifierItems?.let {
+                        for (exclude: Int in it) {
+                            excludedModifierItems.add(exclude.toString())
+                        }
                     }
-                    for (modifierGroupModifierItem: ModifierItem in modifierGroupModifierItems) {
-                        if (!excludedModifierItems.contains(modifierGroupModifierItem.id)) {
-                            modifierGroupModifierItemIds.add(modifierGroupModifierItem.id)
+                    modifierGroupModifierItems?.let {
+                        for (modifierGroupModifierItem: ModifierItem in it) {
+                            if (!excludedModifierItems.contains(modifierGroupModifierItem.id)) {
+                                modifierGroupModifierItemIds.add(modifierGroupModifierItem.id)
+                            }
                         }
                     }
                     for (modifierItemDb: ModifierItemDb in appDatabase.modifierItemDao()
@@ -2474,7 +2518,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     private var transactions: ArrayList<LoyaltyPointsTransaction>? = null
 
     override fun getMukafaaTransaction(): LoyaltyPointsTransaction? {
-        if (transactions != null) {
+        transactions?.let { transactions ->
             for (transaction in transactions!!) {
                 if (transaction.attributes != null && transaction.attributes.provider != null && Values.MUKAFAA_PROVIDER.equals(
                         transaction.attributes.provider,
@@ -2488,13 +2532,13 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         return null
     }
 
-    override fun getLoyaltyPointsTransaction(): ArrayList<LoyaltyPointsTransaction> {
-        return transactions!!
+    override fun getLoyaltyPointsTransaction(): ArrayList<LoyaltyPointsTransaction>? {
+        return transactions
     }
 
     override fun getSoloLoyaltyTransaction(): LoyaltyPointsTransaction? {
-        if (transactions != null) {
-            for (transaction in transactions!!) {
+        transactions?.let { transactions ->
+            for (transaction in transactions) {
                 if ((transaction.attributes != null) && transaction.attributes.provider != null && Values.LOYALTY_PROVIDER.equals(
                         transaction.attributes.provider,
                         ignoreCase = true
@@ -2550,6 +2594,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                     }
                 } else {
                     subscribeToOrderDriverLocationUpdate(orderId)
+                    setLogisticsPolling(orderId, order.orderStatus.sequence)
                 }
             }
         }
@@ -2564,25 +2609,23 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                 message
             )
         }
-        order?.let { order ->
-            val status = order.orderStatus
-            if(coroutinePoller == null
-                && status.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value
-                && status.sequence != OrderStatusType.CANCELLED_BY_EMPLOYEE.value
-                && status.sequence != OrderStatusType.FINISHED.value
-                && status.sequence != OrderStatusType.CANCELLED_BY_CUSTOMER.value){
-                coroutinePoller = CoroutinePoller(Dispatchers.IO){
-                    sendLogisticsPoll(orderId)
-                }
-                val flow = coroutinePoller?.poll(pollingValue * 1000L)
-                GlobalScope.launch(Dispatchers.IO) {
-                    flow?.collectLatest { it.invoke() }
-                }
-            }
-        }
-
     }
 
+    private fun setLogisticsPolling(orderId: String, orderStatus : Int){
+        if(coroutinePoller == null
+            && orderStatus >= OrderStatusType.DELIVERY_IN_PROGRESS.value
+            && orderStatus != OrderStatusType.CANCELLED_BY_EMPLOYEE.value
+            && orderStatus != OrderStatusType.FINISHED.value
+            && orderStatus != OrderStatusType.CANCELLED_BY_CUSTOMER.value){
+            coroutinePoller = CoroutinePoller(Dispatchers.IO){
+                sendLogisticsPoll(orderId)
+            }
+            val flow = coroutinePoller?.poll(pollingValue * 1000L)
+            GlobalScope.launch(Dispatchers.IO) {
+                flow?.collectLatest { it.invoke() }
+            }
+        }
+    }
 
 
 
@@ -2595,6 +2638,18 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                 val jsonObject = JSONObject(message.data.toString())
                 val orderObject = jsonObject.optJSONObject("order")
                 if (orderObject != null) {
+
+                    val currentStatusSequence = when {
+                        orderObject.has("current-status") -> {
+                            val currentStatus = orderObject.getJSONObject("current-status")
+                            if(currentStatus.has("sequence")){
+                                currentStatus.getInt("sequence")
+                            }else {
+                                0
+                            }
+                        }
+                        else -> 0
+                    }
                     val lyveDriverObject = orderObject.optJSONObject("lyve-driver")
                     if (lyveDriverObject != null) {
                         val lyveDriver =
@@ -2614,6 +2669,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                     ordersView.showDriver(customerLatLng, driverLatLng, bearing.eta)
                                     if(!isLocationUpdateSubscribed){
                                         subscribeToOrderDriverLocationUpdate(order.id)
+                                        setLogisticsPolling(order.id, currentStatusSequence)
                                     }
                                 }
                             } else {
