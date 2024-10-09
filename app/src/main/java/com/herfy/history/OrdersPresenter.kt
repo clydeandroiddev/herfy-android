@@ -2614,9 +2614,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     private fun setLogisticsPolling(orderId: String, orderStatus : Int){
         if(coroutinePoller == null
             && orderStatus >= OrderStatusType.DELIVERY_IN_PROGRESS.value
-            && orderStatus != OrderStatusType.CANCELLED_BY_EMPLOYEE.value
-            && orderStatus != OrderStatusType.FINISHED.value
-            && orderStatus != OrderStatusType.CANCELLED_BY_CUSTOMER.value){
+            && orderStatus < OrderStatusType.FINISHED.value){
             coroutinePoller = CoroutinePoller(Dispatchers.IO){
                 sendLogisticsPoll(orderId)
             }
