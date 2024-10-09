@@ -102,7 +102,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     private var newestToOldest = true
     private val ordersMap = HashMap<String, Int?>()
     private var orders = ArrayList<OrderHistory>()
-    private lateinit var order: OrderDetails
+    private var order: OrderDetails? = null
     private var orderStatuses = ArrayList<OrderStatus>()
     private var store: Store? = null
     private var address: Address? = null
@@ -303,231 +303,232 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                             val data = jsonObject.getJSONObject("data")
 
                             order = OrderDetails.parse(data)
-
-                            try {
-                                if (jsonObject.has("included") && !jsonObject.isNull("included")) {
-                                    val included = jsonObject.getJSONArray("included")
-                                    for (a in 0 until included.length()) {
-                                        val includedObject = included.getJSONObject(a)
-                                        if ((includedObject.getString("type") == "payments")) {
-                                            order.payment = GsonHelper.gsonFinal().fromJson(
-                                                includedObject.toString(),
-                                                object : TypeToken<Payment?>() {
-                                                }.type
-                                            )
-                                        } else if ((includedObject.getString("type") == "customer-car")) {
-                                            order.customerCar = GsonHelper.gsonFinal().fromJson(
-                                                includedObject.toString(),
-                                                object : TypeToken<CustomerCar?>() {
-                                                }.type
-                                            )
+                            order?.let { order ->
+                                try {
+                                    if (jsonObject.has("included") && !jsonObject.isNull("included")) {
+                                        val included = jsonObject.getJSONArray("included")
+                                        for (a in 0 until included.length()) {
+                                            val includedObject = included.getJSONObject(a)
+                                            if ((includedObject.getString("type") == "payments")) {
+                                                order.payment = GsonHelper.gsonFinal().fromJson(
+                                                    includedObject.toString(),
+                                                    object : TypeToken<Payment?>() {
+                                                    }.type
+                                                )
+                                            } else if ((includedObject.getString("type") == "customer-car")) {
+                                                order.customerCar = GsonHelper.gsonFinal().fromJson(
+                                                    includedObject.toString(),
+                                                    object : TypeToken<CustomerCar?>() {
+                                                    }.type
+                                                )
+                                            }
                                         }
                                     }
-                                }
 
-                                if (order.getPayments().statusDescription.isEmpty()) {
+                                    if (order.payments.statusDescription.isEmpty()) {
+                                        val dataArr = jsonObject.optJSONArray("included")
+                                        if (dataArr != null) {
+                                            for (i in 0 until dataArr.length()) {
+                                                val dataObj = dataArr.optJSONObject(i)
+                                                if (dataObj != null) {
+                                                    if ((dataObj.optString("type") == "payments")) {
+                                                        val attributes =
+                                                            checkNotNull(dataObj.optJSONObject("attributes"))
+                                                        val payments = Payments(
+                                                            attributes.optString("status"),
+                                                            attributes.optString("status-description")
+                                                        )
+                                                        order.setPayments(payments)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     val dataArr = jsonObject.optJSONArray("included")
+                                    transactions = ArrayList()
                                     if (dataArr != null) {
                                         for (i in 0 until dataArr.length()) {
                                             val dataObj = dataArr.optJSONObject(i)
                                             if (dataObj != null) {
-                                                if ((dataObj.optString("type") == "payments")) {
-                                                    val attributes =
-                                                        checkNotNull(dataObj.optJSONObject("attributes"))
-                                                    val payments = Payments(
-                                                        attributes.optString("status"),
-                                                        attributes.optString("status-description")
+                                                if ((dataObj.getString("type") == "loyalty-points-transaction")) {
+                                                    transactions!!.add(
+                                                        GsonHelper.gsonFinal().fromJson(
+                                                            dataObj.toString(),
+                                                            object :
+                                                                TypeToken<LoyaltyPointsTransaction?>() {
+                                                            }.type
+                                                        )
                                                     )
-                                                    order.setPayments(payments)
                                                 }
                                             }
                                         }
                                     }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
 
-                                val dataArr = jsonObject.optJSONArray("included")
-                                transactions = ArrayList()
-                                if (dataArr != null) {
-                                    for (i in 0 until dataArr.length()) {
-                                        val dataObj = dataArr.optJSONObject(i)
-                                        if (dataObj != null) {
-                                            if ((dataObj.getString("type") == "loyalty-points-transaction")) {
-                                                transactions!!.add(
-                                                    GsonHelper.gsonFinal().fromJson(
-                                                        dataObj.toString(),
-                                                        object :
-                                                            TypeToken<LoyaltyPointsTransaction?>() {
+                                if (!statusUpdate) {
+                                    if (!reorder) {
+                                        val orderId = order.getId()
+                                        subscribeToOrderStatusUpdate(orderId)
+                                        subscribeToOrderDriverAssign(orderId)
+                                        getOrderStatuses()
+                                        getOrderFeedbackTopics()
+                                    }
+
+                                    menuItems = ArrayList()
+                                    val comboPrices = HashMap<String, Double>()
+                                    if (jsonObject.has("included") && !jsonObject.isNull("included")) {
+                                        val included = jsonObject.getJSONArray("included")
+                                        for (i in 0 until included.length()) {
+                                            val includedObject = included.getJSONObject(i)
+                                            val includedType = includedObject.getString("type")
+                                            if ((includedType == "order-item")) {
+                                                val menuItem = GsonHelper.gsonFinal()
+                                                    .fromJson<MenuItem>(
+                                                        includedObject.toString(),
+                                                        object : TypeToken<MenuItem?>() {
                                                         }.type
                                                     )
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-
-                            if (!statusUpdate) {
-                                if (!reorder) {
-                                    val orderId = order.getId()
-                                    subscribeToOrderStatusUpdate(orderId)
-                                    subscribeToOrderDriverAssign(orderId)
-                                    getOrderStatuses()
-                                    getOrderFeedbackTopics()
-                                }
-
-                                menuItems = ArrayList()
-                                val comboPrices = HashMap<String, Double>()
-                                if (jsonObject.has("included") && !jsonObject.isNull("included")) {
-                                    val included = jsonObject.getJSONArray("included")
-                                    for (i in 0 until included.length()) {
-                                        val includedObject = included.getJSONObject(i)
-                                        val includedType = includedObject.getString("type")
-                                        if ((includedType == "order-item")) {
-                                            val menuItem = GsonHelper.gsonFinal()
-                                                .fromJson<MenuItem>(
+                                                menuItems.add(menuItem)
+                                            } else if ((includedType == "location")) {
+                                                store = Store.parseStore(includedObject)
+                                            } else if ((includedType == "customer-address")) {
+                                                address = Address.parseAddress(includedObject)
+                                            } else if ((includedType == "combo")) {
+                                                val combo = GsonHelper.gsonFinal().fromJson<MenuItem>(
                                                     includedObject.toString(),
                                                     object : TypeToken<MenuItem?>() {
                                                     }.type
                                                 )
-                                            menuItems.add(menuItem)
-                                        } else if ((includedType == "location")) {
-                                            store = Store.parseStore(includedObject)
-                                        } else if ((includedType == "customer-address")) {
-                                            address = Address.parseAddress(includedObject)
-                                        } else if ((includedType == "combo")) {
-                                            val combo = GsonHelper.gsonFinal().fromJson<MenuItem>(
-                                                includedObject.toString(),
-                                                object : TypeToken<MenuItem?>() {
-                                                }.type
-                                            )
-                                            comboPrices[combo.attributes.itemId.toString()] =
-                                                combo.attributes.finalPrice
-                                        }
-                                    }
-                                    for (menuItem: MenuItem in menuItems) {
-                                        if (menuItem.attributes.isCombo) {
-                                            val menuItemId = menuItem.attributes.itemId.toString()
-                                            if (comboPrices.containsKey(menuItemId)) {
-                                                val price = comboPrices[menuItemId]
-                                                if (price != null && price != 0.00) {
-                                                    menuItem.price = price
-                                                    menuItem.attributes.price = price
-                                                }
+                                                comboPrices[combo.attributes.itemId.toString()] =
+                                                    combo.attributes.finalPrice
                                             }
                                         }
-                                        val modifierGroups = ArrayList<ModifierGroup>()
-                                        for (i in 0 until included.length()) {
-                                            val includedObject = included.getJSONObject(i)
-                                            if ((includedObject.getString("type") == "modifier-group")) {
-                                                val modifierGroup = GsonHelper.gsonFinal()
-                                                    .fromJson<ModifierGroup>(
-                                                        includedObject.toString(),
-                                                        object : TypeToken<ModifierGroup?>() {
-                                                        }.type
-                                                    )
-                                                var code = ""
-                                                if (modifierGroup.attributes.code != null) {
-                                                    code =
-                                                        modifierGroup.attributes.code.trim { it <= ' ' }
-                                                            .lowercase(Locale.getDefault())
-                                                }
-                                                var type = ""
-                                                if (modifierGroup.attributes.type != null) {
-                                                    type =
-                                                        modifierGroup.attributes.type.trim { it <= ' ' }
-                                                            .lowercase(Locale.getDefault())
-                                                }
-                                                var label = ""
-                                                if (modifierGroup.attributes.label != null) {
-                                                    label =
-                                                        modifierGroup.attributes.label.trim { it <= ' ' }
-                                                            .lowercase(Locale.getDefault())
-                                                }
-                                                if ((code == "sizes") || (type == "sizes") || (label == "sizes")) {
-                                                    modifierGroup.type = ModifierGroupType.SIZES
-                                                } else {
-                                                    modifierGroup.type = ModifierGroupType.OPTIONS
-                                                }
-                                                modifierGroups.add(modifierGroup)
-                                            } else if ((includedObject.getString("type") == "modifier")) {
-                                                val modifierItem = GsonHelper.gsonFinal()
-                                                    .fromJson<OrderModifierItem>(
-                                                        includedObject.toString(),
-                                                        object : TypeToken<OrderModifierItem?>() {
-                                                        }.type
-                                                    )
-
-                                                // for modifiers with empty modifier ID like in combo meal
-                                                if (modifierItem.attributes.id == null || modifierItem.attributes.id.isEmpty()) {
-                                                    modifierItem.attributes.id = modifierItem.id
-                                                }
-
-                                                if (menuItem.modifierItemsIds.contains(modifierItem.id)) {
-                                                    if (menuItem.orderModifierItemsMap.containsKey(
-                                                            modifierItem.attributes.id
-                                                        )
-                                                    ) {
-                                                        val modItem =
-                                                            menuItem.orderModifierItemsMap[modifierItem.attributes.id]
-                                                        if (modItem != null) {
-                                                            modItem.attributes.quantity =
-                                                                modItem.attributes.quantity + modifierItem.attributes.quantity
-                                                            menuItem.orderModifierItemsMap[modifierItem.attributes.id] =
-                                                                modItem
-                                                        }
-                                                    } else {
-                                                        menuItem.orderModifierItemsMap[modifierItem.attributes.id] =
-                                                            modifierItem
+                                        for (menuItem: MenuItem in menuItems) {
+                                            if (menuItem.attributes.isCombo) {
+                                                val menuItemId = menuItem.attributes.itemId.toString()
+                                                if (comboPrices.containsKey(menuItemId)) {
+                                                    val price = comboPrices[menuItemId]
+                                                    if (price != null && price != 0.00) {
+                                                        menuItem.price = price
+                                                        menuItem.attributes.price = price
                                                     }
                                                 }
-                                            } else if ((includedObject.getString("type") == "item-ingredient")) {
-                                                val ingredient = GsonHelper.gsonFinal()
-                                                    .fromJson<OrderIngredient>(
-                                                        includedObject.toString(),
-                                                        object : TypeToken<OrderIngredient?>() {
-                                                        }.type
-                                                    )
-                                                if (menuItem.ingredientsIds.contains(ingredient.id)) {
-                                                    ingredient.attributes.isSelected = false
-                                                    val items: MutableList<OrderIngredient> =
-                                                        ArrayList(menuItem.orderIngredients)
-                                                    items.add(ingredient)
-                                                    menuItem.orderIngredients = items
+                                            }
+                                            val modifierGroups = ArrayList<ModifierGroup>()
+                                            for (i in 0 until included.length()) {
+                                                val includedObject = included.getJSONObject(i)
+                                                if ((includedObject.getString("type") == "modifier-group")) {
+                                                    val modifierGroup = GsonHelper.gsonFinal()
+                                                        .fromJson<ModifierGroup>(
+                                                            includedObject.toString(),
+                                                            object : TypeToken<ModifierGroup?>() {
+                                                            }.type
+                                                        )
+                                                    var code = ""
+                                                    if (modifierGroup.attributes.code != null) {
+                                                        code =
+                                                            modifierGroup.attributes.code.trim { it <= ' ' }
+                                                                .lowercase(Locale.getDefault())
+                                                    }
+                                                    var type = ""
+                                                    if (modifierGroup.attributes.type != null) {
+                                                        type =
+                                                            modifierGroup.attributes.type.trim { it <= ' ' }
+                                                                .lowercase(Locale.getDefault())
+                                                    }
+                                                    var label = ""
+                                                    if (modifierGroup.attributes.label != null) {
+                                                        label =
+                                                            modifierGroup.attributes.label.trim { it <= ' ' }
+                                                                .lowercase(Locale.getDefault())
+                                                    }
+                                                    if ((code == "sizes") || (type == "sizes") || (label == "sizes")) {
+                                                        modifierGroup.type = ModifierGroupType.SIZES
+                                                    } else {
+                                                        modifierGroup.type = ModifierGroupType.OPTIONS
+                                                    }
+                                                    modifierGroups.add(modifierGroup)
+                                                } else if ((includedObject.getString("type") == "modifier")) {
+                                                    val modifierItem = GsonHelper.gsonFinal()
+                                                        .fromJson<OrderModifierItem>(
+                                                            includedObject.toString(),
+                                                            object : TypeToken<OrderModifierItem?>() {
+                                                            }.type
+                                                        )
+
+                                                    // for modifiers with empty modifier ID like in combo meal
+                                                    if (modifierItem.attributes.id == null || modifierItem.attributes.id.isEmpty()) {
+                                                        modifierItem.attributes.id = modifierItem.id
+                                                    }
+
+                                                    if (menuItem.modifierItemsIds.contains(modifierItem.id)) {
+                                                        if (menuItem.orderModifierItemsMap.containsKey(
+                                                                modifierItem.attributes.id
+                                                            )
+                                                        ) {
+                                                            val modItem =
+                                                                menuItem.orderModifierItemsMap[modifierItem.attributes.id]
+                                                            if (modItem != null) {
+                                                                modItem.attributes.quantity =
+                                                                    modItem.attributes.quantity + modifierItem.attributes.quantity
+                                                                menuItem.orderModifierItemsMap[modifierItem.attributes.id] =
+                                                                    modItem
+                                                            }
+                                                        } else {
+                                                            menuItem.orderModifierItemsMap[modifierItem.attributes.id] =
+                                                                modifierItem
+                                                        }
+                                                    }
+                                                } else if ((includedObject.getString("type") == "item-ingredient")) {
+                                                    val ingredient = GsonHelper.gsonFinal()
+                                                        .fromJson<OrderIngredient>(
+                                                            includedObject.toString(),
+                                                            object : TypeToken<OrderIngredient?>() {
+                                                            }.type
+                                                        )
+                                                    if (menuItem.ingredientsIds.contains(ingredient.id)) {
+                                                        ingredient.attributes.isSelected = false
+                                                        val items: MutableList<OrderIngredient> =
+                                                            ArrayList(menuItem.orderIngredients)
+                                                        items.add(ingredient)
+                                                        menuItem.orderIngredients = items
+                                                    }
                                                 }
                                             }
+                                            menuItem.modifierGroups = modifierGroups
+                                            menuItem.modifierGroupIds = modifierGroups
+                                            menuItem.orderModifierItems =
+                                                LinkedList(menuItem.orderModifierItemsMap.values)
                                         }
-                                        menuItem.modifierGroups = modifierGroups
-                                        menuItem.modifierGroupIds = modifierGroups
-                                        menuItem.orderModifierItems =
-                                            LinkedList(menuItem.orderModifierItemsMap.values)
                                     }
-                                }
-                                if (!reorder) {
-                                    ordersView.showOrder(order, store, address)
-                                    ordersView.showMenuItems(order, menuItems)
-                                } else {
-                                    checkReorder()
-                                }
-                                if (!reorder && driver == null) {
-                                    parseLyveDriver(data)
-                                }
-                            } else {
-                                if (position >= 0) {
-                                    if (position < orders.size) {
-                                        val orderStatus = order.getOrderStatus()
-                                        orders[position].code = orderStatus.code
-                                        orders[position].sequence = orderStatus.sequence
-                                        orders[position].description = orderStatus.description
-                                        ordersView.updateOrder(position)
+                                    if (!reorder) {
+                                        ordersView.showOrder(order, store, address)
+                                        ordersView.showMenuItems(order, menuItems)
+                                    } else {
+                                        checkReorder()
                                     }
-                                } else {
-                                    ordersView.updateStatus(order, order.getOrderStatus())
-                                    if (driver == null) {
+                                    if (!reorder && driver == null) {
                                         parseLyveDriver(data)
                                     }
-                                    ordersView.showRatings(order.getOrderStatus(), ratings)
+                                } else {
+                                    if (position >= 0) {
+                                        if (position < orders.size) {
+                                            val orderStatus = order.getOrderStatus()
+                                            orders[position].code = orderStatus.code
+                                            orders[position].sequence = orderStatus.sequence
+                                            orders[position].description = orderStatus.description
+                                            ordersView.updateOrder(position)
+                                        }
+                                    } else {
+                                        ordersView.updateStatus(order, order.getOrderStatus())
+                                        if (driver == null) {
+                                            parseLyveDriver(data)
+                                        }
+                                        ordersView.showRatings(order.getOrderStatus(), ratings)
+                                    }
                                 }
                             }
                         } catch (e: JSONException) {
@@ -2533,23 +2534,26 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     }
 
     private fun subscribeToOrderDriverAssign(orderId: String) {
-        if (order!!.deliveryOption.equals(
-                "deliver",
-                ignoreCase = true
-            ) || order!!.deliveryOption.equals("ايصال", ignoreCase = true)
-        ) {
-            val ablyUtil = instance
-            val driverId = order!!.driverId
-            if (driverId == null || driverId.isEmpty()) {
-                ablyUtil.subscribeToOrderDriverAssign(orderId) { message: Message ->
-                    this@OrdersPresenter.onOrderDriverAssign(
-                        message
-                    )
+        order?.let { order ->
+            if (order.deliveryOption.equals(
+                    "deliver",
+                    ignoreCase = true
+                ) || order.deliveryOption.equals("ايصال", ignoreCase = true)
+            ) {
+                val ablyUtil = instance
+                val driverId = order.driverId
+                if (driverId == null || driverId.isEmpty()) {
+                    ablyUtil.subscribeToOrderDriverAssign(orderId) { message: Message ->
+                        this@OrdersPresenter.onOrderDriverAssign(
+                            message
+                        )
+                    }
+                } else {
+                    subscribeToOrderDriverLocationUpdate(orderId)
                 }
-            } else {
-                subscribeToOrderDriverLocationUpdate(orderId)
             }
         }
+
     }
 
     private fun subscribeToOrderDriverLocationUpdate(orderId: String) {
@@ -2560,15 +2564,23 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                 message
             )
         }
-        if(coroutinePoller == null){
-            coroutinePoller = CoroutinePoller(Dispatchers.IO){
-                sendLogisticsPoll(orderId)
-            }
-            val flow = coroutinePoller?.poll(pollingValue * 1000L)
-            GlobalScope.launch(Dispatchers.IO) {
-                flow?.collectLatest { it.invoke() }
+        order?.let { order ->
+            val status = order.orderStatus
+            if(coroutinePoller == null
+                && status.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value
+                && status.sequence != OrderStatusType.CANCELLED_BY_EMPLOYEE.value
+                && status.sequence != OrderStatusType.FINISHED.value
+                && status.sequence != OrderStatusType.CANCELLED_BY_CUSTOMER.value){
+                coroutinePoller = CoroutinePoller(Dispatchers.IO){
+                    sendLogisticsPoll(orderId)
+                }
+                val flow = coroutinePoller?.poll(pollingValue * 1000L)
+                GlobalScope.launch(Dispatchers.IO) {
+                    flow?.collectLatest { it.invoke() }
+                }
             }
         }
+
     }
 
 
@@ -2577,31 +2589,35 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     private fun onOrderDetailsStatusUpdate(message: Message) {
         fromAbly = true
         getOrderStatuses()
-        getOrder(order!!.id, -1, true, false)
-        try {
-            val jsonObject = JSONObject(message.data.toString())
-            val orderObject = jsonObject.optJSONObject("order")
-            if (orderObject != null) {
-                val lyveDriverObject = orderObject.optJSONObject("lyve-driver")
-                if (lyveDriverObject != null) {
-                    val lyveDriver =
-                        Gson().fromJson(lyveDriverObject.toString(), LyveDriver::class.java)
-                    if (lyveDriver != null) {
-                        val bearing = lyveDriver.bearing
-                        driver = lyveDriver
-                        ordersView.showWhatsApp(driver?.mobile?:"")
-                        if (bearing != null) {
-                            val lat = bearing.lat
-                            val lng = bearing.lng
-                            if ((lat != null) && !lat.isEmpty() && (lng != null) && !lng.isEmpty()) {
-                                val customerLatLng = LatLng(
-                                    order!!.customerLat, order!!.customerLng
-                                )
-                                val driverLatLng = LatLng(lat.toDouble(), lng.toDouble())
-                                ordersView.showDriver(customerLatLng, driverLatLng, bearing.eta)
-                                if(!isLocationUpdateSubscribed){
-                                    subscribeToOrderDriverLocationUpdate(order.id)
+        order?.let { order ->
+            getOrder(order.id, -1, true, false)
+            try {
+                val jsonObject = JSONObject(message.data.toString())
+                val orderObject = jsonObject.optJSONObject("order")
+                if (orderObject != null) {
+                    val lyveDriverObject = orderObject.optJSONObject("lyve-driver")
+                    if (lyveDriverObject != null) {
+                        val lyveDriver =
+                            Gson().fromJson(lyveDriverObject.toString(), LyveDriver::class.java)
+                        if (lyveDriver != null) {
+                            val bearing = lyveDriver.bearing
+                            driver = lyveDriver
+                            ordersView.showWhatsApp(driver?.mobile?:"")
+                            if (bearing != null) {
+                                val lat = bearing.lat
+                                val lng = bearing.lng
+                                if ((lat != null) && !lat.isEmpty() && (lng != null) && !lng.isEmpty()) {
+                                    val customerLatLng = LatLng(
+                                        order.customerLat, order.customerLng
+                                    )
+                                    val driverLatLng = LatLng(lat.toDouble(), lng.toDouble())
+                                    ordersView.showDriver(customerLatLng, driverLatLng, bearing.eta)
+                                    if(!isLocationUpdateSubscribed){
+                                        subscribeToOrderDriverLocationUpdate(order.id)
+                                    }
                                 }
+                            } else {
+                                getDriver()
                             }
                         } else {
                             getDriver()
@@ -2612,22 +2628,20 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                 } else {
                     getDriver()
                 }
-            } else {
+            } catch (e: JSONException) {
+                e.printStackTrace()
                 getDriver()
             }
-        } catch (e: JSONException) {
-            e.printStackTrace()
-            getDriver()
         }
-        return Unit
     }
 
     private fun onOrderDriverAssign(message: Message) {
-        fromAbly = true
-        val ablyUtil = instance
-        ablyUtil.detachToOrderDriverAssign(order!!.id)
-        getDriver()
-        return Unit
+        order?.let { order ->
+            fromAbly = true
+            val ablyUtil = instance
+            ablyUtil.detachToOrderDriverAssign(order.id)
+            getDriver()
+        }
     }
 
     private fun sendLogisticsPoll(orderId: String) {
@@ -2667,7 +2681,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
 
     override fun getNewFusedLocation(location: Location) {
         hasLocation = true
-        fusedLocationProvider!!.disconnect()
+        fusedLocationProvider?.disconnect()
         this.location = location
         CacheUtil.getInstance().orderLatitude = location.latitude.toString()
         CacheUtil.getInstance().orderLongitude = location.longitude.toString()
@@ -2692,11 +2706,11 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         ordersView.setPresenter(this)
     }
 
-    fun getAddressLoc(latLng: LatLng): String {
+    private fun getAddressLoc(latLng: LatLng): String {
         if (geocoder != null) {
             try {
-                val addresses = geocoder!!.getFromLocation(latLng.latitude, latLng.longitude, 1)
-                addressNew = (if (addresses!!.isEmpty()) null else addresses[0])
+                val addresses = geocoder?.getFromLocation(latLng.latitude, latLng.longitude, 1)
+                addressNew = (if (addresses.isNullOrEmpty()) null else addresses[0])
                 if (addressNew != null) {
                     place = null
                     return addressNew!!.getAddressLine(0)
