@@ -117,6 +117,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     private var coroutinePoller: CoroutinePoller? = null
     private val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
     private var pollingValue = 5
+    private var lyvePollingEnable = false
 
 
     private var orderSequence = -1
@@ -130,6 +131,9 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                 val lyvePolling: String = firebaseRemoteConfig.getString("lyve_polling")
                 if(lyvePolling.isNotEmpty()){
                     val lyvePollingObj = JSONObject(lyvePolling)
+                    if(lyvePollingObj.has("pull-driver-api-enable")){
+                        lyvePollingEnable = lyvePollingObj.getBoolean("pull-driver-api-enable")
+                    }
                     if (lyvePollingObj.has("ttl")) {
                         pollingValue = lyvePollingObj.getInt("ttl")
                     }
@@ -2612,7 +2616,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     }
 
     private fun setLogisticsPolling(orderId: String, orderStatus : Int){
-        if(coroutinePoller == null
+        if(lyvePollingEnable && coroutinePoller == null
             && orderStatus >= OrderStatusType.DELIVERY_IN_PROGRESS.value
             && orderStatus < OrderStatusType.FINISHED.value){
             coroutinePoller = CoroutinePoller(Dispatchers.IO){
