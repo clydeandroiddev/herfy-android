@@ -78,6 +78,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
+import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.showToast
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.CacheUtil
@@ -1631,8 +1632,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     override fun showDriver(customerLatLng: LatLng?, driverLatLng: LatLng?, eta: Int?) {
-        updateDriverFromOrder()
-        updateDriverLocation(driverLatLng, eta)
+        runOnMain {
+            updateDriverFromOrder()
+            updateDriverLocation(driverLatLng, eta)
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -2026,6 +2029,14 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     override fun onDestroy() {
         super.onDestroy()
-        orderPresenter?.detachAbly()
+        orderPresenter?.apply {
+            detachAbly()
+            cancelDriveLocationUpdates()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        orderPresenter?.cancelDriveLocationUpdates()
     }
 }

@@ -166,6 +166,8 @@ public interface OrdersContract {
         ArrayList<OrderHistory> getOrderHistories();
 
         void setOrders(ArrayList<OrderHistory> orders);
+
+        void cancelDriveLocationUpdates();
     }
 
 }
