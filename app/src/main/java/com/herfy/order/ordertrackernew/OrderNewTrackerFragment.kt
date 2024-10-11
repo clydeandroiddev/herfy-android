@@ -20,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -81,11 +82,14 @@ import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.showToast
 import com.herfy.utils.extensions.visible
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.DialogUtils
 import com.herfy.utils.helper.DistanceCalculator
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.MessagingUtil
+import com.herfy.utils.helper.MessagingUtil.whatsAppMessage
 import com.herfy.utils.helper.ViewUtil
 import com.location.FusedLocationProvider
 import com.skylinedynamics.solosdk.api.models.kotlin.DeliveryDriver
@@ -1099,9 +1103,11 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     if (!finalNumber.startsWith(dialCode)) {
                         finalNumber = dialCode + finalNumber
                     }
+
+                    val message = context?.whatsAppMessage(orderId, orderStore?.attributes?.name?:"") ?:""
                     val packageManager = mainActivity.packageManager
                     val intent = Intent(Intent.ACTION_VIEW)
-                    val url = "https://api.whatsapp.com/send?phone=" + finalNumber
+                    val url = "https://api.whatsapp.com/send?phone=$finalNumber&text=$message"
                     intent.setPackage(whatsAppPackageName)
                     intent.data = Uri.parse(url)
                     if (intent.resolveActivity(packageManager) != null) {
