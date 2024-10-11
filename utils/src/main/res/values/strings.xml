@@ -46,7 +46,4 @@
     <string name="side_menu_hi">&#128075;</string>
     <string name="home_greeting_sun">&#9728;&#65039;</string>
     <string name="home_greeting_moon">&#127765;</string>
-    <string name="arabic_language">Arabic</string>
-    <string name="english_language">English</string>
-    <string name="french_language">French</string>
 </resources>

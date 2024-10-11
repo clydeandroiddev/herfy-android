@@ -14,9 +14,8 @@ object MessagingUtil {
         }
         msg.append("\n")
         val preferredLanguage = when {
-            LocaleUtil.getInstance().isArabic -> resources.getString(R.string.arabic_language)
-            LocaleUtil.getInstance().isFrench -> resources.getString(R.string.french_language)
-            else -> resources.getString(R.string.english_language)
+            LocaleUtil.getInstance().isArabic -> CacheUtil.getInstance().getTranslations(Text.ARABIC_LANG_KEY)
+            else -> CacheUtil.getInstance().getTranslations(Text.ENGLISH_LANG_KEY)
         }
         msg.append("${CacheUtil.getInstance().getTranslations(Text.PREFERRED_LANGUAGE, "Preferred Language:")} $preferredLanguage")
         msg.append("\n")

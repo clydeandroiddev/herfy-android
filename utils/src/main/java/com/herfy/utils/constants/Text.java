@@ -1242,4 +1242,7 @@ public class Text {
     public static final String ORDER_NUMBER="order_number";
     public static final String STORE_NAME="store_name";
 
+    public static final String ARABIC_LANG_KEY = "arabic_lang_key";
+    public static final String ENGLISH_LANG_KEY = "english_lang_key";
+
 }
