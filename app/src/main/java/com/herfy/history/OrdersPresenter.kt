@@ -2629,8 +2629,6 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         }
     }
 
-
-
     private fun onOrderDetailsStatusUpdate(message: Message) {
         fromAbly = true
         getOrderStatuses()
