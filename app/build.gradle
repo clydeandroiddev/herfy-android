@@ -185,6 +185,18 @@ android {
             buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
+        merchant2 {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            versionNameSuffix "-merchant-$dateToday.$apkCountForToday"
+            buildConfigField "String", "BASE_URL", "\"https://test-merchant-api2.getsolo.io/\""
+            buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
+            buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
+            buildConfigField "float", "FEATURE_PHASE", '1.3'
+            buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
+            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
+        }
     }
 
     flavorDimensions "concept"
@@ -429,6 +441,7 @@ dependencies {
     kioskImplementation "com.github.chuckerteam.chucker:library:$chucker"
     marketingImplementation "com.github.chuckerteam.chucker:library:$chucker"
     merchantImplementation "com.github.chuckerteam.chucker:library:$chucker"
+    merchant2Implementation "com.github.chuckerteam.chucker:library:$chucker"
 
     implementation 'com.jakewharton:process-phoenix:2.1.2'
 

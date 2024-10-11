@@ -51,7 +51,6 @@ android {
             debuggable true
             minifyEnabled false
             shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "BASE_URL", "\"https://staging-api.getsolo.io/\""
             buildConfigField "String", "SOLO_DRIVER_PACKAGE_NAME", "\"com.solo.driver_android\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"

@@ -19,43 +19,49 @@ android {
 
     buildTypes {
         debug {
+            signingConfig null
+            debuggable true
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         staging {
+            debuggable true
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
+            //buildConfigField "String", "SOLO_APP", "\"ItfsMIdcuH2vaHsW\"" //Herfy Android - DEV USE ONLY
         }
+        //Use this for VAPT builds
         stagingrelease {
             debuggable false
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         prod {
             debuggable true
             minifyEnabled false
             shrinkResources false
-            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
+            buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
         }
         prodrelease {
+            debuggable false
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
+            shrinkResources false
+            buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
         }
         releaselog {
             debuggable true
             minifyEnabled false
             shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
+            buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
         }
         release {
+            debuggable false
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
+            shrinkResources false
+            buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
         }
         consumer {
             debuggable true
@@ -76,6 +82,12 @@ android {
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
         merchant {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
+        }
+        merchant2 {
             debuggable true
             minifyEnabled false
             shrinkResources false

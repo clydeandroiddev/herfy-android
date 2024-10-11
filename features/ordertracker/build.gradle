@@ -23,14 +23,20 @@ android {
     }
 
     buildTypes {
-        staging {
+        debug {
+            debuggable true
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
+        }
+        staging {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
         }
         stagingrelease {
             debuggable false
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
         }
         prod {
             debuggable true
@@ -38,18 +44,19 @@ android {
             shrinkResources false
         }
         prodrelease {
+            debuggable false
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
         }
         releaselog {
             debuggable true
             minifyEnabled false
             shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
+            debuggable false
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
         }
         consumer {
             debuggable true
@@ -67,6 +74,11 @@ android {
             shrinkResources false
         }
         merchant {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        merchant2 {
             debuggable true
             minifyEnabled false
             shrinkResources false
