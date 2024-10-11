@@ -1970,9 +1970,11 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         }
 
                     })
-                ratingBarDialog.show(
-                    it.supportFragmentManager, RatingBarDialog::class.java.simpleName
-                )
+
+                if (isAdded && !isRemoving) {
+                    ratingBarDialog.show(it.supportFragmentManager, RatingBarDialog::class.java.simpleName)
+                }
+
             }
         }
     }

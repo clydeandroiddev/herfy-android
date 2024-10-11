@@ -346,7 +346,10 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                 }
             });
 
-            alertDialog.show();
+            if (!isFinishing() && !isDestroyed()) {
+                alertDialog.show();
+            }
+
 
         } catch (Exception ex) {
 
@@ -385,7 +388,9 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                 }
             });
 
-            alertDialog.show();
+            if (!isFinishing() && !isDestroyed()) {
+                alertDialog.show();
+            }
 
         } catch (Exception ex) {
 
@@ -400,7 +405,10 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
     }
 
     private void dismissDialog(Dialog dialog) {
-        dialog.dismiss();
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+
     }
 
     private boolean isDialogVisible(Dialog dialog) {
@@ -490,7 +498,9 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
             }
         });
 
-        alertDialog.show();
+        if (!isFinishing() && !isDestroyed()) {
+            alertDialog.show();
+        }
 
     }
 

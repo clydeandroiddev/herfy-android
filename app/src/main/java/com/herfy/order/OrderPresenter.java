@@ -341,7 +341,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
                 if (hasLocation) {
                     String storeId = storeObject.optString("id", "");
-                    if(storeId != null && !storeId.isEmpty()) {
+                    if(!storeId.isEmpty()) {
                         StoreDb storeDb = new StoreDb();
                         storeDb.id = storeId;
                         storeDb.applicationId = applicationId;
@@ -417,7 +417,6 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                     }
                 });
             }
-
             sortStoresByDistance(page, pagination.getTotal());
 
         } catch (JSONException e) {
@@ -526,7 +525,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         addCartItem(favorite);
     }
 
-    private void sortStoresByDistance(@Nullable Integer page, @Nullable Integer paginationTotal) {
+    private  void sortStoresByDistance(@Nullable Integer page, @Nullable Integer paginationTotal) {
         Comparator<Store> distanceComparator = (store1, store2) -> {
             if (store1 == null || store1.getAttributes() == null || store1.getAttributes().getDistance() == null ||
                     store2 == null || store2.getAttributes() == null || store2.getAttributes().getDistance() == null) {
@@ -535,10 +534,22 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
             return store1.getAttributes().getDistance().compareTo(store2.getAttributes().getDistance());
         };
 
-        dineInStores.sort(distanceComparator);
-        pickupCurbsideStores.sort(distanceComparator);
-        if(page != null && paginationTotal != null) {
-            orderView.showStores(dineInStores, pickupCurbsideStores);
+        ArrayList<Store> dineInStoresCopy;
+        ArrayList<Store> pickupCurbsideStoresCopy;
+
+        //to prevent ConcurrentModificationException error
+        synchronized (dineInStores) {
+            dineInStoresCopy = new ArrayList<>(dineInStores);
+        }
+        synchronized (pickupCurbsideStores) {
+            pickupCurbsideStoresCopy = new ArrayList<>(pickupCurbsideStores);
+        }
+
+        dineInStoresCopy.sort(distanceComparator);
+        pickupCurbsideStoresCopy.sort(distanceComparator);
+
+        if (page != null && paginationTotal != null) {
+            orderView.showStores(dineInStoresCopy, pickupCurbsideStoresCopy);
             if (totalStoresCount < paginationTotal) {
                 getStores(page + 1);
             }
