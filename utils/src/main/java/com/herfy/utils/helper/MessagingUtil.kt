@@ -1,13 +1,10 @@
 package com.herfy.utils.helper
 
-import android.content.Context
-import androidx.compose.ui.res.stringResource
-import com.herfy.utils.R
 import com.herfy.utils.constants.Text
 
 object MessagingUtil {
 
-    fun Context.whatsAppMessage(orderId : String, storeName : String): String {
+    fun whatsAppMessage(orderId : String, storeName : String): String {
         val msg = StringBuilder()
         AuthUtil.getInstance().customer?.attributes?.apply {
             msg.append("${CacheUtil.getInstance().getTranslations(Text.CUSTOMER_NAME, "Customer Name:")} $firstName $lastName")
