@@ -140,7 +140,7 @@ class PromotionDetailsDialogFragment : BaseDialogFragment() {
                 }
                 binding.avail.setOnClickListener {
                     if (!toRemove) {
-                        if (CacheUtil.getInstance().checkIfUsedPromotion(campaign?.promotion?.id)) {
+                        if (CacheUtil.getInstance().checkIfUsedPromotion(campaign?.promotion)) {
                             showAlertDialog(
                                 "", CacheUtil.getInstance().getTranslations(
                                     Text.PROMO_ALREAD_USED_MESSAGE_KEY,

@@ -94,7 +94,7 @@ class CartPromoAdapter(
                     lnFooterCoupon.setBackgroundResource(R.drawable.background_available_to_redeem)
                     ivFooterCoupon.setImageResource(R.drawable.ic_coupon_available)
                     clCoupons.setOnClickListener { v: View? ->
-                        if (CacheUtil.getInstance().checkIfUsedPromotion(campaign.promotion?.id)) {
+                        if (CacheUtil.getInstance().checkIfUsedPromotion(campaign.promotion)) {
                             listener?.error()
                         } else {
                             listener?.select(

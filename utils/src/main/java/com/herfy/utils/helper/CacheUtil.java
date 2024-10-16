@@ -31,6 +31,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
 import com.skylinedynamics.solosdk.api.models.objects.Promotion;
+import com.skylinedynamics.solosdk.api.models.objects.PromotionRules;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.Tier;
@@ -2168,10 +2169,25 @@ public class CacheUtil {
         editor.apply();
     }
 
-    public boolean checkIfUsedPromotion(String id) {
-        ArrayList<String> usedPromotions = getDeviceUsedPromotions();
-        for (int i = 0; i < usedPromotions.size(); i++) {
-            if (usedPromotions.get(i).equals(id)) {
+    public boolean checkIfUsedPromotion(Promotion promotion) {
+        if (promotion != null) {
+            if (promotion.getAttributes().getRedemptionLimitCustomer() == 1 ||
+                    !promotion.getAttributes().getRequirements().isRepeating() ||
+                    isLimitedPromotion(promotion.getAttributes().getRules())) {
+                ArrayList<String> usedPromotions = getDeviceUsedPromotions();
+                for (int i = 0; i < usedPromotions.size(); i++) {
+                    if (usedPromotions.get(i).equals(promotion.getId())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isLimitedPromotion(List<PromotionRules> rules) {
+        for (int i = 0; i < rules.size(); i++) {
+            if (rules.get(i).getRuleKey().equals("redemption-limit-customer") && rules.get(i).getInputValue() == 1) {
                 return true;
             }
         }

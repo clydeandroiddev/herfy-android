@@ -247,7 +247,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                 binding.btnClaim.alpha = 1f
                 binding.btnClaim.setOnClickListener {
                     if (!toRemove) {
-                        if (CacheUtil.getInstance().checkIfUsedPromotion(promo?.promotion?.id)) {
+                        if (CacheUtil.getInstance().checkIfUsedPromotion(promo?.promotion)) {
                             showError(
                                 CacheUtil.getInstance().getTranslations(
                                     Text.PROMO_ALREAD_USED_MESSAGE_KEY,
