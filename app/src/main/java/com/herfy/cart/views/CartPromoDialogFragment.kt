@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -21,6 +20,7 @@ import com.herfy.cart.adapters.CartPromoAdapter.CartPromoListener
 import com.herfy.cart.databinding.FragmentCouponsBinding
 import com.herfy.common.dialog.CommonCustomDialog
 import com.herfy.ext.cast
+import com.herfy.main.MainActivity
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.helper.CacheUtil
@@ -187,6 +187,20 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
 
     override fun select(campaign: Campaign, position: Int) {
         onAction?.onAvail(true, position)
+    }
+
+    override fun error() {
+        try {
+            val activity = activity as MainActivity?
+            activity?.showAlertDialog(
+                "", CacheUtil.getInstance().getTranslations(
+                    Text.PROMO_ALREAD_USED_MESSAGE_KEY,
+                    "Sorry the promo is already used on this device"
+                )
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun showInvalidCouponDialog(message: String) {

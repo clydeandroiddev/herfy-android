@@ -1467,7 +1467,13 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun showPayment() {
-        KochavaTrackerUtil.trackEventWithData(EventType.CHECKOUT_START.eventName, KochavaEventUtil.purchaseObj(cartPresenter.menuItemsTotalPrice, cartPresenter.menuItemsList))
+        KochavaTrackerUtil.trackEventWithData(
+            EventType.CHECKOUT_START.eventName,
+            KochavaEventUtil.purchaseObj(
+                cartPresenter.menuItemsTotalPrice,
+                cartPresenter.menuItemsList
+            )
+        )
         runOnMain {
             continueCheckout = false
             dismissProgressDialog()

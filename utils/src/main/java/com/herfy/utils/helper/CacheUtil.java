@@ -166,6 +166,7 @@ public class CacheUtil {
 
     private static final String INITIAL_CAMPAIGN = "initial_campaign";
     private static final String IN_APP_REVIEW_ENABLE = "enable_in_app_review";
+    private static final String DEVICE_USED_PROMOTIONS = "device_used_promotions";
 
     private CacheUtil(Context context) {
 
@@ -424,6 +425,21 @@ public class CacheUtil {
         String slides = cacheSharedPreferences.getString(SLIDES, null);
         if (slides != null) {
             return GsonHelper.gsonFinal().fromJson(slides, new TypeToken<ArrayList<Slide>>() {
+            }.getType());
+        }
+        return new ArrayList<>();
+    }
+
+    public void setDeviceUsedPromotions(String promotions) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(DEVICE_USED_PROMOTIONS, promotions);
+        editor.apply();
+    }
+
+    public ArrayList<String> getDeviceUsedPromotions() {
+        String promotions = cacheSharedPreferences.getString(DEVICE_USED_PROMOTIONS, null);
+        if (promotions != null) {
+            return GsonHelper.gsonFinal().fromJson(promotions, new TypeToken<ArrayList<String>>() {
             }.getType());
         }
         return new ArrayList<>();
@@ -2152,4 +2168,13 @@ public class CacheUtil {
         editor.apply();
     }
 
+    public boolean checkIfUsedPromotion(String id) {
+        ArrayList<String> usedPromotions = getDeviceUsedPromotions();
+        for (int i = 0; i < usedPromotions.size(); i++) {
+            if (usedPromotions.get(i).equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -30,6 +30,7 @@ class CartPromoAdapter(
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     interface CartPromoListener {
         fun select(campaign: Campaign, position: Int)
+        fun error()
     }
 
 
@@ -66,7 +67,8 @@ class CartPromoAdapter(
                         ignoreCase = true
                     )
                 ) {
-                } else { }
+                } else {
+                }
                 tvCoupon.text = campaign.attributes.name
                 tvCouponDescription.text = campaign.attributes.description
                 val validFromDate =
@@ -92,10 +94,14 @@ class CartPromoAdapter(
                     lnFooterCoupon.setBackgroundResource(R.drawable.background_available_to_redeem)
                     ivFooterCoupon.setImageResource(R.drawable.ic_coupon_available)
                     clCoupons.setOnClickListener { v: View? ->
-                        listener?.select(
-                            campaign,
-                            position
-                        )
+                        if (CacheUtil.getInstance().checkIfUsedPromotion(campaign.promotion?.id)) {
+                            listener?.error()
+                        } else {
+                            listener?.select(
+                                campaign,
+                                position
+                            )
+                        }
                     }
                 } else {
                     val tvContext = tvFooterCoupon.context
