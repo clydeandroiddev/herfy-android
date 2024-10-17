@@ -2187,7 +2187,7 @@ public class CacheUtil {
 
     private boolean isLimitedPromotion(List<PromotionRules> rules) {
         for (int i = 0; i < rules.size(); i++) {
-            if (rules.get(i).getRuleKey().equals("redemption-limit-customer") && rules.get(i).getInputValue() == 1) {
+            if (rules.get(i).getRuleKey().equals("redemption-limit-customer") && rules.get(i).getInputValue().equals("1")) {
                 return true;
             }
         }
