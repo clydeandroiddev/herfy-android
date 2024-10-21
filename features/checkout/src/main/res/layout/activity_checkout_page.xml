@@ -231,7 +231,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:visibility="gone"
-                                app:constraint_referenced_ids="view_delivery,iv_delivery_note,ln_delivery_instruction"/>
+                                app:constraint_referenced_ids="view_delivery,iv_delivery_note,ln_delivery_instruction" />
 
 
                             <View
@@ -260,11 +260,11 @@
                                 android:id="@+id/ln_delivery_instruction"
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
+                                android:layout_gravity="center"
                                 android:gravity="center_vertical"
                                 android:orientation="vertical"
-                                android:layout_gravity="center"
-                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintBottom_toBottomOf="@+id/iv_delivery_note"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/iv_delivery_note"
                                 app:layout_constraintTop_toTopOf="@+id/iv_delivery_note">
 
@@ -275,12 +275,12 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="12dp"
                                     android:fontFamily="@font/inter_medium"
-                                    tools:text="Delivery Instruction"
                                     android:textAllCaps="false"
                                     android:textColor="@color/color_dark_gray"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintStart_toEndOf="@+id/iv_delivery_note"
-                                    app:layout_constraintTop_toTopOf="@+id/iv_delivery_note" />
+                                    app:layout_constraintTop_toTopOf="@+id/iv_delivery_note"
+                                    tools:text="Delivery Instruction" />
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/tv_delivery_instruction"
@@ -290,14 +290,14 @@
                                     android:layout_marginStart="@dimen/_12sdp"
                                     android:ellipsize="end"
                                     android:maxLines="2"
-                                    android:visibility="gone"
-                                    tools:visibility="visible"
                                     android:textColor="@color/color_gray"
+                                    android:visibility="gone"
                                     app:layout_constraintBottom_toBottomOf="@+id/iv_delivery_note"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintStart_toEndOf="@+id/iv_delivery_note"
                                     app:layout_constraintTop_toBottomOf="@+id/tv_delivery_instruction_label"
-                                    tools:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum" />
+                                    tools:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+                                    tools:visibility="visible" />
                             </LinearLayout>
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -308,28 +308,63 @@
                         layout="@layout/payment_method_new"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/margin_medium"
                         android:layout_marginStart="@dimen/margin_small"
-                        android:layout_marginEnd="@dimen/margin_small" />
-
-                    <include
-                        android:id="@+id/layout_alrahji"
-                        layout="@layout/layout_alrhaji"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/margin_medium"
-                        android:layout_marginStart="@dimen/margin_small"
-                        android:layout_marginEnd="@dimen/margin_small"/>
-
-                    <include
-                        android:id="@+id/layout_loyalty"
-                        layout="@layout/item_loyalty_points"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_small"
-                        android:layout_marginTop="@dimen/margin_micro"
                         android:layout_marginEnd="@dimen/margin_small"
-                        android:layout_marginBottom="@dimen/_5sdp" />
+                        android:layout_marginBottom="@dimen/margin_medium" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/alrhajiPayment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <include
+                            android:id="@+id/layout_alrahji"
+                            layout="@layout/layout_alrhaji"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_small"
+                            android:layout_marginEnd="@dimen/margin_small"
+                            android:layout_marginBottom="@dimen/margin_medium" />
+
+                        <View
+                            android:id="@+id/alrajhiBlocker"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:clickable="true"
+                            app:layout_constraintBottom_toBottomOf="@id/layout_alrahji"
+                            app:layout_constraintEnd_toEndOf="@id/layout_alrahji"
+                            app:layout_constraintStart_toStartOf="@id/layout_alrahji"
+                            app:layout_constraintTop_toTopOf="@id/layout_alrahji" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/loyaltyPayment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <include
+                            android:id="@+id/layout_loyalty"
+                            layout="@layout/item_loyalty_points"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_small"
+                            android:layout_marginTop="@dimen/margin_micro"
+                            android:layout_marginEnd="@dimen/margin_small"
+                            android:layout_marginBottom="@dimen/_5sdp" />
+
+                        <View
+                            android:id="@+id/loyaltyBlocker"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:clickable="true"
+                            app:layout_constraintBottom_toBottomOf="@id/layout_loyalty"
+                            app:layout_constraintEnd_toEndOf="@id/layout_loyalty"
+                            app:layout_constraintStart_toStartOf="@id/layout_loyalty"
+                            app:layout_constraintTop_toTopOf="@id/layout_loyalty" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <include
                         android:id="@+id/layout_payment_summary"
@@ -433,9 +468,9 @@
 
         <View
             android:id="@+id/blocker"
-            android:alpha="0.5"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:alpha="0.5"
             android:background="@color/white"
             android:clickable="true"
             android:focusable="true"

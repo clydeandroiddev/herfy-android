@@ -72,8 +72,6 @@ import com.herfy.payment.savedcards.SavedCardsDialog
 import com.herfy.payment.views.CustomCheckoutDialog
 import com.herfy.payment.views.CustomCheckoutDialog.OnActionSelectedListener
 import com.herfy.payment.views.MoyasarActivity
-import com.herfy.payment.views.PaymentDialogFragment
-import com.herfy.ratings.AppRatingBroadcastReceiver
 import com.herfy.util.AppLogger
 import com.herfy.util.ShipBookLogger.logError
 import com.herfy.util.ShipBookLogger.logInfo
@@ -373,7 +371,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     private fun showMap() {
         val store = CacheUtil.getInstance().orderStore
-        if(store != null) {
+        if (store != null) {
             markerOptionsList.clear()
             var currentMarkerIcon =
                 com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
@@ -1572,6 +1570,28 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     } else CacheUtil.getInstance()
                         .getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
                 binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_cod)
+            }
+        }
+
+        checkSelectedPayment()
+    }
+
+    private fun checkSelectedPayment() {
+        binding?.let {
+            it.apply {
+                if (CacheUtil.getInstance().orderPayment == PaymentType.CASH) {
+                    alrajhiBlocker.isVisible = true
+                    loyaltyBlocker.isVisible = true
+                    alrhajiPayment.alpha = 0.5f
+                    loyaltyPayment.alpha = 0.5f
+                    binding!!.layoutLoyalty.loyaltySwitch.isChecked = false
+                    binding!!.layoutAlrahji.switchAlrahji.isChecked = false
+                } else {
+                    alrhajiPayment.alpha = 1f
+                    loyaltyPayment.alpha = 1f
+                    loyaltyBlocker.isVisible = false
+                    alrajhiBlocker.isVisible = false
+                }
             }
         }
     }
