@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.core.view.isVisible
@@ -154,6 +153,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         super.onResume()
         updateGreetings()
         updateCustomerLoyalty()
+        setupPromotions()
         setupOrdertracker()
     }
 
