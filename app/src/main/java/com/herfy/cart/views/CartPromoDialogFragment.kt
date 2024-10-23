@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -187,6 +186,21 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
 
     override fun select(campaign: Campaign, position: Int) {
         onAction?.onAvail(true, position)
+    }
+
+    override fun error() {
+        try {
+            activity?.cast<BaseActivity> {
+                it.showAlertDialog(
+                    "", CacheUtil.getInstance().getTranslations(
+                        Text.PROMO_ALREAD_USED_MESSAGE_KEY,
+                        "Sorry the promo is already used on this device"
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun showInvalidCouponDialog(message: String) {

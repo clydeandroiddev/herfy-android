@@ -113,7 +113,7 @@ public class CartAvailablePromoDialogFragment extends DialogFragment implements 
         skip.setOnClickListener(v -> {
             donTriggerClose = false;
             close.performClick();
-            if(CacheUtil.getInstance().getCampaign() != null) {
+            if (CacheUtil.getInstance().getCampaign() != null) {
                 onAction.onRemove();
             }
         });
@@ -125,7 +125,7 @@ public class CartAvailablePromoDialogFragment extends DialogFragment implements 
                     // TODO: Remove activity reference
                     try {
                         MainActivity activity = (MainActivity) getActivity();
-                        if(activity != null) {
+                        if (activity != null) {
                             activity.showPromptAlertDialog("", CacheUtil.getInstance().getTranslations(Text.ONE_DISCOUNT_ONLY_MESSAGE, "You can only apply one discount at a time. Currently applied discount will be removed"), CacheUtil.getInstance().getTranslations(Text.YES_CAPS), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -220,7 +220,7 @@ public class CartAvailablePromoDialogFragment extends DialogFragment implements 
     }
 
     @Override
-    public void refreshMenuItems(int position,   boolean fromChangeQuantity) {
+    public void refreshMenuItems(int position, boolean fromChangeQuantity) {
 
     }
 
@@ -455,7 +455,7 @@ public class CartAvailablePromoDialogFragment extends DialogFragment implements 
             remove.setVisibility(View.GONE);
         } else {
             skip.setVisibility(View.GONE);
-            if(CacheUtil.getInstance().getCampaign() != null && CacheUtil.getInstance().getCampaign().getId().equalsIgnoreCase(campaign.getId())) {
+            if (CacheUtil.getInstance().getCampaign() != null && CacheUtil.getInstance().getCampaign().getId().equalsIgnoreCase(campaign.getId())) {
                 avail.setVisibility(View.GONE);
                 remove.setVisibility(View.VISIBLE);
             } else {
@@ -468,7 +468,7 @@ public class CartAvailablePromoDialogFragment extends DialogFragment implements 
     }
 
     public void updateCampaigns(boolean initial, int selected, List<Campaign> campaigns) {
-        if(CacheUtil.getInstance().getCampaign() == null) {
+        if (CacheUtil.getInstance().getCampaign() == null) {
             skip.setVisibility(View.VISIBLE);
             avail.setVisibility(View.GONE);
             remove.setVisibility(View.GONE);
@@ -491,15 +491,32 @@ public class CartAvailablePromoDialogFragment extends DialogFragment implements 
             recyclerView.setVisibility(View.VISIBLE);
         }
 
-        if(!initial) {
+        if (!initial) {
             adapter.updateCampaigns(selected, campaigns);
         }
 
     }
 
+    @Override
+    public void error() {
+        try {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity != null) {
+                activity.showAlertDialog("", CacheUtil.getInstance().getTranslations(
+                        Text.PROMO_ALREAD_USED_MESSAGE_KEY,
+                        "Sorry the promo is already used on this device"
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public interface OnAction {
         void onClose();
+
         void onAvail(boolean removeCoupon, int selected);
+
         void onRemove();
     }
 

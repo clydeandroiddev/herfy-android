@@ -190,6 +190,8 @@ public interface PaymentContract {
 
         List<MenuItem> getMenuItemsList();
 
+        void setDevicePromotion();
+
     }
 
 }

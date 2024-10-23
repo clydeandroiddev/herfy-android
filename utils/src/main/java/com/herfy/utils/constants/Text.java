@@ -1245,4 +1245,6 @@ public class Text {
     public static final String ARABIC_LANG_KEY = "arabic_lang_key";
     public static final String ENGLISH_LANG_KEY = "english_lang_key";
 
+    public static final String PROMO_ALREAD_USED_MESSAGE_KEY = "promo_already_used_message";
+
 }

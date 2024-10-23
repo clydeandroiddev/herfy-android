@@ -59,7 +59,8 @@ class PromotionDetailsDialogFragment : BaseDialogFragment() {
         binding.toolbar.back.text = CacheUtil.getInstance().getTranslations(Text.BACK, "Back")
         binding.requirementsLabel.text =
             CacheUtil.getInstance().getTranslations(Text.REQUIREMENTS, " Requirements")
-        binding.avail.text = CacheUtil.getInstance().getTranslations(Text.REDEEM_THIS_PROMO, "REDEEM THIS PROMO")
+        binding.avail.text =
+            CacheUtil.getInstance().getTranslations(Text.REDEEM_THIS_PROMO, "REDEEM THIS PROMO")
         binding.digitalName.text = campaign?.attributes?.name
         binding.digitalDesc.text = campaign?.attributes?.description
         var imageUrl = campaign?.attributes?.imageUri
@@ -77,30 +78,30 @@ class PromotionDetailsDialogFragment : BaseDialogFragment() {
         binding.image.layoutParams.height = screenSize
         Glide.with(this).load(imageUrl).skipMemoryCache(false)
             .diskCacheStrategy(DiskCacheStrategy.ALL).listener(object : RequestListener<Drawable?> {
-            override fun onLoadFailed(
-                e: GlideException?,
-                model: Any,
-                target: Target<Drawable?>,
-                isFirstResource: Boolean
-            ): Boolean {
-                binding.image.visibility = View.INVISIBLE
-                binding.imageShimmer.visibility = View.VISIBLE
-                return false
-            }
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any,
+                    target: Target<Drawable?>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.image.visibility = View.INVISIBLE
+                    binding.imageShimmer.visibility = View.VISIBLE
+                    return false
+                }
 
-            override fun onResourceReady(
-                resource: Drawable?,
-                model: Any,
-                target: Target<Drawable?>,
-                dataSource: DataSource,
-                isFirstResource: Boolean
-            ): Boolean {
-                binding.image.visibility = View.VISIBLE
-                binding.imageShimmer.visibility = View.GONE
-                return false
-            }
-        }).into(binding.image)
-        binding.toolbar.back.setOnClickListener{ dismiss() }
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any,
+                    target: Target<Drawable?>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.image.visibility = View.VISIBLE
+                    binding.imageShimmer.visibility = View.GONE
+                    return false
+                }
+            }).into(binding.image)
+        binding.toolbar.back.setOnClickListener { dismiss() }
         setupAvail()
         return view
     }
@@ -125,7 +126,11 @@ class PromotionDetailsDialogFragment : BaseDialogFragment() {
             if (it.isMet()) {
                 var toRemove = false
                 try {
-                    if (campaign?.id.equals(CacheUtil.getInstance().campaign.id, ignoreCase = true)) {
+                    if (campaign?.id.equals(
+                            CacheUtil.getInstance().campaign.id,
+                            ignoreCase = true
+                        )
+                    ) {
                         toRemove = true
                         binding.avail.text = CacheUtil.getInstance()
                             .getTranslations(Text.REMOVE_PROMO_CAPS, "REMOVE PROMO")
@@ -135,37 +140,46 @@ class PromotionDetailsDialogFragment : BaseDialogFragment() {
                 }
                 binding.avail.setOnClickListener {
                     if (!toRemove) {
-                        if (CacheUtil.getInstance().couponCode != null) {
-                            try {
-                                showPromptAlertDialog(
-                                    "",
-                                    CacheUtil.getInstance().getTranslations(
-                                        Text.ONE_DISCOUNT_ONLY_MESSAGE,
-                                        "You can only apply one discount at a time. Currently applied discount will be removed"
-                                    ),
-                                    CacheUtil.getInstance().getTranslations(
-                                        Text.YES_CAPS
-                                    ),
-                                    { dialogInterface, i ->
+                        if (CacheUtil.getInstance().checkIfUsedPromotion(campaign?.promotion)) {
+                            showAlertDialog(
+                                "", CacheUtil.getInstance().getTranslations(
+                                    Text.PROMO_ALREAD_USED_MESSAGE_KEY,
+                                    "Sorry the promo is already used on this device"
+                                )
+                            )
+                        } else {
+                            if (CacheUtil.getInstance().couponCode != null) {
+                                try {
+                                    showPromptAlertDialog(
+                                        "",
+                                        CacheUtil.getInstance().getTranslations(
+                                            Text.ONE_DISCOUNT_ONLY_MESSAGE,
+                                            "You can only apply one discount at a time. Currently applied discount will be removed"
+                                        ),
+                                        CacheUtil.getInstance().getTranslations(
+                                            Text.YES_CAPS
+                                        ),
+                                        { dialogInterface, i ->
+                                            CacheUtil.getInstance().couponCode = null
+                                            CacheUtil.getInstance().couponName = null
+                                            CacheUtil.getInstance().couponMenuItem = null
+                                            CacheUtil.getInstance().couponToAdd = null
+                                            onAction?.onAvail(campaign)
+                                            dismiss()
+                                        },
+                                        CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
+                                    ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
+                                } catch (e: Exception) {
+                                    if (CacheUtil.getInstance().couponCode != null) {
                                         CacheUtil.getInstance().couponCode = null
                                         CacheUtil.getInstance().couponName = null
                                         CacheUtil.getInstance().couponMenuItem = null
                                         CacheUtil.getInstance().couponToAdd = null
                                         onAction?.onAvail(campaign)
                                         dismiss()
-                                    },
-                                    CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
-                                ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
-                            } catch (e: Exception) {
-                                if (CacheUtil.getInstance().couponCode != null) {
-                                    CacheUtil.getInstance().couponCode = null
-                                    CacheUtil.getInstance().couponName = null
-                                    CacheUtil.getInstance().couponMenuItem = null
-                                    CacheUtil.getInstance().couponToAdd = null
-                                    onAction?.onAvail(campaign)
-                                    dismiss()
+                                    }
+                                    e.printStackTrace()
                                 }
-                                e.printStackTrace()
                             }
                         }
                     } else {
@@ -175,7 +189,8 @@ class PromotionDetailsDialogFragment : BaseDialogFragment() {
                 }
             } else {
                 activity?.let {
-                    binding.avail.backgroundTintList = ContextCompat.getColorStateList(it, R.color.disabled)
+                    binding.avail.backgroundTintList =
+                        ContextCompat.getColorStateList(it, R.color.disabled)
                 }
                 binding.avail.setOnClickListener(null)
             }

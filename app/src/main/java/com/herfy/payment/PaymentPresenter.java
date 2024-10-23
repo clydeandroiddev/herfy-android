@@ -1425,6 +1425,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
     @Override
     public void sendUpsells() {
         removeMukafaaRedemption();
+        setDevicePromotion();
         CacheUtil.getInstance().clearOrder();
         List<MenuItem> upsells = new ArrayList<>();
         for (MenuItem menuItem : menuItems) {
@@ -1581,7 +1582,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
     @Override
     public String getValidatedBody() {
-        if(validatedBody != null) {
+        if (validatedBody != null) {
             return validatedBody.toString();
         }
         return "";
@@ -1682,6 +1683,16 @@ public class PaymentPresenter implements PaymentContract.Presenter {
     @Override
     public List<MenuItem> getMenuItemsList() {
         return menuItems;
+    }
+
+    @Override
+    public void setDevicePromotion() {
+        Promotion promotion = CacheUtil.getInstance().getCampaignPromotion();
+        if (promotion != null) {
+            ArrayList<String> deviceUsedPromotions = CacheUtil.getInstance().getDeviceUsedPromotions();
+            deviceUsedPromotions.add(promotion.getId());
+            CacheUtil.getInstance().setDeviceUsedPromotions(new Gson().toJson(deviceUsedPromotions));
+        }
     }
 
     public void getMoyasarKey() {
