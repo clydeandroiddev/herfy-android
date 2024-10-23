@@ -313,6 +313,33 @@
                         android:layout_marginBottom="@dimen/margin_medium" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/loyaltyPayment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <include
+                            android:id="@+id/layout_loyalty"
+                            layout="@layout/item_loyalty_points"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_small"
+                            android:layout_marginTop="@dimen/margin_micro"
+                            android:layout_marginEnd="@dimen/margin_small"
+                            android:layout_marginBottom="@dimen/margin_medium" />
+
+                        <View
+                            android:id="@+id/loyaltyBlocker"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:clickable="true"
+                            app:layout_constraintBottom_toBottomOf="@id/layout_loyalty"
+                            app:layout_constraintEnd_toEndOf="@id/layout_loyalty"
+                            app:layout_constraintStart_toStartOf="@id/layout_loyalty"
+                            app:layout_constraintTop_toTopOf="@id/layout_loyalty" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/alrhajiPayment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
@@ -324,7 +351,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/margin_small"
                             android:layout_marginEnd="@dimen/margin_small"
-                            android:layout_marginBottom="@dimen/margin_medium" />
+                            android:layout_marginBottom="@dimen/_5sdp" />
 
                         <View
                             android:id="@+id/alrajhiBlocker"
@@ -338,33 +365,6 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/loyaltyPayment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <include
-                            android:id="@+id/layout_loyalty"
-                            layout="@layout/item_loyalty_points"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/margin_small"
-                            android:layout_marginTop="@dimen/margin_micro"
-                            android:layout_marginEnd="@dimen/margin_small"
-                            android:layout_marginBottom="@dimen/_5sdp" />
-
-                        <View
-                            android:id="@+id/loyaltyBlocker"
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:clickable="true"
-                            app:layout_constraintBottom_toBottomOf="@id/layout_loyalty"
-                            app:layout_constraintEnd_toEndOf="@id/layout_loyalty"
-                            app:layout_constraintStart_toStartOf="@id/layout_loyalty"
-                            app:layout_constraintTop_toTopOf="@id/layout_loyalty" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <include
                         android:id="@+id/layout_payment_summary"

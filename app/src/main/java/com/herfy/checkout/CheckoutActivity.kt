@@ -980,6 +980,14 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun setupTranslations() {
         binding!!.toolbarLayout.title.text =
             CacheUtil.getInstance().getTranslations(Text.CHECKOUT, "Checkout")
+        binding!!.layoutAlrahji.alrhajiDisabledMessage.text =
+            CacheUtil.getInstance()
+                .getTranslations(Text.MOKAFAA_DISABLED, "This option only work for online payments")
+        binding!!.layoutLoyalty.loyaltyDisabledMessage.text =
+            CacheUtil.getInstance().getTranslations(
+                Text.LOYALTY_DISABLED,
+                "Loyalty points only work for Online Payments type"
+            )
         binding!!.layoutPayment.tvEditPaymentMethod.text =
             CacheUtil.getInstance().getTranslations(Text.EDIT, "Edit")
         binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance().getTranslations(
@@ -1241,7 +1249,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     ) {
         binding?.layoutAlrahji?.apply {
             shimmerAlrhaji.gone()
-            clAlrhaji.visible()
+            clAlrhajiLayout.visible()
         }
 
         val isDelivery = CacheUtil.getInstance().orderType == OrderType.DELIVERY
