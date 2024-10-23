@@ -65,7 +65,7 @@ import com.herfy.loyalty.LoyaltyActivity
 import com.herfy.main.adapter.LanguageAdapter
 import com.herfy.main.adapter.SwitchServerAdapter
 import com.herfy.menu.view.MenuFragment
-import com.herfy.menu.views.MenuItemFragmentDirections
+import com.herfy.menuitem.view.MenuItemDetailFragmentDirections
 import com.herfy.newmenu.NewMenuFragmentCommonListener
 import com.herfy.newmenu.views.NewMenuFragment
 import com.herfy.newmenu.views.NewMenuHomePageFragment
@@ -1257,7 +1257,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             )
 
             R.id.nav_menu_item -> NavigationUtils.navigateSafe(
-                navController, MenuItemFragmentDirections.actionMenuItemToCart(
+                navController, MenuItemDetailFragmentDirections.actionMenuItemToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )

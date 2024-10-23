@@ -12,7 +12,7 @@ import com.herfy.digitalcoupons.views.DigitalCouponFragmentDirections
 import com.herfy.digitalcoupons.views.DigitalCouponsFragmentDirections
 import com.herfy.ext.cast
 import com.herfy.favorites.FavoritesFragmentDirections
-import com.herfy.menu.views.MenuItemFragmentDirections
+import com.herfy.menuitem.view.MenuItemDetailFragmentDirections
 import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.newmenu.views.PopularNowFragmentDirections
 import com.herfy.utils.helper.CacheUtil
@@ -222,7 +222,7 @@ class NavigationActivity : BaseActivity(), MainContract.View {
 
             R.id.nav_menu_item -> NavigationUtils.navigateSafe(
                 navController,
-                MenuItemFragmentDirections.actionMenuItemToCart(
+                MenuItemDetailFragmentDirections.actionMenuItemToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
