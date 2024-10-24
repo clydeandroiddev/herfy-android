@@ -957,7 +957,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         if (menuCategory != null && menuItem != null) {
             activity?.let {
                 val intent = Intent(it, NavigationActivity::class.java)
-                intent.putExtra("navigation", R.id.nav_menu_item)
+                intent.putExtra("navigation", R.id.nav_menu_item_detail)
                 intent.putExtra("menu_category_id", menuCategory.id)
                 intent.putExtra("menu_item_id", menuItem.id)
                 intent.putExtra("cart_menu_item_position", -1)

@@ -204,20 +204,11 @@ class FavoritesFragment : BaseFragment(), FavoritesContract.View {
                             KochavaEventUtil.itemObject(menuItem)
                         )
                     }
-                    if (favorite.attributes.isCombo) {
-                        findNavController().navigate(
-                            FavoritesFragmentDirections.actionFavoritesToCombo(
-                                "",
-                                favorite.id, isFavorite = true
-                            )
+                    findNavController().navigate(
+                        FavoritesFragmentDirections.actionFavoritesToMenuItem(
+                            favorite.id, isFavorite = true
                         )
-                    } else {
-                        findNavController().navigate(
-                            FavoritesFragmentDirections.actionFavoritesToMenuItem(
-                                favorite.id, isFavorite = true
-                            )
-                        )
-                    }
+                    )
                 } else {
                     CacheUtil.getInstance().saveFavoriteToAddToCart(favorite)
                     findNavController().navigate(

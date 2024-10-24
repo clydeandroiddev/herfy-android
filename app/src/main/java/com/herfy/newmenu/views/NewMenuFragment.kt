@@ -1207,7 +1207,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             activity?.let {
                 fromMenuItem = true
                 val intent = Intent(it, NavigationActivity::class.java)
-                intent.putExtra("navigation", R.id.nav_menu_item)
+                intent.putExtra("navigation", R.id.nav_menu_item_detail)
                 intent.putExtra("menu_category_id", menuCategory.id)
                 intent.putExtra("menu_item_id", menuItem.id)
                 intent.putExtra("cart_menu_item_position", -1)
@@ -1439,7 +1439,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
             it.runOnUiThread {
                 fromMenuItem = true
                 val intent = Intent(it, NavigationActivity::class.java)
-                intent.putExtra("navigation", R.id.nav_menu_item)
+                intent.putExtra("navigation", R.id.nav_menu_item_detail)
                 intent.putExtra("menu_category_id", categoryId)
                 intent.putExtra("menu_item_id", menuItemId)
                 intent.putExtra("cart_menu_item_position", -1)

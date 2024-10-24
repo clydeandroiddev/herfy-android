@@ -11,6 +11,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.herfy.common.R
+import com.herfy.utils.extensions.gone
+import com.herfy.utils.extensions.visible
 
 class CustomButtonsToolbar @JvmOverloads constructor(
     context: Context,
@@ -79,6 +81,12 @@ class CustomButtonsToolbar @JvmOverloads constructor(
 
     fun setRightButtonIcon(icon : Int){
         rightButton?.setImageResource(icon)
+    }
+
+    fun setRightButtonVisibility(isVisible : Boolean){
+        rightButton?.apply {
+           if (isVisible) visible() else gone()
+        }
     }
 
 

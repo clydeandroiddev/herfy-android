@@ -1,34 +1,54 @@
 package com.herfy.menuitem.view
 
 import android.app.Activity
+import android.content.Context
 import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.herfy.R
+import com.herfy.R2.attr.layoutManager
+import com.herfy.analytics.facebook.FacebookAppEventUtil
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.analytics.kochava.KochavaEventType
 import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
+import com.herfy.base.BaseActivity
 import com.herfy.databinding.FragmentMenuItemDetailBinding
 import com.herfy.menu.adapters.ModifierGroupNewRecycleAdapterKotlin
+import com.herfy.menu.views.ComboMealFragmentDirections
 import com.herfy.menuitem.viewmodel.MenuItemDetailViewModel
+import com.herfy.model.ShowComboMealItemDetails
 import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet
 import com.herfy.nutritiondetails.NutritionInfoParams
+import com.herfy.productpagedetails.ui.adapter.ComboItemDetailsModifierAdapter
+import com.herfy.productpagedetails.ui.adapter.ComboMealComponentAdapter
 import com.herfy.productpagedetails.ui.adapter.SizesItemAdapter
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
+import com.herfy.utils.extensions.OnLayoutLoadingCompleted
+import com.herfy.utils.extensions.cast
+import com.herfy.utils.extensions.deepCopy
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.invisible
 import com.herfy.utils.extensions.navigateUp
@@ -37,16 +57,20 @@ import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.extensions.showToast
+import com.herfy.utils.extensions.toTranslate
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.LocaleUtil
+import com.herfy.utils.helper.SnackBarUtils
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.ViewUtil
 import com.herfy.utils.helper.viewLifecycleScope
+import com.kochava.tracker.events.EventType
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
@@ -61,8 +85,12 @@ class MenuItemDetailFragment :
 
     private val args by lazy { arguments }
 
+    private var mBottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>? = null
+
     private var sizesItemAdapter: SizesItemAdapter? = null
     private var modifierGroupAdapter: ModifierGroupNewRecycleAdapterKotlin? = null
+    private var comboMealComponentAdapter: ComboMealComponentAdapter? = null
+    private var comboItemDetailsModifierAdapter: ComboItemDetailsModifierAdapter? = null
 
     private var _totalPrice = 0.0
 
@@ -141,14 +169,14 @@ class MenuItemDetailFragment :
         //this@MenuItemDetailFragment.viewModel.isFromFavorite = this.isFromFavorite
         binding.viewModel = this@MenuItemDetailFragment.viewModel
         setupImageHeight()
-        setupMenuItemModifiers()
         binding.apply {
+            shimmerLayoutModifiers.visible()
             add.apply {
                 if (isSoldOut) {
                     activity?.apply {
                         image.setColorFilter(
                             ContextCompat.getColor(
-                                this, com.herfy.R.color.soldout
+                                this, R.color.soldout
                             )
                         )
                     }
@@ -172,7 +200,7 @@ class MenuItemDetailFragment :
                     } else {
                         setRightButtonIcon(com.herfy.productpagedetails.R.drawable.ic_favorite_empty)
                     }
-                    //this@MenuItemDetailFragment.viewModel.addRemoveFavorite()
+                    this@MenuItemDetailFragment.viewModel.addRemoveFavorite()
                 }
             }
             add.setOnClickListener {
@@ -190,31 +218,31 @@ class MenuItemDetailFragment :
                 showLoading()
                 if (!isPromo) {
                     if (cartMenuItemPos >= 0) {
-                        //this@ComboMealFragment.viewModel.updateCartItem(false, cartMenuItemPos)
+                        this@MenuItemDetailFragment.viewModel.updateCartItem(false, cartMenuItemPos)
                     } else {
-                        //this@ComboMealFragment.viewModel.getCartMenuItem()
+                        this@MenuItemDetailFragment.viewModel.getCartMenuItem()
                     }
                 } else {
-                    //this@ComboMealFragment.viewModel.updateCartItem(true, cartMenuItemPos)
+                    this@MenuItemDetailFragment.viewModel.updateCartItem(true, cartMenuItemPos)
                 }
-                /*context?.let {
+                context?.let {
                     FirebaseECommerceEventUtil.addToCartEvent(
                         it,
-                        this@ComboMealFragment.viewModel.menuItem!!,
-                        this@ComboMealFragment.viewModel.menuCategory!!,
+                        this@MenuItemDetailFragment.viewModel.menuItem!!,
+                        this@MenuItemDetailFragment.viewModel.menuCategory!!,
                         _totalPrice,
                         Integer.parseInt(binding.quantity.text.toString())
                     )
                     FacebookAppEventUtil.addToCartEvent(
-                        it, this@ComboMealFragment.viewModel.menuItem!!, _totalPrice
+                        it, this@MenuItemDetailFragment.viewModel.menuItem!!, _totalPrice
                     )
                     KochavaTrackerUtil.trackEventWithData(
                         EventType.ADD_TO_CART.eventName,
                         KochavaEventUtil.itemObject(
-                            this@ComboMealFragment.viewModel.menuItem!!
+                            this@MenuItemDetailFragment.viewModel.menuItem!!
                         )
                     )
-                }*/
+                }
             }
 
             if (isPromo) {
@@ -225,10 +253,10 @@ class MenuItemDetailFragment :
                 plus.visible()
             }
             minus.setOnClickListener {
-                //viewModel?.changeMenuItemQuantity(false)
+                viewModel?.changeMenuItemQuantity(false)
             }
             plus.setOnClickListener {
-                //viewModel?.changeMenuItemQuantity(true)
+                viewModel?.changeMenuItemQuantity(true)
             }
         }
     }
@@ -288,29 +316,33 @@ class MenuItemDetailFragment :
                 if (showSizes) {
                     if(sizes.size > 1){
                         binding.sizesLabel.visible()
-
-                        binding.checkBox.setVisible(true)
-                        binding.sizesLabel.text = menuItem.sizes.attributes.name
-                        val imageUrl = menuItem.sizes.attributes.image
-                        if (imageUrl != null && !imageUrl.equals(
-                                "null",
-                                ignoreCase = true
-                            ) && !imageUrl.lowercase(
-                                Locale.getDefault()
-                            ).contains("default-image.png") && !imageUrl.lowercase(
-                                Locale.getDefault()
-                            ).contains("default_category.png")
-                        ) {
-                            binding.sizesImage.visible()
-                            Glide.with(requireContext())
-                                .load(imageUrl)
-                                .apply(RequestOptions.centerCropTransform())
-                                .placeholder(R.drawable.imagepicker_image_placeholder)
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .into(binding.sizesImage)
-                        } else {
-                            binding.sizesImage.gone()
+                        binding.checkBox.visible()
+                        if(it.isCombo && it.combo.isNotEmpty()){
+                            sizesImage.setImageResource(com.herfy.productpagedetails.R.drawable.ic_combo_size)
+                        }else {
+                            binding.sizesLabel.text = menuItem.sizes.attributes.name
+                            val imageUrl = menuItem.sizes.attributes.image
+                            if (imageUrl != null && !imageUrl.equals(
+                                    "null",
+                                    ignoreCase = true
+                                ) && !imageUrl.lowercase(
+                                    Locale.getDefault()
+                                ).contains("default-image.png") && !imageUrl.lowercase(
+                                    Locale.getDefault()
+                                ).contains("default_category.png")
+                            ) {
+                                sizesImage.visible()
+                                Glide.with(requireContext())
+                                    .load(imageUrl)
+                                    .apply(RequestOptions.centerCropTransform())
+                                    .placeholder(R.drawable.imagepicker_image_placeholder)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .into(sizesImage)
+                            } else {
+                                sizesImage.gone()
+                            }
                         }
+
 
                         activity?.let { act ->
                             val itemWidth =
@@ -419,6 +451,12 @@ class MenuItemDetailFragment :
     override fun observe() {
         super.observe()
         viewModel.apply {
+            showLoading.observe(this@MenuItemDetailFragment) {
+                if (it) showLoading() else dismissLoading()
+            }
+            showToastMessage.observeNonNull(this@MenuItemDetailFragment){
+                showToastMessage(it)
+            }
             showError.observeNonNull(this@MenuItemDetailFragment) {
                 it.getContentIfNotHandled()?.let {
                     runOnMain {
@@ -480,13 +518,11 @@ class MenuItemDetailFragment :
             showMenuItemQuantity.observeNonNull(this@MenuItemDetailFragment) { quantityValue ->
                 binding.minus.isFocusable = quantityValue != 1
                 binding.minus.isClickable = quantityValue != 1
-
-
                 binding.quantity.text = StringUtil.localize(quantityValue.toString())
             }
             showModifierGroupAdapterItems.observeNonNull(this@MenuItemDetailFragment) { adapterItems ->
-                binding.shimmerLayoutModifiers.setVisible(adapterItems.isEmpty())
                 modifierGroupAdapter?.submitList(adapterItems)
+                binding.shimmerLayoutModifiers.gone()
                 if(adapterItems.isNotEmpty()){
                     binding.rvModifiers.apply {
                         visible()
@@ -497,10 +533,159 @@ class MenuItemDetailFragment :
                 }else {
                     binding.apply {
                         rvModifiers.gone()
-                        shimmerLayoutModifiers.gone()
                     }
                 }
 
+            }
+            showComboMenuItemComponents.observe(this@MenuItemDetailFragment) {
+                binding.apply {
+                    shimmerLayoutModifiers.gone()
+                    if(it.isNotEmpty()){
+                        rvModifiers.visible()
+                    }else {
+                        rvModifiers.gone()
+                    }
+                }
+
+                comboMealComponentAdapter?.addData(it)
+            }
+            updateMenuItemSizeList.observeNonNull(this@MenuItemDetailFragment){ pair ->
+                menuItem?.let {
+                    sizesItemAdapter?.updateSelectedSize(pair.second, pair.first)
+                    if(it.isCombo && it.combo.isNotEmpty()){
+                        comboMealComponentAdapter?.addData(arrayListOf())
+                    }
+                }
+            }
+            updateComboComponents.observeNonNull(this@MenuItemDetailFragment){
+                val viewModel = this@MenuItemDetailFragment.viewModel
+                val componentModifierQuantity = viewModel.componentModifierCount(it.second.items)
+                val isAboveMax = viewModel.isAboveMaxComponent(it.second, componentModifierQuantity)
+                comboMealComponentAdapter?.apply {
+                    updateSelectedComponent(
+                        it.first, it.second, it.third, isAboveMax
+                    )
+                }
+            }
+            showComboMealItemDetails.observeNonNull(this@MenuItemDetailFragment) { data ->
+                showComboComponentModifierItemDetails(data)
+            }
+            modifierAdapterItems.observe(this@MenuItemDetailFragment) {
+                it.getContentIfNotHandled()?.let { modifierAdapterItems ->
+                    comboItemDetailsModifierAdapter?.addData(modifierAdapterItems)
+                }
+            }
+            showComponentModifierItemTotal.observeNonNull(this@MenuItemDetailFragment){
+                val currentTotal = it + _totalPrice
+                binding.layoutBottomSheetComboDetail.tvTotalValue.text =
+                    CurrencyUtils.updateCurrency(
+                        currentTotal, withSpace = true, ignoreDecimalPlaces = false
+                    )
+            }
+
+            logFirebaseEvent.observe(this@MenuItemDetailFragment) { value ->
+                context?.let { ctx ->
+                    if (Values.sDeepLinkUtm != null) {
+                        val firebaseAnalytics = FirebaseAnalytics.getInstance(ctx)
+                        firebaseAnalytics.logEvent(value, Values.sDeepLinkUtm)
+                    }
+                }
+
+            }
+
+            logEvent.observe(this@MenuItemDetailFragment) { attributes ->
+                activity?.cast<BaseActivity> {
+                    it.logEventAttributesMetric(
+                        attributes.eventName,
+                        attributes.eventAttributes,
+                        attributes.eventMetrictName,
+                        attributes.eventMetricValue
+                    )
+                }
+            }
+
+            logAddToWishlistEvent.observe(this@MenuItemDetailFragment) { menuItem ->
+                context?.let {
+                    FacebookAppEventUtil.addToWishlistEvent(it, menuItem)
+                    KochavaEventUtil.itemAddToWishList(menuItem)
+                }
+            }
+
+            setFavoriteItem.observe(this@MenuItemDetailFragment) {
+                dismissLoading()
+                setFavorite(it)
+            }
+
+            showMenuItemQuantity.observeNonNull(this@MenuItemDetailFragment) { quantityValue ->
+                binding.minus.isFocusable = quantityValue != 1
+                binding.minus.isClickable = quantityValue != 1
+
+
+                binding.quantity.text = StringUtil.localize(quantityValue.toString())
+            }
+            addCartItem.observe(this@MenuItemDetailFragment) {
+                activity?.let {
+                    it.runOnUiThread {
+                        val vibrator = it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vibrator.vibrate(
+                                VibrationEffect.createOneShot(
+                                    500, VibrationEffect.DEFAULT_AMPLITUDE
+                                )
+                            )
+                        } else {
+                            vibrator.vibrate(100)
+                        }
+                        dismissLoading()
+                        showToastMessage(
+                            CacheUtil.getInstance().getTranslations(Text.ITEM_ADDED_TO_CART)
+                        )
+                        navigateUp()
+                    }
+                }
+
+            }
+            updateCartItem.observe(this@MenuItemDetailFragment) {
+                var message =
+                    CacheUtil.getInstance().getTranslations(Text.ITEM_UPDATED, "Item updated")
+                if (isPromo && !isEdit) {
+                    message = CacheUtil.getInstance()
+                        .getTranslations(Text.ITEM_ADDED_TO_CART, "Item added to cart")
+                }
+                activity?.let {
+                    navigateUp()
+                    showToastMessage(message)
+                    dismissLoading()
+                }
+            }
+            updateComboItemDetailModifier.observe(this@MenuItemDetailFragment) {
+                val modifierItemsQuantity =
+                    this@MenuItemDetailFragment.viewModel.modifierItemQuantityCount(it.second.modifierItems)
+                val isAboveMax =
+                    this@MenuItemDetailFragment.viewModel.isAboveMax(it.second, modifierItemsQuantity)
+                comboItemDetailsModifierAdapter?.apply {
+                    this@MenuItemDetailFragment.viewModel.apply {
+                        getComponentModifierItemTotalPrice(
+                            getUpdatedModifierList()
+                        )
+                        updateModifierVisibilityBy(it.second) { mapOfModifierVisibilityConfig ->
+                            updateSelectedModifierItem(
+                                hasModifierItemsSelected = it.first,
+                                modifierGroup = it.second,
+                                modifierItem = it.third,
+                                isAboveMax = isAboveMax,
+                                modifierVisibilityHashMap = mapOfModifierVisibilityConfig
+                            )
+                        }
+                    }
+                }
+            }
+            showCartExpiry.observe(this@MenuItemDetailFragment) {
+                activity?.cast<BaseActivity> {
+                    it.runOnUiThread {
+                        it.setCartExpiry()
+                    }
+                }
             }
         }
     }
@@ -511,7 +696,19 @@ class MenuItemDetailFragment :
             footer.visible()
             language = LocaleUtil.getInstance().language
             menuItem = data
-            setFavorite(data)
+            if (!isPromo && AuthUtil.getInstance().isSignedIn) {
+                binding.cbtMenuItem.setRightButtonVisibility(true)
+                setFavorite(data)
+            } else {
+                binding.cbtMenuItem.setRightButtonVisibility(false)
+            }
+
+            if(data.isCombo && data.combo.isNotEmpty()){
+                setupComboMealItems()
+                setupComboMealDetailsBottomSheet()
+            }else {
+                setupMenuItemModifiers()
+            }
             txtMoreInfo.isVisible = !data.customFieldObjectMap.nutritionInfoImageUrl.isNullOrEmpty()
             txtMoreInfo.ninjaTap(viewLifecycleScope) {
                 val bundle = Bundle()
@@ -526,6 +723,7 @@ class MenuItemDetailFragment :
                     .show(childFragmentManager, NutritionInfoFragmentBottomSheet.TAG)
             }
             setupKochava(data)
+
         }
     }
 
@@ -557,6 +755,162 @@ class MenuItemDetailFragment :
 
     }
 
+    private fun setupComboMealDetailsBottomSheet() {
+        binding.apply {
+            BottomSheetBehavior.from(layoutBottomSheetComboDetail.clBottomSheetDetailsMain)
+                .let { bsb ->
+                    bsb.state = BottomSheetBehavior.STATE_HIDDEN
+                    mBottomSheetBehavior = bsb
+                }
+
+            layoutBottomSheetComboDetail.apply {
+                icClose.setOnClickListener {
+                    collapseComboItemDetails()
+                }
+                comboItemDetailsModifierAdapter = ComboItemDetailsModifierAdapter()
+                comboItemDetailsModifierAdapter?.setOnAction(this@MenuItemDetailFragment.viewModel)
+                context?.let { ctx ->
+                    val linearLayoutManager =
+                        LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
+                    rvModifiers.apply {
+                        adapter = comboItemDetailsModifierAdapter
+                        layoutManager = linearLayoutManager
+                        setHasFixedSize(true)
+                        isNestedScrollingEnabled = false
+                        setOnScrollChangeListener { view, i, i2, i3, i4 ->
+                            mBottomSheetBehavior?.let { behavior ->
+                                if (behavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                                    behavior.isDraggable =
+                                        linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0
+                                } else {
+                                    behavior.isDraggable = true
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            mBottomSheetBehavior?.addBottomSheetCallback(object :
+                BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_COLLAPSED || newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        binding.viewBgTransparent.gone()
+                        this@MenuItemDetailFragment.viewModel.currentSelectedModifierItem = null
+                        binding.layoutBottomSheetComboDetail.btnAddDetails.setOnClickListener(null)
+                        comboItemDetailsModifierAdapter?.addData(arrayListOf())
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                }
+            })
+        }
+    }
+
+    private fun setupComboMealItems() {
+        binding.apply {
+            context?.let { ctx ->
+                val linearLayoutManager =
+                    LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false)
+                comboMealComponentAdapter = ComboMealComponentAdapter()
+                comboMealComponentAdapter?.setOnAction(this@MenuItemDetailFragment.viewModel)
+                rvModifiers.apply {
+                    adapter = comboMealComponentAdapter
+                    layoutManager = linearLayoutManager
+                    setHasFixedSize(true)
+                    isNestedScrollingEnabled = false
+                }
+                rvModifiers.OnLayoutLoadingCompleted {
+                    this@MenuItemDetailFragment.viewModel.apply {
+                        menuItem?.let {
+                            getMenuItemTotalPrice(it, -1)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun expandComboItemDetails() {
+        binding.viewBgTransparent.visible()
+        mBottomSheetBehavior?.let {
+            it.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+    }
+
+    private fun collapseComboItemDetails() {
+        mBottomSheetBehavior?.let {
+            viewModel.currentSelectedModifierItem = null
+            binding.viewBgTransparent.gone()
+            binding.layoutBottomSheetComboDetail.btnAddDetails.setOnClickListener(null)
+            if (it.state == BottomSheetBehavior.STATE_EXPANDED) {
+                it.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+        }
+    }
+
+    private fun showComboComponentModifierItemDetails(data: ShowComboMealItemDetails) {
+        binding.layoutBottomSheetComboDetail.apply {
+            data.componentModifierItem.apply {
+                val modifierGroupsCopy = modifierGroups.deepCopy(ModifierGroup::class.java)
+                this@MenuItemDetailFragment.viewModel.currentSelectedModifierItem = this
+                viewModel.getModifierAdapterItem(modifierGroupsCopy)
+                tvTitle.text = name.toTranslate()
+                this@MenuItemDetailFragment.viewModel.getComponentModifierItemTotalPrice(
+                    modifierGroupsCopy
+                )
+                btnAddDetails.setOnClickListener {
+                    viewModel.updateSelectedModifierItem(
+                        data.isSelected,
+                        data.menuItemComponent,
+                        data.menuItemComponentIndex,
+                        data.componentModifierItem,
+                        comboItemDetailsModifierAdapter?.getUpdatedModifierList()
+                    )
+                    collapseComboItemDetails()
+                }
+            }
+            expandComboItemDetails()
+        }
+    }
+
+    private fun showToastMessage(message: String) {
+        if (inProgress) {
+            dismissLoading()
+        }
+        if (message == CacheUtil.getInstance()
+                .getTranslations(Text.ADDED_TO_FAVORITES) || message == CacheUtil.getInstance()
+                .getTranslations(Text.REMOVED_FROM_FAVORITES)
+        ) {
+            isFavorites(
+                message == CacheUtil.getInstance().getTranslations(Text.ADDED_TO_FAVORITES)
+            )
+        } else {
+            context?.let {
+                Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun isFavorites(isFavorite: Boolean) {
+        var text = CacheUtil.getInstance().getTranslations(Text.ADDED_TO_FAVORITES)
+        if (!isFavorite) {
+            text = CacheUtil.getInstance().getTranslations(Text.REMOVED_FROM_FAVORITES)
+        }
+        var background: Int = com.herfy.R.drawable.background_favorites
+        if (!isFavorite) {
+            background = com.herfy.R.drawable.background_unfavorite
+        }
+
+        var color: Int = binding.mainToolbar.context.resources.getColor(R.color.fav_color)
+        if (!isFavorite) {
+            color = binding.mainToolbar.context.resources.getColor(R.color.unfav_color)
+        }
+
+        SnackBarUtils.showCustomSnackBar(binding.mainLayout, text!!, isFavorite, background, color)
+    }
 
     private fun showLoading() {
         binding.apply {

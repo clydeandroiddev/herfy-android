@@ -1603,9 +1603,8 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
         isCombo: Boolean,
         isFromFrequentBoughtMenuItem: Boolean
     ) {
-        val destinationLink = if (isCombo) "nav_combo" else "nav_menu_item"
         val destinationUri =
-            "${destinationLink}/$menuCategoryId/$menuItemId?is_frequently_bought_item=$isFromFrequentBoughtMenuItem"
+            "nav_menu_item_detail/$menuCategoryId/$menuItemId?is_frequently_bought_item=$isFromFrequentBoughtMenuItem"
         findNavController().navigateToDeepLink(destinationUri)
     }
 

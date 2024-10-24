@@ -80,7 +80,7 @@
 
         <action
             android:id="@+id/action_home_to_menu_item"
-            app:destination="@id/nav_menu_item"
+            app:destination="@id/nav_menu_item_detail"
             app:popUpTo="@+id/nav_home" />
 
         <action
@@ -164,7 +164,7 @@
 
         <action
             android:id="@+id/action_popular_now_to_menu_item"
-            app:destination="@id/nav_menu_item"
+            app:destination="@id/nav_menu_item_detail"
             app:popUpTo="@+id/nav_popular_now" />
 
         <action
@@ -218,7 +218,7 @@
             app:nullable="true" />
         <action
             android:id="@+id/action_orderType_to_menu_item"
-            app:destination="@id/nav_menu_item"
+            app:destination="@id/nav_menu_item_detail"
             app:popUpTo="@+id/nav_favorites">
 
         </action>
@@ -405,11 +405,11 @@
         <action
             android:id="@+id/action_menu_item_to_cart"
             app:destination="@id/nav_cart"
-            app:popUpTo="@+id/nav_menu_item" />
+            app:popUpTo="@+id/nav_menu_item_detail" />
         <action
             android:id="@+id/action_menu_item_to_favorite"
             app:destination="@id/nav_favorites"
-            app:popUpTo="@+id/nav_menu_item"
+            app:popUpTo="@+id/nav_menu_item_detail"
             app:popUpToInclusive="true"/>
     </fragment>
 
@@ -511,7 +511,7 @@
 
         <action
             android:id="@+id/action_cart_to_menu_item"
-            app:destination="@id/nav_menu_item"
+            app:destination="@id/nav_menu_item_detail"
             app:popUpTo="@+id/nav_cart" />
 
         <action
@@ -572,7 +572,7 @@
 
         <action
             android:id="@+id/action_upsell_to_menu_item"
-            app:destination="@id/nav_menu_item"
+            app:destination="@id/nav_menu_item_detail"
             app:popUpTo="@+id/nav_upsell" />
 
     </fragment>
@@ -737,7 +737,7 @@
             app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_favorites_to_menu_item"
-            app:destination="@id/nav_menu_item"
+            app:destination="@id/nav_menu_item_detail"
             app:popUpTo="@+id/nav_favorites">
 
         </action>
@@ -817,7 +817,7 @@
 
         <action
             android:id="@+id/action_notifications_to_menu_item"
-            app:destination="@id/nav_menu_item"
+            app:destination="@id/nav_menu_item_detail"
             app:popUpTo="@+id/nav_notifications" />
 
         <action

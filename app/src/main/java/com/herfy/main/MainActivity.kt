@@ -1256,7 +1256,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 )
             )
 
-            R.id.nav_menu_item -> NavigationUtils.navigateSafe(
+            R.id.nav_menu_item_detail -> NavigationUtils.navigateSafe(
                 navController, MenuItemDetailFragmentDirections.actionMenuItemToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )

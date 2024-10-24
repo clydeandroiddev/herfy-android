@@ -1125,27 +1125,15 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     ) {
         runOnMain {
             dismissDialogFragments()
-            if (menuItem.isCombo) {
-                val bundle = Bundle()
-                bundle.putBoolean(Values.KEY_IS_PROMO, false)
-                bundle.putString(Values.KEY_MENU_ITEM_ID, "")
-                bundle.putBoolean(Values.KEY_IS_UPSELL, menuItem.attributes.isUpsell)
-                bundle.putBoolean(Values.KEY_IS_EDIT, true)
-                bundle.putInt(Values.KEY_CART_MENU_ITEM_POSITION, position)
-                NavigationUtils.navigateSafe(
-                    findNavController(), R.id.action_cart_to_combo_meal, bundle
-                )
-            } else {
-                NavigationUtils.navigateSafe(
-                    findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                        menuItemId = menuItem.id,
-                        menuCategoryId = "",
-                        cartMenuItemPosition = position,
-                        isPromo = false
-                    )
-                )
-            }
-
+            val bundle = Bundle()
+            bundle.putBoolean(Values.KEY_IS_PROMO, false)
+            bundle.putString(Values.KEY_MENU_ITEM_ID, "")
+            bundle.putBoolean(Values.KEY_IS_UPSELL, menuItem.attributes.isUpsell)
+            bundle.putBoolean(Values.KEY_IS_EDIT, true)
+            bundle.putInt(Values.KEY_CART_MENU_ITEM_POSITION, position)
+            NavigationUtils.navigateSafe(
+                findNavController(), R.id.action_cart_to_menu_item, bundle
+            )
         }
 
     }
@@ -2036,29 +2024,20 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                 CacheUtil.getInstance().campaignPromotionMenuItem
             } else {
                 null
-            }/*promoItem?.let { promoMenuItem ->
-                if (promoMenuItem.isMustBeCustomized && promoMenuItem.isCombo) {
-                    NavigationUtils.navigateSafe(
-                        findNavController(), CartFragmentDirections.actionCartToComboMeal(
-                            menuCategoryId = "",
-                            menuItemId = promoItem.id,
-                            cartMenuItemPosition = -1,
-                            isPromo = true,
-                            isEdit = false
-                        )
-                    )
-                } else if (promoMenuItem.isMustBeCustomized) {
+            }
+            promoItem?.let { promoMenuItem ->
+                if (promoMenuItem.isMustBeCustomized) {
                     NavigationUtils.navigateSafe(
                         findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                            menuItemId = promoItem.id,
                             menuCategoryId = "",
+                            menuItemId = promoItem.id,
                             cartMenuItemPosition = -1,
                             isPromo = true,
                             isEdit = false
                         )
                     )
                 }
-            }*/
+            }
 
         }
     }
@@ -2074,17 +2053,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     null
                 }
             promoItem?.let { promoMenuItem ->
-                if (promoMenuItem.isMustBeCustomized && promoMenuItem.isCombo) {
-                    NavigationUtils.navigateSafe(
-                        findNavController(), CartFragmentDirections.actionCartToComboMeal(
-                            menuCategoryId = "",
-                            menuItemId = promoMenuItem.id,
-                            cartMenuItemPosition = -1,
-                            isPromo = true,
-                            isEdit = true
-                        )
-                    )
-                } else if (promoMenuItem.isMustBeCustomized) {
+                if (promoMenuItem.isMustBeCustomized) {
                     NavigationUtils.navigateSafe(
                         findNavController(), CartFragmentDirections.actionCartToMenuItem(
                             menuItemId = promoItem.id,
@@ -2305,26 +2274,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
     override fun goToItemDetails(position: Int, upsell: MenuItem) {
-        if (upsell.isCombo) {
-            NavigationUtils.navigateSafe(
-                findNavController(), CartFragmentDirections.actionCartToComboMeal(
-                    upsell.attributes.categoryId.toString(),
-                    upsell.id,
-                    -1,
-                    isUpsell = upsell.attributes.isUpsell
-                )
+        NavigationUtils.navigateSafe(
+            findNavController(), CartFragmentDirections.actionCartToMenuItem(
+                upsell.id,
+                upsell.attributes.categoryId.toString(),
+                -1,
+                isUpsell = upsell.attributes.isUpsell
             )
-        } else {
-            NavigationUtils.navigateSafe(
-                findNavController(), CartFragmentDirections.actionCartToMenuItem(
-                    upsell.id,
-                    upsell.attributes.categoryId.toString(),
-                    -1,
-                    isUpsell = upsell.attributes.isUpsell
-                )
-            )
-        }
-
+        )
     }
 
     override fun showCartMenuItemsLoading() {

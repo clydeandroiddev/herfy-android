@@ -10,7 +10,7 @@
     app:cardUseCompatPadding="false"
     app:cardCornerRadius="20dp"
     app:strokeWidth="1dp"
-    android:layout_margin="4dp">
+    android:layout_margin="@dimen/margin_micro">
 
     <LinearLayout
         android:id="@+id/container"
