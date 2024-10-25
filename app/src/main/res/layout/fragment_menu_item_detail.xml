@@ -281,7 +281,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/margin_large"
                             android:visibility="gone"
-                            tools:visibility="gone">
+                            tools:visibility="visible">
 
 
                             <ImageView
@@ -291,9 +291,10 @@
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_modifier_group_checked_selected"
                                 android:visibility="gone"
-                                app:layout_constraintBottom_toBottomOf="@+id/sizesImage"
+                                android:layout_marginTop="16dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="@+id/sizesImage"
+                                app:layout_constraintTop_toTopOf="parent"
                                 tools:visibility="visible" />
 
 
@@ -302,16 +303,18 @@
                                 style="@style/Styles.Text.Footnote.Semi.Bold"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/margin_large"
                                 android:gravity="start"
                                 android:includeFontPadding="false"
                                 android:text="Choose size"
                                 android:textAlignment="viewStart"
                                 android:textColor="@color/black"
                                 android:textSize="14sp"
+                                android:layout_marginTop="@dimen/margin_large"
+                                android:layout_marginStart="@dimen/margin_large"
+                                app:layout_goneMarginStart="0dp"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/sizesImage"
-                                app:layout_constraintTop_toTopOf="@+id/sizesImage" />
+                                app:layout_constraintTop_toTopOf="parent" />
 
 
 
@@ -323,6 +326,7 @@
                                 android:background="@color/white"
                                 android:scaleType="centerInside"
                                 android:layout_marginTop="@dimen/margin_large"
+                                android:layout_marginEnd="@dimen/margin_large"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"

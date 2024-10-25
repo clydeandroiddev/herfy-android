@@ -16,7 +16,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -35,7 +34,6 @@ import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.base.BaseActivity
 import com.herfy.databinding.FragmentMenuItemDetailBinding
 import com.herfy.menu.adapters.ModifierGroupNewRecycleAdapterKotlin
-import com.herfy.menu.views.ComboMealFragmentDirections
 import com.herfy.menuitem.viewmodel.MenuItemDetailViewModel
 import com.herfy.model.ShowComboMealItemDetails
 import com.herfy.nutritiondetails.NutritionInfoFragmentBottomSheet
@@ -128,6 +126,7 @@ class MenuItemDetailFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this@MenuItemDetailFragment.viewModel.isFromFavorite = this.isFromFavorite
         if (!isPromo) {
             if (menuItemId.isNotEmpty()) {
                 viewModel.apply {
@@ -166,7 +165,7 @@ class MenuItemDetailFragment :
 
     override fun initViews() {
         super.initViews()
-        //this@MenuItemDetailFragment.viewModel.isFromFavorite = this.isFromFavorite
+        //
         binding.viewModel = this@MenuItemDetailFragment.viewModel
         setupImageHeight()
         binding.apply {
@@ -318,8 +317,9 @@ class MenuItemDetailFragment :
                         binding.sizesLabel.visible()
                         binding.checkBox.visible()
                         if(it.isCombo && it.combo.isNotEmpty()){
-                            sizesImage.setImageResource(com.herfy.productpagedetails.R.drawable.ic_combo_size)
+                            sizesImage.gone()
                         }else {
+                            sizesImage.visible()
                             binding.sizesLabel.text = menuItem.sizes.attributes.name
                             val imageUrl = menuItem.sizes.attributes.image
                             if (imageUrl != null && !imageUrl.equals(
