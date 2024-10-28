@@ -900,80 +900,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 }
             })
         }
-        //total.setText(StringUtil.getFormattedPrice(paymentPresenter.getTotalPrice()));
-
-        /* Concept concept = CacheUtil.getInstance().getConcept();
-        if (concept != null) {
-            String vatNumber = concept.getVatNumber();
-            String vatCertificateUrl = concept.getVatCertificateUrl();
-            if (vatNumber != null && !vatNumber.isEmpty() && vatCertificateUrl != null && !vatCertificateUrl.isEmpty()) {
-                financialValue.setText(vatNumber);
-                financialContainer.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (vatCertificateUrl.contains(".pdf")) {
-                            Intent browserIntent = new Intent(Intent.ACTION_VIEW);
-                            browserIntent.setDataAndType(Uri.parse(vatCertificateUrl), "application/pdf");
-                            Intent chooser = Intent.createChooser(browserIntent, CacheUtil.getInstance().getTranslations(Text.VAT_NO_CAPS, "VAT NO."));
-                            startActivity(chooser);
-                        } else {
-                            Intent intent = new Intent(CheckoutActivity.this, BrowserActivity.class);
-                            intent.putExtra("title", CacheUtil.getInstance().getTranslations(Text.VAT_NO_CAPS, "VAT NO."));
-                            intent.putExtra("url", vatCertificateUrl);
-                            startActivity(intent);
-                        }
-                    }
-                });
-                financialCard.setVisibility(View.VISIBLE);
-            } else {
-                financialCard.setVisibility(View.GONE);
-            }
-        } else {
-            financialCard.setVisibility(View.GONE);
-        }*/
-
-        /*tvMukafaaRemove.setOnClickListener(view -> {
-            paymentPresenter.removeMukafaa();
-            cardMukafaaContainer.performClick();
-        });
-
-        cardMukafaaContainer.setOnClickListener(view -> {
-            if (!paymentPresenter.hasMukafaaTransactionId()) {
-                CacheUtil.getInstance().setOrderPayment(PaymentType.NONE);
-                mukafaaSelected = !mukafaaSelected;
-                selectMukafaa(mukafaaSelected, true);
-            }
-        });
-
-        requestOTP.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String number = getNumber();
-                if (number == null || number.isEmpty()) {
-                    showMessage(CacheUtil.getInstance().getTranslations(Text.MOBILE_OR_CIC_REQUIRED, "Please input either your Mobile Number or Loyalty CIC Number to request an OTP."));
-                } else if (!phoneNumber.getText().toString().isEmpty() && !StringUtil.isValidMobileNumber(number)) {
-                    showMessage(CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER_INVALID));
-                } else {
-                    Intent intent = new Intent(PaymentActivity.this, MukafaaOTPActivity.class);
-                    intent.putExtra("number", number);
-                    intent.putExtra("total", String.valueOf(paymentPresenter.getValidatedTotal()));
-                    intent.putExtra("cart", paymentPresenter.getValidatedBody());
-                    intent.putExtra("delivery_charge", paymentPresenter.getValidatedDeliveryCharge());
-                    startActivityForResult(intent, OTP_REQUEST);
-
-                }
-            }
-        });
-
-        if (paymentPresenter.hasMukafaaTransactionId()) {
-            if (!mukafaaSelected) {
-                mukafaaSelected = true;
-                mukafaaPayment.setStrokeColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));
-                mukafaaNumbers.setVisibility(View.GONE);
-                requestOTP.setVisibility(View.GONE);
-                placeOrder.setVisibility(View.VISIBLE);
-            }
-        }*/
     }
 
     override fun setupFonts() {}
@@ -1587,7 +1513,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private fun checkSelectedPayment() {
         binding?.let {
             it.apply {
-                if (CacheUtil.getInstance().orderPayment == PaymentType.CASH) {
+                if (CacheUtil.getInstance().orderPayment == PaymentType.CASH || CacheUtil.getInstance().orderPayment == PaymentType.NONE) {
                     alrajhiBlocker.isVisible = true
                     loyaltyBlocker.isVisible = true
                     alrhajiPayment.alpha = 0.5f
