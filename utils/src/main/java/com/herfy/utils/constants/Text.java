@@ -1246,5 +1246,7 @@ public class Text {
     public static final String ENGLISH_LANG_KEY = "english_lang_key";
 
     public static final String PROMO_ALREAD_USED_MESSAGE_KEY = "promo_already_used_message";
+    public static final String MOKAFAA_DISABLED = "mokafaa_disabled";
+    public static final String LOYALTY_DISABLED = "loyalty_disabled";
 
 }
