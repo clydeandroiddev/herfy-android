@@ -1817,7 +1817,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
 
         paymentPresenter?.validateOrder(
-            false, CacheUtil.getInstance().orderStore, null, 0, false
+            false, CacheUtil.getInstance().orderStore, null, loyaltypointsInput, false
         )
     }
 
