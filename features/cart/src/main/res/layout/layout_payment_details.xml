@@ -329,7 +329,7 @@
                         android:textColor="#55667B"
                         android:textSize="14sp"
                         style="@style/TextAppearance.Footnote"
-                        tools:text="Coupon Discount" />
+                        tools:text="Discount" />
 
                     <TextView
                         android:id="@+id/coupon_discount"

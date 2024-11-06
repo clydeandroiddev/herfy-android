@@ -1148,7 +1148,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         if (loyaltyPoints > 0) {
                             pointsSarValue = loyaltyPoints / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
                         }
-                        double discountValue = orderData.getDiscountDisplay() > 0.0 ? orderData.getDiscountDisplay() : orderData.getDiscount();
+                        double discountValue = orderData.getDiscount() > 0.0 ? orderData.getDiscount() : orderData.getDiscountDisplay();
 
                         boolean hasPromoItem = CacheUtil.getInstance().getCouponMenuItem() != null || CacheUtil.getInstance().getCampaignPromotionMenuItem() != null;
 

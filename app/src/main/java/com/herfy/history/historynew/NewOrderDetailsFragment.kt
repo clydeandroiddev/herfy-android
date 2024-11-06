@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 import com.herfy.R
 import com.herfy.analytics.firebase.FirebaseService
 import com.herfy.base.BaseActivity
@@ -35,6 +36,7 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.visible
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.DialogUtils
@@ -48,6 +50,7 @@ import com.skylinedynamics.solosdk.api.models.objects.PaymentType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.Store
 import dagger.hilt.android.AndroidEntryPoint
+import io.shipbook.shipbooksdk.Log
 
 @AndroidEntryPoint
 class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
@@ -278,24 +281,28 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                 }
 
                 val discountAmount =
-                    (if (order.discountDisplay != 0.0) order.discountDisplay else order.discount) - mukafaaAmount
+                    (if (order.discount != 0.0) order.discount else order.discountDisplay)
+
                 if (discountAmount > 0.0) {
                     discountContainer.isVisible = true
-                    discountTotal.text = "-" + StringUtil.getNewFormattedPrice(
-                        (item.discount - mukafaaAmount), true
-                    )
+                    discountTotal.text = "-" + StringUtil.getNewFormattedPrice(item.discount, true)
                 } else {
                     discountContainer.isVisible = false
                 }
 
-                if (item.loyaltyPointsRedeemed > 0) {
-                    loyaltyContainer.visible()
-                    tvRedeemPointsLabel.text = CacheUtil.getInstance()
-                        .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
-                        .replace("x", item.loyaltyActualPointsRedeemed.toString())
-                    tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
-                        item.loyaltyPointsRedeemed, true, false, true
-                    )
+                if (item.loyaltyActualPointsRedeemed > 0) {
+                    orderPresenter?.let {
+                        val loyaltyTransaction = it.soloLoyaltyTransaction
+                        if (loyaltyTransaction != null) {
+                            loyaltyContainer.visible()
+                            tvRedeemPointsLabel.text = CacheUtil.getInstance()
+                                .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
+                                .replace("x", item.loyaltyActualPointsRedeemed.toString())
+                            tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
+                                loyaltyTransaction.attributes.amount, true, false, true
+                            )
+                        }
+                    }
                 } else {
                     loyaltyContainer.gone()
                 }

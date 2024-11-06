@@ -221,6 +221,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 finish()
             }
         }
+        paymentPresenter?.removeMukafaaRedemption()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -960,8 +961,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             CacheUtil.getInstance().getTranslations(Text.PLACE_ORDER, "Place Order")
         binding!!.layoutPaymentSummary.tvSubtotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL)
-        binding!!.layoutPaymentSummary.tvDiscount.text =
-            CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
         binding!!.layoutPaymentSummary.tvTotalLabel.text =
             CacheUtil.getInstance().getTranslations(Text.TOTAL_LABEL, "Total").replace(":", "")
         binding!!.tvDeliveryInstructionLabel.text = CacheUtil.getInstance()
@@ -1235,7 +1234,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             binding!!.layoutLoyalty.etPoints.clearFocus()
             binding!!.layoutPaymentSummary.grpRedeemedPoints.visible()
             binding!!.layoutPaymentSummary.tvRedeemPointsLabel.text =
-                CacheUtil.getInstance().getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
+                CacheUtil.getInstance().getTranslations(Text.REDEEMED_PTS_LABEL, "(x) pts redeemed")
                     .replace("x", pointsUsed.toString())
             val sarAmount = Math.min(
                 pointsSarValue, paymentPresenter!!.menuItemsTotalPrice
