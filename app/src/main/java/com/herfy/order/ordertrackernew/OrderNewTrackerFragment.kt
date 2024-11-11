@@ -1497,20 +1497,30 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     if (item.loyaltyActualPointsRedeemed > 0) {
                         orderPresenter?.let {
                             val loyaltyTransaction = it.soloLoyaltyTransaction
-                            if (loyaltyTransaction != null) {
+                            if (loyaltyTransaction != null || item.loyaltyPointsRedeemed > 0) {
                                 loyaltyContainer.visible()
                                 tvRedeemPointsLabel.text = CacheUtil.getInstance()
                                     .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
                                     .replace("x", item.loyaltyActualPointsRedeemed.toString())
-                                tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
-                                    loyaltyTransaction.attributes.amount, true, false, true
-                                )
+                                if (loyaltyTransaction != null) {
+                                    tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
+                                        loyaltyTransaction.attributes.amount, true, false, true
+                                    )
+                                } else {
+                                    tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
+                                        item.loyaltyPointsRedeemed, true, false, true
+                                    )
+                                }
+                            } else {
+                                loyaltyContainer.gone()
                             }
                         }
                     } else {
                         loyaltyContainer.gone()
                     }
                 }
+
+
 
                 orderPaymentDetails.totalPrice.text = StringUtil.getNewFormattedPrice(
                     item.total, true
