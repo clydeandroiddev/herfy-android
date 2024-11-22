@@ -864,7 +864,7 @@ class CartPresenter @Inject constructor(
         }
 
         val discountValue =
-            if (finalOrderData.discountDisplay > 0.0) finalOrderData.discountDisplay else finalOrderData.discount
+            if (finalOrderData.discount > 0.0) finalOrderData.discount else finalOrderData.discountDisplay
 
         cartView.setTotalPrice(
             hasPromotion,
@@ -2744,7 +2744,7 @@ class CartPresenter @Inject constructor(
                                     )
                                 }
                                 val discountValue =
-                                    if (orderData.discountDisplay > 0.0) orderData.discountDisplay else orderData.discount
+                                    if (orderData.discount > 0.0) orderData.discount else orderData.discountDisplay
 
                                 if (!isPromoItem) {
                                     cartView.setTotalPrice(

@@ -81,6 +81,7 @@ import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.showToast
 import com.herfy.utils.extensions.visible
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.DialogUtils
@@ -248,7 +249,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         orderPresenter?.start()
-        if(args.fromPayment == "true") {
+        if (args.fromPayment == "true") {
             activity?.cast<BaseActivity> { it.showAppReview() }
         }
     }
@@ -1101,7 +1102,9 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                         finalNumber = dialCode + finalNumber
                     }
 
-                    val message = MessagingUtil.whatsAppMessage(orderId, orderStore?.attributes?.name?:"") ?:""
+                    val message =
+                        MessagingUtil.whatsAppMessage(orderId, orderStore?.attributes?.name ?: "")
+                            ?: ""
                     val packageManager = mainActivity.packageManager
                     val intent = Intent(Intent.ACTION_VIEW)
                     val url = "https://api.whatsapp.com/send?phone=$finalNumber&text=$message"
@@ -1463,6 +1466,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 } else {
                     orderPaymentDetails.deliverContainer.isVisible = false
                 }
+
                 var mukafaaAmount = 0.0
                 orderPaymentDetails.apply {
                     orderPresenter?.let {
@@ -1479,29 +1483,43 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     }
                 }
                 val discountAmount =
-                    (if (order.discountDisplay != 0.0) order.discountDisplay else order.discount) - mukafaaAmount
+                    (if (order.discount != 0.0) order.discount else order.discountDisplay)
+
                 if (discountAmount > 0.0) {
                     orderPaymentDetails.discountContainer.isVisible = true
-                    orderPaymentDetails.discountTotal.text = "-" + StringUtil.getNewFormattedPrice(
-                        (item.discount - mukafaaAmount), true
-                    )
+                    orderPaymentDetails.discountTotal.text =
+                        "-" + StringUtil.getNewFormattedPrice(item.discount, true)
                 } else {
                     orderPaymentDetails.discountContainer.isVisible = false
                 }
 
-                if (item.loyaltyPointsRedeemed > 0) {
-                    orderPaymentDetails.apply {
-                        loyaltyContainer.visible()
-                        tvRedeemPointsLabel.text = CacheUtil.getInstance()
-                            .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
-                            .replace("x", item.loyaltyActualPointsRedeemed.toString())
-                        tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
-                            item.loyaltyPointsRedeemed, true, false, true
-                        )
+                orderPaymentDetails.apply {
+                    if (item.loyaltyActualPointsRedeemed > 0) {
+                        orderPresenter?.let {
+                            val loyaltyTransaction = it.soloLoyaltyTransaction
+                            if (loyaltyTransaction != null || item.loyaltyPointsRedeemed > 0) {
+                                loyaltyContainer.visible()
+                                tvRedeemPointsLabel.text = CacheUtil.getInstance()
+                                    .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
+                                    .replace("x", item.loyaltyActualPointsRedeemed.toString())
+                                if (loyaltyTransaction != null) {
+                                    tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
+                                        loyaltyTransaction.attributes.amount, true, false, true
+                                    )
+                                } else {
+                                    tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
+                                        item.loyaltyPointsRedeemed, true, false, true
+                                    )
+                                }
+                            } else {
+                                loyaltyContainer.gone()
+                            }
+                        }
+                    } else {
+                        loyaltyContainer.gone()
                     }
-                } else {
-                    orderPaymentDetails.loyaltyContainer.gone()
                 }
+
 
 
                 orderPaymentDetails.totalPrice.text = StringUtil.getNewFormattedPrice(
@@ -1690,7 +1708,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     try {
                         if (orderAddress != null) {
 
-                            if(eta == null || eta == 0) {
+                            if (eta == null || eta == 0) {
                                 textView.visibility = View.INVISIBLE
                             } else {
                                 textView.text = if (eta > 1) {
@@ -1707,11 +1725,13 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 textView.visibility = View.VISIBLE
                             }
 
-                            currentLocationToUse = orderAddress?.attributes?.lat?.toDouble()?.let { orderAddressLat ->
-                                orderAddress?.attributes?.longt?.toDouble()?.let { orderAddressLng ->
-                                    LatLng(orderAddressLat, orderAddressLng)
+                            currentLocationToUse =
+                                orderAddress?.attributes?.lat?.toDouble()?.let { orderAddressLat ->
+                                    orderAddress?.attributes?.longt?.toDouble()
+                                        ?.let { orderAddressLng ->
+                                            LatLng(orderAddressLat, orderAddressLng)
+                                        }
                                 }
-                            }
 
                             currentLocationToUse?.let { locationToUse ->
                                 val isLocationLeft = isAboveOrBelowAndLeft(
@@ -1834,7 +1854,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     binding.statusDriverDetails.apply {
                         appDriver.bearing?.lat?.let { lat ->
                             appDriver.bearing?.lng?.let { lng ->
-                                if(lat.isNotEmpty() && lng.isNotEmpty()) {
+                                if (lat.isNotEmpty() && lng.isNotEmpty()) {
                                     updateDriverLocation(
                                         LatLng(lat.toDouble(), lng.toDouble()),
                                         appDriver.bearing?.eta
@@ -1969,7 +1989,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     })
 
                 if (isAdded && !isRemoving) {
-                    ratingBarDialog.show(it.supportFragmentManager, RatingBarDialog::class.java.simpleName)
+                    ratingBarDialog.show(
+                        it.supportFragmentManager,
+                        RatingBarDialog::class.java.simpleName
+                    )
                 }
 
             }

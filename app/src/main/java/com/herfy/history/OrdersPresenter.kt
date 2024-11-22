@@ -71,6 +71,7 @@ import com.skylinedynamics.solosdk.api.models.objects.order.OrderModifierItem
 import com.skylinedynamics.solosdk.api.models.requestbodies.OrderFeedbackBody
 import com.skylinedynamics.solosdk.util.GsonHelper
 import io.ably.lib.types.Message
+import io.shipbook.shipbooksdk.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
@@ -129,9 +130,9 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener { task: Task<Boolean?> ->
             if (task.isSuccessful) {
                 val lyvePolling: String = firebaseRemoteConfig.getString("lyve_polling")
-                if(lyvePolling.isNotEmpty()){
+                if (lyvePolling.isNotEmpty()) {
                     val lyvePollingObj = JSONObject(lyvePolling)
-                    if(lyvePollingObj.has("pull-driver-api-enable")){
+                    if (lyvePollingObj.has("pull-driver-api-enable")) {
                         lyvePollingEnable = lyvePollingObj.getBoolean("pull-driver-api-enable")
                     }
                     if (lyvePollingObj.has("ttl")) {
@@ -404,18 +405,20 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                             } else if ((includedType == "customer-address")) {
                                                 address = Address.parseAddress(includedObject)
                                             } else if ((includedType == "combo")) {
-                                                val combo = GsonHelper.gsonFinal().fromJson<MenuItem>(
-                                                    includedObject.toString(),
-                                                    object : TypeToken<MenuItem?>() {
-                                                    }.type
-                                                )
+                                                val combo =
+                                                    GsonHelper.gsonFinal().fromJson<MenuItem>(
+                                                        includedObject.toString(),
+                                                        object : TypeToken<MenuItem?>() {
+                                                        }.type
+                                                    )
                                                 comboPrices[combo.attributes.itemId.toString()] =
                                                     combo.attributes.finalPrice
                                             }
                                         }
                                         for (menuItem: MenuItem in menuItems) {
                                             if (menuItem.attributes.isCombo) {
-                                                val menuItemId = menuItem.attributes.itemId.toString()
+                                                val menuItemId =
+                                                    menuItem.attributes.itemId.toString()
                                                 if (comboPrices.containsKey(menuItemId)) {
                                                     val price = comboPrices[menuItemId]
                                                     if (price != null && price != 0.00) {
@@ -455,14 +458,16 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                                     if ((code == "sizes") || (type == "sizes") || (label == "sizes")) {
                                                         modifierGroup.type = ModifierGroupType.SIZES
                                                     } else {
-                                                        modifierGroup.type = ModifierGroupType.OPTIONS
+                                                        modifierGroup.type =
+                                                            ModifierGroupType.OPTIONS
                                                     }
                                                     modifierGroups.add(modifierGroup)
                                                 } else if ((includedObject.getString("type") == "modifier")) {
                                                     val modifierItem = GsonHelper.gsonFinal()
                                                         .fromJson<OrderModifierItem>(
                                                             includedObject.toString(),
-                                                            object : TypeToken<OrderModifierItem?>() {
+                                                            object :
+                                                                TypeToken<OrderModifierItem?>() {
                                                             }.type
                                                         )
 
@@ -471,7 +476,10 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                                         modifierItem.attributes.id = modifierItem.id
                                                     }
 
-                                                    if (menuItem.modifierItemsIds.contains(modifierItem.id)) {
+                                                    if (menuItem.modifierItemsIds.contains(
+                                                            modifierItem.id
+                                                        )
+                                                    ) {
                                                         if (menuItem.orderModifierItemsMap.containsKey(
                                                                 modifierItem.attributes.id
                                                             )
@@ -583,7 +591,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                         Gson().fromJson(lyveDriverObject.toString(), LyveDriver::class.java)
                     if (lyveDriver != null) {
                         driver = lyveDriver
-                        ordersView.showWhatsApp(driver?.mobile?:"")
+                        ordersView.showWhatsApp(driver?.mobile ?: "")
                         val bearing = lyveDriver.bearing
                         if (bearing != null) {
                             val lat = bearing.lat
@@ -760,7 +768,8 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     ) {
         if (orderPosition == -1) {
             order?.let { order ->
-                val isCancelled = order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value
+                val isCancelled =
+                    order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value
                 timeLineViewHolder.setTimeLine(isCancelled, orderStatuses[position], noDriver)
             }
         } else {
@@ -847,7 +856,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                         )
                                         if (lyveDriver != null) {
                                             driver = lyveDriver
-                                            ordersView.showWhatsApp(driver?.mobile?:"")
+                                            ordersView.showWhatsApp(driver?.mobile ?: "")
                                             val bearing = lyveDriver.bearing
                                             if (bearing != null) {
                                                 val lat = bearing.lat
@@ -867,7 +876,10 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                             }
                                             if (!isLocationUpdateSubscribed) {
                                                 subscribeToOrderDriverLocationUpdate(order.id)
-                                                setLogisticsPolling(order.id, order.orderStatus.sequence)
+                                                setLogisticsPolling(
+                                                    order.id,
+                                                    order.orderStatus.sequence
+                                                )
                                             }
                                         } else {
                                             getDriverBearing(employeeId)
@@ -990,7 +1002,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                             getOrderFeedbacks()
                         } catch (e: JSONException) {
                             e.printStackTrace()
-                            this.onError(e.message?:"")
+                            this.onError(e.message ?: "")
                         }
                     }
 
@@ -1024,7 +1036,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                     getOrderFeedbacks(orderId)
                 } catch (e: JSONException) {
                     e.printStackTrace()
-                    this.onError(e.message?:"")
+                    this.onError(e.message ?: "")
                 }
             }
 
@@ -1085,7 +1097,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                     ordersView.showRatings(null, ratings)
                 } catch (e: JSONException) {
                     e.printStackTrace()
-                    this.onError(e.message?:"")
+                    this.onError(e.message ?: "")
                 }
             }
 
@@ -1134,7 +1146,8 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                                     ignoreCase = true
                                                 )
                                             ) {
-                                                ratingTopic.attributes.rating = rating.attributes.rating
+                                                ratingTopic.attributes.rating =
+                                                    rating.attributes.rating
                                                 break
                                             }
                                         }
@@ -1146,7 +1159,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                         ordersView.showRatings(order.orderStatus, ratings)
                     } catch (e: JSONException) {
                         e.printStackTrace()
-                        this.onError(e.message?:"")
+                        this.onError(e.message ?: "")
                     }
                 }
 
@@ -1297,21 +1310,23 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                         break
                                     }
                                 } else if (type.equals("modifier-group", ignoreCase = true)) {
-                                    val modifierGroup = GsonHelper.gsonFinal().fromJson<ModifierGroup>(
-                                        includedObject.toString(),
-                                        object : TypeToken<ModifierGroup?>() {
-                                        }.type
-                                    )
+                                    val modifierGroup =
+                                        GsonHelper.gsonFinal().fromJson<ModifierGroup>(
+                                            includedObject.toString(),
+                                            object : TypeToken<ModifierGroup?>() {
+                                            }.type
+                                        )
                                     if (modifierGroup.attributes.enabled == 0) {
                                         reorderable = false
                                         break
                                     }
                                 } else if (type.equals("modifier", ignoreCase = true)) {
-                                    val modifierItem = GsonHelper.gsonFinal().fromJson<ModifierItem>(
-                                        includedObject.toString(),
-                                        object : TypeToken<ModifierItem?>() {
-                                        }.type
-                                    )
+                                    val modifierItem =
+                                        GsonHelper.gsonFinal().fromJson<ModifierItem>(
+                                            includedObject.toString(),
+                                            object : TypeToken<ModifierItem?>() {
+                                            }.type
+                                        )
                                     if (modifierItem.attributes.enabled == 0) {
                                         reorderable = false
                                         break
@@ -1328,11 +1343,12 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                     }
                                 } else if (type.equals("combo", ignoreCase = true)) {
                                     try {
-                                        val comboItem = GsonHelper.gsonFinal().fromJson<ComboItemMain>(
-                                            includedObject.toString(),
-                                            object : TypeToken<ComboItemMain?>() {
-                                            }.type
-                                        )
+                                        val comboItem =
+                                            GsonHelper.gsonFinal().fromJson<ComboItemMain>(
+                                                includedObject.toString(),
+                                                object : TypeToken<ComboItemMain?>() {
+                                                }.type
+                                            )
                                         comboItems.add(comboItem)
                                     } catch (e: Exception) {
                                         e.printStackTrace()
@@ -1502,9 +1518,11 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                             .fromJson(modifierGroupDb.data, ModifierGroupCdn::class.java)
                     )
                     val modifierItems = LinkedList<ModifierItem>()
-                    val modifierGroupModifierItems = modifierGroupIds[modifierGroupCdn.id]?.modifiers
+                    val modifierGroupModifierItems =
+                        modifierGroupIds[modifierGroupCdn.id]?.modifiers
                     val modifierGroupModifierItemIds = ArrayList<String>()
-                    val excludeModifierItems = modifierGroupIds[modifierGroupCdn.id]?.excludeModifiers
+                    val excludeModifierItems =
+                        modifierGroupIds[modifierGroupCdn.id]?.excludeModifiers
                     val excludedModifierItems: MutableSet<String> = HashSet()
                     excludeModifierItems?.let {
                         for (exclude: Int in it) {
@@ -2523,7 +2541,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
 
     override fun getMukafaaTransaction(): LoyaltyPointsTransaction? {
         transactions?.let { transactions ->
-            for (transaction in transactions!!) {
+            for (transaction in transactions) {
                 if (transaction.attributes != null && transaction.attributes.provider != null && Values.MUKAFAA_PROVIDER.equals(
                         transaction.attributes.provider,
                         ignoreCase = true
@@ -2615,11 +2633,12 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         }
     }
 
-    private fun setLogisticsPolling(orderId: String, orderStatus : Int){
-        if(lyvePollingEnable && coroutinePoller == null
+    private fun setLogisticsPolling(orderId: String, orderStatus: Int) {
+        if (lyvePollingEnable && coroutinePoller == null
             && orderStatus >= OrderStatusType.DELIVERY_IN_PROGRESS.value
-            && orderStatus < OrderStatusType.FINISHED.value){
-            coroutinePoller = CoroutinePoller(Dispatchers.IO){
+            && orderStatus < OrderStatusType.FINISHED.value
+        ) {
+            coroutinePoller = CoroutinePoller(Dispatchers.IO) {
                 sendLogisticsPoll(orderId)
             }
             val flow = coroutinePoller?.poll(pollingValue * 1000L)
@@ -2642,12 +2661,13 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                     val currentStatusSequence = when {
                         orderObject.has("current-status") -> {
                             val currentStatus = orderObject.getJSONObject("current-status")
-                            if(currentStatus.has("sequence")){
+                            if (currentStatus.has("sequence")) {
                                 currentStatus.getInt("sequence")
-                            }else {
+                            } else {
                                 0
                             }
                         }
+
                         else -> 0
                     }
                     val lyveDriverObject = orderObject.optJSONObject("lyve-driver")
@@ -2657,7 +2677,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                         if (lyveDriver != null) {
                             val bearing = lyveDriver.bearing
                             driver = lyveDriver
-                            ordersView.showWhatsApp(driver?.mobile?:"")
+                            ordersView.showWhatsApp(driver?.mobile ?: "")
                             if (bearing != null) {
                                 val lat = bearing.lat
                                 val lng = bearing.lng
@@ -2667,7 +2687,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                     )
                                     val driverLatLng = LatLng(lat.toDouble(), lng.toDouble())
                                     ordersView.showDriver(customerLatLng, driverLatLng, bearing.eta)
-                                    if(!isLocationUpdateSubscribed){
+                                    if (!isLocationUpdateSubscribed) {
                                         subscribeToOrderDriverLocationUpdate(order.id)
                                         setLogisticsPolling(order.id, currentStatusSequence)
                                     }

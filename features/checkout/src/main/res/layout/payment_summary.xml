@@ -5,22 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#F7F7F7"
-    android:paddingBottom="16dp"
     android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:paddingEnd="16dp"
+    android:paddingBottom="16dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_payment_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Payment Summary"
-        android:textSize="16sp"
-        android:textFontWeight="600"
-        android:lineHeight="19dp"
-        android:textAllCaps="false"
         android:fontFamily="@font/inter_semi_bold"
+        android:lineHeight="19dp"
+        android:text="Payment Summary"
+        android:textAllCaps="false"
         android:textColor="#0C0C0C"
+        android:textFontWeight="600"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,26 +29,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        tools:text="Subtotal"
-        android:textColor="#55667B"
-        android:textSize="14sp"
         android:fontFamily="@font/inter_regular"
+        android:textColor="#55667B"
         android:textFontWeight="500"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_payment_label" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_payment_label"
+        tools:text="Subtotal" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_subtotal"
+        style="@style/TextAppearance.Footnote_Bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        tools:text="24 SR"
-        android:textColor="@color/black"
-        style="@style/TextAppearance.Footnote_Bold"
-        android:textFontWeight="500"
         android:lineHeight="14dp"
+        android:textColor="@color/black"
+        android:textFontWeight="500"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_payment_label" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_payment_label"
+        tools:text="24 SR" />
 
     <View
         android:id="@+id/view0"
@@ -60,213 +60,54 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_subtotal_label" />
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_delivery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        tools:text="24 SR"
-        android:textColor="@color/black"
         style="@style/TextAppearance.Footnote_Bold"
-        android:textFontWeight="500"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:lineHeight="14dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_payment_label" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/grp_mukafaa"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        tools:visibility="visible"
-        app:constraint_referenced_ids="tv_mukafaa_label,tv_mukafaa_sar, view_mukafaa"/>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_mukafaa_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        tools:text="Al Rajhi Mokafa'a"
-        android:textColor="#55667B"
-        android:textSize="14sp"
-        android:fontFamily="@font/inter_regular"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewDeliverySeparator" />
-
-   <!-- <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_mukafaa_remove"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
-        android:fontFamily="@font/inter_semi_bold"
         android:textColor="@color/black"
-        android:textSize="9sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_mukafaa_sar"
-        app:layout_constraintEnd_toStartOf="@+id/tv_mukafaa_sar"
-        app:layout_constraintTop_toTopOf="@+id/tv_mukafaa_sar"
-        tools:text="Remove"
-        android:visibility="gone"/>-->
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_mukafaa_sar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        tools:text="24 SR"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        android:fontFamily="@font/inter_semi_bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewDeliverySeparator" />
-
-    <View
-        android:id="@+id/view_mukafaa"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/colorSeparator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_mukafaa_label" />
-
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/grp_discount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        tools:visibility="visible"
-        app:constraint_referenced_ids="tv_discount_label,tv_discount,view1"/>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvDeliveryChargeLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Delivery Charges"
-        android:layout_marginTop="10dp"
-        android:textColor="#55667B"
-        android:textSize="14sp"
-        android:fontFamily="@font/inter_regular"
         android:textFontWeight="500"
-        android:lineHeight="14dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view0" />
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvDeliveryChargeValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        tools:text="24 SR"
-        android:textColor="@color/black"
-        style="@style/TextAppearance.Footnote_Bold"
-        android:textFontWeight="500"
-        android:lineHeight="14dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view0" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_payment_label"
+        tools:text="24 SR" />
 
-
-    <View
-        android:id="@+id/viewDeliverySeparator"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/colorSeparator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvDeliveryChargeValue" />
-
-
-
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_discount_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        tools:text="Discount"
-        android:textColor="#55667B"
-        android:textSize="14sp"
-        android:textFontWeight="500"
-        android:fontFamily="@font/inter_regular"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_mukafaa" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_discount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/black"
-        style="@style/TextAppearance.Footnote_Bold"
-        android:textFontWeight="700"
-        android:lineHeight="14dp"
-        android:fontFamily="@font/inter_bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_mukafaa"
-        tools:text="-5 SR" />
-
-    <View
-        android:id="@+id/view1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/colorSeparator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_discount_label" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/grp_redeemed_points"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        tools:visibility="visible"
-        app:constraint_referenced_ids="tv_redeem_points_label, tv_redeem_points_equiv, view_redeem_points"/>
+        app:constraint_referenced_ids="tv_redeem_points_label, tv_redeem_points_equiv, view_redeem_points"
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_redeem_points_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:textColor="#55667B"
-        android:textSize="14sp"
         android:fontFamily="@font/inter_regular"
         android:textAllCaps="false"
+        android:textColor="#55667B"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view1"
-        tools:text="Loyalty Points (500)"/>
-
-<!--    <androidx.appcompat.widget.AppCompatTextView-->
-<!--        android:id="@+id/tv_redeem_pts"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:fontFamily="@font/inter_regular"-->
-<!--        android:lineHeight="18dp"-->
-<!--        android:textColor="@color/black"-->
-<!--        android:textFontWeight="500"-->
-<!--        android:textSize="14sp"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/tv_redeem_label"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/view1"-->
-<!--        tools:text="redeemed" />-->
+        app:layout_constraintTop_toBottomOf="@+id/viewDeliverySeparator"
+        tools:text="Loyalty Points (500)" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_redeem_points_equiv"
+        style="@style/TextAppearance.Footnote_Bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:textColor="#16A34A"
-        style="@style/TextAppearance.Footnote"
-        android:textFontWeight="700"
-        android:lineHeight="14dp"
         android:fontFamily="@font/inter_bold"
+        android:lineHeight="14dp"
+        android:textColor="@color/black"
+        android:textFontWeight="700"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view1"
+        app:layout_constraintTop_toBottomOf="@+id/viewDeliverySeparator"
         tools:text="-5 SR" />
 
     <View
@@ -281,43 +122,174 @@
         app:layout_constraintTop_toBottomOf="@id/tv_redeem_points_label" />
 
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/grp_discount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="tv_discount_label,tv_discount,view1"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvDeliveryChargeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/inter_regular"
+        android:lineHeight="14dp"
+        android:textColor="#55667B"
+        android:textFontWeight="500"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view0"
+        tools:text="Delivery Charges" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvDeliveryChargeValue"
+        style="@style/TextAppearance.Footnote_Bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:lineHeight="14dp"
+        android:textColor="@color/black"
+        android:textFontWeight="500"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view0"
+        tools:text="24 SR" />
+
+
+    <View
+        android:id="@+id/viewDeliverySeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/colorSeparator"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDeliveryChargeValue"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_discount_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="#55667B"
+        android:textFontWeight="500"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view_redeem_points"
+        tools:text="Discount" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_discount"
+        style="@style/TextAppearance.Footnote_Bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/inter_bold"
+        android:lineHeight="14dp"
+        android:textColor="@color/black"
+        android:textFontWeight="700"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view_redeem_points"
+        tools:text="-5 SR" />
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/colorSeparator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_discount_label" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/grp_mukafaa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="tv_mukafaa_label,tv_mukafaa_sar, view_mukafaa"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_mukafaa_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="#55667B"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view1"
+        tools:text="Al Rajhi Mokafa'a" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_mukafaa_sar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/inter_semi_bold"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view1"
+        tools:text="24 SR" />
+
+    <View
+        android:id="@+id/view_mukafaa"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/colorSeparator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_mukafaa_label" />
+
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_delivery_charge_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:fontFamily="@font/inter_regular"
+        android:lineHeight="18dp"
         android:text="Delivery Charge"
         android:textColor="#55667B"
-        android:textSize="14sp"
         android:textFontWeight="500"
-        android:lineHeight="18dp"
-        android:fontFamily="@font/inter_regular"
+        android:textSize="14sp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_redeem_points" />
+        app:layout_constraintTop_toBottomOf="@+id/view_mukafaa" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_delivery_charge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/inter_bold"
+        android:lineHeight="14dp"
         android:text="0 SR"
         android:textColor="@color/black"
-        android:textSize="12sp"
         android:textFontWeight="700"
-        android:lineHeight="14dp"
+        android:textSize="12sp"
         android:visibility="gone"
-        android:fontFamily="@font/inter_bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_redeem_points" />
+        app:layout_constraintTop_toBottomOf="@+id/view_mukafaa" />
 
     <View
         android:id="@+id/view2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"
         android:layout_marginTop="@dimen/_10sdp"
-        android:visibility="gone"
         android:background="@color/colorSeparator"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_delivery_charge_label" />
@@ -327,8 +299,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        tools:visibility="visible"
-        app:constraint_referenced_ids="rv_service_charge,view_service_charge"/>
+        app:constraint_referenced_ids="rv_service_charge,view_service_charge"
+        tools:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_service_charge"
@@ -336,8 +308,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view2"
-        tools:listitem="@layout/item_service_charge"
-        tools:itemCount="2"/>
+        tools:itemCount="2"
+        tools:listitem="@layout/item_service_charge" />
 
     <View
         android:id="@+id/view_service_charge"
@@ -354,26 +326,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
+        android:fontFamily="@font/inter_regular"
+        android:lineHeight="16dp"
         android:text="Total"
+        android:textColor="#55667B"
+        android:textFontWeight="400"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:textFontWeight="400"
-        android:lineHeight="16dp"
-        android:fontFamily="@font/inter_regular"
-        android:textColor="#55667B"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view_service_charge" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_total"
+        style="@style/TextAppearance.Footnote_Bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:lineHeight="24dp"
         android:text="24 SR"
         android:textColor="@color/black"
-        style="@style/TextAppearance.Footnote_Bold"
         android:textFontWeight="600"
-        android:lineHeight="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view_service_charge" />
 </androidx.constraintlayout.widget.ConstraintLayout>

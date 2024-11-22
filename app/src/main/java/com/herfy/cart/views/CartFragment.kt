@@ -736,7 +736,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         binding.paymentSummaryContainer.deliveryChargeLabel.text =
             CacheUtil.getInstance().getTranslations(Text.DELIVERY_CHARGE, "Delivery charge")
         binding.paymentSummaryContainer.couponDiscountLabel.text =
-            CacheUtil.getInstance().getTranslations(Text.COUPON_DISCOUNT_LABEL, "Coupon Discount")
+            CacheUtil.getInstance().getTranslations(Text.DISCOUNT, "Discount")
         binding.placeOrder.text =
             CacheUtil.getInstance().getTranslations(Text.CHECKOUT_LABEL, "Checkout")
         binding.totalVatLabel.text = CacheUtil.getInstance()
