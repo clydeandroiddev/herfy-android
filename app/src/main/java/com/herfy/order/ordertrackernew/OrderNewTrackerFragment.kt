@@ -81,7 +81,6 @@ import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.showToast
 import com.herfy.utils.extensions.visible
-import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CurrencyUtils
 import com.herfy.utils.helper.DialogUtils
@@ -1434,6 +1433,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun showOrder(order: OrderDetails?, store: Store?, address: Address?) {
         dismissDialogs()
         order?.let { item ->
@@ -1488,7 +1488,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 if (discountAmount > 0.0) {
                     orderPaymentDetails.discountContainer.isVisible = true
                     orderPaymentDetails.discountTotal.text =
-                        "-" + StringUtil.getNewFormattedPrice(item.discount, true)
+                        "-" + StringUtil.getNewFormattedPrice(
+                            (order.discount - mukafaaAmount),
+                            true
+                        )
                 } else {
                     orderPaymentDetails.discountContainer.isVisible = false
                 }

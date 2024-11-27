@@ -285,7 +285,10 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
 
                 if (discountAmount > 0.0) {
                     discountContainer.isVisible = true
-                    discountTotal.text = "-" + StringUtil.getNewFormattedPrice(item.discount, true)
+                    discountTotal.text = "-" + StringUtil.getNewFormattedPrice(
+                        (order.discount - mukafaaAmount),
+                        true
+                    )
                 } else {
                     discountContainer.isVisible = false
                 }
