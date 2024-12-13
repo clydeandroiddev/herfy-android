@@ -969,6 +969,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             CacheUtil.getInstance().getTranslations(Text.SUBTOTAL)
         binding!!.layoutPaymentSummary.tvDiscount.text =
             CacheUtil.getInstance().getTranslations(Text.PROMO_DISCOUNT)
+
         binding!!.totalVatDescription.text = CacheUtil.getInstance()
             .getTranslations(Text.TOTAL_IS_INCLUSIVE_OF_VAT, "Total is inclusive of VAT")
         binding?.layoutAlrahji?.apply {
@@ -1188,13 +1189,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.setVisible(isDeliverCharge)
         binding
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.text = deliveryChargeTotal
-        if (discount != 0.0) {
-            binding!!.layoutPaymentSummary.grpDiscount.visibility = View.VISIBLE
-            binding!!.layoutPaymentSummary.tvDiscount.text =
-                updateCurrency(discount, true, hasPromotion, discount > 0)
-        } else {
-            binding!!.layoutPaymentSummary.grpDiscount.visibility = View.GONE
-        }
 
         if (charges.size > 0) {
             val linearLayoutManager: LinearLayoutManager = object : LinearLayoutManager(this) {
@@ -1209,11 +1203,17 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
 
         val mukafaaAmount = paymentPresenter!!.getMukafaaTransactionAmount();
+
         val _discount = discount - mukafaaAmount;
-        binding!!.layoutPaymentSummary.tvDiscount.text =
-            updateCurrency(discount, true, hasPromotion, _discount > 0)
-        binding!!.layoutPaymentSummary.grpDiscount.visibility =
-            if (_discount != 0.0) View.VISIBLE else View.GONE
+
+        if (_discount != 0.0) {
+            binding!!.layoutPaymentSummary.grpDiscount.visibility = View.VISIBLE
+            binding!!.layoutPaymentSummary.tvDiscount.text =
+                updateCurrency(_discount, true, hasPromotion, _discount > 0)
+        } else {
+            binding!!.layoutPaymentSummary.grpDiscount.visibility = View.GONE
+        }
+
         binding?.layoutPaymentSummary?.apply {
             if (mukafaaAmount > 0) {
                 if (paymentPresenter!!.hasMukafaaTransactionId() && paymentPresenter!!.isMukafaaEnabled()) {
