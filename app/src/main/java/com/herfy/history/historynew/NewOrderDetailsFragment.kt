@@ -280,13 +280,12 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                     }
                 }
 
-                val discountAmount =
-                    (if (order.discount != 0.0) order.discount else order.discountDisplay)
+                val discountAmount = order.discount - mukafaaAmount
 
                 if (discountAmount > 0.0) {
                     discountContainer.isVisible = true
                     discountTotal.text = "-" + StringUtil.getNewFormattedPrice(
-                        (order.discount - mukafaaAmount),
+                        discountAmount,
                         true
                     )
                 } else {
