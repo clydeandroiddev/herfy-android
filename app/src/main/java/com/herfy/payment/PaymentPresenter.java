@@ -398,11 +398,11 @@ public class PaymentPresenter implements PaymentContract.Presenter {
             }
         }
 
-//        if (!isUpsell || item.isPromo() || item.getAttributes().getUpsellQuantity() > item.getAttributes().getQuantity()) {
-//            totalPrice *= item.getAttributes().getQuantity();
-//        } else {
-//            totalPrice *= item.getAttributes().getUpsellQuantity();
-//        }
+        if (!isUpsell || item.isPromo() || item.getAttributes().getUpsellQuantity() > item.getAttributes().getQuantity()) {
+            totalPrice *= item.getAttributes().getQuantity();
+        } else {
+            totalPrice *= item.getAttributes().getUpsellQuantity();
+        }
 
         return totalPrice;
     }
