@@ -124,6 +124,8 @@ public interface PaymentContract {
 
         double getTotalPrice();
 
+        @Nullable Double getValidatedSubtotal();
+
         @Nullable Double getValidatedTotal();
 
         double getCashPresented();

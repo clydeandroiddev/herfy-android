@@ -32,11 +32,6 @@ import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-
-const val KEY_TOTAL = "total"
-const val KEY_CART_BODY = "cart"
-const val KEY_DELIVERY_CHARGE = "delivery_charge"
-
 @AndroidEntryPoint
 class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
 
@@ -52,9 +47,8 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
     private var amountTextWatcher: TextWatcher? = null
 
     private var amountCount = -1
-    private var total = 0.0
     private var cartBody = ""
-    private var deliveryCharge = 0.0
+    private var subtotal = 0.0
     private var number = ""
     private var mBottomSheetListener: OTPAlrahjiListener? = null
     private var countDownTimer: CountDownTimer? = null
@@ -65,9 +59,8 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
 
         arguments?.let {
             try {
-                total = it.getDouble(KEY_TOTAL, 0.0)
                 cartBody = it.getString(KEY_CART_BODY, "")
-                deliveryCharge = it.getDouble(KEY_DELIVERY_CHARGE, 0.0)
+                subtotal = it.getDouble(KEY_SUBTOTAL, 0.0)
             } catch (e: NumberFormatException) {
                 e.printStackTrace()
             }
@@ -239,7 +232,6 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
             }
 
             btnSubmit.setOnClickListener {
-                val totalMinusDC = total - deliveryCharge
                 val o = StringUtil.toEnglish(otpAlrhaji.text.toString()) ?: ""
                 val a = StringUtil.toEnglish(etAmount.text.toString()) ?: ""
 
@@ -257,7 +249,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                         CacheUtil.getInstance()
                             .getTranslations(Text.AMOUNT_REQUIRED, "Amount is required")
                     )
-                } else if (amount > totalMinusDC) {
+                } else if (amount > subtotal) {
                     etAmount.text.clear()
                     tvAmountError.visible()
                 } else {
@@ -280,7 +272,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                 setLayoutInputNumber(true)
             }
 
-            val formattedPrice: String = StringUtil.getFormattedPrice(total).toString()
+            val formattedPrice: String = StringUtil.getFormattedPrice(subtotal).toString()
             txtTotalCartLabel.text = cacheUtilHelper.getTranslations(
                 Text.TOTAL_CART_VALUE,
                 "Total Cart Value:"
@@ -455,13 +447,15 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
 
     companion object {
 
+        const val KEY_CART_BODY = "cartBody"
+        const val KEY_SUBTOTAL = "subtotal"
+
         @JvmStatic
-        fun newInstance(total: Double, cartBody: String, deliveryCharge: Double) =
+        fun newInstance(cartBody: String, subtotal: Double) =
             BottomSheetAlrhaji().apply {
                 arguments = Bundle().apply {
-                    putDouble(KEY_TOTAL, total)
                     putString(KEY_CART_BODY, cartBody)
-                    putDouble(KEY_DELIVERY_CHARGE, deliveryCharge)
+                    putDouble(KEY_SUBTOTAL, subtotal)
                 }
             }
     }
@@ -486,4 +480,5 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
         fun otpResult(transactionId: String, amount: String, invalidMukafaa: Boolean)
 
     }
+
 }

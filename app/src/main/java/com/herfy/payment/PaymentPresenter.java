@@ -523,7 +523,8 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         return Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", total));
     }
 
-    public double getValidatedSubtotal() {
+    @Override
+    public @Nullable Double getValidatedSubtotal() {
         double promoItemPrice = 0.0;
 //        double subtotalForDisplay = validatedSubtotal - (validatedPromoItemPrice * validatedPromoItemQuantity);
 //        if (CacheUtil.getInstance().getCouponMenuItem() != null) {

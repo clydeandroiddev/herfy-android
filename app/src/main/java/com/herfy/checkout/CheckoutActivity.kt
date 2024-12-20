@@ -199,11 +199,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
         } else {
             paymentPresenter?.let {
-                val total = it.validatedTotal ?: 0.0
-                val deliveryCharge = it.validatedDeliveryCharge ?: 0.0
-                bottomSheetAlrhaji = BottomSheetAlrhaji.newInstance(
-                    total, it.validatedBody, deliveryCharge
-                )
+                val subtotal = it.validatedSubtotal ?: 0.0
+                bottomSheetAlrhaji = BottomSheetAlrhaji.newInstance(it.validatedBody, subtotal)
                 bottomSheetAlrhaji?.isCancelable = false
                 bottomSheetAlrhaji?.show(
                     supportFragmentManager, BottomSheetAlrhaji::class.java.simpleName
