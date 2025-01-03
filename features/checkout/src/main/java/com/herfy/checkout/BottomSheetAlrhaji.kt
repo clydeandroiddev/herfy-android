@@ -48,7 +48,9 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
 
     private var amountCount = -1
     private var cartBody = ""
-    private var subtotal = 0.0
+    private var validateLoyalty = false
+    private var loyaltySarAmount = 0.0
+    private var total = 0.0
     private var number = ""
     private var mBottomSheetListener: OTPAlrahjiListener? = null
     private var countDownTimer: CountDownTimer? = null
@@ -60,7 +62,14 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
         arguments?.let {
             try {
                 cartBody = it.getString(KEY_CART_BODY, "")
-                subtotal = it.getDouble(KEY_SUBTOTAL, 0.0)
+                validateLoyalty = it.getBoolean(KEY_VALIDATE_LOYALTY, false)
+                loyaltySarAmount = it.getDouble(KEY_LOYALTY_SAR_AMOUNT, 0.0)
+                val totalArg = it.getDouble(KEY_TOTAL, 0.0)
+                total = if(!validateLoyalty) {
+                    totalArg
+                } else {
+                    totalArg - loyaltySarAmount
+                }
             } catch (e: NumberFormatException) {
                 e.printStackTrace()
             }
@@ -249,7 +258,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                         CacheUtil.getInstance()
                             .getTranslations(Text.AMOUNT_REQUIRED, "Amount is required")
                     )
-                } else if (amount > subtotal) {
+                } else if (amount > total) {
                     etAmount.text.clear()
                     tvAmountError.visible()
                 } else {
@@ -272,7 +281,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                 setLayoutInputNumber(true)
             }
 
-            val formattedPrice: String = StringUtil.getFormattedPrice(subtotal).toString()
+            val formattedPrice: String = StringUtil.getFormattedPrice(total).toString()
             txtTotalCartLabel.text = cacheUtilHelper.getTranslations(
                 Text.TOTAL_CART_VALUE,
                 "Total Cart Value:"
@@ -441,21 +450,30 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                 binding.cvResend.isEnabled = true
             }
         }
-        countDownTimer?.start();
+        countDownTimer?.start()
     }
 
 
     companion object {
 
         const val KEY_CART_BODY = "cartBody"
-        const val KEY_SUBTOTAL = "subtotal"
+        const val KEY_VALIDATE_LOYALTY = "validateLoyalty"
+        const val KEY_LOYALTY_SAR_AMOUNT = "loyaltySarAmoun"
+        const val KEY_TOTAL = "total"
 
         @JvmStatic
-        fun newInstance(cartBody: String, subtotal: Double) =
+        fun newInstance(
+            cartBody: String,
+            validateLoyalty: Boolean,
+            loyaltySarAmount: Double,
+            total: Double
+        ) =
             BottomSheetAlrhaji().apply {
                 arguments = Bundle().apply {
                     putString(KEY_CART_BODY, cartBody)
-                    putDouble(KEY_SUBTOTAL, subtotal)
+                    putBoolean(KEY_VALIDATE_LOYALTY, validateLoyalty)
+                    putDouble(KEY_LOYALTY_SAR_AMOUNT, loyaltySarAmount)
+                    putDouble(KEY_TOTAL, total)
                 }
             }
     }
