@@ -794,8 +794,14 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         }
 
         switch (CacheUtil.getInstance().getOrderType()) {
-            case PICKUP:
             case DRIVE_THRU:
+                deliveryCharge = 0.0;
+                orderBody.addProperty("type", "drive-thru");
+                if (store != null) {
+                    orderBody.addProperty("location", store.getId());
+                }
+                break;
+            case PICKUP:
                 deliveryCharge = 0.0;
                 if (CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.DINE_IN)) {
                     orderBody.addProperty("type", "to-go");
