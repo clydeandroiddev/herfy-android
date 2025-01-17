@@ -549,6 +549,12 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         return validatedTotal;
     }
 
+    @androidx.annotation.Nullable
+    @Override
+    public Double getValidateDeliveryCharge() {
+        return validatedDeliveryCharge;
+    }
+
     @Override
     public double getCashPresented() {
         return cashPresented;

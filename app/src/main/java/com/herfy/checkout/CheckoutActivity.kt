@@ -201,7 +201,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
         } else {
             paymentPresenter?.let {
-                val total = it.validatedTotal ?: 0.0
+                var total = (it.validatedTotal ?: 0.0) - (it.validatedDeliveryCharge ?: 0.0)
+                if (total < 0) {
+                    total = 0.0
+                }
                 bottomSheetAlrhaji = BottomSheetAlrhaji.newInstance(
                     it.validatedBody,
                     validateLoyalty,
@@ -1211,7 +1214,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
         val _discount = discount - mukafaaAmount;
 
-        if (_discount != 0.0) {
+        if (_discount > 0.0) {
             binding!!.layoutPaymentSummary.grpDiscount.visibility = View.VISIBLE
             binding!!.layoutPaymentSummary.tvDiscount.text =
                 updateCurrency(_discount, true, hasPromotion, _discount > 0)

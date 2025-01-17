@@ -128,6 +128,8 @@ public interface PaymentContract {
 
         @Nullable Double getValidatedTotal();
 
+        @Nullable Double getValidateDeliveryCharge();
+
         double getCashPresented();
 
         void setCashPresented(double cashPresented);

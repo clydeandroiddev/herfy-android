@@ -65,7 +65,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                 validateLoyalty = it.getBoolean(KEY_VALIDATE_LOYALTY, false)
                 loyaltySarAmount = it.getDouble(KEY_LOYALTY_SAR_AMOUNT, 0.0)
                 val totalArg = it.getDouble(KEY_TOTAL, 0.0)
-                total = if(!validateLoyalty) {
+                total = if (!validateLoyalty) {
                     totalArg
                 } else {
                     totalArg - loyaltySarAmount
@@ -244,7 +244,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                 val o = StringUtil.toEnglish(otpAlrhaji.text.toString()) ?: ""
                 val a = StringUtil.toEnglish(etAmount.text.toString()) ?: ""
 
-                val amount = if(a.isNotEmpty()) etAmount.text.toString().toDouble() else 0.0
+                val amount = if (a.isNotEmpty()) etAmount.text.toString().toDouble() else 0.0
 
                 if (o.isEmpty()) {
                     otpAlrhaji.requestFocus()
@@ -262,7 +262,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                     etAmount.text.clear()
                     tvAmountError.visible()
                 } else {
-                    if(cartBody.isNotEmpty()){
+                    if (cartBody.isNotEmpty()) {
                         viewModel.verifyOTP(
                             o, a, GsonHelper.gsonFinal().fromJson(
                                 cartBody,
