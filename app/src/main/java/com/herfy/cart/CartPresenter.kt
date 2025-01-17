@@ -369,13 +369,7 @@ class CartPresenter @Inject constructor(
 
                     OrderType.DRIVE_THRU -> {
                         deliveryCharge = 0.0
-                        if (CacheUtil.getInstance().application.attributes.getOrderTypes()
-                                .contains(OrderType.DINE_IN)
-                        ) {
-                            orderBody.addProperty("type", "to-go")
-                        } else {
-                            orderBody.addProperty("type", "pickup")
-                        }
+                        orderBody.addProperty("type", "drive-thru")
                         if (CacheUtil.getInstance().orderStore != null) {
                             orderBody.addProperty("location", CacheUtil.getInstance().orderStore.id)
                         }
@@ -2359,13 +2353,7 @@ class CartPresenter @Inject constructor(
 
                     OrderType.DRIVE_THRU -> {
                         deliveryCharge = 0.0
-                        if (CacheUtil.getInstance().application.attributes.getOrderTypes()
-                                .contains(OrderType.DINE_IN)
-                        ) {
-                            orderBody.addProperty("type", "to-go")
-                        } else {
-                            orderBody.addProperty("type", "pickup")
-                        }
+                        orderBody.addProperty("type", "drive-thru")
                         if (CacheUtil.getInstance().orderStore != null) {
                             orderBody.addProperty("location", CacheUtil.getInstance().orderStore.id)
                         }
@@ -2909,7 +2897,6 @@ class CartPresenter @Inject constructor(
             when (CacheUtil.getInstance().orderType) {
                 OrderType.PICKUP -> {
                     deliveryCharge = 0.0
-                    //                        if (CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().size() == 3 || CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.DINE_IN)) {
                     if (CacheUtil.getInstance().application.attributes.getOrderTypes()
                             .contains(OrderType.DINE_IN)
                     ) {
@@ -2924,13 +2911,7 @@ class CartPresenter @Inject constructor(
 
                 OrderType.DRIVE_THRU -> {
                     deliveryCharge = 0.0
-                    if (CacheUtil.getInstance().application.attributes.getOrderTypes()
-                            .contains(OrderType.DINE_IN)
-                    ) {
-                        orderBody.addProperty("type", "to-go")
-                    } else {
-                        orderBody.addProperty("type", "pickup")
-                    }
+                    orderBody.addProperty("type", "drive-thru")
                     if (store != null) {
                         orderBody.addProperty("location", store.id)
                     }
@@ -3988,13 +3969,7 @@ class CartPresenter @Inject constructor(
 
                 OrderType.DRIVE_THRU -> {
                     deliveryCharge = 0.0
-                    if (CacheUtil.getInstance().application.attributes.getOrderTypes()
-                            .contains(OrderType.DINE_IN)
-                    ) {
-                        orderBody.addProperty("type", "to-go")
-                    } else {
-                        orderBody.addProperty("type", "pickup")
-                    }
+                    orderBody.addProperty("type", "drive-thru")
                     if (store != null) {
                         orderBody.addProperty("location", store.id)
                     }
@@ -4250,13 +4225,7 @@ class CartPresenter @Inject constructor(
 
             OrderType.DRIVE_THRU -> {
                 deliveryCharge = 0.0
-                if (CacheUtil.getInstance().application.attributes.getOrderTypes()
-                        .contains(OrderType.DINE_IN)
-                ) {
-                    orderBody.addProperty("type", "to-go")
-                } else {
-                    orderBody.addProperty("type", "pickup")
-                }
+                orderBody.addProperty("type", "drive-thru")
                 if (CacheUtil.getInstance().orderStore != null) {
                     orderBody.addProperty("location", CacheUtil.getInstance().orderStore.id)
                 }
@@ -4690,13 +4659,7 @@ class CartPresenter @Inject constructor(
 
                         OrderType.DRIVE_THRU -> {
                             deliveryCharge = 0.0
-                            if (CacheUtil.getInstance().application.attributes.getOrderTypes()
-                                    .contains(OrderType.DINE_IN)
-                            ) {
-                                orderBody.addProperty("type", "to-go")
-                            } else {
-                                orderBody.addProperty("type", "pickup")
-                            }
+                            orderBody.addProperty("type", "drive-thru")
                             if (store != null) {
                                 orderBody.addProperty("location", store.id)
                             }
