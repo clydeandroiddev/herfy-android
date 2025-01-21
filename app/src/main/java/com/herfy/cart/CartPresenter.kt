@@ -3145,7 +3145,7 @@ class CartPresenter @Inject constructor(
                         digitalCoupons = when (orderType) {
                             OrderType.PICKUP -> digitalCoupons.filter { coupon ->
                                 coupon.promotion.attributes.rules.any { rule ->
-                                    rule.ruleKey == "order-type" && (rule.ruleValue.contains("in:pickup") || rule.ruleValue.contains(
+                                    rule.ruleKey == "order-type" && (rule.ruleValue.contains("in:pickup") || rule.ruleValue.contains("pickup") || rule.ruleValue.contains(
                                         "in:deliver,pickup"
                                     ))
                                 }
@@ -3153,7 +3153,7 @@ class CartPresenter @Inject constructor(
 
                             OrderType.DELIVERY -> digitalCoupons.filter { coupon ->
                                 coupon.promotion.attributes.rules.any { rule ->
-                                    rule.ruleKey == "order-type" && (rule.ruleValue.contains("in:deliver") || rule.ruleValue.contains(
+                                    rule.ruleKey == "order-type" && (rule.ruleValue.contains("in:deliver") || rule.ruleValue.contains("deliver") || rule.ruleValue.contains(
                                         "in:deliver,pickup"
                                     ))
                                 }
