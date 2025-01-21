@@ -576,12 +576,8 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                 if (alarmManager != null) {
                     alarmManager.cancel(pendingIntent);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || alarmManager.canScheduleExactAlarms()) {
-                            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (cartExpiry * 60 * 1000), pendingIntent);
-                        }
-                    } else {
-                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (cartExpiry * 60 * 1000), pendingIntent);
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (cartExpiry * 60 * 1000), pendingIntent);
                     }
                 }
             }
@@ -599,12 +595,8 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                 if (alarmManager != null) {
                     alarmManager.cancel(pendingIntent);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || alarmManager.canScheduleExactAlarms()) {
-                            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (appRatingTime * 1000), pendingIntent);
-                        }
-                    } else {
-                        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (appRatingTime * 1000), pendingIntent);
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (appRatingTime * 1000), pendingIntent);
                     }
                 }
             }
