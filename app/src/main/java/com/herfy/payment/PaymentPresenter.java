@@ -523,7 +523,8 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         return Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", total));
     }
 
-    public double getValidatedSubtotal() {
+    @Override
+    public @Nullable Double getValidatedSubtotal() {
         double promoItemPrice = 0.0;
 //        double subtotalForDisplay = validatedSubtotal - (validatedPromoItemPrice * validatedPromoItemQuantity);
 //        if (CacheUtil.getInstance().getCouponMenuItem() != null) {
@@ -546,6 +547,12 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 //        }
 //        totalForDisplay += promoItemPrice;
         return validatedTotal;
+    }
+
+    @androidx.annotation.Nullable
+    @Override
+    public Double getValidateDeliveryCharge() {
+        return validatedDeliveryCharge;
     }
 
     @Override
@@ -794,8 +801,14 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         }
 
         switch (CacheUtil.getInstance().getOrderType()) {
-            case PICKUP:
             case DRIVE_THRU:
+                deliveryCharge = 0.0;
+                orderBody.addProperty("type", "drive-thru");
+                if (store != null) {
+                    orderBody.addProperty("location", store.getId());
+                }
+                break;
+            case PICKUP:
                 deliveryCharge = 0.0;
                 if (CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.DINE_IN)) {
                     orderBody.addProperty("type", "to-go");

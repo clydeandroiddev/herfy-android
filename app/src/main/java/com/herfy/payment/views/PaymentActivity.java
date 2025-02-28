@@ -1761,12 +1761,8 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                             if (alarmManager != null) {
                                 alarmManager.cancel(pendingIntent);
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || alarmManager.canScheduleExactAlarms()) {
-                                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + promptRatingSeconds, pendingIntent);
-                                    }
-                                } else {
-                                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + promptRatingSeconds, pendingIntent);
+                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || alarmManager.canScheduleExactAlarms()) {
+                                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + promptRatingSeconds, pendingIntent);
                                 }
                             }
                         }

@@ -32,11 +32,6 @@ import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-
-const val KEY_TOTAL = "total"
-const val KEY_CART_BODY = "cart"
-const val KEY_DELIVERY_CHARGE = "delivery_charge"
-
 @AndroidEntryPoint
 class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
 
@@ -52,9 +47,10 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
     private var amountTextWatcher: TextWatcher? = null
 
     private var amountCount = -1
-    private var total = 0.0
     private var cartBody = ""
-    private var deliveryCharge = 0.0
+    private var validateLoyalty = false
+    private var loyaltySarAmount = 0.0
+    private var total = 0.0
     private var number = ""
     private var mBottomSheetListener: OTPAlrahjiListener? = null
     private var countDownTimer: CountDownTimer? = null
@@ -65,9 +61,15 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
 
         arguments?.let {
             try {
-                total = it.getDouble(KEY_TOTAL, 0.0)
                 cartBody = it.getString(KEY_CART_BODY, "")
-                deliveryCharge = it.getDouble(KEY_DELIVERY_CHARGE, 0.0)
+                validateLoyalty = it.getBoolean(KEY_VALIDATE_LOYALTY, false)
+                loyaltySarAmount = it.getDouble(KEY_LOYALTY_SAR_AMOUNT, 0.0)
+                val totalArg = it.getDouble(KEY_TOTAL, 0.0)
+                total = if (!validateLoyalty) {
+                    totalArg
+                } else {
+                    totalArg - loyaltySarAmount
+                }
             } catch (e: NumberFormatException) {
                 e.printStackTrace()
             }
@@ -239,11 +241,10 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
             }
 
             btnSubmit.setOnClickListener {
-                val totalMinusDC = total - deliveryCharge
                 val o = StringUtil.toEnglish(otpAlrhaji.text.toString()) ?: ""
                 val a = StringUtil.toEnglish(etAmount.text.toString()) ?: ""
 
-                val amount = if(a.isNotEmpty()) etAmount.text.toString().toDouble() else 0.0
+                val amount = if (a.isNotEmpty()) etAmount.text.toString().toDouble() else 0.0
 
                 if (o.isEmpty()) {
                     otpAlrhaji.requestFocus()
@@ -257,11 +258,11 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                         CacheUtil.getInstance()
                             .getTranslations(Text.AMOUNT_REQUIRED, "Amount is required")
                     )
-                } else if (amount > totalMinusDC) {
+                } else if (amount > total) {
                     etAmount.text.clear()
                     tvAmountError.visible()
                 } else {
-                    if(cartBody.isNotEmpty()){
+                    if (cartBody.isNotEmpty()) {
                         viewModel.verifyOTP(
                             o, a, GsonHelper.gsonFinal().fromJson(
                                 cartBody,
@@ -449,19 +450,30 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
                 binding.cvResend.isEnabled = true
             }
         }
-        countDownTimer?.start();
+        countDownTimer?.start()
     }
 
 
     companion object {
 
+        const val KEY_CART_BODY = "cartBody"
+        const val KEY_VALIDATE_LOYALTY = "validateLoyalty"
+        const val KEY_LOYALTY_SAR_AMOUNT = "loyaltySarAmoun"
+        const val KEY_TOTAL = "total"
+
         @JvmStatic
-        fun newInstance(total: Double, cartBody: String, deliveryCharge: Double) =
+        fun newInstance(
+            cartBody: String,
+            validateLoyalty: Boolean,
+            loyaltySarAmount: Double,
+            total: Double
+        ) =
             BottomSheetAlrhaji().apply {
                 arguments = Bundle().apply {
-                    putDouble(KEY_TOTAL, total)
                     putString(KEY_CART_BODY, cartBody)
-                    putDouble(KEY_DELIVERY_CHARGE, deliveryCharge)
+                    putBoolean(KEY_VALIDATE_LOYALTY, validateLoyalty)
+                    putDouble(KEY_LOYALTY_SAR_AMOUNT, loyaltySarAmount)
+                    putDouble(KEY_TOTAL, total)
                 }
             }
     }
@@ -486,4 +498,5 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
         fun otpResult(transactionId: String, amount: String, invalidMukafaa: Boolean)
 
     }
+
 }

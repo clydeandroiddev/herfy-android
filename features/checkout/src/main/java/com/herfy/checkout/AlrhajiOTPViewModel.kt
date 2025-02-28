@@ -16,47 +16,52 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AlrhajiOTPViewModel @Inject constructor(
-    private val paymentRepository : PaymentRepository
+    private val paymentRepository: PaymentRepository
 ) : BaseViewModel() {
 
     private val _showError = MutableLiveData<ErrorMsgItem>()
-    val showError : LiveData<ErrorMsgItem> = _showError
+    val showError: LiveData<ErrorMsgItem> = _showError
 
     private val _showCountDown = MutableLiveData<Long>()
-    val showCountdown : LiveData<Long> = _showCountDown
+    val showCountdown: LiveData<Long> = _showCountDown
 
     private val _showVerified = MutableLiveData<Event<OTPData>>()
-    val showVerified : LiveData<Event<OTPData>> = _showVerified
+    val showVerified: LiveData<Event<OTPData>> = _showVerified
 
     private val _isLoading = MutableLiveData<Event<Boolean>>()
-    val isLoading : LiveData<Event<Boolean>> = _isLoading
+    val isLoading: LiveData<Event<Boolean>> = _isLoading
 
-    fun sendOTP(number : String){
+    fun sendOTP(number: String) {
         _isLoading.value = Event(true)
         invoke {
-            paymentRepository.sendOTP(number){
+            paymentRepository.sendOTP(number) {
                 _isLoading.value = Event(false)
-                if(it.isSuccess){
-                    _showCountDown.value = (3*60*1000)
-                }else {
-                    it.error?.let {
-                        _showError.value = it
+                if (it.isSuccess) {
+                    _showCountDown.value = (3 * 60 * 1000)
+                } else {
+                    it.error?.let { error ->
+                        _showError.value = error
+                        // 210 means there is an existing OTP code
+                        // proceed to input
+                        if (!error.closePage) {
+                            _showCountDown.value = (3 * 60 * 1000)
+                        }
                     }
                 }
             }
         }
     }
 
-    fun verifyOTP(otp : String, amount : String, cartBody : JsonObject){
+    fun verifyOTP(otp: String, amount: String, cartBody: JsonObject) {
         _isLoading.value = Event(true)
         invoke {
-            paymentRepository.verifyOTP(otp,amount, cartBody){
+            paymentRepository.verifyOTP(otp, amount, cartBody) {
                 _isLoading.value = Event(false)
-                if(it.isSuccess){
-                    it.data?.let { data->
+                if (it.isSuccess) {
+                    it.data?.let { data ->
                         _showVerified.value = Event(data)
                     }
-                }else {
+                } else {
                     it.error?.let {
                         _showError.value = it
                     }
@@ -64,7 +69,7 @@ class AlrhajiOTPViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun getFormattedTimeForCountdown(millisUntilFinished: Long): String? {
         var millisUntilFinished = millisUntilFinished
         val minutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)

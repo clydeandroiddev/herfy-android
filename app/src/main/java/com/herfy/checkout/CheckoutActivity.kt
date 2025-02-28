@@ -189,6 +189,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private var bottomSheetAlrhaji: BottomSheetAlrhaji? = null
     private var finalTotal = 0.0
     private var finalDiscount = 0.0
+    private var loyaltySarAmount = 0.0
+    private var validateLoyalty = false
 
     var alrahjiCheckChangeListener = OnCheckedChangeListener { p0, p1 ->
         if (!p1) {
@@ -199,10 +201,15 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             }
         } else {
             paymentPresenter?.let {
-                val total = it.validatedTotal ?: 0.0
-                val deliveryCharge = it.validatedDeliveryCharge ?: 0.0
+                var total = (it.validatedTotal ?: 0.0) - (it.validatedDeliveryCharge ?: 0.0)
+                if (total < 0) {
+                    total = 0.0
+                }
                 bottomSheetAlrhaji = BottomSheetAlrhaji.newInstance(
-                    total, it.validatedBody, deliveryCharge
+                    it.validatedBody,
+                    validateLoyalty,
+                    loyaltySarAmount,
+                    total
                 )
                 bottomSheetAlrhaji?.isCancelable = false
                 bottomSheetAlrhaji?.show(
@@ -782,18 +789,19 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         )
                     }
 
-                    val sarAmount = Math.min(
+                    loyaltySarAmount = Math.min(
                         userSetPoints / pointConversion, paymentPresenter!!.menuItemsTotalPrice
                     )
 
-                    val formattedSarAmount = String.format("%.2f", sarAmount)
-                    if (sarAmount >= 1) {
+                    val formattedSarAmount = String.format("%.2f", loyaltySarAmount)
+                    if (loyaltySarAmount >= 1) {
+                        validateLoyalty = true
                         binding?.layoutLoyalty?.etSarAmount?.text = formattedSarAmount
                     }
 
                     binding!!.layoutLoyalty.etPoints.setSelection(binding!!.layoutLoyalty.etPoints.text.toString().length)
                     loyaltypointsInput = userSetPoints.toInt()
-                    if (sarAmount >= 1) {
+                    if (loyaltySarAmount >= 1) {
                         paymentPresenter!!.validateOrder(
                             false,
                             CacheUtil.getInstance().orderStore,
@@ -1206,7 +1214,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
         val _discount = discount - mukafaaAmount;
 
-        if (_discount != 0.0) {
+        if (_discount > 0.0) {
             binding!!.layoutPaymentSummary.grpDiscount.visibility = View.VISIBLE
             binding!!.layoutPaymentSummary.tvDiscount.text =
                 updateCurrency(_discount, true, hasPromotion, _discount > 0)
@@ -1284,7 +1292,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         } else {
             binding?.tvOriginalPrice?.gone()
         }
-
+        validateLoyalty = false
     }
 
     override fun setMenuItem(menuItem: MenuItem) {}
