@@ -919,22 +919,14 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
     override fun navigateMenuItemDetails(menuItem: MenuItem?) {
         menuItem?.let {
-            if (it.isCombo) {
-                findNavController().navigate(
-                    OrderTypeNewFragmentDirections.actionOrderTypeToCombo(
-                        menuCategoryId = "",
-                        menuItemId = it.id,
-                        isFavorite = true,
-                        isFromOrderType = true
-                    )
+            findNavController().navigate(
+                OrderTypeNewFragmentDirections.actionOrderTypeToMenuItem(
+                    menuCategoryId = "",
+                    menuItemId = it.id,
+                    isFavorite = true,
+                    isFromOrderType = true
                 )
-            } else {
-                findNavController().navigate(
-                    OrderTypeNewFragmentDirections.actionOrderTypeToMenuItem(
-                        menuItemId = it.id, isFavorite = true, isFromOrderType = true
-                    )
-                )
-            }
+            )
         }
 
 

@@ -369,7 +369,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             it.getContentIfNotHandled()?.let { pair ->
                 activity?.apply {
                     runOnUiThread {
-                        findNavController().navigateToDeepLink("nav_menu_item/${pair.first}/${pair.second}")
+                        findNavController().navigateToDeepLink("nav_menu_item_detail/${pair.first}/${pair.second}")
                     }
                 }
             }
@@ -803,14 +803,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             title = "", message = error.message
                         )
                     }
-                }
-            }
-        }
-
-        viewModel.showMenuItemCombo.observeNonNull(this) {
-            it.getContentIfNotHandled()?.let { pair ->
-                runOnMain {
-                    findNavController().navigateToDeepLink("nav_combo/${pair.first}/${pair.second}")
                 }
             }
         }

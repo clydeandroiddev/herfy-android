@@ -155,9 +155,6 @@ class HomeViewModel @Inject constructor(
     private val _showPromotionsError = MutableLiveData<Event<ErrorMsgItem>>()
     val showPromotionsError: LiveData<Event<ErrorMsgItem>> = _showPromotionsError
 
-    private val _showMenuItemCombo = MutableLiveData<Event<Pair<String,String>>>()
-    val showMenuItemCombo : LiveData<Event<Pair<String,String>>> = _showMenuItemCombo
-
     fun getSliders() {
         invoke {
             val sliderId = CacheUtil.getInstance().getSliderId(Values.HOME_PAGE_TOP_BANNER_LABEL)
@@ -340,12 +337,7 @@ class HomeViewModel @Inject constructor(
                 homeResponse.data?.cast<MenuItemEntity> { menuItemEntity ->
                     val categoryId = menuItemEntity.menuCategoryId
                     if (categoryId.isNotEmpty()) {
-                        if(menuItemEntity.isCombo){
-                            _showMenuItemCombo.value = Event(Pair(categoryId, menuItemEntity.id))
-                        }else {
-                            _showMenuItem.value = Event(Pair(categoryId, menuItemEntity.id))
-                        }
-
+                        _showMenuItem.value = Event(Pair(categoryId, menuItemEntity.id))
                     }
                 }
             }

@@ -670,11 +670,10 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     }
 
     private fun navMenuItem(menuCategoryId: String, menuItemId: String, menu: MenuItem) {
-        val destinationLink = if (menu.isCombo) "nav_combo" else "nav_menu_item"
         val isSoldOut = CacheUtil.getOrderStoreId() != null && menu.outOfStockLocations.contains(
             CacheUtil.getOrderStoreId()
         )
-        findNavController().navigateToDeepLink("$destinationLink/$menuCategoryId/$menuItemId?is_sold_out=$isSoldOut")
+        findNavController().navigateToDeepLink("nav_menu_item_detail/$menuCategoryId/$menuItemId?is_sold_out=$isSoldOut")
     }
 
     private fun navCart() {
