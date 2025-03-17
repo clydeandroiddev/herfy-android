@@ -7,8 +7,8 @@ object PriceFormatter {
     fun formatPriceWithLocale(originalPrice: Double, translatedName: String): String {
         return when {
             isEnglishOrFrench() -> "+${formatPrice(originalPrice)}"
-            ArabicUtils.isArabic(translatedName) -> convertFormattedPriceToString(StringUtil.getFormattedPriceWithText(originalPrice))
-            else -> convertFormattedPriceToString(StringUtil.getFormattedPriceWithText(originalPrice))
+            ArabicUtils.isArabic(translatedName) -> convertFormattedPriceToString(StringUtil.getFormattedPrice(originalPrice))
+            else -> convertFormattedPriceToString(StringUtil.getFormattedPrice(originalPrice))
         }
     }
 

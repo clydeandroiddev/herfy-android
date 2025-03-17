@@ -46,6 +46,7 @@
             tools:visibility="visible"
             tools:text="Sar 2"
             android:textColor="@color/colorPrimaryDark"
+            android:textDirection="ltr"
             android:layout_height="wrap_content"/>
 
 

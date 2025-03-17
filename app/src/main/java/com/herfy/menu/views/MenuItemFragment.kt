@@ -1298,10 +1298,11 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
             )
         } else {
             binding.total.text = StringUtil.getFormattedPrice(totalPrice)
-            binding.add.text =
-                CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
-                    .replace("(x)", "${StringUtil.getFormattedPrice(totalPrice)}")
-
+            binding.add.text = if(LocaleUtil.getInstance().isArabic) {
+                "${StringUtil.getFormattedPrice(totalPrice)} - ${CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG, "Add to bag")}"
+            } else {
+                "${CacheUtil.getInstance().getTranslations(Text.ADD_TO_BAG, "Add to bag")} - ${StringUtil.getFormattedPrice(totalPrice)}"
+            }
         }
         _totalPrice = totalPrice
     }

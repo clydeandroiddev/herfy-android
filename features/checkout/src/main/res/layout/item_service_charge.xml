@@ -36,6 +36,7 @@
         android:textAlignment="viewEnd"
         android:textAllCaps="true"
         android:textColor="@color/black"
+        android:textDirection="ltr"
         tools:text="1" />
 
 </LinearLayout>

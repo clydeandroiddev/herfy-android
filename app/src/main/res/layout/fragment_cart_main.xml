@@ -614,6 +614,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/cairo_bold"
                                 android:textColor="@color/primary_text"
+                                android:textDirection="ltr"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="55 SR" />
@@ -646,6 +647,7 @@
                                 android:textStyle="bold"
                                 android:textColor="@color/primary_text"
                                 android:textSize="14sp"
+                                android:textDirection="ltr"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="55 SR" />
@@ -746,6 +748,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/cairo_regular"
                                 android:textColor="@color/primary_text"
+                                android:textDirection="ltr"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="55 SR" />
@@ -775,6 +778,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/cairo_regular"
                                 android:textColor="@color/primary_text"
+                                android:textDirection="ltr"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="55 SR" />
@@ -1061,6 +1065,7 @@
                 android:fontFamily="@font/cairo_bold"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="24sp"
+                android:textDirection="ltr"
                 app:layout_constraintBottom_toTopOf="@id/total_vat_label"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/total_label"
@@ -1089,6 +1094,7 @@
                 android:paddingEnd="2dp"
                 android:textColor="@color/home_indicator"
                 android:textSize="12sp"
+                android:textDirection="ltr"
                 android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@id/total_label"
                 app:layout_constraintTop_toTopOf="parent"

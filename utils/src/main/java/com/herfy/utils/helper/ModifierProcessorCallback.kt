@@ -34,8 +34,8 @@ class ModifierProcessor(private val callback: ModifierProcessorCallback) {
     private fun formatPriceBasedOnLocale(originalPrice: Double, translatedName: String): String {
         return when {
             isEnglishOrFrench() -> "+${getFormattedPrice(originalPrice)}"
-            ArabicUtils.isArabic(translatedName) -> convertFormattedPriceAsString(StringUtil.getFormattedPriceWithText(originalPrice))
-            else -> convertFormattedPriceAsString(StringUtil.getFormattedPriceWithText(originalPrice))
+            ArabicUtils.isArabic(translatedName) -> convertFormattedPriceAsString(StringUtil.getFormattedPrice(originalPrice))
+            else -> convertFormattedPriceAsString(StringUtil.getFormattedPrice(originalPrice))
         }
     }
     private fun isEnglishOrFrench(): Boolean {

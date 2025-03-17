@@ -266,18 +266,13 @@ public class ModifierItemViewHolder extends RecyclerView.ViewHolder implements M
         }
 
         String price;
-        //hamburgini
-        if (BuildConfig.SOLO_CONCEPT == "1") {
+        if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
             price = ("+" + StringUtil.getFormattedPrice(modifierItem.getAttributes().getPrice()));
         } else {
-            if (LocaleUtil.getInstance().isEnglish() || LocaleUtil.getInstance().isFrench()) {
+            if (isProbablyArabic(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()))) {
                 price = ("+" + StringUtil.getFormattedPrice(modifierItem.getAttributes().getPrice()));
             } else {
-                if (isProbablyArabic(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()))) {
-                    price = ("+" + StringUtil.getFormattedPriceWithText(modifierItem.getAttributes().getPrice()));
-                } else {
-                    price = (StringUtil.getFormattedPrice(modifierItem.getAttributes().getPrice()) + "+");
-                }
+                price = (StringUtil.getFormattedPrice(modifierItem.getAttributes().getPrice()) + "+");
             }
         }
 
