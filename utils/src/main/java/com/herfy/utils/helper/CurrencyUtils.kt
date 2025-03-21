@@ -37,7 +37,7 @@ class CurrencyUtils {
         @JvmOverloads
         fun updateCurrency(
             amount: Double,
-            withSpace: Boolean = false,
+            withSpace: Boolean = true,
             ignoreDecimalPlaces: Boolean = false,
             isDiscount: Boolean = false,
             ignoreScale: Boolean = true
@@ -69,6 +69,7 @@ class CurrencyUtils {
                     scale(scaleRatio) {
                         append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
                     }
+                    append(space)
                     append("\u200E") // Force number to be treated as LTR
                     append(StringUtil.localize(formattedDecimal))
                 }
