@@ -403,12 +403,11 @@ class MenuItemDetailFragment :
             if (cartMenuItemPos >= 0 || isEdit) {
                 add.text = cacheUtilHelper.getTranslations(Text.UPDATE, "Update")
             } else {
-                add.text =
-                    cacheUtilHelper.getTranslations(Text.ADD_TO_BAG_AMOUNT, "Add to bag - (x)")
-                        .replace(
-                            "(x)",
-                            "${StringUtil.getFormattedPrice(this@MenuItemDetailFragment.viewModel.cartMenuItemsTotalPrice)}"
-                        )
+                add.text = if(LocaleUtil.getInstance().isArabic) {
+                    "${StringUtil.getFormattedPrice(this@MenuItemDetailFragment.viewModel.cartMenuItemsTotalPrice)} - ${cacheUtilHelper.getTranslations(Text.ADD_TO_BAG, "Add to bag")}"
+                } else {
+                    "${cacheUtilHelper.getTranslations(Text.ADD_TO_BAG, "Add to bag")} - ${StringUtil.getFormattedPrice(this@MenuItemDetailFragment.viewModel.cartMenuItemsTotalPrice)}"
+                }
             }
             layoutBottomSheetComboDetail.apply {
                 tvTotalLabel.text = cacheUtilHelper.getTranslations(
@@ -505,14 +504,12 @@ class MenuItemDetailFragment :
                     if (cartMenuItemPos >= 0 || isEdit) {
                         binding.add.text = cacheUtilHelper.getTranslations(Text.UPDATE, "Update")
                     } else {
-                        binding.add.text =
-                            cacheUtilHelper.getTranslations(
-                                Text.ADD_TO_BAG_AMOUNT,
-                                "Add to bag - (x)"
-                            )
-                                .replace("(x)", formattedPrice.toString())
+                        binding.add.text = if(LocaleUtil.getInstance().isArabic) {
+                            "$formattedPrice - ${cacheUtilHelper.getTranslations(Text.ADD_TO_BAG, "Add to bag")}"
+                        } else {
+                            "${cacheUtilHelper.getTranslations(Text.ADD_TO_BAG, "Add to bag")} - $formattedPrice"
+                        }
                     }
-
                 }
             }
             showMenuItemQuantity.observeNonNull(this@MenuItemDetailFragment) { quantityValue ->

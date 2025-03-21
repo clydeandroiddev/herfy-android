@@ -116,6 +116,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="28sp"
                         android:textColor="@color/background_color_blue"
+                        android:textDirection="ltr"
                         tools:text="SAR 18.50"
                         android:includeFontPadding="false"
                         style="@style/Styles.Text.LargeTitle"/>

@@ -270,6 +270,7 @@
                                             android:includeFontPadding="false"
                                             android:textColor="#212121"
                                             android:textSize="12sp"
+                                            android:textDirection="ltr"
                                             app:layout_constraintStart_toEndOf="@id/hatLayout"
                                             app:layout_constraintTop_toBottomOf="@id/status"
                                             tools:text="SAR 44.00" />

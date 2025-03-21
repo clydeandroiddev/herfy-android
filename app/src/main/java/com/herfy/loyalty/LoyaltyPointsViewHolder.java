@@ -113,7 +113,7 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
         if (loyaltyTransaction.getDetails() != null && loyaltyTransaction.getDetails().getAmount() != null) {
             tvSarValue.setText(StringUtil.localize(formatter.format(loyaltyTransaction.getDetails().getAmount()) + " " + CacheUtil.getInstance().getTranslations(concept.getCurrencySymbol())));
         } else {
-            tvSarValue.setText(CurrencyUtils.Companion.updateAmountWithCurrency(0.0, true));
+            tvSarValue.setText(CurrencyUtils.Companion.updateCurrency(0.0, true));
         }
     }
 

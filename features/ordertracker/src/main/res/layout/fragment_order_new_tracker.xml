@@ -369,6 +369,7 @@
                                     android:maxLines="1"
                                     android:textColor="#0C0C0C"
                                     android:textSize="12sp"
+                                    android:textDirection="ltr"
                                     app:layout_constraintBottom_toBottomOf="@id/totalLabel"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="@id/totalLabel"

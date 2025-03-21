@@ -10,43 +10,7 @@ import java.text.DecimalFormatSymbols
 
 internal const val ONE_RATIO_PROPOTION = 1F
 internal const val SCALE_VALUE = 0.58f
-// For kotlin classes
-fun String.updateCurrency(currency: String, withSpace: Boolean): SpannedString {
-    val space = if (withSpace) " " else ""
-    val concept = CacheUtil.getInstance().concept
-    return when (concept.currencyFormat) {
-        CurrencyFormat.currencySymbolAmount -> buildSpannedString {
-            scale(0.58f) {
-                concept.currencySymbol
-            }
-            append(space)
-            append(StringUtil.localize(this@updateCurrency))
-        }
-        CurrencyFormat.currencyCodeAmount -> buildSpannedString {
-            scale(0.58f) {
-                concept.currencyCode
-            }
-            append(space)
-            append(StringUtil.localize(this@updateCurrency))
-        }
-        CurrencyFormat.amountCurrencySymbol -> buildSpannedString {
-            append(StringUtil.localize(this@updateCurrency))
-            append(space)
-            scale(0.58f) {
-                concept.currencySymbol
-            }
-        }
-        CurrencyFormat.amountCurrencyCode -> buildSpannedString {
-            append(StringUtil.localize(this@updateCurrency))
-            append(space)
-            scale(0.58f) {
-                concept.currencyCode
-            }
-        }
-    }
-}
 
-// For non-kotlin classes
 class CurrencyUtils {
 
     companion object {
@@ -101,9 +65,11 @@ class CurrencyUtils {
                 CurrencyFormat.currencySymbolAmount -> buildSpannedString {
                     append(discount)
                     append(space)
+                    append("\u200F") // Force SAR symbol to be treated as RTL
                     scale(scaleRatio) {
                         append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
                     }
+                    append("\u200E") // Force number to be treated as LTR
                     append(StringUtil.localize(formattedDecimal))
                 }
                 CurrencyFormat.currencyCodeAmount -> buildSpannedString {
@@ -136,82 +102,6 @@ class CurrencyUtils {
         }
         private fun getScaleRatio(ignoreScale: Boolean): Float {
             return if (ignoreScale) ONE_RATIO_PROPOTION else SCALE_VALUE
-        }
-        @JvmOverloads
-        fun updateCurrencyWithText(
-            amount: Double,
-            withSpace: Boolean = false
-        ): SpannedString {
-
-            val concept = CacheUtil.getInstance().concept
-            val symbols = DecimalFormatSymbols(LocaleUtil.getLocale())
-
-            val pattern = if(amount.hasDecimalPart()) {
-                if (concept.decimalPlaces > 0) {
-                    "#,##0.${"0".repeat(concept.decimalPlaces)}"
-                } else {
-                    "#,##0.${"0".repeat(2)}"
-                }
-            } else {
-                "#"
-            }
-
-            val decimalFormat = DecimalFormat(pattern, symbols)
-            val formattedDecimal: String = decimalFormat.format(amount)
-            val space = if (withSpace) " " else ""
-            return when (concept.currencyFormat) {
-                CurrencyFormat.currencySymbolAmount -> buildSpannedString {
-                    append(StringUtil.localize(formattedDecimal))
-                    append(space)
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
-                    }
-                }
-                CurrencyFormat.currencyCodeAmount -> buildSpannedString {
-                    append(StringUtil.localize(formattedDecimal))
-                    append(space)
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
-                    }
-                }
-                CurrencyFormat.amountCurrencySymbol -> buildSpannedString {
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
-                    }
-                    append(space)
-                    append(StringUtil.localize(formattedDecimal))
-                }
-                CurrencyFormat.amountCurrencyCode -> buildSpannedString {
-                    scale(0.58f) {
-                        append(CacheUtil.getInstance().getTranslations(concept.currencyCode))
-                    }
-                    append(space)
-                    append(StringUtil.localize(formattedDecimal))
-                }
-            }
-        }
-
-        @JvmOverloads
-        fun updateAmountWithCurrency(amount: Double, withSpace: Boolean = false): SpannedString {
-            val concept = CacheUtil.getInstance().concept
-            val symbols = DecimalFormatSymbols(LocaleUtil.getLocale())
-            val pattern = if(amount.hasDecimalPart()) {
-                if (concept.decimalPlaces > 0) {
-                    "#,##0.${"0".repeat(concept.decimalPlaces)}"
-                } else {
-                    "#,##0.${"0".repeat(2)}"
-                }
-            } else {
-                "#"
-            }
-            val space = if (withSpace) " " else ""
-            val decimalFormat = DecimalFormat(pattern, symbols)
-            val formattedDecimal: String = decimalFormat.format(amount)
-            return buildSpannedString {
-                append(StringUtil.localize(formattedDecimal))
-                append(space)
-                append(CacheUtil.getInstance().getTranslations(concept.currencySymbol))
-            }
         }
 
     }

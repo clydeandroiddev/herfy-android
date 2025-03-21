@@ -181,8 +181,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_marginEnd="20dp"
-
                         android:textColor="@color/text_color_blue"
+                        android:textDirection="ltr"
                         app:layout_constraintBottom_toBottomOf="@+id/name"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/name"
@@ -635,6 +635,7 @@
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textAllCaps="false"
+            android:textDirection="ltr"
             app:cornerRadius="36dp"
             android:paddingStart="@dimen/_30sdp"
             android:paddingTop="@dimen/padding_small"

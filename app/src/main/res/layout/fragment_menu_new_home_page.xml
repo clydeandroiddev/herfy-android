@@ -886,6 +886,7 @@
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="15sp"
+            android:textDirection="ltr"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/cart"
             app:layout_constraintTop_toTopOf="parent"

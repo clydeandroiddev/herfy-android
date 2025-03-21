@@ -505,28 +505,10 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             binding.cartQuantity.visibility = View.VISIBLE
             binding.totalContainer.visibility = View.VISIBLE
         }
-        if (CacheUtil.getInstance().cart.size > 0) {
-            if (LocaleUtil.getInstance().isArabic) {
-                binding.totalPrice.text = CacheUtil.getInstance()
-                    .getTranslations(Text.TOTAL, "TOTAL") + " " + StringUtil.getFormattedPrice(
-                    menuPresenter!!.menuItemsTotalPrice
-                )
-            } else {
-                binding.totalPrice.text = StringUtil.getFormattedPrice(
-                    menuPresenter!!.menuItemsTotalPrice
-                ).toString() + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
-            }
+        binding.totalPrice.text = if (CacheUtil.getInstance().cart.size > 0) {
+            StringUtil.getFormattedPrice(menuPresenter.menuItemsTotalPrice).toString() + " " +  CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
         } else {
-            if (LocaleUtil.getInstance().isArabic) {
-                binding.totalPrice.text = CacheUtil.getInstance()
-                    .getTranslations(Text.TOTAL, "TOTAL") + " " + StringUtil.getFormattedPrice(0.0)
-            } else {
-                binding.totalPrice.text =
-                    StringUtil.getFormattedPrice(0.0).toString() + " " + CacheUtil.getInstance()
-                        .getTranslations(
-                            Text.TOTAL, "TOTAL"
-                        )
-            }
+            StringUtil.getFormattedPrice(0.0).toString()  + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
         }
         if (menuFavoritesRecyclerViewAdapter != null) {
             binding.favoritesItemList.recycledViewPool.clear()
@@ -1082,28 +1064,10 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                 binding.totalContainer.visibility = View.VISIBLE
             }
         }
-        if (CacheUtil.getInstance().cart.size > 0) {
-            if (LocaleUtil.getInstance().isArabic) {
-                binding.totalPrice.text = CacheUtil.getInstance()
-                    .getTranslations(Text.TOTAL, "TOTAL") + " " + StringUtil.getFormattedPrice(
-                    menuPresenter!!.menuItemsTotalPrice
-                )
-            } else {
-                binding.totalPrice.text = StringUtil.getFormattedPrice(
-                    menuPresenter!!.menuItemsTotalPrice
-                ).toString() + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
-            }
+        binding.totalPrice.text = if (CacheUtil.getInstance().cart.size > 0) {
+            StringUtil.getFormattedPrice(menuPresenter.menuItemsTotalPrice).toString() + " " +  CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
         } else {
-            if (LocaleUtil.getInstance().isArabic) {
-                binding.totalPrice.text = CacheUtil.getInstance()
-                    .getTranslations(Text.TOTAL, "TOTAL") + " " + StringUtil.getFormattedPrice(0.0)
-            } else {
-                binding.totalPrice.text =
-                    StringUtil.getFormattedPrice(0.0).toString() + " " + CacheUtil.getInstance()
-                        .getTranslations(
-                            Text.TOTAL, "TOTAL"
-                        )
-            }
+            StringUtil.getFormattedPrice(0.0).toString()  + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
         }
     }
 
@@ -1597,31 +1561,10 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
 
     override fun updateFloatingTotalPrice() {
         activity?.runOnUiThread {
-            if (CacheUtil.getInstance().cart.size > 0) {
-                if (LocaleUtil.getInstance().isArabic) {
-                    binding.totalPrice.text = CacheUtil.getInstance()
-                        .getTranslations(Text.TOTAL, "TOTAL") + " " + StringUtil.getFormattedPrice(
-                        menuPresenter.menuItemsTotalPrice
-                    )
-                } else {
-                    binding.totalPrice.text = StringUtil.getFormattedPrice(
-                        menuPresenter.menuItemsTotalPrice
-                    ).toString() + " " + CacheUtil.getInstance()
-                        .getTranslations(Text.TOTAL, "TOTAL")
-                }
+            binding.totalPrice.text = if (CacheUtil.getInstance().cart.size > 0) {
+                StringUtil.getFormattedPrice(menuPresenter.menuItemsTotalPrice).toString() + " " +  CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
             } else {
-                if (LocaleUtil.getInstance().isArabic) {
-                    binding.totalPrice.text = CacheUtil.getInstance()
-                        .getTranslations(Text.TOTAL, "TOTAL") + " " + StringUtil.getFormattedPrice(
-                        0.0
-                    )
-                } else {
-                    binding.totalPrice.text =
-                        StringUtil.getFormattedPrice(0.0).toString() + " " + CacheUtil.getInstance()
-                            .getTranslations(
-                                Text.TOTAL, "TOTAL"
-                            )
-                }
+                StringUtil.getFormattedPrice(0.0).toString()  + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
             }
         }
     }
