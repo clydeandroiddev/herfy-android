@@ -212,27 +212,15 @@ class NotificationsFragment : BaseFragment(), NotificationContract.View {
 
     override fun goToItemDetails(menuCategoryId: String, menuItem: MenuItem) {
         dismissDialogs()
-        if(menuItem.isCombo) {
-            NavigationUtils.navigateSafe(
-                findNavController(),
-                NotificationsFragmentDirections.actionNotificationsToComboMeal(
-                    menuCategoryId = menuCategoryId,
-                    menuItemId = menuItem.id,
-                    cartMenuItemPosition = -1,
-                    isUpsell = false
-                )
+        NavigationUtils.navigateSafe(
+            findNavController(),
+            NotificationsFragmentDirections.actionNotificationsToMenuItem(
+                menuItemId = menuItem.id,
+                menuCategoryId = menuCategoryId,
+                cartMenuItemPosition = -1,
+                isUpsell = false
             )
-        } else {
-            NavigationUtils.navigateSafe(
-                findNavController(),
-                NotificationsFragmentDirections.actionNotificationsToMenuItem(
-                    menuItemId = menuItem.id,
-                    menuCategoryId = menuCategoryId,
-                    cartMenuItemPosition = -1,
-                    isUpsell = false
-                )
-            )
-        }
+        )
     }
 
     override fun markNotificationAsRead(position: Int) {

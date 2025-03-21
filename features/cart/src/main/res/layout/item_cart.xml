@@ -330,10 +330,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/inter_semi_bold"
                         android:textAlignment="viewStart"
                         android:textColor="@color/primary_text"
                         android:textSize="12sp"
                         android:textStyle="bold"
+                        android:textDirection="ltr"
                         tools:text="SAR 12" />
 
                     <View

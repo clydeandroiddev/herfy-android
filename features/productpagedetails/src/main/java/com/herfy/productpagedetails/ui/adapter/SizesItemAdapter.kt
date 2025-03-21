@@ -53,7 +53,7 @@ class SizesItemAdapter (private var items : List<ModifierItem> = arrayListOf(),
     ) {
         if(previous != selected){
             items[previous].apply {
-                this.attributes.isSelected = false
+                attributes.isSelected = false
             }
             items[selected].apply {
                 attributes.isSelected = true

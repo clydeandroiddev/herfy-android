@@ -296,6 +296,7 @@
                     android:textAllCaps="true"
                     android:textColor="@color/primaryTextColor"
                     android:textSize="12sp"
+                    android:textDirection="ltr"
                     style="@style/Styles.Text.SmallTitle"
                     tools:text="55 SR" />
 
@@ -342,6 +343,7 @@
                         android:textAllCaps="true"
                         android:textColor="@color/primaryTextColor"
                         android:textSize="12sp"
+                        android:textDirection="ltr"
                         style="@style/Styles.Text.SmallTitle"
                         tools:text="-2 SR" />
                 </LinearLayout>
@@ -393,6 +395,7 @@
                         android:textAllCaps="true"
                         android:textColor="@color/primaryTextColor"
                         android:textSize="12sp"
+                        android:textDirection="ltr"
                         style="@style/Styles.Text.SmallTitle"
                         tools:text="5 SR" />
 
@@ -441,6 +444,7 @@
                     android:textAllCaps="true"
                     android:textColor="@color/primaryTextColor"
                     android:textSize="12sp"
+                    android:textDirection="ltr"
                     style="@style/Styles.Text.SmallTitle"
                     tools:text="55 SR" />
 

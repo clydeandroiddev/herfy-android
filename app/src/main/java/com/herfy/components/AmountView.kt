@@ -2,6 +2,7 @@ package com.herfy.components
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -84,6 +85,11 @@ class AmountTextView @JvmOverloads constructor(
                 binding.midText.setTextColor(it)
             }
         }
+
+        val customFont = Typeface.createFromAsset(context.assets, "fonts/inter_regular.ttf")
+        binding.midText.typeface = customFont
+        binding.startText.typeface = customFont
+        binding.endText.typeface = customFont
     }
 }
 

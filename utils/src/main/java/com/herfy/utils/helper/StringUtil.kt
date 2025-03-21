@@ -131,10 +131,6 @@ object StringUtil {
         }
     }
 
-    fun getFormattedPriceWithText(price: Double): SpannedString {
-        return CurrencyUtils.updateCurrencyWithText(price, true)
-    }
-
     fun getFormattedPrice(price: Double): SpannedString {
         return CurrencyUtils.updateCurrency(price, true)
     }

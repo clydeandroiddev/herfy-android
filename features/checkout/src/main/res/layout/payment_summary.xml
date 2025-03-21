@@ -46,6 +46,7 @@
         android:lineHeight="14dp"
         android:textColor="@color/black"
         android:textFontWeight="500"
+        android:textDirection="ltr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_payment_label"
         tools:text="24 SR" />
@@ -70,6 +71,7 @@
         android:lineHeight="14dp"
         android:textColor="@color/black"
         android:textFontWeight="500"
+        android:textDirection="ltr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_payment_label"
         tools:text="24 SR" />
@@ -106,6 +108,7 @@
         android:lineHeight="14dp"
         android:textColor="@color/black"
         android:textFontWeight="700"
+        android:textDirection="ltr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewDeliverySeparator"
         tools:text="-5 SR" />
@@ -153,6 +156,7 @@
         android:lineHeight="14dp"
         android:textColor="@color/black"
         android:textFontWeight="500"
+        android:textDirection="ltr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view0"
         tools:text="24 SR" />
@@ -194,6 +198,7 @@
         android:lineHeight="14dp"
         android:textColor="@color/black"
         android:textFontWeight="700"
+        android:textDirection="ltr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view_redeem_points"
         tools:text="-5 SR" />
@@ -237,6 +242,7 @@
         android:fontFamily="@font/inter_semi_bold"
         android:textColor="@color/black"
         android:textSize="12sp"
+        android:textDirection="ltr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view1"
         tools:text="24 SR" />
@@ -346,6 +352,7 @@
         android:text="24 SR"
         android:textColor="@color/black"
         android:textFontWeight="600"
+        android:textDirection="ltr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view_service_charge" />
 </androidx.constraintlayout.widget.ConstraintLayout>

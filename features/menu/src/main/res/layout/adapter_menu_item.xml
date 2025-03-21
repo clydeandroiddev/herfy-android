@@ -139,7 +139,8 @@
             android:includeFontPadding="false"
             android:textStyle="bold"
             android:textSize="12sp"
-            android:textColor="#2266A7" />
+            android:textColor="#2266A7"
+            android:textDirection="ltr"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvOldPrice"

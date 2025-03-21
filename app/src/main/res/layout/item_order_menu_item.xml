@@ -54,6 +54,7 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:textAlignment="viewEnd"
+        android:textDirection="ltr"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/modifierItemName"
@@ -134,6 +135,7 @@
         android:textColor="@color/primary_text"
         android:textSize="14sp"
         android:textStyle="bold"
+        android:textDirection="ltr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="40.00 SR" />

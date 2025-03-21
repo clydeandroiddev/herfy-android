@@ -35,6 +35,7 @@
         android:textColor="@color/primary_text"
         android:textSize="14sp"
         android:textStyle="bold"
+        android:textDirection="ltr"
         tools:text="1" />
 
 </LinearLayout>

@@ -318,10 +318,6 @@ public class StringUtil {
 
     }
 
-    public static SpannedString getFormattedPriceWithText(double price) {
-        return CurrencyUtils.Companion.updateCurrencyWithText(price, true);
-    }
-
     public static SpannedString getFormattedPrice(double price) {
         return CurrencyUtils.Companion.updateCurrency(price, true);
     }

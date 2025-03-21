@@ -63,6 +63,7 @@
         android:textFontWeight="500"
         android:lineHeight="18dp"
         android:textColor="@color/black"
+        android:textDirection="ltr"
         android:fontFamily="@font/inter_regular"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

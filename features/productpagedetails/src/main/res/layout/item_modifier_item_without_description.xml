@@ -68,6 +68,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
             app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
+            android:textDirection="ltr"
             tools:text="+Sar 2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

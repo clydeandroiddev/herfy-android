@@ -12,7 +12,7 @@ import com.herfy.digitalcoupons.views.DigitalCouponFragmentDirections
 import com.herfy.digitalcoupons.views.DigitalCouponsFragmentDirections
 import com.herfy.ext.cast
 import com.herfy.favorites.FavoritesFragmentDirections
-import com.herfy.menu.views.MenuItemFragmentDirections
+import com.herfy.menuitem.view.MenuItemDetailFragmentDirections
 import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.newmenu.views.PopularNowFragmentDirections
 import com.herfy.utils.helper.CacheUtil
@@ -61,7 +61,7 @@ class NavigationActivity : BaseActivity(), MainContract.View {
             currentDestination = navigation
             graph.setStartDestination(navigation)
             when (navigation) {
-                R.id.nav_menu_item -> {
+                R.id.nav_menu_item_detail -> {
                     bundle.putString("menu_category_id", it.getString("menu_category_id"))
                     bundle.putString("menu_item_id", it.getString("menu_item_id"))
                     bundle.putInt("cart_menu_item_position", it.getInt("cart_menu_item_position"))
@@ -220,9 +220,9 @@ class NavigationActivity : BaseActivity(), MainContract.View {
                 )
             )
 
-            R.id.nav_menu_item -> NavigationUtils.navigateSafe(
+            R.id.nav_menu_item_detail -> NavigationUtils.navigateSafe(
                 navController,
-                MenuItemFragmentDirections.actionMenuItemToCart(
+                MenuItemDetailFragmentDirections.actionMenuItemToCart(
                     CacheUtil.getInstance().preselectedBranch
                 )
             )
