@@ -144,9 +144,6 @@ dependencies {
     //FlexBox
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
-    //ImagePicker
-    implementation project(':imagepicker')
-
     //Shimmer
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 

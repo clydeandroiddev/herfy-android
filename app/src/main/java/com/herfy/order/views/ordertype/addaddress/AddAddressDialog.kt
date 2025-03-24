@@ -162,7 +162,7 @@ class AddAddressDialog : DialogFragment() {
                         it.latitude, it.longitude
                     ).staticMap(requireActivity().resources.getString(com.herfy.R.string.google_maps_api_key))
                 ).apply(RequestOptions.centerInsideTransform())
-                    .placeholder(com.herfy.R.drawable.imagepicker_image_placeholder)
+                    .placeholder(com.herfy.R.drawable.image_placeholder)
                     .diskCacheStrategy(
                         DiskCacheStrategy.ALL
                     ).into(staticMap)
@@ -184,7 +184,7 @@ class AddAddressDialog : DialogFragment() {
                         it.attributes.lat.toDouble(), it.attributes.longt.toDouble()
                     ).staticMap(requireActivity().resources.getString(com.herfy.R.string.google_maps_api_key))
                 ).apply(RequestOptions.centerInsideTransform())
-                    .placeholder(com.herfy.R.drawable.imagepicker_image_placeholder)
+                    .placeholder(com.herfy.R.drawable.image_placeholder)
                     .diskCacheStrategy(
                         DiskCacheStrategy.ALL
                     ).into(staticMap)

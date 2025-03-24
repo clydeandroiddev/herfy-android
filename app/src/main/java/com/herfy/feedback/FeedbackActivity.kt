@@ -1,9 +1,10 @@
 package com.herfy.feedback
 
-import android.Manifest
-import android.content.pm.PackageManager
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,20 +15,13 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-import com.nguyenhoanglam.imagepicker.helper.DeviceHelper
-import com.nguyenhoanglam.imagepicker.model.ImagePickerConfig
-import com.nguyenhoanglam.imagepicker.model.RootDirectory
-import com.nguyenhoanglam.imagepicker.ui.imagepicker.registerImagePicker
-import com.herfy.R
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.herfy.base.BaseActivity
 import com.herfy.utils.constants.Text
 import com.herfy.databinding.ActivityFeedbackBinding
 import com.herfy.util.StringUtil
-import com.herfy.util.ViewUtil
 import java.io.File
 import java.io.FileOutputStream
 import com.herfy.utils.helper.*
@@ -38,43 +32,33 @@ class FeedbackActivity : BaseActivity(), FeedbackContract.View {
 
     private lateinit var feedbackPresenter: FeedbackContract.Presenter
 
-    private val cameraPermissionLauncher: ActivityResultLauncher<String> =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if(isGranted) {
-                binding.uploadImage.performClick()
-            }
-        }
-
-    private val readPermissionLauncher: ActivityResultLauncher<String> =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if(isGranted) {
-                showImagePicker()
-            }
-        }
-
     private var imageFile: File? = null
 
-    private val imagePickerLauncher = registerImagePicker { images ->
-        if(images.isNotEmpty()) {
+    private var pickerDialog: PickerDialog? = null
 
-            val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, images[0].uri))
+    private val cameraLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                val fileUri = result.data?.data
+                fileUri?.let {
+                    processImage(it)
+                }
+            } else if (result.resultCode == ImagePicker.RESULT_ERROR) {
+                Toast.makeText(this, ImagePicker.getError(result.data), Toast.LENGTH_SHORT).show()
             } else {
-                MediaStore.Images.Media.getBitmap(contentResolver, images[0].uri)
+                Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
             }
-
-            imageFile = File.createTempFile("IMG_", ".jpg", this@FeedbackActivity.cacheDir)
-            FileOutputStream(imageFile).use { bitmap.compress(Bitmap.CompressFormat.JPEG, 30, it) }
-            bitmap.recycle()
-
-            Glide.with(this)
-                .load(images[0].uri)
-                .into(binding.image)
-            binding.imgContainer.visibility = View.VISIBLE
-            binding.imageEmptyContainer.visibility = View.GONE
-
         }
-    }
+
+    private val standardImagePickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data
+                uri?.let {
+                    processImage(it)
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -153,25 +137,7 @@ class FeedbackActivity : BaseActivity(), FeedbackContract.View {
         })
 
         binding.uploadImage.setOnClickListener(View.OnClickListener {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.CAMERA
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-            } else {
-                val readPermission =
-                if (DeviceHelper.isMinSdk33) Manifest.permission.READ_MEDIA_IMAGES else Manifest.permission.READ_EXTERNAL_STORAGE
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(
-                        this,
-                        readPermission
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    readPermissionLauncher.launch(readPermission)
-                } else {
-                    showImagePicker()
-                }
-            }
+            showSelection()
         })
 
         binding.submit.setOnClickListener(View.OnClickListener {
@@ -193,7 +159,7 @@ class FeedbackActivity : BaseActivity(), FeedbackContract.View {
     }
 
     override fun setupTranslations() {
-        binding.toolbar.title =       CacheUtil.getInstance().getTranslations(Text.HELP_SUPPORT_LABEL, "Help & Support")
+        binding.toolbar.title = CacheUtil.getInstance().getTranslations(Text.HELP_SUPPORT_LABEL, "Help & Support")
 
         binding.message.text = CacheUtil.getInstance().getTranslations(
             Text.FEEDBACK_MESSAGE,
@@ -271,41 +237,59 @@ class FeedbackActivity : BaseActivity(), FeedbackContract.View {
         }
     }
 
+    private fun showSelection() {
+        pickerDialog = PickerDialog.newInstance(object : PickerDialog.OnAction {
+            override fun onClose() {
+                pickerDialog?.dismiss()
+            }
+
+            override fun onCamera() {
+                ImagePicker.with(currentActivity)
+                    .cameraOnly()
+                    .createIntent { intent ->
+                        cameraLauncher.launch(intent)
+                    }
+                pickerDialog?.dismiss()
+            }
+
+            override fun onGallery() {
+                showImagePicker()
+                pickerDialog?.dismiss()
+            }
+
+        })
+        pickerDialog?.isCancelable = true
+        pickerDialog?.show(supportFragmentManager, PickerDialog::class.java.toString())
+    }
+
+    private fun processImage(uri: Uri) {
+        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
+        } else {
+            MediaStore.Images.Media.getBitmap(contentResolver, uri)
+        }
+        imageFile = File.createTempFile("IMG_", ".jpg", this@FeedbackActivity.cacheDir)
+        FileOutputStream(imageFile).use {
+            bitmap.compress(
+                Bitmap.CompressFormat.JPEG,
+                30,
+                it
+            )
+        }
+        bitmap.recycle()
+        Glide.with(this)
+            .load(uri)
+            .into(binding.image)
+        binding.imgContainer.visibility = View.VISIBLE
+        binding.imageEmptyContainer.visibility = View.GONE
+    }
+
 
     private fun showImagePicker() {
-        val white = StringUtil.colorIntToString(
-            ContextCompat.getColor(
-                this@FeedbackActivity,
-                R.color.white
-            )
-        )
-        val primary =
-            StringUtil.colorIntToString(ViewUtil.getColorMain(this@FeedbackActivity))
-
-        val config = ImagePickerConfig(
-            isFolderMode = false,
-            uploadButtonText = CacheUtil.getInstance().getTranslations(Text.UPLOAD_SELECTED_IMAGE, "UPLOAD SELECTED IMAGE"),
-            backButtonText = CacheUtil.getInstance().getTranslations(Text.BACK, "Back"),
-            primaryColor = primary,
-            statusBarColor = primary,
-            toolbarColor = white,
-            isLightStatusBar = false,
-            backgroundColor = white,
-            progressIndicatorColor = primary,
-            selectedIndicatorColor = primary,
-            isShowNumberIndicator = false,
-            isCameraOnly = false,
-            isMultipleMode = true,
-            isAlwaysShowDoneButton = false,
-            doneTitle = "DONE",
-            folderTitle = CacheUtil.getInstance().getTranslations(Text.ALBUMS, "Albums"),
-            imageTitle = CacheUtil.getInstance().getTranslations(Text.PHOTOS, "Photos"),
-            isShowCamera = true,
-            rootDirectory = RootDirectory.DCIM,
-            subDirectory = getString(R.string.app_name),
-            maxSize = 1
-        )
-        imagePickerLauncher.launch(config)
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+        }
+        standardImagePickerLauncher.launch(intent)
     }
 
 }

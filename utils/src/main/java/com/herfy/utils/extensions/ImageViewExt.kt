@@ -13,7 +13,7 @@ fun ImageView.loadImageFromUrl(imageUrl:String,
                                isSkipMemoryCache : Boolean = false,
                                strategy: DiskCacheStrategy = DiskCacheStrategy.ALL,
                                requestOptions: RequestOptions = RequestOptions.noTransformation(),
-                               placeholder: Int = R.drawable.imagepicker_image_placeholder,
+                               placeholder: Int = R.drawable.image_placeholder,
                                listener: RequestListener<Drawable>? = null
 ) {
     var isContextDestroyed = false

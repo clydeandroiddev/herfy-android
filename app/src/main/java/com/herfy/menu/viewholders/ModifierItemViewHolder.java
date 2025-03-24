@@ -259,7 +259,7 @@ public class ModifierItemViewHolder extends RecyclerView.ViewHolder implements M
 
         String imageUrl = modifierItem.getAttributes().getImage();
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
-            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
+            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
             image.setVisibility(View.VISIBLE);
         } else {
             image.setVisibility(View.GONE);

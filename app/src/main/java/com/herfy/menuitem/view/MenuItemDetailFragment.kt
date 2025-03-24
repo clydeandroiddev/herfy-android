@@ -335,7 +335,7 @@ class MenuItemDetailFragment :
                                 Glide.with(requireContext())
                                     .load(imageUrl)
                                     .apply(RequestOptions.centerCropTransform())
-                                    .placeholder(R.drawable.imagepicker_image_placeholder)
+                                    .placeholder(R.drawable.image_placeholder)
                                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                                     .into(sizesImage)
                             } else {

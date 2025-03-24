@@ -106,13 +106,13 @@ public class ComboItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     .skipMemoryCache(false)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .apply(RequestOptions.centerInsideTransform())
-                    .placeholder(R.drawable.imagepicker_image_placeholder)
-                    .error(R.drawable.imagepicker_image_placeholder)
+                    .placeholder(R.drawable.image_placeholder)
+                    .error(R.drawable.image_placeholder)
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             holder.imageModifierItem.setVisibility(View.VISIBLE);
-                            holder.imageModifierItem.setImageResource(R.drawable.imagepicker_image_placeholder);
+                            holder.imageModifierItem.setImageResource(R.drawable.image_placeholder);
                             return false;
                         }
 
@@ -124,7 +124,7 @@ public class ComboItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     }).into(holder.imageModifierItem);
 
         } else {
-            holder.imageModifierItem.setImageResource(R.drawable.imagepicker_image_placeholder);
+            holder.imageModifierItem.setImageResource(R.drawable.image_placeholder);
         }
 
         holder.mainCard.setOnClickListener(new View.OnClickListener() {

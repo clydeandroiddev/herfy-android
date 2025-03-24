@@ -184,7 +184,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-config-ktx:21.6.0'
 
     //Modules
-    implementation project(':imagepicker')
     implementation project(path: ':solosdk')
     implementation project(path: ':data:model')
     implementation project(path: ':commonStyles')

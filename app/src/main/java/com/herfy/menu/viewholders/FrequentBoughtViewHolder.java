@@ -79,7 +79,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
 //        Pair<String,Boolean> addedToCart = isFavoriteItemInCart(menuItem);
         addToCart.setVisibility(menuItem.isAddedToCart()  ? View.GONE : View.VISIBLE);
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
-            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
+            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
             image.setVisibility(View.VISIBLE);
         } else {
             image.setVisibility(View.GONE);

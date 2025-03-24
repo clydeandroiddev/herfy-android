@@ -1026,7 +1026,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     Glide.with(requireContext())
                         .load(imageUrl)
                         .apply(RequestOptions.centerCropTransform())
-                        .placeholder(R.drawable.imagepicker_image_placeholder)
+                        .placeholder(R.drawable.image_placeholder)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(binding.sizesImage)
                 } else {

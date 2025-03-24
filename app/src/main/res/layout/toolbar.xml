@@ -47,7 +47,7 @@
             android:textStyle="bold"
             android:visibility="gone"
             app:backgroundTint="@android:color/transparent"
-            app:icon="@drawable/imagepicker_ic_back"
+            app:icon="@drawable/ic_back"
             app:iconGravity="textStart"
             app:iconPadding="0dp"
             app:iconSize="20dp"

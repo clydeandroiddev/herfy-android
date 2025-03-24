@@ -210,7 +210,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
             Glide.with(itemView.context)
                 .load(imageUrl)
                 .apply(RequestOptions.centerCropTransform())
-                .placeholder(R.drawable.imagepicker_image_placeholder)
+                .placeholder(R.drawable.image_placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(binding.modifierImage)
 
@@ -748,7 +748,7 @@ class ModifierGroupNewRecycleAdapterKotlin(
             Glide.with(itemView.context)
                 .load(imageUrl)
                 .apply(RequestOptions.centerCropTransform())
-                .placeholder(R.drawable.imagepicker_image_placeholder)
+                .placeholder(R.drawable.image_placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(binding.image)
 
