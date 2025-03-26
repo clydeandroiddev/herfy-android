@@ -224,7 +224,7 @@ public class ModifierNewGroupViewHolder extends RecyclerView.ViewHolder implemen
             Glide.with(context)
                     .load(imageUrl)
                     .apply(RequestOptions.centerCropTransform())
-                    .placeholder(R.drawable.imagepicker_image_placeholder)
+                    .placeholder(R.drawable.image_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(modifierImage);
         } else {

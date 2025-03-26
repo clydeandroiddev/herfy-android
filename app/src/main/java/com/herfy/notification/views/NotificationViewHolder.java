@@ -103,7 +103,7 @@ public class NotificationViewHolder extends RecyclerView.ViewHolder implements N
         }
         title.setText(notification.getNotifData().getMessage().getValue(LocaleUtil.getInstance().getLanguage()));
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
-            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(notificationImage);
+            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(notificationImage);
             notificationImage.setVisibility(View.VISIBLE);
             viewTop.setVisibility(View.GONE);
         } else {

@@ -78,7 +78,7 @@ public class ComboAdditionsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         String imageUrl = modifierItem.getAttributes().getImage();
         holder.image.setVisibility(View.VISIBLE);
-        Glide.with(context).load(imageUrl).apply(RequestOptions.centerInsideTransform()).placeholder(R.drawable.imagepicker_image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.image);
+        Glide.with(context).load(imageUrl).apply(RequestOptions.centerInsideTransform()).placeholder(R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.image);
 
         String price;
         if(LocaleUtil.getInstance().isArabic()){
