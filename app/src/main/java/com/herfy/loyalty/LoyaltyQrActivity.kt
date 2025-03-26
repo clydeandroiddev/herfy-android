@@ -40,7 +40,7 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
 
     private var points: Int = 0
     private var value: Double = 0.0
-    private var code: Int = 0
+    private var code: String = ""
     private var expiresAt: Long = 0L
     private var qrData: String = ""
 
@@ -66,7 +66,7 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
             points = b.getInt(POINTS, 0)
 
             value = b.getDouble(VALUE, 0.0)
-            code = b.getInt(CODE, 0)
+            code = b.getString(CODE, "")
 
             b.getString(EXPIRES_AT)?.let {
                 expiresAt = it.toLong()
@@ -146,7 +146,7 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
                 d.let {
                     ivQrCode.setImageDrawable(it)
                 }
-                if (code != 0) {
+                if (code.isNotEmpty()) {
                     setupSixDigitCode(code)
                 }
                 if (expiresAt != 0L) {
@@ -181,7 +181,7 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
         TODO("Not yet implemented")
     }
 
-    private fun setupSixDigitCode(code: Int) {
+    private fun setupSixDigitCode(code: String) {
     }
 
     private fun setupExpiry(expiresAt: Long) {
