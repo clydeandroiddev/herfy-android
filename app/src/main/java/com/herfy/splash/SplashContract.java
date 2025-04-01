@@ -17,6 +17,8 @@ public interface SplashContract {
 
     interface View extends BaseView<Presenter> {
 
+        void init();
+
         void checkIfRooted();
 
         void recreate();
@@ -27,7 +29,7 @@ public interface SplashContract {
 
         void showForceUpdate(String message, String url);
 
-        void getSoloDriver();
+        void getSharedProject();
 
         void initializeSoloApi(String url);
 
@@ -57,7 +59,7 @@ public interface SplashContract {
 
         void getRemoteConfig();
 
-        void setSoloDriver(FirebaseApp soloDriver);
+        void setSharedProject(FirebaseApp sharedFirebaseApp);
 
         void sendLanguage();
 

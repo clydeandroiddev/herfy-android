@@ -6,13 +6,15 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.credentials.ClearCredentialStateRequest;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.exceptions.ClearCredentialException;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.herfy.R;
@@ -37,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -164,12 +168,19 @@ public class AccountActivity extends BaseActivity implements AccountContract.Vie
             @Override
             public void onClick(View v) {
                 LoginManager.getInstance().logOut();
-                GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(BuildUtil.googleInClient(AccountActivity.this))
-                        .requestEmail()
-                        .build();
-                GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(AccountActivity.this, googleSignInOptions);
-                googleSignInClient.signOut();
+                CredentialManager credentialManager = CredentialManager.create(AccountActivity.this);
+                Executor clearCredentialStateAsyncExecutor = Executors.newSingleThreadExecutor();
+                credentialManager.clearCredentialStateAsync(new ClearCredentialStateRequest(), null, clearCredentialStateAsyncExecutor, new CredentialManagerCallback<Void, ClearCredentialException>() {
+                    @Override
+                    public void onResult(Void unused) {
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull ClearCredentialException e) {
+
+                    }
+                });
                 accountPresenter.removeMukafaaRedemption();
                 CacheUtil.getInstance().clearOrder();
                 SoloAuth.getInstance().logout();

@@ -10,16 +10,18 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.facebook.login.LoginManager
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
 import com.herfy.commonstyles.R
 import com.herfy.curbside.curbsidenew.CurbsideNewActivity
 import com.herfy.profile.databinding.FragmentUserProfileBinding
+import com.herfy.util.AppLogger
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.AuthUtil
@@ -29,6 +31,7 @@ import com.herfy.utils.helper.DialogUtils.showAlertDialog
 import com.skylinedynamics.solosdk.api.SoloAuth
 import com.skylinedynamics.solosdk.api.models.objects.Address
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.util.Date
 
 @AndroidEntryPoint
@@ -264,10 +267,9 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
     override fun accountDeleted() {
         dismissDialogs()
         LoginManager.getInstance().logOut()
-        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(BuildUtil.googleInClient(requireActivity())).requestEmail().build()
-        val googleSignInClient = GoogleSignIn.getClient(requireActivity(), googleSignInOptions)
-        googleSignInClient.signOut()
+
+        handleGoogleLogout()
+
         CacheUtil.getInstance().clearOrder()
         SoloAuth.getInstance().logout()
         CacheUtil.getInstance().setCurrentOrderId(null)
@@ -301,10 +303,7 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
 
     override fun onLogout() {
         LoginManager.getInstance().logOut()
-        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(BuildUtil.googleInClient(requireActivity())).requestEmail().build()
-        val googleSignInClient = GoogleSignIn.getClient(requireActivity(), googleSignInOptions)
-        googleSignInClient.signOut()
+        handleGoogleLogout()
         accountPresenter!!.removeMukafaaRedemption()
         CacheUtil.getInstance().clearOrder()
         SoloAuth.getInstance().logout()
@@ -314,4 +313,18 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
         AuthUtil.getInstance().customer = null
         navigateUp()
     }
+
+    private fun handleGoogleLogout() {
+        activity?.let {
+            lifecycleScope.launch {
+                try {
+                    val credentialManager = CredentialManager.create(it)
+                    credentialManager.clearCredentialState(ClearCredentialStateRequest())
+                } catch (e: Exception) {
+                    AppLogger.longError("Failed to clear credential state: ${e.message}")
+                }
+            }
+        }
+    }
+
 }

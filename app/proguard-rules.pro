@@ -35,6 +35,7 @@
 -keep class com.herfy.utils.event.** { *; }
 -keep class com.herfy.model.** { *; }
 -keep class com.herfy.enum.** { *; }
+-keep class com.herfy.util.hmac.** { *; }
 
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
@@ -234,3 +235,6 @@ com.samsung.android.game.cloudgame.dev.sdk.* { *;}
 }
 
 -keep class com.google.android.play.core.** { *; }
+
+-if class androidx.credentials.CredentialManager
+-keep class androidx.credentials.playservices.** { *;}
