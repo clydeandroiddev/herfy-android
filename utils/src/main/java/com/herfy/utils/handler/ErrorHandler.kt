@@ -27,9 +27,10 @@ object ErrorHandler {
                     errorMsg = CacheUtil.getInstance().getTranslations(key)
                 }
 
-                if(key.isNotEmpty() && errorMsg.equals(key)){
+                if(key.isEmpty() && error.has("detail") && !error.isNull("detail")){
                     errorMsg = error.getString("detail")
                 }
+
             } else if (error is JSONArray) {
                 val errorObject = error.getJSONObject(0)
                 val key = if(errorObject.has("code")) "error_code_" + errorObject.getString("code") else ""
@@ -37,9 +38,10 @@ object ErrorHandler {
                     errorMsg = CacheUtil.getInstance().getTranslations(key)
                 }
 
-                if(key.isNotEmpty() && errorMsg.equals(key)){
+                if(key.isEmpty() && errorObject.has("detail") && !errorObject.isNull("detail")){
                     errorMsg = errorObject.getString("detail")
                 }
+
             }
         } catch (e: JSONException) {
             e.printStackTrace()

@@ -37,6 +37,7 @@ import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.DeviceUtil;
+import com.herfy.utils.helper.EnvUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
@@ -307,7 +308,12 @@ public class SplashPresenter implements SplashContract.Presenter {
 
                     if (task.isSuccessful()) {
 
-                        String sharedConfigString = sharedRemoteConfig.getString(ObfuscatorKt.reveal(Keychain.INSTANCE.getSHARED_PROJECT_REMOTE_CONFIG_KEY()));
+                        String sharedConfigStringKey = ObfuscatorKt.reveal(Keychain.INSTANCE.getSHARED_PROJECT_REMOTE_CONFIG_KEY());
+                        if(!EnvUtil.isProduction()) {
+                            sharedConfigStringKey = ObfuscatorKt.reveal(Keychain.INSTANCE.getSHARED_PROJECT_REMOTE_CONFIG_MERCHANT_KEY());
+                        }
+
+                        String sharedConfigString = sharedRemoteConfig.getString(sharedConfigStringKey);
                         CacheUtil.getInstance().setSharedStringConfig(sharedConfigString);
 
                     }

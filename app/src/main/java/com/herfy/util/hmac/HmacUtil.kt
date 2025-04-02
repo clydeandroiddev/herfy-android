@@ -4,6 +4,7 @@ import android.util.Base64
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.EnvUtil
 import java.nio.charset.StandardCharsets
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -12,7 +13,14 @@ object HmacUtil {
 
     @JvmStatic
     fun encrypt(data: String?): String {
-        val secret = CacheUtil.getInstance().getSharedStringConfig(reveal(Keychain.SHARED_STRING_CONFIG))
+        val defaultValue = reveal(
+            if(EnvUtil.isProduction()) {
+                Keychain.SHARED_STRING_CONFIG
+            } else {
+                Keychain.SHARED_STRING_CONFIG_MERCHANT
+            }
+        )
+        val secret = CacheUtil.getInstance().getSharedStringConfig(defaultValue)
         val algorithm = "HmacSHA256"
         val shaHMAC = Mac.getInstance(algorithm)
         val secretKey = SecretKeySpec(secret.toByteArray(), algorithm)
