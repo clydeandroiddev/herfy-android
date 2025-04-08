@@ -39,6 +39,8 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
 import com.herfy.BuildConfig;
 import com.herfy.R;
@@ -47,6 +49,8 @@ import com.herfy.base.BaseActivity;
 import com.herfy.country.CountriesActivity;
 import com.herfy.language.LanguageNewActivity;
 import com.herfy.main.MainActivity;
+import com.herfy.util.obfuscator.Keychain;
+import com.herfy.util.obfuscator.ObfuscatorKt;
 import com.herfy.utils.helper.CacheHelper;
 import com.herfy.utils.helper.DeepLinkUtil;
 import com.herfy.util.JsonUtil;
@@ -64,6 +68,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -148,7 +153,26 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
     @Override
     protected void onResume() {
         super.onResume();
+        getSharedProject();
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void init() {
         setStatusBarColor();
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -194,21 +218,6 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             splashPresenter.setRecreate(recreate);
             splashPresenter.start();
         }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     @Override
@@ -504,27 +513,28 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
     }
 
     @Override
-    public void getSoloDriver() {
-        /*FirebaseOptions options = new FirebaseOptions.Builder()
-                .setProjectId(BuildConfig.SOLO_DRIVER_PROJECT_ID)
-                .setApplicationId(BuildConfig.SOLO_DRIVER_APPLICATION_ID)
-                .setApiKey(BuildConfig.SOLO_DRIVER_API_KEY)
+    public void getSharedProject() {
+        FirebaseOptions options = new FirebaseOptions.Builder()
+                .setProjectId(ObfuscatorKt.reveal(Keychain.INSTANCE.getSHARED_PROJECT_ID()))
+                .setApplicationId(ObfuscatorKt.reveal(Keychain.INSTANCE.getSHARED_PROJECT_APPLICATION_ID()))
+                .setApiKey(ObfuscatorKt.reveal(Keychain.INSTANCE.getSHARED_PROJECT_API_KEY()))
                 .build();
 
-        FirebaseApp soloDriver = null;
+        FirebaseApp sharedProject = null;
         boolean hasBeenInitialized = false;
+        String packageName = ObfuscatorKt.reveal(Keychain.INSTANCE.getSHARED_PROJECT_PACKAGE_NAME());
         List<FirebaseApp> firebaseApps = FirebaseApp.getApps(this);
         for (FirebaseApp app : firebaseApps) {
-            if (app.getName().equals(BuildConfig.SOLO_DRIVER_PACKAGE_NAME)) {
+            if (app.getName().equals(packageName)) {
                 hasBeenInitialized = true;
-                soloDriver = app;
+                sharedProject = app;
                 break;
             }
         }
         if (!hasBeenInitialized) {
-            soloDriver = FirebaseApp.initializeApp(this, options, BuildConfig.SOLO_DRIVER_PACKAGE_NAME);
+            sharedProject = FirebaseApp.initializeApp(this, options, packageName);
         }
-        splashPresenter.setSoloDriver(soloDriver);*/
+        splashPresenter.setSharedProject(sharedProject);
     }
 
     @Override

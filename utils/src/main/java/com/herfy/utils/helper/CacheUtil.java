@@ -2,6 +2,7 @@ package com.herfy.utils.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
 import android.util.Pair;
 
 import com.google.gson.Gson;
@@ -168,6 +169,7 @@ public class CacheUtil {
     private static final String INITIAL_CAMPAIGN = "initial_campaign";
     private static final String IN_APP_REVIEW_ENABLE = "enable_in_app_review";
     private static final String DEVICE_USED_PROMOTIONS = "device_used_promotions";
+    private static final String SHARED_STRING_CONFIG = "SharedStringConfig";
 
     private CacheUtil(Context context) {
 
@@ -2193,4 +2195,19 @@ public class CacheUtil {
         }
         return false;
     }
+
+    public String getSharedStringConfig(String defaultValue) {
+        String sharedStringConfig = cacheSharedPreferences.getString(SHARED_STRING_CONFIG, defaultValue);
+        if(sharedStringConfig != null && !sharedStringConfig.isEmpty()) {
+            return new String(Base64.decode(sharedStringConfig, Base64.DEFAULT));
+        }
+        return sharedStringConfig;
+    }
+
+    public void setSharedStringConfig(String sharedStringConfig) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(SHARED_STRING_CONFIG, sharedStringConfig);
+        editor.apply();
+    }
+
 }

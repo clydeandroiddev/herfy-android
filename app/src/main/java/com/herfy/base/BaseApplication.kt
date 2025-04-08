@@ -19,6 +19,7 @@ import com.herfy.database.AppDatabase
 import com.herfy.font.FontHandler
 import com.herfy.util.AppLogger
 import com.herfy.util.glide.UnsafeOkHttpClient
+import com.herfy.util.hmac.HmacHeaderInterceptor
 import com.herfy.util.obfuscator.Keychain
 import com.herfy.util.obfuscator.reveal
 import com.herfy.utils.helper.AuthUtil
@@ -70,10 +71,13 @@ class BaseApplication : Application(), ImageLoaderFactory {
         val chuckerInterceptor: ChuckerInterceptor = ChuckerInterceptor.Builder(this)
             .collector(chuckerCollector)
             .redactHeaders("Authorization")
+            .redactHeaders(HmacHeaderInterceptor.HEADER_SIGNATURE)
             .alwaysReadResponseBody(true) // Controls Android shortcut creation. Available in SNAPSHOTS versions only at the moment
             .build()
         SoloApi.getInstance()
             .addInterceptor(chuckerInterceptor)
+
+        SoloApi.getInstance().addInterceptor(HmacHeaderInterceptor())
 
         ShipBook.start(this, reveal(Keychain.SHIP_BOOK_APP_ID), reveal(Keychain.SHIP_BOOK_APP_KEY))
         ShipBook.enableInnerLog(BuildConfig.DEBUG)

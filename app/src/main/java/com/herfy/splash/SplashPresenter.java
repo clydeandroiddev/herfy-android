@@ -28,6 +28,8 @@ import com.herfy.database.responses.MenuCategoryItemResponse;
 import com.herfy.model.SupportedCountry;
 import com.herfy.util.AppLogger;
 import com.herfy.util.StringUtil;
+import com.herfy.util.obfuscator.Keychain;
+import com.herfy.util.obfuscator.ObfuscatorKt;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.handler.ErrorHandler;
@@ -35,6 +37,7 @@ import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.DeviceUtil;
+import com.herfy.utils.helper.EnvUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
@@ -288,54 +291,47 @@ public class SplashPresenter implements SplashContract.Presenter {
     }
 
     @Override
-    public void setSoloDriver(FirebaseApp soloDriver) {
+    public void setSharedProject(FirebaseApp sharedFirebaseApp) {
 
-        FirebaseRemoteConfig soloDriverFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance(soloDriver);
+        FirebaseRemoteConfig sharedRemoteConfig = FirebaseRemoteConfig.getInstance(sharedFirebaseApp);
 
-        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(0L).build();
-        soloDriverFirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(0L)
+                .build();
+        sharedRemoteConfig.setConfigSettingsAsync(configSettings);
 
-        soloDriverFirebaseRemoteConfig.fetchAndActivate().addOnCompleteListener(new OnCompleteListener<Boolean>() {
+        new Handler().post(() -> {
+            sharedRemoteConfig.fetchAndActivate().addOnCompleteListener(new OnCompleteListener<Boolean>() {
 
-            @Override
-            public void onComplete(@NonNull Task<Boolean> task) {
+                @Override
+                public void onComplete(@NonNull Task<Boolean> task) {
 
-                if (task.isSuccessful()) {
+                    if (task.isSuccessful()) {
 
-                    try {
-
-                        JSONObject jsonObject = new JSONObject(soloDriverFirebaseRemoteConfig.getString("backup_api_url"));
-                        if (jsonObject.has("enabled") && jsonObject.getBoolean("enabled") && jsonObject.has("url")) {
-                            splashView.initializeSoloApi(jsonObject.getString("url"));
+                        String sharedConfigStringKey = ObfuscatorKt.reveal(Keychain.INSTANCE.getSHARED_PROJECT_REMOTE_CONFIG_KEY());
+                        if(!EnvUtil.isProduction()) {
+                            sharedConfigStringKey = ObfuscatorKt.reveal(Keychain.INSTANCE.getSHARED_PROJECT_REMOTE_CONFIG_MERCHANT_KEY());
                         }
-                        sendLanguage();
-                        getApplication();
-                        errorCounter = errorCounter + 1;
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        sendLanguage();
-                        getApplication();
+                        String sharedConfigString = sharedRemoteConfig.getString(sharedConfigStringKey);
+                        CacheUtil.getInstance().setSharedStringConfig(sharedConfigString);
+
                     }
 
-                } else {
-                    sendLanguage();
-                    getApplication();
-                }
+                    splashView.init();
 
-            }
-        }).addOnCanceledListener(new OnCanceledListener() {
-            @Override
-            public void onCanceled() {
-                sendLanguage();
-                getApplication();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                sendLanguage();
-                getApplication();
-            }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    splashView.init();
+                }
+            }).addOnCanceledListener(new OnCanceledListener() {
+                @Override
+                public void onCanceled() {
+                    splashView.init();
+                }
+            });
         });
     }
 

@@ -1,7 +1,6 @@
 package com.herfy.authentication.views
 
 import android.app.Activity
-import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
@@ -11,15 +10,21 @@ import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
+import androidx.credentials.PasswordCredential
+import androidx.credentials.PublicKeyCredential
+import androidx.credentials.exceptions.GetCredentialException
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.herfy.analytics.kochava.KochavaEventType
 import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
@@ -32,11 +37,12 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.loadSliderImage
 import com.herfy.utils.extensions.observeNonNull
-import com.herfy.utils.helper.BuildUtil
+import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.collectViewModelState
 import com.skylinedynamics.solosdk.api.models.objects.Customer
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 
@@ -57,47 +63,12 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
     private var isMaxTen = false
 
-    private var googleSignInClient: GoogleSignInClient? = null
-
-    private var googleLauncher: ActivityResultLauncher<Intent>? = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result != null && result.data != null) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(
-                    ApiException::class.java
-                )
-                if (account != null) {
-                    googleName = account.displayName.orEmpty()
-                    viewModel.loginViaGoogle(account.email.orEmpty(), account.idToken.orEmpty())
-                } else {
-                    showAlertDialog(
-                        title = "",
-                        message = CacheUtil.getInstance().getTranslations(Text.GOOGLE_ERROR)
-                    )
-                }
-            } catch (e: ApiException) {
-                e.printStackTrace()
-                showAlertDialog(
-                    title = "", message = CacheUtil.getInstance().getTranslations(Text.GOOGLE_ERROR)
-                )
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        googleLauncher = null
-    }
+    private lateinit var credentialManager: CredentialManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.let {
-            val googleSignInOptions =
-                GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(BuildUtil.googleInClient(it)).requestEmail().build()
-            googleSignInClient = GoogleSignIn.getClient(it, googleSignInOptions)
+            credentialManager = CredentialManager.create(it)
         }
     }
 
@@ -136,12 +107,8 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
 
             loginGoogle.setOnClickListener {
                 hideKeyboard(binding.root)
-                googleSignInClient!!.signOut()
-                showProgressDialog(
-                    false, CacheUtil.getInstance().getTranslations(Text.LOADING, "Loading")
-                )
-                val signInIntent = googleSignInClient!!.signInIntent
-                googleLauncher!!.launch(signInIntent)
+                handleGoogleLogout()
+                signInGoogle()
             }
 
             loginGuest.setOnClickListener {
@@ -365,4 +332,96 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
             e.printStackTrace()
         }
     }
+
+    private fun handleGoogleLogout() {
+        activity?.let {
+            lifecycleScope.launch {
+                try {
+                    val credentialManager = CredentialManager.create(it)
+                    credentialManager.clearCredentialState(ClearCredentialStateRequest())
+                } catch (e: Exception) {
+                    AppLogger.longError("Failed to clear credential state: ${e.message}")
+                }
+            }
+        }
+    }
+
+    private fun signInGoogle() {
+        showProgressDialog(false)
+        lifecycleScope.launch {
+            try {
+                credentialManager.clearCredentialState(ClearCredentialStateRequest())
+            } catch (e: Exception) {
+                AppLogger.longError("Failed to clear credential state: ${e.message}")
+            }
+        }
+
+        val signInWithGoogleOption: GetSignInWithGoogleOption = GetSignInWithGoogleOption.Builder(getString(R.string.google_sign_in_client_id))
+            .build()
+
+        val request: GetCredentialRequest = GetCredentialRequest
+            .Builder()
+            .addCredentialOption(signInWithGoogleOption)
+            .build()
+
+
+        lifecycleScope.launch {
+            try {
+                val result = credentialManager.getCredential(
+                    request = request,
+                    context = requireContext(),
+                )
+                handleGoogleSignIn(result)
+            } catch (e: GetCredentialException) {
+
+            }
+        }
+    }
+
+    private fun handleGoogleSignIn(result: GetCredentialResponse) {
+        activity?.runOnUiThread {
+            when (val credential = result.credential) {
+                // Passkey credential
+                is PublicKeyCredential -> {
+
+                }
+
+                // Password credential
+                is PasswordCredential -> {
+
+                }
+
+                // GoogleIdToken credential
+                is CustomCredential -> {
+                    if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                        try {
+                            val googleIdTokenCredential = GoogleIdTokenCredential
+                                .createFrom(credential.data)
+
+                            showProgressDialog()
+                            viewModel.loginViaGoogle(googleIdTokenCredential.id, googleIdTokenCredential.idToken)
+                        } catch (e: GoogleIdTokenParsingException) {
+                            showAlertDialog(
+                                title = "",
+                                message = CacheUtil.getInstance().getTranslations(Text.GOOGLE_ERROR)
+                            )
+                        }
+                    } else {
+                        showAlertDialog(
+                            title = "",
+                            message = CacheUtil.getInstance().getTranslations(Text.GOOGLE_ERROR)
+                        )
+                    }
+                }
+
+                else -> {
+                    showAlertDialog(
+                        title = "",
+                        message = CacheUtil.getInstance().getTranslations(Text.GOOGLE_ERROR)
+                    )
+                }
+            }
+        }
+    }
+
 }
