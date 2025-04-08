@@ -386,7 +386,7 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                     }
 
                                     menuItems = ArrayList()
-                                    val comboPrices = HashMap<String, Double>()
+                                    val comboPricesList = mutableListOf<Double>()
                                     if (jsonObject.has("included") && !jsonObject.isNull("included")) {
                                         val included = jsonObject.getJSONArray("included")
                                         for (i in 0 until included.length()) {
@@ -411,21 +411,18 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                                         object : TypeToken<MenuItem?>() {
                                                         }.type
                                                     )
-                                                comboPrices[combo.attributes.itemId.toString()] =
-                                                    combo.attributes.finalPrice
+                                                comboPricesList.add(combo.attributes.finalPrice)
                                             }
                                         }
+                                        var comboIndex = 0
                                         for (menuItem: MenuItem in menuItems) {
                                             if (menuItem.attributes.isCombo) {
-                                                val menuItemId =
-                                                    menuItem.attributes.itemId.toString()
-                                                if (comboPrices.containsKey(menuItemId)) {
-                                                    val price = comboPrices[menuItemId]
-                                                    if (price != null && price != 0.00) {
-                                                        menuItem.price = price
-                                                        menuItem.attributes.price = price
-                                                    }
+                                                val price = comboPricesList[comboIndex]
+                                                if (price != 0.00) {
+                                                    menuItem.price = price
+                                                    menuItem.attributes.price = price
                                                 }
+                                                comboIndex++
                                             }
                                             val modifierGroups = ArrayList<ModifierGroup>()
                                             for (i in 0 until included.length()) {
