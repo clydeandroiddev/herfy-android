@@ -36,6 +36,7 @@
 -keep class com.herfy.model.** { *; }
 -keep class com.herfy.enum.** { *; }
 -keep class com.herfy.util.hmac.** { *; }
+-keep class com.herfy.utils.handler.** { *; }
 
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application

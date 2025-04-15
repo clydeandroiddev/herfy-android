@@ -27,19 +27,26 @@ object ErrorHandler {
                     errorMsg = CacheUtil.getInstance().getTranslations(key)
                 }
 
-                if(key.isEmpty() && error.has("detail") && !error.isNull("detail")){
+                if(translationNotFound(key, errorMsg) && error.has("detail") && !error.isNull("detail")){
                     errorMsg = error.getString("detail")
                 }
 
             } else if (error is JSONArray) {
-                val errorObject = error.getJSONObject(0)
-                val key = if(errorObject.has("code")) "error_code_" + errorObject.getString("code") else ""
-                if(key.isNotEmpty()){
-                    errorMsg = CacheUtil.getInstance().getTranslations(key)
-                }
+                if(error.length() > 0) {
+                    val errorObject = error.getJSONObject(0)
+                    val key =
+                        if (errorObject.has("code")) "error_code_" + errorObject.getString("code") else ""
+                    if (key.isNotEmpty()) {
+                        errorMsg = CacheUtil.getInstance().getTranslations(key)
+                    }
 
-                if(key.isEmpty() && errorObject.has("detail") && !errorObject.isNull("detail")){
-                    errorMsg = errorObject.getString("detail")
+                    if (translationNotFound(
+                            key,
+                            errorMsg
+                        ) && errorObject.has("detail") && !errorObject.isNull("detail")
+                    ) {
+                        errorMsg = errorObject.getString("detail")
+                    }
                 }
 
             }
@@ -79,6 +86,11 @@ object ErrorHandler {
         }
 
         code(codeValue)
+    }
+
+
+    private fun translationNotFound(key: String, errorMsg: String): Boolean {
+        return key.isEmpty() || errorMsg.isEmpty() || errorMsg.equals(key, ignoreCase = true)
     }
 
 }
