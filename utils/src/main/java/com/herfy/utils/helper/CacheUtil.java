@@ -2173,24 +2173,13 @@ public class CacheUtil {
 
     public boolean checkIfUsedPromotion(Promotion promotion) {
         if (promotion != null) {
-            if (promotion.getAttributes().getRedemptionLimitCustomer() == 1 ||
-                    !promotion.getAttributes().getRequirements().isRepeating() ||
-                    isLimitedPromotion(promotion.getAttributes().getRules())) {
+            if (promotion.getAttributes() != null && promotion.getAttributes().getRedemptionLimitCustomer() == 1) {
                 ArrayList<String> usedPromotions = getDeviceUsedPromotions();
                 for (int i = 0; i < usedPromotions.size(); i++) {
                     if (usedPromotions.get(i).equals(promotion.getId())) {
                         return true;
                     }
                 }
-            }
-        }
-        return false;
-    }
-
-    private boolean isLimitedPromotion(List<PromotionRules> rules) {
-        for (int i = 0; i < rules.size(); i++) {
-            if (rules.get(i).getRuleKey().equals("redemption-limit-customer") && rules.get(i).getInputValue().equals("1")) {
-                return true;
             }
         }
         return false;
