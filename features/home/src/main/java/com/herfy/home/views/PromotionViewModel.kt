@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import com.herfy.repository.HomeRepository
 import com.herfy.utils.base.mvvm.BaseViewModel
 import com.herfy.utils.extensions.cast
-import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.Event
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,14 +33,11 @@ class PromotionViewModel @Inject constructor(
                                 }
                             }
                         }
-                        AppLogger.error("37")
                         _showPromo.value = Event(showCampaign)
                     } ?: run {
-                        AppLogger.error("39")
                         _showPromo.value = Event(null)
                     }
                 } else {
-                    AppLogger.error("42")
                     _showPromo.value = Event(null)
                 }
             }
