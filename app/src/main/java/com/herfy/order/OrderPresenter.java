@@ -338,25 +338,30 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
             List<FacilityEntity> facilityEntities = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
                 JSONObject storeObject = array.getJSONObject(i);
-
-                if (hasLocation) {
-                    String storeId = storeObject.optString("id", "");
-                    if (!storeId.isEmpty()) {
-                        StoreDb storeDb = new StoreDb();
-                        storeDb.id = storeId;
-                        storeDb.applicationId = applicationId;
-                        storeDb.data = storeObject.toString();
-                        Executor executor = Executors.newSingleThreadExecutor();
-                        executor.execute(() -> storeDbs.add(storeDb));
+                if (storeObject != null) {
+                    if (hasLocation) {
+                        String storeId = storeObject.optString("id", "");
+                        if (!storeId.isEmpty()) {
+                            StoreDb storeDb = new StoreDb();
+                            storeDb.id = storeId;
+                            storeDb.applicationId = applicationId;
+                            storeDb.data = storeObject.toString();
+                            try {
+                                Executor executor = Executors.newSingleThreadExecutor();
+                                executor.execute(() -> storeDbs.add(storeDb));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                }
-                Store store = Store.parseStore(storeObject);
-                if (store.getAttributes().getPickupEnabled() == 1) {
-                    dineInStores.add(store);
-                }
-                boolean curbsideEnabled = CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.CURBSIDE);
-                if (store.getAttributes().getPickupEnabled() == 1 || (curbsideEnabled && store.getAttributes().getCurbsideEnabled() == 1)) {
-                    pickupCurbsideStores.add(store);
+                    Store store = Store.parseStore(storeObject);
+                    if (store.getAttributes().getPickupEnabled() == 1) {
+                        dineInStores.add(store);
+                    }
+                    boolean curbsideEnabled = CacheUtil.getInstance().getApplication().getAttributes().getOrderTypes().contains(OrderType.CURBSIDE);
+                    if (store.getAttributes().getPickupEnabled() == 1 || (curbsideEnabled && store.getAttributes().getCurbsideEnabled() == 1)) {
+                        pickupCurbsideStores.add(store);
+                    }
                 }
             }
 
