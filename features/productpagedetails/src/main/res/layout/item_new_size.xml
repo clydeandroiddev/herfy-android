@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    android:id="@+id/clickable_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clickable_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:gravity="center_vertical"
+    android:orientation="horizontal"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
@@ -30,18 +29,18 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
         <TextView
             android:id="@+id/txtModifierItemName"
+            style="@style/Styles.Text.Footnote.Semi.Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/margin_large"
             android:gravity="start|center_vertical"
-            style="@style/Styles.Text.Footnote.Semi.Bold"
             android:paddingEnd="4dp"
             android:textAlignment="viewStart"
             android:textColor="#1e1e1e"
@@ -52,13 +51,13 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtmodifierPrice"
-            android:layout_width="wrap_content"
             style="@style/Styles.Text.Footnote"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textDirection="ltr"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/txtModifierItemName"
             app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
-            android:textDirection="ltr"
             tools:text="+Sar 2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

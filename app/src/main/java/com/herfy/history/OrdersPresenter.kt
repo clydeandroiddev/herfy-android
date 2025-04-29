@@ -1217,12 +1217,12 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
     ) {
         this.ratings = ratings
         var feedbackNew = otherFeedback
-        if (feedbackNew.isEmpty()) {
+        if (feedbackNew.isNullOrEmpty()) {
             feedbackNew = "Order Feedback"
         }
         val customer = AuthUtil.getInstance().customer
         var email = customer.attributes.email
-        if (email.isEmpty()) {
+        if (email.isNullOrEmpty()) {
             email = null
         }
         val orderFeedbackBody = OrderFeedbackBody(

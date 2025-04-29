@@ -1979,9 +1979,11 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 activity?.cast<BaseActivity> {
                                     it.showLoadingDialog()
                                 }
-                                orderPresenter?.sendOrderFeedback(
-                                    ratings, orderId, feedbackOther
-                                )
+                                if (orderId != null) {
+                                    orderPresenter?.sendOrderFeedback(
+                                        ratings, orderId, feedbackOther
+                                    )
+                                }
                             }
                         }
 

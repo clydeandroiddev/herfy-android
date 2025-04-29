@@ -341,7 +341,7 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
 
                 if (hasLocation) {
                     String storeId = storeObject.optString("id", "");
-                    if(!storeId.isEmpty()) {
+                    if (!storeId.isEmpty()) {
                         StoreDb storeDb = new StoreDb();
                         storeDb.id = storeId;
                         storeDb.applicationId = applicationId;
@@ -525,34 +525,38 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
         addCartItem(favorite);
     }
 
-    private  void sortStoresByDistance(@Nullable Integer page, @Nullable Integer paginationTotal) {
-        Comparator<Store> distanceComparator = (store1, store2) -> {
-            if (store1 == null || store1.getAttributes() == null || store1.getAttributes().getDistance() == null ||
-                    store2 == null || store2.getAttributes() == null || store2.getAttributes().getDistance() == null) {
-                throw new IllegalStateException("One or more required objects or attributes are null.");
+    private void sortStoresByDistance(@Nullable Integer page, @Nullable Integer paginationTotal) {
+        try {
+            Comparator<Store> distanceComparator = (store1, store2) -> {
+                if (store1 == null || store1.getAttributes() == null || store1.getAttributes().getDistance() == null ||
+                        store2 == null || store2.getAttributes() == null || store2.getAttributes().getDistance() == null) {
+                    throw new IllegalStateException("One or more required objects or attributes are null.");
+                }
+                return store1.getAttributes().getDistance().compareTo(store2.getAttributes().getDistance());
+            };
+
+            ArrayList<Store> dineInStoresCopy;
+            ArrayList<Store> pickupCurbsideStoresCopy;
+
+            //to prevent ConcurrentModificationException error
+            synchronized (dineInStores) {
+                dineInStoresCopy = new ArrayList<>(dineInStores);
             }
-            return store1.getAttributes().getDistance().compareTo(store2.getAttributes().getDistance());
-        };
-
-        ArrayList<Store> dineInStoresCopy;
-        ArrayList<Store> pickupCurbsideStoresCopy;
-
-        //to prevent ConcurrentModificationException error
-        synchronized (dineInStores) {
-            dineInStoresCopy = new ArrayList<>(dineInStores);
-        }
-        synchronized (pickupCurbsideStores) {
-            pickupCurbsideStoresCopy = new ArrayList<>(pickupCurbsideStores);
-        }
-
-        dineInStoresCopy.sort(distanceComparator);
-        pickupCurbsideStoresCopy.sort(distanceComparator);
-
-        if (page != null && paginationTotal != null) {
-            orderView.showStores(dineInStoresCopy, pickupCurbsideStoresCopy);
-            if (totalStoresCount < paginationTotal) {
-                getStores(page + 1);
+            synchronized (pickupCurbsideStores) {
+                pickupCurbsideStoresCopy = new ArrayList<>(pickupCurbsideStores);
             }
+
+            dineInStoresCopy.sort(distanceComparator);
+            pickupCurbsideStoresCopy.sort(distanceComparator);
+
+            if (page != null && paginationTotal != null) {
+                orderView.showStores(dineInStoresCopy, pickupCurbsideStoresCopy);
+                if (totalStoresCount < paginationTotal) {
+                    getStores(page + 1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -1455,9 +1459,11 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                 com.skylinedynamics.solosdk.api.models.objects.Address updateAddress = null;
                 if (AuthUtil.getInstance().isSignedIn()) {
                     for (com.skylinedynamics.solosdk.api.models.objects.Address homeAddress : bookmarkedAddresses) {
-                        if (homeAddress.getAttributes().getLat().equals(String.valueOf(address.getLatitude())) && homeAddress.getAttributes().getLongt().equals(String.valueOf(address.getLongitude()))) {
-                            updateAddress = homeAddress;
-                            break;
+                        if (address != null) {
+                            if (homeAddress.getAttributes().getLat().equals(String.valueOf(address.getLatitude())) && homeAddress.getAttributes().getLongt().equals(String.valueOf(address.getLongitude()))) {
+                                updateAddress = homeAddress;
+                                break;
+                            }
                         }
                     }
                     if (updateAddress == null) {
@@ -1683,46 +1689,49 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
             latitude = addressNew.getAttributes().getLat();
             longitude = addressNew.getAttributes().getLongt();
         } else {
-            latitude = String.valueOf(address.getLatitude());
-            longitude = String.valueOf(address.getLongitude());
+            if (address != null) {
+                latitude = String.valueOf(address.getLatitude());
+                longitude = String.valueOf(address.getLongitude());
+            }
         }
 
-        LocationApiCall.getInstance().getNearestStoreOrderOptions(latitude, longitude, new ApiRequestListener() {
-            @Override
-            public void onSuccess(Object o) {
-                try {
-                    JSONObject object = new JSONObject(o.toString());
-                    Object data = object.get("data");
+        if (!latitude.isEmpty() && !longitude.isEmpty()) {
+            LocationApiCall.getInstance().getNearestStoreOrderOptions(latitude, longitude, new ApiRequestListener() {
+                @Override
+                public void onSuccess(Object o) {
+                    try {
+                        JSONObject object = new JSONObject(o.toString());
+                        Object data = object.get("data");
 
-                    if (data instanceof JSONObject) {
-                        store = Store.parseStore((JSONObject) data);
-                        CacheUtil.getInstance().setOrderStore(store);
-                        selectedAddress = addressNew;
-                        checkUnavailableMenuItems();
-                    } else if (data instanceof JSONArray) {
-                        JSONArray array = (JSONArray) data;
-                        if (array.length() > 0) {
-                            store = Store.parseStore(array.getJSONObject(0));
+                        if (data instanceof JSONObject) {
+                            store = Store.parseStore((JSONObject) data);
                             CacheUtil.getInstance().setOrderStore(store);
                             selectedAddress = addressNew;
                             checkUnavailableMenuItems();
-                        } else {
-                            orderView.showError(CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA));
+                        } else if (data instanceof JSONArray) {
+                            JSONArray array = (JSONArray) data;
+                            if (array.length() > 0) {
+                                store = Store.parseStore(array.getJSONObject(0));
+                                CacheUtil.getInstance().setOrderStore(store);
+                                selectedAddress = addressNew;
+                                checkUnavailableMenuItems();
+                            } else {
+                                orderView.showError(CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA));
+                            }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        orderView.showError(CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA));
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    orderView.showError(CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA));
                 }
-            }
 
-            @Override
-            public void onError(Object o) {
-                AppLogger.printRetrofitError(o);
-                orderView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA)));
-            }
-        });
-
+                @Override
+                public void onError(Object o) {
+                    AppLogger.printRetrofitError(o);
+                    orderView.showError(ErrorHandler.getErrorMessage(o, "", CacheUtil.getInstance().getTranslations(Text.WE_DO_NOT_DELIVER_TO_YOUR_AREA)));
+                }
+            });
+        }
     }
 
     @Override
