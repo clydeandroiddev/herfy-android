@@ -35,19 +35,17 @@ import butterknife.ButterKnife;
 
 public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContract.View {
 
-    private Context context;
+    @BindView(R.id.container)
+    ConstraintLayout container;
 
-    private MenuContract.Presenter menuPresenter;
+    @BindView(R.id.check)
+    CheckBox check;
 
-    //@BindView(R.id.card) MaterialCardView card;
+    @BindView(R.id.txtModifierItemName)
+    TextView name;
 
-    @BindView(R.id.container) ConstraintLayout container;
-
-    @BindView(R.id.check) CheckBox check;
-
-    @BindView(R.id.name) TextView name;
-
-    @BindView(R.id.price) TextView price;
+    @BindView(R.id.txtmodifierPrice)
+    TextView price;
 
     private SizeViewHolder.OnAction onAction;
 
@@ -60,18 +58,11 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     }
 
     public SizeViewHolder(Context context, MenuContract.Presenter menuPresenter, View itemView) {
-
         super(itemView);
-
         ButterKnife.bind(this, itemView);
-
-        this.context = context;
-        this.menuPresenter = menuPresenter;
-
         setupViews();
         setupFonts();
         setupTranslations();
-
     }
 
     @Override
@@ -93,7 +84,6 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     public void setupViews() {
 
 
-
     }
 
     public void setupFonts() {
@@ -111,6 +101,7 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     public void showStore(Store store) {
 
     }
+
     @Override
     public void navigateToMenuItemDetails(MenuCategory menuCategory, MenuItem menuItem) {
 
@@ -185,9 +176,11 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     public void setModifierItem(ModifierGroup modifierGroup, ModifierItem modifierItem, int position) {
 
     }
+
     public void showFrequentBoughtItems(List<MenuItem> frequentBoughtItems) {
 
     }
+
     @Override
     public void setModifierItem(int modifierGroupPosition, ModifierGroup modifierGroup, int modifierItemPosition, ModifierItem modifierItem, boolean showModifierItemPrice) {
 
@@ -196,16 +189,12 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
         container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!modifierItem.getAttributes().isSelected()) {
+                if (!modifierItem.getAttributes().isSelected()) {
                     check.toggle();
-                    if(onAction != null) {
+                    if (onAction != null) {
                         onAction.onCheckedChanged(modifierItem);
                     }
                 }
-
-
-                //check.toggle();
-                //menuPresenter.selectSize(modifierItem.getId());
             }
         });
 
@@ -213,31 +202,18 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
             @Override
             public void onClick(View view) {
                 //menuPresenter.selectSize(modifierItem.getId());
-                if(!modifierItem.getAttributes().isSelected()) {
+                if (!modifierItem.getAttributes().isSelected()) {
                     check.toggle();
-                    if(onAction != null) {
+                    if (onAction != null) {
                         onAction.onCheckedChanged(modifierItem);
                     }
                 }
             }
         });
 
-        /*if (modifierItem.getAttributes().isSelected()) {
-            card.setStrokeColor(ViewUtil.getColorMain(context));
-            card.setStrokeWidth(ViewUtil.dpToPx(context, 2));
-        } else {
-            card.setStrokeColor(ContextCompat.getColor(context, android.R.color.transparent));
-            card.setStrokeWidth(0);
-        }*/
-
         name.setText(modifierItem.getAttributes().getTranslatedName().getValue(LocaleUtil.getInstance().getLanguage()));
+
         price.setText(StringUtil.getFormattedPrice(modifierItem.getAttributes().getPrice()));
-        /*container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                menuPresenter.selectSize(modifierItem.getId());
-            }
-        });*/
     }
 
     @Override
@@ -309,6 +285,7 @@ public class SizeViewHolder extends RecyclerView.ViewHolder implements MenuContr
     public void showModifierSelectionIndicator(boolean hasAtleastOneSelectedItem, int modifierGroupPosition, HashMap<String, Integer> modifierGroupIndexVisibility, int modifierItemPosition) {
 
     }
+
     @Override
     public void showFavorites(boolean fromAddRemove, ArrayList<Favorite> favorites) {
 
