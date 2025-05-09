@@ -70,8 +70,7 @@ class BaseApplication : Application(), ImageLoaderFactory {
         // Create the Interceptor
         val chuckerInterceptor: ChuckerInterceptor = ChuckerInterceptor.Builder(this)
             .collector(chuckerCollector)
-            .redactHeaders("Authorization")
-            .redactHeaders(HmacHeaderInterceptor.HEADER_SIGNATURE)
+            .redactHeaders("Authorization", HmacHeaderInterceptor.HEADER_SIGNATURE)
             .alwaysReadResponseBody(true) // Controls Android shortcut creation. Available in SNAPSHOTS versions only at the moment
             .build()
         SoloApi.getInstance()
