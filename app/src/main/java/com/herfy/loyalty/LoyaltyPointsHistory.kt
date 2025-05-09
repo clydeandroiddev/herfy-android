@@ -4,16 +4,9 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
-import butterknife.ButterKnife
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.card.MaterialCardView
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.databinding.ActivityLoyaltyPointsHistoryBinding
@@ -24,11 +17,7 @@ import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
-import com.moneyhash.sdk.android.extensions.inflater
-import com.skylinedynamics.solosdk.api.models.objects.Loyalty
-import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
-import com.skylinedynamics.solosdk.api.models.objects.Tier
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -45,7 +34,7 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyHistoryContract.View {
     }
 
     private val binding by lazy {
-        ActivityLoyaltyPointsHistoryBinding.inflate(inflater)
+        ActivityLoyaltyPointsHistoryBinding.inflate(layoutInflater)
     }
 
     private var canLoadMoreItems = false

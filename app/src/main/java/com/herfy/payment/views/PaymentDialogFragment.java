@@ -27,7 +27,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.material.button.MaterialButton;
 import com.herfy.utils.helper.CacheUtil;
-import com.moneyhash.sdk.android.ResultType;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
 import com.herfy.base.BaseDialogFragment;
@@ -361,11 +360,6 @@ public class PaymentDialogFragment extends BaseDialogFragment implements Payment
     @Override
     public void showErrorPrayerTime() {
 
-    }
-
-    @Override
-    public ActivityResultLauncher<Pair<String, ResultType>> moneyHashContract() {
-        return null;
     }
 
     @Override

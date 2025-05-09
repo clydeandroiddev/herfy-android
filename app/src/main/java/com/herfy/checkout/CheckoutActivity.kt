@@ -97,9 +97,6 @@ import com.herfy.utils.helper.launchWithTimber
 import com.herfy.utils.permission.PermissionManager
 import com.herfy.utils.permission.PermissionResult
 import com.herfy.utils.permission.permissionProvider
-import com.moneyhash.sdk.android.ResultType
-import com.moneyhash.sdk.android.payment.PaymentResultContract
-import com.moneyhash.sdk.android.payment.PaymentStatus
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
@@ -1337,30 +1334,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun showErrorPrayerTime() {}
-    val activityResultLauncher: ActivityResultLauncher<Pair<String, ResultType>> =
-        registerForActivityResult(PaymentResultContract() as ActivityResultContract<Pair<String, ResultType>, Any>,
-            ActivityResultCallback<Any> { result ->
-                if (result == null) return@ActivityResultCallback
-                when (result) {
-                    is PaymentStatus.Success -> paymentPresenter?.sendUpsells()
-                    is PaymentStatus.Redirect -> {
-                        if (result.result.component2()?.status.equals(
-                                "SUCCESSFUL", ignoreCase = true
-                            )
-                        ) {
-                            paymentPresenter?.sendUpsells()
-                        } else {
-                            showCardFailed()
-                        }
-                    }
-
-                    else -> showCardFailed()
-                }
-            })
-
-    override fun moneyHashContract(): ActivityResultLauncher<Pair<String, ResultType>> {
-        return activityResultLauncher
-    }
 
     override fun setOrderId(orderId: String) {}
     override fun showCardDialogList(orderId: String) {
@@ -1786,7 +1759,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             context = this@CheckoutActivity,
             title = getString(R.string.permission_denied),
             body = getString(R.string.permission_read_write_denied_msg),
-            positiveButtonText = getString(R.string.try_again_later),
+            positiveButtonText = getString(R.string.try_again),
             negativeButtonText = getString(R.string.cancel),
             positiveClickListener = { onRationaleRequested() },
             message = getString(R.string.permission_read_write_denied_msg)

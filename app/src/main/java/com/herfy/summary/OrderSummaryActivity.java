@@ -28,8 +28,6 @@ import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.EnvUtil;
-import com.moneyhash.sdk.android.ResultType;
-import com.moneyhash.sdk.android.payment.PaymentResultContract;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
@@ -561,12 +559,6 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
     @Override
     public void showErrorPrayerTime() {
 
-    }
-
-    @Override
-    public ActivityResultLauncher<Pair<String, ResultType>> moneyHashContract() {
-        return registerForActivityResult((ActivityResultContract) (new PaymentResultContract()), (ActivityResultCallback) (result) -> {
-        });
     }
 
     @Override
