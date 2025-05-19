@@ -33,7 +33,7 @@ public interface SplashContract {
 
         void initializeSoloApi(String url);
 
-        void showError(String error);
+        void showError(String error, boolean closeApp);
 
         void cacheSliders(boolean mid, ArrayList<Slide> slides);
 
