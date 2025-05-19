@@ -8,7 +8,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.gson.JsonObject;
-import com.moneyhash.sdk.android.ResultType;
 import com.herfy.base.BasePresenter;
 import com.herfy.base.BaseView;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
@@ -82,8 +81,6 @@ public interface PaymentContract {
         void showPrayerTime(PrayerTime prayerTime);
 
         void showErrorPrayerTime();
-
-        ActivityResultLauncher<kotlin.Pair<String, ResultType>> moneyHashContract();
 
         void setOrderId(String orderId);
 

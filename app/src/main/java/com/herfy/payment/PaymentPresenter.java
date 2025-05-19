@@ -28,8 +28,6 @@ import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.helper.TimeUtil;
 import com.kochava.tracker.events.EventType;
-import com.moneyhash.sdk.android.MoneyHash;
-import com.moneyhash.sdk.android.ResultType;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
@@ -37,9 +35,6 @@ import com.skylinedynamics.solosdk.api.calls.LocationApiCall;
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall;
 import com.skylinedynamics.solosdk.api.calls.PrayerTimesApiCall;
 import com.skylinedynamics.solosdk.api.calls.UtilitiesApiCall;
-import com.skylinedynamics.solosdk.api.models.kotlin.MoneyHashIntent;
-import com.skylinedynamics.solosdk.api.models.kotlin.MoneyHashRequestIntent;
-import com.skylinedynamics.solosdk.api.models.kotlin.SoloResponse;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Application;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
@@ -1310,7 +1305,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                                     break;
                                 case "moneyhash":
                                 case "money-hash":
-                                    getMoneyHashIntent(orderId, validatedTotal);
+                                    paymentView.showError("Payment gateway not found");
                                     break;
                                 case "moyasar":
                                     getMoyasarKey();
@@ -1336,37 +1331,6 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                 paymentView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.SORRY_ERROR_PAYMENT), null));
             }
         });
-
-    }
-
-
-    private void getMoneyHashIntent(String orderId, double orderTotalPrice) {
-        OrdersApiCall.getInstance().moneyHashIntent(new MoneyHashRequestIntent(orderTotalPrice, orderId), new Callback<SoloResponse<MoneyHashIntent>>() {
-            @Override
-            public void onResponse(Call<SoloResponse<MoneyHashIntent>> call, Response<SoloResponse<MoneyHashIntent>> response) {
-                if (response.isSuccessful()) {
-                    MoneyHash.INSTANCE.startPaymentFlow(response.body().getData().getId(), paymentView.moneyHashContract(), ResultType.CALLBACK);
-                } else {
-                    Object message = null;
-                    if (response.body() != null && response.body().getData() != null) {
-                        message = response.body().getData();
-                    } else if (response.errorBody() != null) {
-                        message = response.errorBody();
-                    }
-                    if (message != null) {
-                        ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, getPaymentProvider(), "Card Payment Failed (Reason: " + new Gson().toJson(message) + ")");
-                    } else {
-                        ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, getPaymentProvider(), "Card Payment Failed (Reason: getMoneyHashIntent failed)");
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<SoloResponse<MoneyHashIntent>> call, Throwable t) {
-                ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, getPaymentProvider(), "Card Payment Failed (Reason: " + new Gson().toJson(t) + ")");
-            }
-        });
-
 
     }
 

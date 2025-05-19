@@ -64,9 +64,6 @@ import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.EnvUtil;
-import com.moneyhash.sdk.android.ResultType;
-import com.moneyhash.sdk.android.payment.PaymentResultContract;
-import com.moneyhash.sdk.android.payment.PaymentStatus;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -1790,27 +1787,6 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
 
     @Override
     public void showErrorPrayerTime() {
-    }
-
-    ActivityResultLauncher<kotlin.Pair<String, ResultType>> activityResultLauncher = registerForActivityResult((ActivityResultContract) (new PaymentResultContract()), (ActivityResultCallback) (result) -> {
-        if (result == null) return;
-        if (result instanceof PaymentStatus.Success) {
-            paymentPresenter.sendUpsells();
-        } else if (result instanceof PaymentStatus.Redirect) {
-            if (((PaymentStatus.Redirect) result).getResult().component2().getStatus().equalsIgnoreCase("SUCCESSFUL")) {
-                paymentPresenter.sendUpsells();
-            } else {
-                showCardFailed();
-            }
-        } else {
-            showCardFailed();
-        }
-    });
-
-
-    @Override
-    public ActivityResultLauncher<kotlin.Pair<String, ResultType>> moneyHashContract() {
-        return activityResultLauncher;
     }
 
     @Override

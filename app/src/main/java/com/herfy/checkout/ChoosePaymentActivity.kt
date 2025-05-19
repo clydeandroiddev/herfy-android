@@ -23,9 +23,6 @@ import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.setVisible
 import com.herfy.utils.helper.CacheUtil
-import com.moneyhash.sdk.android.ResultType
-import com.moneyhash.sdk.android.payment.PaymentResultContract
-import com.moneyhash.sdk.android.payment.PaymentStatus
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -195,10 +192,6 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
 
     override fun showErrorPrayerTime() {
 
-    }
-
-    override fun moneyHashContract(): ActivityResultLauncher<Pair<String, ResultType>> {
-        return activityResultLauncher
     }
 
     override fun setOrderId(orderId: String?) {
@@ -400,21 +393,6 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
         cardView.strokeColor = ContextCompat.getColor(this,R.color.border_color_light)
         constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.card_selected_bg))
         imageView.background = resources.getDrawable(R.drawable.selected_image_bg)
-    }
-
-    private val activityResultLauncher = registerForActivityResult(PaymentResultContract()) { result ->
-        if (result == null) return@registerForActivityResult
-        when (result) {
-            is PaymentStatus.Success -> checkoutPresenter.sendUpsells()
-            is PaymentStatus.Redirect -> {
-                if ((result as PaymentStatus.Redirect).result.component2()?.status.equals("SUCCESSFUL", true)) {
-                    checkoutPresenter.sendUpsells()
-                } else {
-                    showCardFailed()
-                }
-            }
-            else -> showCardFailed()
-        }
     }
 
     private fun setupSavedCards() {

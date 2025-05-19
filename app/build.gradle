@@ -416,8 +416,6 @@ dependencies {
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
-    implementation 'io.moneyHash:android:0.1.4'
-
     // Chucker
     def chucker = "3.5.2"
     debugImplementation "com.github.chuckerteam.chucker:library:$chucker"

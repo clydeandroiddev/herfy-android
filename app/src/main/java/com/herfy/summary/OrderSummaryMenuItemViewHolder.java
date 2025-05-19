@@ -4,13 +4,11 @@ import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.herfy.utils.helper.CacheUtil;
-import com.moneyhash.sdk.android.ResultType;
 import com.herfy.R;
 import com.herfy.utils.constants.Text;
 import com.herfy.database.AppDatabase;
@@ -38,7 +36,6 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import kotlin.Pair;
 
 public class OrderSummaryMenuItemViewHolder extends RecyclerView.ViewHolder implements PaymentContract.View {
 
@@ -381,11 +378,6 @@ public class OrderSummaryMenuItemViewHolder extends RecyclerView.ViewHolder impl
     @Override
     public void showErrorPrayerTime() {
 
-    }
-
-    @Override
-    public ActivityResultLauncher<Pair<String, ResultType>> moneyHashContract() {
-        return null;
     }
 
     @Override
