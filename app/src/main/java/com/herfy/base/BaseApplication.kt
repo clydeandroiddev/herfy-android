@@ -27,6 +27,7 @@ import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.EnvUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.skylinedynamics.solosdk.api.ApiHeaders
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
 import dagger.hilt.android.HiltAndroidApp
@@ -70,7 +71,11 @@ class BaseApplication : Application(), ImageLoaderFactory {
         // Create the Interceptor
         val chuckerInterceptor: ChuckerInterceptor = ChuckerInterceptor.Builder(this)
             .collector(chuckerCollector)
-            .redactHeaders("Authorization", HmacHeaderInterceptor.HEADER_SIGNATURE)
+            .redactHeaders(
+                ApiHeaders.AUTHORIZATION_HEADER,
+                ApiHeaders.SOLO_APP_HEADER,
+                HmacHeaderInterceptor.HEADER_SIGNATURE
+            )
             .alwaysReadResponseBody(true) // Controls Android shortcut creation. Available in SNAPSHOTS versions only at the moment
             .build()
         SoloApi.getInstance()
