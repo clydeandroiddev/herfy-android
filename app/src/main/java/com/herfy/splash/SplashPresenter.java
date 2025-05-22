@@ -440,6 +440,7 @@ public class SplashPresenter implements SplashContract.Presenter {
             @Override
             public void onSuccess(Object o) {
                 try {
+                    errorCounter = 0;
                     String object = o.toString();
                     JSONObject jsonObject = new JSONObject(object);
                     cacheCountryApplication(object);
@@ -516,10 +517,10 @@ public class SplashPresenter implements SplashContract.Presenter {
             @Override
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o.toString());
-                if (errorCounter >= 3) {
-                    splashView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                errorCounter++;
+                if (errorCounter >= 1) {
+                    splashView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null), true);
                 } else {
-                    //splashView.getSoloDriver();
                     getApplication();
                 }
             }
@@ -748,7 +749,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                     @Override
                     public void onError(Object o) {
                         AppLogger.printRetrofitError(o.toString());
-                        splashView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
+                        splashView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null), false);
                     }
                 });
             }

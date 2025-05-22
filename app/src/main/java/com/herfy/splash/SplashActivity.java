@@ -165,10 +165,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        closeApp();
     }
 
     @Override
@@ -545,8 +542,24 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
     }
 
     @Override
-    public void showError(String error) {
-        showAlertDialog("", error);
+    public void showError(String error, boolean closeApp) {
+        if(!closeApp) {
+            showAlertDialog("", error);
+        } else {
+            showAlertDialog("", error, CacheUtil.getInstance().getTranslations(Text.OK), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    closeApp();
+                }
+            });
+        }
+    }
+
+    private void closeApp() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
