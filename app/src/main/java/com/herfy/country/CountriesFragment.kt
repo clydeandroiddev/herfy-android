@@ -11,6 +11,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.request.RequestOptions
+import com.chuckerteam.chucker.api.ChuckerCollector
+import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.chuckerteam.chucker.api.RetentionManager
 import com.herfy.BuildConfig
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
@@ -21,9 +24,11 @@ import com.herfy.main.MainActivity
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
 import com.herfy.util.*
+import com.herfy.util.hmac.HmacHeaderInterceptor
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.EnvUtil
 import com.herfy.utils.helper.LocaleUtil
+import com.skylinedynamics.solosdk.api.ApiHeaders
 
 class CountriesFragment : BaseFragment(), CountriesContract.View,
     ConfirmConceptSelectionDialog.OnDialogAction {
@@ -162,17 +167,43 @@ class CountriesFragment : BaseFragment(), CountriesContract.View,
         CacheUtil.getInstance().country = country
         CacheUtil.getInstance().applicationKey = country!!.applicationKey
         CacheUtil.getInstance().conceptKey = country!!.applicationConcept
-        SoloApi.init(
-            requireActivity(),
-            EnvUtil.getEnvironmentUrl(),
-            CacheUtil.getInstance().applicationKey,
-            CacheUtil.getInstance().conceptKey
-        )
+        initSoloApi()
         SoloAuth.getInstance().setLanguage(
             LocaleUtil.getInstance().languageSymbol
         )
         SoloApi.getInstance().isDebug = BuildConfig.BUILD_TYPE == "debug"
         countriesPresenter!!.getApplication()
+    }
+
+    private fun initSoloApi() {
+        activity?.let {
+            // Create the Collector
+            val chuckerCollector = ChuckerCollector(
+                it,  // Toggles visibility of the push notification
+                true,
+                RetentionManager.Period.ONE_HOUR
+            )
+            SoloApi.init(
+                it,
+                EnvUtil.getEnvironmentUrl(),
+                CacheUtil.getInstance().applicationKey
+            )
+            // Create the Interceptor
+            val chuckerInterceptor = ChuckerInterceptor.Builder(it)
+                .collector(chuckerCollector)
+                .redactHeaders(
+                    ApiHeaders.AUTHORIZATION_HEADER,
+                    ApiHeaders.SOLO_APP_HEADER,
+                    HmacHeaderInterceptor.HEADER_SIGNATURE
+                )
+                .alwaysReadResponseBody(true) // Controls Android shortcut creation. Available in SNAPSHOTS versions only at the moment
+                .build()
+            SoloApi.getInstance()
+                .addInterceptor(chuckerInterceptor)
+
+            SoloApi.getInstance().addInterceptor(HmacHeaderInterceptor())
+        }
+
     }
 
     override fun onBack() {
