@@ -28,8 +28,7 @@ import com.herfy.database.responses.MenuCategoryItemResponse;
 import com.herfy.model.SupportedCountry;
 import com.herfy.util.AppLogger;
 import com.herfy.util.StringUtil;
-import com.herfy.util.obfuscator.Keychain;
-import com.herfy.util.obfuscator.ObfuscatorKt;
+import com.herfy.util.hmac.HmacUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.handler.ErrorHandler;
@@ -37,7 +36,6 @@ import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.DeviceUtil;
-import com.herfy.utils.helper.EnvUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.utils.menu.MenuUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
@@ -308,12 +306,9 @@ public class SplashPresenter implements SplashContract.Presenter {
 
                     if (task.isSuccessful()) {
 
-                        String sharedConfigStringKey = ObfuscatorKt.reveal(Keychain.INSTANCE.getSHARED_PROJECT_REMOTE_CONFIG_KEY());
-                        if(!EnvUtil.isProduction()) {
-                            sharedConfigStringKey = ObfuscatorKt.reveal(Keychain.INSTANCE.getSHARED_PROJECT_REMOTE_CONFIG_MERCHANT_KEY());
-                        }
-
-                        String sharedConfigString = sharedRemoteConfig.getString(sharedConfigStringKey);
+                        String sharedStringRemoteConfigKey = HmacUtil.getSharedStringRemoteConfigKey();
+                        AppLogger.error("sharedStringRemoteConfigKey " + sharedStringRemoteConfigKey);
+                        String sharedConfigString = sharedRemoteConfig.getString(sharedStringRemoteConfigKey);
                         CacheUtil.getInstance().setSharedStringConfig(sharedConfigString);
 
                     }
@@ -434,8 +429,6 @@ public class SplashPresenter implements SplashContract.Presenter {
 
     @Override
     public void getApplication() {
-
-        String previousColorMain = CacheUtil.getInstance().getColorMain();
         ApplicationsApiCall.getInstance().getApplication(new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
