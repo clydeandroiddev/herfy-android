@@ -39,6 +39,12 @@ android {
             shrinkResources false
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
+        preprod {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
+        }
         prod {
             debuggable true
             minifyEnabled false

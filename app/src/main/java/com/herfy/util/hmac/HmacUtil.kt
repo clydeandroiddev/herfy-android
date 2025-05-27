@@ -62,6 +62,8 @@ object HmacUtil {
                 Keychain.SHARED_PROJECT_REMOTE_CONFIG_KIOSK_KEY
             } else if(EnvUtil.isStaging()) {
                 Keychain.SHARED_PROJECT_REMOTE_CONFIG_STAGING_KEY
+            } else if(EnvUtil.isPreprod()) {
+                Keychain.SHARED_PROJECT_REMOTE_CONFIG_PREPROD_KEY
             } else {
                 Keychain.SHARED_PROJECT_REMOTE_CONFIG_KEY
             }
@@ -82,6 +84,8 @@ object HmacUtil {
                 Keychain.SHARED_STRING_CONFIG_KIOSK
             } else if(EnvUtil.isStaging()) {
                 Keychain.SHARED_STRING_CONFIG_STAGING
+            } else if(EnvUtil.isPreprod()) {
+                Keychain.SHARED_STRING_CONFIG_PREPROD
             } else {
                 Keychain.SHARED_STRING_CONFIG
             }

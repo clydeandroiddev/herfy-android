@@ -28,6 +28,10 @@ public class EnvUtil {
 		}
 	}
 
+	public static boolean isPreprod() {
+		return getEnvironmentUrl().toLowerCase().contains("preprod-api");
+	}
+
 	public static boolean isStaging() {
 		return getEnvironmentUrl().toLowerCase().contains("staging");
 	}

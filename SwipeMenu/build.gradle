@@ -26,6 +26,11 @@ android {
             minifyEnabled false
             shrinkResources false
         }
+        preprod {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
         prod {
             debuggable true
             minifyEnabled false
