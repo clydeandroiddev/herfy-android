@@ -28,6 +28,34 @@ public class EnvUtil {
 		}
 	}
 
+	public static boolean isPreprod() {
+		return getEnvironmentUrl().toLowerCase().contains("preprod-api");
+	}
+
+	public static boolean isStaging() {
+		return getEnvironmentUrl().toLowerCase().contains("staging");
+	}
+
+	public static boolean isMerchant() {
+		return getEnvironmentUrl().toLowerCase().contains("merchant");
+	}
+
+	public static boolean isMarketing() {
+		return getEnvironmentUrl().toLowerCase().contains("marketing");
+	}
+
+	public static boolean isConsumer() {
+		return getEnvironmentUrl().toLowerCase().contains("consumer");
+	}
+
+	public static boolean isKiosk() {
+		return getEnvironmentUrl().toLowerCase().contains("kiosk");
+	}
+
+	public static boolean isDevelop() {
+		return getEnvironmentUrl().toLowerCase().contains("dev-api");
+	}
+
 	public static String getContentUrlPrefix() {
 		if(serverType != null) {
 			return serverType.getContentUrlPrefix();

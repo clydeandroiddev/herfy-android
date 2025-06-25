@@ -2187,7 +2187,9 @@ public class CacheUtil {
 
     public String getSharedStringConfig(String defaultValue) {
         String sharedStringConfig = cacheSharedPreferences.getString(SHARED_STRING_CONFIG, defaultValue);
-        if(sharedStringConfig != null && !sharedStringConfig.isEmpty()) {
+        if(sharedStringConfig == null || sharedStringConfig.isEmpty()) {
+            sharedStringConfig = defaultValue;
+        } else {
             return new String(Base64.decode(sharedStringConfig, Base64.DEFAULT));
         }
         return sharedStringConfig;

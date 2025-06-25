@@ -13,14 +13,7 @@ object HmacUtil {
 
     @JvmStatic
     fun encrypt(data: String?): String {
-        val defaultValue = reveal(
-            if(EnvUtil.isProduction()) {
-                Keychain.SHARED_STRING_CONFIG
-            } else {
-                Keychain.SHARED_STRING_CONFIG_MERCHANT
-            }
-        )
-        val secret = CacheUtil.getInstance().getSharedStringConfig(defaultValue)
+        val secret = CacheUtil.getInstance().getSharedStringConfig(getDefaultSharedStringConfig())
         val algorithm = "HmacSHA256"
         val shaHMAC = Mac.getInstance(algorithm)
         val secretKey = SecretKeySpec(secret.toByteArray(), algorithm)
@@ -52,6 +45,51 @@ object HmacUtil {
             j++
         }
         return String(hexChars)
+    }
+
+    @JvmStatic
+    fun getSharedStringRemoteConfigKey(): String {
+        return reveal(
+            if(EnvUtil.isDevelop()) {
+                Keychain.SHARED_PROJECT_REMOTE_CONFIG_DEVELOP_KEY
+            } else if(EnvUtil.isMarketing()) {
+                Keychain.SHARED_PROJECT_REMOTE_CONFIG_MARKETING_KEY
+            } else if(EnvUtil.isMerchant()) {
+                Keychain.SHARED_PROJECT_REMOTE_CONFIG_MERCHANT_KEY
+            } else if(EnvUtil.isConsumer()) {
+                Keychain.SHARED_PROJECT_REMOTE_CONFIG_CONSUMER_KEY
+            } else if(EnvUtil.isKiosk()) {
+                Keychain.SHARED_PROJECT_REMOTE_CONFIG_KIOSK_KEY
+            } else if(EnvUtil.isStaging()) {
+                Keychain.SHARED_PROJECT_REMOTE_CONFIG_STAGING_KEY
+            } else if(EnvUtil.isPreprod()) {
+                Keychain.SHARED_PROJECT_REMOTE_CONFIG_PREPROD_KEY
+            } else {
+                Keychain.SHARED_PROJECT_REMOTE_CONFIG_KEY
+            }
+        )
+    }
+
+    private fun getDefaultSharedStringConfig(): String {
+        return reveal(
+            if(EnvUtil.isDevelop()) {
+                Keychain.SHARED_STRING_CONFIG_DEVELOP
+            } else if(EnvUtil.isMarketing()) {
+                Keychain.SHARED_STRING_CONFIG_MARKETING
+            } else if(EnvUtil.isMerchant()) {
+                Keychain.SHARED_STRING_CONFIG_MERCHANT
+            } else if(EnvUtil.isConsumer()) {
+                Keychain.SHARED_STRING_CONFIG_CONSUMER
+            } else if(EnvUtil.isKiosk()) {
+                Keychain.SHARED_STRING_CONFIG_KIOSK
+            } else if(EnvUtil.isStaging()) {
+                Keychain.SHARED_STRING_CONFIG_STAGING
+            } else if(EnvUtil.isPreprod()) {
+                Keychain.SHARED_STRING_CONFIG_PREPROD
+            } else {
+                Keychain.SHARED_STRING_CONFIG
+            }
+        )
     }
 
 }
