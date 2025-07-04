@@ -76,7 +76,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.apache.commons.lang3.StringUtils
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
@@ -417,8 +416,12 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                         var comboIndex = 0
                                         for (menuItem: MenuItem in menuItems) {
                                             if (menuItem.attributes.isCombo) {
-                                                val price = comboPricesList[comboIndex]
-                                                if (price != 0.00) {
+                                                val price = if(comboPricesList.isNotEmpty() && comboIndex < comboPricesList.size) {
+                                                    comboPricesList[comboIndex]
+                                                } else {
+                                                    0.0
+                                                }
+                                                if (price != 0.0) {
                                                     menuItem.price = price
                                                     menuItem.attributes.price = price
                                                 }
@@ -527,19 +530,19 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                     }
                                 } else {
                                     if (position >= 0) {
-                                        if (position < orders.size) {
-                                            val orderStatus = order.getOrderStatus()
+                                        if (orders.isNotEmpty() && position < orders.size) {
+                                            val orderStatus = order.orderStatus
                                             orders[position].code = orderStatus.code
                                             orders[position].sequence = orderStatus.sequence
                                             orders[position].description = orderStatus.description
                                             ordersView.updateOrder(position)
                                         }
                                     } else {
-                                        ordersView.updateStatus(order, order.getOrderStatus())
+                                        ordersView.updateStatus(order, order.orderStatus)
                                         if (driver == null) {
                                             parseLyveDriver(data)
                                         }
-                                        ordersView.showRatings(order.getOrderStatus(), ratings)
+                                        ordersView.showRatings(order.orderStatus, ratings)
                                     }
                                 }
                             }

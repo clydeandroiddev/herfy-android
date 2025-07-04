@@ -22,6 +22,7 @@ import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.order.views.AddressActivity;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.theme.DynamicTheme;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.herfy.subscription.branch.PickupBranchActivity;
 import com.herfy.subscription.premade.PreMadeStep1Contract;
@@ -35,7 +36,6 @@ import com.herfy.subscription.subhome.views.NutritionFactsDialogFragment;
 import com.herfy.utils.helper.AnimUtil;
 import com.herfy.utils.helper.LocaleUtil;
 import com.herfy.util.StringUtil;
-import com.herfy.views.DynamicTheme;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.suke.widget.SwitchButton;
 

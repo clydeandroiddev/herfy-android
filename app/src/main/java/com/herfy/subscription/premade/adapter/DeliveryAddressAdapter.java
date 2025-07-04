@@ -15,8 +15,8 @@ import com.herfy.R;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.theme.DynamicTheme;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
-import com.herfy.views.DynamicTheme;
 
 import java.util.List;
 

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 import com.herfy.R;
 import com.herfy.subscription.premade.models.DeliveryTime;
-import com.herfy.views.DynamicTheme;
+import com.herfy.utils.theme.DynamicTheme;
 
 import java.util.List;
 

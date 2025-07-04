@@ -17,7 +17,7 @@ import com.herfy.utils.constants.Text;
 import com.herfy.subscription.premade.models.StubPreMadeModel;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.helper.CacheUtil;
-import com.herfy.views.DynamicTheme;
+import com.herfy.utils.theme.DynamicTheme;
 
 import java.util.List;
 

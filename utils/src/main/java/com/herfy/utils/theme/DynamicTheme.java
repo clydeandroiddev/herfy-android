@@ -1,4 +1,4 @@
-package com.herfy.views;
+package com.herfy.utils.theme;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,18 +7,20 @@ import android.graphics.Color;
 
 import androidx.annotation.ColorInt;
 
-import com.herfy.R;
+import com.herfy.utils.R;
 
 public class DynamicTheme {
 
-    private static final String NAME = "DynamicTheme", KEY = "color";
+    private static final String NAME = "DynamicTheme";
+    private static final String KEY = "color";
+    public static final String DEFAULT_PRIMARY_COLOR = "0064AC";
 
     @ColorInt
     public int color;
 
     public DynamicTheme(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(NAME, Context.MODE_PRIVATE);
-        String stringColor = sharedPreferences.getString(KEY, "F26224");
+        String stringColor = sharedPreferences.getString(KEY, DEFAULT_PRIMARY_COLOR);
         color = Color.parseColor("#" + stringColor);
 
         if (isLightActionBar()) context.setTheme(R.style.AppTheme);
@@ -40,7 +42,7 @@ public class DynamicTheme {
 
     public static String getStringColor(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(NAME, Context.MODE_PRIVATE);
-        String stringColor = sharedPreferences.getString(KEY, "F26224");
+        String stringColor = sharedPreferences.getString(KEY, DEFAULT_PRIMARY_COLOR);
         return "#" + stringColor;
     }
 

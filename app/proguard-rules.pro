@@ -37,6 +37,7 @@
 -keep class com.herfy.enum.** { *; }
 -keep class com.herfy.util.hmac.** { *; }
 -keep class com.herfy.utils.handler.** { *; }
+-keep class com.herfy.utils.theme.** { *; }
 
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
@@ -239,3 +240,6 @@ com.samsung.android.game.cloudgame.dev.sdk.* { *;}
 
 -if class androidx.credentials.CredentialManager
 -keep class androidx.credentials.playservices.** { *;}
+
+-keep class com.shockwave.**
+-keep class com.checkout.** { *; }

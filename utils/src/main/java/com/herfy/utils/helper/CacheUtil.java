@@ -16,6 +16,7 @@ import com.herfy.model.SupportedCountry;
 import com.herfy.model.SupportedCountryResponse;
 import com.herfy.utils.BuildConfig;
 import com.herfy.utils.constants.Values;
+import com.herfy.utils.theme.DynamicTheme;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Application;
 import com.skylinedynamics.solosdk.api.models.objects.Campaign;
@@ -32,7 +33,6 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
 import com.skylinedynamics.solosdk.api.models.objects.Promotion;
-import com.skylinedynamics.solosdk.api.models.objects.PromotionRules;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
 import com.skylinedynamics.solosdk.api.models.objects.Tier;
@@ -661,8 +661,7 @@ public class CacheUtil {
     }
 
     public String getColorMain() {
-        //return cacheSharedPreferences.getString(COLOR_MAIN, "#F26224");
-        return cacheSharedPreferences.getString(COLOR_MAIN, "#000000");
+        return cacheSharedPreferences.getString(COLOR_MAIN, "#" + DynamicTheme.DEFAULT_PRIMARY_COLOR);
     }
 
     public void setMenuCategories(HashMap<String, Pair<MenuCategory, Set<String>>> menuCategories) {

@@ -69,7 +69,7 @@ import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
 import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.menu.MenuUtil
-import com.herfy.views.DynamicTheme
+import com.herfy.utils.theme.DynamicTheme
 import com.kochava.tracker.events.EventType
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
