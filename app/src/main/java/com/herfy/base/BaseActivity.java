@@ -11,14 +11,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
@@ -61,9 +59,9 @@ import com.herfy.utils.constants.Values;
 import com.herfy.utils.event.AddToCartEvent;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.theme.DynamicTheme;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
-import com.skylinedynamics.solosdk.api.models.objects.Concept;
 import com.herfy.summary.OrderSummaryActivity;
 import com.herfy.upsell.UpsellActivity;
 import com.herfy.utils.helper.LocaleUtil;
@@ -72,7 +70,6 @@ import com.herfy.util.StringUtil;
 import com.herfy.util.ViewUtil;
 import com.herfy.util.receivers.InAppRatingBroadcastReceivers;
 import com.herfy.util.receivers.NetworkConnection;
-import com.herfy.views.DynamicTheme;
 import com.herfy.views.NetworkConnectivityDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -201,22 +198,38 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
         observeNetworkConnection();
 
         new DynamicTheme(this);
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = getTheme();
-        theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
-        Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(typedValue.data);
 
-        if (!ViewUtil.isColorDark(typedValue.data)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            }
+        // Fetch the color from CacheUtil and handle potential nulls
+        String defaultColor = "#" + DynamicTheme.DEFAULT_PRIMARY_COLOR;
+        String colorMain = CacheUtil.getInstance().getColorMain();
+        if (colorMain == null || colorMain.equalsIgnoreCase("null") || colorMain.isEmpty() || colorMain.length() != 7) {
+            colorMain = defaultColor;
         }
 
-        int red = Integer.valueOf(CacheUtil.getInstance().getColorMain().substring(1, 3), 16);
-        int green = Integer.valueOf(CacheUtil.getInstance().getColorMain().substring(3, 5), 16);
-        int blue = Integer.parseInt(CacheUtil.getInstance().getColorMain().substring(5, 7), 16);
+        try {
+            setStatusBarColor(colorMain);
+            setDynamicTheme(colorMain);
+        } catch (Exception e) {
+            e.printStackTrace();
+            setStatusBarColor(defaultColor);
+            setDynamicTheme(defaultColor);
+        }
+
+        LocaleUtil.getInstance().setLocale(this);
+        Locale locale = LocaleUtil.getInstance().createDefaultLocale();
+
+        Locale.setDefault(locale);
+        final Configuration cfg = new Configuration();
+        cfg.locale = locale;
+        getResources().updateConfiguration(cfg, null);
+
+        ViewUtil.overrideFonts(findViewById(android.R.id.content));
+    }
+
+    private void setDynamicTheme(String colorMain) {
+        int red = Integer.valueOf(colorMain.substring(1, 3), 16);
+        int green = Integer.valueOf(colorMain.substring(3, 5), 16);
+        int blue = Integer.parseInt(colorMain.substring(5, 7), 16);
 
         DynamicTheme.setNewThemeColor(this, red, green, blue);
 
@@ -229,6 +242,23 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
         getResources().updateConfiguration(cfg, null);
 
         ViewUtil.overrideFonts(findViewById(android.R.id.content));
+    }
+
+    public void setStatusBarColor(String color) {
+        try {
+            Window window = getWindow();
+            if(window != null) {
+                int statusBarColor = Color.parseColor(color);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(statusBarColor);
+                if (!ViewUtil.isColorDark(statusBarColor)) {
+                    window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isNetworkAvailable() {

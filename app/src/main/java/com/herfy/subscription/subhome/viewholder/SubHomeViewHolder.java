@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.herfy.R;
 import com.herfy.subscription.subhome.SubHomeContract;
 import com.herfy.util.StringUtil;
-import com.herfy.views.DynamicTheme;
+import com.herfy.utils.theme.DynamicTheme;
 
 import java.util.ArrayList;
 

@@ -341,17 +341,12 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                 if (storeObject != null) {
                     if (hasLocation) {
                         String storeId = storeObject.optString("id", "");
-                        if (!storeId.isEmpty()) {
+                        if (storeId != null && !storeId.isEmpty()) {
                             StoreDb storeDb = new StoreDb();
                             storeDb.id = storeId;
                             storeDb.applicationId = applicationId;
                             storeDb.data = storeObject.toString();
-                            try {
-                                Executor executor = Executors.newSingleThreadExecutor();
-                                executor.execute(() -> storeDbs.add(storeDb));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            storeDbs.add(storeDb);
                         }
                     }
                     Store store = Store.parseStore(storeObject);
@@ -415,9 +410,20 @@ public class OrderPresenter implements OrderContract.Presenter, FusedLocationPro
                                 appDatabase.storeDao().deleteByApplication(applicationId);
                                 appDatabase.facilityDao().deleteByApplication(applicationId);
                             }
-                            appDatabase.storeDao().insertAll(storeDbs.toArray(new StoreDb[storeDbs.size()]));
-                            appDatabase.facilityDao().insertAll(facilityEntities.toArray(new FacilityEntity[facilityEntities.size()]));
+                            if(!storeDbs.isEmpty()) {
+                                List<StoreDb> filteredStores = new ArrayList<>();
+                                for (StoreDb storeDb : storeDbs) {
+                                    if (storeDb.id != null && storeDb.id.isEmpty()) {
+                                        filteredStores.add(storeDb);
+                                    }
+                                }
+                                appDatabase.storeDao().insertAll(storeDbs.toArray(new StoreDb[storeDbs.size()]));
+                            }
+                            if(!facilityEntities.isEmpty()) {
+                                appDatabase.facilityDao().insertAll(facilityEntities.toArray(new FacilityEntity[facilityEntities.size()]));
+                            }
                         } catch (ArrayIndexOutOfBoundsException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
