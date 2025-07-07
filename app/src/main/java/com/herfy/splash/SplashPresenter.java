@@ -307,7 +307,6 @@ public class SplashPresenter implements SplashContract.Presenter {
                     if (task.isSuccessful()) {
 
                         String sharedStringRemoteConfigKey = HmacUtil.getSharedStringRemoteConfigKey();
-                        AppLogger.error("sharedStringRemoteConfigKey " + sharedStringRemoteConfigKey);
                         String sharedConfigString = sharedRemoteConfig.getString(sharedStringRemoteConfigKey);
                         CacheUtil.getInstance().setSharedStringConfig(sharedConfigString);
 
