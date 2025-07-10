@@ -352,6 +352,7 @@
 					android:textSize="14sp"
 					android:imeOptions="actionDone"
 					android:hint="Tell us about your experience here"
+					android:maxLength="100"
 					android:textAlignment="viewStart"
 					android:gravity="start"/>
 
